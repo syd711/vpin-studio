@@ -42,52 +42,69 @@ public class VPAuthenticationService {
   }
 
   public String authenticate(AuthenticationProvider authenticationProvider, String login, String password) {
-    try {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      Future<String> submit = executor.submit(new Callable<String>() {
-        @Override
-        public String call() throws Exception {
-          Thread.currentThread().setName("VP Authentication Service");
-          if (authenticationProvider == null) {
-            LOG.info("Skipped authentication, no provider selected.");
-            return "No authentication provider selected. Please choose and configure an authentication provider from the backup settings";
-          }
+    if (authenticationProvider == null) {
+      LOG.info("Skipped authentication, no provider selected.");
+      return "No authentication provider selected. Please choose and configure an authentication provider from the backup settings";
+    }
 
-          if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-            String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
-            LOG.info(msg);
-            return msg;
-          }
+    if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
+      String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
+      LOG.info(msg);
+      return msg;
+    }
 
-          LOG.info("Authentication using {}", authenticationProvider);
-          switch (authenticationProvider) {
-            case VPF: {
-              VPFSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
-              settings.setLogin(login);
-              settings.setPassword(password);
-              preferencesService.savePreference(settings);
-              return new VpfVPAuthenticator(settings).login();
-            }
-            case VPU: {
-              VPUSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
-              settings.setLogin(login);
-              settings.setPassword(password);
-              preferencesService.savePreference(settings);
-              return new VpuVPAuthenticator(settings).login();
-            }
-            default: {
-              return "Invalid authentication provider";
-            }
-          }
+    LOG.info("Authentication using {}", authenticationProvider);
+
+    // Save credentials to DB on the calling thread before spawning executor,
+    // so the background thread never needs a DB connection (avoids pool starvation
+    // when the HTTP thread holds the only HikariCP connection and blocks on future.get).
+    switch (authenticationProvider) {
+      case VPF: {
+        VPFSettings vpfSettings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
+        vpfSettings.setLogin(login);
+        vpfSettings.setPassword(password);
+        try {
+          preferencesService.savePreference(vpfSettings);
         }
-      });
+        catch (Exception e) {
+          LOG.error("Error saving auth settings: {}", e.getMessage());
+        }
+        return runWithTimeout(() -> new VpfVPAuthenticator(vpfSettings).login());
+      }
+      case VPU: {
+        VPUSettings vpuSettings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
+        vpuSettings.setLogin(login);
+        vpuSettings.setPassword(password);
+        try {
+          preferencesService.savePreference(vpuSettings);
+        }
+        catch (Exception e) {
+          LOG.error("Error saving auth settings: {}", e.getMessage());
+        }
+        return runWithTimeout(() -> new VpuVPAuthenticator(vpuSettings).login());
+      }
+      default: {
+        return "Invalid authentication provider";
+      }
+    }
+  }
 
-      return submit.get(10, TimeUnit.SECONDS);
+  private String runWithTimeout(Callable<String> task) {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    try {
+      Future<String> future = executor.submit(() -> {
+        Thread.currentThread().setName("VP Authentication Service");
+        return task.call();
+      });
+      return future.get(60, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      String msg = "Timeout running backup authentication, please try again later. (" + e.getMessage() + ")";
-      LOG.error("{}: {}", msg, e.getMessage());
+      String msg = "Timeout running backup authentication, please try again later.";
+      LOG.error(msg, e);
       return msg;
+    }
+    finally {
+      executor.shutdownNow();
     }
   }
 
