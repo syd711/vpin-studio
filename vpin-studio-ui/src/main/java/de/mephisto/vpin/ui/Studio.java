@@ -356,7 +356,7 @@ public class Studio extends Application {
               width = position.getWidth();
               height = position.getHeight();
             }
-            Scene scene = new Scene(root, width, height, Paint.valueOf("#212529"));
+            Scene scene = new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT);
               if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
                   stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-128.png"))));
               }
@@ -364,7 +364,7 @@ public class Studio extends Application {
             stage.setMinWidth(1280);
             stage.setMinHeight(700);
             stage.setResizable(true);
-            stage.initStyle(StageStyle.UNDECORATED);
+            stage.initStyle(StageStyle.TRANSPARENT);
 
             if (position.getX() != -1) {
               stage.setX(position.getX());

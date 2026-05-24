@@ -48,14 +48,20 @@
     -fx-border-style: solid;
     -fx-border-color: #605E5E;
     -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
 }
 
 .main, .root {
     -fx-background-color: -fx-base-6;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
 }
 
 .window-header {
     -fx-background-color: -fx-base-7;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
 }
 
 .dialog-header {

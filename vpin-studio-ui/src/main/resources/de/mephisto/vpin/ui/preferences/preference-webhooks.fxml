@@ -94,6 +94,17 @@
             </TableView>
                   <VBox>
                      <children>
+                  <Label styleClass="preference-subtitle" text="Public API Endpoints" />
+                  <Label styleClass="preference-description" text="The VPin Studio Server supports a public API endpoints to read game, highscore and player data." textFill="WHITE" />
+                  <Label styleClass="preference-description" text="A detailled description can be found here:" textFill="WHITE" />
+                  <Hyperlink onAction="#onLinkClick" text="https://github.com/syd711/vpin-studio/wiki/Webhooks" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox>
+                     <children>
                         <Label styleClass="preference-subtitle" text="Media Recorder Hooks">
                            <VBox.margin>
                               <Insets top="12.0" />
@@ -167,47 +178,35 @@
                         </GridPane>
                      </children>
                   </VBox>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Public API Endpoints">
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="The VPin Studio Server supports a public API endpoints to read game, highscore and player data." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="669.0" styleClass="preference-description" text="A detailled description can be found here:" textFill="WHITE" />
-            <Hyperlink onAction="#onLinkClick" text="https://github.com/syd711/vpin-studio/wiki/Webhooks" />
-            <Label layoutX="34.0" layoutY="703.0" styleClass="preference-subtitle" text="Additional Settings">
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="742.0" styleClass="preference-description" text="Miscellaneous settings used by integrations can be configured here." textFill="WHITE">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="370.199951171875" minWidth="10.0" prefWidth="147.200048828125" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="639.0" minWidth="10.0" prefWidth="603.199951171875" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-               <children>
-                  <Label styleClass="default-text" text="Pause Menu:" textFill="WHITE" />
-                  <VBox GridPane.columnIndex="1">
+                  <VBox>
                      <children>
-                        <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="Always take a screenshot before opening the pause menu." />
-                        <Label styleClass="checkbox-description" text="The screenshot can be read from the URL:" textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="http://&lt;HOST&gt;:8089/api/v1/recorder/screenshot/latest" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Additional Settings" />
+                  <Label styleClass="preference-description" text="Miscellaneous settings used by integrations can be configured here." textFill="WHITE" />
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="370.199951171875" minWidth="10.0" prefWidth="147.200048828125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="639.0" minWidth="10.0" prefWidth="603.199951171875" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="default-text" text="Pause Menu:" textFill="WHITE" />
+                        <VBox GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="Always take a screenshot before opening the pause menu." />
+                              <Label styleClass="checkbox-description" text="The screenshot can be read from the URL:" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="http://&lt;HOST&gt;:8089/api/v1/recorder/screenshot/latest" textFill="WHITE" />
+                           </children>
+                        </VBox>
                      </children>
+                  </GridPane>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
                   </VBox>
-               </children>
-            </GridPane>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
