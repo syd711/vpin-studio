@@ -10,6 +10,7 @@
 ### Bugfixes
 
 - **Highscores**: Fixed VPReg.stg file lookup.
+- **VPU/VPF**: Fixed login tests.
 
 
 ### Breaking Changes

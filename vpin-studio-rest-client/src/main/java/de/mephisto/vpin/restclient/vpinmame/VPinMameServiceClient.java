@@ -112,6 +112,6 @@ public class VPinMameServiceClient extends VPinStudioClientService {
   }
 
   public VPinMameOptions saveOptions(VPinMameOptions options) throws Exception {
-    return getRestClient().post(API + "mame/options/", options, VPinMameOptions.class);
+    return getRestClient().post(API + "mame/options", options, VPinMameOptions.class);
   }
 }

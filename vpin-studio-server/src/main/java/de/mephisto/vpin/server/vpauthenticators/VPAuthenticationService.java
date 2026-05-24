@@ -82,7 +82,7 @@ public class VPAuthenticationService {
         }
       });
 
-      return submit.get(5, TimeUnit.SECONDS);
+      return submit.get(10, TimeUnit.SECONDS);
     }
     catch (Exception e) {
       String msg = "Timeout running backup authentication, please try again later. (" + e.getMessage() + ")";

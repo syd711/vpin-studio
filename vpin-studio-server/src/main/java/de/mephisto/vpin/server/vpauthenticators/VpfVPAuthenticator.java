@@ -5,14 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.WebClient;
-import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class VpfVPAuthenticator implements VPAuthenticator {
   private final static Logger LOG = LoggerFactory.getLogger(VpfVPAuthenticator.class);
@@ -36,32 +34,44 @@ public class VpfVPAuthenticator implements VPAuthenticator {
 
   private String doLogin(final WebClient webClient) {
     try {
-      // don't even try to authenticate if settings are not set
       if (StringUtils.isBlank(settings.getLogin())) {
         return "Login cannot be empty";
       }
 
-      // Perfom VPF authentication
+      // VPF runs IPS 3.x — login form is present on the main page as a widget
       HtmlPage loginPage = webClient.getPage("https://www.vpforums.org/index.php?app=core&module=global&section=login");
+      LOG.info("VPF login page title: '{}', forms: {}", loginPage.getTitleText(), loginPage.getForms().size());
+
+      // IPS 3.x login form has id="login"
       HtmlForm loginForm = loginPage.getForms().stream()
           .filter(f -> Strings.CI.equals(f.getId(), "login"))
-          .findFirst().orElseThrow();
+          .findFirst()
+          .orElseThrow(() -> new RuntimeException("Login form not found on page: " + loginPage.getTitleText()));
+
+      // IPS 3.x field names
       loginForm.getInputByName("ips_username").setValue(settings.getLogin());
       loginForm.getInputByName("ips_password").setValue(settings.getPassword());
-      DomElement submitBtn = loginPage.querySelector("input.input_submit");
-      HtmlPage homePage = submitBtn.click();
 
-      // check authentication happens correctly
-      String title = homePage.getTitleText();
-      if (Strings.CI.contains(title, "sign in")) {
+      HtmlElement submitButton = loginForm.getFirstByXPath(".//input[@type='submit']");
+      if (submitButton == null) {
+        submitButton = loginForm.getFirstByXPath(".//button[@type='submit']");
+      }
+      if (submitButton == null) {
+        throw new RuntimeException("Submit button not found in login form");
+      }
+
+      HtmlPage homePage = (HtmlPage) submitButton.click();
+      LOG.info("VPF result page title: '{}'", homePage.getTitleText());
+
+      // Successful login redirects away from the sign-in page
+      if (Strings.CI.contains(homePage.getTitleText(), "sign in")) {
         DomNode node = homePage.querySelector("p.message.error");
         return node != null ? node.getTextContent().trim() : "Cannot login";
       }
-      // login successful, no error
       return null;
     }
-    catch (IOException e) {
-      LOG.error("Login failed: {}", e.getMessage(), e);
+    catch (Exception e) {
+      LOG.error("VPF login failed: {}", e.getMessage(), e);
       return "Login failed: " + e.getMessage();
     }
   }

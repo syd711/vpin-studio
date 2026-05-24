@@ -6,12 +6,11 @@ import org.apache.commons.lang3.Strings;
 import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class VpuVPAuthenticator implements VPAuthenticator {
   private final static Logger LOG = LoggerFactory.getLogger(VpuVPAuthenticator.class);
@@ -48,7 +47,8 @@ public class VpuVPAuthenticator implements VPAuthenticator {
 
       loginForm.getInputByName("auth").setValue(settings.getLogin());
       loginForm.getInputByName("password").setValue(settings.getPassword());
-      final HtmlPage homePage = loginForm.getButtonByName("_processLogin").click();
+      HtmlButton submitButton = loginForm.getFirstByXPath(".//button[@type='submit']");
+      final HtmlPage homePage = submitButton.click();
 
       // check that authentication happens successfully
       String title = homePage.getTitleText();
@@ -58,7 +58,7 @@ public class VpuVPAuthenticator implements VPAuthenticator {
       }
       return null;
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Login failed: {}", e.getMessage(), e);
       return "Login failed: " + e.getMessage();
     }
