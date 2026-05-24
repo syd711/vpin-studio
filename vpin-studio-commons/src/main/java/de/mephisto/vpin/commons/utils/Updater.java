@@ -33,7 +33,6 @@ public class Updater {
   public static String LATEST_VERSION = null;
 
   public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
-  public final static String SERVER_EXE = "VPin-Studio-Server.exe";
   public final static long SERVER_ZIP_SIZE = 251 * 1000 * 1000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
@@ -269,12 +268,7 @@ public class Updater {
       if (is == null) {
         throw new IOException("Update template not found on classpath: " + resourcePath);
       }
-      return new String(is.readAllBytes(), StandardCharsets.UTF_8)
-          .replace("{{ZULU_VERSION_CHECK}}", JRE_VERSION_CHECK)
-          .replace("{{ZULU_BUNDLE_WIN}}", JRE_WIN_X64)
-          .replace("{{ZULU_BUNDLE_LINUX}}", JRE_LINUX_X64)
-          .replace("{{ZULU_BUNDLE_MACOS_AARCH64}}", JRE_MACOS_ARCH64)
-          .replace("{{ZULU_BUNDLE_MACOS_X64}}", JRE_MACOS_X64);
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
   }
 

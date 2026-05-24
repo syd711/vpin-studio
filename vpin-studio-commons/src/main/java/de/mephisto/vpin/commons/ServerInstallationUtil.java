@@ -51,45 +51,4 @@ public class ServerInstallationUtil {
       throw e;
     }
   }
-
-//  public static File getAutostartFile() {
-//    try {
-//      PropertiesStore store = PropertiesStore.create(SystemInfo.RESOURCES, "system");
-//      String autostartValue = store.get(SystemInfo.AUTOSTART_DIR);
-//      if (!StringUtils.isEmpty(autostartValue)) {
-//        File autostartFile = new File(new File(autostartValue), BAT.getName());
-//        if (autostartFile.exists()) {
-//          return autostartFile;
-//        }
-//      }
-//    } catch (Exception e) {
-//      LOG.error("Failed to resolve new autostart folder: " + e.getMessage(), e);
-//    }
-//
-//
-//    //use legacy lookup
-//    String path = "C:/Users/%s/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/" + BAT;
-//    String userName = System.getProperty("user.name");
-//
-//    String formattedPath = String.format(path, userName);
-//    File autostartFile = new File(formattedPath);
-//    if (autostartFile.exists()) {
-//      return autostartFile;
-//    }
-//
-//    userName = System.getenv("USERNAME");
-//    formattedPath = String.format(path, userName);
-//    autostartFile = new File(formattedPath);
-//    if (autostartFile.exists()) {
-//      return new File(autostartFile, VPIN_STUDIO_SERVER_BAT);
-//    }
-//
-//    String path2 = System.getenv("APPDATA") + "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
-//    autostartFile = new File(path2);
-//    if (autostartFile.exists()) {
-//      return new File(autostartFile, VPIN_STUDIO_SERVER_BAT);
-//    }
-//
-//    return new File(System.getProperty("user.home"), VPIN_STUDIO_SERVER_BAT);
-//  }
 }
