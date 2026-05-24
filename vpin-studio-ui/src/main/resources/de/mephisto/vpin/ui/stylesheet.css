@@ -66,6 +66,8 @@
 
 .dialog-header {
     -fx-background-color: -fx-base-7;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
 }
 
 .main-toolbar {

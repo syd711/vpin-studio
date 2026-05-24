@@ -546,13 +546,13 @@ public class WidgetFactory {
   private static String determineIconLiteral(String nameLower) {
     for (KeywordRule rule : keywordRules) {
       String pattern = switch (rule.getType()) {
-          case EXACT -> "\\b" + Pattern.quote(rule.getKeyword()) + "\\b";
-          case PREFIX -> "\\b" + Pattern.quote(rule.getKeyword());
-          case ANYWHERE -> Pattern.quote(rule.getKeyword());
-          default -> throw new IllegalStateException("Unexpected match type: " + rule.getType());
+        case EXACT -> "\\b" + Pattern.quote(rule.getKeyword()) + "\\b";
+        case PREFIX -> "\\b" + Pattern.quote(rule.getKeyword());
+        case ANYWHERE -> Pattern.quote(rule.getKeyword());
+        default -> throw new IllegalStateException("Unexpected match type: " + rule.getType());
       };
 
-        if (Pattern.compile(pattern).matcher(nameLower).find()) {
+      if (Pattern.compile(pattern).matcher(nameLower).find()) {
         return rule.getIcon();
       }
     }
@@ -576,9 +576,10 @@ public class WidgetFactory {
 
   public static Stage createStage() {
     Stage stage = new Stage();
-      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
-          stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
-      }
+    if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+      stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
+    }
+    stage.initStyle(StageStyle.TRANSPARENT);
     return stage;
   }
 
@@ -687,7 +688,6 @@ public class WidgetFactory {
       stage.initModality(Modality.APPLICATION_MODAL);
     }
 
-    stage.initStyle(StageStyle.UNDECORATED);
     stage.setTitle(title);
     stage.setUserData(controller);
 
@@ -708,7 +708,7 @@ public class WidgetFactory {
     }
 
     stage.initOwner(owner);
-    Scene scene = new Scene(root);
+    Scene scene = new Scene(root, Color.TRANSPARENT);
     stage.setScene(scene);
     scene.getRoot().setStyle("-fx-border-width: 1;-fx-border-color: #605E5E;");
     scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {

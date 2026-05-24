@@ -1268,7 +1268,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     else {
       String term = game.getGameDisplayName();
       term = term.replaceAll("", "");
-      term = term.replaceAll("The", "");
+      term = term.replaceAll("The ", "");
       term = term.replaceAll(", ", "");
       term = term.replaceAll("-", "");
       term = term.replaceAll("'", "");
