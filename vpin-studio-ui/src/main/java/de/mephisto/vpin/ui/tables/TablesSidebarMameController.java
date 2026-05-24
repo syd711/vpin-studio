@@ -262,7 +262,7 @@ public class TablesSidebarMameController implements Initializable {
       if (game.isPresent()) {
         GameRepresentation gameRepresentation = game.get();
 
-        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(MonitoredFile.VPMAliasTxt);
+        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(String.valueOf(MonitoredFile.VPMAliasTxt));
         monitoredTextFile.setEmulatorId(gameRepresentation.getEmulatorId());
         boolean b = Dialogs.openTextEditor(monitoredTextFile, "VPMAlias.txt");
         if (b) {

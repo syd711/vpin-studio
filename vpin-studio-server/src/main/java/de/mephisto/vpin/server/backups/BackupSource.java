@@ -2,9 +2,8 @@ package de.mephisto.vpin.server.backups;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.id.IncrementGenerator;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -17,8 +16,7 @@ public class BackupSource {
   private Instant createdAt;
 
   @Id
-  @GenericGenerator(name = "backupsource_gen", type = IncrementGenerator.class)
-  @GeneratedValue(generator = "backupsource_gen")
+  @IncrementGenerated
   private Long id;
 
   private String type;

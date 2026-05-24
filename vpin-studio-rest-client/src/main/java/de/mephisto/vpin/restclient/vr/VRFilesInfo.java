@@ -14,7 +14,11 @@ public class VRFilesInfo {
 
   private String dmdDeviceIni;
   private String dmdDeviceIniVr;
+
+  @JsonProperty("vPinballXIni")
   private String vPinballXIni;
+
+  @JsonProperty("vPinballXIniVr")
   private String vPinballXIniVr;
 
   @JsonIgnore
@@ -69,7 +73,7 @@ public class VRFilesInfo {
     this.dmdDeviceIniVr = dmdDeviceIniVr;
   }
 
-  @JsonProperty("vPinballXIni")
+
   public String getvPinballXIni() {
     return vPinballXIni;
   }
@@ -78,7 +82,6 @@ public class VRFilesInfo {
     this.vPinballXIni = vPinballXIni;
   }
 
-  @JsonProperty("vPinballXIniVr")
   public String getvPinballXIniVr() {
     return vPinballXIniVr;
   }

@@ -532,7 +532,7 @@ public class Studio extends Application {
   public static boolean editGameFile(@NonNull GameRepresentation game, @NonNull String filePath) throws Exception {
     FileMonitoringService.getInstance().setPaused(true);
 
-    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(MonitoredFile.LOCAL_GAME_FILE);
+      MonitoredTextFile monitoredTextFile = new MonitoredTextFile(String.valueOf(MonitoredFile.LOCAL_GAME_FILE));
     monitoredTextFile.setFileId(String.valueOf(game.getId()));
     monitoredTextFile.setPath(filePath);
     MonitoredTextFile loadedMonitoredFile = client.getTextEditorService().getText(monitoredTextFile);

@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="de.mephisto.vpin.ui.Studio" />
     <module name="vpin-studio-ui" />
-    <option name="VM_PARAMETERS" value="--add-exports javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED --enable-native-access=javafx.graphics " />
+    <option name="VM_PARAMETERS" value="--add-exports javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED --enable-native-access=javafx.graphics --enable-native-access=javafx.web " />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="de.mephisto.vpin.ui.mania.util.*" />

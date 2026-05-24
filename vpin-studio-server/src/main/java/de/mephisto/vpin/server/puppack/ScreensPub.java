@@ -24,24 +24,26 @@ public class ScreensPub {
 
   public ScreensPub(@NonNull File screensPupFile) {
     this.screensPupFile = screensPupFile;
-    try (Reader in = new FileReader(screensPupFile)) {
+      //Don't try to read unless it exists
       if (screensPupFile.exists()) {
-        CSVFormat format = CSVFormat.RFC4180.builder().get(); // Use builder for modern API
-        Iterable<CSVRecord> records = format.parse(in);
-        Iterator<CSVRecord> iterator = records.iterator();
-        if (iterator.hasNext()) { // Skip header
-          iterator.next();
-        }
+          try (Reader in = new FileReader(screensPupFile)) {
+            CSVFormat format = CSVFormat.RFC4180.builder().get(); // Use builder for modern API
+            Iterable<CSVRecord> records = format.parse(in);
+            Iterator<CSVRecord> iterator = records.iterator();
+            if (iterator.hasNext()) { // Skip header
+              iterator.next();
+            }
 
-        while (iterator.hasNext()) {
-          CSVRecord record = iterator.next();
-          ScreenEntry entry = new ScreenEntry(record);
-          this.entries.add(entry);
+            while (iterator.hasNext()) {
+              CSVRecord record = iterator.next();
+              ScreenEntry entry = new ScreenEntry(record);
+              this.entries.add(entry);
+            }
+
+        } catch (Exception e) {
+          //LOG.warn("Failed to load {}: {}", screensPupFile.getAbsolutePath(), e.getMessage());
         }
       }
-    } catch (Exception e) {
-      //LOG.warn("Failed to load {}: {}", screensPupFile.getAbsolutePath(), e.getMessage());
-    }
   }
 
   public long length() {
