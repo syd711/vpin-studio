@@ -187,19 +187,20 @@ public class DirectB2SResource {
   //-------
   // download utilities
 
-    private ResponseEntity<Resource> download(String base64, String filename) {
-        byte[] image = null;
-        if (base64 != null) {
-            try {
-                image = Base64.getMimeDecoder().decode(base64);
-            } catch (IllegalArgumentException e) {
-                LOG.error("Failed to decode base64 string for file '{}': {}", filename, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-        }
-        //TODO check impact if we turn to false
-        return download(image, filename, true);
+  private ResponseEntity<Resource> download(String base64, String filename) {
+    byte[] image = null;
+    if (base64 != null) {
+      try {
+        image = Base64.getMimeDecoder().decode(base64);
+      }
+      catch (IllegalArgumentException e) {
+        LOG.error("Failed to decode base64 string for file '{}': {}", filename, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      }
     }
+    //TODO check impact if we turn to false
+    return download(image, filename, true);
+  }
 
   private ResponseEntity<Resource> download(byte[] image, String name, boolean forceDownload) {
     if (image == null) {
@@ -478,7 +479,7 @@ public class DirectB2SResource {
     try {
       String frame = backglassService.setScreenResFrame(emulatorId, b2sFilename, file.getOriginalFilename(), file.getInputStream());
 
-      if (frame != null)  {
+      if (frame != null) {
         Game game = gameService.getGameByDirectB2S(emulatorId, b2sFilename);
         if (game != null) {
           gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, null);
