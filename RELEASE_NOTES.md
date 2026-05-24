@@ -11,9 +11,10 @@
 
 - **Highscores**: Fixed VPReg.stg file lookup.
 - **VPU/VPF**: Fixed login tests.
+- **discord** player name inconsistent
 
 
 ### Breaking Changes
 
-- Player comp. name (iscored)
+- Player comp. name (iscored) for discord too
 - iScored notification settings

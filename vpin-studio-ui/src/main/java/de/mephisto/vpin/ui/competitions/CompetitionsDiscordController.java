@@ -146,6 +146,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   private WaitOverlayController loaderController;
 
   private long discordBotId;
+  private final Map<String, String> playerNameCache = new HashMap<>();
 
   // Add a public no-args constructor
   public CompetitionsDiscordController() {
@@ -357,6 +358,17 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
+      playerNameCache.clear();
+      for (CompetitionRepresentation c : competitions) {
+        if (!StringUtils.isEmpty(c.getWinnerInitials())) {
+          String key = c.getDiscordServerId() + ":" + c.getWinnerInitials();
+          if (!playerNameCache.containsKey(key)) {
+            PlayerRepresentation player = client.getPlayerService().getPlayer(c.getDiscordServerId(), c.getWinnerInitials());
+            playerNameCache.put(key, player != null ? player.getName() : c.getWinnerInitials());
+          }
+        }
+      }
+
       Platform.runLater(() -> {
         competitionWidget.setVisible(true);
         if (competitions.isEmpty()) {
@@ -546,11 +558,8 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       String winner = "-";
 
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
-        winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayerService().getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
-        if (player != null) {
-          winner = player.getName();
-        }
+        String key = value.getDiscordServerId() + ":" + value.getWinnerInitials();
+        winner = playerNameCache.getOrDefault(key, value.getWinnerInitials());
       }
       return new SimpleObjectProperty(winner);
     });

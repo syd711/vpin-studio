@@ -85,7 +85,7 @@
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label text="iScored Name:" textFill="WHITE">
+                        <Label text="Competition Name:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -95,12 +95,12 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="400.0" text="You can input a different name here that will overwrite the regular name for highscores posted on iScored." wrapText="true" />
+                              <Tooltip prefWidth="400.0" text="You can input a different name here that will overwrite the regular name for highscores posts." wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
-                  <TextField fx:id="iScoredNameField" promptText="Enter the iScored name for the player here..." GridPane.columnIndex="1">
+                  <TextField fx:id="iScoredNameField" promptText="Enter the competition name for the player here... (optional)" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
