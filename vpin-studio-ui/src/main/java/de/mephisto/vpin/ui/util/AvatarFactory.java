@@ -33,22 +33,4 @@ public class AvatarFactory {
     imageView.setClip(clip);
     return imageView;
   }
-
-  public static ImageView createAvatarImageView(Image image) {
-    ImageView imageView = new ImageView(image);
-    imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
-    imageView.setPreserveRatio(true);
-    imageView.setSmooth(true);
-
-    Rectangle clip = new Rectangle();
-    clip.setWidth(UIDefaults.DEFAULT_AVATARSIZE);
-    clip.setHeight(UIDefaults.DEFAULT_AVATARSIZE);
-
-    clip.setArcHeight(UIDefaults.DEFAULT_AVATARSIZE);
-    clip.setArcWidth(UIDefaults.DEFAULT_AVATARSIZE);
-    clip.setStroke(Color.WHITE);
-    clip.setStrokeWidth(0);
-    imageView.setClip(clip);
-    return imageView;
-  }
 }

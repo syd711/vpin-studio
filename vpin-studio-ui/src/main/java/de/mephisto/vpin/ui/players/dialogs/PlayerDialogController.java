@@ -121,7 +121,6 @@ public class PlayerDialogController implements Initializable, DialogController {
 
       boolean maniaAccount = this.vpinManiaPlayerCheckbox.isSelected();
       String maniaName = this.maniaNameField.getText();
-      String iScoredName = this.iScoredNameField.getText();
       AccountVisibility visibility = visibilityCheckbox.isSelected() ? AccountVisibility.searchable : AccountVisibility.hidden;
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, visibility, this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {

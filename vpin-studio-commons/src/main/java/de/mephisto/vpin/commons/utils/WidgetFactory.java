@@ -40,6 +40,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -135,6 +136,7 @@ public class WidgetFactory {
   public static File snapshot(Pane root) throws IOException {
     int offset = 14;
     SnapshotParameters snapshotParameters = new SnapshotParameters();
+    snapshotParameters.setFill(Color.TRANSPARENT);
     Rectangle2D rectangle2D = new Rectangle2D(offset, offset, root.getWidth() - offset - offset, root.getHeight() - offset - offset);
     snapshotParameters.setViewport(rectangle2D);
     WritableImage snapshot = root.snapshot(snapshotParameters, null);

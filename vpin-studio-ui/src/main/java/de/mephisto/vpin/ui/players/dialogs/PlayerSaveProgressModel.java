@@ -80,9 +80,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   @Override
   public void processNext(ProgressResultModel progressResultModel, PlayerRepresentation player) {
     try {
-//      if (player.getAvatar() == null && this.avatarFile == null) {
+      if (player.getAvatar() == null && this.avatarFile == null) {
         generateAvatarFile();
-//      }
+      }
 
       player = client.getPlayerService().savePlayer(player);
 
