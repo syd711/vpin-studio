@@ -368,10 +368,11 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
         TableDetails tableDetails = null;
         if (gameDetails == null || forceScan) {
-            if (gameDetails == null) {
+         //If we're forcing a scan don't we want to reset even if gameDetails exist?
+        //    if (gameDetails == null) {
                 gameDetails = new GameDetails();
                 gameDetails.setCreatedAt(Instant.now());
-            }
+          //  }
 
             tableDetails = frontendService.getTableDetails(game.getId());
 
