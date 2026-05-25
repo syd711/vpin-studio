@@ -344,9 +344,14 @@ public class LauncherController implements Initializable {
         LOG.info("Found server startup, running on version {}, starting table scan.",
             client.getSystemService().getVersion());
         Platform.runLater(() -> {
-          stage.close();
-          ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
-          Studio.loadStudio(WidgetFactory.createStage(), client);
+          try {
+            stage.close();
+            ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
+            Studio.loadStudio(WidgetFactory.createStage(), client);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to launch Studio after server installation: {}", e.getMessage(), e);
+          }
         });
       }).start();
     } catch (Exception e) {

@@ -349,6 +349,7 @@ public class Studio extends Application {
             }
             catch (IOException e) {
               LOG.error("Failed to load Studio: {}", e.getMessage(), e);
+              return;
             }
 
             Rectangle position = LocalUISettings.getPosition();
@@ -397,7 +398,8 @@ public class Studio extends Application {
               splashController.setStatus("Finalizing startup...");
             }
             VBSManager.getInstance();
-          });
+          })
+          .onErrorLater(ex -> LOG.error("Failed to load Studio UI: {}", ex.getMessage(), ex));
     }
     catch (Exception e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
