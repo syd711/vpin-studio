@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.Base64;
 
 
@@ -38,7 +36,7 @@ public class DirectB2SDataExtractor extends DefaultHandler {
     this.data.setFilename(updatedFileName);
     this.data.setFilesize(directB2S.length());
     this.data.setEmulatorId(emulatorId);
-    this.data.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(directB2S.lastModified()), ZoneId.systemDefault()));
+    this.data.setModificationDate(Instant.ofEpochMilli(directB2S.lastModified()));
     if (directB2S.exists()) {
       try (InputStream in = new FileInputStream(directB2S)) {
         SAXParserFactory factory = SAXParserFactory.newInstance();

@@ -508,7 +508,7 @@ public class Studio extends Application {
           new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start();
         }
         catch (IOException e) {
-          LOG.error("Browse failed: {}", e.getMessage());
+          LOG.error("Open failed: {}", e.getMessage());
         }
       }
       else {

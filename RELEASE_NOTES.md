@@ -1,6 +1,7 @@
 ## Relase Notes 5.0.0
+
 - **MIGRATION TO JAVA 25**
-  - Code base has been brought forward to Azul Zulu Java 25.
+  - Code base has been migrated from Java 11 forward to Azul Zulu Java 25(!).
 - **WOVP Icon**
   - Added icon augmentation to APNG wheels
 - **Splash Screen**
@@ -21,6 +22,7 @@
 - **VPU/VPF**: Fixed login tests.
 - **Discord Competitions**: Fixed issue that the player name used being inconsistent for the first and consecutive scores.
 - **Player Avatars**: Fixed issue of the white outer avatar ring keep growing with every save.
+- **Future Pinball**: Fixed installation of .fpl files.
 
 ### Breaking Changes
 

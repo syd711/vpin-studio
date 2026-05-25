@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.directb2s;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class DirectB2SData {
   private int b2sElements;
 
   private long filesize;
-  private OffsetDateTime modificationDate;
+  private Instant modificationDate;
 
   private boolean backgroundAvailable;
   private boolean dmdImageAvailable;
@@ -218,11 +218,11 @@ public class DirectB2SData {
     this.filesize = filesize;
   }
 
-  public OffsetDateTime getModificationDate() {
+  public Instant getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(OffsetDateTime modificationDate) {
+  public void setModificationDate(Instant modificationDate) {
     this.modificationDate = modificationDate;
   }
 

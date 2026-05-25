@@ -92,6 +92,7 @@ public class FuturePinballService {
 
       if (libFolder.exists()) {
         for (String fplFileName : fileNamesForAssetType) {
+          String archivePath = fplFileName;
           if (fplFileName.contains("/")) {
             fplFileName = fplFileName.substring(fplFileName.lastIndexOf("/") + 1);
           }
@@ -99,8 +100,8 @@ public class FuturePinballService {
           if (out.exists() && !out.delete()) {
             throw new IOException("Failed to delete existing " + fplFileName + " file " + out.getAbsolutePath());
           }
-          org.apache.commons.io.FileUtils.copyFile(tempFile, out);
-          LOG.info("Installed fpl file {}: {}", tempFile.getName(), out.getAbsolutePath());
+          PackageUtil.unpackTargetFile(tempFile, out, archivePath);
+          LOG.info("Installed fpl file {}: {}", archivePath, out.getAbsolutePath());
         }
 
         if (FilenameUtils.getExtension(tempFile.getName()).equalsIgnoreCase(AssetType.FPL.name())) {

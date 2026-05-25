@@ -473,11 +473,10 @@ public class VPinMameService implements InitializingBean {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        desktop.open(exe);
-        return true;
+        new ProcessBuilder("cmd", "/c", "start", "", exe.getAbsolutePath()).start();
       }
-      catch (IOException ioe) {
-        LOG.error("Error while executing {}", exe.getAbsolutePath(), ioe);
+      catch (IOException e) {
+        LOG.error("Open failed: {}", e.getMessage());
       }
     }
     return true;

@@ -54,6 +54,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
@@ -725,7 +726,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       disableCombosFrames();
 
-      modificationDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(directB2SData.getModificationDate()));
+      modificationDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()).format(directB2SData.getModificationDate()));
 
       reloadBtn.setDisable(false);
       deleteBtn.setDisable(false);

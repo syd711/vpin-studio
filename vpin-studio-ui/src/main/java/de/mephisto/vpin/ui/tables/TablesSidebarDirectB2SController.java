@@ -40,6 +40,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -516,7 +517,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
           filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
           bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-          modificationDateLabel.setText(tableData.getModificationDate() != null ? SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()) : "");
+          modificationDateLabel.setText(tableData.getModificationDate() != null ? SimpleDateFormat.getDateTimeInstance().format(Date.from(tableData.getModificationDate())) : "");
 
           hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
