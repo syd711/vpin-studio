@@ -138,7 +138,7 @@ public class Studio extends Application {
         NavigationController.refreshControllerCache();
         NavigationController.refreshViewCache();
 
-        Studio.loadLauncher(new Stage());
+        Studio.loadLauncher(createLauncherStage());
         WidgetFactory.showAlert(stage, "Server Connection Failed", "You have been disconnected from the server.");
       });
     };
@@ -208,6 +208,11 @@ public class Studio extends Application {
     }
   }
 
+  public static Stage createLauncherStage() {
+    Stage launcherStage = new Stage(StageStyle.TRANSPARENT);
+    return launcherStage;
+  }
+
   private void runExtensionsInstallation() {
     // install our APNGImageLoader
     ApngImageLoaderFactory.install();
@@ -231,7 +236,7 @@ public class Studio extends Application {
 
 
       Scene scene = new Scene(root);
-      scene.setFill(Paint.valueOf("#212529"));
+      scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
       stage.setTitle("VPin Studio Launcher");
         if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
             stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
