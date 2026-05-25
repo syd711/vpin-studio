@@ -48,6 +48,9 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
   private TableColumn<ManiaTableSynchronizationDialogController.ManiaTableSyncResultModel, String> nameColumn;
 
   @FXML
+  private TableColumn<ManiaTableSynchronizationDialogController.ManiaTableSyncResultModel, String> typeColumn;
+
+  @FXML
   private TableColumn<ManiaTableSynchronizationDialogController.ManiaTableSyncResultModel, String> accountColumn;
 
   @FXML
@@ -103,6 +106,12 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
       return new SimpleObjectProperty(value.getTableName() != null ? value.getTableName() : "-");
     });
 
+
+    typeColumn.setCellValueFactory(cellData -> {
+      ManiaTableSyncResultModel value = cellData.getValue();
+      return new SimpleObjectProperty(value.getTableType() != null ? value.getTableType() : "-");
+    });
+
     accountColumn.setCellValueFactory(cellData -> {
       ManiaTableSyncResultModel value = cellData.getValue();
       return new SimpleObjectProperty(value.getAccount() != null ? value.getAccount() : "-");
@@ -153,6 +162,13 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     public String getTableName() {
       if (result.getTableName() != null) {
         return result.getTableName();
+      }
+      return null;
+    }
+
+    public String getTableType() {
+      if (result.getTableType() != null) {
+        return result.getTableType();
       }
       return null;
     }

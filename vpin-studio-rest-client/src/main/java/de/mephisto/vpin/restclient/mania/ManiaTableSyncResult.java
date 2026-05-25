@@ -11,8 +11,17 @@ public class ManiaTableSyncResult {
   private TableScore tableScore;
 
   private String tableName;
+  private String tableType;
   private boolean denied = false;
   private boolean valid = true;
+
+  public String getTableType() {
+    return tableType;
+  }
+
+  public void setTableType(String tableType) {
+    this.tableType = tableType;
+  }
 
   public boolean isValid() {
     return valid;

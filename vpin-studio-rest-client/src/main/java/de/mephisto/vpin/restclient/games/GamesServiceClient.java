@@ -282,7 +282,8 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<VpsTable> getInstalledVpsTables() {
     List<VpsTable> vpsTables = new ArrayList<>();
-    List<GameRepresentation> gamesCached = getVpxGamesCached();
+    List<GameRepresentation> gamesCached = new ArrayList<>(getVpxGamesCached());
+    gamesCached.addAll(getFPGamesCached());
     for (GameRepresentation game : gamesCached) {
       if (!StringUtils.isEmpty(game.getExtTableId())) {
         VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());

@@ -43,7 +43,8 @@ public class ManiaServiceCache {
 
   public void preCache() {
     if (gamesByVpsId.isEmpty()) {
-      List<Game> knownGames = gameService.getKnownGames(-1);
+      List<Game> knownGames = new ArrayList<>(gameService.getKnownGames(-1));
+      knownGames.addAll(gameService.getKnownFpGames(-1));
       for (Game game : knownGames) {
         if (game == null || StringUtils.isEmpty(game.getExtTableId())) {
           LOG.info("Skipped highscore sync for \"{}\", because invalid VPS mapping", game.getGameDisplayName());

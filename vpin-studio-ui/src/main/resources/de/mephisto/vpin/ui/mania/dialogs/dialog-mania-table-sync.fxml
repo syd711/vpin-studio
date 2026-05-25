@@ -74,6 +74,7 @@
               <columns>
                   <TableColumn fx:id="statusColumn" prefWidth="50.0" style="-fx-alignment: BASELINE_CENTER;" />
                 <TableColumn fx:id="nameColumn" prefWidth="500.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
+                  <TableColumn fx:id="typeColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Table Type" />
                 <TableColumn fx:id="accountColumn" minWidth="0.0" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Account" />
                   <TableColumn fx:id="scoreColumn" prefWidth="214.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Highscore" />
               </columns>

@@ -215,6 +215,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return gameCachingService.getKnownGames(emulatorId);
   }
 
+  @SuppressWarnings("unused")
+  public List<Game> getKnownFpGames(int emulatorId) {
+    return gameCachingService.getKnownFpGames(emulatorId);
+  }
+
   public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
     return gameCachingService.getGamesByRom(emulatorId, rom);
   }

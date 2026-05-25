@@ -110,6 +110,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       return result;
     }
 
+    result.setTableType(game.getEmulator().getType().shortName());
     result.setTableName(game.getGameDisplayName());
     synchronizeHighscores(result, game, vpsTable);
     return result;

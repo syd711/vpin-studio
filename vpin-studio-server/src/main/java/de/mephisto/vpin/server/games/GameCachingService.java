@@ -242,6 +242,25 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return games;
     }
 
+    @SuppressWarnings("unused")
+    public List<Game> getKnownFpGames(int emulatorId) {
+        List<Game> games = new ArrayList<>();
+        if (emulatorId == -1) {
+            games.addAll(getFpGames());
+        }
+        else {
+            GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+            if (emulator != null && emulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulator.getId(), id -> fetchEmulatorGames(emulator, Collections.emptyMap()));
+                games.addAll(emulatorCache.getGames());
+            }
+        }
+
+        games = games.stream().filter(g -> g.getEmulator() != null).collect(Collectors.toList());
+        games.sort(Comparator.comparing(o -> o.getGameDisplayName().toLowerCase()));
+        return games;
+    }
+
     private List<Game> getVpxGames() {
         List<GameDetails> all = gameDetailsRepositoryService.findAll();
         Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
@@ -250,6 +269,23 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         }
         List<Game> games = new ArrayList<>();
         List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
+        for (GameEmulator gameEmulator : gameEmulators) {
+            if (gameEmulator.isEnabled()) {
+                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+                emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
+        games.addAll(emulatorCache.getGames());
+      }
+    }
+    return games;
+  }
+    private List<Game> getFpGames() {
+        List<GameDetails> all = gameDetailsRepositoryService.findAll();
+        Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
+        for (GameDetails gameDetails : all) {
+            mappedGameDetails.put(gameDetails.getPupId(), gameDetails);
+        }
+        List<Game> games = new ArrayList<>();
+        List<GameEmulator> gameEmulators = emulatorService.getFpGameEmulators();
         for (GameEmulator gameEmulator : gameEmulators) {
             if (gameEmulator.isEnabled()) {
                 GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));

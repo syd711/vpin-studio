@@ -116,6 +116,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
     return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
+  public List<GameEmulator> getFpGameEmulators() {
+    return getGameEmulators().stream().filter(e -> e.isFpEmulator() && e.isValid()).collect(Collectors.toList());
+  }
+
   public List<GameEmulator> getZenGameEmulators() {
     return getGameEmulators().stream().filter(e -> e.isZenEmulator() && e.isValid()).collect(Collectors.toList());
   }
