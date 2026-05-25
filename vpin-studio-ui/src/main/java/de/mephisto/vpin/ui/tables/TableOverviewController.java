@@ -775,10 +775,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !vpsSettings.isHideVPSUpdates();
 
-    startReload("Loading Tables...");
+    startReload("Loading Emulators...");
 
     refreshPlaylists();
-    refreshEmulators();
 
     this.searchTextField.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -797,101 +796,107 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.emulatorCombo.setDisable(true);
     this.playlistCombo.setDisable(true);
 
-    GameRepresentation selection = getSelection();
-    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-    GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    boolean isAllVpxSelected = client.getEmulatorService().isAllVpx(value);
+    // Wait for the emulator combo to be populated before reading the selection,
+    // otherwise the initial load races and falls back to isAllVpx(null)=true,
+    // loading only VPX-emulator tables (and racing against the emulator cache).
+    refreshEmulators().thenLater(() -> {
+      startReload("Loading Tables...");
+      GameRepresentation selection = getSelection();
+      GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+      GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
+      boolean isAllVpxSelected = client.getEmulatorService().isAllVpx(value);
 
-    JFXFuture.supplyAsync(() -> {
-      if (clearCache) {
-        if (isAllVpxSelected) {
-          client.getGameService().clearCache();
+      JFXFuture.supplyAsync(() -> {
+        if (clearCache) {
+          if (isAllVpxSelected) {
+            client.getGameService().clearCache();
+          }
+          else {
+            client.getGameService().clearCache(value.getId());
+          }
+        }
+
+        return isAllVpxSelected ? client.getGameService().getVpxGamesCached() : client.getGameService().getGamesByEmulator(value.getId());
+      }).onErrorSupply(e -> {
+        LOG.error("Loading tables failed", e);
+        Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+        return Collections.emptyList();
+      }).thenAcceptLater(data -> {
+        this.emulatorCombo.setDisable(false);
+        this.playlistCombo.setDisable(false);
+
+        tableView.getSelectionModel().getSelectedItems().removeListener(this);
+        setItems(data);
+        refreshFilters();
+
+        if (selection != null) {
+          final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
+          if (updatedGame.isPresent()) {
+            GameRepresentation gameRepresentation = updatedGame.get().getBean();
+            this.playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
+          }
+        }
+
+        if (!data.isEmpty()) {
+          this.validateBtn.setDisable(false);
+          this.deleteBtn.setDisable(false);
+          this.tableEditBtn.setDisable(false);
         }
         else {
-          client.getGameService().clearCache(value.getId());
+          Frontend frontend = client.getFrontendService().getFrontendCached();
+          this.validationErrorLabel.setText("No tables found");
+          this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]" + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
         }
-      }
 
-      return isAllVpxSelected ? client.getGameService().getVpxGamesCached() : client.getGameService().getGamesByEmulator(value.getId());
-    }).onErrorSupply(e -> {
-      LOG.error("Loading tables failed", e);
-      Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
-      return Collections.emptyList();
-    }).thenAcceptLater(data -> {
-      this.emulatorCombo.setDisable(false);
-      this.playlistCombo.setDisable(false);
+        List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
-      tableView.getSelectionModel().getSelectedItems().removeListener(this);
-      setItems(data);
-      refreshFilters();
-
-      if (selection != null) {
-        final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
-        if (updatedGame.isPresent()) {
-          GameRepresentation gameRepresentation = updatedGame.get().getBean();
-          this.playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
+        GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
+        if (emulatorRepresentation != null) {
+          this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator() && !emulatorRepresentation.isFpEmulator());
+          this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+          this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
         }
-      }
+        this.stopBtn.setDisable(false);
+        this.searchTextField.setDisable(false);
+        this.reloadBtn.setDisable(false);
+        this.scanBtn.setDisable(false);
+        this.scanAllBtn.setDisable(false);
+        this.uploadsButtonController.setDisable(false);
 
-      if (!data.isEmpty()) {
-        this.validateBtn.setDisable(false);
-        this.deleteBtn.setDisable(false);
-        this.tableEditBtn.setDisable(false);
-      }
-      else {
-        Frontend frontend = client.getFrontendService().getFrontendCached();
-        this.validationErrorLabel.setText("No tables found");
-        this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]" + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
-      }
+        tableView.requestFocus();
 
-      List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
-
-      GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.getValue();
-      if (emulatorRepresentation != null) {
-        this.importBtn.setDisable(!emulatorRepresentation.isVpxEmulator() && !emulatorRepresentation.isMameEmulator() && !emulatorRepresentation.isFpEmulator());
-        this.exportBtn.setVisible(emulatorRepresentation.isVpxEmulator());
-        this.exportBtn.setDisable(!emulatorRepresentation.isVpxEmulator());
-      }
-      this.stopBtn.setDisable(false);
-      this.searchTextField.setDisable(false);
-      this.reloadBtn.setDisable(false);
-      this.scanBtn.setDisable(false);
-      this.scanAllBtn.setDisable(false);
-      this.uploadsButtonController.setDisable(false);
-
-      tableView.requestFocus();
-
-      tableView.getSelectionModel().getSelectedItems().addListener(this);
-      if (selectedItem == null) {
-        //TODO this will result in a duplicate initial selection which may lead to a deadlock
-//        tableView.getSelectionModel().select(0);
-      }
-      else {
-        tableView.getSelectionModel().select(selectedItem);
-      }
-
-      for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
-        reloadConsumer.accept(selection);
-      }
-      reloadConsumers.clear();
-
-      endReload();
-
-      //TODO fixed above TODO by postphone the selection, no idea if this is feasable
-      Platform.runLater(() -> {
-        if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
-          tableView.getSelectionModel().select(0);
+        tableView.getSelectionModel().getSelectedItems().addListener(this);
+        if (selectedItem == null) {
+          //TODO this will result in a duplicate initial selection which may lead to a deadlock
+//          tableView.getSelectionModel().select(0);
         }
+        else {
+          tableView.getSelectionModel().select(selectedItem);
+        }
+
+        for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
+          reloadConsumer.accept(selection);
+        }
+        reloadConsumers.clear();
+
+        endReload();
+
+        //TODO fixed above TODO by postphone the selection, no idea if this is feasable
+        Platform.runLater(() -> {
+          if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+            tableView.getSelectionModel().select(0);
+          }
+        });
       });
     });
   }
 
-  private void refreshEmulators() {
+  private JFXFuture<Void> refreshEmulators() {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings)).thenAcceptLater(filtered -> {
+    return JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings)).thenAcceptLater(filtered -> {
       this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
       this.emulatorCombo.setItems(FXCollections.observableList(filtered));
       this.emulatorCombo.setDisable(false);
