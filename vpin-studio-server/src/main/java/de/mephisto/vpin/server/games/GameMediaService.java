@@ -367,7 +367,7 @@ public class GameMediaService extends MediaService {
     saveTableDetails(tableDetails, uploadDescriptor.getGameId(), !keepExistingFilename);
     frontendService.updateTableFileUpdated(uploadDescriptor.getGameId());
 
-    Game game = gameService.scanGame(uploadDescriptor.getGameId());
+    Game game = gameService.scanGame(uploadDescriptor.getGameId(), true);
     if (game != null) {
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
@@ -416,7 +416,7 @@ public class GameMediaService extends MediaService {
 
     int returningGameId = frontendService.importGame(targetVPXFile, true, -1, gameEmulator.getId());
     if (returningGameId >= 0) {
-      Game game = gameService.scanGame(returningGameId);
+      Game game = gameService.scanGame(returningGameId, true);
       if (game != null) {
         if (!uploadDescriptor.isBackupRestoreMode()) {
           if (uploadDescriptor.isAutoFill()) {
@@ -519,7 +519,7 @@ public class GameMediaService extends MediaService {
 
     int returningGameId = frontendService.importGame(target, true, -1, gameEmulator.getId());
     if (returningGameId >= 0) {
-      Game importedGame = gameService.scanGame(returningGameId);
+      Game importedGame = gameService.scanGame(returningGameId, true);
       Game original = gameService.getGame(uploadDescriptor.getGameId());
 
       //update table details after new entry creation

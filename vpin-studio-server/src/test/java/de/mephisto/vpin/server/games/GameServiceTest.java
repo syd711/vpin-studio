@@ -25,7 +25,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
 
       // force re-scan as state is uncertain
       for (Game game : games) {
-        assertNotNull(gameService.scanGame(game.getId()));
+        assertNotNull(gameService.scanGame(game.getId(), true));
         assertNotNull(gameService.getGame(game.getId()));
         assertNotNull(gameService.getScores(game.getId()));
         assertNotNull(gameService.getScoreHistory(game.getId()));

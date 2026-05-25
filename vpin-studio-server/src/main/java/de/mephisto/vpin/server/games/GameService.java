@@ -319,8 +319,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   @Nullable
-  public Game scanGame(int gameId) {
-    return gameCachingService.scanGame(gameId);
+  public Game scanGame(int gameId, boolean forceScan) {
+    return gameCachingService.scanGame(gameId, forceScan);
   }
 
   @Nullable
