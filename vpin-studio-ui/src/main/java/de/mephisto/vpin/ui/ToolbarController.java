@@ -405,7 +405,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         debouncer.debounce("breadcrumb", () -> {
           Platform.runLater(() -> {
-            double maxWidth = newValue.intValue() - 800;
+            double maxWidth = newValue.intValue() - 900;
             breadcrumb.setMaxWidth(maxWidth);
           });
         }, DEBOUNCE_MS);

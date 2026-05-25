@@ -73,7 +73,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     remoteClientUpdate.managedProperty().bindBidirectional(remoteClientUpdate.visibleProperty());
   }
 
-  public void setClient(VPinStudioClient _client) {
+  public void setData(Stage dialogStage, VPinStudioClient _client) {
     this.client = _client;
 
     remoteClientUpdate.setVisible(!client.getSystemService().isLocal());

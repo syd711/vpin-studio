@@ -74,7 +74,7 @@ public class Dialogs {
     FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
     Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
     UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
-    controller.setForUpdate(version);
+    controller.setData(stage, version);
     stage.showAndWait();
   }
 
@@ -85,7 +85,7 @@ public class Dialogs {
   public static boolean openUpdateDialog(VPinStudioClient client) {
     Stage stage = createStudioDialogStage("dialog-updater.fxml", "VPin Studio Updater");
     UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
-    controller.setClient(client);
+    controller.setData(stage, client);
     stage.showAndWait();
     return true;
   }

@@ -43,6 +43,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
   @FXML
   private Hyperlink kofiLink;
   private WebEngine webEngine;
+  private WebView webview;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -75,7 +76,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
     updateBtn.setVisible(false);
 
     try {
-      WebView webview = new WebView();
+      webview = new WebView();
       webview.setPrefSize(900, 700);
       webEngine = webview.getEngine();
       webEngine.setUserStyleSheetLocation(Studio.class.getResource("web-style.css").toString());
@@ -112,7 +113,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
     return "Failed to load release notes.";
   }
 
-  public void setForUpdate(String version) {
+  public void setData(Stage dialogStage, String version) {
     updateBtn.setVisible(true);
 
     try {
@@ -126,6 +127,15 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
       LOG.error("Failed to load release info: {}", e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to load release info: " + e.getMessage());
     }
+
+    Platform.runLater(() -> {
+      double height = Studio.stage.heightProperty().get();
+      if (height < dialogStage.getHeight()) {
+        // Reserve ~108px for header, footer buttons, and padding so they are never clipped
+        webview.setMaxHeight(height - 108);
+        dialogStage.setHeight(height - 20);
+      }
+    });
   }
 
   @Override

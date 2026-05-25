@@ -73,7 +73,7 @@ public class DropInContainerController implements Initializable {
   @FXML
   private void onOpen() {
     if (file.isFile()) {
-      SystemUtil.openFolder(file.getParentFile());
+      SystemUtil.openFile(file);
     }
     else {
       SystemUtil.openFolder(file);

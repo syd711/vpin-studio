@@ -11,8 +11,8 @@
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <center>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
-         <top>
+      <BorderPane>
+         <center>
             <BorderPane fx:id="center" style="-fx-background-color: #283335;" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
@@ -21,7 +21,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </padding>
             </BorderPane>
-         </top>
+         </center>
          <bottom>
             <BorderPane BorderPane.alignment="CENTER">
                <right>
