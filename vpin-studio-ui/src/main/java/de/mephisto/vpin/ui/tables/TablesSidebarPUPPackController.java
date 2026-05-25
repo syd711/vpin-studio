@@ -225,6 +225,10 @@ public class TablesSidebarPUPPackController implements Initializable {
     String value = optionsCombo.getValue();
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value + ".bat");
+        if (!file.exists()) {
+            WidgetFactory.showAlert(Studio.stage, "Did not find file.","Are you on the server? ", file.getName());
+            return;
+        }
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
     }

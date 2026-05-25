@@ -30,7 +30,7 @@ import java.util.*;
 public class VPinMameRomAliasService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPinMameRomAliasService.class);
 
-  private final static String VPM_ALIAS = MonitoredFile.VPMAliasTxt.toString();
+  private final static String VPM_ALIAS = "VPMAlias.txt";
 
   private final Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
 

@@ -68,7 +68,10 @@ public class TextEditService {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-      MonitoredFile monitoredFile = monitoredTextFile.getFile();
+      MonitoredFile monitoredFile = monitoredTextFile.getFile() != null
+                ? monitoredTextFile.getFile()
+                : MonitoredFile.valueOf(monitoredTextFile.getContent());
+
       switch (monitoredFile) {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
@@ -150,7 +153,11 @@ public class TextEditService {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
       monitoredTextFile.setLastModified(OffsetDateTime.now());
-      MonitoredFile monitoredFile = monitoredTextFile.getFile();
+
+        MonitoredFile monitoredFile = monitoredTextFile.getFile() != null
+                ? monitoredTextFile.getFile()
+                : MonitoredFile.valueOf(monitoredTextFile.getContent());
+
       switch (monitoredFile) {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
