@@ -74,6 +74,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation reload(int gameId) {
     return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
   }
+
   public boolean reloadEmulator(int emulatorId) {
     return getRestClient().get(API + "games/reloadEmulator/" + emulatorId, Boolean.class);
   }
@@ -134,7 +135,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public void deleteGameFile(int emulatorId, @NonNull String name) {
     try {
-      Map<String, Object> data =new HashMap<>();
+      Map<String, Object> data = new HashMap<>();
       data.put("emulatorId", emulatorId);
       data.put("fileName", name);
       getRestClient().post(API + "games/deleteGameFile", data, Boolean.class);
@@ -468,8 +469,8 @@ public class GamesServiceClient extends VPinStudioClientService {
           loadingFlags.put(emulatorId, Boolean.TRUE);
           // load games in a separate thread not to block the UI
           new Thread(() -> {
-            LOG.info("Start the loading of known games for emulator " + emulatorId);
             List<GameRepresentation> emulatorGames = this.getKnownGames(emulatorId);
+            LOG.info("Loaded {} known games for emulator {}", emulatorGames.size(), emulatorId);
             Object lockInThread = getLock(emulatorId);
             synchronized (lockInThread) {
               // add games in cache and notify waiting thread
@@ -533,7 +534,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
-    if(first.isEmpty()) {
+    if (first.isEmpty()) {
       return getGame(gameId);
     }
     return first.orElse(null);

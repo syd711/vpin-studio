@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -348,11 +349,16 @@ public class TablesSidebarHighscoresController implements Initializable {
         backupCountLabel.setText("0");
       }
       else {
-        highscoreBackups = Studio.client.getHigscoreBackupService().get(rom);
-        backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
-        if (!highscoreBackups.isEmpty()) {
-          restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
-        }
+        final String romName = rom;
+        JFXFuture.supplyAsync(() -> {
+          return Studio.client.getHigscoreBackupService().get(romName);
+        }).thenAcceptLater((backups) -> {
+          highscoreBackups = Studio.client.getHigscoreBackupService().get(romName);
+          backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
+          if (!highscoreBackups.isEmpty()) {
+            restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
+          }
+        });
       }
 
       boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
@@ -382,11 +388,11 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
 
         if (metadata.getModified() != null) {
-          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getModified()));
+          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(Date.from(metadata.getModified())));
         }
 
         if (metadata.getScanned() != null) {
-          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getScanned()));
+          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(Date.from(metadata.getScanned())));
         }
 
         if (!StringUtils.isEmpty(metadata.getRaw())) {
