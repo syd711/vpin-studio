@@ -36,6 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -240,13 +241,14 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   @FXML
   private void onDisconnect() {
     doDisconnect();
-    Studio.loadLauncher(new Stage());
+    Studio.loadLauncher(Studio.createLauncherStage());
   }
 
   @FXML
   private void onSettings(ActionEvent event) {
     PreferencesController.open();
   }
+
 
   @FXML
   private void toggleMonitor() {

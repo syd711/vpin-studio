@@ -97,7 +97,7 @@ public class FrontendResource {
     if (tableFile.exists()) {
       int result = frontendService.importGame(tableFile, true, -1, item.getEmuId());
       if (result > 0) {
-        gameService.scanGame(result);
+        gameService.scanGame(result, true);
       }
     }
     return JobDescriptorFactory.ok(-1);

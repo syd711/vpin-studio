@@ -516,7 +516,7 @@ public class UniversalUploadService {
     Long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     Long channelId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID, -1);
     if (channelId > 0 && serverId > 0) {
-      Game game = gameService.scanGame(uploadDescriptor.getGameId());
+      Game game = gameService.scanGame(uploadDescriptor.getGameId(), true);
       if (game != null) {
         EmbedBuilder embed = new EmbedBuilder();
         String url = null;

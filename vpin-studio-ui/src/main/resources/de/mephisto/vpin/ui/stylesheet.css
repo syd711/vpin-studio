@@ -597,6 +597,7 @@
 .navigation-panel {
     -fx-width: 300px;
     -fx-background-color: #272b2f;
+    -fx-background-radius: 0 0 0 6;
 }
 
 /**
@@ -623,6 +624,7 @@
 .base-component {
     -fx-text-fill: #FFFFFF;
     -fx-base : #111111;
+    -fx-background-radius: 0 6 6 0;
 }
 
 .combo-box {

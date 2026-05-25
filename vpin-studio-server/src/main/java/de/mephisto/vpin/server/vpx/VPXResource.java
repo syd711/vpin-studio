@@ -98,7 +98,7 @@ public class VPXResource {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     boolean replaced = vpxService.setNvOffset(game, nvOffset, serverSettings.isKeepVbsFiles());
     if (replaced) {
-      gameCachingService.scanGame(game.getId());
+      gameCachingService.scanGame(game.getId(), true);
       gameCachingService.invalidate(game.getId());
       return gameCachingService.getGame(game.getId()).getNvOffset();
     }

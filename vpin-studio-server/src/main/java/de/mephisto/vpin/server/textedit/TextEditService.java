@@ -213,7 +213,7 @@ public class TextEditService {
             monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
             monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
             LOG.info("Saved {}, performing table table.", gameFile.getAbsolutePath());
-            gameService.scanGame(game.getId());
+            gameService.scanGame(game.getId(), true);
             return monitoredTextFile;
           }
           else {

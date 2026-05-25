@@ -148,12 +148,12 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
 
     @Nullable
-    public Game scanGame(int gameId) {
+    public Game scanGame(int gameId, boolean forceScan) {
         Game game = null;
         try {
             game = frontendService.getOriginalGame(gameId);
             if (game != null) {
-                GameDetailsInfo gameDetailsInfo = applyGameDetails(game, true, true, null);
+                GameDetailsInfo gameDetailsInfo = applyGameDetails(game, forceScan, true, null);
                 applyGameValidation(gameDetailsInfo, true);
 
                 vPinMameService.clearCacheFor(game.getRom());
