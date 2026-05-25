@@ -129,7 +129,8 @@ public class TextEditorController implements Initializable, DialogController {
 
   public void load(MonitoredTextFile file) throws Exception {
     this.file = file;
-    if(file.getFile() == null) {
+    //We need the file if we want to load it.
+    if(file.getFile() != null) {
       richText = new RichText(file.getContent());
       richText.getCodeArea().setEditable(false);
       size.setVisible(false);
@@ -139,12 +140,18 @@ public class TextEditorController implements Initializable, DialogController {
     }
     else {
       MonitoredTextFile value = client.getTextEditorService().getText(file);
-      lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getLastModified()));
-      size.setText(FileUtils.readableFileSize(value.getSize()));
-      richText = new RichText(value.getContent());
+      //Just an extra check
+      if (value != null){
+          lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getLastModified()));
+          size.setText(FileUtils.readableFileSize(value.getSize()));
+          richText = new RichText(value.getContent());
 
-      this.saveBtn.setDisable(false);
-      this.saveAndCloseBtn.setDisable(false);
+          this.saveBtn.setDisable(false);
+          this.saveAndCloseBtn.setDisable(false);
+      }
+      else {
+          LOG.error("Failed to retrieve text file {}",file.getContent());
+      }
     }
 
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
