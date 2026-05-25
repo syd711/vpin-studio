@@ -46,3 +46,7 @@ Download Links:
 - **Future Pinball**: Fixed installation of .fpl files.
 - **Update Info Dialog**: Fixed size issues for smaller screens.
 
+### VPin Mania
+
+- Added synchronization of Future Pinball highscores.
+
