@@ -209,8 +209,7 @@ public class Studio extends Application {
   }
 
   public static Stage createLauncherStage() {
-    Stage launcherStage = new Stage(StageStyle.TRANSPARENT);
-    return launcherStage;
+    return new Stage(StageStyle.TRANSPARENT);
   }
 
   private void runExtensionsInstallation() {

@@ -320,7 +320,7 @@ public class LauncherController implements Initializable {
 
   private void installServer() {
     try {
-      ServerInstallationUtil.install();
+      ServerInstallationUtil.createRunScripts();
       Updater.restartServer();
       main.getTop().setVisible(false);
 

@@ -16,7 +16,7 @@ public class ServerInstallationUtil {
   public static final String VPIN_STUDIO_SERVER_BAT = "VPin-Studio-Server.bat";
   public static File BAT = new File(VPIN_STUDIO_SERVER_BAT);
 
-  public static boolean install() throws IOException {
+  public static boolean createRunScripts() throws IOException {
     try {
       File root = new File("./");
       File vbsFile = new File("./", "server.vbs");
