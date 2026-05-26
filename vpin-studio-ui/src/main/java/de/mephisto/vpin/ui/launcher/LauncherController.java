@@ -345,6 +345,7 @@ public class LauncherController implements Initializable {
             client.getSystemService().getVersion());
         Platform.runLater(() -> {
           try {
+            Platform.setImplicitExit(false);
             stage.close();
             ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
             Studio.loadStudio(WidgetFactory.createStage(), client);

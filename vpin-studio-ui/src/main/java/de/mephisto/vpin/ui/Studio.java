@@ -151,9 +151,9 @@ public class Studio extends Application {
 
       //replace the OverlayFX client with the Studio one
       Studio.client = new VPinStudioClient("localhost");
-        if (splashController != null) {
-            splashController.setStatus("Checking localhost...");
-        }
+      if (splashController != null) {
+        splashController.setStatus("Checking localhost...");
+      }
       Studio.Features = client.getSystemService().getFeatures();
       ServerFX.client = Studio.client;
 
@@ -170,14 +170,14 @@ public class Studio extends Application {
         List<ConnectionEntry> connections = connectionProperties.getConnections();
         if (!connections.isEmpty()) {
           for (ConnectionEntry connection : connections) {
-              if (splashController != null) {
-                  splashController.setStatus("Checking " + connection.getName() + "...");
-              }
+            if (splashController != null) {
+              splashController.setStatus("Checking " + connection.getName() + "...");
+            }
             Studio.client = new VPinStudioClient(connection.getIp());
             version = client.getSystemService().getVersion();
             if (!StringUtils.isEmpty(version)) {
-                //moved this inside because we are using the version to check connection. It was slowing this process down
-                Studio.Features = client.getSystemService().getFeatures();
+              //moved this inside because we are using the version to check connection. It was slowing this process down
+              Studio.Features = client.getSystemService().getFeatures();
               final VPinStudioClient foundClient = Studio.client;
               Platform.runLater(() -> loadStudio(stage, foundClient));
               return;
@@ -237,9 +237,9 @@ public class Studio extends Application {
       Scene scene = new Scene(root);
       scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
       stage.setTitle("VPin Studio Launcher");
-        if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
-            stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
-        }
+      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+        stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+      }
       stage.setScene(scene);
       stage.initStyle(StageStyle.TRANSPARENT);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));
@@ -263,7 +263,7 @@ public class Studio extends Application {
 
       try {
         if (splashController != null) {
-            splashController.setStatus("Checking SevenZip binaries...");
+          splashController.setStatus("Checking SevenZip binaries...");
         }
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
         if (!sevenZipTempFolder.exists()) {
@@ -285,7 +285,6 @@ public class Studio extends Application {
       Studio.Features = client.getSystemService().getFeatures();
       ServerFX.client = Studio.client;
 
-//      Platform.setImplicitExit(false);
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
@@ -298,7 +297,7 @@ public class Studio extends Application {
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
             if (splashController != null) {
-                splashController.setStatus("Fetching data from server...");
+              splashController.setStatus("Fetching data from server...");
             }
             //force pre-caching, this way, the table overview does not need to execute single GET requests
             new Thread(() -> {
@@ -362,9 +361,9 @@ public class Studio extends Application {
               height = position.getHeight();
             }
             Scene scene = new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT);
-              if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
-                  stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-128.png"))));
-              }
+            if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+              stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-128.png"))));
+            }
             stage.setScene(scene);
             stage.setMinWidth(1280);
             stage.setMinHeight(700);
@@ -427,9 +426,9 @@ public class Studio extends Application {
 
     Stage stage = new Stage(StageStyle.TRANSPARENT);
     //stage.setAlwaysOnTop(true); // Ensure splash screen is always on top
-      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
-          stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-64.png"))));
-      }
+    if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+      stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-64.png"))));
+    }
     stage.setScene(scene);
     stage.setX((screenBounds.getWidth() / 2) - (imgWidth / 2));
     stage.setY((screenBounds.getHeight() / 2) - (imgHeight / 2));
@@ -538,7 +537,7 @@ public class Studio extends Application {
   public static boolean editGameFile(@NonNull GameRepresentation game, @NonNull String filePath) throws Exception {
     FileMonitoringService.getInstance().setPaused(true);
 
-      MonitoredTextFile monitoredTextFile = new MonitoredTextFile(String.valueOf(MonitoredFile.LOCAL_GAME_FILE));
+    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(String.valueOf(MonitoredFile.LOCAL_GAME_FILE));
     monitoredTextFile.setFileId(String.valueOf(game.getId()));
     monitoredTextFile.setPath(filePath);
     MonitoredTextFile loadedMonitoredFile = client.getTextEditorService().getText(monitoredTextFile);
