@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.mania.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.restclient.mania.ManiaTableSync;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
@@ -21,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -103,7 +101,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
 
     nameColumn.setCellValueFactory(cellData -> {
       ManiaTableSyncResultModel value = cellData.getValue();
-      return new SimpleObjectProperty(value.getTableName() != null ? value.getTableName() : "-");
+      return new SimpleObjectProperty(value.getTableName() != null ? (value.getTableName() + " / (GameID: " + value.getGameId() + ")") : "-");
     });
 
 
@@ -145,18 +143,28 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
   }
 
   public void setSynchronizationResult(List<ManiaTableSyncResult> result) {
-    List<ManiaTableSyncResultModel> models = result.stream().map(r -> new ManiaTableSyncResultModel(r)).collect(Collectors.toList());
+    List<ManiaTableSyncResultModel> models = new ArrayList<>();
+    for (ManiaTableSyncResult maniaTableSyncResult : result) {
+      List<ManiaTableSync> results = maniaTableSyncResult.getResults();
+      for (ManiaTableSync maniaTableSync : results) {
+        models.add(new ManiaTableSyncResultModel(maniaTableSync));
+      }
+    }
     tableView.setItems(FXCollections.observableList(models));
-
-    statsLabel.setText(result.stream().filter(r -> !r.isDenied()).count() + " highscore have been submitted to vpin-mania.net.");
+    LOG.info(models.size() + " highscore have been submitted to vpin-mania.net.");
+    statsLabel.setText(models.size() + " highscore have been submitted to vpin-mania.net.");
   }
 
   class ManiaTableSyncResultModel {
 
-    private final ManiaTableSyncResult result;
+    private final ManiaTableSync result;
 
-    public ManiaTableSyncResultModel(ManiaTableSyncResult result) {
+    public ManiaTableSyncResultModel(ManiaTableSync result) {
       this.result = result;
+    }
+
+    public int getGameId() {
+      return result.getGameId();
     }
 
     public String getTableName() {

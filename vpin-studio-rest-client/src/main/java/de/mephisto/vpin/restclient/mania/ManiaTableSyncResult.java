@@ -1,65 +1,34 @@
 package de.mephisto.vpin.restclient.mania;
 
-import de.mephisto.vpin.connectors.mania.model.TableScore;
-import org.jspecify.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ManiaTableSyncResult {
-  @Nullable
-  private String result = null;
+  private List<ManiaTableSync> results = new ArrayList<>();
+  private String vpsTableId;
+  private String error;
 
-  @Nullable
-  private TableScore tableScore;
-
-  private String tableName;
-  private String tableType;
-  private boolean denied = false;
-  private boolean valid = true;
-
-  public String getTableType() {
-    return tableType;
+  public String getError() {
+    return error;
   }
 
-  public void setTableType(String tableType) {
-    this.tableType = tableType;
+  public void setError(String error) {
+    this.error = error;
   }
 
-  public boolean isValid() {
-    return valid;
+  public String getVpsTableId() {
+    return vpsTableId;
   }
 
-  public void setValid(boolean valid) {
-    this.valid = valid;
+  public void setVpsTableId(String vpsTableId) {
+    this.vpsTableId = vpsTableId;
   }
 
-  public String getTableName() {
-    return tableName;
+  public List<ManiaTableSync> getResults() {
+    return results;
   }
 
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
-  }
-
-  public boolean isDenied() {
-    return denied;
-  }
-
-  public void setDenied(boolean denied) {
-    this.denied = denied;
-  }
-
-  public String getResult() {
-    return result;
-  }
-
-  public void setResult(String result) {
-    this.result = result;
-  }
-
-  public TableScore getTableScore() {
-    return tableScore;
-  }
-
-  public void setTableScore(TableScore tableScore) {
-    this.tableScore = tableScore;
+  public void setResults(List<ManiaTableSync> results) {
+    this.results = results;
   }
 }

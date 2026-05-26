@@ -6,10 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.mania.ManiaConfig;
-import de.mephisto.vpin.restclient.mania.ManiaRegistration;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
-import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
+import de.mephisto.vpin.restclient.mania.*;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
@@ -91,47 +88,56 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public ManiaTableSyncResult synchronizeHighscore(String vpsTableId) {
     ManiaTableSyncResult result = new ManiaTableSyncResult();
+    result.setVpsTableId(vpsTableId);
+
     VpsTable vpsTable = vpsService.getTableById(vpsTableId);
     if (vpsTable == null) {
-      result.setValid(false);
-      result.setResult("No matching VPS table found.");
+      result.setError("No matching VPS table found.");
       return result;
     }
-    result.setTableName(vpsTable.getDisplayName());
 
     maniaServiceCache.preCache();
 
-    Game game = maniaServiceCache.getGame(vpsTableId);
-    if (game == null || StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
-      String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
-      LOG.info(msg);
-      result.setValid(false);
-      result.setResult(msg);
-      return result;
+    List<Game> games = maniaServiceCache.getGamesByVpsId(vpsTableId);
+    for (Game game : games) {
+      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+        String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
+        LOG.info(msg);
+        result.setError(msg);
+        return result;
+      }
+
+      ManiaTableSync maniaTableSync = synchronizeHighscores(game, vpsTable);
+      if (maniaTableSync != null) {
+        result.getResults().add(maniaTableSync);
+      }
     }
 
-    result.setTableType(game.getEmulator().getType().shortName());
-    result.setTableName(game.getGameDisplayName());
-    synchronizeHighscores(result, game, vpsTable);
     return result;
   }
 
-  private void synchronizeHighscores(@NonNull ManiaTableSyncResult result, @NonNull Game game, @NonNull VpsTable vpsTable) {
+  @Nullable
+  private ManiaTableSync synchronizeHighscores(@NonNull Game game, @NonNull VpsTable vpsTable) {
     if (!maniaSettings.isSubmitAllScores()) {
-      return;
+      return null;
     }
 
     LOG.info("Synchronizing mania table scores for \"{}\"", game);
     List<Account> cachedPlayerAccounts = maniaServiceCache.getCachedPlayerAccounts();
     LOG.info("Found {} eligable local players to synchronize.", cachedPlayerAccounts.size());
 
+    ManiaTableSync item = new ManiaTableSync();
+    item.setTableName(vpsTable.getDisplayName());
+    item.setTableType(game.getEmulator().getType().shortName());
+    item.setGameId(game.getId());
+
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
     if (scoreList.isEmpty()) {
       String msg = "No highscores found for \"" + game.getGameDisplayName() + "\", VPS ids: " + game.getExtTableId() + "/" + game.getExtTableVersionId();
       LOG.info(msg);
-      result.setResult(msg);
-      return;
+      item.setResult(msg);
+      return item;
     }
 
     List<String> submittedInitials = new ArrayList<>();
@@ -157,29 +163,30 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           tableScore.setScoreSource(game.getRom());
 
           if (isOnDenyList(deniedScoresByTableId, score, game)) {
-            result.setTableScore(tableScore);
-            result.setDenied(true);
-            result.setResult("A matching score has been found, but it is on the ignore list.");
-            continue;
+            item.setTableScore(tableScore);
+            item.setDenied(true);
+            item.setResult("A matching score has been found, but it is on the ignore list.");
+            return item;
           }
 
           LOG.info("Found score match to synchronize for {}: {}", playerInitials, score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
-          result.setTableScore(submitted);
-          result.setResult("The highscore was successfully synchronized.");
+          item.setTableScore(submitted != null ? submitted : tableScore);
+          item.setResult("The highscore was successfully synchronized.");
           submittedInitials.add(playerInitials);
         }
         else {
-          result.setResult("No matching account found for initials \"" + playerInitials + "\"");
+          item.setResult("No matching account found for initials \"" + playerInitials + "\"");
         }
       }
       catch (Exception e) {
         LOG.error("Failed to submit mania highscore during sync: {}", e.getMessage(), e);
-        result.setResult("Failed to submit mania highscore during sync: " + e.getMessage());
+        item.setResult("Failed to submit mania highscore during sync: " + e.getMessage());
       }
     }
 
     LOG.info("Highscore sync finished for \"{}\"/{}/{}.", vpsTable.getDisplayName(), game.getExtTableId(), game.getExtTableVersionId());
+    return item;
   }
 
   public VPinManiaClient getClient() {

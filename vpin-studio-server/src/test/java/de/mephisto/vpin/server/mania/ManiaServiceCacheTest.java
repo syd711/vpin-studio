@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +36,7 @@ public class ManiaServiceCacheTest {
 
   @Test
   void getGame_returnsNull_whenCacheIsEmpty() {
-    assertNull(cache.getGame("vps-table-1"));
+    assertNull(cache.getGamesByVpsId("vps-table-1"));
   }
 
   // ---- containsAccountForInitials ----

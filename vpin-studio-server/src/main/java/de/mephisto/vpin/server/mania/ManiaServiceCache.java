@@ -28,7 +28,7 @@ public class ManiaServiceCache {
 
   private ManiaService maniaService;
   private final Map<String, Account> playerCache = new HashMap<>();
-  private final Map<String, Game> gamesByVpsId = new HashMap<>();
+  private final Map<String, List<Game>> gamesByVpsId = new HashMap<>();
 
   public boolean clear() {
     playerCache.clear();
@@ -50,7 +50,12 @@ public class ManiaServiceCache {
           LOG.info("Skipped highscore sync for \"{}\", because invalid VPS mapping", game.getGameDisplayName());
         }
         else {
-          gamesByVpsId.put(game.getExtTableId(), game);
+          List<Game> games = new ArrayList<>();
+          if (gamesByVpsId.containsKey(game.getExtTableId())) {
+            games = gamesByVpsId.get(game.getExtTableId());
+          }
+          games.add(game);
+          gamesByVpsId.put(game.getExtTableId(), games);
         }
       }
     }
@@ -65,7 +70,7 @@ public class ManiaServiceCache {
     }
   }
 
-  public Game getGame(String vpsTableId) {
+  public List<Game> getGamesByVpsId(String vpsTableId) {
     return gamesByVpsId.get(vpsTableId);
   }
 
