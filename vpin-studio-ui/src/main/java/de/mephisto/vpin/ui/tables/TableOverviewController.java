@@ -75,7 +75,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -2283,7 +2283,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @Override
-  protected int getPreferredColumnIndex(@NotNull String columnId) {
+  protected int getPreferredColumnIndex(@NonNull String columnId) {
     return -1;
   }
 

@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
+
 import org.apache.commons.lang3.Strings;
 
 public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
@@ -124,7 +124,7 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public boolean deleteMedia(@NotNull Game game, @NotNull VPinScreen screen) {
+  public boolean deleteMedia(@NonNull Game game, @NonNull VPinScreen screen) {
     File mediaFolder = getGameMediaFolder(game, screen, null, false);
     if(mediaFolder.exists()) {
       for (File file : mediaFolder.listFiles()) {
@@ -135,7 +135,7 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public boolean deleteMedia(@NotNull Playlist playlist, @NotNull VPinScreen screen) {
+  public boolean deleteMedia(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
     File mediaFolder = getPlaylistMediaFolder(playlist, screen, false);
     if(mediaFolder.exists()) {
       for (File file : mediaFolder.listFiles()) {

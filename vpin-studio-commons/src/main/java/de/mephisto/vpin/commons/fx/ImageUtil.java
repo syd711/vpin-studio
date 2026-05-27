@@ -1,8 +1,16 @@
 package de.mephisto.vpin.commons.fx;
 
-import com.jhlabs.image.GaussianFilter;
-import com.jhlabs.image.BoxBlurFilter;
-import com.jhlabs.image.GrayscaleFilter;
+
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.alg.filter.blur.BlurImageOps;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageType;
+import boofcv.struct.image.Planar;
+import boofcv.alg.color.ColorRgb;
+import boofcv.struct.image.GrayU8;
+
+
+
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import javafx.scene.canvas.GraphicsContext;
@@ -267,20 +275,25 @@ public class ImageUtil {
     return image.getSubimage(x, y, targetWidth, targetHeight);
   }
 
-  public static BufferedImage blurImage(BufferedImage originalImage, int radius) {
-    GaussianFilter filter = new GaussianFilter(radius);
-    return filter.filter(originalImage, null);
-  }
+    public static BufferedImage blurImage(BufferedImage originalImage, int radius) {
+        Planar<GrayF32> input = ConvertBufferedImage.convertFrom(originalImage, true, ImageType.pl(3, GrayF32.class));
+        Planar<GrayF32> output = input.createSameShape();
+        BlurImageOps.gaussian(input, output, -1, radius, null);
+        return ConvertBufferedImage.convertTo(output, null, true);
+    }
 
-  public static BufferedImage boxBlurImage(BufferedImage originalImage, int radius) {
-    BoxBlurFilter filter = new BoxBlurFilter(2 * radius, 2 * radius, 1);
-    return filter.filter(originalImage, null);
-  }
-
-  public static BufferedImage grayScaleImage(BufferedImage originalImage) {
-    GrayscaleFilter filter = new GrayscaleFilter();
-    return filter.filter(originalImage, null);
-  }
+    public static BufferedImage boxBlurImage(BufferedImage originalImage, int radius) {
+        Planar<GrayF32> input = ConvertBufferedImage.convertFromPlanar(originalImage, null, true, GrayF32.class);
+        Planar<GrayF32> output = input.createSameShape();
+        BlurImageOps.mean(input, output, radius, null, null);
+        return ConvertBufferedImage.convertTo(output, null, true);
+    }
+    public static BufferedImage grayScaleImage(BufferedImage originalImage) {
+        Planar<GrayU8> input = ConvertBufferedImage.convertFromPlanar(originalImage, null, true, GrayU8.class);
+        var output = new GrayU8(input.width, input.height);
+        ColorRgb.rgbToGray_Weighted(input, output);
+        return ConvertBufferedImage.convertTo(output, null);
+    }
 
 
   /**

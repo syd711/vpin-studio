@@ -10,7 +10,7 @@ import de.mephisto.vpin.restclient.util.HttpUtils;
 import de.mephisto.vpin.server.games.Game;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -139,10 +139,10 @@ public class SuperHacTableAssetAdapter extends DefaultTableAssetAdapter  {
     return true;
   }
 
-  @NotNull
-  private static TableAsset toTableAsset(@NotNull TableAssetSource tableAssetSource,
-                                         @NotNull EmulatorType emulator,
-                                         @NotNull String screenSegment,
+@NonNull
+  private static TableAsset toTableAsset(@NonNull TableAssetSource tableAssetSource,
+                                       @NonNull EmulatorType emulator,
+                                       @NonNull String screenSegment,
                                          @NonNull String url,
                                          @NonNull String name) {
     TableAsset asset = new TableAsset();

@@ -11,7 +11,8 @@ import de.mephisto.vpin.restclient.vpxz.models.Version;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
+
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +97,7 @@ public class VPXZResource {
     return toRepresentation(descriptors);
   }
 
-  @NotNull
+@NonNull
   private List<VPXZDescriptorRepresentation> toRepresentation(List<VPXZDescriptor> descriptors) {
     List<VPXZDescriptorRepresentation> result = new ArrayList<>();
     for (VPXZDescriptor VPXZDescriptor : descriptors) {

@@ -21,11 +21,13 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.PlayerRepository;
 import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
-import org.jcodec.common.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -35,7 +37,9 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract public class AbstractVPinServerTest {
-  public static final String EM_TABLE_NAME = "Baseball (1970).vpx";
+    private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public static final String EM_TABLE_NAME = "Baseball (1970).vpx";
   public static final String EM_ROM_NAME = "Baseball_1970";
   public static final String EM_B2S_NAME = "Baseball (1970).directb2s";
   public static final File EM_TABLE = new File("../testsystem/vPinball/VisualPinball/Tables/" + EM_TABLE_NAME);
@@ -154,7 +158,7 @@ abstract public class AbstractVPinServerTest {
       frontendService.importGame(NVRAM_TABLE, 1);
     }
     catch (Exception e) {
-      Logger.error("Failed to setup test system: {}", e.getMessage(), e);
+      LOG.error("Failed to setup test system: {}", e.getMessage(), e);
     }
   }
 

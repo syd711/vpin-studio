@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +141,7 @@ public class FolderChooserDialogController implements Initializable, DialogContr
     return null;
   }
 
-  private static boolean matches(@NotNull String path, TreeItem<FolderRepresentation> child) {
+  private static boolean matches(@NonNull String path, TreeItem<FolderRepresentation> child) {
     if (path.equalsIgnoreCase(child.getValue().getPath())) {
       return true;
     }

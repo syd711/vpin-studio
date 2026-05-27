@@ -7,7 +7,7 @@ import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
   }
 
   @Override
-  public void competitionDeleted(@NotNull Competition competition) {
+  public void competitionDeleted(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game == null) {
       game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
@@ -53,7 +53,7 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
     }
   }
 
-  private void refreshBadge(@NotNull Competition competition) {
+  private void refreshBadge(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     boolean active = competition.isActive();
 

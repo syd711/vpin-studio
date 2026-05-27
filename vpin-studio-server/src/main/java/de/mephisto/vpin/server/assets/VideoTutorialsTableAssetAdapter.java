@@ -9,7 +9,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,10 +95,10 @@ public class VideoTutorialsTableAssetAdapter extends DefaultTableAssetAdapter {
     return true;
   }
 
-  @NotNull
-  private static TableAsset toTableAsset(@NotNull TableAssetSource tableAssetSource,
-                                         @NotNull EmulatorType emulator,
-                                         @NotNull String screenSegment,
+@NonNull
+  private static TableAsset toTableAsset(@NonNull TableAssetSource tableAssetSource,
+                                       @NonNull EmulatorType emulator,
+                                       @NonNull String screenSegment,
                                          @NonNull VpsTable vpsTable) {
     TableAsset asset = new TableAsset();
     asset.setEmulator(null);

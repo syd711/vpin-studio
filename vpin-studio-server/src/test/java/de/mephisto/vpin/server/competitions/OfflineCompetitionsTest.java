@@ -1,14 +1,18 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import org.jcodec.common.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.lang.invoke.MethodHandles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class OfflineCompetitionsTest extends AbstractVPinServerTest {
+    private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Test
   public void testCompetitions() {
@@ -27,7 +31,7 @@ public class OfflineCompetitionsTest extends AbstractVPinServerTest {
       assertTrue(competitionService.delete(save.getId()));
     }
     catch (Exception e) {
-      Logger.error("OfflineCompetitionsTest failed: {}", e.getMessage(), e);
+      LOG.error("OfflineCompetitionsTest failed: {}", e.getMessage(), e);
     }
   }
 }

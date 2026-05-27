@@ -2,7 +2,8 @@ package de.mephisto.vpin.server.system;
 
 
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
-import org.jetbrains.annotations.NotNull;
+
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,7 +65,7 @@ public class FolderChooserResource {
     return null;
   }
 
-  @NotNull
+@NonNull
   private static FolderRepresentation buildFolder(File baseDir) {
     FolderRepresentation folder = new FolderRepresentation(baseDir);
     if (baseDir.isHidden() && baseDir.getParentFile() != null) {

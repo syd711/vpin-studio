@@ -10,7 +10,7 @@ import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.jspecify.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,7 +44,7 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
   }
 
   @Override
-  public void gameDataChanged(@NotNull GameDataChangedEvent changedEvent) {
+  public void gameDataChanged(@NonNull GameDataChangedEvent changedEvent) {
     List<String> gameTags = TaggingUtil.getTags(changedEvent.getOldData().getTags());
     for (String gameTag : gameTags) {
       tags.remove(gameTag);
@@ -56,7 +56,7 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
   }
 
   @Override
-  public void gameAssetChanged(@NotNull GameAssetChangedEvent changedEvent) {
+  public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
     AssetType assetType = changedEvent.getAssetType();
     switch (assetType) {
       case DIRECTB2S: {
@@ -72,7 +72,7 @@ public class TaggingService implements InitializingBean, GameDataChangedListener
   }
 
   @Override
-  public void gameScreenAssetChanged(@NotNull GameScreenAssetChangedEvent changedEvent) {
+  public void gameScreenAssetChanged(@NonNull GameScreenAssetChangedEvent changedEvent) {
     if (taggingSettings.isAutoTagScreensEnabled() && taggingSettings.getTaggedScreens().contains(changedEvent.getVPinScreen())) {
       TableDetails tableDetails = frontendService.getTableDetails(changedEvent.getGameId());
       if (tableDetails != null && !taggingSettings.getTaggedScreens().isEmpty()) {
