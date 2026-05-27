@@ -197,7 +197,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
         }
       }
       else if ("video".equals(baseType)) {
-        if (JCodec.export(item.getFile(), target)) {
+        if (VidUtil.export(item.getFile(), target)) {
           return true;
         }
       }

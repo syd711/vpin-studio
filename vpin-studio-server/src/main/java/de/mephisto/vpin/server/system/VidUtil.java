@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-public class JCodec {
-    private final static Logger LOG = LoggerFactory.getLogger(JCodec.class);
+public class VidUtil {
+    private final static Logger LOG = LoggerFactory.getLogger(VidUtil.class);
     private static final int FRAME_INDEX = 50;
 
     public static boolean export(@NonNull File file, @NonNull File defaultPicture) {

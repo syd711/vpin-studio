@@ -1,4 +1,5 @@
 ## Release Notes 5.1.1
+- Removed 2 older dependencies whose functions could be replaced with other dependencies already included.
 
 ### Changes
 
