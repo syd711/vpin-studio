@@ -14,7 +14,7 @@ import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.system.JCodec;
+import de.mephisto.vpin.server.system.VidUtil;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.catalina.connector.ClientAbortException;
@@ -355,7 +355,7 @@ public class GameMediaResource {
       response.setStatus(status.value());
 
       if (getPreview) {
-        byte[] bytes = JCodec.grab(frontendMediaItem.getFile());
+        byte[] bytes = VidUtil.grab(frontendMediaItem.getFile());
         if (bytes != null) {
           response.setContentLength(bytes.length);
           response.getOutputStream().write(bytes);

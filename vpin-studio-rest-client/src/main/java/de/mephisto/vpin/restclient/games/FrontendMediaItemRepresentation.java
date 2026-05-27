@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient.games;
 import java.time.OffsetDateTime;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-
+//TODO change to a record?
 public class FrontendMediaItemRepresentation {
   private String mimeType;
   private String uri;

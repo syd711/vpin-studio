@@ -10,7 +10,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.jobs.JobService;
-import de.mephisto.vpin.server.system.JCodec;
+import de.mephisto.vpin.server.system.VidUtil;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -309,7 +309,7 @@ public class PupPacksService implements InitializingBean {
         }
       }
       else {
-        if (JCodec.export(defaultVideo, defaultPicture)) {
+        if (VidUtil.export(defaultVideo, defaultPicture)) {
           LOG.info("Successfully extracted default background image {}", defaultPicture.getAbsolutePath());
         }
       }

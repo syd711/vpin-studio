@@ -1,3 +1,7 @@
+## Release Notes 5.1.0
+- Removed 2 older dependencies whose functions could be replaced with other dependencies already included.   
+
+
 ## Release Notes 5.0.0
 
 ### !!! Important Notice !!!

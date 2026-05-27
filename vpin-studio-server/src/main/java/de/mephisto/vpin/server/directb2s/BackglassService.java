@@ -17,7 +17,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.BackglassNamingHelper;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.system.JCodec;
+import de.mephisto.vpin.server.system.VidUtil;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
@@ -1274,7 +1274,7 @@ public class BackglassService implements InitializingBean {
         }
       }
       else if ("video".equals(baseType)) {
-        return JCodec.grab(item.getFile());
+        return VidUtil.grab(item.getFile());
       }
     }
     return null;
