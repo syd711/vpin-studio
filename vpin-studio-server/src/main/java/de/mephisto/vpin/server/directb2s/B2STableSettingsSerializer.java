@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.util.FileUpdateWriter;
 import de.mephisto.vpin.server.util.XMLUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public class B2STableSettingsSerializer {
     }
   }
 
-  private <T> void removeChild(@NotNull T settings, String rom, List<String> tableEntries, SettingsGetter<T> getter, Node root, Document doc) {
+  private <T> void removeChild(@NonNull T settings, String rom, List<String> tableEntries, SettingsGetter<T> getter, Node root, Document doc) {
     Node rootNodeByRom = null;
     if (rom != null) {
       // one table (Guardians of Galaxy Trilogy) has a rom name with a space...
@@ -107,7 +107,7 @@ public class B2STableSettingsSerializer {
     }
   }
 
-  private <T> void appendChild(@NotNull T settings, String rom, List<String> tableEntries, SettingsGetter<T> getter, Node root, Document doc) {
+  private <T> void appendChild(@NonNull T settings, String rom, List<String> tableEntries, SettingsGetter<T> getter, Node root, Document doc) {
     Node rootNodeByRom = null;
     if (rom != null) {
       // one table (Guardians of Galaxy Trilogy) has a rom name with a space...

@@ -47,7 +47,7 @@ import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -913,7 +913,7 @@ public class GameMediaService extends MediaService {
     return null;
   }
 
-  @NotNull
+@NonNull
   @Override
   public List<File> getMediaFiles(int gameId, VPinScreen screen) {
     Game game = frontendService.getOriginalGame(gameId);

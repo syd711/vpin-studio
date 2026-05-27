@@ -10,7 +10,8 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
+
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class BackupResource {
     return toRepresentation(descriptors);
   }
 
-  @NotNull
+@NonNull
   private List<BackupDescriptorRepresentation> toRepresentation(List<BackupDescriptor> descriptors) {
     List<BackupDescriptorRepresentation> result = new ArrayList<>();
     for (BackupDescriptor backupDescriptor : descriptors) {

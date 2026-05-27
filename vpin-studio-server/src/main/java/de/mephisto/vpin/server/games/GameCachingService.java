@@ -42,7 +42,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -550,7 +550,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         return new GameDetailsInfo(game, gameDetails, tableDetails, newGame);
     }
 
-    private void applyGameValidation(@NotNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
+    private void applyGameValidation(@NonNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
         //run validations at the end!!!
         Game game = gameDetailsInfo.game;
         List<ValidationState> validationStates = gameValidationService.validate(gameDetailsInfo.game, findFirstIssueOnly);
@@ -685,12 +685,12 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     //---------- Highscore Change Listener ---------------------
 
     @Override
-    public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+    public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
         invalidate(event.getGame().getId());
     }
 
     @Override
-    public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+    public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
         invalidate(game.getId());
     }
 

@@ -13,8 +13,7 @@
     <artifactId>vpin-studio-commons</artifactId>
 
     <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -98,9 +97,14 @@
             <version>${commons-math3.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.jhlabs</groupId>
-            <artifactId>filters</artifactId>
-            <version>${jhlabs-filters.version}</version>
+            <groupId>org.boofcv</groupId>
+            <artifactId>boofcv-ip</artifactId>
+            <version>${boofcv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>boofcv-io</artifactId>
+            <version>${boofcv.version}</version>
         </dependency>
         <dependency>
             <groupId>org.imgscalr</groupId>

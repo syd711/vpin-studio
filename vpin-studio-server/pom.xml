@@ -18,8 +18,7 @@
     <properties>
         <java.version>25</java.version>
         <javafx.version>25.0.3</javafx.version>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <commons-io.version>2.22.0</commons-io.version>
@@ -58,12 +57,10 @@
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <xstream.version>1.4.21</xstream.version>
         <commons-csv.version>1.13.0</commons-csv.version>
-        <jcodec.version>0.2.5</jcodec.version>
         <imgscalr.version>4.2</imgscalr.version>
         <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
         <guava.version>33.4.0-jre</guava.version>
         <jetbrains-annotations.version>13.0</jetbrains-annotations.version>
-        <jhlabs-filters.version>2.0.235</jhlabs-filters.version>
         <controlsfx.version>11.2.3</controlsfx.version>
         <sqlite.version>3.53.0.0</sqlite.version>
     </properties>
@@ -386,16 +383,6 @@
             <version>${commons-csv.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jcodec</groupId>
-            <artifactId>jcodec</artifactId>
-            <version>${jcodec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jcodec</groupId>
-            <artifactId>jcodec-javase</artifactId>
-            <version>${jcodec.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>${sqlite.version}</version>
@@ -444,16 +431,7 @@
             <artifactId>spotbugs-annotations</artifactId>
             <version>${spotbugs.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>${jetbrains-annotations.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jhlabs</groupId>
-            <artifactId>filters</artifactId>
-            <version>${jhlabs-filters.version}</version>
-        </dependency>
+
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

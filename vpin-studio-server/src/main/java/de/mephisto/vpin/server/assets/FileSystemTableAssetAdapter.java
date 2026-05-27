@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,8 +100,8 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter {
     return true;
   }
 
-  @NotNull
-  private static TableAsset toTableAsset(@NotNull TableAssetSource tableAssetSource, @NotNull EmulatorType emulator, @NotNull String screenSegment, @NonNull File f) {
+@NonNull
+  private static TableAsset toTableAsset(@NonNull TableAssetSource tableAssetSource, @NonNull EmulatorType emulator, @NonNull String screenSegment, @NonNull File f) {
     String filename = f.getName();
 
     TableAsset asset = new TableAsset();

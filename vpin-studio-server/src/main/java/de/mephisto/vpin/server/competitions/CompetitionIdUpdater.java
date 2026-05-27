@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   }
 
   @Override
-  public void competitionChanged(@NotNull Competition competition) {
+  public void competitionChanged(@NonNull Competition competition) {
     TableDetails tableDetails = gameMediaService.getTableDetails(competition.getGameId());
     if (tableDetails != null) {
       setTourneyId(competition, tableDetails, competition.getGameId());

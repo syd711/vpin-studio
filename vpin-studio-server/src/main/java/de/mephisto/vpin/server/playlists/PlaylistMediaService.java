@@ -8,7 +8,7 @@ import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,7 @@ public class PlaylistMediaService extends MediaService {
 
   //-------------------------
 
-  @NotNull
+@NonNull
   @Override
   public List<File> getMediaFiles(int playlistId, VPinScreen screen) {
     Playlist playlist = playlistService.getPlaylist(playlistId);

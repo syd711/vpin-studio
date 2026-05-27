@@ -9,7 +9,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.io.File;
 
@@ -22,7 +22,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getEmulatorMediaFolder(@NotNull EmulatorType emulatorType) {
+  public File getEmulatorMediaFolder(@NonNull EmulatorType emulatorType) {
     File defaultMedia = new File(pinUPConnector.getSettings().getGlobalMediaDir());
     return new File(defaultMedia.getParentFile(), emulatorType.folderName());
   }
@@ -35,7 +35,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public boolean deleteMedia(@NotNull Game game, @NotNull VPinScreen screen) {
+  public boolean deleteMedia(@NonNull Game game, @NonNull VPinScreen screen) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
     File screenFolder = new File(mediaDirectory, screen.name());
     if (screenFolder.exists()) {
@@ -48,7 +48,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public boolean deleteMedia(@NotNull Playlist playlist, @NotNull VPinScreen screen) {
+  public boolean deleteMedia(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
     File defaultMedia = new File(pinUPConnector.getSettings().getGlobalMediaDir());
     File playlistScreen = new File(defaultMedia, screen.getSegment());
     if (playlistScreen.exists()) {
