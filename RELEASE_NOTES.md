@@ -46,6 +46,7 @@ Please use the existing installation folder during the reinstall process to ensu
 - **Future Pinball**: Fixed installation of .fpl files.
 - **Update Info Dialog**: Fixed size issues for smaller screens.
 - **Highscore Backups Dialog**: Add multi-selection for deletions.
+- **PinUpPlayer.ini Parsing**: Fixed issues parsing the file caused by comments.
 
 ### VPin Mania
 
