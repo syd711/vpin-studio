@@ -5,13 +5,8 @@
 We are happy to announce that the next major release of VPin Studio 5.0 has been published. While it does not introduce many flashy new features, we have extensively revamped the underlying codebase to ensure the project's long-term maintainability and support future development.
 The major drawback:
 
-**You have to reinstall the Studio Client(s) + Server!!! Studio 5.x updates can't be applied with a 4.x version!**
-
-**Use the existing installation folder for this so that all your data remains untouched by this!**.
-
-Download Links:
-- Full Installer: https://github.com/syd711/vpin-studio/releases/download/5.0.0/VPin-Studio-Full-Installer-5.0.0.exe
-- Client Installer (Windows): https://github.com/syd711/vpin-studio/releases/download/5.0.0/VPin-Studio-Client-Installer-5.0.0.exe  
+**You need to reinstall the Studio Client(s) and Server. Updates for Studio 5.x cannot be applied over a 4.x installation.
+Please use the existing installation folder during the reinstall process to ensure that all your data remains intact!**.
 
 ### Changes
 
@@ -45,8 +40,10 @@ Download Links:
 - **Player Avatars**: Fixed issue of the white outer avatar ring keep growing with every save.
 - **Future Pinball**: Fixed installation of .fpl files.
 - **Update Info Dialog**: Fixed size issues for smaller screens.
+- **Highscore Backups Dialog**: Add multi-selection for deletions.
 
 ### VPin Mania
 
 - Added synchronization of Future Pinball highscores.
+- Fixed synchronization issues.
 
