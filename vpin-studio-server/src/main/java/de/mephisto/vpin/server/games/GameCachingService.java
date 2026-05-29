@@ -232,7 +232,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         else {
             GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
             if (emulator != null && emulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulator.getId(), id -> fetchEmulatorGames(emulator, Collections.emptyMap()));
+                GameEmulatorCache emulatorCache = getOrFetchEmulatorCache(emulator, Collections.emptyMap());
                 games.addAll(emulatorCache.getGames());
             }
         }
@@ -251,7 +251,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         else {
             GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
             if (emulator != null && emulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(emulator.getId(), id -> fetchEmulatorGames(emulator, Collections.emptyMap()));
+                GameEmulatorCache emulatorCache = getOrFetchEmulatorCache(emulator, Collections.emptyMap());
                 games.addAll(emulatorCache.getGames());
             }
         }
@@ -271,13 +271,14 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
         for (GameEmulator gameEmulator : gameEmulators) {
             if (gameEmulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+                GameEmulatorCache emulatorCache = getOrFetchEmulatorCache(gameEmulator, mappedGameDetails);
                 emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
-        games.addAll(emulatorCache.getGames());
-      }
+                games.addAll(emulatorCache.getGames());
+            }
+        }
+        return games;
     }
-    return games;
-  }
+
     private List<Game> getFpGames() {
         List<GameDetails> all = gameDetailsRepositoryService.findAll();
         Map<Integer, GameDetails> mappedGameDetails = new LinkedHashMap<>();
@@ -288,27 +289,37 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         List<GameEmulator> gameEmulators = emulatorService.getFpGameEmulators();
         for (GameEmulator gameEmulator : gameEmulators) {
             if (gameEmulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, mappedGameDetails));
+                GameEmulatorCache emulatorCache = getOrFetchEmulatorCache(gameEmulator, mappedGameDetails);
                 emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
-        games.addAll(emulatorCache.getGames());
-      }
+                games.addAll(emulatorCache.getGames());
+            }
+        }
+        return games;
     }
-    return games;
-  }
-
 
     private List<Game> getZenGames() {
         List<Game> games = new ArrayList<>();
         List<GameEmulator> gameEmulators = emulatorService.getZenGameEmulators();
         for (GameEmulator gameEmulator : gameEmulators) {
             if (gameEmulator.isEnabled()) {
-                GameEmulatorCache emulatorCache = allGamesByEmulatorId.computeIfAbsent(gameEmulator.getId(), id -> fetchEmulatorGames(gameEmulator, Collections.emptyMap()));
+                GameEmulatorCache emulatorCache = getOrFetchEmulatorCache(gameEmulator, Collections.emptyMap());
                 emulatorCache.drainPendingNewGameIds().forEach(id -> gameLifecycleService.notifyGameCreated(id));
-        games.addAll(emulatorCache.getGames());
-      }
+                games.addAll(emulatorCache.getGames());
+            }
+        }
+        return games;
     }
-    return games;
-  }
+
+    private GameEmulatorCache getOrFetchEmulatorCache(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
+        GameEmulatorCache existing = allGamesByEmulatorId.get(emulator.getId());
+        if (existing != null && existing.isFullyLoaded()) {
+            return existing;
+        }
+        // Either absent or a partial stub created by individual getGame() calls — do a full fetch.
+        GameEmulatorCache freshCache = fetchEmulatorGames(emulator, mappedGameDetails);
+        allGamesByEmulatorId.put(emulator.getId(), freshCache);
+        return freshCache;
+    }
 
     private GameEmulatorCache fetchEmulatorGames(@NonNull GameEmulator emulator, @NonNull Map<Integer, GameDetails> mappedGameDetails) {
         long start = System.currentTimeMillis();
