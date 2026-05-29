@@ -804,7 +804,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     List<FrontendPlayerDisplay> result = new ArrayList<>();
     try {
       INIConfiguration iniConfiguration = new INIConfiguration();
-      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";#");
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
@@ -837,7 +837,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
-        if (section.contains("INFO")) {
+        if (section != null && section.contains("INFO")) {
           try {
             FrontendPlayerDisplay display = new FrontendPlayerDisplay();
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
@@ -846,16 +846,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
               display.setTechnicalName(section);
               display.setName(name);
               display.setScreen(VPinScreen.valueOfScreen(name));
-              display.setX(sectionNode.getInt("ScreenXPos"));
-              display.setY(sectionNode.getInt("ScreenYPos"));
-              display.setWidth(sectionNode.getInt("ScreenWidth"));
-              display.setHeight(sectionNode.getInt("ScreenHeight"));
-              display.setRotation(sectionNode.getInt("ScreenRotation"));
+              display.setX(sectionNode.getInt("ScreenXPos", 0));
+              display.setY(sectionNode.getInt("ScreenYPos", 0));
+              display.setWidth(sectionNode.getInt("ScreenWidth", 0));
+              display.setHeight(sectionNode.getInt("ScreenHeight", 0));
+              display.setRotation(sectionNode.getInt("ScreenRotation", 0));
+              result.add(display);
             }
             else {
-              LOG.warn("Unsupported PinUP display for screen '{}', display has been skipped.", name);
+              LOG.warn("Unsupported PinUP display for section '{}', display has been skipped.", section);
             }
-            result.add(display);
           }
           catch (Exception e) {
             LOG.error("Failed to create PinUPPlayerDisplay: {}", e.getMessage());
@@ -2345,7 +2345,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     List<FrontendPlayerDisplay> result = new ArrayList<>();
     try {
       INIConfiguration iniConfiguration = new INIConfiguration();
-      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";#");
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
@@ -2378,7 +2378,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
-        if (section.contains("INFO")) {
+        if (section != null && section.contains("INFO")) {
           try {
             FrontendPlayerDisplay display = new FrontendPlayerDisplay();
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
@@ -2386,16 +2386,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             if (name != null) {
               display.setName(name);
               display.setScreen(VPinScreen.valueOfScreen(name));
-              display.setX(sectionNode.getInt("ScreenXPos"));
-              display.setY(sectionNode.getInt("ScreenYPos"));
-              display.setWidth(sectionNode.getInt("ScreenWidth"));
-              display.setHeight(sectionNode.getInt("ScreenHeight"));
-              display.setRotation(sectionNode.getInt("ScreenRotation"));
+              display.setX(sectionNode.getInt("ScreenXPos", 0));
+              display.setY(sectionNode.getInt("ScreenYPos", 0));
+              display.setWidth(sectionNode.getInt("ScreenWidth", 0));
+              display.setHeight(sectionNode.getInt("ScreenHeight", 0));
+              display.setRotation(sectionNode.getInt("ScreenRotation", 0));
+              result.add(display);
             }
             else {
-              LOG.warn("Unsupported PinUP display for screen '{}', display has been skipped.", name);
+              LOG.warn("Unsupported PinUP display for section '{}', display has been skipped.", section);
             }
-            result.add(display);
           }
           catch (Exception e) {
             LOG.error("Failed to create PinUPPlayerDisplay: {}", e.getMessage());
