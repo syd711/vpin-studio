@@ -119,6 +119,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   private VBox statusPane;
 
   @FXML
+  private VBox infoContainer;
+
+  @FXML
   private VBox dataPane;
 
   @FXML
@@ -281,6 +284,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+
     HighscoreMetadataRepresentation metadata = null;
     if (g.isPresent()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
@@ -321,6 +325,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.dataPane.setVisible(games.size() == 1);
 
     maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
+    infoContainer.setVisible(g.isPresent());
 
     if (g.isPresent() && this.games.size() == 1) {
       GameRepresentation game = g.get();

@@ -39,7 +39,7 @@
                            </VBox.margin>
                         </Label>
                         <Label fx:id="statusLabel" styleClass="default-text" text="-" wrapText="true" />
-                        <VBox styleClass="info-container">
+                        <VBox fx:id="infoContainer" styleClass="info-container">
                            <children>
                               <Label fx:id="statusLabel1" styleClass="default-title" text="Troubleshooting Highscore Resolving" wrapText="true">
                                  <VBox.margin>

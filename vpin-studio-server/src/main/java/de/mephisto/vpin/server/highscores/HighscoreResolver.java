@@ -31,7 +31,8 @@ import java.time.ZoneId;
 @Service
 public class HighscoreResolver implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
-  public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
+  public static final String NO_SCORE_FOUND_MSG_VPX = "No nvram file, VPReg.stg entry or highscore text file found.";
+  public static final String NO_SCORE_FOUND_MSG_FP = "No matching or incompatible fpRAM file found.";
 
   @Autowired
   private SystemService systemService;
@@ -182,7 +183,15 @@ public class HighscoreResolver implements InitializingBean {
 
       if (rawScore == null) {
         if (metadata.getStatus() == null) {
-          metadata.setStatus(NO_SCORE_FOUND_MSG);
+          if(game.isVpxGame()) {
+            metadata.setStatus(NO_SCORE_FOUND_MSG_VPX);
+          }
+          else if(game.isFpGame()) {
+            metadata.setStatus(NO_SCORE_FOUND_MSG_FP);
+          }
+          else {
+            metadata.setStatus("Unknown game type.");
+          }
         }
       }
       else {
