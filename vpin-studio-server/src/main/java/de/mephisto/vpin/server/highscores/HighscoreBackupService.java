@@ -302,7 +302,7 @@ public class HighscoreBackupService implements InitializingBean {
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case FPRam: {
-        File target = new File(folderLookupService.getFpRamFile(game), highscoreBackup.getHighscoreFilename());
+        File target = new File(folderLookupService.getFpRamFile(game).getParentFile(), highscoreBackup.getHighscoreFilename());
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
