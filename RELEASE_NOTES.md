@@ -22,7 +22,12 @@ Please use the existing installation folder during the reinstall process to ensu
   - Added background to DMG.
   - Changed DMG creation to use create-dmg instead of jpackage for more robust options and simpler workflow.
 - **Future Pinball**
-  - With long overdue, VPin Studio 5 supports Future Pinball highscores now too. The highscore support reflects in the Designer section too, which allows to design highscore cards for Future Pinball now. Note that because of the limited test data a lot of highscore lists might still look broken. Please submit your fpRAM file in that case on our Discord so that we can improve the parsing.
+  - With long overdue, VPin Studio 5 supports Future Pinball highscores now too. The support includes:
+    - the Highscore Card which allows to design highscore cards for Future Pinball now.
+    - Highscore Backups
+    - VPin Mania Support
+  
+    Note that because of the limited test data a lot of highscore lists might still look broken. Please submit your fpRAM file in that case on our Discord so that we can improve the parsing.
 
 ### Breaking Changes
 

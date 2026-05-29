@@ -85,7 +85,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
         if (StringUtils.isEmpty(rom)) {
           rom = this.game.getTableName();
         }
-        ProgressDialog.createProgressDialog(new HighscoreBackupDeleteProgressModel(List.copyOf(selectedItems), this.game.getId(), rom));
+        ProgressDialog.createProgressDialog(new HighscoreBackupDeleteProgressModel(List.copyOf(selectedItems), this.game.getId()));
         EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         refresh();
       }
@@ -132,7 +132,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
   }
 
   private void refresh() {
-    List<HighscoreBackup> highscoreBackups = client.getHigscoreBackupService().get(game.getRom());
+    List<HighscoreBackup> highscoreBackups = client.getHigscoreBackupService().get(game.getId());
     backupList.setItems(FXCollections.observableList(highscoreBackups));
     scoreLabel.setText("");
 

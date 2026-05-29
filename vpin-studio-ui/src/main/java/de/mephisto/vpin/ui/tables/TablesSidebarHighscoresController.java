@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -251,7 +252,8 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onRestore() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      if (StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
+      GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+      if (emulator.isVpxEmulator() && StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
         WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
             "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
             "You can enter the values for this manually in the \"Script Details\" section.");
@@ -284,7 +286,6 @@ public class TablesSidebarHighscoresController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
-
     HighscoreMetadataRepresentation metadata = null;
     if (g.isPresent()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
@@ -325,7 +326,6 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.dataPane.setVisible(games.size() == 1);
 
     maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
-    infoContainer.setVisible(g.isPresent());
 
     if (g.isPresent() && this.games.size() == 1) {
       GameRepresentation game = g.get();
@@ -345,30 +345,22 @@ public class TablesSidebarHighscoresController implements Initializable {
         cardImage.setImage(new Image(resourceAsStream));
       }
 
-      String rom = game.getRom();
-      if (StringUtils.isEmpty(rom)) {
-        rom = game.getTableName();
-      }
-
-      if (StringUtils.isEmpty(rom)) {
-        backupCountLabel.setText("0");
-      }
-      else {
-        final String romName = rom;
-        JFXFuture.supplyAsync(() -> {
-          return Studio.client.getHigscoreBackupService().get(romName);
-        }).thenAcceptLater((backups) -> {
-          highscoreBackups = Studio.client.getHigscoreBackupService().get(romName);
-          backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
-          if (!highscoreBackups.isEmpty()) {
-            restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
-          }
-        });
-      }
+      JFXFuture.supplyAsync(() -> {
+        return Studio.client.getHigscoreBackupService().get(game.getId());
+      }).thenAcceptLater((backups) -> {
+        highscoreBackups = Studio.client.getHigscoreBackupService().get(game.getId());
+        backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
+        if (!highscoreBackups.isEmpty()) {
+          restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
+        }
+      });
 
       boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
       dataPane.setVisible(hasHighscore);
+
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       statusPane.setVisible(!hasHighscore);
+      infoContainer.setVisible(!hasHighscore && gameEmulator.isVpxEmulator());
 
       statusLabel.setText("Unknown status.");
       if (metadata != null) {
@@ -409,9 +401,10 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
 
         ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
+
         if (!summary.getScores().isEmpty()) {
           cardBtn.setDisable(false);
-          resetBtn.setDisable(StringUtils.isEmpty(rom));
+          resetBtn.setDisable(!gameEmulator.isVpxEmulator());
 
           scoreGraphWrapper.setVisible(true);
 

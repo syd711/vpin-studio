@@ -27,9 +27,18 @@ public class HighscoreBackupResources {
   @Autowired
   private GameService gameService;
 
-  @GetMapping("{rom}")
-  public List<HighscoreBackup> get(@PathVariable("rom") String rom) {
-    return highscoreBackupService.getBackups(rom);
+  @GetMapping("{gameId}")
+  public List<HighscoreBackup> get(@PathVariable("gameId") int gameId) {
+    try {
+      Game game = gameService.getGame(gameId);
+      if (game == null) {
+        return Collections.emptyList();
+      }
+      return highscoreBackupService.getBackups(game);
+    }
+    catch (Exception e) {
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Fetching backups failed: " + e.getMessage());
+    }
   }
 
   @PutMapping("backup/{gameId}")
@@ -53,8 +62,12 @@ public class HighscoreBackupResources {
     return highscoreBackupService.restore(game, gamesByRom, filename);
   }
 
-  @DeleteMapping("/{rom}/{filename}")
-  public boolean delete(@PathVariable("rom") String rom, @PathVariable("filename") String filename) {
-    return highscoreBackupService.delete(rom, filename);
+  @DeleteMapping("/{gameId}/{filename}")
+  public boolean delete(@PathVariable("gameId") int gameId, @PathVariable("filename") String filename) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return highscoreBackupService.delete(game, filename);
+    }
+    return false;
   }
 }

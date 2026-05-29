@@ -22,14 +22,12 @@ public class HighscoreBackupDeleteProgressModel extends ProgressModel<HighscoreB
   private final List<HighscoreBackup> backups;
   private final Iterator<HighscoreBackup> iterator;
   private final int gameId;
-  private final String rom;
 
-  public HighscoreBackupDeleteProgressModel(List<HighscoreBackup> backups, int gameId, String rom) {
+  public HighscoreBackupDeleteProgressModel(List<HighscoreBackup> backups, int gameId) {
     super("Deleting Highscore Backups");
     this.backups = backups;
     this.iterator = backups.iterator();
     this.gameId = gameId;
-    this.rom = rom;
   }
 
   @Override
@@ -65,7 +63,7 @@ public class HighscoreBackupDeleteProgressModel extends ProgressModel<HighscoreB
   @Override
   public void processNext(ProgressResultModel progressResultModel, HighscoreBackup backup) {
     try {
-      client.getHigscoreBackupService().delete(rom, backup.getFilename());
+      client.getHigscoreBackupService().delete(gameId, backup.getFilename());
     }
     catch (Exception e) {
       LOG.error("Failed to delete backup: " + e.getMessage(), e);

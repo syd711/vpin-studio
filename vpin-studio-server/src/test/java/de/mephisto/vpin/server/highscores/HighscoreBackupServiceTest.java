@@ -38,24 +38,17 @@ public class HighscoreBackupServiceTest extends AbstractVPinServerTest {
         String rom = game.getRom();
         assertNotNull(rom);
 
-        List<HighscoreBackup> backups = highscoreBackupService.getBackups(rom);
+        List<HighscoreBackup> backups = highscoreBackupService.getBackups(game);
         assertNotNull(backups);
         assertFalse(backups.isEmpty());
 
         // cleanup
-        highscoreBackupService.delete(rom, backupFile.getName());
+        highscoreBackupService.delete(game, backupFile.getName());
       }
     }
     catch (Exception e) {
       fail("Backup test failed: " + e.getMessage());
     }
-  }
-
-  @Test
-  public void testGetBackupsEmpty() {
-    List<HighscoreBackup> backups = highscoreBackupService.getBackups("nonexistent_rom");
-    assertNotNull(backups);
-    assertTrue(backups.isEmpty());
   }
 
   @Test
@@ -69,7 +62,7 @@ public class HighscoreBackupServiceTest extends AbstractVPinServerTest {
         assertTrue(backupFile.exists());
         String rom = game.getRom();
         if (rom != null) {
-          highscoreBackupService.delete(rom, backupFile.getName());
+          highscoreBackupService.delete(game, backupFile.getName());
         }
       }
     }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.highscores;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,12 @@ public class HigscoreBackupServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public List<HighscoreBackup> get(String rom) {
-    return Arrays.asList(getRestClient().get(API + "highscorebackups/" + rom, HighscoreBackup[].class));
+  public List<HighscoreBackup> get(int gameId) {
+    return Arrays.asList(getRestClient().get(API + "highscorebackups/" + gameId, HighscoreBackup[].class));
   }
 
-  public boolean delete(String rom, String filename) {
-    return getRestClient().delete(API + "highscorebackups/" + rom + "/" + filename);
+  public boolean delete(int gameId, String filename) {
+    return getRestClient().delete(API + "highscorebackups/" + gameId + "/" + filename);
   }
 
   public boolean backup(int gameId) throws Exception {

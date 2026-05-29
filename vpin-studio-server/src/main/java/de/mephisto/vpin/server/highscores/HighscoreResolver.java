@@ -72,7 +72,7 @@ public class HighscoreResolver implements InitializingBean {
   }
 
   private File getFPRamFile(Game game) {
-    return folderLookupService.getFPRamFile(game);
+    return folderLookupService.getFpRamFile(game);
   }
 
   @Nullable
@@ -106,6 +106,11 @@ public class HighscoreResolver implements InitializingBean {
   @Nullable
   public File getNvRamFile(@NonNull Game game) {
     return folderLookupService.getNvRamFile(game);
+  }
+
+  @Nullable
+  public File getFpRamFile(@NonNull Game game) {
+    return folderLookupService.getFpRamFile(game);
   }
 
 
