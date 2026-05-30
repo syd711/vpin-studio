@@ -3,6 +3,8 @@
 ### Changes
 
 - Added automatic VPin Studio backups for minor versions.
+- Fixed VPS view which did not show all assets because of empty date values.
+- Added more logging to figure out why for some users the ROM column only shows "..." as a value.
 
 ---
 

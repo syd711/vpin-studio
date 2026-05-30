@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
@@ -262,9 +262,9 @@ public class TablesSidebarMameController implements Initializable {
       if (game.isPresent()) {
         GameRepresentation gameRepresentation = game.get();
 
-        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(String.valueOf(MonitoredFile.VPMAliasTxt));
-        monitoredTextFile.setEmulatorId(gameRepresentation.getEmulatorId());
-        boolean b = Dialogs.openTextEditor(monitoredTextFile, "VPMAlias.txt");
+        TextEditorFile textEditorFile = new TextEditorFile(TextEditorFileTypes.VPMAliasTxt);
+        textEditorFile.setEmulatorId(gameRepresentation.getEmulatorId());
+        boolean b = Dialogs.openTextEditor(textEditorFile, "VPMAlias.txt");
         if (b) {
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
           if (!StringUtils.isEmpty(gameRepresentation.getRomAlias())) {

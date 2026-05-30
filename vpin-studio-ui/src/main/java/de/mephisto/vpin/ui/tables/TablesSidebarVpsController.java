@@ -442,7 +442,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     List<Node> entries = new ArrayList<>();
     for (VpsAuthoredUrls authoredUrl : urls) {
       String version = authoredUrl.getVersion();
-      long updatedAt = authoredUrl.getCreatedAt();
+      Long updatedAt = authoredUrl.getCreatedAt();
       List<String> authors = authoredUrl.getAuthors();
 
       String updateText = null;

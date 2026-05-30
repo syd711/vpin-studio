@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.textedit;
 
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -61,15 +61,15 @@ public class TextEditServiceTest {
   @Test
   void getText_delegatesToAliasService_forVPMAliasTxt() throws Exception {
     GameEmulator emulator = mock(GameEmulator.class);
-    MonitoredTextFile expected = new MonitoredTextFile();
-    MonitoredTextFile request = new MonitoredTextFile();
-    request.setFile(MonitoredFile.VPMAliasTxt);
+    TextEditorFile expected = new TextEditorFile();
+    TextEditorFile request = new TextEditorFile();
+    request.setFile(TextEditorFileTypes.VPMAliasTxt);
     request.setEmulatorId(1);
 
     when(emulatorService.getGameEmulator(1)).thenReturn(emulator);
     when(VPinMameRomAliasService.loadAliasFile(emulator)).thenReturn(expected);
 
-    MonitoredTextFile result = textEditService.getText(request);
+    TextEditorFile result = textEditService.getText(request);
 
     assertSame(expected, result);
     verify(VPinMameRomAliasService).loadAliasFile(emulator);
@@ -79,8 +79,8 @@ public class TextEditServiceTest {
 
   @Test
   void getText_throwsException_whenLocalGameFileDoesNotExist() {
-    MonitoredTextFile request = new MonitoredTextFile();
-    request.setFile(MonitoredFile.LOCAL_GAME_FILE);
+    TextEditorFile request = new TextEditorFile();
+    request.setFile(TextEditorFileTypes.LOCAL_GAME_FILE);
     request.setPath("/nonexistent/path/to/file.txt");
 
     assertThrows(Exception.class, () -> textEditService.getText(request));
@@ -91,11 +91,11 @@ public class TextEditServiceTest {
     File testFile = tempDir.resolve("test.ini").toFile();
     Files.writeString(testFile.toPath(), "key=value");
 
-    MonitoredTextFile request = new MonitoredTextFile();
-    request.setFile(MonitoredFile.LOCAL_GAME_FILE);
+    TextEditorFile request = new TextEditorFile();
+    request.setFile(TextEditorFileTypes.LOCAL_GAME_FILE);
     request.setPath(testFile.getAbsolutePath());
 
-    MonitoredTextFile result = textEditService.getText(request);
+    TextEditorFile result = textEditService.getText(request);
 
     assertEquals("key=value", result.getContent());
     assertEquals(testFile.getAbsolutePath(), result.getPath());
@@ -106,16 +106,16 @@ public class TextEditServiceTest {
   @Test
   void save_sortsLinesAndSavesAliasFile_forVPMAliasTxt() throws Exception {
     GameEmulator emulator = mock(GameEmulator.class);
-    MonitoredTextFile expected = new MonitoredTextFile();
-    MonitoredTextFile request = new MonitoredTextFile();
-    request.setFile(MonitoredFile.VPMAliasTxt);
+    TextEditorFile expected = new TextEditorFile();
+    TextEditorFile request = new TextEditorFile();
+    request.setFile(TextEditorFileTypes.VPMAliasTxt);
     request.setEmulatorId(2);
     request.setContent("zebra=1\nalpha=2\nmiddle=3");
 
     when(emulatorService.getGameEmulator(2)).thenReturn(emulator);
     when(VPinMameRomAliasService.loadAliasFile(emulator)).thenReturn(expected);
 
-    MonitoredTextFile result = textEditService.save(request);
+    TextEditorFile result = textEditService.save(request);
 
     // The sorted content should have been passed to saveAliasFile
     verify(VPinMameRomAliasService).saveAliasFile(eq(emulator), contains("alpha"));
@@ -129,12 +129,12 @@ public class TextEditServiceTest {
     File testFile = tempDir.resolve("output.txt").toFile();
     Files.writeString(testFile.toPath(), "original");
 
-    MonitoredTextFile request = new MonitoredTextFile();
-    request.setFile(MonitoredFile.LOCAL_GAME_FILE);
+    TextEditorFile request = new TextEditorFile();
+    request.setFile(TextEditorFileTypes.LOCAL_GAME_FILE);
     request.setPath(testFile.getAbsolutePath());
     request.setContent("line1\nline2");
 
-    MonitoredTextFile result = textEditService.save(request);
+    TextEditorFile result = textEditService.save(request);
 
     assertNotNull(result);
     assertTrue(testFile.exists());

@@ -15,8 +15,8 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -537,11 +537,11 @@ public class Studio extends Application {
   public static boolean editGameFile(@NonNull GameRepresentation game, @NonNull String filePath) throws Exception {
     FileMonitoringService.getInstance().setPaused(true);
 
-    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(String.valueOf(MonitoredFile.LOCAL_GAME_FILE));
-    monitoredTextFile.setFileId(String.valueOf(game.getId()));
-    monitoredTextFile.setPath(filePath);
-    MonitoredTextFile loadedMonitoredFile = client.getTextEditorService().getText(monitoredTextFile);
-    FileMonitoringService.getInstance().monitor(monitoredTextFile);
+    TextEditorFile textEditorFile = new TextEditorFile(String.valueOf(TextEditorFileTypes.LOCAL_GAME_FILE));
+    textEditorFile.setFileId(String.valueOf(game.getId()));
+    textEditorFile.setPath(filePath);
+    TextEditorFile loadedMonitoredFile = client.getTextEditorService().getText(textEditorFile);
+    FileMonitoringService.getInstance().monitor(textEditorFile);
 
     String fileName = FilenameUtils.getBaseName(game.getGameFileName());
 

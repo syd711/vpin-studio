@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.textedit;
 
-public enum MonitoredFile {
+public enum TextEditorFileTypes {
   DmdDeviceIni, VPinballXIni, VPMAliasTxt, VBScript, DOFLinxINI, LOCAL_GAME_FILE;
 
 //  @Override

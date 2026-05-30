@@ -1,12 +1,10 @@
 package de.mephisto.vpin.restclient.textedit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.File;
 import java.time.OffsetDateTime;
 
-public class MonitoredTextFile {
-  private MonitoredFile file;
+public class TextEditorFile {
+  private TextEditorFileTypes file;
   private String content;
   private OffsetDateTime lastModified;
   private String path;
@@ -14,20 +12,20 @@ public class MonitoredTextFile {
   private int emulatorId;
   private long size;
 
-  public MonitoredTextFile(MonitoredFile monitoredFile) {
-    this.file = monitoredFile;
+  public TextEditorFile(TextEditorFileTypes textEditorFileTypes) {
+    this.file = textEditorFileTypes;
   }
 
-  public MonitoredTextFile(File file) {
+  public TextEditorFile(File file) {
     this.path = file.getAbsolutePath();
-    this.file = MonitoredFile.LOCAL_GAME_FILE;
+    this.file = TextEditorFileTypes.LOCAL_GAME_FILE;
   }
 
-  public MonitoredTextFile(String text) {
+  public TextEditorFile(String text) {
     this.content = text;
   }
 
-  public MonitoredTextFile() {
+  public TextEditorFile() {
 
   }
 
@@ -47,11 +45,11 @@ public class MonitoredTextFile {
     this.path = path;
   }
 
-  public MonitoredFile getFile() {
+  public TextEditorFileTypes getFile() {
     return file;
   }
 
-  public void setFile(MonitoredFile file) {
+  public void setFile(TextEditorFileTypes file) {
     this.file = file;
   }
 
