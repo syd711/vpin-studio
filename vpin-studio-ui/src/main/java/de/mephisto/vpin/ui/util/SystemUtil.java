@@ -73,7 +73,7 @@ public class SystemUtil {
         }
       }
       catch (IOException e) {
-        LOG.error("Failed to open file: " + e.getMessage(), e);
+        LOG.error("Failed to open system file: " + e.getMessage(), e);
       }
     }
     else {

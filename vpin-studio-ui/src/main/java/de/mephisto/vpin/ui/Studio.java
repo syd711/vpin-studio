@@ -486,7 +486,7 @@ public class Studio extends Application {
             desktop.browse(new URI(url));
           }
           catch (Exception e) {
-            LOG.error("Failed to open file: " + e.getMessage(), e);
+            LOG.error("Failed to open macOS file: " + e.getMessage(), e);
           }
         }
       }
@@ -524,7 +524,7 @@ public class Studio extends Application {
             return true;
           }
           catch (Exception e) {
-            LOG.error("Failed to open file: " + e.getMessage(), e);
+            LOG.error("Failed to open {} file: {}", osName, e.getMessage(), e);
           }
         }
       }

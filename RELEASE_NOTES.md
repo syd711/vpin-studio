@@ -1,3 +1,12 @@
+## Release Notes 5.0.1
+
+### Changes
+
+- Added automatic VPin Studio backups for minor versions.
+
+---
+
+
 ## Release Notes 5.0.0
 
 ### !!! Important Notice !!!

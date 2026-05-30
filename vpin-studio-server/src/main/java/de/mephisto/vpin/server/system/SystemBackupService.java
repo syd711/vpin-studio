@@ -1,5 +1,9 @@
 package de.mephisto.vpin.server.system;
 
+import de.mephisto.vpin.server.util.VersionUtil;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.InitializingBean;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
@@ -30,7 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
-public class SystemBackupService {
+public class SystemBackupService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(SystemBackupService.class);
 
   @Autowired
@@ -44,9 +48,6 @@ public class SystemBackupService {
 
   @Autowired
   private GameService gameService;
-
-  @Autowired
-  private PINemHiService pinemhiService;
 
   @Autowired
   private PinVolService pinVolService;
@@ -63,6 +64,21 @@ public class SystemBackupService {
         .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
         .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
         .build();
+  }
+
+  public void createVersionBackup(@NonNull String version) throws Exception {
+    File folder = new File("./resources/backups");
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    String fileName = "VPin-Studio-Backup-" + version + ".json";
+    File f = new File(folder, fileName);
+
+    if (!f.exists()) {
+      String json = create();
+      FileUtils.writeStringToFile(new File(folder, fileName), json, StandardCharsets.UTF_8);
+      LOG.info("Written system backup file: {}", f.getAbsolutePath());
+    }
   }
 
 
@@ -233,5 +249,17 @@ public class SystemBackupService {
       LOG.error("Failed to restore backup: {}", e.getMessage(), e);
     }
     return false;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    try {
+      if (VersionUtil.isMinorVersion() && VersionUtil.getVersion() != null) {
+        createVersionBackup(VersionUtil.getVersion());
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to write minor version system backup: {}", e.getMessage());
+    }
   }
 }
