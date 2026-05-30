@@ -14,7 +14,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
@@ -190,7 +190,7 @@ public class TableUploadController implements Initializable, DialogController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor("readme", stage, new MonitoredTextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new TextEditorFile(value), "README");
   }
 
   @FXML

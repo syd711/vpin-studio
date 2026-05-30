@@ -303,7 +303,7 @@ public class FolderLookupService {
   }
 
   @Nullable
-  public File getFPRamFile(@NonNull Game game) {
+  public File getFpRamFile(@NonNull Game game) {
     if (game.getEmulator() == null) {
       return null;
     }

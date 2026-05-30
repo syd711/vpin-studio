@@ -2,8 +2,8 @@ package de.mephisto.vpin.ui.tables.vbsedit;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -38,32 +38,30 @@ public class VBSManager {
 
   public void edit(Optional<GameRepresentation> game, boolean embeddedEditor) {
     try {
-      MonitoredTextFile monitoredTextFile = new MonitoredTextFile(MonitoredFile.VBScript);
-      monitoredTextFile.setFileId(String.valueOf(game.get().getId()));
+      TextEditorFile textEditorFile = new TextEditorFile(TextEditorFileTypes.VBScript);
+      textEditorFile.setFileId(String.valueOf(game.get().getId()));
+      TextEditorFile value = client.getTextEditorService().getText(textEditorFile);
 
-      if (game.isPresent()) {
-        if (embeddedEditor) {
-          boolean b = Dialogs.openTextEditor(monitoredTextFile, game.get().getGameFileName());
-          if (b) {
-            client.getMameService().clearCache();
-            EventManager.getInstance().notifyTablesChanged();
-          }
+      if (embeddedEditor) {
+        boolean b = Dialogs.openTextEditor(value, game.get().getGameFileName());
+        if (b) {
+          client.getMameService().clearCache();
+          EventManager.getInstance().notifyTablesChanged();
         }
-        else {
-          MonitoredTextFile value = client.getTextEditorService().getText(monitoredTextFile);
-          File vbsFile = writeVbsFile(game.get(), value.getContent());
+      }
+      else {
+        File vbsFile = writeVbsFile(game.get(), value.getContent());
 
-          openFile(vbsFile);
-        }
+        openFile(vbsFile);
       }
     }
     catch (Exception e) {
       LOG.error("Failed to open table VPS: " + e.getMessage(), e);
       String msg = e.getMessage();
-      if(msg != null) {
+      if (msg != null) {
         msg = msg.replaceAll("\\\\n", "\n");
       }
-      WidgetFactory.showOutputDialog(Studio.stage, "Error",  "The extraction of the .vbs file failed.", "Please report this issue to: https://github.com/syd711/vpin-studio/issues", msg);
+      WidgetFactory.showOutputDialog(Studio.stage, "Error", "The extraction of the .vbs file failed.", "Please report this issue to: https://github.com/syd711/vpin-studio/issues", msg);
     }
   }
 

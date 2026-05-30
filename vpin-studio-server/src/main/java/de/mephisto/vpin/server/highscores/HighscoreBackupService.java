@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import org.jetbrains.annotations.NotNull;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
@@ -59,8 +60,8 @@ public class HighscoreBackupService implements InitializingBean {
   @Autowired
   private FolderLookupService folderLookupService;
 
-  public boolean delete(@NonNull String rom, String filename) {
-    File folder = new File(systemService.getBackupFolder(), rom);
+  public boolean delete(@NonNull Game game, String filename) {
+    File folder = getBackupFolder(game);
     File archive = new File(folder, filename);
     if (archive.exists() && !archive.delete()) {
       throw new UnsupportedOperationException("Failed to delete " + archive.getAbsolutePath());
@@ -69,9 +70,10 @@ public class HighscoreBackupService implements InitializingBean {
     return true;
   }
 
-  public List<HighscoreBackup> getBackups(@NonNull String rom) {
-    File folder = new File(systemService.getBackupFolder(), rom);
+  public List<HighscoreBackup> getBackups(@NonNull Game game) {
     List<HighscoreBackup> result = new ArrayList<>();
+    File folder = getBackupFolder(game);
+
     if (folder.exists()) {
       File[] files = folder.listFiles((dir, name) -> name.endsWith("." + FILE_SUFFIX));
       if (files != null) {
@@ -91,25 +93,27 @@ public class HighscoreBackupService implements InitializingBean {
 
   @Nullable
   public File backup(Game game) {
-    String rom = game.getRom();
-    if (StringUtils.isEmpty(rom)) {
-      rom = game.getTableName();
+    if (game.isVpxGame()) {
+      String rom = game.getRom();
+      if (StringUtils.isEmpty(rom)) {
+        rom = game.getTableName();
+      }
+      if (!StringUtils.isEmpty(rom)) {
+        File folder = new File(systemService.getBackupFolder(), rom);
+        return writeBackupFile(game, folder);
+      }
     }
-    if (!StringUtils.isEmpty(rom)) {
-      File folder = new File(systemService.getBackupFolder(), rom);
+    else if (game.isFpGame()) {
+      String gameName = game.getGameName();
+      File folder = new File(systemService.getBackupFolder(), gameName);
       return writeBackupFile(game, folder);
     }
     return null;
   }
 
   public boolean restore(@NonNull Game game, @NonNull List<Game> games, @NonNull String filename) {
-    String rom = game.getRom();
-    if (StringUtils.isEmpty(rom)) {
-      rom = game.getTableName();
-    }
-
-    File backupRomFolder = new File(systemService.getBackupFolder(), rom);
-    File backupFile = new File(backupRomFolder, filename);
+    File backupFolder = getBackupFolder(game);
+    File backupFile = new File(backupFolder, filename);
     boolean result = restoreBackupFile(game, game.getEmulator(), backupFile);
     if (result) {
       highscoreService.setPauseHighscoreEvents(true);
@@ -121,8 +125,8 @@ public class HighscoreBackupService implements InitializingBean {
     return result;
   }
 
-  //--------------------------------------
 
+  //--------------------------------------
   public HighscoreBackup readBackupFile(@NonNull File archiveFile) {
     try {
 
@@ -179,7 +183,8 @@ public class HighscoreBackupService implements InitializingBean {
     return descriptorFile;
   }
 
-  private boolean writeHighscoreBackup(Game game, GameEmulator emulator, Highscore highscore, File romBackupFolder, File tempFile, String filename) {
+  private boolean writeHighscoreBackup(Game game, GameEmulator emulator, Highscore highscore, File
+      romBackupFolder, File tempFile, String filename) {
     boolean highscoreWritten = false;
 
     try (FileOutputStream fos = new FileOutputStream(tempFile);
@@ -199,8 +204,15 @@ public class HighscoreBackupService implements InitializingBean {
 
       //zip nvram file
       File nvRamFile = highscoreResolver.getNvRamFile(game);
-      if (nvRamFile.exists()) {
+      if (nvRamFile != null && nvRamFile.exists()) {
         ZipUtil.zipFile(nvRamFile, nvRamFile.getName(), zipOut);
+        highscoreWritten = true;
+      }
+
+      //zip fpRam file
+      File fpRamFile = highscoreResolver.getFpRamFile(game);
+      if (fpRamFile != null && fpRamFile.exists()) {
+        ZipUtil.zipFile(fpRamFile, fpRamFile.getName(), zipOut);
         highscoreWritten = true;
       }
 
@@ -275,10 +287,22 @@ public class HighscoreBackupService implements InitializingBean {
   public boolean restoreBackupFile(@NonNull Game game, @NonNull GameEmulator gameEmulator, @NonNull File backupFile) {
     HighscoreBackup highscoreBackup = readBackupFile(backupFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();
+    if (highscoreType == null && game.isFpGame()) {
+      highscoreType = HighscoreType.FPRam;
+    }
+
+    if (highscoreType == null) {
+      LOG.warn("Not highscore type set for game {}/{}", game.getGameDisplayName(), game.getId());
+      return false;
+    }
 
     switch (highscoreType) {
       case NVRam: {
         File target = new File(folderLookupService.getNvRamFolder(game), highscoreBackup.getHighscoreFilename());
+        return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
+      }
+      case FPRam: {
+        File target = new File(folderLookupService.getFpRamFile(game).getParentFile(), highscoreBackup.getHighscoreFilename());
         return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
@@ -304,6 +328,21 @@ public class HighscoreBackupService implements InitializingBean {
       }
     }
     return false;
+  }
+
+  private File getBackupFolder(@NotNull Game game) {
+    File folder = systemService.getBackupFolder();
+    if (game.isVpxGame()) {
+      String rom = game.getRom();
+      if (StringUtils.isEmpty(rom)) {
+        rom = game.getTableName();
+      }
+      folder = new File(systemService.getBackupFolder(), rom);
+    }
+    else if (game.isFpGame()) {
+      folder = new File(systemService.getBackupFolder(), game.getGameName());
+    }
+    return folder;
   }
 
   @Override

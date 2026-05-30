@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -55,7 +55,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
     }
     else {
       try {
-        boolean b = Dialogs.openTextEditor(new MonitoredTextFile(MonitoredFile.DmdDeviceIni), "DmdDevice.ini");
+        boolean b = Dialogs.openTextEditor(new TextEditorFile(TextEditorFileTypes.DmdDeviceIni), "DmdDevice.ini");
         if (b) {
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();

@@ -976,8 +976,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnRom, (value, model) -> {
       String rom = value.getRom();
 
-      if (model == null || model.getGameEmulator() == null) {
+      if (model == null || !model.loaded) {
         return new Label("...");
+      }
+      if (model.getGameEmulator() == null) {
+        return new Label("-");
       }
 
       if (!model.getGameEmulator().isFxEmulator() && StringUtils.isEmpty(rom)) {

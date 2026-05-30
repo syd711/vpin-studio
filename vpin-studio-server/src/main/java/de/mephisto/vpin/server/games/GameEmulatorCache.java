@@ -12,6 +12,7 @@ class GameEmulatorCache {
   private final List<Integer> pendingNewGameIds = new ArrayList<>();
   private EmulatorType emulatorType;
   private int emulatorId;
+  private boolean fullyLoaded = false;
 
   public GameEmulatorCache(EmulatorType emulatorType, int emulatorId) {
     this.emulatorType = emulatorType;
@@ -21,6 +22,11 @@ class GameEmulatorCache {
   public GameEmulatorCache(EmulatorType emulatorType, int emulatorId, List<Game> gamesByEmulator) {
     this(emulatorType, emulatorId);
     this.games.addAll(gamesByEmulator);
+    this.fullyLoaded = true;
+  }
+
+  public boolean isFullyLoaded() {
+    return fullyLoaded;
   }
 
   public EmulatorType getEmulatorType() {

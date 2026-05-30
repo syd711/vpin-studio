@@ -42,6 +42,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.*;
@@ -814,12 +815,22 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         return result;
       }
 
-      FileReader fileReader = new FileReader(ini);
+      List<String> rawLines = Files.readAllLines(ini.toPath());
+      String cleaned = rawLines.stream()
+          .map(line -> {
+            if (line.contains("#")) {
+              line = line.substring(0, line.indexOf('#')).trim();
+            }
+            return line;
+          })
+          .collect(Collectors.joining("\n"));
+
+      StringReader stringReader = new StringReader(cleaned);
       try {
-        iniConfiguration.read(fileReader);
+        iniConfiguration.read(stringReader);
       }
       finally {
-        fileReader.close();
+        stringReader.close();
       }
 
       Map<String, String> sectionMappings = new HashMap<>();
@@ -837,7 +848,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
-        if (section.contains("INFO")) {
+        if (section != null && section.contains("INFO")) {
           try {
             FrontendPlayerDisplay display = new FrontendPlayerDisplay();
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
@@ -846,16 +857,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
               display.setTechnicalName(section);
               display.setName(name);
               display.setScreen(VPinScreen.valueOfScreen(name));
-              display.setX(sectionNode.getInt("ScreenXPos"));
-              display.setY(sectionNode.getInt("ScreenYPos"));
-              display.setWidth(sectionNode.getInt("ScreenWidth"));
-              display.setHeight(sectionNode.getInt("ScreenHeight"));
-              display.setRotation(sectionNode.getInt("ScreenRotation"));
+              display.setX(sectionNode.getInt("ScreenXPos", 0));
+              display.setY(sectionNode.getInt("ScreenYPos", 0));
+              display.setWidth(sectionNode.getInt("ScreenWidth", 0));
+              display.setHeight(sectionNode.getInt("ScreenHeight", 0));
+              display.setRotation(sectionNode.getInt("ScreenRotation", 0));
+              result.add(display);
             }
             else {
-              LOG.warn("Unsupported PinUP display for screen '{}', display has been skipped.", name);
+              LOG.warn("Unsupported PinUP display for section '{}', display has been skipped.", section);
             }
-            result.add(display);
           }
           catch (Exception e) {
             LOG.error("Failed to create PinUPPlayerDisplay: {}", e.getMessage());
@@ -921,8 +932,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         }
         //Move this to AFTER we get the id
         preparedStatement.close();
-      } catch (SQLException e) {
-          LOG.error("Failed to add game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
+      }
+      catch (SQLException e) {
+        LOG.error("Failed to add game entry for '{}', file name '{}', emulator {}", tableDetails.getGameName(), tableDetails.getGameFileName(), tableDetails.getEmulatorId());
       }
     }
     catch (Exception e) {
@@ -1256,8 +1268,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
           int id = keys.getInt(1);
           return getPlaylist(id);
         }
-      } catch (SQLException e) {
-          LOG.error("Failed to update playlist: {}", e.getMessage(), e);
+      }
+      catch (SQLException e) {
+        LOG.error("Failed to update playlist: {}", e.getMessage(), e);
       }
       //Close after last accessed.
       preparedStatement.close();
@@ -1488,16 +1501,17 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       LOG.info("Saved {}", emulator);
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
-          if (keys.next()) {
-              int id = keys.getInt(1);
-              return getEmulator(id);
-          }
-      } catch (SQLException e) {
-              LOG.error("Failed to update emulator: {}", e.getMessage(), e);
-          }
+        if (keys.next()) {
+          int id = keys.getInt(1);
+          return getEmulator(id);
+        }
+      }
+      catch (SQLException e) {
+        LOG.error("Failed to update emulator: {}", e.getMessage(), e);
+      }
 
-          //Close after last accessed
-        preparedStatement.close();
+      //Close after last accessed
+      preparedStatement.close();
       return getEmulator(emulator.getId());
     }
     catch (Exception e) {
@@ -1808,12 +1822,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
 
   public FrontendControl getFrontendControlFor(VPinScreen screen) {
-      return switch (screen) {
-          case Other2 -> getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
-          case GameHelp -> getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
-          case GameInfo -> getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
-          default -> new FrontendControl();
-      };
+    return switch (screen) {
+      case Other2 -> getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
+      case GameHelp -> getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
+      case GameInfo -> getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
+      default -> new FrontendControl();
+    };
 
   }
 
@@ -2355,12 +2369,17 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         return result;
       }
 
-      FileReader fileReader = new FileReader(ini);
+      List<String> rawLines = Files.readAllLines(ini.toPath());
+      String cleaned = rawLines.stream()
+          .map(line -> line.replace("#", ""))
+          .collect(Collectors.joining("\n"));
+
+      StringReader stringReader = new StringReader(cleaned);
       try {
-        iniConfiguration.read(fileReader);
+        iniConfiguration.read(stringReader);
       }
       finally {
-        fileReader.close();
+        stringReader.close();
       }
 
       Map<String, String> sectionMappings = new HashMap<>();
@@ -2378,7 +2397,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
-        if (section.contains("INFO")) {
+        if (section != null && section.contains("INFO")) {
           try {
             FrontendPlayerDisplay display = new FrontendPlayerDisplay();
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
@@ -2386,16 +2405,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             if (name != null) {
               display.setName(name);
               display.setScreen(VPinScreen.valueOfScreen(name));
-              display.setX(sectionNode.getInt("ScreenXPos"));
-              display.setY(sectionNode.getInt("ScreenYPos"));
-              display.setWidth(sectionNode.getInt("ScreenWidth"));
-              display.setHeight(sectionNode.getInt("ScreenHeight"));
-              display.setRotation(sectionNode.getInt("ScreenRotation"));
+              display.setX(sectionNode.getInt("ScreenXPos", 0));
+              display.setY(sectionNode.getInt("ScreenYPos", 0));
+              display.setWidth(sectionNode.getInt("ScreenWidth", 0));
+              display.setHeight(sectionNode.getInt("ScreenHeight", 0));
+              display.setRotation(sectionNode.getInt("ScreenRotation", 0));
+              result.add(display);
             }
             else {
-              LOG.warn("Unsupported PinUP display for screen '{}', display has been skipped.", name);
+              LOG.warn("Unsupported PinUP display for section '{}', display has been skipped.", section);
             }
-            result.add(display);
           }
           catch (Exception e) {
             LOG.error("Failed to create PinUPPlayerDisplay: {}", e.getMessage());

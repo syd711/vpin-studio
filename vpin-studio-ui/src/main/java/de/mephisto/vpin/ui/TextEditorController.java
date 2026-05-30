@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.util.RichText;
 import javafx.event.ActionEvent;
@@ -57,7 +57,7 @@ public class TextEditorController implements Initializable, DialogController {
   private Label lastModified;
 
   private RichText richText;
-  private MonitoredTextFile file;
+  private TextEditorFile file;
 
   private boolean saved = false;
 
@@ -72,7 +72,7 @@ public class TextEditorController implements Initializable, DialogController {
 
     try {
       file.setContent(this.richText.getCodeArea().getText());
-      MonitoredTextFile save = client.getTextEditorService().save(file);
+      TextEditorFile save = client.getTextEditorService().save(file);
       lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(save.getLastModified()));
       size.setText(FileUtils.readableFileSize(save.getSize()));
     }
@@ -127,10 +127,9 @@ public class TextEditorController implements Initializable, DialogController {
     stage.close();
   }
 
-  public void load(MonitoredTextFile file) throws Exception {
+  public void load(TextEditorFile file) throws Exception {
     this.file = file;
-    //We need the file if we want to load it.
-    if(file.getFile() != null) {
+    if(file.getFile() == null) {
       richText = new RichText(file.getContent());
       richText.getCodeArea().setEditable(false);
       size.setVisible(false);
@@ -139,7 +138,7 @@ public class TextEditorController implements Initializable, DialogController {
       dataGrid.setVisible(false);
     }
     else {
-      MonitoredTextFile value = client.getTextEditorService().getText(file);
+      TextEditorFile value = client.getTextEditorService().getText(file);
       //Just an extra check
       if (value != null){
           lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getLastModified()));

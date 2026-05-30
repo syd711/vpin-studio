@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -216,7 +216,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new TextEditorFile(file), file.getName());
     }
   }
 
@@ -230,7 +230,7 @@ public class TablesSidebarPUPPackController implements Initializable {
             return;
         }
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new TextEditorFile(file), file.getName());
     }
   }
 

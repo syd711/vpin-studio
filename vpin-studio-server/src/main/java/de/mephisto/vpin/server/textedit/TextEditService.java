@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.textedit;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -64,15 +64,15 @@ public class TextEditService {
   @Autowired
   private VPXService vpxService;
 
-  public MonitoredTextFile getText(MonitoredTextFile monitoredTextFile) throws Exception {
+  public TextEditorFile getText(TextEditorFile textEditorFile) throws Exception {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-      MonitoredFile monitoredFile = monitoredTextFile.getFile() != null
-                ? monitoredTextFile.getFile()
-                : MonitoredFile.valueOf(monitoredTextFile.getContent());
+      TextEditorFileTypes textEditorFileTypes = textEditorFile.getFile() != null
+                ? textEditorFile.getFile()
+                : TextEditorFileTypes.valueOf(textEditorFile.getContent());
 
-      switch (monitoredFile) {
+      switch (textEditorFileTypes) {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
@@ -80,10 +80,10 @@ public class TextEditService {
           String iniText = Files.readString(filePath);
           //Remove BOM
           iniText = iniText.replace("\uFEFF", "");
-          monitoredTextFile.setContent(iniText);
-          monitoredTextFile.setPath(init.getAbsolutePath());
-          monitoredTextFile.setSize(init.length());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setContent(iniText);
+          textEditorFile.setPath(init.getAbsolutePath());
+          textEditorFile.setSize(init.length());
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
             
           break;
         }
@@ -93,51 +93,51 @@ public class TextEditService {
           String iniText = Files.readString(filePath);
           //Remove BOM
           iniText = iniText.replace("\uFEFF", "");
-          monitoredTextFile.setContent(iniText);
-          monitoredTextFile.setPath(init.getAbsolutePath());
-          monitoredTextFile.setSize(init.length());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setContent(iniText);
+          textEditorFile.setPath(init.getAbsolutePath());
+          textEditorFile.setSize(init.length());
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
           break;
         }
         case VPinballXIni: {
           File init = vpxService.getVPXFile();
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
-          monitoredTextFile.setContent(iniText);
-          monitoredTextFile.setPath(init.getAbsolutePath());
-          monitoredTextFile.setSize(init.length());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setContent(iniText);
+          textEditorFile.setPath(init.getAbsolutePath());
+          textEditorFile.setSize(init.length());
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(init.lastModified()), ZoneId.systemDefault()));
           break;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(monitoredTextFile.getEmulatorId());
+          GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(textEditorFile.getEmulatorId());
           return VPinMameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));
+          Game game = frontendService.getOriginalGame(Integer.parseInt(textEditorFile.getFileId()));
           File gameFile = game.getGameFile();
           String vbs = VPXUtil.exportVBS(gameFile, serverSettings.isKeepVbsFiles());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
-          monitoredTextFile.setPath(gameFile.getAbsolutePath());
-          monitoredTextFile.setSize(vbs.getBytes().length);
-          monitoredTextFile.setContent(vbs);
-          return monitoredTextFile;
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setPath(gameFile.getAbsolutePath());
+          textEditorFile.setSize(vbs.getBytes().length);
+          textEditorFile.setContent(vbs);
+          return textEditorFile;
         }
         case LOCAL_GAME_FILE: {
-          monitoredTextFile.setLastModified(OffsetDateTime.now());
-          File f = new File(monitoredTextFile.getPath());
+          textEditorFile.setLastModified(OffsetDateTime.now());
+          File f = new File(textEditorFile.getPath());
           if (!f.exists()) {
             throw new UnsupportedOperationException("No such file: " + f.getAbsolutePath());
           }
           String iniText = Files.readString(f.toPath());
-          monitoredTextFile.setContent(iniText);
-          monitoredTextFile.setPath(f.getAbsolutePath());
-          monitoredTextFile.setSize(f.length());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
-          return monitoredTextFile;
+          textEditorFile.setContent(iniText);
+          textEditorFile.setPath(f.getAbsolutePath());
+          textEditorFile.setSize(f.length());
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
+          return textEditorFile;
         }
         default: {
-          throw new UnsupportedOperationException("Unknown VPin file: " + monitoredFile);
+          throw new UnsupportedOperationException("Unknown VPin file: " + textEditorFileTypes);
         }
       }
 
@@ -146,19 +146,19 @@ public class TextEditService {
       LOG.error("Error reading text file: {}", e.getMessage(), e);
       throw e;
     }
-    return monitoredTextFile;
+    return textEditorFile;
   }
 
-  public MonitoredTextFile save(MonitoredTextFile monitoredTextFile) {
+  public TextEditorFile save(TextEditorFile textEditorFile) {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-      monitoredTextFile.setLastModified(OffsetDateTime.now());
+      textEditorFile.setLastModified(OffsetDateTime.now());
 
-        MonitoredFile monitoredFile = monitoredTextFile.getFile() != null
-                ? monitoredTextFile.getFile()
-                : MonitoredFile.valueOf(monitoredTextFile.getContent());
+        TextEditorFileTypes textEditorFileTypes = textEditorFile.getFile() != null
+                ? textEditorFile.getFile()
+                : TextEditorFileTypes.valueOf(textEditorFile.getContent());
 
-      switch (monitoredFile) {
+      switch (textEditorFileTypes) {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
@@ -170,16 +170,16 @@ public class TextEditService {
           if (iniFile.delete()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8));
             out.write('\ufeff');
-            out.write(monitoredTextFile.getContent());
+            out.write(textEditorFile.getContent());
             out.close();
             LOG.info("Written {}", iniFile.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
           }
-          monitoredTextFile.setSize(iniFile.length());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(iniFile.lastModified()), ZoneId.systemDefault()));
-          return monitoredTextFile;
+          textEditorFile.setSize(iniFile.length());
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(iniFile.lastModified()), ZoneId.systemDefault()));
+          return textEditorFile;
         }
         case DOFLinxINI: {
           File dofLinxIni = dofLinxService.getDOFLinxINI();
@@ -191,20 +191,20 @@ public class TextEditService {
           if (dofLinxIni.delete()) {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dofLinxIni), StandardCharsets.UTF_8));
             out.write('\ufeff');
-            out.write(monitoredTextFile.getContent());
+            out.write(textEditorFile.getContent());
             out.close();
             LOG.info("Written {}", dofLinxIni.getAbsolutePath());
           }
           else {
             throw new IOException("Failed to delete target file.");
           }
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dofLinxIni.lastModified()), ZoneId.systemDefault()));
-          monitoredTextFile.setSize(dofLinxIni.length());
-          return monitoredTextFile;
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dofLinxIni.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setSize(dofLinxIni.length());
+          return textEditorFile;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(monitoredTextFile.getEmulatorId());
-          String[] lines = monitoredTextFile.getContent().split("\n");
+          GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(textEditorFile.getEmulatorId());
+          String[] lines = textEditorFile.getContent().split("\n");
           List<String> sorted = Arrays.asList(lines);
           sorted.sort(Comparator.comparing(String::toLowerCase));
           String content = String.join("\n", sorted);
@@ -213,44 +213,44 @@ public class TextEditService {
           return VPinMameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = frontendService.getOriginalGame(Integer.parseInt(monitoredTextFile.getFileId()));
+          Game game = frontendService.getOriginalGame(Integer.parseInt(textEditorFile.getFileId()));
           if (game != null) {
             File gameFile = game.getGameFile();
-            VPXUtil.importVBS(gameFile, monitoredTextFile.getContent(), serverSettings.isKeepVbsFiles());
-            monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
-            monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
+            VPXUtil.importVBS(gameFile, textEditorFile.getContent(), serverSettings.isKeepVbsFiles());
+            textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gameFile.lastModified()), ZoneId.systemDefault()));
+            textEditorFile.setSize(textEditorFile.getContent().getBytes().length);
             LOG.info("Saved {}, performing table table.", gameFile.getAbsolutePath());
             gameService.scanGame(game.getId(), true);
-            return monitoredTextFile;
+            return textEditorFile;
           }
           else {
-            LOG.error("No game found with game name '{}'", monitoredTextFile.getFileId());
+            LOG.error("No game found with game name '{}'", textEditorFile.getFileId());
           }
         }
         case LOCAL_GAME_FILE: {
-          File f = new File(monitoredTextFile.getPath());
-          String[] lines = monitoredTextFile.getContent().split("\n");
+          File f = new File(textEditorFile.getPath());
+          String[] lines = textEditorFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
           LOG.info("Written {}", f.getAbsolutePath());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
-          monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
-          return monitoredTextFile;
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setSize(textEditorFile.getContent().getBytes().length);
+          return textEditorFile;
         }
         case VPinballXIni: {
           File f = vpxService.getVPXFile();
-          String[] lines = monitoredTextFile.getContent().split("\n");
+          String[] lines = textEditorFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
           FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
           LOG.info("Written {}", f.getAbsolutePath());
-          monitoredTextFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
-          monitoredTextFile.setSize(monitoredTextFile.getContent().getBytes().length);
-          return monitoredTextFile;
+          textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
+          textEditorFile.setSize(textEditorFile.getContent().getBytes().length);
+          return textEditorFile;
         }
         default: {
-          throw new UnsupportedOperationException("Unknown VPin file: " + monitoredFile);
+          throw new UnsupportedOperationException("Unknown VPin file: " + textEditorFileTypes);
         }
       }
     }

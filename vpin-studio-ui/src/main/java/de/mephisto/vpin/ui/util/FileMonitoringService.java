@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.textedit.MonitoredFile;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.application.Platform;
@@ -30,7 +30,7 @@ public class FileMonitoringService {
   private File monitoringFolder;
 
   private final Debouncer debouncer = new Debouncer();
-  private final Map<String, MonitoredTextFile> monitoredTextFiles = new HashMap<>();
+  private final Map<String, TextEditorFile> monitoredTextFiles = new HashMap<>();
 
   private static FileMonitoringService INSTANCE = null;
 
@@ -42,7 +42,7 @@ public class FileMonitoringService {
     return INSTANCE;
   }
 
-  public void monitor(MonitoredTextFile textFile) {
+  public void monitor(TextEditorFile textFile) {
     monitoredTextFiles.put(textFile.getFileId(), textFile);
   }
 
@@ -101,14 +101,14 @@ public class FileMonitoringService {
 
                     LOG.info("File Monitor monitor: " + changedFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
 
-                    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(getFileType(name));
-                    monitoredTextFile.setFileId(id);
+                    TextEditorFile textEditorFile = new TextEditorFile(getFileType(name));
+                    textEditorFile.setFileId(id);
                     if (monitoredTextFiles.containsKey(id)) {
-                      monitoredTextFile.setPath(monitoredTextFiles.get(id).getPath());
+                      textEditorFile.setPath(monitoredTextFiles.get(id).getPath());
                     }
 
-                    monitoredTextFile.setContent(org.apache.commons.io.FileUtils.readFileToString(changedFile, StandardCharsets.UTF_8));
-                    client.getTextEditorService().save(monitoredTextFile);
+                    textEditorFile.setContent(org.apache.commons.io.FileUtils.readFileToString(changedFile, StandardCharsets.UTF_8));
+                    client.getTextEditorService().save(textEditorFile);
                     LOG.info("Imported file " + changed.toFile().getAbsolutePath());
 
                     try {
@@ -147,12 +147,12 @@ public class FileMonitoringService {
     monitorThread.start();
   }
 
-  private MonitoredFile getFileType(String name) {
+  private TextEditorFileTypes getFileType(String name) {
     if (name.endsWith(".vbs")) {
-      return MonitoredFile.VBScript;
+      return TextEditorFileTypes.VBScript;
     }
 
-    return MonitoredFile.LOCAL_GAME_FILE;
+    return TextEditorFileTypes.LOCAL_GAME_FILE;
   }
 
   public File getMonitoringFolder() {

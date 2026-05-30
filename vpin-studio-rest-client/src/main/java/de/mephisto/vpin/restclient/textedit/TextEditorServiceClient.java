@@ -15,11 +15,11 @@ public class TextEditorServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public MonitoredTextFile getText(MonitoredTextFile file) throws Exception {
-    return getRestClient().post(API + "textedit/open", file, MonitoredTextFile.class);
+  public TextEditorFile getText(TextEditorFile file) throws Exception {
+    return getRestClient().post(API + "textedit/open", file, TextEditorFile.class);
   }
 
-  public MonitoredTextFile save(MonitoredTextFile file) throws Exception {
-    return getRestClient().post(API + "textedit/save", file, MonitoredTextFile.class);
+  public TextEditorFile save(TextEditorFile file) throws Exception {
+    return getRestClient().post(API + "textedit/save", file, TextEditorFile.class);
   }
 }

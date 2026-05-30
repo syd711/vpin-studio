@@ -1,7 +1,20 @@
 ## Release Notes 5.1.0
-- Removed 2 older dependencies whose functions could be replaced with other dependencies already included.   
+
+### Changes
+- Removed 2 older dependencies whose functions could be replaced with other dependencies already included.
 
 
+
+
+## Release Notes 5.0.1
+
+### Changes
+
+- Added automatic VPin Studio backups for minor versions.
+- Fixed VPS view which did not show all assets because of empty date values.
+- Added more logging to figure out why for some users the ROM column only shows "..." as a value.
+
+---
 ## Release Notes 5.0.0
 
 ### !!! Important Notice !!!
@@ -9,13 +22,8 @@
 We are happy to announce that the next major release of VPin Studio 5.0 has been published. While it does not introduce many flashy new features, we have extensively revamped the underlying codebase to ensure the project's long-term maintainability and support future development.
 The major drawback:
 
-**You have to reinstall the Studio Client(s) + Server!!! Studio 5.x updates can't be applied with a 4.x version!**
-
-**Use the existing installation folder for this so that all your data remains untouched by this!**.
-
-Download Links:
-- Full Installer: https://github.com/syd711/vpin-studio/releases/download/5.0.0/VPin-Studio-Full-Installer-5.0.0.exe
-- Client Installer (Windows): https://github.com/syd711/vpin-studio/releases/download/5.0.0/VPin-Studio-Client-Installer-5.0.0.exe  
+**You need to reinstall the Studio Client(s) and Server. Updates for Studio 5.x cannot be applied over a 4.x installation.
+Please use the existing installation folder during the reinstall process to ensure that all your data remains intact!**.
 
 ### Changes
 
@@ -31,7 +39,12 @@ Download Links:
   - Added background to DMG.
   - Changed DMG creation to use create-dmg instead of jpackage for more robust options and simpler workflow.
 - **Future Pinball**
-  - With long overdue, VPin Studio 5 supports Future Pinball highscores now too. The highscore support reflects in the Designer section too, which allows to design highscore cards for Future Pinball now. Note that because of the limited test data a lot of highscore lists might still look broken. Please submit your fpRAM file in that case on our Discord so that we can improve the parsing.
+  - With long overdue, VPin Studio 5 supports Future Pinball highscores now too. The support includes:
+    - the Highscore Card which allows to design highscore cards for Future Pinball now.
+    - Highscore Backups
+    - VPin Mania Support
+  
+    Note that because of the limited test data a lot of highscore lists might still look broken. Please submit your fpRAM file in that case on our Discord so that we can improve the parsing.
 
 ### Breaking Changes
 
@@ -49,8 +62,11 @@ Download Links:
 - **Player Avatars**: Fixed issue of the white outer avatar ring keep growing with every save.
 - **Future Pinball**: Fixed installation of .fpl files.
 - **Update Info Dialog**: Fixed size issues for smaller screens.
+- **Highscore Backups Dialog**: Add multi-selection for deletions.
+- **PinUpPlayer.ini Parsing**: Fixed issues parsing the file caused by comments.
 
 ### VPin Mania
 
 - Added synchronization of Future Pinball highscores.
+- Fixed synchronization issues.
 
