@@ -24,7 +24,7 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
 
   FrontendMediaRepresentation frontendMedia;
 
-    Instant backupDate;
+  Instant backupDate;
 
   public GameRepresentationModel(GameRepresentation game) {
     super(game);
