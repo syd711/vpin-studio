@@ -57,7 +57,6 @@ import java.nio.file.Path;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -638,6 +637,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private void refreshStatusCheckbox() {
     activateCheckbox.selectedProperty().removeListener(activationChangeListener);
     activateCheckbox.setSelected(false);
+    // no game associated to the backglass file -> activation is not possible
+    activateCheckbox.setDisable(directb2s == null || directb2s.getGameId() <= 0);
     String selectedVersion = getSelectedVersion();
     if (selectedVersion != null && directb2s != null) {
       boolean selected = FileUtils.baseNameMatches(selectedVersion, directb2s.getFileName());
@@ -711,8 +712,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       loadImages(directB2SData.getEmulatorId(), directB2SData.getFilename());
 
-      setLabelandTooltip(filenameLabel, directB2SData.getFilename());
-      setLabelandTooltip(nameLabel, directB2SData.getName());
+      setLabelAndTooltip(filenameLabel, directB2SData.getFilename());
+      setLabelAndTooltip(nameLabel, directB2SData.getName());
       typeLabel.setText(DirectB2SData.getTableType(directB2SData.getTableType()));
       authorLabel.setText(directB2SData.getAuthor());
       artworkLabel.setText(directB2SData.getArtwork());
@@ -767,6 +768,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   protected void setGame(@Nullable GameRepresentation game, boolean gameAvailable) {
     this.game = game;
+
     if (game != null) {
       JFXFuture.supplyAsync(() -> {
             return client.getEmulatorService().getGameEmulator(game.getEmulatorId());
@@ -777,9 +779,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             }
           });
 
-      setLabelandTooltip(gameLabel, game.getGameDisplayName());
-      setLabelandTooltip(gameFilenameLabel, game.getGameFileName());
-      setLabelandTooltip(gameIdLabel, String.valueOf(game.getId()));
+      setLabelAndTooltip(gameLabel, game.getGameDisplayName());
+      setLabelAndTooltip(gameFilenameLabel, game.getGameFileName());
+      setLabelAndTooltip(gameIdLabel, String.valueOf(game.getId()));
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);
@@ -793,7 +795,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
   }
 
-  protected void setLabelandTooltip(Label lbl, String txt) {
+  protected void setLabelAndTooltip(Label lbl, String txt) {
     lbl.setText(txt);
     lbl.setTooltip(new Tooltip(txt));
   }

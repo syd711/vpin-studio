@@ -247,6 +247,19 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private boolean saveEnabled;
   private String latestSelection;
 
+  // guards the directB2SCombo listener against programmatic (re-)population in refreshView
+  private boolean refreshing;
+
+  private ChangeListener<Boolean> activationChangeListener = (observable, oldValue, newValue) -> {
+    latestSelection = null;
+    if (newValue) {
+      setDirectB2SDefault();
+    }
+    else {
+      setDirectB2SDisabled();
+    }
+  };
+
 
   // Add a public no-args constructor
   public TablesSidebarDirectB2SController() {
@@ -283,7 +296,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             boolean b = client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
-            if(!b) {
+            if (!b) {
               WidgetFactory.showAlert(Studio.stage, "Error", "Backglass deletion failed, check log file for details.");
             }
             client.getBackglassServiceClient().clearCache();
@@ -319,20 +332,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     versionSelectorPane.managedProperty().bindBidirectional(versionSelectorPane.visibleProperty());
     noneActiveInfo.managedProperty().bindBidirectional(noneActiveInfo.visibleProperty());
+    directB2SCombo.managedProperty().bindBidirectional(directB2SCombo.visibleProperty());
+    directB2SLabel.managedProperty().bindBidirectional(directB2SLabel.visibleProperty());
     versionSelectorPane.setVisible(false);
 
-    activateCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        latestSelection = null;
-        if (newValue) {
-          setDirectB2SDefault();
-        }
-        else {
-          setDirectB2SDisabled();
-        }
-      }
-    });
+    activateCheckbox.selectedProperty().addListener(activationChangeListener);
     dmdPositionBtn.managedProperty().bindBidirectional(dmdPositionBtn.visibleProperty());
 
 
@@ -344,6 +348,18 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     dataBoxScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
+
+    directB2SCombo.valueProperty().addListener((obs, o, n) -> {
+      if (refreshing) {
+        return;
+      }
+      latestSelection = n;
+      // re-render the whole section for the newly selected backglass version.
+      // defer to the next pulse so we don't mutate the combo's selection model
+      // while it is still dispatching this very value change (avoids the
+      // IndexOutOfBoundsException in SelectedItemsReadOnlyObservableList).
+      Platform.runLater(() -> refreshView(this.game));
+    });
 
     hideGrill.setItems(FXCollections.observableList(VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -466,6 +482,19 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   }
 
+  private void refreshStatusCheckbox() {
+    activateCheckbox.selectedProperty().removeListener(activationChangeListener);
+    activateCheckbox.setSelected(false);
+    String selectedVersion = getSelectedVersion();
+    if (selectedVersion != null && game.isPresent() && game.get().getDirectB2SPath() != null) {
+      boolean selected = FileUtils.baseNameMatches(selectedVersion, game.get().getDirectB2SPath());
+      activateCheckbox.setSelected(selected);
+    }
+    noneActiveInfo.setVisible(!activateCheckbox.isSelected());
+    activateCheckbox.selectedProperty().addListener(activationChangeListener);
+  }
+
+
   private void setDirectB2SDisabled() {
     if (this.tableData != null && this.tableSettings != null) {
       JFXFuture
@@ -543,8 +572,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   public void refreshView(Optional<GameRepresentation> g) {
     setSaveEnabled(false);
+    // block the combo listener while we (re-)populate the version selector below
+    refreshing = true;
 
-    boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null && !g.get().getDirectB2SVersions().isEmpty();
+    // availability is based on the presence of backglass version files, not on whether one is currently
+    // set as the active default - otherwise disabling the active backglass would hide the whole panel and
+    // there would be no way to re-activate a deactivated version.
+    boolean directb2sAvailable = g.isPresent() && !g.get().getDirectB2SVersions().isEmpty();
     openDefaultPictureBtn.setDisable(!g.isPresent() || !directb2sAvailable);
     uploadBtn.setDisable(!g.isPresent());
     reloadBtn.setDisable(!g.isPresent());
@@ -571,21 +605,52 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     dmdResolutionLabel.setText("");
 
     directB2SCombo.setItems(FXCollections.emptyObservableList());
+    directB2SCombo.setVisible(true);
+    directB2SLabel.setVisible(false);
 
     deleteBtn.setDisable(g.isEmpty() || !directb2sAvailable);
     dmdPositionBtn.setDisable(g.isEmpty() || !directb2sAvailable);
     backglassManagerBtn.setDisable(g.isEmpty() || !directb2sAvailable);
 
     versionSelectorPane.setVisible(directb2sAvailable);
+    noneActiveInfo.setVisible(false);
 
     if (g.isPresent() && directb2sAvailable) {
       Platform.runLater(() -> {
-        noneActiveInfo.setVisible(false);
-        directB2SCombo.setItems(FXCollections.observableList(g.get().getDirectB2SVersions()));
+        List<String> versions = g.get().getDirectB2SVersions();
+        if (versions.size() > 1) {
+          directB2SCombo.setVisible(true);
+          directB2SLabel.setVisible(false);
+          directB2SCombo.setItems(FXCollections.observableList(versions));
+          if (latestSelection != null && versions.contains(latestSelection)) {
+            directB2SCombo.getSelectionModel().select(latestSelection);
+          }
+          else {
+            directB2SCombo.getSelectionModel().selectFirst();
+          }
+        }
+        else if (!versions.isEmpty()) {
+          directB2SCombo.setVisible(false);
+          directB2SLabel.setVisible(true);
+          directB2SLabel.setText(versions.get(0));
+          directB2SCombo.setItems(FXCollections.observableList(versions));
+          directB2SCombo.getSelectionModel().selectFirst();
+        }
+        latestSelection = directB2SCombo.getValue();
+        // version selector is populated, re-enable the combo listener
+        refreshing = false;
+
+        // load the data for the actually selected version (may differ from the game's default)
+        String selectedVersion = getSelectedVersion();
+        if (selectedVersion != null) {
+          tableData = client.getBackglassServiceClient().getDirectB2SData(g.get().getEmulatorId(), selectedVersion);
+        }
+        refreshStatusCheckbox();
 
         GameRepresentation game = g.get();
-          GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-          dmdPositionBtn.setVisible(emulatorRepresentation.isVpxEmulator());nameLabel.setText(tableData.getName());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        dmdPositionBtn.setVisible(emulatorRepresentation.isVpxEmulator());
+        nameLabel.setText(tableData.getName());
         typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
         authorLabel.setText(tableData.getAuthor());
         artworkLabel.setText(tableData.getArtwork());
@@ -673,6 +738,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
         setSaveEnabled(true);
       });
+    }
+    else {
+      refreshing = false;
     }
   }
 

@@ -780,7 +780,7 @@ public class BackglassService implements InitializingBean {
           b2sFile = tempFile;
         }
         else {
-          throw new RuntimeException("Cannot rename " + mainFile + ", operation ignored");
+          LOG.error("Cannot rename " + mainFile + " to {}, operation ignored", b2sFile.getAbsolutePath());
         }
       }
       if (b2sFile.renameTo(mainFile)) {

@@ -26,7 +26,7 @@
          <content>
               <VBox>
                <children>
-                  <VBox fx:id="versionSelectorPane" prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+                  <VBox fx:id="versionSelectorPane" prefWidth="100.0" spacing="3.0">
                      <children>
                         <VBox fx:id="noneActiveInfo" styleClass="info-container">
                            <children>
