@@ -7,12 +7,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
-import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import de.mephisto.vpin.ui.util.UploadProgressModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,15 +20,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -147,7 +141,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     else {
       File file = fileChooser.showOpenDialog(stage);
       if (file != null) {
-        this.selection = Arrays.asList(file);
+        this.selection = List.of(file);
       }
     }
 
@@ -180,7 +174,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     if (isFpOnly()) {
       gameEmulators = Studio.client.getEmulatorService().getFpGameEmulators();
     }
-    emulator = gameEmulators.get(0);
+    emulator = gameEmulators.getFirst();
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulator);
@@ -203,7 +197,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     this.stage = stage;
     this.finalizer = finalizer;
     if (file != null) {
-      this.selection = Arrays.asList(file);
+      this.selection = List.of(file);
       refreshSelection(analysis);
     }
   }
@@ -212,12 +206,18 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     return emulator;
   }
 
+  public void setSelectedEmulator(@Nullable GameEmulatorRepresentation emulator) {
+    if(emulator != null) {
+      this.emulatorCombo.setValue(emulator);
+    }
+  }
+
   public int getSelectedEmulatorId() {
     return emulator != null ? emulator.getId() : -1;
   }
 
   public File getSelection() {
-    return this.selection != null && !this.selection.isEmpty() ? selection.get(0) : null;
+    return this.selection != null && !this.selection.isEmpty() ? selection.getFirst() : null;
   }
 
   public List<File> getSelections() {

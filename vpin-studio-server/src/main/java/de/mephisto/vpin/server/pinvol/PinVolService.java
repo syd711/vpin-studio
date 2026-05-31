@@ -16,11 +16,11 @@ import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,8 +32,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class PinVolService implements InitializingBean, FileChangeListener {
@@ -75,13 +79,14 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     try {
       File pinVolExe = getPinVolExe();
       if (pinVolExe.exists()) {
-        File file = FileUtils.writeBatch(SystemService.RESOURCES + "PinVol.bat", "start /min " + pinVolExe.getAbsolutePath() + "\nexit\n");
+        String pinVolDir = pinVolExe.getParentFile().getAbsolutePath();
+        File file = FileUtils.writeBatch(SystemService.RESOURCES + "PinVol.bat", "start \"\" /min /d \"" + pinVolDir + "\" \"" + pinVolExe.getAbsolutePath() + "\"\nexit\n");
         if (file.exists()) {
           List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
           SystemCommandExecutor executor = new SystemCommandExecutor(commands);
           executor.setDir(new File(SystemService.RESOURCES));
           executor.executeCommand();
-          LOG.info("Executed PinVol command: " + String.join(" ", commands));
+          LOG.info("Executed PinVol command: {}", String.join(" ", commands));
         }
         else {
           LOG.error("Failed to start PinVol.bat, file does not exist: {}", file.getAbsolutePath());
@@ -92,7 +97,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to launch PinVol.exe: " + e.getMessage(), e);
+      LOG.error("Failed to launch PinVol.exe: {}", e.getMessage(), e);
     }
   }
 
@@ -159,7 +164,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
             preferences.getTableEntries().add(e);
           }
         }
-        LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
+        LOG.info("Loaded {} PinVOL table entries.", preferences.getTableEntries().size());
       }
       File volIni = getPinVolVolIniFile();
       if (volIni.exists()) {
@@ -215,17 +220,17 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-  private File getPinVolTablesIniFile() {
+  public File getPinVolTablesIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_TABLES_INI);
   }
 
-  private File getPinVolSettingsIniFile() {
+  public File getPinVolSettingsIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_SETTINGS_INI);
   }
 
-  private File getPinVolVolIniFile() {
+  public File getPinVolVolIniFile() {
     File pinvolExe = getPinVolExe();
     return new File(pinvolExe.getParentFile(), PIN_VOL_VOL_INI);
   }
@@ -291,7 +296,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     StringBuilder builder = new StringBuilder();
     builder.append("# PinVol volume levels list\n");
     builder.append("# Saved ");
-    builder.append(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()));
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss").withZone(ZoneId.systemDefault());
+    builder.append(df.format(Instant.now()));
     builder.append("\n");
     builder.append("\n");
 

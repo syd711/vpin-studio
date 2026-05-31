@@ -36,7 +36,7 @@ public class IniResource {
       return iniService.getIniFile(gameId);
     }
     catch (Exception e) {
-      LOG.error("INI get failed: " + e.getMessage(), e);
+      LOG.error("INI get failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI load failed: " + e.getMessage());
     }
   }
@@ -56,7 +56,7 @@ public class IniResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("INI upload failed: " + e.getMessage(), e);
+      LOG.error("INI upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI upload failed: " + e.getMessage());
     }
     finally {

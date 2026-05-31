@@ -15,13 +15,14 @@ import javafx.scene.layout.*;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
 
 public class WidgetLatestScoreItemController extends WidgetController implements Initializable {
-  private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
+  private final static DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy / hh:mm");
 
   @FXML
   private BorderPane root;
@@ -83,7 +84,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(score.getFormattedScore());
 
-    String date = simpleDateFormat.format(score.getCreatedAt());
+    String date = simpleDateFormat.format(score.getCreatedAt().atZone(ZoneId.systemDefault()));
     changeDateLabel.setText("Updated: " + date);
 
     InputStream competitionBackground = ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId());

@@ -31,7 +31,7 @@ public class BAMCfgUploadController extends BaseUploadController {
 
   protected void refreshEmulators() {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getFpGameEmulators();
-    emulator = gameEmulators.get(0);
+    emulator = gameEmulators.getFirst();
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulator);

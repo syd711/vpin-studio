@@ -1,9 +1,10 @@
 package de.mephisto.vpin.server.ipdb;
 
- 
 
+import de.mephisto.vpin.commons.SystemInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebRequest;
@@ -15,12 +16,12 @@ import org.htmlunit.html.HtmlSubmitInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.commons.SystemInfo;
-
 import java.io.*;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class IpdbDatabase {
@@ -135,7 +136,7 @@ public class IpdbDatabase {
   private void updateDatabase(WebClient webClient, String listUrl) throws IOException {
     File vpsDbFile = getIpdbFile();
 
-    LOG.info("Downloading tables from " + listUrl);
+    LOG.info("Downloading tables from {}", listUrl);
 
     File tmp = new File(vpsDbFile.getParentFile(), vpsDbFile.getName() + ".tmp");
     if (tmp.exists() && !tmp.delete()) {
@@ -143,7 +144,7 @@ public class IpdbDatabase {
     }
 
     try (FileOutputStream fos = new FileOutputStream(tmp)) {
-      WebRequest req = new WebRequest(new URL(BASE_URL + listUrl));
+      WebRequest req = new WebRequest(URI.create(BASE_URL + listUrl).toURL());
       WebResponse res = webClient.getWebConnection().getResponse(req);
       IOUtils.copy(res.getContentAsStream(), fos);
     }
@@ -154,13 +155,13 @@ public class IpdbDatabase {
     }
 
     if (vpsDbFile.exists() && !vpsDbFile.delete()) {
-      LOG.error("Failed to delete " + vpsDbFile.getName());
+      LOG.error("Failed to delete {}", vpsDbFile.getName());
     }
     else if (!tmp.renameTo(vpsDbFile)) {
-      LOG.error("Failed to rename "+ tmp.getName() + " to " + vpsDbFile.getName());
+      LOG.error("Failed to rename {} to {}", tmp.getName(), vpsDbFile.getName());
     }
     else {
-      LOG.info("Written " + vpsDbFile.getAbsolutePath() + ", (" + oldSize + " vs " + vpsDbFile.length() + " bytes)");
+      LOG.info("Written {}, ({} vs {} bytes)", vpsDbFile.getAbsolutePath(), oldSize, vpsDbFile.length());
     }
   }
 
@@ -172,7 +173,7 @@ public class IpdbDatabase {
         return true;
       }
       catch (IOException e) {
-        LOG.error("Failed to reload VPS file: " + e.getMessage(), e);
+        LOG.error("Failed to reload VPS file: {}", e.getMessage(), e);
       }
     }
     return false;
@@ -194,9 +195,9 @@ public class IpdbDatabase {
 
     // check that authentication happens successfully
     String title = homePage.getTitleText();
-    if (StringUtils.equalsIgnoreCase(title, "Pinball DataBase Lists")) {
-      DomElement firstlink = homePage.getElementsByTagName("a").get(0);
-      if (firstlink != null && StringUtils.equalsIgnoreCase(firstlink.getTextContent(), "Alphabetical Game Listing")) {
+    if (Strings.CI.equals(title, "Pinball DataBase Lists")) {
+      DomElement firstlink = homePage.getElementsByTagName("a").getFirst();
+      if (firstlink != null && Strings.CI.equals(firstlink.getTextContent(), "Alphabetical Game Listing")) {
         return firstlink.getAttribute("href");
       }
     }
@@ -208,10 +209,10 @@ public class IpdbDatabase {
     try {
       String html = IOUtils.toString(in, Charset.defaultCharset());
       this.tables = parseTables(html);
-      LOG.info(this.tables.size() + " Tables loaded from database");
+      LOG.info("{} Tables loaded from database", this.tables.size());
     }
     catch (Exception e) {
-      LOG.error("Failed to load IPDB database: " + e.getMessage(), e);
+      LOG.error("Failed to load IPDB database: {}", e.getMessage(), e);
       this.tables = Collections.emptyList();
     }
   }

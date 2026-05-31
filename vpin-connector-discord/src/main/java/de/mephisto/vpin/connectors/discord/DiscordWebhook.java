@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -33,7 +34,7 @@ public class DiscordWebhook {
       hook.setContent(message);
       hook.execute();
     } catch (IOException e) {
-      LOG.error("Failed to send hook message: " + e.getMessage(), e);
+      LOG.error("Failed to send hook message: {}", e.getMessage(), e);
     }
   }
 
@@ -152,7 +153,7 @@ public class DiscordWebhook {
       json.put("embeds", embedObjects.toArray());
     }
 
-    URL url = new URL(this.url);
+    URL url = URI.create(this.url).toURL();
     HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
     connection.addRequestProperty("Content-Type", "application/json");
     connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");
@@ -166,7 +167,7 @@ public class DiscordWebhook {
 
     int responseCode = connection.getResponseCode();
     if(responseCode > 300) {
-      LOG.error("Discord webhook call failed: " + connection.getResponseMessage());
+      LOG.error("Discord webhook call failed: {}", connection.getResponseMessage());
     }
 
     connection.getInputStream().close(); //I'm not sure why but it doesn't work without getting the InputStream

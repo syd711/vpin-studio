@@ -198,6 +198,7 @@
                               <TabPane fx:id="tabPane" minHeight="320.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
                                   <Tab fx:id="startScriptTab" text="Launch Script" />
+                                    <Tab fx:id="vrStartScriptTab" text="VR Launch Script" />
                                   <Tab fx:id="exitScriptTab" text="Exit Script" />
                                 </tabs>
                               </TabPane>

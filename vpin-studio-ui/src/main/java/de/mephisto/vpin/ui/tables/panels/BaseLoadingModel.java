@@ -106,7 +106,7 @@ public abstract class BaseLoadingModel<T, M> extends ObjectPropertyBase<M> {
             allLoaded &= model.isLoaded();
           }
           // wait a bit
-          Thread.sleep(1000);
+          Thread.sleep(500);
         }
       }
       catch (InterruptedException ie)  {

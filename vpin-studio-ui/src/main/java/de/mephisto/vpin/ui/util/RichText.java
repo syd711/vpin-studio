@@ -128,7 +128,7 @@ public class RichText {
       if (KE.getCode() == KeyCode.ENTER) {
         int caretPosition = codeArea.getCaretPosition();
         int currentParagraph = codeArea.getCurrentParagraph();
-        Matcher m0 = whiteSpace.matcher(codeArea.getParagraph(currentParagraph - 1).getSegments().get(0));
+        Matcher m0 = whiteSpace.matcher(codeArea.getParagraph(currentParagraph - 1).getSegments().getFirst());
         if (m0.find()) Platform.runLater(() -> codeArea.insertText(caretPosition, m0.group()));
       }
     });

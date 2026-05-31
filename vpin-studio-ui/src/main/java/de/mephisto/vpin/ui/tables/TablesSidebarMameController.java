@@ -4,11 +4,11 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -159,7 +158,7 @@ public class TablesSidebarMameController implements Initializable {
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
-  private MameOptions options;
+  private VPinMameOptions options;
 
   private boolean saveDisabled = false;
 
@@ -169,7 +168,8 @@ public class TablesSidebarMameController implements Initializable {
 
 
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?",
+        "The default settings will be restored on table launch.");
     String rom = game.get().getRom();
     if (StringUtils.isEmpty(rom)) {
       return;
@@ -262,9 +262,9 @@ public class TablesSidebarMameController implements Initializable {
       if (game.isPresent()) {
         GameRepresentation gameRepresentation = game.get();
 
-        MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.VPMAliasTxt);
-        monitoredTextFile.setEmulatorId(gameRepresentation.getEmulatorId());
-        boolean b = Dialogs.openTextEditor(monitoredTextFile, "VPMAlias.txt");
+        TextEditorFile textEditorFile = new TextEditorFile(TextEditorFileTypes.VPMAliasTxt);
+        textEditorFile.setEmulatorId(gameRepresentation.getEmulatorId());
+        boolean b = Dialogs.openTextEditor(textEditorFile, "VPMAlias.txt");
         if (b) {
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
           if (!StringUtils.isEmpty(gameRepresentation.getRomAlias())) {
@@ -301,7 +301,7 @@ public class TablesSidebarMameController implements Initializable {
       }
       else {
         noInputDataBox.setVisible(false);
-        MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+        VPinMameOptions defaultOptions = client.getMameService().getOptions(VPinMameOptions.DEFAULT_KEY);
 
         options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
         options.setUseSound(defaultOptions.isUseSound());
@@ -411,12 +411,12 @@ public class TablesSidebarMameController implements Initializable {
     showDmd.setSelected(false);
     useExternalDmd.setSelected(false);
     colorizeDmd.setSelected(false);
-    soundModeCombo.setValue(SOUND_MODES.get(0));
+    soundModeCombo.setValue(SOUND_MODES.getFirst());
     forceStereo.setSelected(false);
     volumeSpinner.getValueFactory().setValue(0);
 
     this.errorBox.setVisible(false);
-    this.applyDefaultsBtn.setDisable(!gameOptional.isPresent());
+    this.applyDefaultsBtn.setDisable(gameOptional.isEmpty());
     noInputDataBox.setVisible(false);
     tablesBox.setVisible(false);
 
@@ -437,7 +437,7 @@ public class TablesSidebarMameController implements Initializable {
 
       List<GameRepresentation> data = tablesSidebarController.getTableOverviewController().getData();
       String rom = game.getRom();
-      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).collect(Collectors.toList());
+      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).toList();
       if (!sharedGames.isEmpty()) {
         tablesBox.setVisible(true);
         tableListBox.getChildren().removeAll(tableListBox.getChildren());
@@ -563,7 +563,7 @@ public class TablesSidebarMameController implements Initializable {
       return;
     }
 
-    MameOptions options = new MameOptions();
+    VPinMameOptions options = new VPinMameOptions();
     options.setRom(game.get().getRom());
 
     options.setIgnoreRomCrcError(ignoreRomCrcError.isSelected());

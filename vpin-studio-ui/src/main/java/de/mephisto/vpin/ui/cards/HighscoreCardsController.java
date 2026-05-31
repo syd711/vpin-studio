@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
@@ -17,9 +17,10 @@ import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,6 +30,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,12 +70,16 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private Button maniaBtn;
 
   @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  @FXML
   private BorderPane templateEditorPane;
 
   private final List<String> ignoreList = new ArrayList<>();
 
 
   private TemplateEditorController templateEditorController;
+  private GameEmulatorChangeListener gameEmulatorChangeListener;
 
   public HighscoreCardsController() {
   }
@@ -87,19 +94,12 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     if (game == null) {
       return;
     }
-    VPinScreen screen = VPinScreen.BackGlass;
-    switch (designMode) {
-      case wheel:
-        screen = VPinScreen.Wheel;
-        break;
-      case highscoreCard:
-        screen = VPinScreen.Other2;
-        break;
-      case instructionCard:
-        screen = VPinScreen.GameHelp;
-        break;
-    }
-    TableDialogs.openTableAssetsDialog(null, game, screen);
+    VPinScreen screen = switch (designMode) {
+        case wheel -> VPinScreen.Wheel;
+        case highscoreCard -> VPinScreen.Other2;
+        case instructionCard -> VPinScreen.GameHelp;
+    };
+      TableDialogs.openTableAssetsDialog(null, game, screen);
   }
 
   @FXML
@@ -133,6 +133,8 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   public void doReload(boolean force) {
     startReload("Loading Tables...");
 
+    refreshEmulators();
+
     // load in parallel games and templates, it will ensure templates are cached before the columns access them
     JFXFuture.supplyAllAsync(
             () -> client.getHighscoreCardTemplatesClient().getTemplates(),
@@ -140,7 +142,18 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
               if (force) {
                 client.getGameService().clearCache();
               }
-              return client.getGameService().getVpxGamesCached();
+
+              List<GameRepresentation> games = new ArrayList<>();
+              if(emulatorCombo.getValue() != null) {
+                GameEmulatorRepresentation emu = emulatorCombo.getValue();
+                games.addAll(client.getGameService().getGamesByEmulator(emu.getId()));
+              }
+              else {
+                games.addAll(client.getGameService().getVpxGamesCached());
+                games.addAll(client.getGameService().getFPGamesCached());
+              }
+
+              return games;
             }
         )
         .onErrorSupply(e -> {
@@ -202,6 +215,8 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
         setSelection(selectedItem, true);
       }
     }
+
+    refreshEmulators();
   }
 
 
@@ -233,7 +248,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }
 
     try {
-      ignoreList.addAll(Arrays.asList("popperScreen"));
+      ignoreList.add("popperScreen");
     }
     catch (Exception e) {
       LOG.error("Failed to init card editor: " + e.getMessage(), e);
@@ -295,7 +310,31 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
     EventManager.getInstance().addListener(this);
 
+    this.gameEmulatorChangeListener = new GameEmulatorChangeListener();
     doReload(false);
+  }
+
+
+  private void refreshEmulators() {
+    this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
+    final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getVpxGameEmulators());
+    emulators.addAll(client.getEmulatorService().getFpGameEmulators());
+
+    this.emulatorCombo.setDisable(true);
+    this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
+    this.emulatorCombo.setItems(FXCollections.observableList(emulators));
+    this.emulatorCombo.setDisable(false);
+
+    if (selectedEmu != null) {
+      this.emulatorCombo.getSelectionModel().select(selectedEmu);
+    }
+    GameEmulatorRepresentation newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    if (newSelection == null) {
+      this.emulatorCombo.getSelectionModel().selectFirst();
+    }
+    this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
 
   @Override
@@ -333,5 +372,16 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   @Override
   protected GameRepresentationModel toModel(GameRepresentation game) {
     return new GameRepresentationModel(game);
+  }
+
+
+  class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
+    @Override
+    public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      // callback to filter tables, once the data has been reloaded
+      Platform.runLater(() -> {
+        doReload(false);
+      });
+    }
   }
 }

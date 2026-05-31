@@ -1,8 +1,7 @@
 package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +22,9 @@ public class AltSoundWriter {
     File altSoundCsv = new File(gameAltSoundFolder, "altsound.csv");
     try {
       org.apache.commons.io.FileUtils.writeStringToFile(altSoundCsv, altSound.toCSV(), StandardCharsets.UTF_8);
-      LOG.info("Written ALTSound " + altSoundCsv.getAbsolutePath());
+      LOG.info("Written ALTSound {}", altSoundCsv.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Error writing CSV " + altSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Error writing CSV {}: {}", altSoundCsv.getAbsolutePath(), e.getMessage(), e);
     }
   }
 }

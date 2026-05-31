@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
-import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -15,11 +15,12 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import java.time.Instant;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -56,11 +57,19 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       try {
         DiscordMember member = this.discordClient.getMember(serverId, botId);
         if (member != null) {
-          status.setBotInitials(member.getInitials());
+          List<String> initials = new ArrayList<>();
+          if (member.getInitials().contains(",")) {
+            initials = Arrays.asList(member.getInitials().split(","));
+          }
+          else {
+            initials.add(member.getInitials());
+          }
+
+          status.setBotInitials(initials);
         }
       }
       catch (Exception e) {
-        LOG.warn("Failed to set BOT initials: " + e.getMessage());
+        LOG.warn("Failed to set BOT initials: {}", e.getMessage());
       }
 
       try {
@@ -115,9 +124,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       List<DiscordChannel> collect = this.discordClient.getChannels(serverId).stream().filter(c -> c.getId() == channelId).map(c -> {
         return toChannel(c);
-      }).collect(Collectors.toList());
+      }).toList();
       if (!collect.isEmpty()) {
-        return collect.get(0);
+        return collect.getFirst();
       }
     }
     return null;
@@ -215,7 +224,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           }
         }
         else {
-          LOG.warn("Unable to determine member of pinned message: '" + pinnedMessage.getRaw() + "' (" + pinnedMessage.getId() + ")");
+          LOG.warn("Unable to determine member of pinned message: '{}' ({})", pinnedMessage.getRaw(), pinnedMessage.getId());
         }
       }
     }
@@ -328,7 +337,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       this.discordClient = null;
     }
     catch (Exception e) {
-      LOG.warn("Error in JDA shutdown: " + e.getMessage());
+      LOG.warn("Error in JDA shutdown: {}", e.getMessage());
     }
 
     try {
@@ -344,7 +353,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to create discord client: " + e.getMessage() + ". Try to update your settings to create a valid client.");
+      LOG.error("Failed to create discord client: {}. Try to update your settings to create a valid client.", e.getMessage());
       throw e;
     }
     return this.discordClient;
@@ -417,7 +426,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
 
       if (results.size() == 1) {
-        return toPlayer(results.get(0));
+        return toPlayer(results.getFirst());
       }
       else if (results.size() > 1) {
         Optional<DiscordMember> realPlayer = results.stream().filter(member -> !member.isBot()).findFirst();
@@ -468,7 +477,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to update discord preferences: " + e.getMessage());
+      LOG.error("Failed to update discord preferences: {}", e.getMessage());
     }
   }
 
@@ -530,8 +539,11 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull DiscordMessage message) {
     String raw = message.getRaw();
-    List<Score> scores = highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId());
-    return new ScoreSummary(scores, message.getCreatedAt(), raw);
+    String scoreString = raw.substring(raw.lastIndexOf("---") + 3);
+    scoreString = scoreString.replaceAll("`", "");
+    Instant createdAt = message.getCreatedAt() != null ? message.getCreatedAt().toInstant() : Instant.now();
+    List<Score> scores = highscoreParser.parseScores(createdAt, scoreString, null, message.getServerId());
+    return new ScoreSummary(scores, createdAt, raw);
   }
 
   public void initCompetition(long serverId, long channelId, long messageId, String topic) {
@@ -596,7 +608,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     for (DiscordMessage pinnedMessage : pinnedMessages) {
       if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)
           || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
-        LOG.info("Found finished or canceled message indicator for competition " + uuid);
+        LOG.info("Found finished or canceled message indicator for competition {}", uuid);
         return false;
       }
     }
@@ -612,7 +624,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         discordClient.pinMessage(serverId, channelId, msgId);
       }
       else {
-        LOG.warn("Player could not be added to the player list for channel " + channelId + ", pin limit has been reached.");
+        LOG.warn("Player could not be added to the player list for channel {}, pin limit has been reached.", channelId);
       }
     }
   }
@@ -628,7 +640,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
         if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.JOIN_INDICATOR)) {
           discordClient.unpinMessage(serverId, channelId, pinnedMessage.getId());
-          LOG.info("Removed bot from list of players in channel " + channelId);
+          LOG.info("Removed bot from list of players in channel {}", channelId);
         }
       }
     }
@@ -680,7 +692,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       List<DiscordMessage> pinnedMessages = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : pinnedMessages) {
         if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.START_INDICATOR)) {
-          if(pinnedMessage.getMember() == null) {
+          if (pinnedMessage.getMember() == null) {
             LOG.warn("A pinned competition message was found for channel the channel, but the owner is not member of the server anymore.");
             continue;
           }
@@ -787,7 +799,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to validate Discord settings: " + e.getMessage(), e);
+      LOG.error("Failed to validate Discord settings: {}", e.getMessage(), e);
       status.setError("Failed to validate Discord settings: " + e.getMessage());
     }
 
@@ -805,7 +817,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         this.clearCache();
       }
       catch (Exception e) {
-        LOG.error("Failed to initialize Discord Service: " + e.getMessage());
+        LOG.error("Failed to initialize Discord Service: {}", e.getMessage());
       }
     }).start();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

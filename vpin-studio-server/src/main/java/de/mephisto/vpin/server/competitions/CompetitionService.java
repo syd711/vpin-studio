@@ -12,8 +12,7 @@ import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,9 +21,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -125,10 +126,10 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getCompetitionToBeFinished() {
     try {
-      return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(new Date());
+        return competitionsRepository.findByWinnerInitialsIsNullAndEndDateLessThanEqualOrderByEndDate(Instant.now());
     }
     catch (Exception e) {
-      LOG.error("Failed to read competitions: " + e.getMessage());
+      LOG.error("Failed to read competitions: {}", e.getMessage());
       return Collections.emptyList();
     }
   }
@@ -138,12 +139,12 @@ public class CompetitionService implements InitializingBean {
     competition.getGameId();
 
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
-      Date start = competition.getStartDate();
-      Date end = competition.getEndDate();
+        Instant start = competition.getStartDate();
+        Instant end = competition.getEndDate();
       int gameId = competition.getGameId();
       Game game = gameService.getGame(gameId);
       long serverId = competition.getDiscordServerId();
-      return highscoreService.getScoresBetween(game, start, end, serverId);
+        return highscoreService.getScoresBetween(game, start, end, serverId);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();
@@ -179,7 +180,7 @@ public class CompetitionService implements InitializingBean {
       c.setType(CompetitionType.OFFLINE.name());
     }
     Competition updated = competitionsRepository.saveAndFlush(c);
-    LOG.info("Saved " + updated);
+    LOG.info("Saved {}", updated);
     if (isNew) {
       competitionLifecycleService.notifyCompetitionCreation(updated);
     }
@@ -197,10 +198,10 @@ public class CompetitionService implements InitializingBean {
     //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
     List<Competition> openCompetitions = getCompetitionToBeFinished();
     if (!openCompetitions.isEmpty()) {
-      LOG.info("Running automated competition status check, found " + openCompetitions.size() + " candidates.");
+      LOG.info("Running automated competition status check, found {} candidates.", openCompetitions.size());
     }
     for (Competition openCompetition : openCompetitions) {
-      LOG.info("Finishing " + openCompetition);
+      LOG.info("Finishing {}", openCompetition);
       finishCompetition(openCompetition);
     }
 
@@ -208,7 +209,7 @@ public class CompetitionService implements InitializingBean {
     List<Competition> activeCompetitions = getActiveCompetitions();
     for (Competition activeCompetition : activeCompetitions) {
       if (activeCompetition.isActive() && !activeCompetition.isStarted()) {
-        LOG.info("Starting " + activeCompetition);
+        LOG.info("Starting {}", activeCompetition);
         //update state
         activeCompetition.setStarted(true);
         competitionsRepository.saveAndFlush(activeCompetition);
@@ -221,18 +222,18 @@ public class CompetitionService implements InitializingBean {
         long channelId = activeCompetition.getDiscordChannelId();
         boolean active = discordService.isCompetitionActive(serverId, channelId, activeCompetition.getUuid());
         if (!active) {
-          LOG.info("Found active competition " + activeCompetition + ", trying to resolve winner data.");
+          LOG.info("Found active competition {}, trying to resolve winner data.", activeCompetition);
           ScoreSummary competitionScore = getCompetitionsFinalScore(activeCompetition);
           if (competitionScore.getScores().isEmpty()) {
             activeCompetition.setWinnerInitials("???");
           }
           else {
-            Score score = competitionScore.getScores().get(0);
-            String initials = !StringUtils.isEmpty(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
+            Score score = competitionScore.getScores().getFirst();
+            String initials = StringUtils.hasText(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
             activeCompetition.setWinnerInitials(initials);
           }
           competitionsRepository.saveAndFlush(activeCompetition);
-          LOG.info("Finished " + activeCompetition + ", winner is '" + activeCompetition.getWinnerInitials() + "'");
+          LOG.info("Finished {}, winner is '{}'", activeCompetition, activeCompetition.getWinnerInitials());
         }
       }
     }
@@ -244,16 +245,16 @@ public class CompetitionService implements InitializingBean {
 
   @NonNull
   public Competition finishCompetition(@NonNull Competition competition) {
-    LOG.info("Running finishing process for " + competition);
+    LOG.info("Running finishing process for {}", competition);
     ScoreSummary competitionScore = getCompetitionsFinalScore(competition);
 
     if (competitionScore.getScores().isEmpty()) {
-      LOG.error("Failed to finished " + competition + " correctly, no score could be determined, using John Doe.");
+      LOG.error("Failed to finished {} correctly, no score could be determined, using John Doe.", competition);
       competition.setWinnerInitials("???");
     }
     else {
-      Score score = competitionScore.getScores().get(0);
-      String initials = !StringUtils.isEmpty(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
+      Score score = competitionScore.getScores().getFirst();
+      String initials = StringUtils.hasText(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
       competition.setWinnerInitials(initials);
     }
     competition.setScore(competitionScore.getRaw()); //save the last raw score to the competition itself
@@ -273,28 +274,28 @@ public class CompetitionService implements InitializingBean {
 
   public List<Competition> getActiveCompetitions() {
     try {
-      return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(new Date(), new Date());
+        return competitionsRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(Instant.now(), Instant.now());
     }
     catch (Exception e) {
-      LOG.error("Failed to read active competitions: " + e.getMessage());
+      LOG.error("Failed to read active competitions: {}", e.getMessage());
     }
     return Collections.emptyList();
   }
 
   public List<Competition> getFinishedByDateCompetitions() {
     try {
-      return competitionsRepository.findByEndDateLessThanEqual(new Date());
+        return competitionsRepository.findByEndDateLessThanEqual(Instant.now());
     }
     catch (Exception e) {
-      LOG.error("Failed to read active competitions: " + e.getMessage());
+      LOG.error("Failed to read active competitions: {}", e.getMessage());
     }
     return Collections.emptyList();
   }
 
   public Competition getActiveCompetition(CompetitionType competitionType) {
-    List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(new Date(), new Date(), competitionType.name());
+      List<Competition> result = competitionsRepository.findByAndWinnerInitialsIsNullAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndType(Instant.now(), Instant.now(), competitionType.name());
     if (!result.isEmpty()) {
-      return result.get(0);
+      return result.getFirst();
     }
     return null;
   }
@@ -305,11 +306,11 @@ public class CompetitionService implements InitializingBean {
       assetService.deleteCompetitionBackground(c.get().getGameId());
       competitionsRepository.deleteById(id);
       competitionLifecycleService.notifyCompetitionDeleted(c.get());
-      LOG.error("Deleted competition " + c.get().getName());
+      LOG.error("Deleted competition {}", c.get().getName());
       return true;
     }
     else {
-      LOG.error("No competition exists for id " + id);
+      LOG.error("No competition exists for id {}", id);
     }
     return false;
   }
@@ -346,7 +347,7 @@ public class CompetitionService implements InitializingBean {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
       for (Competition s : iScoredSubscriptions) {
-        LOG.info(s.toString() + " [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
+        LOG.info("{} [{}], [{}], ID: {}", s.toString(), s.getUrl(), VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()), s.getGameId());
       }
       LOG.info("--------------------------------- /iScored Competitions -----------------------------------------------");
     }
@@ -359,7 +360,7 @@ public class CompetitionService implements InitializingBean {
 
   @EventListener(ApplicationReadyEvent.class)
   public void scheduleCompetitionCheck() {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
+      scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), Duration.ofMinutes(2));
   }
 
   public void shutdown() {

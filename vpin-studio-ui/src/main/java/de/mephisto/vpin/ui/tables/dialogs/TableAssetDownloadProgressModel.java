@@ -27,14 +27,16 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   private GameRepresentation game;
   private final Iterator<TableAsset> iterator;
   private final boolean append;
+  private VPinScreen loadingScreenId;
 
-  public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, GameRepresentation game, TableAsset tableAsset, boolean append) {
+  public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, GameRepresentation game, TableAsset tableAsset, boolean append, VPinScreen loadingScreenId) {
     super("Downloading " + tableAsset.getName());
     this.stage = stage;
     this.screen = VPinScreen;
     this.game = game;
     this.iterator = Arrays.asList(tableAsset).iterator();
     this.append = append;
+    this.loadingScreenId = loadingScreenId;
   }
 
   public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, PlaylistRepresentation playlist, TableAsset tableAsset, boolean append) {
@@ -75,7 +77,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   public void processNext(ProgressResultModel progressResultModel, TableAsset tableAsset) {
     try {
       if (game != null) {
-        client.getGameMediaService().downloadTableAsset(tableAsset, this.screen, this.game, append);
+        client.getGameMediaService().downloadTableAsset(tableAsset, this.screen, this.game, append, loadingScreenId);
       }
       else {
         client.getGameMediaService().downloadPlaylistAsset(tableAsset, this.screen, this.playlist, append);

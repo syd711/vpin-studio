@@ -8,8 +8,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +30,10 @@ public class DiscordChannelMessageFactory {
   private static final String COMPETITION_CANCELLED_ANONYMOUS_TEMPLATE = "The competition \"%s\" has been " + CANCEL_INDICATOR + ".";
   private static final String COMPETITION_JOINED_TEMPLATE = "%s has " + JOIN_INDICATOR + " the competition \"%s\".\n(ID: %s)";
   private static final String COMPETITION_FINISHED_INCOMPLETE = "The competition \"%s\" has been " + DiscordChannelMessageFactory.FINISHED_INDICATOR + ", " +
-    "but no winner could be determined:\n" +
-    "No scores have been found.\n(ID: %s)";
+      "but no winner could be determined:\n" +
+      "No scores have been found.\n(ID: %s)";
   private static final String COMPETITION_FINISHED_TEMPLATE =
-    "The competition \"%s\" has been finished!\n(ID: %s)";
+      "The competition \"%s\" has been finished!\n(ID: %s)";
 
   @Autowired
   private PlayerService playerService;
@@ -51,8 +51,8 @@ public class DiscordChannelMessageFactory {
     playerService.validateInitials(newScore);
     String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created the first highscore for the \"%s\" competition.**\n(ID: %s)\n" +
-      "```%s\n" +
-      "```";
+        "```%s\n" +
+        "```";
 
     //do not use the original Score#toString() method as the online position does not match with the persisted score
     String score = "#1 " + newScore.getPlayerInitials() + "   " + newScore.getScore();
@@ -69,8 +69,8 @@ public class DiscordChannelMessageFactory {
     playerService.validateInitials(newScore);
     String playerName = resolvePlayerName(competition.getDiscordServerId(), newScore);
     String template = "**%s created a new highscore for the \"%s\" competition.**\n(ID: %s)\n" +
-      "```%s\n" +
-      "```";
+        "```%s\n" +
+        "```";
     String msg = String.format(template, playerName, game.getGameDisplayName(), competition.getUuid(), newScore);
     msg = msg + getBeatenMessage(competition.getDiscordServerId(), oldScore, newScore);
 
@@ -103,7 +103,11 @@ public class DiscordChannelMessageFactory {
     if (newScore.getPlayer() != null) {
       Player player = playerService.getPlayerForInitials(serverId, newScore.getPlayerInitials());
       if (player != null) {
-        playerName = newScore.getPlayer().getName();
+        playerName = player.getName();
+        if (!StringUtils.isEmpty(player.getCompetitionName())) {
+          playerName = player.getCompetitionName();
+        }
+
         if (PlayerDomain.DISCORD.name().equals(player.getDomain())) {
           playerName = "<@" + player.getId() + ">";
         }
@@ -152,10 +156,10 @@ public class DiscordChannelMessageFactory {
       count++;
     }
 
-    while(count < scoreLimit) {
+    while (count < scoreLimit) {
       builder.append("#");
-      builder.append(count+1);
-      if (String.valueOf(count+1).length() == 1) {
+      builder.append(count + 1);
+      if (String.valueOf(count + 1).length() == 1) {
         builder.append(" ");
       }
       builder.append("  ");

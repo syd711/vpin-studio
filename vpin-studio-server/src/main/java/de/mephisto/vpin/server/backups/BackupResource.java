@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -123,7 +123,7 @@ public class BackupResource {
       in.close();
       out.close();
 
-      LOG.info("Finished download of \"" + backupDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Finished download of \"{}\"", backupDescriptor.getTableDetails().getGameDisplayName());
       invalidateCache();
     }
     catch (IOException ex) {
@@ -147,7 +147,7 @@ public class BackupResource {
       }
     }
     catch (Exception e) {
-      LOG.error("Archive upload failed: " + e.getMessage(), e);
+      LOG.error("Archive upload failed: {}", e.getMessage(), e);
       return JobDescriptorFactory.error("Archive upload failed: " + e.getMessage());
     }
     return JobDescriptorFactory.error(null);

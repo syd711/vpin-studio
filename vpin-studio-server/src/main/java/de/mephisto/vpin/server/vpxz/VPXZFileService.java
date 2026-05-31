@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.vpxz;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
@@ -25,10 +26,10 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -51,15 +52,18 @@ import java.util.function.BiConsumer;
 public class VPXZFileService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZFileService.class);
 
-  private final static ObjectMapper objectMapper;
+    private final static JsonMapper objectMapper;
 
   private final static String MAME_FOLDER = "pinmame";
 
   static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      objectMapper = JsonMapper.builder()
+              .enable(SerializationFeature.INDENT_OUTPUT)
+              .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+              .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+              .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+              .build();
   }
 
   @Autowired

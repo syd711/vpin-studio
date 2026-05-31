@@ -6,14 +6,9 @@ public enum MonitoringMode {
 
   @Override
   public String toString() {
-    switch (this) {
-      case monitors: {
-        return "All Monitors";
-      }
-      case frontendScreens: {
-        return "Frontend Screens";
-      }
-    }
-    throw new UnsupportedOperationException("Unknown MonitoringMode");
+      return switch (this) {
+          case monitors -> "All Monitors";
+          case frontendScreens -> "Frontend Screens";
+      };
   }
 }

@@ -36,7 +36,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -257,7 +258,7 @@ public class TablesSidebarScriptDataController implements Initializable {
 
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
         if (!resultModel.getResults().isEmpty()) {
-          File file = (File) resultModel.getResults().get(0);
+          File file = (File) resultModel.getResults().getFirst();
           try {
             Desktop.getDesktop().open(file);
           } catch (IOException e) {
@@ -317,7 +318,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
-      labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
+      labelLastModified.setText(game.getModified() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(game.getModified()) : "-");
 
       loadScreenshot(game, false);
     }

@@ -6,9 +6,9 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +163,7 @@ public class PupPack {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to load PUP pack \"" + packFolder.getAbsolutePath() + "\": " + e.getMessage());
+      LOG.error("Failed to load PUP pack \"{}\": {}", packFolder.getAbsolutePath(), e.getMessage());
     }
   }
 
@@ -172,7 +172,7 @@ public class PupPack {
     File file = getOptionFile(option);
     if (file.exists()) {
       try {
-        LOG.info("Executing PUP pack option \"" + option + "\" for \"" + getPupPackFolder().getName() + "\"");
+        LOG.info("Executing PUP pack option \"{}\" for \"{}\"", option, getPupPackFolder().getName());
 
         String batFile = org.apache.commons.io.FileUtils.readFileToString(file, Charset.defaultCharset());
         boolean tmpCreated = false;
@@ -184,7 +184,7 @@ public class PupPack {
           tmpCreated = true;
         }
 
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("\"" + file.getName() + "\""));
+        SystemCommandExecutor executor = new SystemCommandExecutor(List.of("\"" + file.getName() + "\""));
         executor.setDir(getPupPackFolder());
         executor.executeCommand();
 
@@ -195,13 +195,13 @@ public class PupPack {
         String out = executor.getStandardOutputFromCommand().toString();
         String err = executor.getStandardErrorFromCommand().toString();
         if (!StringUtils.isEmpty(err)) {
-          LOG.error("Error executing PUP option " + file.getAbsolutePath() + ": " + err);
+          LOG.error("Error executing PUP option {}: {}", file.getAbsolutePath(), err);
           return JobDescriptorFactory.error(err);
         }
         return JobDescriptorFactory.ok(-1);
       }
       catch (Exception e) {
-        LOG.error("Error executing shutdown: " + e.getMessage(), e);
+        LOG.error("Error executing shutdown: {}", e.getMessage(), e);
         return JobDescriptorFactory.error("Error executing shutdown: " + e.getMessage());
       }
       finally {

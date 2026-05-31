@@ -14,8 +14,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class BackglassValidationService implements InitializingBean, PreferenceC
 
     GameEmulator emulator = emulatorService.getGameEmulator(directb2s.getEmulatorId());
 
-    if (isValidationEnabled(directb2s, CODE_NO_GAME)) {
+    if (isValidationEnabled(directb2s, CODE_NO_GAME) && !emulator.isZenEmulator()) {
       String mainBaseName = FileUtils.baseUniqueFile(directb2s.getFilename());
       String gameFilename = mainBaseName + "." + emulator.getGameExt();
       boolean gameAvailable = new File(emulator.getGamesDirectory(), gameFilename).exists();

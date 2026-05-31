@@ -19,13 +19,13 @@ import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -74,6 +74,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation reload(int gameId) {
     return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
   }
+
   public boolean reloadEmulator(int emulatorId) {
     return getRestClient().get(API + "games/reloadEmulator/" + emulatorId, Boolean.class);
   }
@@ -134,7 +135,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public void deleteGameFile(int emulatorId, @NonNull String name) {
     try {
-      Map<String, Object> data =new HashMap<>();
+      Map<String, Object> data = new HashMap<>();
       data.put("emulatorId", emulatorId);
       data.put("fileName", name);
       getRestClient().post(API + "games/deleteGameFile", data, Boolean.class);
@@ -281,9 +282,11 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<VpsTable> getInstalledVpsTables() {
     List<VpsTable> vpsTables = new ArrayList<>();
-    List<GameRepresentation> gamesCached = getVpxGamesCached();
+    Set<String> addedVpsIds = new HashSet<>();
+    List<GameRepresentation> gamesCached = new ArrayList<>(getVpxGamesCached());
+    gamesCached.addAll(getFPGamesCached());
     for (GameRepresentation game : gamesCached) {
-      if (!StringUtils.isEmpty(game.getExtTableId())) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && addedVpsIds.add(game.getExtTableId())) {
         VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
         if (tableById != null) {
           vpsTables.add(tableById);
@@ -468,8 +471,8 @@ public class GamesServiceClient extends VPinStudioClientService {
           loadingFlags.put(emulatorId, Boolean.TRUE);
           // load games in a separate thread not to block the UI
           new Thread(() -> {
-            LOG.info("Start the loading of known games for emulator " + emulatorId);
             List<GameRepresentation> emulatorGames = this.getKnownGames(emulatorId);
+            LOG.info("Loaded {} known games for emulator {}", emulatorGames.size(), emulatorId);
             Object lockInThread = getLock(emulatorId);
             synchronized (lockInThread) {
               // add games in cache and notify waiting thread
@@ -479,12 +482,16 @@ public class GamesServiceClient extends VPinStudioClientService {
             }
           }, "LoadingThreadFor_" + emulatorId).start();
         }
-        try {
-          lock.wait();
-        }
-        catch (InterruptedException ie) {
-          LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
-              + "games may be in an inconsistant state, consider reloading the games", ie);
+        while (!allGames.containsKey(emulatorId)) {
+          try {
+            lock.wait();
+          }
+          catch (InterruptedException ie) {
+            LOG.error("The loading of known games for emulator " + emulatorId + " has been interrupted, "
+                + "games may be in an inconsistant state, consider reloading the games", ie);
+            Thread.currentThread().interrupt();
+            break;
+          }
         }
       }
     }
@@ -513,10 +520,23 @@ public class GamesServiceClient extends VPinStudioClientService {
     return games;
   }
 
+  public List<GameRepresentation> getFPGamesCached() {
+    List<GameRepresentation> games = new ArrayList<>();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      if (gameEmulator.isFpEmulator()) {
+        int emulatorId = gameEmulator.getId();
+        List<GameRepresentation> gamesCached = getGamesCached(emulatorId);
+        games.addAll(gamesCached);
+      }
+    }
+    return games;
+  }
+
   public GameRepresentation getVpxGameCached(int gameId) {
     List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
-    if(first.isEmpty()) {
+    if (first.isEmpty()) {
       return getGame(gameId);
     }
     return first.orElse(null);

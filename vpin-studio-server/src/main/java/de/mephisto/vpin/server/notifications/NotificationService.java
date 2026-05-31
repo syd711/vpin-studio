@@ -20,16 +20,15 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class NotificationService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, FrontendStatusChangeListener, ServerFXListener {
@@ -72,7 +71,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         notification.setWindowTitle(frontendService.getFrontendType().equals(FrontendType.Popper) && pinVolAutostart ? "PinUP Popper" : "VPin Studio Notification");
 
         if (checkEmulator) {
-          boolean vpxRunning = systemService.isPinballEmulatorRunning();
+          boolean vpxRunning = SystemService.isPinballEmulatorRunning();
           NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
         }
         else {
@@ -180,7 +179,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize " + this + ": " + e.getMessage(), e);
+      LOG.error("Failed to initialize {}: {}", this, e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

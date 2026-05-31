@@ -57,7 +57,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
         jsonSettingsCache.put(key, settings);
       }
       catch (Exception e) {
-        LOG.error("Failed to load json preferences " + key + ": " + e.getMessage());
+        LOG.error("Failed to load json preferences " + key + ": " + e.getMessage(), e);
       }
     }
     return (T) jsonSettingsCache.get(key);

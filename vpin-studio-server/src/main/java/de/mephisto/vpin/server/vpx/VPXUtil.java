@@ -3,8 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
-import de.mephisto.vpin.server.util.VPXFileScanner;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.poifs.filesystem.*;
@@ -18,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class VPXUtil {
-  private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
+  private final static Logger LOG = LoggerFactory.getLogger(VPXUtil.class);
   private final static String VPX_TOOL_EXE = "vpxtool.exe";
 
   public static String readScript(@NonNull File file) {
@@ -63,13 +62,13 @@ public class VPXUtil {
         byte[] infoContent = new byte[documentInputStream.available()];
         documentInputStream.read(infoContent);
         documentInputStream.close();
-        LOG.info("Extracted screenshot from file " + file.getAbsolutePath() + ", size: " + FileUtils.readableFileSize(infoContent.length));
+        LOG.info("Extracted screenshot from file {}, size: {}", file.getAbsolutePath(), FileUtils.readableFileSize(infoContent.length));
         return infoContent;
       }
       return null;
     }
     catch (Exception e) {
-      LOG.error("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      LOG.error("Reading table screenshot failed for {}, cause: {}", file.getAbsolutePath(), e.getMessage());
       return null;
     }
     finally {
@@ -79,7 +78,7 @@ public class VPXUtil {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+        LOG.error("Failed to close vpx file stream: {}", e.getMessage(), e);
       }
     }
   }
@@ -119,7 +118,7 @@ public class VPXUtil {
       }
     }
     catch (Exception e) {
-      LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      LOG.error("Reading table info failed for {}, cause: {}", file.getAbsolutePath(), e.getMessage());
       throw new Exception("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
     }
     finally {
@@ -129,7 +128,7 @@ public class VPXUtil {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+        LOG.error("Failed to close vpx file stream: {}", e.getMessage(), e);
       }
     }
 
@@ -153,7 +152,7 @@ public class VPXUtil {
 
     }
     catch (Exception e) {
-      LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
+      LOG.error("Reading script failed for {} failed: {}", file.getAbsolutePath(), e.getMessage());
       throw new Exception("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
     }
     finally {
@@ -163,7 +162,7 @@ public class VPXUtil {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
+        LOG.error("Failed to close vpx file stream: {}", e.getMessage(), e);
       }
     }
 
@@ -180,17 +179,17 @@ public class VPXUtil {
 
       String vpxFilePath = "\"" + vpxFile.getAbsolutePath() + "\"";
       List<String> cmds = Arrays.asList(VPX_TOOL_EXE, "importvbs", vpxFilePath);
-      LOG.info("VBS Import CMD: " + String.join(" ", cmds));
+      LOG.info("VBS Import CMD: {}", String.join(" ", cmds));
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
       executor.setDir(new File("./resources"));
       executor.executeCommand();
 
       if (!keepVbsFile && !vbsFile.delete()) {
-        LOG.error("Failed to delete VBS import file " + vbsFile.getAbsolutePath());
+        LOG.error("Failed to delete VBS import file {}", vbsFile.getAbsolutePath());
       }
     }
     catch (Exception e) {
-      LOG.error("Importing VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Importing VBS failed for {}: {}", vpxFile.getAbsolutePath(), e.getMessage(), e);
     }
   }
 
@@ -203,7 +202,7 @@ public class VPXUtil {
       }
       String vpxFilePath = "\"" + vpxFile.getAbsolutePath() + "\"";
       List<String> cmds = Arrays.asList(VPX_TOOL_EXE, "extractvbs", vpxFilePath);
-      LOG.info("VBS Export CMD: " + String.join(" ", cmds));
+      LOG.info("VBS Export CMD: {}", String.join(" ", cmds));
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
       executor.setDir(new File("./resources"));
       executor.executeCommand();
@@ -215,7 +214,7 @@ public class VPXUtil {
 
       String script = org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
       if (!keepVbsFile && !vbsFile.delete()) {
-        LOG.error("Failed to delete VBS export file " + vbsFile.getAbsolutePath());
+        LOG.error("Failed to delete VBS export file {}", vbsFile.getAbsolutePath());
       }
       return script;
     }
@@ -226,10 +225,10 @@ public class VPXUtil {
   }
 
   public static String getChecksum(File gameFile) {
-    if (gameFile.exists()) {
+    if (gameFile != null && gameFile.exists()) {
       String s = readScript(gameFile);
       return MD5ChecksumUtil.checksum(s);
     }
-    throw new UnsupportedOperationException("No game file found");
+    return null;
   }
 }

@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

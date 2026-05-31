@@ -43,6 +43,9 @@ public class MimeTypeUtil {
       else if (suffix.endsWith("mp3")) {
         mimeType = "audio/mpeg";
       }
+      else if (suffix.endsWith("wav")) {
+        mimeType = "audio/wav";
+      }
       else if (suffix.endsWith("ogg")) {
         mimeType = "audio/ogg";
       }

@@ -1,14 +1,6 @@
 package de.mephisto.vpin.server.dmdscore;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
@@ -16,6 +8,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 
@@ -116,7 +114,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
   }
 
   private void processGameStart(String newGameName) {
-    if (!StringUtils.equals(newGameName, gameName)) {
+    if (!Strings.CI.equals(newGameName, gameName)) {
       // new game started, close previous one
       processGameStop();
 
@@ -140,9 +138,9 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       firstTimeStamp = timeStamp;
     }
 
-    byte[] frameBytes = DmdImageUtils.toPlane(type, planes, bitLength, width, height);
-    if (frameBytes != null) {
-      Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
+    int[] framePixels = DmdImageUtils.toPlane(type, planes, palette, bitLength, width, height);
+    if (framePixels != null) {
+      Frame frame = new Frame(type, timeStamp - firstTimeStamp, framePixels, width, height);
       for (DMDScoreProcessor processor : processors) {
         try {
           processor.onFrameReceived(frame);
@@ -168,12 +166,8 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       firstTimeStamp = timeStamp;
     }
 
-    // a palette indexed by color, the value being the position incremented in the palette
-    int nbInPalette = 0;
-    Map<Integer, Integer> mapPalette = new HashMap<>();
-
     // discover new color, add in palette, generate new position and reference in FrameBytes
-    final byte[] frameBytes = new byte[width * height];
+    final int[] pixels = new int[width * height];
     for (int y = 0; y < height; y++) {
       int yWidth = y * width;
       for (int x = 0; x < width; x++) {
@@ -183,26 +177,11 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
         final int g = (0xFF & colours[index + 1]);
         final int b = (0xFF & colours[index + 2]);
         int color = DmdImageUtils.rgb(r, g, b);
-        Integer pos = mapPalette.get(color);
-        if (pos == null) {
-          pos = nbInPalette++;
-          mapPalette.put(color, pos);
-        }
-        frameBytes[y * width + x] = pos.byteValue();
+        pixels[y * width + x] = color;
       }
     }
 
-    if (nbInPalette > 255) {
-      LOG.warn("Palette is too big: {}. Some color won't be rendered properly.", nbInPalette);
-    }
-
-    // Rebuild the palette
-    int[] palette = new int[nbInPalette];
-    for (Map.Entry<Integer, Integer> entry : mapPalette.entrySet()) {
-      palette[entry.getValue()] = entry.getKey();
-    }
-
-    Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes, width, height, palette);
+    Frame frame = new Frame(type, timeStamp - firstTimeStamp, pixels, width, height);
     for (DMDScoreProcessor processor : processors) {
       try {
         processor.onFrameReceived(frame);

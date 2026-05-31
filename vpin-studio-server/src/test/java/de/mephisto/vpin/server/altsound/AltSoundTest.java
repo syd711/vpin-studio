@@ -1,15 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AltSoundTest {
   private AltSoundService altSoundService;

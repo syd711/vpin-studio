@@ -46,7 +46,7 @@ public abstract class BaseDragDropHandler {
       @Override
       public void handle(DragEvent event) {
         try {
-          List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).filter(s -> s instanceof ContextMenu).collect(Collectors.toList());
+          List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).filter(s -> s instanceof ContextMenu).toList();
           if (open.size() > (isInDialog ? 2 : 1)) {
             return;
           }
@@ -90,7 +90,7 @@ public abstract class BaseDragDropHandler {
       public void handle(DragEvent event) {
         event.consume();
         List<File> files = new ArrayList<>(event.getDragboard().getFiles());
-        final File file = files.get(0);
+        final File file = files.getFirst();
         LOG.info("Dropped file " + file.getAbsolutePath());
 
         try {

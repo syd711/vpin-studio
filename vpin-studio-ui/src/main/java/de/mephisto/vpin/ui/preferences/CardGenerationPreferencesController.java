@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -45,6 +45,9 @@ public class CardGenerationPreferencesController implements Initializable {
   private CheckBox cardBackupAssetCheckbox;
 
   @FXML
+  private CheckBox customCardResCheckbox;
+
+  @FXML
   private ComboBox<String> rotationCombo;
 
   @FXML
@@ -55,6 +58,12 @@ public class CardGenerationPreferencesController implements Initializable {
 
   @FXML
   private Label popperScreenInfo;
+
+  @FXML
+  private TextField cardWidth;
+
+  @FXML
+  private TextField cardHeight;
 
   @FXML
   private Spinner<Integer> highscoreCardDuration;
@@ -153,6 +162,41 @@ public class CardGenerationPreferencesController implements Initializable {
       cardPosPlayfieldRadio.setSelected(!newValue);
       cardSettings.setNotificationOnPopperScreen(true);
       client.getPreferenceService().setJsonPreference(cardSettings);
+    });
+
+    cardSizeCombo.setDisable(cardSettings.isCustomResolution());
+    customCardResCheckbox.setSelected(cardSettings.isCustomResolution());
+    customCardResCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        cardSettings.setCustomResolution(newValue);
+        cardWidth.setDisable(!newValue);
+        cardHeight.setDisable(!newValue);
+        cardSizeCombo.setDisable(newValue);
+        client.getPreferenceService().setJsonPreference(cardSettings);
+      }
+    });
+
+    cardWidth.setText(String.valueOf(cardSettings.getCardWidth()));
+    cardWidth.setDisable(!cardSettings.isCustomResolution());
+    cardWidth.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*") ? change : null));
+    cardWidth.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        cardSettings.setCardWidth(Integer.parseInt(newValue));
+        client.getPreferenceService().setJsonPreference(cardSettings);
+      }
+    });
+
+    cardHeight.setDisable(!cardSettings.isCustomResolution());
+    cardHeight.setText(String.valueOf(cardSettings.getCardHeight()));
+    cardHeight.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*") ? change : null));
+    cardHeight.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        cardSettings.setCardHeight(Integer.parseInt(newValue));
+        client.getPreferenceService().setJsonPreference(cardSettings);
+      }
     });
 
     onScreenChange();

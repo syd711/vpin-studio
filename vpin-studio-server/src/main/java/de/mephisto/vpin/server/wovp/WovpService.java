@@ -24,9 +24,9 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,7 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -137,7 +139,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     }
 
     Optional<Challenge> challenge = challenges.getItems().stream().filter(c -> c.getId().equals(competition.get().getUuid())).findFirst();
-    if (!challenge.isPresent()) {
+    if (challenge.isEmpty()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "Challenge synchronization failed.");
       result.setErrorMessage("Challenge synchronization failed.");
       return result;
@@ -160,7 +162,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
 
       try {
         wovp.submitScore(screenshotFile, challenge.get().getId(), 0, getMetadata(game));
-        LOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
+        LOG.info("[WOVP simulate={}] WOVP score submit finished. Submitted a score for {}", simulate, cachedPlayer.getName());
         SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
       }
       catch (Exception e) {
@@ -235,7 +237,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     List<WovpPlayer> players = Wovp.getPlayers();
     if (!players.isEmpty()) {
-      ScoreSubmitResult scoreSubmitResult = submitScore(players.get(0), true);
+      ScoreSubmitResult scoreSubmitResult = submitScore(players.getFirst(), true);
       return scoreSubmitResult.getErrorMessage() == null;
     }
     return false;
@@ -304,10 +306,5 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       }
       synchronize(true);
     }
-  }
-
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-    //unused
   }
 }

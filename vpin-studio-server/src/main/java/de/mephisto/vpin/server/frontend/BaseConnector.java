@@ -22,9 +22,12 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.apache.commons.collections4.ListUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +122,7 @@ public abstract class BaseConnector implements FrontendConnector {
       }
       gamesByEmu.put(emu.getId(), games);
 
-      LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
+      LOG.info("Parsed games for emulator {}, {}: {} games", emu.getId(), emu.getName(), filenames.size());
     }
 
     // remaining entries in the List are orphaned, delete them
@@ -149,7 +154,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
     GameEntry entry = entries.stream()
-        .filter(e -> e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename))
+        .filter(e -> e.getEmuId() == emuId && Strings.CI.equals(e.getFilename(), filename))
         .findFirst().orElse(null);
 
     // new discovered entry, create id
@@ -171,7 +176,7 @@ public abstract class BaseConnector implements FrontendConnector {
   protected GameEntry findEntryFromFilename(int emuId, String filename) {
     for (Map.Entry<Integer, GameEntry> entry : mapFilenames.entrySet()) {
       GameEntry e = entry.getValue();
-      if (e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename)) {
+      if (e.getEmuId() == emuId && Strings.CI.equals(e.getFilename(), filename)) {
         return e;
       }
     }
@@ -244,10 +249,14 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setGameFileName(details != null ? details.getGameFileName() : filename);
     game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
     game.setGameStatus(details != null ? details.getStatus() : 1);
-    game.setDisabled(details != null ? details.getStatus() == 0 : false);
+    game.setDisabled(details != null && details.getStatus() == 0);
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
     game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
+    if (emu.isZenEmulator()) {
+      game.setRom(game.getGameDisplayName());
+    }
+
     game.setTags(TaggingUtil.getTags(details != null ? details.getTags() : null));
 
     File table = new File(emu.getGamesDirectory(), filename);
@@ -310,7 +319,7 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public List<Game> getGamesByFilename(String filename) {
     String gameFileName = filename.replaceAll("'", "''");
-    return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
+    return getGames().stream().filter(g -> Strings.CI.contains(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
   }
 
   @NonNull
@@ -329,7 +338,15 @@ public abstract class BaseConnector implements FrontendConnector {
   public Game getGameByName(int emuId, String gameName) {
     return getGameEntries(emuId).stream()
         .map(e -> getGame(e))
-        .filter(g -> StringUtils.containsIgnoreCase(g.getGameName(), gameName))
+        .filter(g -> Strings.CI.contains(g.getGameName(), gameName))
+        .findFirst().orElse(null);
+  }
+
+  @Override
+  public Game getGameByDisplayName(int emuId, String gameName) {
+    return getGameEntries(emuId).stream()
+        .map(e -> getGame(e))
+        .filter(g -> Strings.CI.contains(g.getGameDisplayName(), gameName))
         .findFirst().orElse(null);
   }
 
@@ -363,7 +380,7 @@ public abstract class BaseConnector implements FrontendConnector {
     }
 
     // detection of file renamed
-    if (!StringUtils.equalsIgnoreCase(e.getFilename(), tableDetails.getGameFileName())) {
+    if (!Strings.CI.equals(e.getFilename(), tableDetails.getGameFileName())) {
       deleteGame(id, false);
 
       // update filename, but do not change the id 
@@ -564,9 +581,9 @@ public abstract class BaseConnector implements FrontendConnector {
     int intValue = toColorCode(uiSettings.getJustAddedColor());
     pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
-    long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
+    OffsetDateTime dayMinus7 = OffsetDateTime.now().minus(7, ChronoUnit.DAYS);
     List<PlaylistGame> games = getGames().stream().filter(g -> {
-      return g.getDateAdded() != null ? g.getDateAdded().getTime() > dayMinus7 : false;
+      return g.getDateAdded() != null && g.getDateAdded().isAfter(dayMinus7);
     }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
     pl.setGames(games);
     return pl;
@@ -587,7 +604,7 @@ public abstract class BaseConnector implements FrontendConnector {
         s2.getNumberOfPlays() - s1.getNumberOfPlays();
 
     List<TableAlxEntry> games = getAlxData().stream().sorted(c).limit(10)
-        .collect(Collectors.toList());
+        .toList();
 
     List<PlaylistGame> plgames = games.stream().map(s -> toPlaylistGame(s.getGameId()))
         .collect(Collectors.toList());
@@ -719,7 +736,7 @@ public abstract class BaseConnector implements FrontendConnector {
         }
       }
       catch (IOException ioe) {
-        LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
+        LOG.error("Ignored error, cannot read file {}", playlistConfFile.getAbsolutePath(), ioe);
       }
     }
     return new JsonObject();
@@ -743,10 +760,10 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistConfFile != null) {
       try {
         String content = o.toString();
-        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(playlistConfFile.toPath(), content);
       }
       catch (IOException ioe) {
-        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+        LOG.error("Ignored error, cannot write file {}", playlistConfFile.getAbsolutePath(), ioe);
       }
     }
   }
@@ -761,7 +778,7 @@ public abstract class BaseConnector implements FrontendConnector {
         Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
       }
       catch (IOException ioe) {
-        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+        LOG.error("Ignored error, cannot write file {}", playlistConfFile.getAbsolutePath(), ioe);
       }
     }
   }
@@ -780,7 +797,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public java.util.Date getStartDate() {
+  public OffsetDateTime getStartDate() {
     return null;
   }
 
@@ -800,20 +817,18 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public final List<TableAlxEntry> getAlxData(int gameId) {
-    loadStats();
-    List<TableAlxEntry> result = new ArrayList<>();
-    TableAlxEntry stat = getGameStat(gameId);
-    if (stat != null) {
-      result.add(stat);
-    }
-    return result;
+    // force reload of stats and update of cache
+    List<TableAlxEntry> stats = getAlxData();
+    return stats.stream().filter(stat -> stat.getGameId() == gameId).collect(Collectors.toList());
   }
 
   @Override
   public boolean updateNumberOfPlaysForGame(int gameId, long value) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setNumberOfPlays((int) value);
+    if (stat != null) {
+      stat.setNumberOfPlays((int) value);
+    }
     return true;
   }
 
@@ -821,7 +836,9 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setTimePlayedSecs((int) seconds);
+    if (stat != null) {
+      stat.setTimePlayedSecs((int) seconds);
+    }
     return true;
   }
 
@@ -919,7 +936,7 @@ public abstract class BaseConnector implements FrontendConnector {
                     p.info().command().get().startsWith("MAME") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
+        .toList();
 
     if (processes.isEmpty()) {
       LOG.info("No vpin processes found, termination canceled.");
@@ -929,7 +946,7 @@ public abstract class BaseConnector implements FrontendConnector {
     for (ProcessHandle process : processes) {
       String cmd = process.info().command().get();
       boolean b = process.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
     }
     return true;
   }
@@ -958,12 +975,12 @@ public abstract class BaseConnector implements FrontendConnector {
       //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error(exe + " restart failed: {}", standardErrorFromCommand);
+        LOG.error("{} restart failed: {}", exe, standardErrorFromCommand);
         return false;
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to start " + exe + " again: " + e.getMessage(), e);
+      LOG.error("Failed to start {} again: {}", exe, e.getMessage(), e);
       return false;
     }
     return true;
@@ -977,7 +994,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private boolean launchGame(Game game, boolean wait) {
     if (game.isVpxGame()) {
       if (vpxService.play(game, null, null)) {
-        return !wait ? true : vpxService.waitForPlayer();
+        return !wait || vpxService.waitForPlayer();
       }
       return false;
     }

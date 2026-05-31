@@ -1,8 +1,10 @@
 package de.mephisto.vpin.connectors.vps;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -12,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,11 +31,15 @@ public class VPS {
 
   private final static boolean skipUpdates = false;
 
-  static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-  }
+    static {
+        objectMapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+                .build();
+    }
 
   private final List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
@@ -152,13 +161,18 @@ public class VPS {
 
   //----------------- LOADERS
 
-  private File getVpsDbFile() {
-    File folder = new File("./resources");
-    if (!folder.exists()) {
-      folder = new File("../resources");
+    private File vpsDbFile;
+    private File getVpsDbFile() {
+        if (vpsDbFile != null) {
+            return vpsDbFile;
+        }
+        File folder = new File("./resources");
+        if (!folder.exists()) {
+            folder = new File("../resources");
+        }
+        vpsDbFile = new File(folder, "vpsdb.json");
+        return vpsDbFile;
     }
-    return new File(folder, "vpsdb.json");
-  }
 
   public void loadTables(InputStream in) {
     try {
@@ -188,7 +202,7 @@ public class VPS {
 
     try {
       LOG.info("Downloading " + VPS.URL);
-      java.net.URL url = new URL(VPS.URL);
+      java.net.URL url = URI.create(VPS.URL).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
@@ -245,9 +259,9 @@ public class VPS {
     return Collections.emptyList();
   }
 
-  public Date getChangeDate() {
-    return new Date(getVpsDbFile().lastModified());
-  }
+    public OffsetDateTime getChangeDate() {
+        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(getVpsDbFile().lastModified()), ZoneId.systemDefault());
+    }
 
   public boolean reload() {
     File vpsDbFile = getVpsDbFile();

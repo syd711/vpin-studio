@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -13,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="600.0" minWidth="800.0" prefWidth="1124.0" styleClass="base-component" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.TextEditorController">
+<BorderPane minHeight="600.0" minWidth="800.0" prefWidth="1124.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.TextEditorController">
     <top>
         <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
     </top>
@@ -106,4 +107,8 @@
          </padding>
       </BorderPane>
    </bottom>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="root" />
+   </styleClass>
 </BorderPane>

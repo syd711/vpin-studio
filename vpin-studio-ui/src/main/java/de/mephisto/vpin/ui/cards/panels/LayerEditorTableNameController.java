@@ -2,15 +2,17 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
+import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -56,7 +58,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderTableName());
     setIconLock(cardTemplate.isLockTableName(), cardTemplate.isTemplate());
 
@@ -68,7 +70,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
     tableUseDefaultColor.setSelected(cardTemplate.isRawScore());
     CardTemplateBinder.setColorPickerValue(tableFontColorSelector, cardTemplate, "tableColor");
 
-    positionController.setTemplate("table", cardTemplate, res, true);
+    positionController.setTemplate("table", cardTemplate, cardWidth, cardHeight, true);
   }
 
   @Override

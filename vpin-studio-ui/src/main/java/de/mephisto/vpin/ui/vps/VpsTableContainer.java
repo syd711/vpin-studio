@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.vps;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;

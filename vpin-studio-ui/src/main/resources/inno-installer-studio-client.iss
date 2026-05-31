@@ -35,6 +35,45 @@ WizardStyle=modern
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
+[Code]
+function IsProcessRunning(const ProcessName: String): Boolean;
+var
+  WbemLocator: Variant;
+  WbemServices: Variant;
+  WbemObjectSet: Variant;
+begin
+  Result := False;
+  try
+    WbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+    WbemServices := WbemLocator.ConnectServer('', 'root\CIMV2', '', '');
+    WbemObjectSet := WbemServices.ExecQuery(
+      'SELECT Name FROM Win32_Process WHERE Name LIKE ''' + ProcessName + '''');
+    Result := not VarIsNull(WbemObjectSet) and (WbemObjectSet.Count > 0);
+  except
+  end;
+end;
+
+function InitializeSetup(): Boolean;
+var
+  Msg: String;
+begin
+  Result := True;
+  while IsProcessRunning('VPin-Studio.exe') or IsProcessRunning('java%.exe') or IsProcessRunning('VPin-Studio-Server.exe') do
+  begin
+    Msg := 'VPin Studio or Java processes are still running.' + #13#10 + #13#10 +
+           'Please close all VPin Studio applications (VPin-Studio.exe, VPin-Studio-Server.exe, VPin-Studio-App.exe) ' +
+           'and any running Java processes before continuing.' + #13#10 + #13#10 +
+           'Click Retry to check again, or Cancel to abort the installation.';
+    case MsgBox(Msg, mbError, MB_RETRYCANCEL) of
+      IDCANCEL:
+        begin
+          Result := False;
+          Exit;
+        end;
+    end;
+  end;
+end;
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 

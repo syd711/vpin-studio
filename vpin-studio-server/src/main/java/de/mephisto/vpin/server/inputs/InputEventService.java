@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuStatusChangeListener;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -10,6 +12,7 @@ import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.webhooks.WebhookEventType;
 import de.mephisto.vpin.server.VPinStudioServerTray;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
@@ -23,6 +26,8 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.RecorderService;
 import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vr.VRService;
+import de.mephisto.vpin.server.webhooks.WebhooksService;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,13 +37,14 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class InputEventService implements TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener, PauseMenuStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
@@ -63,7 +69,13 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   private ScreenshotService screenshotService;
 
   @Autowired
+  private VRService vrService;
+
+  @Autowired
   private JobQueue queue;
+
+  @Autowired
+  private WebhooksService webhooksService;
 
   private boolean overlayVisible;
   private ShutdownThread shutdownThread;
@@ -102,6 +114,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     String recordBtn = pauseMenuSettings.getRecordingButton();
     String screenshotBtn = pauseMenuSettings.getScreenshotButton();
     String resetBtn = pauseMenuSettings.getResetButton();
+    String vrToggleBtn = pauseMenuSettings.getVrToggleButton();
 
     if (name.equals("Q")) {
       HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
@@ -162,15 +175,21 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       onResetEvent();
       return;
     }
+
+    //handle key based vr toggle
+    if (name.equals(vrToggleBtn)) {
+      onVrToggle();
+      return;
+    }
   }
 
   //-------------- Event Execution -------------------------------------------------------------------------------------
 
   private void onToggleOverlayEvent(String eventName) {
-    LOG.info("Toggling overlay for key event '" + eventName + "'");
+    LOG.info("Toggling overlay for key event '{}'", eventName);
     this.overlayVisible = !overlayVisible;
     Platform.runLater(() -> {
-      LOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
+      LOG.info("Toggle overlay visibility, was visible: {}", !overlayVisible);
       SLOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
       ServerFX.getInstance().showOverlay(overlayVisible);
     });
@@ -198,6 +217,12 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     new Thread(() -> {
       frontendService.restartFrontend();
       frontendStatusService.notifyFrontendRestart();
+    }).start();
+  }
+
+  private void onVrToggle() {
+    new Thread(() -> {
+      vrService.toggleVRMode();
     }).start();
   }
 
@@ -315,7 +340,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
         case PreferenceNames.OVERLAY_SETTINGS: {
           OverlaySettings overlaySettings = preferencesService.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
           this.launchOverlayOnStartup = overlaySettings.isShowOnStartup();
-          LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
+          LOG.info("Show overlay on startup: {}", this.launchOverlayOnStartup);
           break;
         }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
@@ -326,32 +351,42 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
     catch (Exception e) {
-      LOG.error("Error updating " + this.getClass().getSimpleName() + " settings: " + e.getMessage(), e);
+      LOG.error("Error updating {} settings: {}", this.getClass().getSimpleName(), e.getMessage(), e);
     }
   }
 
   @EventListener(ApplicationReadyEvent.class)
   public void onApplicationReady() {
     ServerFX.client = new VPinStudioClient("localhost");
-    new Thread(() -> {
-      ServerFX.main(new String[]{});
-      LOG.info("Overlay listener started.");
-    }).start();
+
+    if (!GraphicsEnvironment.isHeadless()) {
+      new Thread(() -> {
+        try {
+          Thread.currentThread().setName("JavaFX App Thread Launcher");
+          ServerFX.main(new String[]{});
+        } catch (Exception e) {
+          LOG.error("Failed to start JavaFX Application: {}", e.getMessage(), e);
+        }
+      }).start();
+
+      LOG.info("Waiting for JavaFX initialization...");
+      ServerFX.waitForOverlay();
+      LOG.info("JavaFX initialization completed.");
+
+      new VPinStudioServerTray();
+      LOG.info("Application tray created.");
+
+      ServerFX.getInstance().setOverlayTitle(
+          frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
+      LOG.info("Finished initialization of OverlayWindowFX");
+    }
 
     shutdownThread = new ShutdownThread(preferencesService, queue);
     shutdownThread.start();
 
-    ServerFX.waitForOverlay();
-    ServerFX.getInstance().setOverlayTitle(
-        frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
-    LOG.info("Finished initialization of OverlayWindowFX");
-
-    new VPinStudioServerTray();
-    LOG.info("Application tray created.");
-
     try {
       InetAddress localHost = InetAddress.getLocalHost();
-      LOG.info("Server Address: " + localHost.getHostName() + "/" + localHost.getHostAddress());
+      LOG.info("Server Address: {}/{}", localHost.getHostName(), localHost.getHostAddress());
     }
     catch (UnknownHostException e) {
       //
@@ -372,12 +407,27 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     frontendStatusService.addFrontendStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);
-    LOG.info("Server startup finished, running version is " + systemService.getVersion());
+
+    if (!GraphicsEnvironment.isHeadless()) {
+      PauseMenu.getInstance().addListener(this);
+    }
+
+    LOG.info("Server startup finished, running version is {}", systemService.getVersion());
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   public void shutdown() {
     shutdownThread.shutdown();
     LOG.info("Shutdown watcher has been shut down.");
+  }
+
+  @Override
+  public void pauseMenuShow() {
+    webhooksService.notifyGamePauseHooks(frontendStatusService.getGameStatus().getGameId(), WebhookEventType.update);
+  }
+
+  @Override
+  public void pauseMenuHide() {
+    webhooksService.notifyGameUnPauseHooks(frontendStatusService.getGameStatus().getGameId(), WebhookEventType.update);
   }
 }

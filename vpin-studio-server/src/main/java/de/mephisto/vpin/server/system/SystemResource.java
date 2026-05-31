@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.*;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
@@ -17,6 +16,8 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -30,8 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -118,7 +117,7 @@ public class SystemResource {
       return String.join("\n", filtered);
     }
     catch (IOException e) {
-      LOG.error("Error reading log: " + e.getMessage(), e);
+      LOG.error("Error reading log: {}", e.getMessage(), e);
     }
     return "";
   }
@@ -166,7 +165,7 @@ public class SystemResource {
       LOG.info("Finished exporting log files.");
     }
     catch (IOException ex) {
-      LOG.info("Error writing logs: " + ex.getLocalizedMessage(), ex);
+      LOG.info("Error writing logs: {}", ex.getLocalizedMessage(), ex);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "IOError writing file to output stream");
     }
     finally {
@@ -179,7 +178,7 @@ public class SystemResource {
         }
       }
       catch (IOException e) {
-        LOG.error("Erorr closing streams: " + e.getMessage(), e);
+        LOG.error("Erorr closing streams: {}", e.getMessage(), e);
       }
     }
   }
@@ -204,7 +203,7 @@ public class SystemResource {
       info.setScreenInfos(systemService.getMonitorInfos());
     }
     catch (Exception e) {
-      LOG.error("Failed to read system info: " + e.getMessage());
+      LOG.error("Failed to read system info: {}", e.getMessage());
     }
     return info;
   }
@@ -292,11 +291,11 @@ public class SystemResource {
     File uiZip = new File("./", Updater.UI_ZIP);
     if (uiZip.exists()) {
       if (!ZipUtil.unzip(uiZip, new File("./"), null)) {
-        LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
+        LOG.error("Extraction of {} failed.", uiZip.getAbsolutePath());
         return false;
       }
       if (!uiZip.delete()) {
-        LOG.error("Failed to delete client archive: " + uiZip.getAbsolutePath());
+        LOG.error("Failed to delete client archive: {}", uiZip.getAbsolutePath());
         return false;
       }
       return true;
@@ -383,10 +382,10 @@ public class SystemResource {
         return data;
       }
       catch (IOException e) {
-        LOG.error("Failed to read file " + data.getPath() + ": " + e.getMessage(), e);
+        LOG.error("Failed to read file {}: {}", data.getPath(), e.getMessage(), e);
       }
     }
-    LOG.warn("File " + data.getPath() + " does not exists.");
+    LOG.warn("File {} does not exists.", data.getPath());
     return data;
   }
 

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class HighscoreCardsPredicateFactory {
           return false;
         }
 
-        if (StringUtils.isNotEmpty(searchTerm) && !StringUtils.containsIgnoreCase(model.getName(), searchTerm)) {
+        if (StringUtils.isNotEmpty(searchTerm) && !Strings.CI.contains(model.getName(), searchTerm)) {
           return false;
         }
 

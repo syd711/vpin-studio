@@ -205,6 +205,12 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         else if (hsFileInfo != null && hsFileInfo.getFile() != null) {
           SystemUtil.openFile(hsFileInfo.getFile());
         }
+
+        GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(gameRepresentation.getEmulatorId());
+        if (gameEmulator.isFpEmulator()) {
+          File f = new File(gameEmulator.getInstallationDirectory(), "fpRAM");
+          SystemUtil.openFile(f);
+        }
       }
     }
     catch (Exception e) {
@@ -234,14 +240,23 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         Frontend frontend = client.getFrontendService().getFrontendCached();
         File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
-        File gamePupFolder = new File(pupFolder, game.get().getRom());
+        if (!StringUtils.isEmpty(game.get().getRom())) {
+          File romFolder = new File(pupFolder, game.get().getRom());
+          if (romFolder.exists()) {
+            pupFolder = romFolder;
+          }
+        }
+
         if (!StringUtils.isEmpty(game.get().getRomAlias())) {
-          gamePupFolder = new File(pupFolder, game.get().getRomAlias());
+          File romFolder = new File(pupFolder, game.get().getRomAlias());
+          if (romFolder.exists()) {
+            pupFolder = romFolder;
+          }
         }
 
         UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
-          SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
+          SystemUtil.openFolder(pupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
         }
         else {
           SystemUtil.openFolder(new File(frontend.getInstallationDirectory(), "PUPVideos"));
@@ -775,15 +790,17 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fx1Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX);
     boolean fx3Mode = newValue == null || newValue.getType().equals(EmulatorType.ZenFX3);
+    boolean mMode = newValue == null || newValue.getType().equals(EmulatorType.PinballM);
+    boolean fpMode = newValue == null || newValue.getType().equals(EmulatorType.FuturePinball);
 
-    titledPaneHighscores.setVisible(vpxMode);
+    titledPaneHighscores.setVisible(vpxMode || (fpMode && Features.FP_HIGHSCORES_ENABLED));
     titledPanePov.setVisible(vpxMode);
     titledPaneAltSound.setVisible(vpxMode);
-    titledPaneDirectB2s.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
+    titledPaneDirectB2s.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator() || fx3Mode || fx1Mode || mMode);
     titledPanePUPPack.setVisible(newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator());
     titledPaneDMD.setVisible(vpxMode);
     titledPaneMame.setVisible(vpxMode);
-    //titledPaneVps.setVisible(vpxMode);
+    titledPaneVps.setVisible(vpxMode || mMode || fx1Mode || fx3Mode || fpMode);
     titledPaneAltColor.setVisible(vpxMode || fx1Mode || fx3Mode);
     titledPaneScriptDetails.setVisible(vpxMode);
 

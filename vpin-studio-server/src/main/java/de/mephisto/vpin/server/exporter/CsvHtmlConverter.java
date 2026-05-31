@@ -10,18 +10,19 @@ import java.util.List;
 public class CsvHtmlConverter {
 
   public static String convertCsvToEnhancedHtml(String csv) throws Exception {
-    CSVParser parser = CSVParser.parse(
-        new StringReader(csv),
-        CSVFormat.DEFAULT
-            .withDelimiter(';')                     // <- important: your CSV uses ';'
-            .withFirstRecordAsHeader()
-            .withIgnoreEmptyLines()
-            .withTrim()
-            .withQuote('"')
-            .withEscape('\\')
-            .withAllowMissingColumnNames()
-            .withIgnoreSurroundingSpaces()
-    );
+    CSVFormat format = CSVFormat.DEFAULT.builder()
+        .setDelimiter(';')
+        .setHeader()
+        .setSkipHeaderRecord(true)
+        .setIgnoreEmptyLines(true)
+        .setTrim(true)
+        .setQuote('"')
+        .setEscape('\\')
+        .setAllowMissingColumnNames(true)
+        .setIgnoreSurroundingSpaces(true)
+        .get();
+
+    CSVParser parser = CSVParser.parse(new StringReader(csv), format);
 
     // Get headers in order
     List<String> headers = parser.getHeaderNames();
@@ -117,4 +118,3 @@ public class CsvHtmlConverter {
     return out.toString();
   }
 }
-

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class DefaultAutoCompleteMatcher implements AutoCompleteMatcher {
 
   public List<AutoMatchModel> match(String input) {
     return entries.stream()
-        .filter(e -> StringUtils.containsIgnoreCase(e, input))
+        .filter(e -> Strings.CI.contains(e, input))
         .map(e -> new AutoMatchModel(e, e))
         .collect(Collectors.toList());
   }

@@ -2,9 +2,10 @@ package de.mephisto.vpin.server.preferences;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.mephisto.vpin.server.assets.Asset;
+import de.mephisto.vpin.server.util.IncrementGenerated;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Preferences")
@@ -13,8 +14,8 @@ import javax.persistence.*;
 public class Preferences {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", nullable = false)
+  @IncrementGenerated
+  @Column(name = "id")
   private Long id;
 
   @OneToOne(cascade = CascadeType.ALL)
@@ -94,6 +95,8 @@ public class Preferences {
 
   private String vpxzSettings;
 
+  private String vrSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -122,6 +125,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getVrSettings() {
+    return vrSettings;
+  }
+
+  public void setVrSettings(String vrSettings) {
+    this.vrSettings = vrSettings;
+  }
 
   public String getVpxzSettings() {
     return vpxzSettings;

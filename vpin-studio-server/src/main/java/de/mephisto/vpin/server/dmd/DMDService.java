@@ -8,12 +8,12 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.mame.MameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,7 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +37,7 @@ public class DMDService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DMDService.class);
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   public File getDmdFolder(Game game) {
     File tablesFolder = game.getGameFile().getParentFile();
@@ -52,7 +57,7 @@ public class DMDService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to delete DMD directory for " + game + ": " + e.getMessage(), e);
+      LOG.error("Failed to delete DMD directory for {}: {}", game, e.getMessage(), e);
     }
     return false;
   }
@@ -68,7 +73,7 @@ public class DMDService implements InitializingBean {
 
         File dmdFolder = getDmdFolder(game);
         if (dmdFolder.exists()) {
-          dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+          dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
           File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
           if (dmdFiles != null && dmdFiles.length > 0) {
             dmdPackage.setFiles(Arrays.stream(dmdFiles).map(File::getName).collect(Collectors.toList()));
@@ -110,7 +115,7 @@ public class DMDService implements InitializingBean {
   }
 
   public ComponentSummary getFreezySummary() {
-    File mameFolder = mameService.getMameFolder();
+    File mameFolder = vPinMameService.getMameFolder();
     return FreezySummarizer.summarizeFreezy(mameFolder);
   }
 

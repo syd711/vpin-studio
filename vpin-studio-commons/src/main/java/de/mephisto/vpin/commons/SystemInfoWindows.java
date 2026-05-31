@@ -1,20 +1,19 @@
 package de.mephisto.vpin.commons;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.mephisto.vpin.commons.utils.WinRegistry;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 
 public class SystemInfoWindows {
@@ -164,7 +163,7 @@ public class SystemInfoWindows {
     if (StringUtils.isNotEmpty(vpx)) {
       int indexOf = vpx.toLowerCase().indexOf(".exe");
       if (indexOf > 0) {
-        String exe = StringUtils.removeStart(vpx.substring(0, indexOf + 4), "\"");
+        String exe = Strings.CI.removeStart(vpx.substring(0, indexOf + 4), "\"");
         File fexe = new File(exe);
         if (fexe.exists()) {
           return fexe;
@@ -185,12 +184,12 @@ public class SystemInfoWindows {
       String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
       File serverDllFile = null;
       try {
-        serverDllFile = new File(new URL(serverDllPath).getFile());
+        serverDllFile = new File(URI.create(serverDllPath).toURL().getFile());
         if (serverDllFile.exists()) {
           return serverDllFile.getParentFile();
         }
       }
-      catch (MalformedURLException ue) {
+      catch (Exception ue) {
       }
 
       // alternative way copied from FrontendService
@@ -219,22 +218,29 @@ public class SystemInfoWindows {
   private String readRegistry(String location, String key) {
     try {
       // Run reg query, then read output with StreamReader (internal class)
-      String cmd = "reg query " + "\"" + location + "\"";
-      if (key != null) {
-        cmd = "reg query " + '"' + location + "\" /v " + key;
-      }
+          //When using array for non-deprecated getRuntime().exec, each argument is an element of the array
+          //Watch out for extra spaces
+              String[] cmd = {"reg", "query", location};
+        if (key != null) {
+                  cmd = new String[]{"reg", "query", location + " /v " + key};
+        }
+              try {
       Process process = Runtime.getRuntime().exec(cmd);
       StreamReader reader = new StreamReader(process.getInputStream());
       reader.start();
       process.waitFor();
       reader.join();
       return reader.getResult();
+              } catch (Exception e) {
+                  LOG.error("Failed to run process to read registry key at {}: {} ", location, e.getMessage());
+                  return null;
     }
-    catch (Exception e) {
-      LOG.info("Failed to read registry key " + location);
+         } catch (Exception e) {
+          LOG.error("Failed to read registry key at {}: {} ", location, e.getMessage());
       return null;
     }
   }
+
   private String readRegistryValue(String location, String key) {
     String reg = readRegistry(location, key);
     return StringUtils.isNotEmpty(reg) ? extractRegistryValue(reg) : null;
@@ -249,7 +255,7 @@ public class SystemInfoWindows {
    */
   private void writeRegistry(String location, String key, int value) {
     try {
-      String cmd = "REG ADD \"" + location + "\" /v " + key + " /t REG_DWORD /d " + value + " /f";
+      String[] cmd = {"REG","ADD","\"" + location + "\"","/v",key,"/t","REG_DWORD","/d",""+ value,"/f"};
       Process process = Runtime.getRuntime().exec(cmd);
       StreamReader reader = new StreamReader(process.getInputStream());
       reader.start();

@@ -199,17 +199,20 @@ public class HeaderResizeableController implements Initializable {
         stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
         stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
         stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+
+
+        header.setOnMouseMoved(new EventHandler<MouseEvent>() {
+              @Override
+              public void handle(MouseEvent event) {
+                  HeaderResizeableController.event = event;
+              }
+          });
+
+          boolean isMaximize = FXResizeHelper.isMaximized(stage);
+          refreshWindowMaximizedState(isMaximize);
       }
 
-      header.setOnMouseMoved(new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          HeaderResizeableController.event = event;
-        }
-      });
 
-      boolean isMaximize = FXResizeHelper.isMaximized(stage);
-      refreshWindowMaximizedState(isMaximize);
     });
 
   }

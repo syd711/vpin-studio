@@ -69,7 +69,7 @@ public class ScoreFormatUtil {
   /**
    * Apply minimal transformation on raw highscore text
    *
-   * @param raw Th eraw text to be "formatted"
+   * @param raw The raw text to be "formatted"
    * @return The formatted text
    */
   public static String formatRaw(String raw) {

@@ -11,9 +11,9 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -26,8 +26,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*********************************************************************************************************************
  * Game Media
@@ -125,10 +124,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   //-------------------------
 
-  public JobDescriptor uploadMedia(File file, int objectId, boolean playlistMode, VPinScreen screen, boolean append, FileUploadProgressListener listener) throws Exception {
+  public JobDescriptor uploadMedia(File file, int objectId, boolean playlistMode, VPinScreen screen, boolean append, VPinScreen loadingScreenId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + getSegment(playlistMode) + "/upload/" + screen.name() + "/" + append;
       HttpEntity<MultiValueMap<String, Object>> upload = createUpload(file, objectId, null, AssetType.FRONTEND_MEDIA, listener);
+      Map<String, List<Object>> data = upload.getBody();
+      data.put("loadingScreenId", Collections.singletonList(loadingScreenId));
       ResponseEntity<JobDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
@@ -166,12 +167,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return search;
   }
 
-  public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append) throws Exception {
+  public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append, VPinScreen loadingScreenId) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen + "/" + append, tableAsset, Boolean.class);
+      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen + "/" + append + "/" + loadingScreenId, tableAsset, Boolean.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to download asset: " + e.getMessage(), e);
+      LOG.error("Failed to download table asset: " + e.getMessage(), e);
       throw e;
     }
   }
@@ -181,7 +182,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + API_SEGMENT_PLAYLISTMEDIA + "/" + playlist.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to download asset: " + e.getMessage(), e);
+        LOG.error("Failed to download playlist asset: " + e.getMessage(), e);
       throw e;
     }
   }

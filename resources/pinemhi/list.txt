@@ -117,6 +117,7 @@ batmanf3
 batmanf5
 batmanf501
 bay_401
+bay_402
 bay_d300
 bay_d400
 bay_e400
@@ -130,9 +131,13 @@ bbh_160
 bbh_170
 bbnny_l2
 bbnny_lu
-bcats_
+bcats_f1
+bcats_g4
 bcats_l2
 bcats_l5
+bcats_tcm
+bcats_tcm12
+bcats_tcm13
 bdk_210
 bdk_220
 bdk_240
@@ -367,6 +372,7 @@ diner_l1
 diner_l2
 diner_l3
 diner_l4
+diner_l4fr
 diner_p0
 disco_l1
 dm_h5
@@ -623,6 +629,7 @@ gransla4
 granslaa
 granslam
 grgar_l1
+grgar_l2
 grgar_t1
 gs_l3
 gs_l4
@@ -688,6 +695,7 @@ hotdoggn
 hotshots
 hs_l3
 hs_l4
+hs_p4g
 httip_l1
 hulk
 hurr_l2
@@ -842,6 +850,7 @@ mars7
 mav_100
 mav_401
 mav_402
+mav_404g
 mb_10
 mb_106
 mb_106b
@@ -938,6 +947,7 @@ ngg_10
 ngg_13
 ngg_p06
 ngndshkb
+ngndshkm
 ngndshkr
 nightr20
 nightrdb
@@ -1006,6 +1016,7 @@ pnkpntr7
 polic_l2
 polic_l3
 polic_l4
+polic_lx5
 pool_l6
 pool_l7
 pool_le2
@@ -1032,6 +1043,8 @@ qbquest
 quicksfp
 quicksil
 rab_103
+rab_103it
+rab_110be
 rab_130
 rab_320
 rackemup
@@ -1104,6 +1117,8 @@ rollr_g3
 rollr_l2
 rollr_l3
 rollr_p2
+rollr_ta2
+rollst21
 rollstob
 rollston
 rs_l6
@@ -1371,6 +1386,7 @@ tmac_a24
 tmfnt_l5
 tmnt_103
 tmnt_104
+tmnt_200
 tmwrp_l2
 tmwrp_t2
 tom_06
@@ -1418,6 +1434,9 @@ ts_lx4
 ts_lx5
 ts_pa1
 tsptr_l3
+tsptr_l3fj
+tsptr_lx4
+tsptr_lx4b
 twd_156
 twd_156c
 twd_156h
@@ -1487,6 +1506,7 @@ wd_12
 wd_12g
 whirl_l2
 whirl_l3
+wildfyrc
 wildfyre
 wipeout
 wldcp_l1
@@ -1505,6 +1525,8 @@ wpt_140gf
 wpt_140i
 wpt_140l
 wrldtou2
+wrldtou3
+wrldtou4
 wrldtour
 wrlok_l3
 ww_l2

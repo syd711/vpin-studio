@@ -3,11 +3,12 @@ package de.mephisto.vpin.server.listeners;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,7 +43,14 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
 
   @Override
   public void competitionDeleted(@NotNull Competition competition) {
-    refreshBadge(competition);
+    Game game = gameService.getGame(competition.getGameId());
+    if (game == null) {
+      game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
+    }
+
+    if (game != null) {
+      frontendStatusService.deAugmentWheel(game);
+    }
   }
 
   private void refreshBadge(@NotNull Competition competition) {
@@ -51,8 +59,13 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
 
     //the data has already been saved, check other changes, like the badge
     if (game != null && active) {
-      if (competition.getBadge() != null) {
+      boolean wheelAugmented = frontendStatusService.isWheelAugmented(game);
+      boolean setBadge = !StringUtils.isEmpty(competition.getBadge());
+      if (setBadge && !wheelAugmented) {
         frontendStatusService.augmentWheel(game, competition.getBadge());
+      }
+      else if (!setBadge && wheelAugmented) {
+        frontendStatusService.deAugmentWheel(game);
       }
     }
     runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);

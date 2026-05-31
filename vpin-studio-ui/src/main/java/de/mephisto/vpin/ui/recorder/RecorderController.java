@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -28,10 +27,9 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -192,12 +190,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   public void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getFrontendService().terminateFrontend();
-    }
+    Dialogs.killFrontend();
   }
 
   @FXML
@@ -209,7 +202,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         client.getRecorderService().stopRecording(recording);
       }
     }
-    RecorderDialogs.openRecordingDialog(this, selection);
+    RecorderDialogs.openRecordingDialog(this, this.emulatorCombo.getValue(), selection);
   }
 
   @FXML
@@ -293,7 +286,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
             tableView.getSelectionModel().select(selectedItem);
           }
 
-          RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+          RecorderSettings recorderSettingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+          if (recorderSettingsLookup == null) {
+            recorderSettingsLookup = new RecorderSettings();
+          }
+          final RecorderSettings recorderSettings = recorderSettingsLookup;
+
           boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
           this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
           endReload();
@@ -343,7 +341,11 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     this.emulatorCombo.setDisable(true);
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getGameEmulatorsUncached());
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+    List<GameEmulatorRepresentation> filtered = emulators.stream()
+        .filter(e -> e.isEnabled())
+        .filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId())))
+        .sorted(Comparator.comparing(GameEmulatorRepresentation::getName))
+        .collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
@@ -430,7 +432,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
     super.loadPlaylistCombo();
 
-    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    RecorderSettings recorderSettingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    if (recorderSettingsLookup == null) {
+      recorderSettingsLookup = new RecorderSettings();
+    }
+    final RecorderSettings recorderSettings = recorderSettingsLookup;
+
     List<RecordingScreenOptions> options = new ArrayList<>();
     List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
@@ -478,7 +485,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
-      if (value.getDateAdded() != null) {
+      if (value.getDateUpdated() != null) {
         label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
       }
       else {
@@ -595,7 +602,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   private void refreshScreenMenu() {
-    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    RecorderSettings recorderSettingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    if (recorderSettingsLookup == null) {
+      recorderSettingsLookup = new RecorderSettings();
+    }
+    final RecorderSettings recorderSettings = recorderSettingsLookup;
+
     List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
 
     screenMenuButton.getItems().clear();
@@ -611,7 +623,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       item.setContent(checkBox);
       item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
       item.setOnAction(actionEvent -> {
-        RecorderSettings rSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        RecorderSettings rSettingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        if (rSettingsLookup == null) {
+          rSettingsLookup = new RecorderSettings();
+        }
+        final RecorderSettings rSettings = rSettingsLookup;
+
         rSettings.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
         client.getPreferenceService().setJsonPreference(rSettings);
 
@@ -705,7 +722,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   public void refreshSelection() {
-    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    RecorderSettings recorderSettingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    if (recorderSettingsLookup == null) {
+      recorderSettingsLookup = new RecorderSettings();
+    }
+    final RecorderSettings recorderSettings = recorderSettingsLookup;
+
     for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
       screenRecorderPanelController.setVisible(recorderSettings.
           isEnabled(screenRecorderPanelController.getScreen()));
@@ -759,7 +781,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
         if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
-          models.add(0, new GameRepresentationModel(refreshedGame));
+          models.addFirst( new GameRepresentationModel(refreshedGame));
         }
       }
 

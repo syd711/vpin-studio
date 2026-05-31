@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 

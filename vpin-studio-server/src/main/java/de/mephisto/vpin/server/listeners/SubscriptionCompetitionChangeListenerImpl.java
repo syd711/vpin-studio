@@ -17,20 +17,21 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitionChangeListener implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(CompetitionChangeListenerImpl.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private CompetitionService competitionService;
@@ -64,17 +65,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
   @Override
   public void competitionCreated(@NonNull Competition competition) {
-    if (competition.getType().equals(CompetitionType.ISCORED.name())) {
-      Game game = gameService.getGame(competition.getGameId());
-      if (game != null) {
-        if (competition.isHighscoreReset()) {
-          if (highscoreBackupService.backup(game) != null) {
-            highscoreService.resetHighscore(game);
-          }
-        }
-      }
-    }
-    else if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+    if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
       try {
         Game game = gameService.getGame(competition.getGameId());
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
@@ -102,7 +93,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               return;
             }
 
-            LOG.info("Created text channel " + subscriptionChannel);
+            LOG.info("Created text channel {}", subscriptionChannel);
             if (subscriptionChannel != null) {
               long channelId = subscriptionChannel.getId();
 
@@ -124,7 +115,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
                   List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), game, serverId);
 
                   if (!scores.isEmpty()) {
-                    String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.get(0), competition.getScoreLimit());
+                    String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.getFirst(), competition.getScoreLimit());
                     long newHighscoreMessageId = discordService.sendMessage(serverId, channelId, msg);
                     discordService.updateHighscoreMessage(serverId, channelId, newHighscoreMessageId);
                   }
@@ -138,7 +129,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
         }
       }
       catch (Exception e) {
-        LOG.error("Error creating table subscription: " + e.getMessage(), e);
+        LOG.error("Error creating table subscription: {}", e.getMessage(), e);
       }
     }
   }
@@ -195,7 +186,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
     //the bot is not the owner, so it has joined the subscription OR re-joined it
     long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
     discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);
-    LOG.info("Discord bot \"" + bot + "\" has joined \"" + competition + "\"");
+    LOG.info("Discord bot \"{}\" has joined \"{}\"", bot, competition);
   }
 
   @Override

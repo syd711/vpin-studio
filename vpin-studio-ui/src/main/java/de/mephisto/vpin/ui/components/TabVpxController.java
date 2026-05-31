@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
@@ -27,7 +27,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
   @FXML
   private void onOpen() {
     try {
-      Dialogs.openTextEditor(new MonitoredTextFile(VPinFile.VPinballXIni), "VPinballX.ini");
+      Dialogs.openTextEditor(new TextEditorFile(TextEditorFileTypes.VPinballXIni), "VPinballX.ini");
     }
     catch (Exception e) {
       LOG.error("Failed to open file: " + e.getMessage(), e);

@@ -23,11 +23,12 @@ import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.commons.fx.ImageUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -103,7 +104,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
   private void extractDefaultPicture(@NonNull Game game, File target, boolean usePreview) {
     if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
-      LOG.error("Failed to create raw default picture folder: " + target.getParentFile().getAbsolutePath());
+      LOG.error("Failed to create raw default picture folder: {}", target.getParentFile().getAbsolutePath());
     }
 
     // extract Preview with frame, no grill is hidden...
@@ -132,7 +133,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
           DirectB2SImageExporter.export(target, data);
         }
         catch (VPinStudioException e) {
-          LOG.error("Failed to extract background image: " + e.getMessage(), e);
+          LOG.error("Failed to extract background image: {}", e.getMessage(), e);
         }
       }
     }
@@ -192,7 +193,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
           return true;
         }
         catch (IOException e) {
-          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
+          LOG.error("Failed to copy resource file as background: {}", e.getMessage(), e);
         }
       }
       else if ("video".equals(baseType)) {
@@ -266,7 +267,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
       }
 
       BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
-      LOG.info("Resized to " + resized.getWidth() + "x" + resized.getHeight());
+      LOG.info("Resized to {}x{}", resized.getWidth(), resized.getHeight());
       if (resized.getHeight() < cropHeight) {
         resized = ImageUtil.crop(resized, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
@@ -280,7 +281,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
       return blurred;
     }
     catch (Exception e) {
-      LOG.warn("Error creating competition image for " + game.getGameDisplayName() + ": " + e.getMessage(), e);
+      LOG.warn("Error creating competition image for {}: {}", game.getGameDisplayName(), e.getMessage(), e);
     }
     return null;
   }
@@ -353,6 +354,10 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
     String manufacturerFilter = cleanName(manufacturer);
     File folder = new File(SystemService.RESOURCES, "manufacturers");
     File[] files = folder.listFiles((dir, name) -> cleanName(name).startsWith(manufacturerFilter));
+    if (files == null) {
+      return null;
+    }
+
     File preferred = null;
     int prefscore = -1;
     for (File f : files) {
@@ -377,7 +382,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
       }
       else {
         // when no year specified, prefer generic name
-        score += StringUtils.equalsIgnoreCase(manufacturer, filename) ? 2 : 1;
+        score += Strings.CI.equals(manufacturer, filename) ? 2 : 1;
       }
 
       if (score > prefscore) {
@@ -391,8 +396,8 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
   private String cleanName(String name) {
     String ret = name.toLowerCase();
-    ret = StringUtils.remove(ret, " ");
-    ret = StringUtils.remove(ret, ".");
+    ret = Strings.CI.remove(ret, " ");
+    ret = Strings.CI.remove(ret, ".");
     return ret;
   }
 

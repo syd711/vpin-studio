@@ -22,7 +22,7 @@ public class EmulatorCreateProgressModel extends ProgressModel<GameEmulatorRepre
 
   public EmulatorCreateProgressModel(GameEmulatorRepresentation emulator, EmulatorsController emulatorsController) {
     super("Creating \"" + emulator.getName() + "\"");
-    this.emulators = Arrays.asList(emulator);
+    this.emulators = List.of(emulator);
     this.emulatorsController = emulatorsController;
     this.iterator = emulators.iterator();
   }
@@ -60,7 +60,7 @@ public class EmulatorCreateProgressModel extends ProgressModel<GameEmulatorRepre
     super.finalizeModel(progressResultModel);
     Platform.runLater(() -> {
       emulatorsController.onReload();
-      emulatorsController.select(emulators.get(0));
+      emulatorsController.select(emulators.getFirst());
     });
   }
 

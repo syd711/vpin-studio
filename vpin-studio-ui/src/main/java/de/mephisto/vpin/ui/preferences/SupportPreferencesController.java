@@ -31,7 +31,7 @@ public class SupportPreferencesController implements Initializable {
     if (targetFolder != null && targetFolder.exists()) {
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new LogsDownloadProgressModel("Download Logs", targetFolder));
       if (!resultModel.getResults().isEmpty()) {
-        File target = (File) resultModel.getResults().get(0);
+        File target = (File) resultModel.getResults().getFirst();
         WidgetFactory.showInformation(stage, "Logs Generated", "Downloaded \"" + target.getAbsolutePath() + "\".", "Please attach this file with a description to a github issue.");
       }
     }

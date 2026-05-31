@@ -3,15 +3,17 @@ package de.mephisto.vpin.server.recorder;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.recorder.*;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingData;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameMediaService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
+import java.util.concurrent.*;
 
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
+  private final static int TIMEOUT_MINUTES = 10;
 
   private final FrontendConnector frontend;
   private final Game game;
@@ -52,7 +51,7 @@ public class GameRecorder {
   }
 
   public RecordingResult startRecording() {
-    LOG.info("Launching recording of \"" + game.getGameDisplayName() + "\"");
+    LOG.info("Launching recording of \"{}\"", game.getGameDisplayName());
     RecordingResult status = new RecordingResult();
 
     List<Callable<RecordingResult>> callables = new ArrayList<>();
@@ -64,11 +63,11 @@ public class GameRecorder {
         }
 
         File recordingTempFile = createTemporaryRecordingFile(game, screen, option.getRecordMode());
-        List<FrontendPlayerDisplay> collect = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).collect(Collectors.toList());
+        List<FrontendPlayerDisplay> collect = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).toList();
         if (collect.isEmpty()) {
           continue;
         }
-        FrontendPlayerDisplay recordingScreen = collect.get(0);
+        FrontendPlayerDisplay recordingScreen = collect.getFirst();
         int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
         if (totalDuration > totalTime) {
           totalTime = totalDuration;
@@ -78,7 +77,9 @@ public class GameRecorder {
           Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
-              LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + recordingTempFile.getAbsolutePath());
+              option.setOpenGlCommand(recorderSettings.isCustomLauncherEnabled() && recorderSettings.getCustomLauncher() != null && recorderSettings.getCustomLauncher().toLowerCase().contains("gl"));
+              LOG.info("Starting [glmode={}] recording for \"{}\", {}: {}", option.isOpenGlCommand(), game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
+
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
               screenRecorders.add(screenRecorder);
@@ -91,8 +92,8 @@ public class GameRecorder {
 
 
               int count = 0;
-              if(jobDescriptor.getUserData() != null) {
-               count = (int) jobDescriptor.getUserData();
+              if (jobDescriptor.getUserData() != null) {
+                count = (int) jobDescriptor.getUserData();
               }
               jobDescriptor.setUserData((count + 1));
 
@@ -116,19 +117,20 @@ public class GameRecorder {
 
       try {
         for (Future<RecordingResult> future : futures) {
-          RecordingResult recordingResult = future.get();
+          RecordingResult recordingResult = future.get(TIMEOUT_MINUTES, TimeUnit.MINUTES);
           if (recordingResult != null) {
             recordingResults.add(recordingResult);
           }
           LOG.info("Recording finished: {}", recordingResult.toString());
+          LOG.info("Recording error log: {}", recordingResult.getErrorLog());
         }
       }
       catch (Exception e) {
-        LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
+        LOG.error("Error waiting for recording errorResult: {}", e.getMessage(), e);
       }
     }
     else {
-      LOG.info("Skipped recording of " + game.getGameDisplayName() + ", no screens to record.");
+      LOG.info("Skipped recording of {}, no screens to record.", game.getGameDisplayName());
     }
     return status;
   }
@@ -137,12 +139,12 @@ public class GameRecorder {
   protected RecordingScreenOptions validateScreen(VPinScreen screen) {
     RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
     if (!option.isEnabled()) {
-      LOG.info("Skipped recording for " + screen + ", screen is not enabled.");
+      LOG.info("Skipped recording for {}, screen is not enabled.", screen);
       return null;
     }
 
     if (!isRecordingRequired(game, screen, option.getRecordMode())) {
-      LOG.info("Skipped recording for " + screen + ", asset not missing.");
+      LOG.info("Skipped recording for {}, asset not missing.", screen);
       return null;
     }
     return option;
@@ -197,6 +199,11 @@ public class GameRecorder {
   private void finalizeGameRecorder(@NonNull RecordingResult result) {
     VPinScreen screen = result.getScreen();
     File recordingTempFile = result.getRecordingTempFile();
+    if (!recordingTempFile.exists()) {
+      LOG.info("GameRecorder finalization cancelled, recording temp file does not exist.");
+      return;
+    }
+
     RecordingWriteMode recordingWriteMode = result.getRecordingScreenOptions().getRecordMode();
 
     LOG.info("Finalizing temporary recording file {} for screen {}", recordingTempFile.getAbsolutePath(), screen.name());
@@ -215,7 +222,7 @@ public class GameRecorder {
           if (!screenMediaFiles.isEmpty()) {
             for (File screenMediaFile : screenMediaFiles) {
               if (screenMediaFile.getParentFile().equals(mediaFolder) &&
-                  StringUtils.equalsIgnoreCase(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
+                  Strings.CI.equals(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
                 if (!screenMediaFile.delete()) {
                   LOG.error("Failed to delete {}, can't overwrite file with media recording for {}, file will be appended instead", screenMediaFile.getAbsolutePath(), screen.name());
                 }
@@ -235,7 +242,7 @@ public class GameRecorder {
         }
         case append: {
           // simply switch recorded and target files and keep all other files and format
-          if (!StringUtils.equalsIgnoreCase(target.getName(), recordingTempFile.getName())) {
+          if (!Strings.CI.equals(target.getName(), recordingTempFile.getName())) {
             // another temporary not existing file that will be deleted
             target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
             copyRecordingToTarget(game, screen, recordingTempFile, target);
@@ -259,7 +266,7 @@ public class GameRecorder {
 
   private void copyRecordingToTarget(Game game, VPinScreen screen, File recordingTempFile, File target) throws IOException {
     try {
-      if (!target.canWrite()) {
+      if (target.exists() && !target.delete()) {
         target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
         FileUtils.copyFile(recordingTempFile, target);
         LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());

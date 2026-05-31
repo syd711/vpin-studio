@@ -10,7 +10,9 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -56,7 +58,11 @@ public class CardGraphicsTest extends Application {
 
   public CardTemplate loadTemplate(String filename) throws IOException {
     try (InputStream in = getClass().getResourceAsStream(filename)) {
-      ObjectMapper objectMapper = new ObjectMapper();
+      JsonMapper objectMapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .build();
       return objectMapper.readValue(in, CardTemplate.class);	
     }
   }
@@ -76,7 +82,7 @@ public class CardGraphicsTest extends Application {
     }
 
     CardData data = CardDataMock.create();
-    graphics.setData(data, CardResolution.HD);
+    graphics.setData(data, CardResolution.HD.toWidth(), CardResolution.HD.toHeight());
 
     return graphics;
   }

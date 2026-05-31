@@ -20,7 +20,6 @@ public class InstallTableTest {
 
   @Test
   public void testConnect() {
-
     //ServerUpdatePreProcessing.execute();
 
     new SpringApplicationBuilder(VPinStudioServer.class).headless(false).run();

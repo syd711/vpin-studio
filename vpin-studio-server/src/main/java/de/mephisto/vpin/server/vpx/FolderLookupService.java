@@ -4,11 +4,12 @@ import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
-import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * check VPX-10.8.1-FileLayout.md
@@ -28,7 +32,7 @@ public class FolderLookupService {
   private SystemService systemService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
 
   /*
@@ -75,7 +79,7 @@ public class FolderLookupService {
   public File getAltColorFolder(@NonNull Game game, String subfolder) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getAltColorFolder();
+      File folder = vPinMameService.getAltColorFolder();
       return new File(folder, subfolder);
     }
 
@@ -86,7 +90,7 @@ public class FolderLookupService {
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getNvRamFolder();
+      File folder = vPinMameService.getNvRamFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "nvram");
       }
@@ -100,7 +104,7 @@ public class FolderLookupService {
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getRomsFolder();
+      File folder = vPinMameService.getRomsFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "roms");
       }
@@ -124,7 +128,7 @@ public class FolderLookupService {
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
     if (isPreferLegacyFileStructure(emulator)) {
-      File folder = mameService.getCfgFolder();
+      File folder = vPinMameService.getCfgFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "cfg");
       }
@@ -135,16 +139,72 @@ public class FolderLookupService {
   }
 
   @Nullable
-  public File getGameMusicFolder(@NonNull Game game, @Nullable String rom) {
-    GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(game.getEmulator())) {
-      if (!StringUtils.isEmpty(rom)) {
-        return new File(emulator.getInstallationFolder(), "Music/" + rom);
-      }
-      return new File(emulator.getInstallationFolder(), "Music/" + game.getRom());
+  public File getGameMusicFolder(@NonNull Game game) {
+    File musicRoot = getMusicFolder(game);
+    if (musicRoot == null) {
+      return null;
     }
 
-    File folder = new File(game.getGameFolder(), "music/");
+    String effectiveRom = game.getRom();
+    String assetsStr = game.getAssets();
+
+    if (StringUtils.isEmpty(assetsStr)) {
+      // No assets scanned — fall back to music root + ROM name as subfolder
+      return StringUtils.isEmpty(effectiveRom) ? musicRoot : new File(musicRoot, effectiveRom);
+    }
+
+    // Collect distinct folder paths from the asset paths (e.g. "MFDOOM" from "MFDOOM/Attract*.mp3")
+    Set<String> folders = new LinkedHashSet<>();
+    for (String asset : assetsStr.split("\\|")) {
+      if (StringUtils.isEmpty(asset)) {
+        continue;
+      }
+      String folder = StringUtils.strip(FilenameUtils.getPath(asset), "/");
+      if (!StringUtils.isEmpty(folder)) {
+        folders.add(folder);
+      }
+    }
+
+    if (folders.isEmpty()) {
+      // All assets sit at the root level — return the root
+      return musicRoot;
+    }
+
+    if (folders.size() == 1) {
+      return new File(musicRoot, folders.iterator().next());
+    }
+
+    // Multiple folders: prefer the one whose last component matches the ROM name
+    if (!StringUtils.isEmpty(effectiveRom)) {
+      for (String folder : folders) {
+        if (FilenameUtils.getName(folder).equalsIgnoreCase(effectiveRom)) {
+          return new File(musicRoot, folder);
+        }
+      }
+    }
+
+    // No ROM match: pick the deepest folder (most path components)
+    String deepest = folders.stream()
+        .max(Comparator.comparingInt(f -> StringUtils.countMatches(f, '/') + 1))
+        .orElseThrow();
+    return new File(musicRoot, deepest);
+  }
+
+
+  @Nullable
+  public File getMusicFolder(@NonNull Game game) {
+    GameEmulator emulator = game.getEmulator();
+    return getMusicFolder(emulator);
+  }
+
+
+  @Nullable
+  public File getMusicFolder(@NonNull GameEmulator emulator) {
+    if (isPreferLegacyFileStructure(emulator)) {
+      return new File(emulator.getInstallationFolder(), "Music/");
+    }
+
+    File folder = new File(emulator.getGamesFolder(), "music/");
     if (!folder.exists() && !folder.mkdirs()) {
       LOG.warn("Failed to create game music folder {}", folder.getAbsolutePath());
     }
@@ -163,6 +223,18 @@ public class FolderLookupService {
 
   public File getHighscoreTextFile(Game game) {
     if (!StringUtils.isEmpty(game.getHsFileName())) {
+      File f = new File(getUserFolder(game), game.getHsFileName());
+      if (f.exists()) {
+        return f;
+      }
+
+      if (!StringUtils.isEmpty(game.getScannedHsFileName())) {
+        f = new File(getUserFolder(game), game.getScannedHsFileName());
+        if (f.exists()) {
+          return f;
+        }
+      }
+
       return new File(getUserFolder(game), game.getHsFileName());
     }
     return null;
@@ -180,20 +252,45 @@ public class FolderLookupService {
     GameEmulator emulator = game.getEmulator();
     String tableName = game.getTableName();
     ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
+    if (highscoreMapping == null) {
+      highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getScannedRom());
+    }
+
     if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
       tableName = highscoreMapping.getTableName();
     }
 
-    if (isPreferLegacyFileStructure(emulator)) {
-      File stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
+    File stgFile = new File(emulator.getInstallationFolder(), "User/VPReg.stg");
+    if (stgFile.exists()) {
       VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
       if (reg.isValid()) {
         return reg;
       }
     }
 
-    File stgFile = new File(emulator.getInstallationFolder(), "User/VPReg.stg");
-    return new VPRegFile(stgFile, game.getRom(), tableName);
+    if (isPreferLegacyFileStructure(emulator)) {
+      stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
+      if (!stgFile.exists()) {
+        File grandparent = game.getGameFile().getParentFile().getParentFile();
+        if (grandparent != null) {
+          stgFile = new File(grandparent, "user/VPReg.stg");
+        }
+      }
+    }
+
+    VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
+    if (reg.isValid()) {
+      return reg;
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      VPRegFile regScanned = new VPRegFile(stgFile, game.getScannedRom(), tableName);
+      if (regScanned.isValid()) {
+        return regScanned;
+      }
+    }
+
+    return reg;
   }
 
   @Nullable
@@ -201,6 +298,22 @@ public class FolderLookupService {
     File romFolder = getRomFolder(game);
     if (romFolder.exists() && !StringUtils.isEmpty(game.getRom())) {
       return new File(romFolder, game.getRom() + ".zip");
+    }
+    return null;
+  }
+
+  @Nullable
+  public File getFpRamFile(@NonNull Game game) {
+    if (game.getEmulator() == null) {
+      return null;
+    }
+
+    File fpRamFolder = new File(game.getEmulator().getInstallationFolder(), "fpRAM");
+
+    String name = FilenameUtils.getBaseName(game.getGameFileName()) + ".fpRAM";
+    File fpRamFile = new File(fpRamFolder, name);
+    if (fpRamFile.exists()) {
+      return fpRamFile;
     }
     return null;
   }
@@ -218,10 +331,24 @@ public class FolderLookupService {
       return defaultNvRam;
     }
 
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      File defaultNvRam2 = new File(nvRamFolder, game.getScannedRom() + ".nv");
+      if (defaultNvRam2.exists() && game.getNvOffset() == 0) {
+        return defaultNvRam2;
+      }
+    }
+
     //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
     File versionTextFile = new File(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
       return defaultNvRam;
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      File versionTextFile2 = new File(nvRamFolder, game.getScannedRom() + " v" + game.getNvOffset() + ".txt");
+      if (versionTextFile2.exists()) {
+        return versionTextFile2;
+      }
     }
 
     //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
@@ -237,7 +364,17 @@ public class FolderLookupService {
   public File getCfgFile(@NonNull Game game) {
     File folder = getCfgFolder(game);
     if (!StringUtils.isEmpty(game.getRom()) && folder != null) {
-      return new File(folder, game.getRom() + ".cfg");
+      File f = new File(folder, game.getRom() + ".cfg");
+      if (f.exists()) {
+        return f;
+      }
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedRom())) {
+      File scannedRom = new File(folder, game.getScannedRom() + ".cfg");
+      if (scannedRom.exists()) {
+        return scannedRom;
+      }
     }
     return null;
   }

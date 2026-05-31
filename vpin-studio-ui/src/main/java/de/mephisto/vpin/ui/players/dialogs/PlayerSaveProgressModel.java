@@ -23,9 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
@@ -82,9 +80,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   @Override
   public void processNext(ProgressResultModel progressResultModel, PlayerRepresentation player) {
     try {
-//      if (player.getAvatar() == null && this.avatarFile == null) {
+      if (player.getAvatar() == null && this.avatarFile == null) {
         generateAvatarFile();
-//      }
+      }
 
       player = client.getPlayerService().savePlayer(player);
 
@@ -102,7 +100,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       progressResultModel.getResults().add(player);
 
       if (Features.MANIA_ENABLED) {
-        updateTournamentPlayer(player, avatarFile);
+        updateManiaPlayer(player, avatarFile);
       }
     }
     catch (Exception ex) {
@@ -124,8 +122,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
     futureTask.get();
   }
 
-  private void updateTournamentPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
-    //post process tournament player creation
+  private void updateManiaPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
     if (maniaPlayer) {
       Account maniaAccount = null;
       Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();

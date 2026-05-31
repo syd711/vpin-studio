@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.server.players.Player;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public interface CompetitionChangeListener {
 

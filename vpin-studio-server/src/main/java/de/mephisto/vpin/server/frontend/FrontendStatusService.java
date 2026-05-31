@@ -9,23 +9,21 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class FrontendStatusService implements InitializingBean {
@@ -82,6 +80,8 @@ public class FrontendStatusService implements InitializingBean {
     }
 
     TableStatusChangedEvent event = new TableStatusChangedEvent() {
+      private final Date eventTime = new Date();
+
       @NonNull
       @Override
       public Game getGame() {
@@ -91,6 +91,11 @@ public class FrontendStatusService implements InitializingBean {
       @Override
       public TableStatusChangedOrigin getOrigin() {
         return origin;
+      }
+
+      @Override
+      public long getEventAgeMs() {
+        return System.currentTimeMillis() - eventTime.getTime();
       }
     };
 
@@ -229,18 +234,40 @@ public class FrontendStatusService implements InitializingBean {
 
       File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
-        augmenter.augment(badgeFile);
+        boolean rotate = true;
+        Optional<MonitorInfo> first = systemService.getMonitorInfos().stream().filter(MonitorInfo::isPrimary).findFirst();
+        if (first.isPresent()) {
+          rotate = !first.get().isPortraitMode();
+        }
+          if ("apng".equalsIgnoreCase(FilenameUtils.getExtension(wheelIcon.getName()))){
+              augmenter.augmentApng(badgeFile, rotate);
+          } else {
+              augmenter.augment(badgeFile, rotate);
+          }
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
+  }
+
+  public boolean isWheelAugmented(Game game) {
+    FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
+    if (frontendMediaItem != null) {
+      File wheelIcon = frontendMediaItem.getFile();
+      return new WheelAugmenter(wheelIcon).isAugmented();
+    }
+    return false;
   }
 
   public void deAugmentWheel(Game game) {
     FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
     if (frontendMediaItem != null) {
       File wheelIcon = frontendMediaItem.getFile();
-      new WheelAugmenter(wheelIcon).deAugment();
-      new WheelIconDelete(wheelIcon).delete();
+      WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
+      if (augmenter.isAugmented()) {
+        augmenter.deAugment();
+        new WheelIconDelete(wheelIcon).delete();
+      }
+
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
     }
   }

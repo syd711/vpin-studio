@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.highscores.logging;
 
 import de.mephisto.vpin.restclient.util.DateUtil;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 public class EventLogMessage {
@@ -10,11 +10,11 @@ public class EventLogMessage {
     INFO, WARN, ERROR
   }
 
-  private Date date = new Date();
+  private OffsetDateTime date = OffsetDateTime.now();
   private String message;
   private Severity severity;
 
-  public void setDate(Date date) {
+  public void setDate(OffsetDateTime date) {
     this.date = date;
   }
 
@@ -26,7 +26,7 @@ public class EventLogMessage {
     this.severity = severity;
   }
 
-  public Date getDate() {
+  public OffsetDateTime getDate() {
     return date;
   }
 

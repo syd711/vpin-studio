@@ -1,12 +1,12 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -27,21 +27,22 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Iterator<File> iterator;
+  private VPinScreen loadingScreenId;
   private int id = -1;
   private boolean playlistMode;
   private final VPinScreen screen;
   private final boolean append;
   private final List<File> files;
 
-  public FrontendMediaUploadProgressModel(GameRepresentation game, String title, List<File> files, VPinScreen screen, boolean append) {
-    this(game.getId(), false, title, files, screen, append);
+  public FrontendMediaUploadProgressModel(GameRepresentation game, String title, List<File> files, VPinScreen screen, boolean append, VPinScreen loadingScreenId) {
+    this(game.getId(), false, title, files, screen, append, loadingScreenId);
   }
 
   public FrontendMediaUploadProgressModel(PlaylistRepresentation playlist, String title, List<File> files, VPinScreen screen, boolean append) {
-    this(playlist.getId(), true, title, files, screen, append);
+    this(playlist.getId(), true, title, files, screen, append, null);
   }
 
-  public FrontendMediaUploadProgressModel(int id, boolean playlistMode, String title, List<File> files, VPinScreen screen, boolean append) {
+  public FrontendMediaUploadProgressModel(int id, boolean playlistMode, String title, List<File> files, VPinScreen screen, boolean append, VPinScreen loadingScreenId) {
     super(title);
     this.playlistMode = playlistMode;
     this.id = id;
@@ -49,6 +50,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
     this.screen = screen;
     this.append = append;
     this.iterator = files.iterator();
+    this.loadingScreenId = loadingScreenId;
   }
 
   @Override
@@ -80,7 +82,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobDescriptor result = client.getGameMediaService().uploadMedia(next, id, playlistMode, screen, append, percent -> progressResultModel.setProgress(percent));
+      JobDescriptor result = client.getGameMediaService().uploadMedia(next, id, playlistMode, screen, append, loadingScreenId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

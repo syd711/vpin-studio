@@ -101,7 +101,7 @@ public class TableOverviewContextMenu {
     if (games.isEmpty()) {
       return;
     }
-    GameRepresentationModel gameModel = games.get(0);
+    GameRepresentationModel gameModel = games.getFirst();
     GameRepresentation game = gameModel.getGame();
 
     MenuItem dataItem = new MenuItem("Edit Table Data");
@@ -167,18 +167,21 @@ public class TableOverviewContextMenu {
     KeyCombination vpsResetKey = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
     vpsResetItem.setAccelerator(vpsResetKey);
     vpsResetItem.setOnAction(actionEvent -> tableOverviewController.onVpsResetUpdates());
-    vpsResetItem.setDisable(game.getVpsUpdates().isEmpty());
+    if (!multiSelection) {
+      vpsResetItem.setDisable(game.getVpsUpdates().isEmpty());
+    }
+    else {
+      vpsResetItem.setDisable(false);
+    }
     vpsResetItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsResetItem);
 
-    if (client.getEmulatorService().isVpxGame(game)) {
-      ctxMenu.getItems().add(new SeparatorMenuItem());
+    ctxMenu.getItems().add(new SeparatorMenuItem());
 
-      MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
-      resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
-      resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
-      ctxMenu.getItems().add(resetRatingsItem);
-    }
+    MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
+    resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
+    resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
+    ctxMenu.getItems().add(resetRatingsItem);
 
     if (Features.MANIA_ENABLED && client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
@@ -210,7 +213,7 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    if(client.getEmulatorService().isVpxGame(game)) {
+    if (client.getEmulatorService().isVpxOrFpGame(game)) {
       MenuItem eventLogItem = new MenuItem("Event Log");
       KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
       eventLogItem.setAccelerator(eventLogItemKey);
@@ -224,7 +227,7 @@ public class TableOverviewContextMenu {
     }
 
 
-    if(client.getEmulatorService().isVpxGame(game)) {
+    if (client.getEmulatorService().isVpxOrFpGame(game)) {
       MenuItem pinVolItem = new MenuItem("PinVol Settings");
       pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
 //    pinVolItem.setDisable(games.isEmpty());
@@ -232,16 +235,16 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(pinVolItem);
     }
 
+    MenuItem reloadItem = new MenuItem("Reload");
+    KeyCombination reloadItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
+    reloadItem.setAccelerator(reloadItemKey);
+    reloadItem.setGraphic(WidgetFactory.createIcon("mdi2r-refresh"));
+    reloadItem.setOnAction(actionEvent -> tableOverviewController.onTableReload());
+    ctxMenu.getItems().add(reloadItem);
+
+
     if (client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem reloadItem = new MenuItem("Reload");
-      KeyCombination reloadItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
-      reloadItem.setAccelerator(reloadItemKey);
-      reloadItem.setGraphic(WidgetFactory.createIcon("mdi2r-refresh"));
-      reloadItem.setOnAction(actionEvent -> tableOverviewController.onTableReload());
-      ctxMenu.getItems().add(reloadItem);
-
       MenuItem scanItem = new MenuItem("Scan");
       KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.J, KeyCombination.CONTROL_DOWN);
       scanItem.setAccelerator(scanItemKey);

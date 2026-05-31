@@ -1,9 +1,11 @@
 package de.mephisto.vpin.restclient;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException; // Updated import
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,11 +13,15 @@ import java.lang.invoke.MethodHandles;
 
 public abstract class JsonSettings {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  public final static ObjectMapper objectMapper = new ObjectMapper();
+  public final static ObjectMapper objectMapper;
 
   static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
   }
 
   public static <T> T fromJson(Class<T> clazz, String json) throws Exception {
@@ -30,7 +36,7 @@ public abstract class JsonSettings {
     return clazz.getDeclaredConstructor().newInstance();
   }
 
-  public String toJson() throws JsonProcessingException {
+  public String toJson() throws JacksonException { // Updated throws clause
     return objectMapper.writeValueAsString(this);
   }
 

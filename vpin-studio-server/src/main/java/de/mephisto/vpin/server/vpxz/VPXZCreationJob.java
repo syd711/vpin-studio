@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.vpxz;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
@@ -11,8 +13,8 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Date;
+import java.time.Instant;
 
 public class VPXZCreationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZCreationJob.class);
@@ -58,13 +60,13 @@ public class VPXZCreationJob implements Job {
     VPXZDescriptor descriptor = new VPXZDescriptor();
     VPXZPackageInfo packageInfo = new VPXZPackageInfo();
 
-    descriptor.setCreatedAt(new Date());
+    descriptor.setCreatedAt(Instant.now());
     descriptor.setTableDetails(tableDetails);
     descriptor.setPackageInfo(packageInfo);
 
     jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
     long totalSizeExpected = vpxzFileService.calculateTotalSize(game);
-    LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the .vpxz file of " + game.getGameDisplayName());
+    LOG.info("Calculated total approx. size of {} for the .vpxz file of {}", FileUtils.readableFileSize(totalSizeExpected), game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
     File targetFolder = new File(source.getLocation());
@@ -81,10 +83,10 @@ public class VPXZCreationJob implements Job {
     try {
       File tempFile = File.createTempFile(target.getName(), ".bak");
       //---------
-      LOG.info("Packaging " + game.getGameDisplayName());
+      LOG.info("Packaging {}", game.getGameDisplayName());
       long start = System.currentTimeMillis();
 
-      LOG.info("Creating temporary vpxz file " + tempFile.getAbsolutePath());
+      LOG.info("Creating temporary vpxz file {}", tempFile.getAbsolutePath());
 
       ZipFile zipOut = vpxzFileService.createVpxzZip(tempFile);
       vpxzFileService.createVpxz(packageInfo, jobDescriptor, vpxStandaloneFile, (fileToZip, fileName) -> {
@@ -103,13 +105,18 @@ public class VPXZCreationJob implements Job {
           ZipUtil.zipFileUnencrypted(fileToZip, fileName, zipOut);
         }
         catch (IOException ioe) {
-          LOG.error("Cannot add in zip " + fileName, ioe);
+          LOG.error("Cannot add in zip {}", fileName, ioe);
         }
       }, game, tableDetails);
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+      JsonMapper objectMapper = JsonMapper.builder()
+          .enable(SerializationFeature.INDENT_OUTPUT)
+          .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
+
       String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
 
       if (!cancelled) {
@@ -151,10 +158,10 @@ public class VPXZCreationJob implements Job {
 
       boolean renamed = temporaryTarget.renameTo(target);
       if (renamed) {
-        LOG.info("Finished packing of " + target.getAbsolutePath() + ", took " + ((System.currentTimeMillis() - start) / 1000) + " seconds, " + FileUtils.readableFileSize(target.length()));
+        LOG.info("Finished packing of {}, took {} seconds, {}", target.getAbsolutePath(), ((System.currentTimeMillis() - start) / 1000), FileUtils.readableFileSize(target.length()));
       }
       else {
-        LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+        LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
         jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       }
 
@@ -163,7 +170,7 @@ public class VPXZCreationJob implements Job {
       }
     }
     catch (Exception e) {
-      LOG.error("Create .vpxz for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
+      LOG.error("Create .vpxz for {} failed: {}", game.getGameDisplayName(), e.getMessage(), e);
       jobDescriptor.setError("Create .vpxz for " + game.getGameDisplayName() + " failed: " + e.getMessage());
       return;
     }

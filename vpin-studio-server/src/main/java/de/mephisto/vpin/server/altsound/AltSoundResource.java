@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,10 @@ public class AltSoundResource {
   @DeleteMapping("{id}")
   public boolean delete(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return altSoundService.delete(game);
+    if (game != null) {
+      return altSoundService.delete(game);
+    }
+    return false;
   }
 
   @GetMapping("/clearcache")
@@ -121,7 +124,7 @@ public class AltSoundResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.ALT_SOUND.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.ALT_SOUND.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_SOUND + " upload failed: " + e.getMessage());
     }
     finally {

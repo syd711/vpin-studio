@@ -1,11 +1,6 @@
 package de.mephisto.vpin.server.util;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
+
+import java.io.*;
 import java.text.ParseException;
 
 /**

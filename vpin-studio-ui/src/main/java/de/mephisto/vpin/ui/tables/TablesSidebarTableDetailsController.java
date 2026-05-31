@@ -17,7 +17,6 @@ import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.tags.TagButton;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,13 +28,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -240,23 +241,17 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onIniUpload() {
-    if (game.isPresent()) {
-      TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
-    }
+      game.ifPresent(gameRepresentation -> TableDialogs.directUpload(Studio.stage, AssetType.INI, gameRepresentation, null));
   }
 
   @FXML
   private void onResUpload() {
-    if (game.isPresent()) {
-      TableDialogs.directUpload(Studio.stage, AssetType.RES, game.get(), null);
-    }
+      game.ifPresent(gameRepresentation -> TableDialogs.directUpload(Studio.stage, AssetType.RES, gameRepresentation, null));
   }
 
   @FXML
   private void onPovUpload() {
-    if (game.isPresent()) {
-      TableDialogs.directUpload(Studio.stage, AssetType.POV, game.get(), null);
-    }
+      game.ifPresent(gameRepresentation -> TableDialogs.directUpload(Studio.stage, AssetType.POV, gameRepresentation, null));
   }
 
   @FXML
@@ -372,7 +367,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(this.game.get()), null);
+      TableDialogs.openAutoFillSettingsDialog(Studio.stage, List.of(this.game.get()), null);
     }
   }
 
@@ -402,7 +397,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       uploadsButtonController.setData(Collections.emptyList(), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
     else {
-      uploadsButtonController.setData(Arrays.asList(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
+      uploadsButtonController.setData(List.of(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
 
     if (!Features.FIELDS_STANDARD) {
@@ -423,9 +418,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
       GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       tableFilesBox.setVisible(gameEmulator != null && gameEmulator.isVpxEmulator());
 
-      autoFillBtn.setVisible(client.getEmulatorService().isVpxGame(game) && Features.FIELDS_STANDARD);
+      autoFillBtn.setVisible(client.getEmulatorService().isVpxOrFpGame(game) && Features.FIELDS_STANDARD);
 
-      dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
+      dateAdded.setText(game.getDateAdded() == null ? "-" : DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(game.getDateAdded()));
       emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());
       gameVersion.setText(StringUtils.defaultIfEmpty(game.getVersion(), "-"));
       gameName.setText(StringUtils.defaultIfEmpty(game.getGameName(), "-"));
@@ -532,7 +527,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
       volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
 
-      labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
+      labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(tableDetails.getLastPlayed()) : "-");
       if (tableDetails.getNumberPlays() != null) {
         labelTimesPlayed.setText(String.valueOf(tableDetails.getNumberPlays()));
       }
@@ -543,9 +538,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       if (tableDetails.getStatus() >= 0) {
         List<TableStatus> statuses = TableDataController.supportedStatuses();
         Optional<TableStatus> first = statuses.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
-        if (first.isPresent()) {
-          status.setText(first.get().label);
-        }
+          first.ifPresent(tableStatus -> status.setText(tableStatus.label));
       }
 
       //extras
@@ -556,10 +549,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
         webDbId.setText(StringUtils.isEmpty(tableDetails.getWebGameId()) ? "-" : tableDetails.getWebGameId());
         webLink.setText(StringUtils.isEmpty(tableDetails.getWebLink2Url()) ? "-" : tableDetails.getWebLink2Url());
         isMod.setText(String.valueOf(tableDetails.isMod()));
-        gDetails.setText(StringUtils.isEmpty(tableDetails.getgDetails()) ? "" : tableDetails.getgDetails());
-        gNotes.setText(StringUtils.isEmpty(tableDetails.getgNotes()) ? "" : tableDetails.getgNotes());
-        gLog.setText(StringUtils.isEmpty(tableDetails.getgLog()) ? "" : tableDetails.getgLog());
-        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getgPlayLog()) ? "" : tableDetails.getgPlayLog());
+        gDetails.setText(StringUtils.isEmpty(tableDetails.getExtraDetails()) ? "" : tableDetails.getExtraDetails());
+        gNotes.setText(StringUtils.isEmpty(tableDetails.getExtraNotes()) ? "" : tableDetails.getExtraNotes());
+        gLog.setText(StringUtils.isEmpty(tableDetails.getExtraLog()) ? "" : tableDetails.getExtraLog());
+        gPlayLog.setText(StringUtils.isEmpty(tableDetails.getExtraPlayLog()) ? "" : tableDetails.getExtraPlayLog());
       }
     }
     else {
@@ -622,7 +615,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       Parent uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       uploadsButtonController.setCompact(false);
-      toolbar.getItems().add(0, uploadsButton);
+      toolbar.getItems().addFirst(uploadsButton);
     }
     catch (IOException e) {
       LOG.error("failed to load uploads button: " + e.getMessage(), e);

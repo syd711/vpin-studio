@@ -120,7 +120,7 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
     });
 
     if(!discordServers.isEmpty()) {
-      serverCombo.setValue(discordServers.get(0));
+      serverCombo.setValue(discordServers.getFirst());
     }
   }
 

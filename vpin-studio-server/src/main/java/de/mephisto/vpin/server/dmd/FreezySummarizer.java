@@ -10,7 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 public class FreezySummarizer {
   private final static Logger LOG = LoggerFactory.getLogger(FreezySummarizer.class);
@@ -29,7 +32,11 @@ public class FreezySummarizer {
 
       String defaultEncoding = "UTF-8";
       FileInputStream in = new FileInputStream(iniFile);
-      BOMInputStream bOMInputStream = new BOMInputStream(in);
+      BOMInputStream bOMInputStream = BOMInputStream.builder()
+                .setInputStream(in)
+                .get();
+      //deprecated use
+      // BOMInputStream bOMInputStream = new BOMInputStream(in);
       ByteOrderMark bom = bOMInputStream.getBOM();
       String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
       InputStreamReader reader = new InputStreamReader(new BufferedInputStream(bOMInputStream), charsetName);
@@ -42,7 +49,7 @@ public class FreezySummarizer {
       try {
         iniConfiguration.read(reader);
       } catch (Exception e) {
-        LOG.error("Failed to read: " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+        LOG.error("Failed to read: {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
         throw e;
       } finally {
         in.close();
@@ -115,7 +122,7 @@ public class FreezySummarizer {
       }
 
     } catch (Exception e) {
-      LOG.error("Failed to load " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to load {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
       summary.setError("Error creating freezy summary: " + e.getMessage());
     }
     return summary;

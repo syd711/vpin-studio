@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
@@ -20,18 +21,20 @@ import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,13 +102,14 @@ public class GameMediaResource {
     return search;
   }
 
-  @PostMapping("/assets/download/{gameId}/{screen}/{append}")
+  @PostMapping("/assets/download/{gameId}/{screen}/{append}/{loadingScreenId}")
   public boolean downloadTableAsset(@PathVariable("gameId") int gameId,
                                     @PathVariable("screen") VPinScreen screen,
                                     @PathVariable("append") boolean append,
+                                    @PathVariable("loadingScreenId") VPinScreen loadingScreenId,
                                     @RequestBody TableAsset asset) throws Exception {
     try {
-      LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
+      LOG.info("Starting download of {}(appending: {})", asset.getName(), append);
       Game game = frontendService.getOriginalGame(gameId);
       File target = frontendService.getFrontendConnector().getMediaAccessStrategy().createMedia(game, screen, asset.getFileSuffix(), append);
       tableAssetsService.download(asset, target);
@@ -120,11 +124,29 @@ public class GameMediaResource {
         }
       }
 
+      //the loading screen is the default, so we are only interested in other screen assignments
+      runScreenRenamingCheck(screen, loadingScreenId, target);
       return true;
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
     }
+  }
+
+  private static File runScreenRenamingCheck(VPinScreen screen, VPinScreen loadingScreenId, File target) {
+    if (loadingScreenId != null && VPinScreen.Loading.equals(screen) && !VPinScreen.Loading.equals(loadingScreenId)) {
+      String name = target.getName();
+      String baseName = FilenameUtils.getBaseName(name);
+      baseName = FileUtils.baseUniqueFile(baseName);
+      String suffix = FilenameUtils.getExtension(name);
+      String updatedTargetName = baseName + "(SCREEN" + loadingScreenId.getCode() + ")." + suffix;
+
+      File newTarget = new File(target.getParentFile(), updatedTargetName);
+      target.renameTo(newTarget);
+      return newTarget;
+    }
+
+    return null;
   }
 
   @GetMapping("/assets/{assetSourceId}/test")
@@ -173,7 +195,7 @@ public class GameMediaResource {
     if (rangeHeader != null) {
       List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
       if (ranges.size() == 1) {
-        HttpRange range = ranges.get(0);
+        HttpRange range = ranges.getFirst();
         start = range.getRangeStart(contentLength);
         end = range.getRangeEnd(contentLength);
 
@@ -181,7 +203,8 @@ public class GameMediaResource {
           status = HttpStatus.PARTIAL_CONTENT;
           response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
           contentLength = end - start + 1;
-        } else {
+        }
+        else {
           start = -1;
         }
       }
@@ -193,12 +216,12 @@ public class GameMediaResource {
     response.setHeader("Cache-Control", "public, max-age=36000");
     response.setHeader("Accept-Ranges", "bytes");
 
-    if (start >= 0) {
-      LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
-    }
-    else {
-      LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
-    }
+//    if (start >= 0) {
+//      LOG.info("Processing {} method, Length={}, range {}-{}", request.getMethod(), contentLength, start, end);
+//    }
+//    else {
+//      LOG.info("Processing {} method, Length={}", request.getMethod(), contentLength);
+//    }
 
     // For HEAD, do not write the body
     if ("HEAD".equals(request.getMethod())) {
@@ -212,12 +235,14 @@ public class GameMediaResource {
       tableAssetsService.download(outputStream, tableAsset, start, contentLength);
       response.flushBuffer();
     }
-    catch (ClientAbortException cae) {
+    catch (ClientAbortException | AsyncRequestNotUsableException cae) {
       LOG.info("Connection aborted while streaming media {} from {}", name, assetSourceId);
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
-      response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        if (!response.isCommitted()) {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
     }
   }
 
@@ -250,7 +275,8 @@ public class GameMediaResource {
       else {
         frontendMediaItem = frontendMedia.getDefaultMediaItem(screen);
       }
-    } else {
+    }
+    else {
       frontendMediaItem = null;
     }
 
@@ -258,8 +284,7 @@ public class GameMediaResource {
   }
 
   private void downloadFrontendMediaItem(HttpServletResponse response, HttpServletRequest request, int id, String name,
-      boolean preview, final FrontendMediaItem frontendMediaItem) throws IOException 
-  {
+                                         boolean preview, final FrontendMediaItem frontendMediaItem) throws IOException {
     if (frontendMediaItem == null) {
       throw new ResponseStatusException(NOT_FOUND);
     }
@@ -269,7 +294,7 @@ public class GameMediaResource {
     final boolean getPreview;
     long contentLength = -1;
     String mimeType = frontendMediaItem.getMimeType();
-    if (preview && StringUtils.startsWithIgnoreCase(mimeType, "video/")) {
+    if (preview && Strings.CI.startsWith(mimeType, "video/")) {
       // will return only a frame, content length cannot be calculated
       mimeType = "image/png";
       getPreview = true;
@@ -291,7 +316,7 @@ public class GameMediaResource {
     if (rangeHeader != null) {
       List<HttpRange> ranges = HttpRange.parseRanges(rangeHeader);
       if (ranges.size() == 1) {
-        HttpRange range = ranges.get(0);
+        HttpRange range = ranges.getFirst();
         start = range.getRangeStart(contentLength);
         end = range.getRangeEnd(contentLength);
 
@@ -299,7 +324,8 @@ public class GameMediaResource {
           status = HttpStatus.PARTIAL_CONTENT;
           response.setHeader("Content-Range", "bytes " + start + "-" + end + "/" + contentLength);
           contentLength = end - start + 1;
-        } else {
+        }
+        else {
           start = -1;
         }
       }
@@ -359,12 +385,14 @@ public class GameMediaResource {
       }
       response.flushBuffer();
     }
-    catch (ClientAbortException cae) {
+    catch (ClientAbortException | AsyncRequestNotUsableException cae) {
       LOG.info("Connection aborted while downloading {} for game {}", name, id);
     }
     catch (IOException e) {
       LOG.error("Failed to stream media {} for game {}: {}", name, id, e.getMessage(), e);
-      response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        if (!response.isCommitted()) {
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
     }
   }
 
@@ -382,6 +410,7 @@ public class GameMediaResource {
   public JobDescriptor upload(@PathVariable("screen") VPinScreen screen,
                               @PathVariable("append") boolean append,
                               @RequestParam(value = "file", required = false) MultipartFile file,
+                              @RequestParam(value = "loadingScreenId", required = false) String vPinScreen,
                               @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
@@ -396,8 +425,14 @@ public class GameMediaResource {
         return JobDescriptorFactory.error("No game found for media upload.");
       }
 
-      LOG.info("Uploading " + out.getAbsolutePath());
+      LOG.info("Uploading {}", out.getAbsolutePath());
       UploadUtil.upload(file, out);
+
+      if (vPinScreen != null) {
+        VPinScreen loadingScreen = VPinScreen.valueOfScreen(vPinScreen);
+        out = runScreenRenamingCheck(screen, loadingScreen, out);
+      }
+
       gameLifecycleService.notifyGameScreenAssetsChanged(gameId, screen, out);
       return JobDescriptorFactory.empty();
     }
@@ -456,7 +491,7 @@ public class GameMediaResource {
       return true;
     }
     catch (Exception e) {
-      LOG.error("Failed to execute media change request: " + e.getMessage(), e);
+      LOG.error("Failed to execute media change request: {}", e.getMessage(), e);
     }
     finally {
       gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);

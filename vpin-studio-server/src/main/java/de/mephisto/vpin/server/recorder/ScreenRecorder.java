@@ -6,10 +6,13 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.Ffmpeg;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,13 +55,16 @@ public class ScreenRecorder {
 
     try {
       if (options.getInitialDelay() > 0) {
-        LOG.info(this + " is waiting for the initial recording delay of " + options.getInitialDelay() + " seconds.");
+        LOG.info("{} is waiting for the initial recording delay of {} seconds.", this, options.getInitialDelay());
         for (int i = 0; i < options.getInitialDelay(); i++) {
           Thread.sleep(1000);
           if (cancelled) {
             return result;
           }
         }
+      }
+      else {
+        LOG.info("Recording delay for {} has been skipped because it is set to {} seconds.", this, options.getInitialDelay());
       }
 
       int width = recordingScreen.getWidth();
@@ -78,7 +84,12 @@ public class ScreenRecorder {
       if (options.isExpertSettingsEnabled() && options.getCustomFfmpegCommand() != null) {
         command = options.getCustomFfmpegCommand();
       }
+
       String formattedCommand = formatCommand(command, width, height, x, y, duration);
+      if (options.isOpenGlCommand()) {
+        formattedCommand = formatOpenGlCommand(command, width, height, x, y, duration);
+      }
+
       executeCommand(formattedCommand, result, start);
     }
     catch (Exception e) {
@@ -89,13 +100,14 @@ public class ScreenRecorder {
   }
 
   private String getDefaultCommand(RecordingScreenOptions options) {
-    String command = Ffmpeg.DEFAULT_COMMAND;
+    String command = options.isOpenGlCommand() ? Ffmpeg.OPEN_GL_COMMAND : Ffmpeg.DEFAULT_COMMAND;
     if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
       command = command + " -vf \"transpose=2,transpose=2\"";
     }
 
     if (options.isFps60()) {
-      command = command.replace("-framerate 30", "-framerate 60");
+      command = command.replace("framerate=30", "framerate=60");
+      command = command.replace("framerate 30", "framerate 60");
       command = command.replace("-r 30", "-r 60");
     }
 
@@ -113,6 +125,35 @@ public class ScreenRecorder {
     command = command.replace("[duration]", String.valueOf(duration));
     command = command.replace("[width]", String.valueOf(width));
     command = command.replace("[height]", String.valueOf(height));
+    command = command.replace("[adapter_idx]", "0");
+    return command;
+  }
+
+  private String formatOpenGlCommand(String cmd, int width, int height, int x, int y, long duration) {
+    int outputIdx = 0;
+    int relX = x;
+    int relY = y;
+    if (cmd.contains("[output_idx]")) {
+      GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+      for (int i = 0; i < screens.length; i++) {
+        Rectangle bounds = screens[i].getDefaultConfiguration().getBounds();
+        if (bounds.contains(x, y)) {
+          outputIdx = i;
+          relX = x - bounds.x;
+          relY = y - bounds.y;
+          break;
+        }
+      }
+    }
+
+    String command = cmd;
+    command = command.replace("[output_idx]", String.valueOf(outputIdx));
+    command = command.replace("[x]", String.valueOf(relX));
+    command = command.replace("[y]", String.valueOf(relY));
+    command = command.replace("[duration]", String.valueOf(duration));
+    command = command.replace("[width]", String.valueOf(width));
+    command = command.replace("[height]", String.valueOf(height));
+    command = command.replace("[adapter_idx]", "0");
     return command;
   }
 
@@ -155,7 +196,7 @@ public class ScreenRecorder {
     if (temporaryTarget.exists()) {
       temporaryTarget.delete();
     }
-    LOG.info("Finished cancellation of " + this);
+    LOG.info("Finished cancellation of {}", this);
   }
 
   @Override

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.system;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
@@ -23,10 +23,10 @@ public class JCodec {
       BufferedImage bufferedImage = AWTUtil.toBufferedImage(picture);
       ImageIO.write(bufferedImage, "png", defaultPicture);
 
-      LOG.info("Extraction from " + file.getAbsolutePath() + " took " + (System.currentTimeMillis() - time) + "ms");
+      LOG.info("Extraction from {} took {}ms", file.getAbsolutePath(), (System.currentTimeMillis() - time));
       return defaultPicture.exists();
     } catch (Exception e) {
-      LOG.warn("Failed to extract video: " + e.getMessage());
+      LOG.warn("Failed to extract video: {}", e.getMessage());
       return false;
     }
   }
@@ -44,10 +44,10 @@ public class JCodec {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ImageIO.write(bufferedImage, "png", baos);
 
-      LOG.info("Extraction from " + file.getAbsolutePath() + " took " + (System.currentTimeMillis() - time) + "ms");
+      LOG.info("Extraction from {} took {}ms", file.getAbsolutePath(), (System.currentTimeMillis() - time));
       return baos.toByteArray();
     } catch (Exception e) {
-      LOG.warn("Failed to extract video: " + e.getMessage());
+      LOG.warn("Failed to extract video: {}", e.getMessage());
       return null;
     }
   }

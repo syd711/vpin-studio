@@ -62,6 +62,7 @@
                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints />
                     </rowConstraints>
                      <children>
 
@@ -99,8 +100,8 @@
                            </children>
                         </HBox>
 
-                        <Label styleClass="default-text" text="Frame Picture:" GridPane.rowIndex="2"/>
-                        <StackPane fx:id="fileNamePane" alignment="CENTER_RIGHT" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                        <Label styleClass="default-text" text="Frame Picture:" GridPane.rowIndex="2" />
+                        <StackPane fx:id="fileNamePane" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="Select or drop a frame image here">
                                  <font>
@@ -117,14 +118,14 @@
                               </Button>
                            </children>
                         </StackPane>                
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.rowIndex="2" GridPane.columnIndex="2">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
 
 
-                        <CheckBox fx:id="turnOnRunAsExe" mnemonicParsing="false" text="Turn on 'run Backglass as exe' to display frames" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="3">
+                        <CheckBox fx:id="turnOnRunAsExe" mnemonicParsing="false" text="Turn on 'Run Backglass as exe' to display frames" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -191,7 +192,7 @@
                </BorderPane.margin>
                <children>
                   <Label styleClass="default-text" text="Screenres.txt:" />
-                  <Label fx:id="screenResLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" />
+                  <Label fx:id="screenResLabel" layoutX="10.0" layoutY="15.0" maxWidth="500.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" />
 
                   <Label styleClass="default-text" text="Backglass Screen:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                   <Label fx:id="backglassScreenLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />

@@ -5,17 +5,18 @@ import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,14 +27,14 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 /**
  *
@@ -43,7 +44,10 @@ public class AltColorService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
+
+  @Autowired
+  private DOFLinxService dofLinxService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -54,10 +58,10 @@ public class AltColorService implements InitializingBean {
   public void setAltColorEnabled(@NonNull Game game, boolean b) {
     String rom = game.getRom();
     if (game.isVpxGame() && !StringUtils.isEmpty(rom)) {
-      MameOptions options = mameService.getOptions(rom);
+      VPinMameOptions options = vPinMameService.getOptions(rom);
       options.setColorizeDmd(b);
       options.setUseExternalDmd(b);
-      mameService.saveOptions(options);
+      vPinMameService.saveOptions(options);
       gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, rom);
     }
   }
@@ -85,12 +89,13 @@ public class AltColorService implements InitializingBean {
             }
           }
           gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, altColor.getName());
+          gameLifecycleService.notifyGameUpdated(game.getId());
           return true;
         }
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to delete altcolor directory for " + game + ": " + e.getMessage(), e);
+      LOG.error("Failed to delete altcolor directory for {}: {}", game, e.getMessage(), e);
     }
     return false;
   }
@@ -102,8 +107,8 @@ public class AltColorService implements InitializingBean {
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (game.isZenGame()) {
-      File altColorFolderRoot = mameService.getAltColorFolder();
-      altColorFolder = new File(altColorFolderRoot, game.getGameName());
+      File altColorFolderRoot = vPinMameService.getAltColorFolder();
+      altColorFolder = new File(altColorFolderRoot, dofLinxService.getGameNameForAltColor(game));
     }
     else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
       altColorFolder = getAltColorFolder(game, game.getRomAlias());
@@ -125,9 +130,10 @@ public class AltColorService implements InitializingBean {
       return altColor;
     }
 
+    altColor.setFolder(altColorFolder.getAbsolutePath());
     File[] altColorFiles = altColorFolder.listFiles((dir, name) -> new File(dir, name).isFile());
     if (altColorFiles != null && altColorFiles.length > 0) {
-      altColor.setModificationDate(new Date(altColorFolder.lastModified()));
+      altColor.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(altColorFolder.lastModified()), ZoneId.systemDefault()));
       altColor.setName(altColorFolder.getName());
       altColor.setAvailable(true);
       altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
@@ -139,19 +145,19 @@ public class AltColorService implements InitializingBean {
       Optional<File> cROMcFile = Arrays.stream(altColorFiles).filter(f -> f.getName().endsWith(UploaderAnalysis.CROMC_SUFFIX)).findFirst();
 
       if (pacFile.isPresent()) {
-        altColor.setModificationDate(new Date(pacFile.get().lastModified()));
+        altColor.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(pacFile.get().lastModified()), ZoneId.systemDefault()));
         type = AltColorTypes.pac;
       }
       else if (palFile.isPresent()) {
-        altColor.setModificationDate(new Date(palFile.get().lastModified()));
+        altColor.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(palFile.get().lastModified()), ZoneId.systemDefault()));
         type = AltColorTypes.pal;
       }
       else if (crzFile.isPresent()) {
-        altColor.setModificationDate(new Date(crzFile.get().lastModified()));
+        altColor.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(crzFile.get().lastModified()), ZoneId.systemDefault()));
         type = AltColorTypes.serum;
       }
       else if (cROMcFile.isPresent()) {
-        altColor.setModificationDate(new Date(cROMcFile.get().lastModified()));
+        altColor.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(cROMcFile.get().lastModified()), ZoneId.systemDefault()));
         type = AltColorTypes.cROMc;
       }
       altColor.setAltColorType(type);
@@ -181,12 +187,14 @@ public class AltColorService implements InitializingBean {
     installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.VNI, "pin2dmd.vni");
 
     if (game.isZenGame()) {
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX);
+      String name = dofLinxService.getGameNameForAltColor(game);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, name + "." + UploaderAnalysis.SERUM_SUFFIX);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, name + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
     else {
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
-      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX);
+      String romName = !StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom();
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, romName + "." + UploaderAnalysis.SERUM_SUFFIX);
+      installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CROMC, romName + "." + UploaderAnalysis.CROMC_SUFFIX);
     }
 
     setAltColorEnabled(game, true);
@@ -212,24 +220,30 @@ public class AltColorService implements InitializingBean {
     if (folder != null) {
       String name = out.getName();
       try {
-        installAltColorFromFile(name, folder, out, "pin2dmd.pac");
-        installAltColorFromFile(name, folder, out, "pin2dmd.vni");
-        installAltColorFromFile(name, folder, out, "pin2dmd.pal");
+        String altColorName = "pin2dmd";
         if (game.isZenGame()) {
-          installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.SERUM_SUFFIX);
-          installAltColorFromFile(name, folder, out, "pin2dmd." + UploaderAnalysis.CROMC_SUFFIX);
+          altColorName = dofLinxService.getGameNameForAltColor(game);
+        }
+
+        installAltColorFromFile(name, folder, out, altColorName+ ".pac");
+        installAltColorFromFile(name, folder, out, altColorName+ ".vni");
+        installAltColorFromFile(name, folder, out, altColorName+ ".pal");
+        if (game.isZenGame()) {
+          installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, altColorName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
         else {
-          installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
-          installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.CROMC_SUFFIX);
+          String romName = !StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : game.getRom();
+          installAltColorFromFile(name, folder, out, romName + "." + UploaderAnalysis.SERUM_SUFFIX);
+          installAltColorFromFile(name, folder, out, romName + "." + UploaderAnalysis.CROMC_SUFFIX);
         }
       }
       catch (IOException e) {
-        LOG.error("Failed to copy alt color file: " + e.getMessage(), e);
+        LOG.error("Failed to copy alt color file: {}", e.getMessage(), e);
         return JobDescriptorFactory.error("Failed to copy alt color file: " + e.getMessage());
       }
     }
-    LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
+    LOG.info("Successfully imported ALT color from temp file {}", out.getAbsolutePath());
     setAltColorEnabled(game, true);
     return JobDescriptorFactory.empty();
   }
@@ -253,7 +267,8 @@ public class AltColorService implements InitializingBean {
     File backupsFolder = new File(folder, "backups/");
     backupsFolder.mkdirs();
     if (existingFiles != null) {
-      String format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+      String format = OffsetDateTime.now().format(formatter);
       for (File existingFile : existingFiles) {
         String existingSuffix = FilenameUtils.getExtension(existingFile.getName());
         if (targetSuffix.equalsIgnoreCase(UploaderAnalysis.PAL_SUFFIX) && existingSuffix.equalsIgnoreCase(UploaderAnalysis.VNI_SUFFIX)) {
@@ -268,17 +283,17 @@ public class AltColorService implements InitializingBean {
           File backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
           while (backup.exists()) {
             Thread.sleep(1000);
-            format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+            format = OffsetDateTime.now().format(formatter);
             backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
           }
           FileUtils.copyFile(existingFile, backup);
-          LOG.info("Created backup ALTColor backup file \"" + backup.getAbsolutePath() + "\"");
+          LOG.info("Created backup ALTColor backup file \"{}\"", backup.getAbsolutePath());
           if (!existingFile.delete()) {
-            LOG.error("Failed to delete existing ALTColor file \"" + existingFile.getAbsolutePath() + "\"");
+            LOG.error("Failed to delete existing ALTColor file \"{}\"", existingFile.getAbsolutePath());
           }
         }
         catch (Exception e) {
-          LOG.error("Failed to backup ALTColor file \"" + existingFile.getAbsolutePath() + "\": " + e.getMessage(), e);
+          LOG.error("Failed to backup ALTColor file \"{}\": {}", existingFile.getAbsolutePath(), e.getMessage(), e);
         }
       }
     }

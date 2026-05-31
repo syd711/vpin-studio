@@ -25,7 +25,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -90,7 +89,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     String term = game.getGameDisplayName();
     List<VpsTable> vpsTables = client.getVpsService().find(term, game.getRom());
     if (!vpsTables.isEmpty()) {
-      VpsTable vpsTable = vpsTables.get(0);
+      VpsTable vpsTable = vpsTables.getFirst();
       refreshTableView(vpsTable);
     }
   }

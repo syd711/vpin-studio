@@ -6,7 +6,6 @@ This document provides guidance for AI agents working with the VPin Studio codeb
 
 **VPin Studio** is a comprehensive virtual pinball cabinet management system. It provides management of pinball cabinets running PinUP Popper with a client/server architecture supporting multi-machine management.
 
-- **Version:** 4.6.3
 - **License:** MIT
 - **Repository:** github.com/syd711/vpin-studio
 
@@ -256,6 +255,50 @@ Key test files:
 - `main` - Stable release branch
 - Feature branches for development
 - Current: `mania-claude` (Mania mode development)
+
+## MP3 Asset Handling
+
+VPX tables reference mp3 files in their embedded VBScript. VPin Studio scans, stores, and resolves these references across several classes.
+
+### Scanning — `VPXFileScanner#lineSearchMp3FileName`
+
+Uses `MP3_EXPRESSION_PATTERN` to match both simple quoted filenames and VBScript string-concat expressions:
+
+```
+(?:"[^"]*"|\w+)(?:\s*&\s*(?:"[^"]*"|\w+))*
+```
+
+`buildMp3Wildcard` converts each match: quoted parts become literal path segments, variable/identifier tokens become `*` wildcards. Backslashes are normalized to forward slashes. Deduplication via `addAsset()`: the path-qualified version (`sounds/intro.mp3`) wins over a plain filename (`intro.mp3`) for the same basename.
+
+Examples:
+- `"intro.mp3"` → `intro.mp3`
+- `"MFDOOM\Attract" & i & ".mp3"` → `MFDOOM/Attract*.mp3`
+
+### Storage — `GameDetails.assets` / `Game.assets`
+
+Pipe-delimited string written by `GameCachingService`:
+```java
+gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), "|"));
+// e.g. "MFDOOM/Attract*.mp3|intro.mp3|sounds/theme.mp3"
+```
+
+### Music Folder Resolution — `FolderLookupService#getGameMusicFolder`
+
+Derives the game-specific music subfolder from the stored asset paths:
+
+1. Extract unique directory parts from all asset paths (`MFDOOM` from `MFDOOM/Attract*.mp3`)
+2. No folder parts → return music root (assets at root level)
+3. One folder → use it
+4. Multiple folders → prefer the one whose last component matches the ROM name (case-insensitive)
+5. Multiple folders, no ROM match → use the deepest one (most path components)
+6. No assets at all → fallback: `musicRoot/<rom>`
+
+`getMusicFolder(Game)` returns the root: legacy layout uses `<installationFolder>/Music/`, modern uses `<gameFolder>/music/`.
+
+### Lookup / Validation — `MusicService`
+
+- `getMp3Files(Game)` — returns all `File` objects matching the stored asset patterns. Exact names use `File.exists()`; wildcard patterns use `Files.walk` + `FilenameUtils.wildcardMatch` on relativized paths.
+- `getMissingMp3Files(Game)` — same loop, collects patterns for which no matching file was found. Bogus patterns like `/*.mp3` (pure-variable paths with no literal prefix) are skipped.
 
 ## Additional Resources
 

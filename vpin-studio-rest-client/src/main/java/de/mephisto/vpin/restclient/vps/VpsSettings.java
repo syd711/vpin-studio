@@ -2,12 +2,6 @@ package de.mephisto.vpin.restclient.vps;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.emulators.LaunchConfiguration;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VpsSettings extends JsonSettings {
   private boolean hideVPSUpdates;

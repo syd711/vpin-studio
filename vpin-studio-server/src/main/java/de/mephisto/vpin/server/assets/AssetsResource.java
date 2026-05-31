@@ -140,7 +140,7 @@ public class AssetsResource {
 
   public ResponseEntity<byte[]> serializeAsset(Asset asset) {
     return ResponseEntity.ok()
-        .lastModified(asset.getUpdatedAt().getTime())
+        .lastModified(asset.getUpdatedAt().toEpochMilli())
         .contentType(MediaType.parseMediaType(asset.getMimeType()))
         .contentLength(asset.getData().length)
         .cacheControl(CacheControl.maxAge(3600 * 24 * 7, TimeUnit.SECONDS).cachePublic())
@@ -159,7 +159,7 @@ public class AssetsResource {
           .body(IOUtils.toByteArray(new FileInputStream(file)));
     }
     catch (IOException e) {
-      LOG.error("Faild to serialize file " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Faild to serialize file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
     }
     return null;
   }

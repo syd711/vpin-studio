@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -102,7 +102,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
     GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
     allTables.setId(-1);
     allTables.setName("All Tables");
-    filtered.add(0, allTables);
+    filtered.addFirst( allTables);
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.getSelectionModel().select(0);

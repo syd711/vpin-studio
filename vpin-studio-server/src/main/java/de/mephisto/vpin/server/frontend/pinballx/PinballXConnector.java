@@ -14,13 +14,13 @@ import de.mephisto.vpin.server.frontend.pinbally.PinballYTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ import java.awt.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
@@ -41,6 +41,13 @@ public class PinballXConnector extends BaseConnector {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
   public final static String PINBALL_X = FrontendType.PinballX.name();
+
+    // check standard emulators, starts with Visual Pinball as default one
+  private final static String[] emuNames = new String[]{
+        "Visual Pinball", "Future Pinball", "Zaccaria", "Pinball FX2", "Pinball FX3", "Pinball Arcade"
+  };
+
+  private static final int MAX_SYSTEM = 20;
 
   @Autowired
   private SystemService systemService;
@@ -75,10 +82,10 @@ public class PinballXConnector extends BaseConnector {
       super.setTableAssetAdapter(new de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter(assetAdapter));
     }
     catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+      LOG.error("Unable to find PopperAssetAdapter: {}", e.getMessage());
     }
 */
-    LOG.info("Finished initialization of " + this);
+    LOG.info("Finished initialization of {}", this);
   }
 
   @NonNull
@@ -99,7 +106,7 @@ public class PinballXConnector extends BaseConnector {
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);
     frontend.setSupportedScreens(screens);
-    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2));
+    frontend.setIgnoredValidations(List.of(GameValidationCode.CODE_NO_OTHER2));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -111,7 +118,7 @@ public class PinballXConnector extends BaseConnector {
       return preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS, PinballXSettings.class);
     }
     catch (Exception e) {
-      LOG.error("Getting pinballX settings failed: " + e.getMessage(), e);
+      LOG.error("Getting pinballX settings failed: {}", e.getMessage(), e);
       return null;
     }
   }
@@ -125,7 +132,7 @@ public class PinballXConnector extends BaseConnector {
       initializeConnector();
     }
     catch (Exception e) {
-      LOG.error("Saving pinballX settings failed: " + e.getMessage(), e);
+      LOG.error("Saving pinballX settings failed: {}", e.getMessage(), e);
     }
   }
 
@@ -147,15 +154,49 @@ public class PinballXConnector extends BaseConnector {
       return emulator;
     }
 
-    SubnodeConfiguration emulatorNode = iniConfiguration.getSection(emulator.getSafeName());
-    if (emulatorNode == null || emulatorNode.isEmpty()) {
-      LOG.warn("No matching PinballX emulator configuration found for {}, cannot save", emulator.getSafeName());
-      return emulator;
+    SubnodeConfiguration emulatorNode = null;
+    if (emulator.getSafeName() == null) {
+      LOG.info("New emulator created: {}", emulator.getName());
+      // guess the section name from type
+      String safename = safeNameFromType(emulator.getType());
+      int systemType = -1;
+      if (safename != null) {
+        // standard section found, get associated section
+        emulatorNode = iniConfiguration.getSection(safename);
+      }
+      // if safename is null, or section not found or section not empty, pick a system one
+      if (emulatorNode == null || !emulatorNode.isEmpty()) {
+        for (int k = 1; k < MAX_SYSTEM; k++) {
+          SubnodeConfiguration s = iniConfiguration.getSection("System_" + k);
+          if (s.isEmpty()) {
+            emulatorNode = s;
+            safename = "System_" + k;
+            systemType = systemTypeFromType(emulator.getType());
+            break;
+          }
+        }
+      }
+      if (emulatorNode == null) {
+        LOG.error("No possible section found in INI, emulator not saved!");
+        return emulator;
+      }
+      emulator.setSafeName(safename);
+      emulatorNode.addProperty("Name", emulator.getName());
+      if (systemType >= 0) {
+        emulatorNode.addProperty("SystemType", systemType);
+      }
+    }
+    else {
+      emulatorNode = iniConfiguration.getSection(emulator.getSafeName());
+      if (emulatorNode == null || emulatorNode.isEmpty()) {
+        LOG.warn("No matching PinballX emulator configuration found for {}, cannot save", emulator.getSafeName());
+        return emulator;
+      }
     }
 
     if (isSystemEmulator(emulator)) {
       // if the emulator has changed, rename also the database file
-      if (!emulatorNode.getString("Name").equalsIgnoreCase(emulator.getName())) {
+      if (!Strings.CI.equals(emulatorNode.getString("Name"), emulator.getName())) {
         File oldDb = getDatabase(emulatorNode.getString("Name"));
         File newDb = getDatabase(emulator);
         if (!FileUtils.rename(oldDb, newDb)) {
@@ -180,6 +221,8 @@ public class PinballXConnector extends BaseConnector {
     emulatorNode.setProperty("Parameters", emulator.getExeParameters());
     emulatorNode.setProperty("TablePath", emulator.getGamesDirectory());
     emulatorNode.setProperty("WorkingPath", emulator.getInstallationFolder().getAbsolutePath());
+    // add a specific studio properties to have proper extension type
+    emulatorNode.setProperty("EmulatorType", emulator.getType());
 
     if (emulator.getType().isVpxEmulator()) {
       initVisualPinballXScripts(emulator, iniConfiguration);
@@ -205,8 +248,25 @@ public class PinballXConnector extends BaseConnector {
     return emulator;
   }
 
+  private int systemTypeFromType(EmulatorType type) {
+      return switch (type) {
+          case VisualPinball, VisualPinball9 -> 1;
+          case FuturePinball -> 2;
+          default -> 0;
+      };
+  }
+
+  private String safeNameFromType(EmulatorType type) {
+    for (String emuName : emuNames) {
+      if (type.equals(EmulatorType.fromName(emuName))) {
+        return emuName.replaceAll(" ", "");
+      }
+    }
+    return null;
+  }
+
   private boolean isSystemEmulator(GameEmulator emu) {
-    return StringUtils.startsWith(emu.getSafeName(), "System_");
+    return Strings.CI.startsWith(emu.getSafeName(), "System_");
   }
 
   @Override
@@ -221,11 +281,6 @@ public class PinballXConnector extends BaseConnector {
     List<GameEmulator> emulators = new ArrayList<>();
     mapTableDetails = new HashMap<>();
 
-    // check standard emulators, starts with Visual Pinball as default one
-    String[] emuNames = new String[]{
-        "Visual Pinball", "Future Pinball", "Zaccaria", "Pinball FX2", "Pinball FX3", "Pinball Arcade"
-    };
-
     int emuId = 1;
     for (String emuName : emuNames) {
       String sectionName = emuName.replaceAll(" ", "");
@@ -239,7 +294,7 @@ public class PinballXConnector extends BaseConnector {
       }
     }
     // Add specific ones
-    for (int k = 1; k < 20; k++) {
+    for (int k = 1; k < MAX_SYSTEM; k++) {
       SubnodeConfiguration s = iniConfiguration.getSection("System_" + k);
       if (!s.isEmpty()) {
         String emuname = s.getString("Name");
@@ -281,7 +336,7 @@ public class PinballXConnector extends BaseConnector {
   private INIConfiguration loadPinballXIni() {
     File pinballXIni = getPinballXIni();
     if (!pinballXIni.exists()) {
-      LOG.warn("Ini file not found " + pinballXIni);
+      LOG.warn("Ini file not found {}", pinballXIni);
       return null;
     }
 
@@ -374,20 +429,17 @@ public class PinballXConnector extends BaseConnector {
     afterScript.setParameters(afterParameters);
 
     EmulatorType type = null;
+    if (s.containsKey("EmulatorType")) {
+      type = EmulatorType.valueOf(s.getString("EmulatorType"));
+    }
     // needed for named emulator
-    if (s.containsKey("SystemType")) {
+    else if (s.containsKey("SystemType")) {
       int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case 2:
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.fromName(emuname);
-          break; // Custom Exe, use name
-      }
+        type = switch (systemType) {
+            case 1 -> EmulatorType.VisualPinball; // Visual Pinball
+            case 2 -> EmulatorType.FuturePinball; // Future Pinball
+            default -> EmulatorType.fromName(emuname); // Custom Exe, use name
+        };
     }
     else {
       type = EmulatorType.fromName(emuname);
@@ -570,11 +622,11 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public boolean deletePlaylist(int playlistId) {
     List<Playlist> playlists = this.loadPlayLists();
-    playlists = playlists.stream().filter(p -> p.getId() == playlistId).collect(Collectors.toList());
+    playlists = playlists.stream().filter(p -> p.getId() == playlistId).toList();
 
     for (GameEmulator emu : emulators.values()) {
       File dbfolder = getDatabaseFolder(emu);
-      for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+      for (File f : dbfolder.listFiles((dir, name) -> Strings.CI.endsWith(name, ".xml"))) {
         String playlistname = FilenameUtils.getBaseName(f.getName());
 
         for (Playlist playlist : playlists) {
@@ -600,9 +652,9 @@ public class PinballXConnector extends BaseConnector {
     for (GameEmulator emu : emulators.values()) {
       File dbfolder = getDatabaseFolder(emu);
       if (dbfolder.exists()) {
-        for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+        for (File f : dbfolder.listFiles((dir, name) -> Strings.CI.endsWith(name, ".xml"))) {
           String playlistname = FilenameUtils.getBaseName(f.getName());
-          if (!StringUtils.equalsIgnoreCase(playlistname, emu.getName())) {
+          if (!Strings.CI.equals(playlistname, emu.getName())) {
 
             Playlist playlist = new Playlist();
             playlist.setId(id++);
@@ -768,7 +820,7 @@ public class PinballXConnector extends BaseConnector {
       iniConfiguration.write(fileWriter);
     }
     catch (Exception e) {
-      LOG.error("Failed to write PinballX.ini: " + e.getMessage(), e);
+      LOG.error("Failed to write PinballX.ini: {}", e.getMessage(), e);
     }
   }
 
@@ -789,7 +841,7 @@ public class PinballXConnector extends BaseConnector {
     List<ProcessHandle> processes = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() && p.info().command().get().contains("Settings.exe"))
-        .collect(Collectors.toList());
+        .toList();
 
     if (processes.isEmpty()) {
       LOG.info("No PinballX processes found, termination canceled.");
@@ -799,7 +851,7 @@ public class PinballXConnector extends BaseConnector {
     for (ProcessHandle p : processes) {
       String cmd = p.info().command().get();
       boolean b = p.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+      LOG.info("Destroyed process '{}', result: {}", cmd, b);
     }
     return true;
   }

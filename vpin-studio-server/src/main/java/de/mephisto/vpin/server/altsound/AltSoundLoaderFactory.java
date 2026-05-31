@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ public class AltSoundLoaderFactory {
         SubnodeConfiguration formatNode = iniConfiguration.getSection("format");
         if (formatNode != null) {
           String format = formatNode.getString("format");
-          if (format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
+          if (format != null && format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
             AltSound altSound = new AltSound2Loader(iniConfiguration, gSoundCsv).load();
             altSound.setFolder(altSoundFolder.getAbsolutePath());
             return altSound;
@@ -90,10 +90,10 @@ public class AltSoundLoaderFactory {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to load altsound: " + e.getMessage(), e);
+      LOG.error("Failed to load altsound: {}", e.getMessage(), e);
     }
 
-    LOG.warn("Failed to resolve altsound for folder " + altSoundFolder.getAbsolutePath());
+    LOG.warn("Failed to resolve altsound for folder {}", altSoundFolder.getAbsolutePath());
     return new AltSound();
   }
 

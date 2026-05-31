@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.emulators;
 
 public class GameEmulatorScript {
-  private boolean startScript;
   private String script;
   private boolean enabled;
   private boolean waitForExit;
@@ -9,14 +8,6 @@ public class GameEmulatorScript {
   private String workingDirectory;
   private String executeable;
   private String parameters;
-
-  public boolean isStartScript() {
-    return startScript;
-  }
-
-  public void setStartScript(boolean startScript) {
-    this.startScript = startScript;
-  }
 
   public String getScript() {
     return script;

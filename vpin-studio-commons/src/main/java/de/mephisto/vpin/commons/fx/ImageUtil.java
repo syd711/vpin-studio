@@ -54,8 +54,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -102,7 +102,7 @@ public class ImageUtil {
   }
 
   public static BufferedImage drawTimestamp(BufferedImage image) throws IOException {
-    return drawWatermark(image, DateUtil.formatDateTime(new Date()), Color.RED);
+    return drawWatermark(image, DateUtil.formatDateTime(OffsetDateTime.now()), Color.RED);
   }
 
   public static BufferedImage drawWatermark(BufferedImage bufferedImage, String watermark, Color color) throws IOException {

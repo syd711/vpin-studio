@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getGameEmulatorsByType(@Nullable EmulatorType emutype) {
     if (emutype != null) {
-      if (emutype.equals(EmulatorType.VisualPinball)) {
+      if (emutype.equals(EmulatorType.VisualPinball) || emutype.equals(EmulatorType.VisualPinball9)) {
         return getVpxGameEmulators();
       }
       else if (emutype.equals(EmulatorType.FuturePinball)) {
@@ -80,13 +80,16 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
     List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> e.isEnabled()).filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-    List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    List<GameEmulatorRepresentation> filtered = emulators.stream()
+        .filter(e -> e.isEnabled())
+        .filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId())))
+        .collect(Collectors.toList());
+    List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).toList();
 
     Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
       @Override
       public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
-        if(o1.isVpxEmulator()) {
+        if (o1.isVpxEmulator()) {
           return -1;
         }
         return 1;
@@ -94,7 +97,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     });
 
     if (vpxEmulators.size() > 1) {
-      filtered.add(0, createAllVpx());
+      filtered.addFirst( createAllVpx());
     }
     return filtered;
   }
@@ -106,7 +109,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     Collections.sort(filtered, new Comparator<GameEmulatorRepresentation>() {
       @Override
       public int compare(GameEmulatorRepresentation o1, GameEmulatorRepresentation o2) {
-        if(o1.isVpxEmulator()) {
+        if (o1.isVpxEmulator()) {
           return -1;
         }
         return 1;
@@ -130,7 +133,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithEmptyOption(UISettings uiSettings) {
     List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-    filtered.add(0, null);
+    filtered.addFirst( null);
     return filtered;
   }
 
@@ -164,6 +167,10 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     return gameEmulator != null && gameEmulator.isFpEmulator();
   }
 
+  public boolean isVpxOrFpGame(GameRepresentation game) {
+    return isVpxGame(game) || isFpGame(game);
+  }
+
   public boolean isZenGame(GameRepresentation game) {
     GameEmulatorRepresentation gameEmulator = getGameEmulator(game.getEmulatorId());
     return gameEmulator != null && gameEmulator.isFxEmulator();
@@ -172,5 +179,10 @@ public class EmulatorServiceClient extends VPinStudioClientService {
   public boolean isZaccariaGame(GameRepresentation game) {
     GameEmulatorRepresentation gameEmulator = getGameEmulator(game.getEmulatorId());
     return gameEmulator != null && gameEmulator.isZaccariaEmulator();
+  }
+
+  public boolean isMameGame(GameRepresentation game) {
+    GameEmulatorRepresentation gameEmulator = getGameEmulator(game.getEmulatorId());
+    return gameEmulator != null && gameEmulator.isMameEmulator();
   }
 }

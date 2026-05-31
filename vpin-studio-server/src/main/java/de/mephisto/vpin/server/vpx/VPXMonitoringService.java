@@ -9,15 +9,15 @@ import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
+import jakarta.annotation.PreDestroy;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,7 +59,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
 
       List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-      boolean playerRunning = windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
+      boolean playerRunning = windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), "Visual Pinball Player"));
 
       if (playerRunning && !gameStatusService.isActive()) {
         int emuId = -1;
@@ -67,7 +67,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
 
         for (DesktopWindow wdw : windows) {
           for (GameEmulator emu : emulators) {
-            if (StringUtils.startsWithIgnoreCase(wdw.getFilePath(), emu.getInstallationDirectory())) {
+            if (Strings.CI.startsWith(wdw.getFilePath(), emu.getInstallationDirectory())) {
               String windowTitle = wdw.getTitle();
               //LOG.info("VPX process detected with window title " + wdw.getTitle());
               if (windowTitle.contains("[") && windowTitle.contains("]")) {
@@ -86,7 +86,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       }
     }
     catch (Exception e) {
-      LOG.info("VPX Monitor Thread failed: " + e.getMessage(), e);
+      LOG.info("VPX Monitor Thread failed: {}", e.getMessage(), e);
     }
   }
 
@@ -95,17 +95,17 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     Game game = gameId > 0 ? gameService.getGame(gameId) : null;
 
     if (game != null) {
-      LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
+      LOG.info("{} notifying table end event of \"{}\"", this.getClass().getSimpleName(), game.getGameDisplayName());
       frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
     }
     else {
-      LOG.info(this.getClass().getSimpleName() + " unregistered a VPX window, but the game could not be resolved");
+      LOG.info("{} unregistered a VPX window, but the game could not be resolved", this.getClass().getSimpleName());
       gameStatusService.setForceActive(false);
     }
   }
 
   private void notifyTableStartByFileName(int emuId, @NonNull String tableName) {
-    LOG.info("Detected VPX running with table filename \"" + tableName + ".vpx\", resolving game for it.");
+    LOG.info("Detected VPX running with table filename \"{}.vpx\", resolving game for it.", tableName);
 
     Game game = gameService.getGameByFilename(emuId, tableName + ".vpx");
     if (game == null) {
@@ -113,11 +113,11 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     }
 
     if (game != null) {
-      LOG.info(this.getClass().getSimpleName() + " notifying table start event of \"" + game.getGameDisplayName() + "\"");
+      LOG.info("{} notifying table start event of \"{}\"", this.getClass().getSimpleName(), game.getGameDisplayName());
       frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }
     else {
-      LOG.info(this.getClass().getSimpleName() + " registered a VPX window, but the game could not be resolved for name \"" + tableName + "\"");
+      LOG.info("{} registered a VPX window, but the game could not be resolved for name \"{}\"", this.getClass().getSimpleName(), tableName);
       gameStatusService.setForceActive(true);
     }
   }
@@ -138,7 +138,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to update VPX monitoring: " + e.getMessage(), e);
+      LOG.error("Failed to update VPX monitoring: {}", e.getMessage(), e);
     }
   }
 
@@ -152,6 +152,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
+  @PreDestroy
   public void shutdown() {
     scheduler.shutdownNow();
     LOG.info("Folder monitoring scheduler has been shut down.");

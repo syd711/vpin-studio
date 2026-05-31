@@ -118,6 +118,9 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
       else if (client.getEmulatorService().isZaccariaGame(game)) {
         items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
       }
+      else if (client.getEmulatorService().isMameGame(game)) {
+        items.add(new LaunchConfiguration("Launch via MAME", false, null, null));
+      }
 
       launchCombo.setItems(FXCollections.observableList(items));
       launchCombo.setDisable(items.isEmpty());
@@ -160,7 +163,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isHideVPXStartInfo()) {
-        client.getGameService().playGame(game.getId(), altExe, option);
+        launchGame(game, altExe, option);
         return;
       }
 
@@ -176,9 +179,13 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(uiSettings);
         }
-        client.getGameService().playGame(game.getId(), altExe, option);
+        launchGame(game, altExe, option);
       }
     }
+  }
+
+  private static void launchGame(GameRepresentation game, String altExe, String option) {
+    client.getGameService().playGame(game.getId(), altExe, option);
   }
 
   @Override

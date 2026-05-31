@@ -3,26 +3,23 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameScoreValidation;
-import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -36,8 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -105,7 +102,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
   @FXML
   private void onTableScan() {
-    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Arrays.asList(game)));
+    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Collections.singletonList(game)));
     this.game = client.getGameService().getGame(this.game.getId());
     refreshScannedValues();
   }
@@ -160,7 +157,7 @@ public class TableDataTabScoreDataController implements Initializable {
         availableRoms.addAll(highscoreFiles.getVpRegEntries());
       }
       Collections.sort(availableRoms);
-      availableRoms.add(0, null);
+      availableRoms.addFirst(null);
       romName.setItems(FXCollections.observableList(availableRoms));
 
       List<String> availableHsFiles = new ArrayList<>();
@@ -168,7 +165,7 @@ public class TableDataTabScoreDataController implements Initializable {
         availableHsFiles.addAll(highscoreFiles.getTextFiles());
       }
       Collections.sort(availableHsFiles);
-      availableHsFiles.add(0, null);
+      availableHsFiles.addFirst(null);
       highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
 
       refreshScannedValues();

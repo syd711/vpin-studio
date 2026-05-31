@@ -100,6 +100,9 @@ public class GameEmulatorRepresentation {
   public boolean isVpxEmulator() {
     return type.isVpxEmulator();
   }
+  public boolean isMameEmulator() {
+    return type.isMameEmulator();
+  }
 
   public String getName() {
     return name;

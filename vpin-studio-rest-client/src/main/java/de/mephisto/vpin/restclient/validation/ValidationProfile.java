@@ -18,7 +18,7 @@ public class ValidationProfile {
   }
 
   public ValidationConfig getOrCreateConfig(int validationCode) {
-    Optional<ValidationConfig> config = configurations.stream().filter(v -> v.getValidationCode() == validationCode).findFirst();
+    Optional<ValidationConfig> config = new ArrayList<>(configurations).stream().filter(v -> v.getValidationCode() == validationCode).findFirst();
     if (config.isPresent()) {
       return config.get();
     }

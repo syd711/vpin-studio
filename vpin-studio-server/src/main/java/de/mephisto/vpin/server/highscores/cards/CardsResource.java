@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardData;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.server.games.Game;
@@ -9,6 +8,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +38,7 @@ public class CardsResource {
 
 
   @GetMapping("/resolution/{templateType}")
-  public CardResolution getCardResolution(@PathVariable("templateType") CardTemplateType templateType) {
+  public int[] getCardResolution(@PathVariable("templateType") CardTemplateType templateType) {
     return cardService.getCardResolution(templateType);
   }
 
@@ -64,28 +63,34 @@ public class CardsResource {
   }
 
   @GetMapping("/preview/{templateType}/{gameId}")
-  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, 
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId,
                                                     @PathVariable("templateType") CardTemplateType templateType) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateTableCardFile(game, templateType), "card-sample.png");
+      byte[] bytes = cardService.generateTableCardFile(game, templateType);
+      if (bytes != null) {
+        return RequestUtil.serializeImage(bytes, "card-sample.png");
+      }
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
   @GetMapping("/preview/{templateType}/{gameId}/{templateId}")
-  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, 
-                                                    @PathVariable("templateType") CardTemplateType templateType, 
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId,
+                                                    @PathVariable("templateType") CardTemplateType templateType,
                                                     @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateType, templateId), "card-sample.png");
+      byte[] bytes = cardService.generateTemplateTableCardFile(game, templateType, templateId);
+      if (bytes != null) {
+        return RequestUtil.serializeImage(bytes, "card-sample.png");
+      }
     }
     throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
   @GetMapping("/generate/{templateType}/{gameId}")
-  public boolean generateCard(@PathVariable("gameId") int gameId, 
+  public boolean generateCard(@PathVariable("gameId") int gameId,
                               @PathVariable("templateType") CardTemplateType templateType) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
@@ -96,7 +101,7 @@ public class CardsResource {
 
   // OLE Not used but kept in API
   @GetMapping("/generate/{templateType}/{gameId}/{templateId}")
-  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId, 
+  public boolean generateCardWithTemplate(@PathVariable("gameId") int gameId,
                                           @PathVariable("templateType") CardTemplateType templateType,
                                           @PathVariable("templateId") long templateId) {
     Game game = gameService.getGame(gameId);
@@ -107,8 +112,8 @@ public class CardsResource {
   }
 
   @GetMapping("/image/{name}/{gameId}/{templateId}")
-  public ResponseEntity<byte[]> getImage(@PathVariable("gameId") int gameId, 
-                                         @PathVariable("templateId") long templateId, 
+  public ResponseEntity<byte[]> getImage(@PathVariable("gameId") int gameId,
+                                         @PathVariable("templateId") long templateId,
                                          @PathVariable("name") String imageName) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
@@ -132,6 +137,7 @@ public class CardsResource {
   public List<String> getBackgrounds() {
     return cardService.getImages("backgrounds");
   }
+
   @GetMapping("/frames")
   public List<String> getFrames() {
     return cardService.getImages("frames");

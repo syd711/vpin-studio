@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +170,7 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     try {
       IScoredSyncModel sync = new IScoredSyncModel();
       sync.setGame(next);
-      sync.setiScoredGameRoom(gameRoom);
+      sync.setGameRoom(gameRoom);
       sync.setManualSubscription(manualSubscription);
       sync.setInvalidate(invalidate);
       return getRestClient().post(API + "competitions/iscored/synchronizeGameRoom", sync, IScoredSyncModel.class);

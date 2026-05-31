@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.exporter;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class ExporterService {
         .setTrailingDelimiter(true)
         .setEscape(escape)
         .setQuote(quote)
-        .build().print(builder);
+        .get().print(builder);
   }
 
 

@@ -6,9 +6,9 @@ import de.mephisto.vpin.restclient.ini.IniSectionRepresentation;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
@@ -82,7 +81,7 @@ public class IniService {
       iniConfiguration.read(fileReader);
     }
     catch (Exception e) {
-      LOG.error("Failed to read: " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read: {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
       throw e;
     }
     finally {
@@ -121,7 +120,7 @@ public class IniService {
       iniConfiguration.write(fileWriter);
     }
     catch (Exception e) {
-      LOG.error("Failed to write ini: " + e.getMessage(), e);
+      LOG.error("Failed to write ini: {}", e.getMessage(), e);
     }
     finally {
       try {

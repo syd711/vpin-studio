@@ -1,16 +1,14 @@
 package de.mephisto.vpin.restclient.directb2s;
 
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.util.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.Strings;
+
 import java.util.ArrayList;
 import java.util.Collections;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import de.mephisto.vpin.restclient.util.FileUtils;
+import java.util.List;
+import java.util.Objects;
 
 public class DirectB2S {
 
@@ -84,9 +82,9 @@ public class DirectB2S {
     this.fileName = FileUtils.fromUniqueFile(fileName);
 
     // make sure main file is always the first version
-    boolean main = StringUtils.equalsIgnoreCase(this.fileName, fileName);
+    boolean main = Strings.CI.equals(this.fileName, fileName);
     if (main) {
-      this.versions.add(0, fileName);
+      this.versions.addFirst(fileName);
     }
     else {
       this.versions.add(fileName);
@@ -104,5 +102,10 @@ public class DirectB2S {
   @JsonIgnore
   public String getVersion(int i) {
     return i < versions.size() ? versions.get(i) : null;
+  }
+
+  @JsonIgnore
+  public int getNbVersions() {
+    return versions != null ? versions.size() : 0;
   }
 }

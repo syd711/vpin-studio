@@ -10,8 +10,8 @@ import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.SystemUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -73,7 +73,7 @@ public class DropInContainerController implements Initializable {
   @FXML
   private void onOpen() {
     if (file.isFile()) {
-      SystemUtil.openFolder(file.getParentFile());
+      SystemUtil.openFile(file);
     }
     else {
       SystemUtil.openFolder(file);

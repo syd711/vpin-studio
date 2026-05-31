@@ -1,17 +1,17 @@
 package de.mephisto.vpin.restclient.discord;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class DiscordChannel {
   private long id;
   private String name;
-  private Date creationDate;
+  private OffsetDateTime creationDate;
 
-  public Date getCreationDate() {
+  public OffsetDateTime getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(Date creationDate) {
+  public void setCreationDate(OffsetDateTime creationDate) {
     this.creationDate = creationDate;
   }
 

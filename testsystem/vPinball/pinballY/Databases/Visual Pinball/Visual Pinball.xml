@@ -1,35 +1,33 @@
 <menu>
   <game name="Baseball (1970)">
-    <description>Baseball (1970).vpx</description>
-    <title>Baseball (1970)</title>
+    <description>Baseball (1970)</description>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-12-12 18:37:37</dateadded>
+    <datemodified>2023-12-17 19:21:12</datemodified>
   </game>
   <game name="Jaws">
-    <description>Jaws.vpx</description>
-    <title>Jaws</title>
+    <description>Jaws</description>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-12-12 18:37:37</dateadded>
+    <datemodified>2023-12-17 19:21:24</datemodified>
   </game>
   <game name="Twister (1996)">
-    <description>Twister (1996).vpx</description>
-    <title>Twister (1996)</title>
+    <description>Twister (1996)</description>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-12-12 18:37:37</dateadded>
+    <author>Test Osterone</author>
+    <datemodified>2023-12-17 19:21:29</datemodified>
   </game>
 </menu>

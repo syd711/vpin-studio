@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.List;

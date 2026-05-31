@@ -15,8 +15,8 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -26,8 +26,6 @@ import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.FileMonitoringService;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -40,7 +38,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -50,6 +47,8 @@ import javafx.stage.WindowEvent;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StreamUtils;
@@ -62,8 +61,8 @@ import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -87,6 +86,8 @@ public class Studio extends Application {
   public static HostServices hostServices;
 
   private ServerSocket ss;
+  private static Stage splash;
+  private static SplashScreenController splashController;
 
   public static void main(String[] args) {
     launch(args);
@@ -117,6 +118,14 @@ public class Studio extends Application {
       System.exit(-1);
     }
 
+    try {
+      LOG.info("Creating splash screen...");
+      splash = createSplash();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to create splash: " + e.getMessage(), e);
+    }
+
     Studio.stage = stage;
     Studio.hostServices = getHostServices();
 
@@ -129,36 +138,56 @@ public class Studio extends Application {
         NavigationController.refreshControllerCache();
         NavigationController.refreshViewCache();
 
-        Studio.loadLauncher(new Stage());
+        Studio.loadLauncher(createLauncherStage());
         WidgetFactory.showAlert(stage, "Server Connection Failed", "You have been disconnected from the server.");
       });
     };
 
-    //replace the OverlayFX client with the Studio one
-    Studio.client = new VPinStudioClient("localhost");
-    Studio.Features = client.getSystemService().getFeatures();
-    ServerFX.client = Studio.client;
+    // offload connection logic so the splash screen can actually render
+    new Thread(() -> {
+      if (splashController != null) {
+        splashController.setStatus("Connecting to last server...");
+      }
 
-    String version = client.getSystemService().getVersion();
-    if (!StringUtils.isEmpty(version)) {
-      loadStudio(stage, Studio.client);
-    }
-    else {
-      ConnectionProperties connectionProperties = new ConnectionProperties();
-      List<ConnectionEntry> connections = connectionProperties.getConnections();
-      if (!connections.isEmpty()) {
-        for (ConnectionEntry connection : connections) {
-          Studio.client = new VPinStudioClient(connection.getIp());
-          Studio.Features = client.getSystemService().getFeatures();
-          version = client.getSystemService().getVersion();
-          if (!StringUtils.isEmpty(version)) {
-            loadStudio(stage, Studio.client);
-            return;
+      //replace the OverlayFX client with the Studio one
+      Studio.client = new VPinStudioClient("localhost");
+      if (splashController != null) {
+        splashController.setStatus("Checking localhost...");
+      }
+      Studio.Features = client.getSystemService().getFeatures();
+      ServerFX.client = Studio.client;
+
+      String version = client.getSystemService().getVersion();
+      if (!StringUtils.isEmpty(version)) {
+        Platform.runLater(() -> loadStudio(stage, Studio.client));
+      }
+      else {
+        if (splashController != null) {
+          splashController.setStatus("Checking connections...");
+        }
+
+        ConnectionProperties connectionProperties = new ConnectionProperties();
+        List<ConnectionEntry> connections = connectionProperties.getConnections();
+        if (!connections.isEmpty()) {
+          for (ConnectionEntry connection : connections) {
+            if (splashController != null) {
+              splashController.setStatus("Checking " + connection.getName() + "...");
+            }
+            Studio.client = new VPinStudioClient(connection.getIp());
+            version = client.getSystemService().getVersion();
+            if (!StringUtils.isEmpty(version)) {
+              //moved this inside because we are using the version to check connection. It was slowing this process down
+              Studio.Features = client.getSystemService().getFeatures();
+              final VPinStudioClient foundClient = Studio.client;
+              Platform.runLater(() -> loadStudio(stage, foundClient));
+              return;
+            }
+
           }
         }
+        Platform.runLater(() -> loadLauncher(stage));
       }
-      loadLauncher(stage);
-    }
+    }, "Studio Connection Initializer").start();
   }
 
   private void runOperatingSystemChecks() {
@@ -179,6 +208,10 @@ public class Studio extends Application {
     }
   }
 
+  public static Stage createLauncherStage() {
+    return new Stage(StageStyle.TRANSPARENT);
+  }
+
   private void runExtensionsInstallation() {
     // install our APNGImageLoader
     ApngImageLoaderFactory.install();
@@ -191,6 +224,10 @@ public class Studio extends Application {
   public static void loadLauncher(Stage stage) {
     LOG.info("load launcher...");
     try {
+      if (splash != null) {
+        splash.hide();
+      }
+
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(LauncherController.class.getResource("scene-launcher.fxml"));
@@ -198,11 +235,13 @@ public class Studio extends Application {
 
 
       Scene scene = new Scene(root);
-      scene.setFill(Paint.valueOf("#212529"));
+      scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
       stage.setTitle("VPin Studio Launcher");
-      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+        stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+      }
       stage.setScene(scene);
-      stage.initStyle(StageStyle.UNDECORATED);
+      stage.initStyle(StageStyle.TRANSPARENT);
       stage.setX((screenBounds.getWidth() / 2) - (800 / 2));
       stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
 
@@ -218,7 +257,14 @@ public class Studio extends Application {
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     LOG.info("Launching Studio...");
     try {
+      if (splashController != null) {
+        splashController.setStatus("Initializing application...");
+      }
+
       try {
+        if (splashController != null) {
+          splashController.setStatus("Checking SevenZip binaries...");
+        }
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
         if (!sevenZipTempFolder.exists()) {
           sevenZipTempFolder.mkdirs();
@@ -230,14 +276,15 @@ public class Studio extends Application {
         LOG.error("Failed to initialize SevenZip (.rar support): " + e.getMessage(), e);
       }
 
-      Stage splash = createSplash();
+      if (splash == null) {
+        splash = createSplash();
+      }
 
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
       Studio.Features = client.getSystemService().getFeatures();
       ServerFX.client = Studio.client;
 
-//      Platform.setImplicitExit(false);
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
@@ -249,6 +296,9 @@ public class Studio extends Application {
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
+            if (splashController != null) {
+              splashController.setStatus("Fetching data from server...");
+            }
             //force pre-caching, this way, the table overview does not need to execute single GET requests
             new Thread(() -> {
               Studio.client.getVpsService().invalidateAll();
@@ -265,11 +315,17 @@ public class Studio extends Application {
 
             List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
             if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
+              if (splashController != null) {
+                splashController.setStatus("Scanning for table changes...");
+              }
               LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
               ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
               ProgressDialog.createProgressDialog(ClearCacheProgressModel.getReloadGamesClearCacheModel(false));
             }
 
+            if (splashController != null) {
+              splashController.setStatus("Loading preferences...");
+            }
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
             client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
@@ -282,6 +338,9 @@ public class Studio extends Application {
               LOG.info("Window Mode: Portrait");
             }
 
+            if (splashController != null) {
+              splashController.setStatus("Building user interface...");
+            }
             FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
             Parent root = null;
             try {
@@ -289,6 +348,7 @@ public class Studio extends Application {
             }
             catch (IOException e) {
               LOG.error("Failed to load Studio: {}", e.getMessage(), e);
+              return;
             }
 
             Rectangle position = LocalUISettings.getPosition();
@@ -300,13 +360,15 @@ public class Studio extends Application {
               width = position.getWidth();
               height = position.getHeight();
             }
-            Scene scene = new Scene(root, width, height, Paint.valueOf("#212529"));
-            stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
+            Scene scene = new Scene(root, width, height, javafx.scene.paint.Color.TRANSPARENT);
+            if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+              stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-128.png"))));
+            }
             stage.setScene(scene);
             stage.setMinWidth(1280);
             stage.setMinHeight(700);
             stage.setResizable(true);
-            stage.initStyle(StageStyle.UNDECORATED);
+            stage.initStyle(StageStyle.TRANSPARENT);
 
             if (position.getX() != -1) {
               stage.setX(position.getX());
@@ -326,11 +388,17 @@ public class Studio extends Application {
 
             client.setErrorHandler(errorHandler);
             stage.show();
-            splash.hide();
+            if (splash != null) {
+              splash.hide();
+            }
 
             //launch VPSMonitor
+            if (splashController != null) {
+              splashController.setStatus("Finalizing startup...");
+            }
             VBSManager.getInstance();
-          });
+          })
+          .onErrorLater(ex -> LOG.error("Failed to load Studio UI: {}", ex.getMessage(), ex));
     }
     catch (Exception e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
@@ -338,27 +406,34 @@ public class Studio extends Application {
   }
 
   private static Stage createSplash() throws Exception {
+    LOG.info("Load FXML for splash screen...");
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
-    SplashScreenController controller = loader.getController();
+    splashController = loader.getController();
 
     double imgWidth = 800, imgHeight = 534;
-    try (InputStream imgStream = Studio.class.getResourceAsStream("splash4.0.png")) {
+    try (InputStream imgStream = Studio.class.getResourceAsStream("splash.png")) {
       Image image = new Image(imgStream);
-      controller.setImage(image);
-      imgWidth = image.getWidth();
-      imgHeight = image.getHeight();
+      splashController.setImage(image);
+      if (image.getWidth() > 0) { // Ensure image loaded successfully before using its dimensions
+        imgWidth = image.getWidth();
+        imgHeight = image.getHeight();
+      }
     }
 
-    Scene scene = new Scene(root, imgWidth, imgHeight, Color.TRANSPARENT);
+    Scene scene = new Scene(root, imgWidth, imgHeight, Paint.valueOf("#212529")); // Set solid background color
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
-    Stage stage = new Stage(StageStyle.UNDECORATED);
-    stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
+    Stage stage = new Stage(StageStyle.TRANSPARENT);
+    //stage.setAlwaysOnTop(true); // Ensure splash screen is always on top
+    if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+      stage.getIcons().add(new Image(Objects.requireNonNull(Studio.class.getResourceAsStream("logo-64.png"))));
+    }
     stage.setScene(scene);
     stage.setX((screenBounds.getWidth() / 2) - (imgWidth / 2));
     stage.setY((screenBounds.getHeight() / 2) - (imgHeight / 2));
     stage.setResizable(false);
+    LOG.info("stage.show for splash screen...");
     stage.show();
     return stage;
   }
@@ -396,7 +471,13 @@ public class Studio extends Application {
     if (!StringUtils.isEmpty(url)) {
       String osName = System.getProperty("os.name");
       if (osName.contains("Windows")) {
-        Studio.hostServices.showDocument(url);
+//        Studio.hostServices.showDocument(url);
+        try {
+          new ProcessBuilder("cmd", "/c", "start", "", url).start();
+        }
+        catch (IOException e) {
+          LOG.error("Browse failed: {}", e.getMessage());
+        }
       }
       else if (osName.toLowerCase().contains("mac")) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -405,7 +486,7 @@ public class Studio extends Application {
             desktop.browse(new URI(url));
           }
           catch (Exception e) {
-            LOG.error("Failed to open file: " + e.getMessage(), e);
+            LOG.error("Failed to open macOS file: " + e.getMessage(), e);
           }
         }
       }
@@ -426,16 +507,28 @@ public class Studio extends Application {
 
   public static boolean open(@Nullable File file) {
     if (file != null && file.exists()) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows")) {
         try {
-          desktop.open(file);
-          return true;
+          new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start();
         }
-        catch (Exception e) {
-          LOG.error("Failed to open file: " + e.getMessage(), e);
+        catch (IOException e) {
+          LOG.error("Open failed: {}", e.getMessage());
         }
       }
+      else {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+          try {
+            desktop.open(file);
+            return true;
+          }
+          catch (Exception e) {
+            LOG.error("Failed to open {} file: {}", osName, e.getMessage(), e);
+          }
+        }
+      }
+
     }
     return false;
   }
@@ -444,11 +537,11 @@ public class Studio extends Application {
   public static boolean editGameFile(@NonNull GameRepresentation game, @NonNull String filePath) throws Exception {
     FileMonitoringService.getInstance().setPaused(true);
 
-    MonitoredTextFile monitoredTextFile = new MonitoredTextFile(VPinFile.LOCAL_GAME_FILE);
-    monitoredTextFile.setFileId(String.valueOf(game.getId()));
-    monitoredTextFile.setPath(filePath);
-    MonitoredTextFile loadedMonitoredFile = client.getTextEditorService().getText(monitoredTextFile);
-    FileMonitoringService.getInstance().monitor(monitoredTextFile);
+    TextEditorFile textEditorFile = new TextEditorFile(String.valueOf(TextEditorFileTypes.LOCAL_GAME_FILE));
+    textEditorFile.setFileId(String.valueOf(game.getId()));
+    textEditorFile.setPath(filePath);
+    TextEditorFile loadedMonitoredFile = client.getTextEditorService().getText(textEditorFile);
+    FileMonitoringService.getInstance().monitor(textEditorFile);
 
     String fileName = FilenameUtils.getBaseName(game.getGameFileName());
 
@@ -467,7 +560,13 @@ public class Studio extends Application {
     if (file != null && file.exists()) {
       String osName = System.getProperty("os.name");
       if (osName.contains("Windows")) {
-        Studio.hostServices.showDocument(file.getAbsolutePath());
+//        Studio.hostServices.showDocument(file.getAbsolutePath());
+        try {
+          new ProcessBuilder("cmd", "/c", "start", "", file.getAbsolutePath()).start();
+        }
+        catch (IOException e) {
+          LOG.error("Open failed: {}", e.getMessage());
+        }
       }
       else if (osName.toLowerCase().contains("mac")) {
         try {

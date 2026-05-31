@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.*;
 
@@ -51,16 +52,16 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
             if(manifest != null) {
               BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
-              BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
+              BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, Instant.ofEpochMilli(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
               cache.add(descriptor);
             }
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            LOG.error("Failed to read {}: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
           }
         }
         if (!cache.isEmpty()) {
-          LOG.info("Loaded existing backups: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpaFiles.length);
+          LOG.info("Loaded existing backups: {}, took {}ms.", vpaFiles.length, (System.currentTimeMillis() - start));
         }
       }
     }
@@ -76,9 +77,9 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
     if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
-      LOG.error("Failed moving file to trash: " + file.getAbsolutePath());
+      LOG.error("Failed moving file to trash: {}", file.getAbsolutePath());
       if (!file.delete()) {
-        LOG.error("Failed to delete " + file.getAbsolutePath());
+        LOG.error("Failed to delete {}", file.getAbsolutePath());
         return false;
       }
     }

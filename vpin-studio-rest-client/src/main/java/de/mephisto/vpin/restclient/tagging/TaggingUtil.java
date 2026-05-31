@@ -1,8 +1,8 @@
 package de.mephisto.vpin.restclient.tagging;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,15 +15,13 @@ public class TaggingUtil {
   public static List<String> getTags(@Nullable String value) {
     List<String> result = new ArrayList<>();
     if (!StringUtils.isEmpty(value)) {
-      result.addAll(new ArrayList<>(Arrays.asList(value.split(","))).stream().map(t -> t.trim()).filter(t -> !StringUtils.isEmpty(t)).collect(Collectors.toList()));
+      result.addAll(new ArrayList<>(Arrays.asList(value.split(","))).stream().map(t -> t.trim()).filter(t -> !StringUtils.isEmpty(t)).toList());
     }
     return result;
   }
 
-  public static String merge(String tags, String tags1) {
-    Set<String> existing = new HashSet<>(getTags(tags));
-    existing.addAll(getTags(tags1));
-    return String.join(", ", existing);
+  public static String join(List<String> tagList) {
+    return tagList.stream().distinct().collect(Collectors.joining(","));
   }
 
   public void resetColors() {

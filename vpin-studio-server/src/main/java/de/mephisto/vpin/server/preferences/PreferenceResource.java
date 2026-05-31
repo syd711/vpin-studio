@@ -38,7 +38,7 @@ public class PreferenceResource {
       return preferencesService.getJsonPreference(key);
     } 
     catch (Exception e) {
-      LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
+      LOG.error("Failed to read JSON preferences: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Failed to read JSON preferences: " + e.getMessage());
     }
   }

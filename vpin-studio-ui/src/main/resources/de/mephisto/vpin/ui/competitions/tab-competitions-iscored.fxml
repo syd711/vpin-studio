@@ -54,7 +54,7 @@
                 </StackPane>
             </center>
             <top>
-                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
                         <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                             <font>
@@ -70,7 +70,7 @@
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                              <TextField fx:id="textfieldSearch" prefWidth="180.0" promptText="Subscription Search...">
+                              <TextField fx:id="textfieldSearch" prefWidth="160.0" promptText="Subscription Search...">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -86,7 +86,6 @@
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Label styleClass="default-text" text="Game Room: " />
                   <ComboBox fx:id="gameRoomsCombo" prefWidth="260.0" />
                   <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" textFill="WHITE">
                      <font>
@@ -110,8 +109,7 @@
                         <Tooltip text="Edit game room settings." />
                      </tooltip>
                   </Button>
-                  <Separator layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" text="Game Rooms" textFill="WHITE">
+                  <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -120,6 +118,18 @@
                      </graphic>
                      <tooltip>
                         <Tooltip text="Open game room preferences." />
+                     </tooltip>
+                  </Button>
+                  <Separator fx:id="playBtnSeparator" layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

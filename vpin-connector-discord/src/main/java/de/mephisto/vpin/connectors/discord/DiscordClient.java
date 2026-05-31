@@ -1,7 +1,8 @@
 package de.mephisto.vpin.connectors.discord;
 
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
+import org.jspecify.annotations.Nullable;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import net.dv8tion.jda.internal.utils.PermissionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +44,8 @@ public class DiscordClient {
     this.listenerAdapter = new DiscordListenerAdapter(this, commandResolver);
     this.botToken = botToken;
 
-    jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
+    jda = JDABuilder.create(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
             GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-        .setEventPassthrough(true)
         .setStatus(OnlineStatus.ONLINE)
         .setMemberCachePolicy(MemberCachePolicy.ALL)
         .addEventListeners(this.listenerAdapter)
@@ -65,8 +64,8 @@ public class DiscordClient {
         Member member = guild.getMemberById(memberId);
         if (member != null) {
           List<Permission> permissionList = Arrays.stream(permissions).map(Permissions::toPermission).collect(Collectors.toList());
-          boolean isAdmin = PermissionUtil.checkPermission(member, Permission.ADMINISTRATOR);
-          return isAdmin || PermissionUtil.checkPermission(channel.getPermissionContainer(), member, permissionList.toArray(new Permission[0]));
+          boolean isAdmin = member.hasPermission(Permission.ADMINISTRATOR);
+          return isAdmin || member.hasPermission(channel, permissionList);
         }
       }
     }
@@ -79,8 +78,8 @@ public class DiscordClient {
       Member member = guild.getMemberById(memberId);
       if (member != null) {
         List<Permission> permissionList = Arrays.stream(permissions).map(Permissions::toPermission).collect(Collectors.toList());
-        boolean isAdmin = PermissionUtil.checkPermission(member, Permission.ADMINISTRATOR);
-        return isAdmin || PermissionUtil.checkPermission(member, permissionList.toArray(new Permission[0]));
+        boolean isAdmin = member.hasPermission(Permission.ADMINISTRATOR);
+        return isAdmin || member.hasPermission(permissionList);
       }
     }
     return false;
@@ -151,8 +150,7 @@ public class DiscordClient {
         t.setId(channel.getIdLong());
         t.setName(channel.getName());
 
-        long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
-        t.setCreationDate(new Date(epochMilli));
+        t.setCreationDate(channel.getTimeCreated());
 
         return t;
       }
@@ -215,7 +213,7 @@ public class DiscordClient {
     Guild guild = getGuild(guildId);
     if (guild != null) {
       Member memberById = guild.getMemberById(botId);
-      return new GuildInfo(guild, PermissionUtil.checkPermission(memberById, Permission.ADMINISTRATOR));
+      return new GuildInfo(guild, memberById.hasPermission(Permission.ADMINISTRATOR));
     }
     return null;
   }
@@ -239,7 +237,7 @@ public class DiscordClient {
   public List<GuildInfo> getGuilds() {
     return jda.getGuilds().stream().map(guild -> {
       Member memberById = guild.getMemberById(botId);
-      return new GuildInfo(guild, PermissionUtil.checkPermission(memberById, Permission.VIEW_CHANNEL));
+      return new GuildInfo(guild, memberById.hasPermission(Permission.VIEW_CHANNEL));
     }).collect(Collectors.toList());
   }
 
@@ -251,39 +249,41 @@ public class DiscordClient {
     return botToken;
   }
 
-  public List<DiscordMessage> getPinnedMessages(long serverId, long channelId) {
-    if (pinnedMessagesCache.containsKey(channelId)) {
-      return new ArrayList<>(pinnedMessagesCache.get(channelId).getMessages());
-    }
-    try {
-      Guild guild = getGuild(serverId);
-      if (guild != null) {
-        TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
-        if (channel != null) {
-          long start = System.currentTimeMillis();
-          List<Message> complete = channel.retrievePinnedMessages().complete();
-          for (Message message : complete) {
-            this.messageCacheById.put(message.getIdLong(), message);
-          }
-
-          LOG.info("Pinned messages fetch for channel \"" + channel.getName() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
-          List<DiscordMessage> collect = complete.stream().map(this::toMessage).collect(Collectors.toList());
-          pinnedMessagesCache.put(channelId, new PinnedMessages());
-          pinnedMessagesCache.get(channelId).getMessages().addAll(collect);
-          return collect;
+    public List<DiscordMessage> getPinnedMessages(long serverId, long channelId) {
+        if (pinnedMessagesCache.containsKey(channelId)) {
+            return new ArrayList<>(pinnedMessagesCache.get(channelId).getMessages());
         }
-        else {
-          LOG.error("No discord channel found for id '" + channelId + "' to read pinned messages from.");
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Error reading pinned messages: " + e.getMessage(), e);
-    }
-    return Collections.emptyList();
-  }
+        try {
+            Guild guild = getGuild(serverId);
+            if (guild != null) {
+                TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
+                if (channel != null) {
+                    long start = System.currentTimeMillis();
+                    // Fix: Map the PinnedMessage objects to Message objects
+                    List<PinnedMessagePaginationAction.PinnedMessage> complete = channel.retrievePinnedMessages().complete().stream()
+                            .toList();
+                    for (PinnedMessagePaginationAction.PinnedMessage message : complete) {
+                        this.messageCacheById.put(message.getMessage().getIdLong(), message.getMessage());
+                    }
 
-  public void setSlowMode(long serverId, long channelId, int seconds) {
+                    LOG.info("Pinned messages fetch for channel \"" + channel.getName() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
+                    List<DiscordMessage> collect = complete.stream().map(PinnedMessagePaginationAction.PinnedMessage::getMessage).map(this::toMessage).collect(Collectors.toList());
+                    pinnedMessagesCache.put(channelId, new PinnedMessages());
+                    pinnedMessagesCache.get(channelId).getMessages().addAll(collect);
+                    return collect;
+                }
+                else {
+                    LOG.error("No discord channel found for id '" + channelId + "' to read pinned messages from.");
+                }
+            }
+        }
+        catch (Exception e) {
+            LOG.error("Error reading pinned messages: " + e.getMessage(), e);
+        }
+        return Collections.emptyList();
+    }
+
+    public void setSlowMode(long serverId, long channelId, int seconds) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
       TextChannel channel = guild.getChannelById(TextChannel.class, channelId);
@@ -293,6 +293,30 @@ public class DiscordClient {
     }
   }
 
+  /**
+   *   Inside pinMessage (DiscordClient.java:296-327):
+   *   1. channel.pinMessageById(messageId).complete() — pins on Discord
+   *   2. Adds the message to pinnedMessagesCache
+   *   3. invalidateMessageCache(channelId, -1) — immediately removes the cache entry because botId != -1
+   *
+   *   So after the first highscoreChanged completes, the newly pinned message was added to the cache and then evicted in the same call.
+   *   The second highscoreChanged gets a cache miss and falls through to channel.retrievePinnedMessages().complete().
+   *
+   *   This is where the race lives: pinMessage used .complete() (synchronous), so Discord has received the pin request —
+   *   but Discord's own servers don't guarantee that retrievePinnedMessages immediately reflects a just-pinned message.
+   *   The second call can still get back an empty list from the Discord REST API.
+   *
+   *   Change it to pass botId so the guard works as intended:
+   *
+   *   invalidateMessageCache(channelId, botId);
+   *
+   *   With this change, when the bot pins a message it updates the cache (line 307) and then invalidateMessageCache does nothing (because botId == botId).
+   *   The second highscoreChanged call would then get a cache HIT with the pinned message already in it, isEmpty() would be false,
+   *   and createFirstCompetitionHighscoreCreatedMessage would not be called again.
+   * @param serverId
+   * @param channelId
+   * @param messageId
+   */
   public void pinMessage(long serverId, long channelId, long messageId) {
     Guild guild = getGuild(serverId);
     if (guild != null) {
@@ -314,7 +338,7 @@ public class DiscordClient {
               channel.deleteMessageById(message.getId()).complete();
             }
           }
-          invalidateMessageCache(channelId, -1);
+          invalidateMessageCache(channelId, botId);
         }
         catch (Exception e) {
           LOG.error("Failed to cleanup pin messages: " + e.getMessage(), e);
@@ -419,17 +443,19 @@ public class DiscordClient {
       for (GuildChannel channel : channels) {
         if (channel instanceof TextChannel) {
           if (!ALLOW_LIST.contains(channel.getName())) {
-            PermissionOverride po = channel.getPermissionContainer().getPermissionOverride((IPermissionHolder) guild.getRolesByName("@everyone", true).toArray()[0]);
-            if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
-              continue;
+            Role everyoneRole = guild.getPublicRole();
+            if (everyoneRole != null) {
+              PermissionOverride po = channel.getPermissionContainer().getPermissionOverride(everyoneRole);
+              if (po != null && po.getDenied().contains(Permission.VIEW_CHANNEL)) {
+                continue;
+              }
             }
           }
           DiscordTextChannel t = new DiscordTextChannel();
           t.setId(channel.getIdLong());
           t.setName(channel.getName());
 
-          long epochMilli = channel.getTimeCreated().toInstant().toEpochMilli();
-          t.setCreationDate(new Date(epochMilli));
+          t.setCreationDate(channel.getTimeCreated());
 
           channelList.add(t);
         }
@@ -553,11 +579,9 @@ public class DiscordClient {
 
   private DiscordMessage toMessage(Message msg) {
     DiscordMessage message = new DiscordMessage();
-    long epochMilli = msg.getTimeCreated().toInstant().toEpochMilli();
-    Date createdAt = new Date(epochMilli);
 
     message.setId(msg.getIdLong());
-    message.setCreatedAt(createdAt);
+    message.setCreatedAt(msg.getTimeCreated());
     message.setRaw(msg.getContentRaw());
     message.setServerId(msg.getGuild().getIdLong());
 
@@ -619,9 +643,7 @@ public class DiscordClient {
       if (initials.contains("]")) {
         initials = initials.substring(0, initials.indexOf("]"));
       }
-      if (initials.length() > 3) {
-        initials = initials.substring(0, 3);
-      }
+      initials = initials.trim();
     }
     return initials;
   }

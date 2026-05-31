@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class PinballYSettingsParser {
       load(p, file);
     }
     catch (Exception e) {
-      LOG.error("cannot parse settings file " + pinballYSettings, e);
+      LOG.error("cannot parse settings file {}", pinballYSettings, e);
     }
     return p;
   }

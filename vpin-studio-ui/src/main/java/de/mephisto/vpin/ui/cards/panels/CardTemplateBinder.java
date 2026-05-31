@@ -1,24 +1,32 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 
 public class CardTemplateBinder extends BeanBinder<CardTemplate> {
 
-  private CardResolution resolution;
+  private int width;
+  private int height;
 
   public CardTemplateBinder() {
     super();
   }
 
-  public CardResolution getResolution() {
-    return resolution;
+  public int getWidth() {
+    return width;
   }
 
-  public void setResolution(CardResolution res) {
-    this.resolution = res;
+  public void setWidth(int width) {
+    this.width = width;
+  }
+
+  public int getHeight() {
+    return height;
+  }
+
+  public void setHeight(int height) {
+    this.height = height;
   }
 
   public CardTemplateType getTemplateType() {

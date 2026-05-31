@@ -1,11 +1,14 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.cards.CardTemplateType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
@@ -13,6 +16,7 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -31,7 +35,6 @@ import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,6 +122,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   private VBox statusPane;
 
   @FXML
+  private VBox infoContainer;
+
+  @FXML
   private VBox dataPane;
 
   @FXML
@@ -163,7 +169,11 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
       }
       if (!tables.isEmpty()) {
-        ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
+        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
+        if (!progressDialog.getResults().isEmpty()) {
+          List<ManiaTableSyncResult> results = (List<ManiaTableSyncResult>) (List<?>) progressDialog.getResults();
+          ManiaDialogs.openTableSyncResult(results);
+        }
       }
     }
   }
@@ -221,7 +231,7 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       String last = null;
       if (highscoreBackups != null && !this.highscoreBackups.isEmpty()) {
-        last = "The last backup was created at " + this.highscoreBackups.get(0);
+        last = "The last backup was created at " + this.highscoreBackups.getFirst();
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for table \"" + g.getGameDisplayName() + "\"?", last);
@@ -248,7 +258,8 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onRestore() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      if (StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
+      GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+      if (emulator.isVpxEmulator() && StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
         WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
             "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
             "You can enter the values for this manually in the \"Script Details\" section.");
@@ -272,7 +283,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.games = games;
 
     if (!games.isEmpty()) {
-      this.game = Optional.of(games.get(0));
+      this.game = Optional.of(games.getFirst());
     }
 
     Platform.runLater(() -> {
@@ -285,7 +296,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (g.isPresent()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
       if (!progressDialog.getResults().isEmpty()) {
-        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
+        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().getFirst();
       }
     }
 
@@ -340,25 +351,22 @@ public class TablesSidebarHighscoresController implements Initializable {
         cardImage.setImage(new Image(resourceAsStream));
       }
 
-      String rom = game.getRom();
-      if (StringUtils.isEmpty(rom)) {
-        rom = game.getTableName();
-      }
-
-      if (StringUtils.isEmpty(rom)) {
-        backupCountLabel.setText("0");
-      }
-      else {
-        highscoreBackups = Studio.client.getHigscoreBackupService().get(rom);
+      JFXFuture.supplyAsync(() -> {
+        return Studio.client.getHigscoreBackupService().get(game.getId());
+      }).thenAcceptLater((backups) -> {
+        highscoreBackups = Studio.client.getHigscoreBackupService().get(game.getId());
         backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
         if (!highscoreBackups.isEmpty()) {
           restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
         }
-      }
+      });
 
       boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
       dataPane.setVisible(hasHighscore);
+
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       statusPane.setVisible(!hasHighscore);
+      infoContainer.setVisible(!hasHighscore && gameEmulator.isVpxEmulator());
 
       statusLabel.setText("Unknown status.");
       if (metadata != null) {
@@ -383,11 +391,11 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
 
         if (metadata.getModified() != null) {
-          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getModified()));
+          this.hsLastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(Date.from(metadata.getModified())));
         }
 
         if (metadata.getScanned() != null) {
-          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(metadata.getScanned()));
+          this.hsLastScannedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(Date.from(metadata.getScanned())));
         }
 
         if (!StringUtils.isEmpty(metadata.getRaw())) {
@@ -399,9 +407,10 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
 
         ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
+
         if (!summary.getScores().isEmpty()) {
           cardBtn.setDisable(false);
-          resetBtn.setDisable(StringUtils.isEmpty(rom));
+          resetBtn.setDisable(!gameEmulator.isVpxEmulator());
 
           scoreGraphWrapper.setVisible(true);
 

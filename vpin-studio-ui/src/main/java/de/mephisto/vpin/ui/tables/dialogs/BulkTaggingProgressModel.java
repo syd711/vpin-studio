@@ -95,7 +95,7 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
       }
 
       if (updated) {
-        tableDetails.setTags(String.join(",", tableTags));
+        tableDetails.setTags(TaggingUtil.join(tableTags));
         client.getFrontendService().saveTableDetails(tableDetails, game.getId());
         progressResultModel.getResults().add(game.getId());
       }

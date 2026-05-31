@@ -1,18 +1,14 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @RestController
 @RequestMapping(API_SEGMENT + "games")
@@ -35,7 +31,7 @@ public class UniversalUploadResource {
       descriptor.upload();
     }
     catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error("Table upload failed: {}", e.getMessage(), e);
       descriptor.setError("Table upload failed: " + e.getMessage());
       descriptor.finalizeUpload();
     }

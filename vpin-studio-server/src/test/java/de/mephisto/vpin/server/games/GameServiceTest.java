@@ -25,7 +25,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
 
       // force re-scan as state is uncertain
       for (Game game : games) {
-        assertNotNull(gameService.scanGame(game.getId()));
+        assertNotNull(gameService.scanGame(game.getId(), true));
         assertNotNull(gameService.getGame(game.getId()));
         assertNotNull(gameService.getScores(game.getId()));
         assertNotNull(gameService.getScoreHistory(game.getId()));
@@ -55,7 +55,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
     File b2sFile = game.getDirectB2SFile();
     assertEquals(gameFolder, b2sFile.getParentFile());
 
-    String b2sFileName = game.getDirectB2SFilename();
+    String b2sFileName = BackglassNamingHelper.getBackglassFileName(game);
     assertEquals(expectedB2sName, b2sFileName);
   }
 }

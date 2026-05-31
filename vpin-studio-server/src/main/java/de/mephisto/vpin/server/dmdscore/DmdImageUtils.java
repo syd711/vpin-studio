@@ -7,9 +7,9 @@ public class DmdImageUtils {
 
   private final static Logger LOG = LoggerFactory.getLogger(DmdImageUtils.class);
 
-  public static byte[] toPlane(final FrameType type, final byte[] planes, final int bitLength, final int width, final int height) {
+  public static int[] toPlane(final FrameType type, final byte[] planes, final int[] palette, final int bitLength, final int width, final int height) {
     if (planesAreValid(planes, bitLength, width, height)) {
-      return joinPlanes(planes, bitLength, width, height);
+      return joinPlanes(planes, palette, bitLength, width, height);
     }
     LOG.warn("Planes data was not valid for frame type {}, bitLength: {}, dim: {} x {}, planesLength: {}", type, bitLength, width, height, planes.length);
     return null;
@@ -20,18 +20,16 @@ public class DmdImageUtils {
   private static boolean planesAreValid(final byte[] planes, final int bitLength, final int width, final int height) {
   return (width * height) % 8 == 0 &&
       planes.length % bitLength == 0 &&
-      planes.length * 8 / bitLength == (width * height);
+      (planes.length * 8 / bitLength == (width * height) || planes.length * 8 / bitLength == (width * height) * 4);
   }
 
-  private static byte[] joinPlanes(final byte[] planes, final int bitLength, final int width, int height) {
-    final byte[] plane = new byte[width * height];
-    final int planeSize = planes.length / bitLength;
+  private static int[] joinPlanes(final byte[] frame, final int[] palette, final int bitLength, final int width, final int height) {
+    final byte[] plane = new byte[frame.length * 8 / bitLength];
+    final int planeSize = frame.length / bitLength;
 
     // A bit plane is a byte array with the same dimensions as the original frame,
-		// but since it's bits, a pixel can be either one or zero, so they are packed
-		// into bytes.
-		// This makes it more efficient to transfer than one byte per pixel, where only
-		// 2 or 4 bits are used.
+		// but since it's bits, a pixel can be either one or zero, so they are packed into bytes.
+		// This makes it more efficient to transfer than one byte per pixel, where only 2 or 4 bits are used.
 
     // From my understanding....
     // The frame is made up of a width x height / 8 (number of bits in a byte) items across
@@ -41,19 +39,78 @@ public class DmdImageUtils {
     // represents the colour palette lookup value, most significant bit first.
     // For 2 planes we have a colour palette of 4, for 4 planes we have 16.
     for (int bytePos = 0; bytePos < planeSize; bytePos++) {
-        for (int bitPos = 7; bitPos >= 0; bitPos--) {
-            for (int planePos = 0; planePos < bitLength ; planePos++) {
-                final int bit = theBit(planes[planeSize * planePos + bytePos], bitPos);
-                plane[bytePos * 8 + bitPos] |= (bit << planePos);
-            }
+      for (int bitPos = 7; bitPos >= 0; bitPos--) {
+        for (int planePos = 0; planePos < bitLength ; planePos++) {
+          byte b = frame[planeSize * planePos + bytePos];
+          int bit = (b == 0 ? 0 : (b & (1 << bitPos)) != 0 ? 1 : 0);
+          plane[bytePos * 8 + bitPos] |= (bit << planePos);
         }
+      }
     }
-    return plane;
+    
+    //now resolve palette
+    final int[] pixels = new int[width * height];
+
+    boolean scale2x = plane.length == (width * height) * 4;
+    if (scale2x) {
+      for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+          // Gather the 4 pixels of the 2x2 block (palette index -> RGB -> average)
+          final int tl = plane[j * 2       * width * 2 + i * 2    ] & 0xFF;
+          final int tr = plane[j * 2       * width * 2 + i * 2 + 1] & 0xFF;
+          final int bl = plane[(j * 2 + 1) * width * 2 + i * 2    ] & 0xFF;
+          final int br = plane[(j * 2 + 1) * width * 2 + i * 2 + 1] & 0xFF;
+
+          pixels[j * width + i] = averagePaletteColors(palette, tl, tr, bl, br);
+        }
+      }
+    }
+    else {
+      for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
+          int idx = plane[j * width + i];
+          if (idx >= 0 && idx < palette.length) {
+            pixels[j * width + i] = palette[idx];
+          }
+        }
+      }
+    }
+
+    return pixels;
   }
 
-  private static int theBit(final byte b, final int pos) {
-    return (b == 0 ? 0 : (b & (1 << pos)) != 0 ? 1 : 0);
-  }
+  /**
+   * Averages 4 palette ARGB colors and returns the closest palette index.
+   */
+  private static int averagePaletteColors(final int[] palette, final int i0, final int i1, final int i2, final int i3) {
+    // Average each channel across the 4 palette entries
+    final int avgA = (a(palette[i0]) + a(palette[i1]) + a(palette[i2]) + a(palette[i3])) >> 2;
+    final int avgR = (r(palette[i0]) + r(palette[i1]) + r(palette[i2]) + r(palette[i3])) >> 2;
+    final int avgG = (g(palette[i0]) + g(palette[i1]) + g(palette[i2]) + g(palette[i3])) >> 2;
+    final int avgB = (b(palette[i0]) + b(palette[i1]) + b(palette[i2]) + b(palette[i3])) >> 2;
+
+    int bestColor = argb(avgA, avgR, avgG, avgB);
+
+    /** alternative if we want to stick to the palette
+    // Find the closest palette entry to the averaged color (min squared distance)
+    int bestColor = -1;
+    int bestDist = Integer.MAX_VALUE;
+
+    for (int i = 0; i < palette.length; i++) {
+        final int dA = avgA - a(palette[i]);
+        final int dR = avgR - r(palette[i]);
+        final int dG = avgG - g(palette[i]);
+        final int dB = avgB - b(palette[i]);
+        final int dist = dA * dA + dR * dR + dG * dG + dB * dB;
+        if (dist < bestDist) {
+            bestDist = dist;
+            bestColor = palette[i];
+        }
+    }*/
+
+    return bestColor;
+}
+
 
   //------------------------------------------
 
@@ -97,7 +154,7 @@ public class DmdImageUtils {
   public static int[] paletteFromColor(int color, int numberOfColours) {
     int[] palette = new int[numberOfColours];
     
-    float[] hsl = RGBToHSL(red(color), green(color), blue(color));
+    float[] hsl = RGBToHSL(r(color), g(color), b(color));
     final float[] newHsl = new float[3];
     newHsl[0] = hsl[0];
     newHsl[1] = hsl[1];
@@ -209,33 +266,41 @@ public class DmdImageUtils {
     return rgb(r, g, b);
   }
 
+  private static int a(int color) { 
+    return (color >> 24) & 0xFF; 
+  }
+
   /**
    * Return the red component of a color int. This is the same as saying
    * (color >> 16) & 0xFF
    */
-  public static int red(int color) {
+  public static int r(int color) {
     return (color >> 16) & 0xFF;
   }
   /**
    * Return the green component of a color int. This is the same as saying
    * (color >> 8) & 0xFF
    */
-  public static int green(int color) {
+  public static int g(int color) {
     return (color >> 8) & 0xFF;
   }
   /**
    * Return the blue component of a color int. This is the same as saying
    * color & 0xFF
    */
-  public static int blue(int color) {
+  public static int b(int color) {
     return color & 0xFF;
   }
-
+  
   public static int rgb(int red, int green, int blue) {
     return 0xff000000 | (red << 16) | (green << 8) | blue;
   }
 
+  public static int argb(int alpha, int red, int green, int blue) {
+    return (alpha << 24) | (red << 16) | (green << 8) | blue;
+  }
+
   public static String colorToHex(int c) {
-    return String.format("#%02x%02x%02x", red(c), green(c), blue(c));  
+    return String.format("#%02x%02x%02x", r(c), g(c), b(c));  
   }
 }

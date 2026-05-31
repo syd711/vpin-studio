@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
 import net.lingala.zip4j.model.enums.EncryptionMethod;
@@ -67,6 +67,7 @@ public class ZipUtil {
               if (!itempath.toLowerCase().startsWith(archiveFolder.toLowerCase())) {
                 zis.closeEntry();
                 zipEntry = zis.getNextEntry();
+                LOG.info("Skipping zip entry \"{}\" because it is not part of the archive folder {}", itempath, archiveFolder);
                 continue;
               }
               itempath = itempath.substring(archiveFolder.length());

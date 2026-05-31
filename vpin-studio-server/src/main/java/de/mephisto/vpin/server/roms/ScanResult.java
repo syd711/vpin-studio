@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.roms;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +104,7 @@ public class ScanResult {
   }
 
   public void setHsFileName(String hsFileName) {
-    while (hsFileName.contains("\\")) {
+    while (hsFileName != null && hsFileName.contains("\\")) {
       hsFileName = hsFileName.substring(hsFileName.indexOf("\\") + 1);
     }
     this.hsFileName = hsFileName;

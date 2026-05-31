@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
-import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class CabinetSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CabinetSettingsPreferencesController.class);
@@ -122,7 +121,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       client.getPreferenceService().setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
-    }, 500));
+    }, 800));
 
     stickyKeysCheckbox.setSelected(!serverSettings.isStickyKeysEnabled());
     stickyKeysCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

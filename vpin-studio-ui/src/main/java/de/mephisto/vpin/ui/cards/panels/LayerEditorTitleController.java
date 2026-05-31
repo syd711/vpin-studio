@@ -2,14 +2,13 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-import java.util.*;
+import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -47,7 +46,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     }
   }
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderTitle());
     setIconLock(cardTemplate.isLockTitle(), cardTemplate.isTemplate());
 
@@ -57,7 +56,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     titleUseDefaultColor.setSelected(cardTemplate.isTitleUseDefaultColor());
     CardTemplateBinder.setColorPickerValue(titleFontColorSelector, cardTemplate, "titleColor");
 
-    positionController.setTemplate("title", cardTemplate, res, true);
+    positionController.setTemplate("title", cardTemplate, cardWidth, cardHeight, true);
   }
 
   @Override

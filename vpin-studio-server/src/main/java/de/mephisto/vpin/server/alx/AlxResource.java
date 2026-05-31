@@ -49,10 +49,10 @@ public class AlxResource {
                            @RequestBody Map<String, Object> values) {
     String field = (String) values.get("dataField");
     int value = (int) values.get("value");
-    if(field.equals("numberOfPlays")) {
+    if (field.equals("numberOfPlays")) {
       return analyticsService.updateNumberOfPlaysForGame(gameId, value);
     }
-    else if(field.equals("timePlayed")) {
+    else if (field.equals("timePlayed")) {
       long seconds = value * 60;
       return analyticsService.updateSecondsPlayedForGame(gameId, seconds);
     }

@@ -5,17 +5,19 @@ import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.server.mame.MameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,7 +26,7 @@ public class FreezyComponent implements ComponentFacade {
   private final static List<String> INVALID_MAME_FILES = Arrays.asList("serum.dll", "serum.exp", "serum.lib", "serum64.dll", "serum64.exp", "serum64.lib");
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @NonNull
   @Override
@@ -46,18 +48,18 @@ public class FreezyComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    return mameService.getMameFolder();
+    return vPinMameService.getMameFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate() {
-    File file = new File(mameService.getMameFolder(), "DmdDevice64.dll");
+  public OffsetDateTime getModificationDate() {
+    File file = new File(vPinMameService.getMameFolder(), "DmdDevice64.dll");
     if (!file.exists()) {
-      file = new File(mameService.getMameFolder(), "DmdDevice.dll");
+      file = new File(vPinMameService.getMameFolder(), "DmdDevice.dll");
     }
     if (file.exists()) {
-      return new Date(file.lastModified());
+      return OffsetDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
     }
     return null;
   }
@@ -65,7 +67,7 @@ public class FreezyComponent implements ComponentFacade {
   @Override
   public void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
     for (String deleteFile : INVALID_MAME_FILES) {
-      FileUtils.delete(new File(mameService.getMameFolder(), deleteFile));
+      FileUtils.delete(new File(vPinMameService.getMameFolder(), deleteFile));
     }
   }
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 public class HttpUtils {
@@ -25,7 +26,8 @@ public class HttpUtils {
   public static boolean check(String fileUrl) {
     HttpURLConnection connection = null;
     try {
-      URL url = new URL(fileUrl);
+
+      URL url = URI.create(fileUrl).toURL();
       connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("HEAD");
       connection.connect();

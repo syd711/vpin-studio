@@ -71,7 +71,7 @@ public class PlaylistTemplatesController implements DialogController, Initializa
       }).thenAcceptLater((games) -> {
         String title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
         if (games.size() == 1) {
-          title = "Adding \"" + games.get(0).getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
+          title = "Adding \"" + games.getFirst().getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
         }
         ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist, games, true));
         playlistTableController.setData(Optional.of(client.getPlaylistsService().getPlaylist(playlistId)));

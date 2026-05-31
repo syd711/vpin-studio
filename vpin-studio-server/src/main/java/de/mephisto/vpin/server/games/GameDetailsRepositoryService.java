@@ -1,11 +1,12 @@
 package de.mephisto.vpin.server.games;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -26,7 +27,7 @@ public class GameDetailsRepositoryService {
       LOG.error("Failed to fetch game by PUP id: {}", e.getMessage());
       List<GameDetails> allByPupId = gameDetailsRepository.findAllByPupId(pupId);
       if (!allByPupId.isEmpty()) {
-        delete(allByPupId.get(0));
+        delete(allByPupId.getFirst());
         LOG.warn("Deleted duplicate GameDetails entry PUP id: {}", pupId);
         return findByPupId(pupId);
       }
@@ -52,5 +53,22 @@ public class GameDetailsRepositoryService {
 
   public void deleteAll() {
     gameDetailsRepository.deleteAll();
+  }
+
+  public List<Integer> findAllPupIds() {
+    return gameDetailsRepository.findAllPupIds();
+  }
+
+  @Transactional
+  public void deleteByPupId(List<Long> ids) {
+    try {
+      int batchSize = 999;
+      for (int i = 0; i < ids.size(); i += batchSize) {
+        gameDetailsRepository.deleteByPupId(ids.subList(i, Math.min(i + batchSize, ids.size())));
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete GameDetails: {}", e.getMessage());
+    }
   }
 }

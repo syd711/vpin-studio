@@ -26,8 +26,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -131,6 +132,7 @@ abstract public class AbstractVPinServerTest {
     systemService.setFrontendType(frontendType);
     // notify frontendService 
     frontendService.afterPropertiesSet();
+    System.setProperty("java.awt.headless", "true");
     setupSystem();
   }
 
@@ -170,9 +172,9 @@ abstract public class AbstractVPinServerTest {
     Competition competition = new Competition();
     competition.setGameId(game.getId());
     competition.setType(CompetitionType.OFFLINE.name());
-    competition.setName(String.valueOf(new Date().getTime()));
-    competition.setStartDate(new Date());
-    competition.setEndDate(new Date());
+    competition.setName(String.valueOf(OffsetDateTime.now().toInstant().toEpochMilli()));
+    competition.setStartDate(Instant.now());
+    competition.setEndDate(Instant.now());
 
     return competitionService.save(competition);
   }

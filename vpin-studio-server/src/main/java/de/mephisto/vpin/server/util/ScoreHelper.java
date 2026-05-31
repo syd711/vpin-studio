@@ -5,8 +5,6 @@ import de.mephisto.vpin.server.highscores.Score;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DecimalFormat;
-
 public class ScoreHelper {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreHelper.class);
 

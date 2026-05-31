@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -31,8 +31,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -44,7 +45,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  @FXML
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    @FXML
   private Button uploadBtn;
 
   @FXML
@@ -213,7 +216,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new TextEditorFile(file), file.getName());
     }
   }
 
@@ -222,8 +225,12 @@ public class TablesSidebarPUPPackController implements Initializable {
     String value = optionsCombo.getValue();
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value + ".bat");
+        if (!file.exists()) {
+            WidgetFactory.showAlert(Studio.stage, "Did not find file.","Are you on the server? ", file.getName());
+            return;
+        }
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor("puppack", stage, new MonitoredTextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new TextEditorFile(file), file.getName());
     }
   }
 
@@ -247,7 +254,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       WidgetFactory.showAlert(Studio.stage, "Did not find PupPackScreenTweaker.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
     }
     else {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(file.getName()));
+      SystemCommandExecutor executor = new SystemCommandExecutor(List.of(file.getName()));
       executor.setDir(file.getParentFile());
       executor.executeCommandAsync();
     }
@@ -348,7 +355,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackLoadProgressModel(game));
-      pupPack = (PupPackRepresentation) resultModel.getResults().get(0);
+      pupPack = (PupPackRepresentation) resultModel.getResults().getFirst();
       boolean pupPackAvailable = pupPack != null;
       scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
       screensPanel.setVisible(pupPackAvailable && !pupPack.isScriptOnly());
@@ -402,12 +409,12 @@ public class TablesSidebarPUPPackController implements Initializable {
         }
 
         bundleSizeLabel.setText(FileUtils.readableFileSize(pupPack.getSize()));
-        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(pupPack.getModificationDate()));
+        lastModifiedLabel.setText(LocalDateTime.ofInstant(pupPack.getModificationDate(), ZoneOffset.UTC).format(FORMATTER));
 
         List<ValidationState> validationStates = pupPack.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());
         if (!validationStates.isEmpty()) {
-          validationState = validationStates.get(0);
+          validationState = validationStates.getFirst();
           LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
           errorTitle.setText(validationResult.getLabel());
           errorText.setText(validationResult.getText());

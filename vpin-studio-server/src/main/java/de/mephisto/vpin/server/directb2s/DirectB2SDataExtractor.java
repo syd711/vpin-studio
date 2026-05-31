@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDataScore;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -14,7 +14,9 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Date;
+import java.time.Instant;
+import java.util.Base64;
+
 
 public class DirectB2SDataExtractor extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SDataExtractor.class);
@@ -29,10 +31,12 @@ public class DirectB2SDataExtractor extends DefaultHandler {
 
   public DirectB2SData extractData(@NonNull File directB2S, int emulatorId, String filename) {
     this.data = new DirectB2SData();
-    this.data.setFilename(filename);
+
+    String updatedFileName = getRelativeDirectb2sFileName(directB2S, filename);
+    this.data.setFilename(updatedFileName);
     this.data.setFilesize(directB2S.length());
     this.data.setEmulatorId(emulatorId);
-    this.data.setModificationDate(new Date(directB2S.lastModified()));
+    this.data.setModificationDate(Instant.ofEpochMilli(directB2S.lastModified()));
     if (directB2S.exists()) {
       try (InputStream in = new FileInputStream(directB2S)) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -44,6 +48,19 @@ public class DirectB2SDataExtractor extends DefaultHandler {
       }
     }
     return data;
+  }
+
+  private String getRelativeDirectb2sFileName(File directB2S, String filename) {
+    String path = directB2S.getAbsolutePath().replace('\\', '/');
+    int tablesIdx = path.lastIndexOf("/Tables/");
+    if (tablesIdx >= 0) {
+      String relative = path.substring(tablesIdx + "/Tables/".length());
+      int lastSlash = relative.lastIndexOf('/');
+      if (lastSlash > 0) {
+        return relative.substring(0, lastSlash + 1) + filename;
+      }
+    }
+    return filename;
   }
 
   public String getName() {
@@ -95,6 +112,8 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         break;
       }
       case "Author": {
+
+          //IDE suggests removing String.valueof- Impact?
         data.setAuthor(String.valueOf(attr.getValue("Value").trim()));
         break;
       }
@@ -130,18 +149,32 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         data.setIlluminations(data.getIlluminations() + 1);
         break;
       }
-      case "BackglassImage": {
-        //data.setBackgroundBase64(attr.getValue("Value"));
-        backgroundBase64 = attr.getValue("Value");
-        data.setBackgroundAvailable(true);
-        break;
-      }
-      case "DMDImage": {
-        //data.setDmdBase64(attr.getValue("Value"));
-        dmdBase64 = attr.getValue("Value");
-        data.setDmdImageAvailable(true);
-        break;
-      }
+        case "BackglassImage": {
+            String value = attr.getValue("Value");
+            try {
+                Base64.getMimeDecoder().decode(value); // Validate Base64 string
+                backgroundBase64 = value;
+                data.setBackgroundAvailable(true);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Invalid Base64 string for BackglassImage in file '{}': {}", data.getFilename(), e.getMessage());
+                backgroundBase64 = null;
+                data.setBackgroundAvailable(false);
+            }
+            break;
+        }
+        case "DMDImage": {
+            String value = attr.getValue("Value");
+            try {
+                Base64.getMimeDecoder().decode(value); // Validate Base64 string
+                dmdBase64 = value;
+                data.setDmdImageAvailable(true);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Invalid Base64 string for DMDImage in file '{}': {}", data.getFilename(), e.getMessage());
+                dmdBase64 = null;
+                data.setDmdImageAvailable(false);
+            }
+            break;
+        }
 
 /*
 Other elements in XML :  path / from / top (interesting attributes)
@@ -170,7 +203,7 @@ Other elements in XML :  path / from / top (interesting attributes)
       return StringUtils.isNotEmpty(v) ? Integer.parseInt(v) : defaultValue;
     } 
     catch (Exception e) {
-      LOG.warn("Cannot parse integer attribute " + name + ", value " + v + ", ignored error " + e.getMessage());
+      LOG.warn("Cannot parse integer attribute {}, value {}, ignored error {}", name, v, e.getMessage());
       return defaultValue;
     }
   }

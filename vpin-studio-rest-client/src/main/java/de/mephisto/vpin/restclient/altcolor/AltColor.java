@@ -2,18 +2,27 @@ package de.mephisto.vpin.restclient.altcolor;
 
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AltColor {
   private String name;
   private AltColorTypes altColorType;
-  private Date modificationDate;
+  private OffsetDateTime modificationDate;
   private List<ValidationState> validationStates;
   private List<String> files = new ArrayList<>();
   private List<String> backedUpFiles = new ArrayList<>();
   private boolean available = false;
+  private String folder;
+
+  public String getFolder() {
+    return folder;
+  }
+
+  public void setFolder(String folder) {
+    this.folder = folder;
+  }
 
   public boolean isAvailable() {
     return available;
@@ -55,11 +64,11 @@ public class AltColor {
     this.name = name;
   }
 
-  public Date getModificationDate() {
+  public OffsetDateTime getModificationDate() {
     return modificationDate;
   }
 
-  public void setModificationDate(Date modificationDate) {
+  public void setModificationDate(OffsetDateTime modificationDate) {
     this.modificationDate = modificationDate;
   }
 

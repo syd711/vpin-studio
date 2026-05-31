@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.exporter;
 
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -72,7 +71,7 @@ public class HighscoreExportService extends ExporterService {
             }
           }
           catch (Exception e) {
-            LOG.error("Export failed for table \"" + game.getGameDisplayName() + "\":" + e.getMessage(), e);
+            LOG.error("Export failed for table \"{}\":{}", game.getGameDisplayName(), e.getMessage(), e);
           }
         }
       }
@@ -80,7 +79,7 @@ public class HighscoreExportService extends ExporterService {
       return builder.toString();
     }
     catch (Exception e) {
-      LOG.error("Failed to export highscore data: " + e.getMessage(), e);
+      LOG.error("Failed to export highscore data: {}", e.getMessage(), e);
       return "Failed to export highscore data: " + e.getMessage();
     }
   }

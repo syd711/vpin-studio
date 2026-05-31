@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.backups.adapters.vpa;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.*;
@@ -25,18 +26,18 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
-import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -49,6 +50,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -59,15 +64,20 @@ import java.util.function.BiConsumer;
 public class VpaService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
-  private final static ObjectMapper objectMapper;
 
   private final static String MAME_FOLDER = "VPinMAME";
 
+  private final static JsonMapper objectMapper;
+
   static {
-    objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper = JsonMapper.builder()
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+        .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+        .build();
   }
 
   @Autowired
@@ -95,7 +105,7 @@ public class VpaService implements InitializingBean {
   private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private BackglassService backglassService;
@@ -207,7 +217,7 @@ public class VpaService implements InitializingBean {
         }
 
         if (!files.isEmpty()) {
-          packageInfo.setDirectb2s(BackupFileInfoFactory.create(files.get(0), files));
+          packageInfo.setDirectb2s(BackupFileInfoFactory.create(files.getFirst(), files));
         }
       }
     }
@@ -231,7 +241,7 @@ public class VpaService implements InitializingBean {
         File dmdFolder = dmdService.getDmdFolder(game);
         if (dmdFolder.exists()) {
           List<File> archiveFiles = new ArrayList<>();
-          dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+          dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
           if (!zipFile(jobDescriptor, dmdFolder, "DMD/" + dmdPackage.getName() + "/", zipOut)) {
             return;
           }
@@ -240,13 +250,16 @@ public class VpaService implements InitializingBean {
       }
     }
 
-    //always zip music files if they are in a ROM named folder
     if (backupSettings.isMusic()) {
-      File musicFolder = musicService.getGameMusicFolder(game);
-      if (musicFolder != null && musicFolder.exists()) {
-        packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
-        if (!zipFile(jobDescriptor, musicFolder, "Music/" + musicFolder.getName(), zipOut)) {
-          return;
+      List<File> mp3Files = musicService.getMp3Files(game);
+      File musicFolder = folderLookupService.getMusicFolder(game);
+      if (!mp3Files.isEmpty() && musicFolder != null) {
+        packageInfo.setMusic(BackupFileInfoFactory.create(game.getRom(), null, mp3Files));
+        for (File mp3File : mp3Files) {
+          Path relativize = musicFolder.toPath().relativize(mp3File.toPath());
+          if (!zipFile(jobDescriptor, mp3File, "Music/" + relativize, zipOut)) {
+            return;
+          }
         }
       }
     }
@@ -302,7 +315,7 @@ public class VpaService implements InitializingBean {
     zipTableDetails(jobDescriptor, game, tableDetails, zipOut);
 
     if (backupSettings.isRegistryData()) {
-      Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
+      Map<String, Object> options = vPinMameService.getOptionsRaw(game.getRom());
       if (options == null) {
         options = new HashMap<>();
       }

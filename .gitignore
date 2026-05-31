@@ -34,6 +34,11 @@ vpin-studio-server/resources/system.properties
 vpin-studio-server/target/
 vpin-studio-ui/target/
 
+zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz
+zulu25.34.17-ca-fx-jre25.0.3-win_x64.zip
+zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz
+zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz
+
 java-runtime/
 java-runtime-linux/
 java-runtime-osx-arm-x64/
@@ -71,6 +76,8 @@ hs_err_pid*
 /resources/b2s-raw/
 /resources/b2s-cropped/
 /resources/flags/
+/resources/maps/
+/resources/maps/**
 resources/media-raw/
 resources/media-cropped/
 /resources/overlay.png
@@ -152,3 +159,7 @@ vpin-studio-logs.zip
 .claude/settings.local.json
 /nul
 /resources/vpxscripts/**
+/resources/vr/**
+/vpin-tools/highscore-analysis.csv
+win32/java/bin/jinput-dx8_64.dll
+

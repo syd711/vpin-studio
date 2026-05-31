@@ -1,10 +1,8 @@
 package de.mephisto.vpin.restclient.directb2s;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import org.apache.commons.lang3.StringUtils;
 
 public class DirectB2sScreenRes {
 
@@ -395,28 +393,20 @@ public class DirectB2sScreenRes {
   //-----------------------------------
 
   public double getScreenWidth(VPinScreen onScreen) {
-    switch (onScreen) {
-      case BackGlass:
-        return this.getFullBackglassWidth();
-      case Menu:
-        return this.getDmdWidth();
-      case PlayField:
-        return this.getPlayfieldWidth();
-      default:
-        return -1;
-    }
+      return switch (onScreen) {
+          case BackGlass -> this.getFullBackglassWidth();
+          case Menu -> this.getDmdWidth();
+          case PlayField -> this.getPlayfieldWidth();
+          default -> -1;
+      };
   }
 
   public double getScreenHeight(VPinScreen onScreen) {
-    switch (onScreen) {
-      case BackGlass:
-        return this.getFullBackglassHeight();
-      case Menu:
-        return this.getDmdHeight();
-      case PlayField:
-        return this.getPlayfieldHeight();
-      default:
-        return -1;
-    }
+      return switch (onScreen) {
+          case BackGlass -> this.getFullBackglassHeight();
+          case Menu -> this.getDmdHeight();
+          case PlayField -> this.getPlayfieldHeight();
+          default -> -1;
+      };
   }
 }

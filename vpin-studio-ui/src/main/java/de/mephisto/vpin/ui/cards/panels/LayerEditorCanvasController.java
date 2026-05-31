@@ -1,11 +1,12 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
 
 import java.util.Optional;
 
@@ -18,13 +19,13 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
   @FXML
   private Spinner<Integer> canvasBorderRadiusSpinner;
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderCanvas());
     setIconLock(cardTemplate.isLockCanvas(), cardTemplate.isTemplate());
 
     CardTemplateBinder.setColorPickerValue(canvasColorSelector, cardTemplate, "canvasBackground");
 
-    positionController.setTemplate("canvas", cardTemplate, res, false);
+    positionController.setTemplate("canvas", cardTemplate, cardWidth, cardHeight, false);
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
   }

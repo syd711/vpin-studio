@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
-import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -72,6 +72,7 @@ public class BackupUploadController implements Initializable, DialogController {
         if (progressResult.isCancelled()) {
           result = false;
         }
+
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

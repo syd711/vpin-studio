@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.games;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +18,10 @@ public interface GameDetailsRepository extends JpaRepository<GameDetails, Long> 
 
   List<GameDetails> findByRomName(String rom);
 
+  @Query(value = "SELECT g.pupId FROM GameDetails g WHERE g.pupId IS NOT NULL AND g.pupId > 0", nativeQuery = true)
+  List<Integer> findAllPupIds();
+
+  @Modifying
+  @Query(value = "DELETE FROM GameDetails WHERE pupId IN (:ids)", nativeQuery = true)
+  void deleteByPupId(@Param("ids") List<Long> ids);
 }

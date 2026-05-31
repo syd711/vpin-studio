@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.notifications;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
@@ -9,7 +11,7 @@ public class NotificationSettings extends JsonSettings {
   private boolean startupNotification = false;
   private boolean highscoreUpdatedNotification = true;
   private boolean highscoreCheckedNotification = true;
-  private boolean iScoredNotification = true;
+  private boolean iscoredNotification = true;
   private boolean discordNotification = true;
   private boolean competitionNotification = true;
   private boolean recordingStartNotification = true;
@@ -92,12 +94,12 @@ public class NotificationSettings extends JsonSettings {
     this.highscoreCheckedNotification = highscoreCheckedNotification;
   }
 
-  public boolean isiScoredNotification() {
-    return iScoredNotification;
+  public boolean isIscoredNotification() {
+    return iscoredNotification;
   }
 
-  public void setiScoredNotification(boolean iScoredNotification) {
-    this.iScoredNotification = iScoredNotification;
+  public void setIscoredNotification(boolean iscoredNotification) {
+    this.iscoredNotification = iscoredNotification;
   }
 
   public int getDurationSec() {

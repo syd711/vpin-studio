@@ -1,11 +1,12 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import de.mephisto.vpin.server.util.IncrementGenerated;
+import tools.jackson.core.JacksonException;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "TemplateMappings")
@@ -14,7 +15,7 @@ import javax.persistence.*;
 public class TemplateMapping {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @IncrementGenerated
   private Long id;
 
   private String templateJson;
@@ -40,7 +41,7 @@ public class TemplateMapping {
       this.templateJson = cardTemplate.toJson();
       this.id = cardTemplate.getId();
     }
-    catch (JsonProcessingException jpe) {
+    catch (JacksonException jpe) {
       throw new RuntimeException("cannot serialize card template " + cardTemplate.getName(), jpe);
     }
   }

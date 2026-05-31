@@ -167,7 +167,7 @@ public class BackglassPreferencesController implements Initializable {
         });
 
         List<B2SLedType> ledTypeList = new ArrayList<>(TablesSidebarDirectB2SController.LED_TYPES);
-        ledTypeList.add(0, null);
+        ledTypeList.addFirst( null);
         usedLEDType.setItems(FXCollections.observableList(ledTypeList));
         if (backglassServerSettings.getUsedLEDType() != -1) {
           for (B2SLedType ledType : TablesSidebarDirectB2SController.LED_TYPES) {

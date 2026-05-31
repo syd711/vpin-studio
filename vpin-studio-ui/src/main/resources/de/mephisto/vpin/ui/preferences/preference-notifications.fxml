@@ -149,7 +149,7 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="Enable this mode when you play in desktop mode." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="229.0" styleClass="checkbox-description" text="Note that screens with scaling are not supported (the position will be off)." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="229.0" styleClass="checkbox-description" text="Note that for screens with scaling the position will be off and you need to adjust it." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="System Notifications">
                      <VBox.margin>
                         <Insets top="12.0" />

@@ -7,10 +7,10 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -45,9 +45,15 @@ public class FPCommandLineService implements ApplicationContextAware {
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (altExe != null) {
       fpExe = new File(emulator.getInstallationFolder(), altExe);
+      if (!fpExe.exists()) {
+        fpExe = new File(new File(emulator.getInstallationFolder(), "BAM"), "FPLoader.exe");
+      }
     }
     else if (!StringUtils.isEmpty(altLaunchExe)) {
       fpExe = new File(emulator.getInstallationFolder(), altLaunchExe);
+      if (!fpExe.exists()) {
+        fpExe = new File(new File(emulator.getInstallationFolder(), "BAM"), altLaunchExe);
+      }
     }
 
     try {
@@ -58,13 +64,13 @@ public class FPCommandLineService implements ApplicationContextAware {
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("FP command failed:\n" + standardErrorFromCommand);
+        LOG.error("FP command failed:\n{}", standardErrorFromCommand);
         return false;
       }
       return true;
     }
     catch (Exception e) {
-      LOG.error("Error executing FP command: " + e.getMessage(), e);
+      LOG.error("Error executing FP command: {}", e.getMessage(), e);
     }
     return false;
   }
@@ -78,18 +84,18 @@ public class FPCommandLineService implements ApplicationContextAware {
 
     try {
       List<String> strings = Arrays.asList(fpExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing FP " + commandParam + "command: " + String.join(" ", strings));
+      LOG.info("Executing FP {}command: {}", commandParam, String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(fpExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("FP command failed:\n" + standardErrorFromCommand);
+        LOG.error("FP command failed:\n{}", standardErrorFromCommand);
       }
     }
     catch (Exception e) {
-      LOG.error("Error executing FP command: " + e.getMessage(), e);
+      LOG.error("Error executing FP command: {}", e.getMessage(), e);
     }
 
     int count = 0;
@@ -102,7 +108,7 @@ public class FPCommandLineService implements ApplicationContextAware {
         //ignore
       }
       if (count > 20) {
-        LOG.error("Timeout waiting for the generation of " + target.getAbsolutePath());
+        LOG.error("Timeout waiting for the generation of {}", target.getAbsolutePath());
         systemService.killProcesses("Future Pinball");
         break;
       }
@@ -125,12 +131,12 @@ public class FPCommandLineService implements ApplicationContextAware {
 
           StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
           if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-            LOG.error("FP command failed:\n" + standardErrorFromCommand);
+            LOG.error("FP command failed:\n{}", standardErrorFromCommand);
             return false;
           }
         }
         catch (Exception e) {
-          LOG.error("Error executing VPX command: " + e.getMessage(), e);
+          LOG.error("Error executing VPX command: {}", e.getMessage(), e);
           return false;
         }
         return true;

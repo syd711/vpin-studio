@@ -12,14 +12,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -150,8 +150,8 @@ public class ComponentSummaryController implements Initializable {
       ignoreBtn.setVisible(component.isInstalled() &&
         component.getLatestReleaseVersion() != null && !component.getLatestReleaseVersion().equals("?") && component.getReleases().size() > 1);
 
-      lastCheckLabel.setText(component.getLastCheck() != null ? DateFormat.getDateTimeInstance().format(component.getLastCheck()) : "?");
-      lastModifiedLabel.setText(component.getLastModified() != null ? DateFormat.getDateTimeInstance().format(component.getLastModified()) : "?");
+      lastCheckLabel.setText(component.getLastCheck() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(component.getLastCheck()) : "?");
+      lastModifiedLabel.setText(component.getLastModified() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(component.getLastModified()) : "?");
 
       folderLabel.setText(component.getTargetFolder() != null ? component.getTargetFolder() : "?");
       folderBtn.setVisible(!component.isInstalled());

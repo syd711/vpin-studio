@@ -4,11 +4,10 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -24,7 +23,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +35,7 @@ public class PinballXTableParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXTableParser.class);
 
   /** Parser for dates */
-  protected final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+  protected final DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
   private final Charset charset;
 
@@ -58,7 +61,7 @@ public class PinballXTableParser extends DefaultHandler {
         Node node = list.item(temp);
         if (node.getNodeType() == Node.ELEMENT_NODE && node.hasChildNodes()) {
           Element element = (Element) node;
-          if (StringUtils.equalsIgnoreCase(element.getTagName(), "game")) {
+          if (Strings.CI.equals(element.getTagName(), "game")) {
             
             String gameName = element.getAttribute("name");
 
@@ -74,8 +77,7 @@ public class PinballXTableParser extends DefaultHandler {
                 try {
                   readNode(detail, name, content);
                 } catch (Exception e) {
-                  LOG.warn("Ignored exception while parsing " + name + " '" + content+ "' of table '" + gameName + 
-                    " for emulator "  + emu.getName() +  "': " + e.getMessage());
+                  LOG.warn("Ignored exception while parsing {} '{}' of table '{} for emulator {}': {}", name, content, gameName, emu.getName(), e.getMessage());
                 }
               }
             }
@@ -86,7 +88,7 @@ public class PinballXTableParser extends DefaultHandler {
           }
         }
       }
-      LOG.info("Finished parsing of " + xmlFile.getAbsolutePath());
+      LOG.info("Finished parsing of {}", xmlFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse database file '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);
@@ -198,12 +200,12 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "dateadded": {
-        Date dateAdded = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
+        OffsetDateTime dateAdded = content.equals("1900-01-01 00:00:00") ? null : OffsetDateTime.of(LocalDateTime.parse(content, sdf), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
         detail.setDateAdded(dateAdded);
         break;
       }
       case "datemodified": {
-        Date dateModified = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
+        OffsetDateTime dateModified = content.equals("1900-01-01 00:00:00") ? null : OffsetDateTime.of(LocalDateTime.parse(content, sdf), ZoneId.systemDefault().getRules().getOffset(Instant.now()));
         detail.setDateModified(dateModified);
         break;
       }
@@ -239,7 +241,7 @@ public class PinballXTableParser extends DefaultHandler {
         pinballXDb.createNewFile();
       }
       catch (IOException ioe) {
-        LOG.error("Cannot create file " + pinballXDb, ioe);
+        LOG.error("Cannot create file {}", pinballXDb, ioe);
       }
     }
     
@@ -250,7 +252,7 @@ public class PinballXTableParser extends DefaultHandler {
         TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), entry.getFilename()));
         if (detail!=null) {
           // <game name= /> stores the filename without extension 
-          String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGameExt());
+          String gameFileName =Strings.CI.removeEnd(entry.getFilename(), "." + emu.getGameExt());
           writer.append("  <game name=\"").append(escapeXml(gameFileName)).append("\">\n");
 
           appendDescription(writer, detail);
@@ -281,12 +283,13 @@ public class PinballXTableParser extends DefaultHandler {
       writer.append("</menu>");
     }
     catch (Exception e) {
-      LOG.error("Error while writing " + pinballXDb, e);
+      LOG.error("Error while writing {}", pinballXDb, e);
     }
   }
 
   protected void appendDescription(BufferedWriter writer, TableDetails detail) throws IOException {
-    appendValue(writer, "description", detail.getGameDisplayName());
+    String gameDisplayName = detail.getGameDisplayName();
+    appendValue(writer, "description", gameDisplayName);
   }
 
   protected void appendKeepDisplays(BufferedWriter writer, String tag, String keepDisplays, VPinScreen screen) throws IOException {
@@ -309,7 +312,7 @@ public class PinballXTableParser extends DefaultHandler {
       appendValueNoEscape(writer, tag, value? "True": "False");
     }
   }
-  protected void appendValue(BufferedWriter writer, String tag, Date value) throws IOException {
+  protected void appendValue(BufferedWriter writer, String tag, OffsetDateTime value) throws IOException {
     if (value != null) {
       appendValueNoEscape(writer, tag, sdf.format(value));
     }

@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -100,7 +100,7 @@ public class FolderChooserDialogController implements Initializable, DialogContr
           treeView.refresh();
           treeView.getRoot().setExpanded(true);
 
-          treeView.getRoot().getChildren().get(0).setExpanded(true);
+          treeView.getRoot().getChildren().getFirst().setExpanded(true);
 
           if (path != null) {
             for (TreeItem t : roots) {

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -58,6 +60,9 @@ public class GamesResource {
 
   @Autowired
   private GameStatusService gameStatusService;
+
+  @Autowired
+  private MameService mameService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -121,6 +126,28 @@ public class GamesResource {
         SLOG.initLog(game.getId());
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
+          new Thread(()-> {
+            Thread.currentThread().setName("Visual Pinball Player Focus Thread");
+            long timeoutMs = 30000;
+            long start = System.currentTimeMillis();
+
+            while (System.currentTimeMillis() - start < timeoutMs) {
+              WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, "Visual Pinball Player");
+
+              if (hwnd != null) {
+                try { Thread.sleep(4000); } catch (InterruptedException e) { break; }
+                User32.INSTANCE.ShowWindow(hwnd, 9); // SW_RESTORE
+                User32.INSTANCE.SetForegroundWindow(hwnd);
+
+                try { Thread.sleep(4000); } catch (InterruptedException e) { break; }
+                User32.INSTANCE.ShowWindow(hwnd, 9); // SW_RESTORE
+                User32.INSTANCE.SetForegroundWindow(hwnd);
+                return;
+              }
+
+              try { Thread.sleep(500); } catch (InterruptedException e) { break; }
+            }
+          }).start();
           return true;
         }
       }
@@ -136,6 +163,14 @@ public class GamesResource {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
         if (steamService.play(game)) {
+          gameStatusService.setActiveStatus(id);
+          return true;
+        }
+      }
+      else if (game.isMameGame()) {
+        frontendService.killFrontend();
+        SLOG.initLog(game.getId());
+        if (mameService.play(game)) {
           gameStatusService.setActiveStatus(id);
           return true;
         }
@@ -220,8 +255,8 @@ public class GamesResource {
    */
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {
-    LOG.info("Client initiated game scan for " + pupId);
-    Game game = gameService.scanGame(pupId);
+    LOG.info("Client initiated game scan for {}", pupId);
+    Game game = gameService.scanGame(pupId, true);
     if (game != null) {
       gameService.scanScore(game.getId(), EventOrigin.INITIAL_SCAN);
     }

@@ -73,7 +73,7 @@ public class SystemUtil {
         }
       }
       catch (IOException e) {
-        LOG.error("Failed to open file: " + e.getMessage(), e);
+        LOG.error("Failed to open system file: " + e.getMessage(), e);
       }
     }
     else {
@@ -117,6 +117,7 @@ public class SystemUtil {
           String path = folder.getAbsolutePath();
 
           String remotePath = resolveNetworkPath(publicUrl, path);
+          LOG.info("Resolved network path '{}', use publicUrl '{}' and path '{}'", remotePath, publicUrl, path);
           if (remotePath != null) {
             openFolderWithOS(remotePath);
           }
@@ -192,7 +193,9 @@ public class SystemUtil {
       else if (isMac() && base.startsWith("smb://")) {
         // Convert Windows backslashes to forward slashes for SMB paths
         path = path.replace("\\", "/");
-        return resolveNetworkPath(base, path, "/", "/");
+        String networkPath = resolveNetworkPath(base, path, "/", "/");
+        LOG.info("Resolved network path: {}", networkPath);
+        return networkPath;
       }
 
       // Return null if no matching OS condition was met

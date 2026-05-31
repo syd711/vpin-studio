@@ -12,8 +12,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
-
 public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private List<GameRepresentation> games;

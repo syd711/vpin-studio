@@ -2,25 +2,27 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
-import de.mephisto.vpin.server.mame.MameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class FlexDMDComponent implements ComponentFacade {
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @NonNull
   @Override
@@ -42,15 +44,15 @@ public class FlexDMDComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    return mameService.getMameFolder();
+    return vPinMameService.getMameFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate() {
-    File file = new File(mameService.getMameFolder(), "FlexDMD.dll");
+  public OffsetDateTime getModificationDate() {
+    File file = new File(vPinMameService.getMameFolder(), "FlexDMD.dll");
     if (file.exists()) {
-      return new Date(file.lastModified());
+      return OffsetDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
     }
     return null;
   }

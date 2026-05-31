@@ -50,7 +50,7 @@
                         <ComboBox fx:id="recordModeComboBox" prefWidth="150.0" GridPane.columnIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Spinner fx:id="durationSpinner" prefWidth="80.0" />
+                              <Spinner fx:id="durationSpinner" editable="true" prefWidth="80.0" />
                               <Label styleClass="default-text" text="seconds" />
                            </children>
                         </HBox>
@@ -59,7 +59,7 @@
                         <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Recording Delay:" GridPane.rowIndex="2" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Spinner fx:id="delaySpinner" prefWidth="80.0" />
+                              <Spinner fx:id="delaySpinner" editable="true" prefWidth="80.0" />
                               <Label styleClass="default-text" text="seconds" />
                               <Label>
                                  <font>

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,10 +27,12 @@ public class VpsTable implements VPSEntity {
 
   private String ipdbUrl;
   private String manufacturer;
-  private int players;
+  @JsonProperty("MPU")
+  private String MPU;
+  private Integer players;
   private String type;
-  private int year;
-  private long updatedAt;
+  private Integer year;
+  private Long updatedAt;
 
   //----------- Custom fields
   private String comment;
@@ -119,6 +122,14 @@ public class VpsTable implements VPSEntity {
     this.manufacturer = manufacturer;
   }
 
+  public String getMPU() {
+    return MPU;
+  }
+
+  public void setMPU(String mPU) {
+    this.MPU = mPU;
+  }
+
   public List<VpsBackglassFile> getB2sFiles() {
     return b2sFiles;
   }
@@ -127,11 +138,11 @@ public class VpsTable implements VPSEntity {
     this.b2sFiles = b2sFiles;
   }
 
-  public int getPlayers() {
+  public Integer getPlayers() {
     return players;
   }
 
-  public void setPlayers(int players) {
+  public void setPlayers(Integer players) {
     this.players = players;
   }
 
@@ -143,19 +154,19 @@ public class VpsTable implements VPSEntity {
     this.type = type;
   }
 
-  public int getYear() {
+  public Integer getYear() {
     return year;
   }
 
-  public void setYear(int year) {
+  public void setYear(Integer year) {
     this.year = year;
   }
 
-  public long getUpdatedAt() {
+  public Long getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(long updatedAt) {
+  public void setUpdatedAt(Long updatedAt) {
     this.updatedAt = updatedAt;
   }
 
@@ -197,7 +208,7 @@ public class VpsTable implements VPSEntity {
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
-    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getCreatedAt()));
+    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getCreatedAt() != null ? o.getCreatedAt() : 0));
     Collections.reverse(tableFiles);
     this.tableFiles = tableFiles;
   }
@@ -260,7 +271,7 @@ public class VpsTable implements VPSEntity {
       result = result + " (" + this.manufacturer;
     }
 
-    if (this.year > 0) {
+    if (this.year != null && this.year > 0) {
       result = result + " " + this.year + ")";
     }
     else {

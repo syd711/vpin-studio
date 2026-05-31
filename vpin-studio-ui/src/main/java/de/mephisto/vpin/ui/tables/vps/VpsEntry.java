@@ -28,9 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,14 +49,14 @@ public class VpsEntry extends HBox {
   private final String version;
   private final List<String> authors;
   private final String link;
-  private final long changeDate;
+  private final Long changeDate;
   private final String update;
   private final boolean installed;
   private final boolean isFiltered;
 
-  public VpsEntry(GameRepresentation game, VpsDiffTypes type, VpsTable table, VpsTableVersion tableVersion,  
+  public VpsEntry(GameRepresentation game, VpsDiffTypes type, VpsTable table, VpsTableVersion tableVersion,
                   String version, List<String> authors, String link,
-                  long changeDate, String update, boolean installed, boolean isFiltered) {
+                  Long changeDate, String update, boolean installed, boolean isFiltered) {
     this.game = game;
     this.type = type;
     this.table = table;
@@ -221,7 +223,7 @@ public class VpsEntry extends HBox {
           table.setComment(notes);
           client.getVpsService().saveVpsData(table);
           EventManager.getInstance().notifyVpsTableChange(table.getId());
-        });  
+        });
         menu.getItems().add(addTodoItem);
       }
       button.setContextMenu(menu);
@@ -261,14 +263,15 @@ public class VpsEntry extends HBox {
     }
 
     // Add change date at the end
-    Label changedLabel = WidgetFactory.createDefaultLabel(DateFormat.getDateInstance().format(new Date(changeDate)));
+    String date = "unknown";
+    if (changeDate != null) {
+      date = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(Instant.ofEpochMilli(changeDate).atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+    Label changedLabel = WidgetFactory.createDefaultLabel(date);
     changedLabel.setPrefWidth(100);
     changedLabel.setStyle("-fx-padding: 0 3px 0 0;-fx-font-size: 14px;");
     changedLabel.setAlignment(Pos.CENTER_RIGHT);
     changedLabel.setContentDisplay(ContentDisplay.RIGHT);
-    if (changeDate == 0) {
-      changedLabel.setText("");
-    }
     this.getChildren().add(changedLabel);
 
     this.setDisable(!isFiltered);
@@ -286,17 +289,17 @@ public class VpsEntry extends HBox {
     if (object == null || getClass() != object.getClass()) return false;
     VpsEntry vpsEntry = (VpsEntry) object;
     return changeDate == vpsEntry.changeDate && installed == vpsEntry.installed && isFiltered == vpsEntry.isFiltered
-        && Objects.equals(table != null ? table.getId() : null, vpsEntry.table != null ? vpsEntry.table.getId() : null) 
-        && Objects.equals(tableVersion != null ? tableVersion.getId() : null, vpsEntry.tableVersion != null ? vpsEntry.tableVersion.getId() : null) 
-        && Objects.equals(tableVersion != null ? tableVersion.getTableFormat() : null, vpsEntry.tableVersion != null ? vpsEntry.tableVersion.getTableFormat() : null) 
-        && Objects.equals(game, vpsEntry.game) && type == vpsEntry.type && Objects.equals(version, vpsEntry.version) 
+        && Objects.equals(table != null ? table.getId() : null, vpsEntry.table != null ? vpsEntry.table.getId() : null)
+        && Objects.equals(tableVersion != null ? tableVersion.getId() : null, vpsEntry.tableVersion != null ? vpsEntry.tableVersion.getId() : null)
+        && Objects.equals(tableVersion != null ? tableVersion.getTableFormat() : null, vpsEntry.tableVersion != null ? vpsEntry.tableVersion.getTableFormat() : null)
+        && Objects.equals(game, vpsEntry.game) && type == vpsEntry.type && Objects.equals(version, vpsEntry.version)
         && Objects.equals(authors, vpsEntry.authors) && Objects.equals(link, vpsEntry.link) && Objects.equals(update, vpsEntry.update);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(table != null ? table.getId() : null, tableVersion != null ? tableVersion.getId() : null, 
-                        game, type, tableVersion != null ? tableVersion.getTableFormat() : null, version, authors, link, 
-                        changeDate, update, installed, isFiltered);
+    return Objects.hash(table != null ? table.getId() : null, tableVersion != null ? tableVersion.getId() : null,
+        game, type, tableVersion != null ? tableVersion.getTableFormat() : null, version, authors, link,
+        changeDate, update, installed, isFiltered);
   }
 }

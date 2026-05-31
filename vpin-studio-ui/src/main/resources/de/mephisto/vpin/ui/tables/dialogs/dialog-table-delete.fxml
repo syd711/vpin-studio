@@ -161,7 +161,7 @@
                                           </CheckBox>
                                        </children>
                                     </VBox>
-                                    <VBox spacing="6.0">
+                                    <VBox fx:id="mediaColumn" spacing="6.0">
                                        <children>
                                           <Label fx:id="titleLabel112" styleClass="default-title" text="Media" textFill="WHITE">
                                              <font>
@@ -221,7 +221,7 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <VBox spacing="6.0">
+                                    <VBox fx:id="settingsColumn" spacing="6.0">
                                        <children>
                                           <Label fx:id="titleLabel111" styleClass="default-title" text="Settings" textFill="WHITE">
                                              <font>

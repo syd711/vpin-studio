@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -70,7 +73,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
   public Long getPreferenceValueLong(String key, long defaultValue) {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
     Object value = bean.getPropertyValue(key);
-    if (value != null && String.valueOf(value).length() > 0) {
+    if (value != null && !String.valueOf(value).isEmpty()) {
       return Long.parseLong(String.valueOf(value));
     }
     return defaultValue;
@@ -133,7 +136,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     newAvatar.setData(bytes);
     newAvatar.setUuid(UUID.randomUUID().toString());
     newAvatar.setMimeType(mimeType);
-    LOG.info("Created asset " + newAvatar);
+    LOG.info("Created asset {}", newAvatar);
 
     Asset asset = assetRepository.saveAndFlush(newAvatar);
     preferences.setAvatar(asset);
@@ -169,7 +172,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       return jsonSettings.getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
-      LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
+      LOG.error("Failed to read JSON preferences: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -183,7 +186,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
         preferencesRepository.saveAndFlush(prefs);
         all = preferencesRepository.findAll();
       }
-      preferences = all.get(0);
+      preferences = all.getFirst();
     }
     catch (Exception e) {
       LOG.error("Preference Service init failed: {}", e.getMessage(), e);
@@ -215,7 +218,12 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
         ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
         systemService.setStickyKeysEnabled(serverSettings.isStickyKeysEnabled());
-        LOG.info("Sticky keys enabled: " + serverSettings.isStickyKeysEnabled());
+        LOG.info("Sticky keys enabled: {}", serverSettings.isStickyKeysEnabled());
+
+
+        File propertiesFile = new File(SystemInfo.RESOURCES + "system.properties");
+        PropertiesStore store = PropertiesStore.create(propertiesFile);
+        store.set("startup.delay", serverSettings.getStartupDelay());
       }
     }
     catch (Exception e) {

@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.fx.FrontendScreenController;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

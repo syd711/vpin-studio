@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.util.RichText;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -56,7 +57,7 @@ public class TextEditorController implements Initializable, DialogController {
   private Label lastModified;
 
   private RichText richText;
-  private MonitoredTextFile file;
+  private TextEditorFile file;
 
   private boolean saved = false;
 
@@ -71,8 +72,8 @@ public class TextEditorController implements Initializable, DialogController {
 
     try {
       file.setContent(this.richText.getCodeArea().getText());
-      MonitoredTextFile save = client.getTextEditorService().save(file);
-      lastModified.setText(DateFormat.getDateTimeInstance().format(save.getLastModified()));
+      TextEditorFile save = client.getTextEditorService().save(file);
+      lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(save.getLastModified()));
       size.setText(FileUtils.readableFileSize(save.getSize()));
     }
     catch (Exception ex) {
@@ -126,9 +127,9 @@ public class TextEditorController implements Initializable, DialogController {
     stage.close();
   }
 
-  public void load(MonitoredTextFile file) throws Exception {
+  public void load(TextEditorFile file) throws Exception {
     this.file = file;
-    if(file.getvPinFile() == null) {
+    if(file.getFile() == null) {
       richText = new RichText(file.getContent());
       richText.getCodeArea().setEditable(false);
       size.setVisible(false);
@@ -137,13 +138,19 @@ public class TextEditorController implements Initializable, DialogController {
       dataGrid.setVisible(false);
     }
     else {
-      MonitoredTextFile value = client.getTextEditorService().getText(file);
-      lastModified.setText(DateFormat.getDateTimeInstance().format(value.getLastModified()));
-      size.setText(FileUtils.readableFileSize(value.getSize()));
-      richText = new RichText(value.getContent());
+      TextEditorFile value = client.getTextEditorService().getText(file);
+      //Just an extra check
+      if (value != null){
+          lastModified.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getLastModified()));
+          size.setText(FileUtils.readableFileSize(value.getSize()));
+          richText = new RichText(value.getContent());
 
-      this.saveBtn.setDisable(false);
-      this.saveAndCloseBtn.setDisable(false);
+          this.saveBtn.setDisable(false);
+          this.saveAndCloseBtn.setDisable(false);
+      }
+      else {
+          LOG.error("Failed to retrieve text file {}",file.getContent());
+      }
     }
 
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());

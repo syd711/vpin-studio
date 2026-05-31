@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.converter;
 
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand.ImageOp;
 import de.mephisto.vpin.restclient.converter.MediaOperation;
@@ -12,10 +13,9 @@ import de.mephisto.vpin.server.frontend.MediaService;
 import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.playlists.PlaylistMediaService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.commons.fx.ImageUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -50,7 +50,7 @@ public class MediaConverterService implements InitializingBean {
     LOG.info("Executing video conversion for {} / {} ", operation.getFilename(), operation.getCommand());
     try {
       List<File> mediaItemFiles = getMediaItemFiles(result, operation);
-      List<File> filteredFiles = filterMediaFiles(mediaItemFiles, operation.getCommand().getType());
+      List<File> filteredFiles = mediaItemFiles; //filterMediaFiles(mediaItemFiles, operation.getCommand().getType());
 
       for (File mediaItemFile : filteredFiles) {
         convert(operation.getCommand(), result, mediaItemFile);
@@ -113,7 +113,7 @@ public class MediaConverterService implements InitializingBean {
     if (operation.getFilename() != null) {
       File mediaFile = mediaService.getMediaFile(operation.getObjectId(), operation.getScreen(), operation.getFilename());
       if (mediaFile == null || !mediaFile.exists()) {
-        LOG.info("No media item found for " + operation.getFilename());
+        LOG.info("No media item found for {}", operation.getFilename());
         operationResult.setResult("No media item found for " + operation.getFilename());
         return result;
       }
@@ -133,7 +133,7 @@ public class MediaConverterService implements InitializingBean {
   private String convertWithScript(File batFile, File file) throws Exception {
     // List<String> params = Arrays.asList("cmd", "/c", "start", "\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
     List<String> params = Arrays.asList("\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
-    LOG.info("Executing: " + String.join(" ", params));
+    LOG.info("Executing: {}", String.join(" ", params));
     SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
     executor.setDir(batFile.getParentFile());
     executor.executeCommand();
@@ -178,7 +178,7 @@ public class MediaConverterService implements InitializingBean {
 
     commandList.add(targetFile.getAbsolutePath());
 
-    LOG.info("Executing: " + String.join(" ", commandList));
+    LOG.info("Executing: {}", String.join(" ", commandList));
     SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
 
     executor = new SystemCommandExecutor(commandList);
@@ -215,34 +215,28 @@ public class MediaConverterService implements InitializingBean {
 
     commandList.add(targetFile.getAbsolutePath());
 
-    LOG.info("Executing: " + String.join(" ", commandList));
+    LOG.info("Executing: {}", String.join(" ", commandList));
     SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
 
     executor = new SystemCommandExecutor(commandList);
-//      executor.enableLogging(true);
+    executor.enableLogging(true);
     executor.setDir(resources);
     executor.executeCommand();
 
-    //StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-    //LOG.info("Conversion failed: {}", standardErrorFromCommand);
-    //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-    //LOG.info("Video conversion output: {}", standardOutputFromCommand);
+    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    LOG.info("Conversion failed: {}", standardErrorFromCommand);
+    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    LOG.info("Video conversion output: {}", standardOutputFromCommand);
   }
 
   private void convertWithImageUtils(MediaOperationResult result, ImageOp command, File mediaFile) {
     try {
       BufferedImage img = ImageUtil.loadImage(mediaFile);
-      switch (command) {
-        case ROTATE_90:
-          img = ImageUtil.rotateRight(img);
-          break;
-        case ROTATE_90_CCW:
-          img = ImageUtil.rotateLeft(img);
-          break;
-        case ROTATE_180:
-          img = ImageUtil.rotate180(img);
-          break;
-      }
+        img = switch (command) {
+            case ROTATE_90 -> ImageUtil.rotateRight(img);
+            case ROTATE_90_CCW -> ImageUtil.rotateLeft(img);
+            case ROTATE_180 -> ImageUtil.rotate180(img);
+        };
 
       ImageUtil.write(img, mediaFile);
       result.setResult("Converted file " + mediaFile.getAbsolutePath());

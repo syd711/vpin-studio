@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
 import de.mephisto.vpin.commons.BackupSourceAuthenticationType;
-import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

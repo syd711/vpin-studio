@@ -7,14 +7,13 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,18 +76,18 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       File indexFile = getIndexFile();
       File tmp = new File(indexFile.getParentFile(), indexFile.getName() + ".tmp");
       if (tmp.exists() && !tmp.delete()) {
-        LOG.error("Failed to delete existing tmp file " + indexFile.getName() + ".tmp");
+        LOG.error("Failed to delete existing tmp file {}.tmp", indexFile.getName());
       }
       getIndex().saveToFile(tmp);
 
       // switch files
       if (indexFile.exists() && !indexFile.delete()) {
-        LOG.error("Failed to delete " + indexFile.getName());
+        LOG.error("Failed to delete {}", indexFile.getName());
       }
       if (!tmp.renameTo(indexFile)) {
-        LOG.error("Failed to rename " + indexFile.getName());
+        LOG.error("Failed to rename {}", indexFile.getName());
       }
-      LOG.info("Written " + indexFile.getAbsolutePath());
+      LOG.info("Written {}", indexFile.getAbsolutePath());
     }
     catch (ConnectException ce) {
       LOG.error("Cannot connect to FTP server: {}", ce.getMessage());
@@ -109,7 +108,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
 
     EmulatorType emutype = EmulatorType.valueOf(emulatorType);
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
-    LOG.info("Searching term '" + term + "'' for emulator " + emutype + " and screen  " + screen);
+    LOG.info("Searching term '{}'' for emulator {} and screen  {}", term, emutype, screen);
     return getIndex().match(emutype, screen, term);
   }
 
@@ -131,7 +130,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       String url = tableAsset.getUrl();
       String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
       decodeUrl = decodeUrl.substring(1);
-      LOG.info("downloading " + decodeUrl);
+      LOG.info("downloading {}", decodeUrl);
 
       String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
       String name = StringUtils.substringAfterLast(decodeUrl, "/");
@@ -140,7 +139,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
       try (InputStream in = ftp.retrieveFileStream(name)) {
-        LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
+        LOG.info("Read FTP file \"{}\", {}", decodeUrl, ftp.getReplyString());
         if (start < 0) {
           IOUtils.copy(in, outputStream);
         }
@@ -150,7 +149,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       }
     }
     catch (CopyStreamException cse) {
-      LOG.error("Error while downloading asset: " + cse.getMessage());
+      LOG.error("Error while downloading asset: {}", cse.getMessage());
     }
     finally {
       close(ftp);
@@ -164,11 +163,11 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       try {
         index = new PinballXIndex();
         File indexFile = getIndexFile();
-        LOG.info("Load pinballX Asset index from file : " + indexFile);
+        LOG.info("Load pinballX Asset index from file : {}", indexFile);
         index.loadFromFile(indexFile);
       }
       catch (IOException e) {
-        LOG.error("Failed to load PinballX index file: " + e.getMessage(), e);
+        LOG.error("Failed to load PinballX index file: {}", e.getMessage(), e);
       }
     }
     return index;

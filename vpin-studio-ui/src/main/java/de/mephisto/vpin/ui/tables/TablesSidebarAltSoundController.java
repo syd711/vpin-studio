@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -187,7 +188,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
-    uploadBtn.setDisable(true);
+    uploadBtn.setDisable(g.isEmpty() || StringUtils.isEmpty(g.get().getRom()));
     deleteBtn.setDisable(true);
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
@@ -204,43 +205,42 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (g.isPresent() && g.get().isAltSoundAvailable()) {
       GameRepresentation game = g.get();
       JFXFuture.supplyAsync(() -> Studio.client.getAltSoundService().getAltSound(game.getId()))
-        .thenAcceptLater(altSound -> {
-          this.altSound = altSound;
+          .thenAcceptLater(altSound -> {
+            this.altSound = altSound;
 
-          boolean altSoundAvailable = altSound != null;
-          dataBox.setVisible(altSoundAvailable);
-          emptyDataBox.setVisible(!altSoundAvailable);
+            boolean altSoundAvailable = altSound != null;
+            dataBox.setVisible(altSoundAvailable);
+            emptyDataBox.setVisible(!altSoundAvailable);
 
-          uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
-          deleteBtn.setDisable(!altSoundAvailable);
-          altSoundBtn.setDisable(!altSoundAvailable);
-          restoreBtn.setDisable(!altSoundAvailable);
+            deleteBtn.setDisable(!altSoundAvailable);
+            altSoundBtn.setDisable(!altSoundAvailable);
+            restoreBtn.setDisable(!altSoundAvailable);
 
-          if (altSound != null) {
-            nameLabel.setText(altSound.getName());
-            entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
-            filesLabel.setText(String.valueOf(altSound.getFiles()));
+            if (altSound != null) {
+              nameLabel.setText(altSound.getName());
+              entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
+              filesLabel.setText(String.valueOf(altSound.getFiles()));
 
-            long filesize = altSound.getFilesize();
-            if (filesize == -1) {
-              formatLabel.setText(altSound.getFormat() + " (not played yet)");
+              long filesize = altSound.getFilesize();
+              if (filesize == -1) {
+                formatLabel.setText(altSound.getFormat() + " (not played yet)");
+              }
+              else {
+                bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
+                lastModifiedLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(altSound.getModificationDate()));
+                formatLabel.setText(altSound.getFormat());
+              }
+
+              List<ValidationState> validationStates = altSound.getValidationStates();
+              errorBox.setVisible(!validationStates.isEmpty());
+              if (!validationStates.isEmpty()) {
+                validationState = validationStates.getFirst();
+                LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
+                errorTitle.setText(validationResult.getLabel());
+                errorText.setText(validationResult.getText());
+              }
             }
-            else {
-              bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));
-              lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altSound.getModificationDate()));
-              formatLabel.setText(altSound.getFormat());
-            }
-
-            List<ValidationState> validationStates = altSound.getValidationStates();
-            errorBox.setVisible(!validationStates.isEmpty());
-            if (!validationStates.isEmpty()) {
-              validationState = validationStates.get(0);
-              LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
-              errorTitle.setText(validationResult.getLabel());
-              errorText.setText(validationResult.getText());
-            }
-          }
-        });
+          });
     }
   }
 

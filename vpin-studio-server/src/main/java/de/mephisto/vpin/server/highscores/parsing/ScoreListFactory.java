@@ -4,30 +4,52 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
-import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
+
 
 public class ScoreListFactory {
-  private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
+  private final static Logger LOG = LoggerFactory.getLogger(de.mephisto.vpin.server.highscores.parsing.ScoreListFactory.class);
 
   private final static List<ScoreListAdapter> adapters = new ArrayList<>();
 
-  // Adapters are used to return a list of scores from the raw highscore
-  // If an adapter is applicable, this is the only adapter used to return scores
-  // (adapters don't "stack")
-  static {
-    adapters.add(new SortedScoreAdapter("tf_180"));
+  public static void registerScoreListAdapter(ScoreListAdapter adapter) {
+    adapters.add(adapter);
   }
 
-  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
+  //-------------------------------------------------------
+
+  //-------------------------------------------------------
+
+  public static List<Score> create(@NonNull String raw, @NonNull Instant createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
+    return create(raw, createdAt, game, scoringDB, false);
+  }
+
+  /**
+   * The parseAll flag, when false (by default), filters on high scores only
+   */
+  public static List<Score> create(@NonNull String raw, @NonNull Instant createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
+    List<Score> scores = getScores(raw, createdAt, game, scoringDB, parseAll);
+    List<Score> filteredScores = new ArrayList<>();
+    int position = 1;
+    for (Score sc : scores) {
+      if (filteredScores.stream().anyMatch(score -> Objects.equals(score.getScore(), sc.getScore()) && Strings.CI.equals(score.getPlayerInitials(), sc.getPlayerInitials()))) {
+        continue;
+      }
+      sc.setPosition(position++);
+      filteredScores.add(sc);
+    }
+    return filteredScores;
+  }
+
+
+  private static List<Score> getScores(@NonNull String raw, @NonNull Instant createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB, boolean parseAll) {
     List<Score> scores = new ArrayList<>();
 
     try {
@@ -37,21 +59,23 @@ public class ScoreListFactory {
         return scores;
       }
 
-      List<String> titles = scoringDB.getHighscoreTitles();
       if (game != null) {
         for (ScoreListAdapter adapter : adapters) {
           if (adapter.isApplicable(game)) {
-//            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
-            return adapter.getScores(game, createdAt, lines, titles);
+            List<Score> scoreList = adapter.getScores(game, createdAt, lines, parseAll);
+            if (!scoreList.isEmpty()) {
+              return scoreList;
+            }
           }
         }
       }
-      // fall back adapter 
-      DefaultAdapter adapter = new DefaultAdapter();
-      return adapter.getScores(game, createdAt, lines, titles);
+
+      // fall back adapter, for non nvrams
+      DefaultAdapter adapter = new DefaultAdapter(scoringDB);
+      return adapter.getScores(game, createdAt, lines, parseAll);
     }
     catch (Exception e) {
-      LOG.error("Failed to parse highscore: " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
+      LOG.error("Failed to parse highscore: {}\nRaw Data:\n==================================\n{}", e.getMessage(), raw, e);
     }
     return scores;
   }

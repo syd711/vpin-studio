@@ -40,11 +40,11 @@ public class NVRamService {
       File resettedNvRam = new File(systemService.getResettedNVRamsFolder(), nvRamFile.getName());
       if (resettedNvRam.exists()) {
         FileUtils.copyFile(resettedNvRam, nvRamFile);
-        LOG.info("Copied resetted nvram file \"" + resettedNvRam.getAbsolutePath()+ "\" to \"" + nvRamFile.getAbsolutePath() + "\"");
+        LOG.info("Copied resetted nvram file \"{}\" to \"{}\"", resettedNvRam.getAbsolutePath(), nvRamFile.getAbsolutePath());
         return true;
       }
     } catch (IOException e) {
-      LOG.error("Failed to copy resetted nvram file " + nvRamFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to copy resetted nvram file {}: {}", nvRamFile.getAbsolutePath(), e.getMessage(), e);
       return false;
     }
     return true;

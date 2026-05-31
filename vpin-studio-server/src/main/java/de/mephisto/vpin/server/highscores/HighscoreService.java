@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.highscores.parsing.nvram.RamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -20,10 +21,10 @@ import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,6 +82,10 @@ public class HighscoreService implements InitializingBean {
 
   public File getHighscoreFile(@NonNull Game game) {
     return highscoreResolver.getHighscoreFile(game);
+  }
+
+  public boolean isSupportedRom(String rom) {
+    return RamOutputToScoreTextConverter.isSupportedRom(rom);
   }
 
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
@@ -180,16 +186,16 @@ public class HighscoreService implements InitializingBean {
 
     File highscoreIniFile = highscoreResolver.getHighscoreIniFile(game);
     if (highscoreIniFile != null && highscoreIniFile.exists()) {
-      if(!highscoreIniFile.delete()) {
+      if (!highscoreIniFile.delete()) {
         LOG.error("Failed to delete ini file {}", highscoreIniFile.getAbsolutePath());
       }
     }
   }
 
-  @NonNull
-  public List<Score> parseScores(Date createdAt, String raw, @NonNull Game game, long serverId) {
-    return highscoreParser.parseScores(createdAt, raw, game, serverId);
-  }
+    @NonNull
+    public List<Score> parseScores(Instant createdAt, String raw, @NonNull Game game, long serverId) {
+        return highscoreParser.parseScores(createdAt, raw, game, serverId);
+    }
 
   @NonNull
   public List<RankedPlayer> getPlayersByRanks() {
@@ -224,7 +230,7 @@ public class HighscoreService implements InitializingBean {
     }
 
     String rankingPoints = (String) preferencesService.getPreferenceValue(PreferenceNames.RANKING_POINTS, "4,2,1,0");
-    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> points = Arrays.stream(rankingPoints.split(",")).map(Integer::parseInt).toList();
 
     List<RankedPlayer> rankedPlayers = new ArrayList<>(playerMap.values());
     for (RankedPlayer rankedPlayer : rankedPlayers) {
@@ -256,15 +262,15 @@ public class HighscoreService implements InitializingBean {
     return result;
   }
 
-  public ScoreList getScoreHistory(@NonNull Game game) {
-    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return getScoresBetween(game, new Date(0), new Date(), serverId);
-  }
+    public ScoreList getScoreHistory(@NonNull Game game) {
+        long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+        return getScoresBetween(game, Instant.ofEpochMilli(0), Instant.now(), serverId);
+    }
 
   /**
    * Returns all available scores for the game with the given id and time frame
    */
-  public ScoreList getScoresBetween(@NonNull Game game, Date start, Date end, long serverId) {
+  public ScoreList getScoresBetween(@NonNull Game game, Instant start, Instant end, long serverId) {
     ScoreList scoreList = new ScoreList();
     List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(game.getId(), start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
@@ -283,7 +289,7 @@ public class HighscoreService implements InitializingBean {
     scoreList.getScores().sort(Comparator.comparing(ScoreSummary::getCreatedAt));
 
     if (!scoreList.getScores().isEmpty()) {
-      scoreList.setLatestScore(scoreList.getScores().get(0));
+      scoreList.setLatestScore(scoreList.getScores().getFirst());
     }
     return scoreList;
   }
@@ -385,6 +391,12 @@ public class HighscoreService implements InitializingBean {
               versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
               parsedVersions.put(version, versionScores);
             }
+          // Guard against historical snapshots with fewer entries than changedPos implies
+          if (changedPos >= versionScores.size()) {
+              LOG.warn("Changed Position of {} is out of bounds for high score version {} with {} scores (game: {})",
+                      changedPos, version.getId(), versionScores.size(), game.getGameDisplayName());
+              continue;
+          }
             Score oldScore = versionScores.get(changedPos);
             // verify same score and same player
             if (newScore.matches(oldScore)) {
@@ -468,9 +480,9 @@ public class HighscoreService implements InitializingBean {
 
   @Nullable
   public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
-    if (!game.isVpxGame()) {
-      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game, highscore parsing cancelled.");
-      LOG.info("Game {} is not a VPX game, highscore parsing cancelled.", game.getGameDisplayName());
+    if (!game.isVpxGame() && !game.isFpGame()) {
+      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX or FP game, highscore parsing cancelled.");
+      LOG.info("Game {} is not a VPX or FP game, highscore parsing cancelled.", game.getGameDisplayName());
       return null;
     }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
@@ -617,6 +629,21 @@ public class HighscoreService implements InitializingBean {
   }
 
   /**
+   * Ensures both score list have the same length.
+   *
+   * @param newScores
+   * @param oldScores
+   */
+  private void fillScores(int gameId, List<Score> newScores, List<Score> oldScores) {
+    while (newScores.size() < oldScores.size()) {
+      newScores.add(new Score(Instant.now(), gameId, "???", null, null, 0, newScores.size() + 1));
+    }
+    while (oldScores.size() < newScores.size()) {
+      oldScores.add(new Score(Instant.now(), gameId, "???", null, null, 0, oldScores.size() + 1));
+    }
+  }
+
+  /**
    * The old highscore may be empty if a competitions did reset them.
    */
   @NonNull
@@ -672,7 +699,7 @@ public class HighscoreService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.info("Failed to calculate score change: " + e.getMessage(), e);
+      LOG.info("Failed to calculate score change: {}", e.getMessage(), e);
     }
     return changes;
   }
@@ -698,7 +725,7 @@ public class HighscoreService implements InitializingBean {
       return;
     }
 
-    Collections.sort(events, (o1, o2) -> Long.compare(o2.getNewScore().getScore(), o1.getNewScore().getScore()));
+    events.sort((o1, o2) -> Long.compare(o2.getNewScore().getScore(), o1.getNewScore().getScore()));
     for (HighscoreChangeEvent event : events) {
       for (HighscoreChangeListener listener : listeners) {
         listener.highscoreChanged(event);

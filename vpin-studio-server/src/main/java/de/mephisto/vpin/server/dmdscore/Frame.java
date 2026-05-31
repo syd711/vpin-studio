@@ -6,18 +6,16 @@ public class Frame {
 
   private FrameType type;
   private int timeStamp;
-  private byte[] plane;
+  private int[] plane;
   private int width;
   private int height;
-  private int[] palette;
-
-  public Frame(FrameType type, int timeStamp, byte[] plane, int width, int height, int[] palette) {
+  
+  public Frame(FrameType type, int timeStamp, int[] plane, int width, int height) {
     this.type = type;
     this.timeStamp = timeStamp;
     this.plane = plane;
     this.width = width;
     this.height = height;
-    this.palette = palette;
   }
 
   public FrameType getType() {
@@ -34,10 +32,10 @@ public class Frame {
     this.timeStamp = timeStamp;
   }
   
-  public byte[] getPlane() {
+  public int[] getPlane() {
     return plane;
   }
-  public void setPlane(byte[] plane) {
+  public void _setPlane(int[] plane) {
     this.plane = plane;
   }
 
@@ -53,13 +51,6 @@ public class Frame {
   }
   public void setHeight(int height) {
     this.height = height;
-  }
-
-  public int[] getPalette() {
-    return palette;
-  }
-  public void setPalette(int[] palette) {
-    this.palette = palette;
   }
 
   public boolean equals(Object o) {

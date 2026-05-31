@@ -23,13 +23,15 @@ import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.VersionUtil;
+import de.mephisto.vpin.server.util.WindowsUtil;
 import de.mephisto.vpin.server.vpx.VPXMonitoringService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -48,7 +50,9 @@ import java.lang.reflect.Field;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -71,6 +75,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
 
   private static Robot robot;
+
   static {
     try {
       boolean isHeadless = GraphicsEnvironment.isHeadless();
@@ -92,6 +97,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private File standaloneTablesFolder;
 
   private File backglassServerFolder;
+  private File vpxInstallationFolder;
 
   private File backupFolder;
 
@@ -106,6 +112,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private ScoringDB db;
 
   private ApplicationContext context;
+
+  @Override
+  public File resolveVpxExe() {
+    File vpxExe = super.resolveVpxExe();
+    if ((vpxExe == null || !vpxExe.exists()) && getVpxFolder() != null) {
+      vpxExe = new File(getVpxFolder(), "VPinballX.exe");
+    }
+    return vpxExe;
+  }
 
   private void initBaseFolders() throws VPinStudioException {
     try {
@@ -143,6 +158,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       else {
         // for non PinupPopper users, initialize pinupInstallationFolder from player
         this.pinupInstallationFolder = resolvePinupPlayerFolder();
+      }
+
+      //VPinMAME Folder
+      if (store.containsNonEmptyKey(VPX_INSTALLATION_DIR)) {
+        this.vpxInstallationFolder = new File(store.get(VPX_INSTALLATION_DIR));
       }
 
       // now that frontend is determined, activate or deactivate features
@@ -239,6 +259,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return backglassServerFolder;
   }
 
+  public File getVpxFolder() {
+    return vpxInstallationFolder;
+  }
+
   private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
     StringBuilder b = new StringBuilder(label);
     b.append(":");
@@ -266,7 +290,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @NonNull
   public File getPinemhiCommandFile() {
-    return new File(PINemHiService.PINEMHI_FOLDER, PINemHiService.PINEMHI_COMMAND);
+    return PINemHiService.getPinemhiExe();
   }
 
   public File getResettedNVRamsFolder() {
@@ -380,7 +404,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+        .toList();
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -396,36 +420,37 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-        .collect(Collectors.toList());
+        .toList();
     return !filteredProceses.isEmpty();
   }
 
-  public List<ProcessHandle> getProcesses() {
+  public static List<ProcessHandle> getProcesses() {
     return ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
 
   public boolean isWindowOpened(String name) {
     List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
+    return windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), name));
   }
 
   public static void main(String[] args) {
-    System.out.println(new SystemService().isProcessRunning("Visual Pinball Player"));
+    System.out.println(SystemService.isPinballEmulatorRunning());
   }
 
 
-  public boolean isPinballEmulatorRunning() {
-    return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
+  public static boolean isPinballEmulatorRunning() {
+    List<ProcessHandle> processes = getProcesses();
+    return isVPXRunning(processes) || isFPRunning(processes) || isMameRunning(processes) || isZenRunning(processes) || isZaccariaRunning(processes);
   }
 
-  public boolean isVPXRunning(List<ProcessHandle> allProcesses) {
-    for (ProcessHandle p : allProcesses) {
+  private static boolean isZaccariaRunning(List<ProcessHandle> processes) {
+    for (ProcessHandle p : processes) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
-          LOG.info("Found active VPX process: {}", fileName);
+        if (fileName.toLowerCase().contains("zaccaria")) {
+          LOG.info("Found active zaccaria process: {}", fileName);
           return true;
         }
       }
@@ -433,16 +458,67 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public boolean isFPRunning(List<ProcessHandle> allProcesses) {
+  private static boolean isZenRunning(List<ProcessHandle> processes) {
+    for (ProcessHandle p : processes) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("pinballfx") || fileName.toLowerCase().contains("pinball fx") || fileName.toLowerCase().contains("pinballm")) {
+          LOG.info("Found active Zen process: {}", fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean isMameRunning(List<ProcessHandle> processes) {
+    for (ProcessHandle p : processes) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("mame")) {
+          LOG.info("Found active MAME process: {}", fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean isVPXRunning(List<ProcessHandle> allProcesses) {
+//    for (ProcessHandle p : allProcesses) {
+//      if (p.info().command().isPresent()) {
+//        String cmdName = p.info().command().get();
+//        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+//        if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
+//          LOG.info("Found active VPX process: {}", fileName);
+//          return true;
+//        }
+//      }
+//    }
+
+    if (WindowsUtil.isProcessRunning("Visual Pinball Player")) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public static boolean isFPRunning(List<ProcessHandle> allProcesses) {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("Future Pinball")) {
+        if (fileName.toLowerCase().contains("future pinball")) {
           LOG.info("Found active FP process: {}", fileName);
           return true;
         }
       }
+    }
+
+    if (WindowsUtil.isProcessRunning("Future Pinball")) {
+      return true;
     }
     return false;
   }
@@ -468,6 +544,16 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 //      monitors = filtered;
 //    }
     return monitors;
+  }
+
+  public boolean isPrimaryMonitorRotated() {
+    List<MonitorInfo> monitorInfos = getMonitorInfos();
+    boolean rotate = false;
+    Optional<MonitorInfo> first = monitorInfos.stream().filter(m -> m.isPrimary() && !m.isPortraitMode()).findFirst();
+    if (first.isPresent()) {
+      rotate = true;
+    }
+    return rotate;
   }
 
   public MonitorInfo getMonitor(int monitor) {
@@ -678,7 +764,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public String backup() {
     File source = new File(RESOURCES, "vpin-studio.db");
-    String name = FilenameUtils.getBaseName(source.getName()) + "_" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".db";
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss").withZone(ZoneId.systemDefault());
+    String name = FilenameUtils.getBaseName(source.getName()) + "_" + df.format(Instant.now()) + ".db";
     File targetFolder = new File(RESOURCES, "backups/");
     File target = new File(targetFolder, name);
     try {
@@ -686,7 +773,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       FileUtils.copyFile(source, target);
     }
     catch (IOException e) {
-      LOG.error("Failed to backup DB: " + e.getMessage(), e);
+      LOG.error("Failed to backup DB: {}", e.getMessage(), e);
     }
     return target.getName();
   }

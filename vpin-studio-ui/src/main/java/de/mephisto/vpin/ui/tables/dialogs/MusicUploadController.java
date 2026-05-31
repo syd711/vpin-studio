@@ -14,6 +14,7 @@ public class MusicUploadController extends BaseUploadController {
 
   @FXML
   private Label targetFolderLabel;
+  private int gameId;
 
   public MusicUploadController() {
     super(AssetType.MUSIC_BUNDLE, false, true, PackageUtil.ARCHIVE_SUFFIXES);
@@ -21,7 +22,7 @@ public class MusicUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new MusicUploadProgressModel("Music Upload", getSelection());
+    return new MusicUploadProgressModel("Music Upload", getSelection(), getSelectedEmulatorId(), gameId);
   }
 
   @Override
@@ -37,14 +38,18 @@ public class MusicUploadController extends BaseUploadController {
     } catch (IOException e) {
       return "Failed to analyze music bundle: " + e.getMessage();
     }
-    
+
     String analyze = analysis.validateAssetTypeInArchive(AssetType.MUSIC_BUNDLE);
     if (analyze == null) {
-      String relativeMusicPath = analysis.getRelativeMusicPath(true);
+      String relativeMusicPath = analysis.getRelativeMusicPathWithoutMusicFolder();
       File musicFolder= new File(getSelectedEmulator().getInstallationDirectory(), "Music");
       File targetFolder = new File(musicFolder, relativeMusicPath);
       this.targetFolderLabel.setText(targetFolder.getAbsolutePath());
     }
     return analyze;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 }

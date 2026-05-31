@@ -38,18 +38,13 @@ public class DirectB2SFrameTypeGenerator {
       targetH = targetW * screenH / screenW;
     }
 
-    switch (frameType) {
-      case AMBILIGHT:
-        return createAmbilightFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
-      case BLURRED:
-        return createBlurredFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
-      case MIRROR:
-        return createMirrorFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
-      case GRADIENT:
-        return createGradientFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
-      default:
-        return null;
-    }
+      return switch (frameType) {
+          case AMBILIGHT -> createAmbilightFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
+          case BLURRED -> createBlurredFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
+          case MIRROR -> createMirrorFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
+          case GRADIENT -> createGradientFrame(b2s, (int) targetW, (int) targetH, addOriginalImage);
+          default -> null;
+      };
   }
 
   //--------------------------------

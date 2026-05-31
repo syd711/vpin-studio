@@ -23,6 +23,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.xml.bind.DatatypeConverter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +84,7 @@ public class DirectB2SResource {
 
   @PostMapping("/gameId")
   public Integer getGameId(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
-    String basefileName = StringUtils.removeEndIgnoreCase(fileName, ".directb2s");
+    String basefileName = Strings.CI.removeEnd(fileName, ".directb2s");
     Game game = frontedService.getGameByBaseFilename(emulatorId, basefileName);
     return game != null ? game.getId() : -1;
   }
@@ -141,7 +141,7 @@ public class DirectB2SResource {
     if (game == null) {
       throw new RuntimeException("No Game found for id " + gameId);
     }
-    return getBackground(game.getEmulatorId(), game.getDirectB2SFilename());
+    return getBackground(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game));
   }
 
   @GetMapping("/background/{emulatorId}/{fileName}")
@@ -160,7 +160,7 @@ public class DirectB2SResource {
     if (game == null) {
       throw new RuntimeException("No Game found for id " + gameId);
     }
-    return getDmdImage(game.getEmulatorId(), game.getDirectB2SFilename());
+    return getDmdImage(game.getEmulatorId(), BackglassNamingHelper.getBackglassFileName(game));
   }
 
   @GetMapping("/dmdimage/{emulatorId}/{fileName}")
@@ -188,7 +188,16 @@ public class DirectB2SResource {
   // download utilities
 
   private ResponseEntity<Resource> download(String base64, String filename) {
-    byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
+    byte[] image = null;
+    if (base64 != null) {
+      try {
+        image = Base64.getMimeDecoder().decode(base64);
+      }
+      catch (IllegalArgumentException e) {
+        LOG.error("Failed to decode base64 string for file '{}': {}", filename, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      }
+    }
     //TODO check impact if we turn to false
     return download(image, filename, true);
   }
@@ -221,7 +230,7 @@ public class DirectB2SResource {
       res.contentLength(resource.contentLength());
     }
     catch (IOException ioe) {
-      LOG.warn("Cannot determine content Length for " + name);
+      LOG.warn("Cannot determine content Length for {}", name);
     }
 
     // add content Type
@@ -340,7 +349,7 @@ public class DirectB2SResource {
       return backglassService.saveServerSettings(settings);
     }
     catch (Exception e) {
-      LOG.error("Saving b2s server settings failed: " + e.getMessage(), e);
+      LOG.error("Saving b2s server settings failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving b2s server settings failed: " + e.getMessage());
     }
   }
@@ -359,10 +368,11 @@ public class DirectB2SResource {
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();
+      gameCachingService.invalidate(gameId);
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      LOG.error("Directb2s upload failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
     finally {
@@ -380,7 +390,7 @@ public class DirectB2SResource {
     }
 
     try {
-      String base64 = DatatypeConverter.printBase64Binary(file.getBytes());
+      String base64 = Base64.getEncoder().encodeToString(file.getBytes());
       return updateDmdImage(emulatorId, fileName, file.getOriginalFilename(), base64);
     }
     catch (IOException ioe) {
@@ -469,7 +479,7 @@ public class DirectB2SResource {
     try {
       String frame = backglassService.setScreenResFrame(emulatorId, b2sFilename, file.getOriginalFilename(), file.getInputStream());
 
-      if (frame != null)  {
+      if (frame != null) {
         Game game = gameService.getGameByDirectB2S(emulatorId, b2sFilename);
         if (game != null) {
           gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, null);

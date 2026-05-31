@@ -8,14 +8,12 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -79,15 +77,15 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    HighscoreBackup selectedItem = backupList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete backup from " + selectedItem+ "?");
+    List<HighscoreBackup> selectedItems = backupList.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + " backup(s)?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         String rom = this.game.getRom();
-        if(StringUtils.isEmpty(rom)) {
+        if (StringUtils.isEmpty(rom)) {
           rom = this.game.getTableName();
         }
-        client.getHigscoreBackupService().delete(rom, selectedItem.getFilename());
+        ProgressDialog.createProgressDialog(new HighscoreBackupDeleteProgressModel(List.copyOf(selectedItems), this.game.getId()));
         EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         refresh();
       }
@@ -106,6 +104,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
     this.restoreBtn.setDisable(true);
     scoreLabel.setFont(getScoreFontText());
 
+    this.backupList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     this.backupList.getSelectionModel().selectedItemProperty().addListener((observableValue, highscoreBackup, t1) -> {
       deleteBtn.setDisable(t1 == null);
       restoreBtn.setDisable(t1 == null);
@@ -133,7 +132,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
   }
 
   private void refresh() {
-    List<HighscoreBackup> highscoreBackups = client.getHigscoreBackupService().get(game.getRom());
+    List<HighscoreBackup> highscoreBackups = client.getHigscoreBackupService().get(game.getId());
     backupList.setItems(FXCollections.observableList(highscoreBackups));
     scoreLabel.setText("");
 

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -34,20 +35,15 @@ import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogControll
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +77,7 @@ public class TableDialogs {
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
-
+        VPinScreen loadingScreenId = null;
         FrontendMediaRepresentation medias = client.getGameMediaService().getMedia(id, playlistMode);
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
@@ -92,6 +88,13 @@ public class TableDialogs {
           }
           else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
             append = true;
+
+            if (screen.equals(VPinScreen.Loading) && client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+              VPinScreen vPinScreen = TableDialogs.openAssetScreenAssignmentDialog();
+              if (vPinScreen != null) {
+                loadingScreenId = vPinScreen;
+              }
+            }
           }
           else {
             return;
@@ -99,10 +102,18 @@ public class TableDialogs {
         }
 
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(id, playlistMode,
-            "Media Upload", files, screen, append);
+            "Media Upload", files, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
       });
     }
+  }
+
+  public static VPinScreen openAssetScreenAssignmentDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(LoadingAsset2ScreenAssignmentController.class, "dialog-loading-asset-assignment.fxml", "Loading Screen Assignment");
+    LoadingAsset2ScreenAssignmentController controller = (LoadingAsset2ScreenAssignmentController) stage.getUserData();
+    stage.showAndWait();
+
+    return controller.getScreen();
   }
 
   public static void openCfgUploads(File file, Runnable finalizer) {
@@ -156,8 +167,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void onRomUploads(File file, Runnable finalizer) {
-    TableDialogs.openRomUploadDialog(file, () -> {
+  public static void onRomUploads(int emulatorId, File file, Runnable finalizer) {
+    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(emulatorId);
+    onRomUploads(gameEmulator, file, finalizer);
+  }
+
+  public static void onRomUploads(GameEmulatorRepresentation emulator, File file, Runnable finalizer) {
+    TableDialogs.openRomUploadDialog(emulator, file, () -> {
       EventManager.getInstance().notifyTablesChanged();
       Platform.runLater(() -> {
         if (finalizer != null) {
@@ -167,8 +183,8 @@ public class TableDialogs {
     });
   }
 
-  public static void onMusicUploads(File file, UploaderAnalysis analysis, Runnable finalizer) {
-    TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
+  public static void onMusicUploads(File file, UploaderAnalysis analysis, int gameId, Runnable finalizer) {
+    TableDialogs.openMusicUploadDialog(file, analysis, gameId, finalizer);
   }
 
 
@@ -354,6 +370,10 @@ public class TableDialogs {
     controller.setStage(stage);
     controller.setPlaylistMode();
     controller.setPlaylist(stage, overviewController, playlist, screen);
+
+    FXResizeHelper.install(stage, 30, 6);
+    stage.setMinWidth(860);
+    stage.setMinHeight(600);
 
     stage.showAndWait();
     return true;
@@ -579,7 +599,7 @@ public class TableDialogs {
   private static boolean onOpenAutoMatch(List<GameRepresentation> games) {
     String title = "Auto-Match table and version for " + games.size() + " tables?";
     if (games.size() == 1) {
-      title = "Auto-Match table and version for \"" + games.get(0).getGameDisplayName() + "\"?";
+      title = "Auto-Match table and version for \"" + games.getFirst().getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
@@ -655,10 +675,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openRomUploadDialog(File file, Runnable finalizer) {
+  public static void openRomUploadDialog(GameEmulatorRepresentation emulator, File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
+    controller.setSelectedEmulator(emulator);
     stage.showAndWait();
   }
 
@@ -670,10 +691,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis, Runnable finalizer) {
+  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis, int gameId, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);
+    controller.setGameId(gameId);
     stage.showAndWait();
   }
 
@@ -683,7 +705,7 @@ public class TableDialogs {
     }
     String title = "Re-validate " + selectedItems.size() + " tables?";
     if (selectedItems.size() == 1) {
-      title = "Re-validate table \"" + selectedItems.get(0).getGameDisplayName() + "\"?";
+      title = "Re-validate table \"" + selectedItems.getFirst().getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
@@ -691,7 +713,7 @@ public class TableDialogs {
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       title = "Re-validating " + selectedItems.size() + " tables";
       if (selectedItems.size() == 1) {
-        title = "Re-validating table \"" + selectedItems.get(0).getGameDisplayName() + "\"";
+        title = "Re-validating table \"" + selectedItems.getFirst().getGameDisplayName() + "\"";
       }
 
       ProgressDialog.createProgressDialog(new TableValidateProgressModel(title, selectedItems, reload));
@@ -717,7 +739,7 @@ public class TableDialogs {
   }
 
   public static void openMediaDialog(@NonNull Stage parent, @Nullable FrontendMediaItemRepresentation item) {
-    if(item == null) {
+    if (item == null) {
       return;
     }
 

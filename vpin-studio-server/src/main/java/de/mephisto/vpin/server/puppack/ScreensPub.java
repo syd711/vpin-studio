@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,31 +24,26 @@ public class ScreensPub {
 
   public ScreensPub(@NonNull File screensPupFile) {
     this.screensPupFile = screensPupFile;
-    Reader in = null;
-    try {
+      //Don't try to read unless it exists
       if (screensPupFile.exists()) {
-        in = new FileReader(screensPupFile);
-        Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
-        Iterator<CSVRecord> iterator = records.iterator();
-        iterator.next();
+          try (Reader in = new FileReader(screensPupFile)) {
+            CSVFormat format = CSVFormat.RFC4180.builder().get(); // Use builder for modern API
+            Iterable<CSVRecord> records = format.parse(in);
+            Iterator<CSVRecord> iterator = records.iterator();
+            if (iterator.hasNext()) { // Skip header
+              iterator.next();
+            }
 
-        while (iterator.hasNext()) {
-          CSVRecord record = iterator.next();
-          ScreenEntry entry = new ScreenEntry(record);
-          this.entries.add(entry);
+            while (iterator.hasNext()) {
+              CSVRecord record = iterator.next();
+              ScreenEntry entry = new ScreenEntry(record);
+              this.entries.add(entry);
+            }
+
+        } catch (Exception e) {
+          //LOG.warn("Failed to load {}: {}", screensPupFile.getAbsolutePath(), e.getMessage());
         }
       }
-    } catch (Exception e) {
-      LOG.error("Failed to load " + screensPupFile.getAbsolutePath() + ": " + e.getMessage(), e);
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //ignore
-        }
-      }
-    }
   }
 
   public long length() {

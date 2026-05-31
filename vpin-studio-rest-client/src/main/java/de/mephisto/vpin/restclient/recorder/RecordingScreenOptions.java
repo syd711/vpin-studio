@@ -10,9 +10,18 @@ public class RecordingScreenOptions {
   private boolean inGameRecording = false;
   private boolean recordAudio = false;
   private boolean rotated = false;
+  private boolean openGlCommand = false;
 
   private boolean expertSettingsEnabled = false;
   private String customFfmpegCommand = null;
+
+  public boolean isOpenGlCommand() {
+    return openGlCommand;
+  }
+
+  public void setOpenGlCommand(boolean openGlCommand) {
+    this.openGlCommand = openGlCommand;
+  }
 
   public boolean isExpertSettingsEnabled() {
     return expertSettingsEnabled;

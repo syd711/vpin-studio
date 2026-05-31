@@ -5,14 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.Base64;
-import java.util.Date;
 
 public class ChannelTopic {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static String TITLE = "VPin Studio Competition Channel";
-  private long timestamp = new Date().getTime();
+  private long timestamp = OffsetDateTime.now().toEpochSecond();
   private long messageId = 0;
 
   public long getMessageId() {
@@ -61,6 +61,6 @@ public class ChannelTopic {
   }
 
   public boolean isOlderThanToday() {
-    return new Date().getTime() - timestamp > (1000 * 60 * 60 * 24);
+    return OffsetDateTime.now().toEpochSecond() - timestamp > (60 * 60 * 24);
   }
 }

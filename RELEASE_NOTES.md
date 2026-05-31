@@ -1,102 +1,70 @@
-## Release Notes 4.7.4
+## Release Notes 5.0.1
 
-- **WOVP Pause Menu Item**: Screenshots for portrait mode screens are not rotated anymore.
+### Changes
 
-## Release Notes 4.7.3
- 
-- **Table Options**: Added "Options" tab to the table data manager dialog. The new tab analysis the table script options so that you canfigure them into a .ini file for the table.
-   
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/table-options.png?raw=true" width="550" />
-
-- **Table Backups/Deletions**: Fixed additional issues with the VPX music folder during table deletions and backups.
-- **Table Installation**: Fixed issue that upper case .ZIP files were rejected for uploading.
-- **Backglass Manager**: 
-  - Added 'No Focus' setting on backglass server preferences and by table.
-  - When a new backglass is setup, default all values from server settings.
-- **DMD Position Tool**: 
-  - Restore type correctly when dmd is deactivated and use backglass scores.
-  - Store latest margin value as default and restore it on new usage.
-- **VPin Mania Score Dates**: Fixed issue that the creation date was used instead of the last modification date for the score submitting to VPin Mania.
-- **Studio Window Manager**: Fixed _gtk_window_resize: assertion 'height > 0' failed_ error (blind fix).
-- **VPin MAME Settings**: Added input field for the table volume. Note that this field is not support for all tables and the values vary for ROM/table.
-- **Card Template Designer**: 
-  - Fixed possible server error applying templates.
-  - Fixed issue that background images were shown unscaled (hopefully this time).
-- **Highscore Parsing**: Fixed table "Eye of the Tiger".
-- **WOVP Synchronization**: Fixed issue that if the game script validation fails, the old game id was not resetted. 
-- **WOVP Settings**: Added option to disable API keys/users. 
-- **WOVP Pause Menu Item**: 
-  - Fixed issue that the existing score of the player was not shown anymore. 
-  - Added score reload after score submissions with a small delay which should show the updated score that was submitted.
-  - Fixed layout glitches.  
-- **VPinMAME**: Fixed lookup of the correct ROM folder and nvrams folder if no defaults are configured. 
-
-
----
-
-## Release Notes 4.7.2
-
-- **WOVP Competitions**: Added proper cleanup of games that are no longer competed on WOVP (augmented wheels and competition ids).
-- **VPin MAME Settings**: Fixed override and apply of default values (finally).
-- **.vpt File Support**: Added missing detection of .vpt files for the table import dialog.
-- **Universal Installer**: Fixed extraction of music bundles.
-
----
-
-## Release Notes 4.7.1
-
-- **Table Management**: Added support for older VPX file format **.vpt**.
-- **Preferences Menu**: Fixed rendering the menu, even if the status check for the server fails.
-- **Table Validation**: The missing ALT color validation error is only triggered when a non-pinsound bundle is available. 
-- **Table Validation**: Fixed lookup of the scripts folder which caused validation issues.
-
+- **VPin Studio Backups**: Added automatic VPin Studio backups for minor versions.
+- **VP-Spreadsheet**: Fixed VPS view which did not show all assets because of empty date values.
+- **Table Overview**: Added more logging to figure out why for some users the ROM column only shows "..." as a value.
+- **Text Editing**: Fixed various issues opening text or .vbs files with the internal editor.
+- **Table Scans**: Fixed critical issue for table scans which caused script change detections not being applied.
+- **MacOS/Linux Clients**: Fixed missing exports for apng supports which broke the clients.
+- **VPin Mania Sync**: Added result dialog for single score synchronizations from the sidebar.
 
 ---
 
 
-## Release Notes 4.7.0
+## Release Notes 5.0.0
 
-## Changes
+### !!! Important Notice !!!
 
-### VPX 10.8.1 Support
+We are happy to announce that the next major release of VPin Studio 5.0 has been published. While it does not introduce many flashy new features, we have extensively revamped the underlying codebase to ensure the project's long-term maintainability and support future development.
+The major drawback:
 
-With version 4.7.0, we are building the foundation for the upcoming VPX 10.8.1 release, which introduces a completely new folder structure for VPX files and their companion files (table override INI file, backglass file, PuP video folder, DMD colorization, music, etc.).
+**You need to reinstall the Studio Client(s) and Server. Updates for Studio 5.x cannot be applied over a 4.x installation.
+Please use the existing installation folder during the reinstall process to ensure that all your data remains intact!**.
 
-Please note that not all companion software supports the new folder layout yet. For example, PinUP Popper currently does not look into the actual table folder for assets. Therefore, the transition will take some time, and we are working closely with the VPX team to ensure full support.
+### Changes
 
-**Right now, nothing changes for you.** We needed to implement major server-side changes to support the new format for all available companion assets.
-First, we will ensure everything continues to work with the old folder structure. Later, we will enable specific flags in the backup restore process that allow backups to be extracted into the new folder structure.
+- **Java 25 Migration**
+  - Code base has been migrated from **Java 11 forward to Azul Zulu Java 25(!)**, including an update for all 3rd party dependencies. 
+- **Competition Wheel Icons**
+  - Added icon augmentation to APNG wheels.
+- **Splash Screen**
+  - Added details to splash screen showing connection steps/attempts.
+- **Mac**
+  - App Icon now works correctly as dynamic icon with MacOS 26+.
+  - Fix splash screen not showing.
+  - Added background to DMG.
+  - Changed DMG creation to use create-dmg instead of jpackage for more robust options and simpler workflow.
+- **Future Pinball**
+  - With long overdue, VPin Studio 5 supports Future Pinball highscores now too. The support includes:
+    - the Highscore Card which allows to design highscore cards for Future Pinball now.
+    - Highscore Backups
+    - VPin Mania Support
+  
+    Note that because of the limited test data a lot of highscore lists might still look broken. Please submit your fpRAM file in that case on our Discord so that we can improve the parsing.
 
-Further reading:
-https://github.com/vpinball/vpinball/blob/master/docs/FileLayout.md
+### Breaking Changes
 
-### .vpxz File Support
+- **Players**: The players "iScored Name" has been renamed to "Competition Name" and is used for Discord too. **You have to reconfigure the name as the old value has been discarded!**
+- **Notifications**: The notification settings for iScored have been resetted.
 
-Support for .vpxz files has been added. Check out the YouTube video to see how you can connect your phone with VPin Studio (https://www.youtube.com/watch?v=A-mzXOkTD7E) and upload and install .vpxz files on your mobile device.
+### Bugfixes
 
-A huge shoutout to @jsm174 for his awesome VPX app!
+- **Table Overview**: Fixed issue that sometimes not all tables have been loaded initially.
+- **DMD Screen Capture**: Fixed the DMD capture when dmddevice is set to double or scale2X scaler mode. Used to transfer DMD score in WoVP.
+- **Statistics**: Fixed issue analytics not being updated for PinballY in the pause menu.
+- **Highscores**: Fixed VPReg.stg file lookup.
+- **VPU/VPF**: Fixed login tests.
+- **Discord Competitions**: Fixed issue that the player name used being inconsistent for the first and consecutive scores.
+- **Player Avatars**: Fixed issue of the white outer avatar ring keep growing with every save.
+- **Future Pinball**: Fixed installation of .fpl files.
+- **Update Info Dialog**: Fixed size issues for smaller screens.
+- **Highscore Backups Dialog**: Add multi-selection for deletions.
+- **PinUpPlayer.ini Parsing**: Fixed issues parsing the file caused by comments.
 
-<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/vpxz/vpxz-view.png?raw=true" width="700" />
+### VPin Mania
 
-### VPin Mania 2.0
+- Added synchronization of Future Pinball highscores.
+- Fixed synchronization issues.
 
-VPin Mania has been relaunched with a new registration system and additional features.
-Please watch the YouTube video (https://youtu.be/gjTapjVT3qY) to get an overview of what has changed or visit the [VPin Mania Announcement](https://discord.com/channels/1043199618172858500/1376784123238023168) channel.
-
-**So, is all my data gone now?**
-
-No! Although you now need to re-register with a real user account, your existing cabinet data will be reused once you link your cabinet to VPin Mania again. If this does not work, you can always perform a complete sync between your cabinet and VPin Mania.
-
-**Table statistics are not affected by this update — rankings and play counts remain intact.**
-
-## Changes
-
-- **Table Scans**: Improved PUP pack detection.
-- **Pause Menu**: Fixed misaligned position when "too many" entries have been added on the pause menu item list. 
-- **Pause Menu**: For the **WOVP** menu entry, the scoring list is refreshed for the selected player (if you have multiple account registered).
-- **Pause Menu**: For colorized DMD, the frame is now correctly processed and included in screenshot.
-- **Kill Button**: Added MAME to the list of processes to kill when all processes should be stopped. 
-- **VPinMAME Settings**: Fixed applying the default values which simply have been deleted before.
-- **Tagging**: Fixed issue where tags have been added multiple times for tables.
-- **HighScores**: Fix parsing of french highscores.
-- **iScored**: Fixed wheel badges for iScored competitions.

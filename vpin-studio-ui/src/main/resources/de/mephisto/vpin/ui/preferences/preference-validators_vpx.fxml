@@ -102,6 +102,8 @@
                   </VBox>
                   <VBox fx:id="tagPane">
                      <children>
+                        <CheckBox fx:id="pref_61" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Music Files Missing" />
+                        <Label styleClass="checkbox-description" text="Checks if audio files from the &quot;Music&quot; folder are missing." textFill="WHITE" />
                         <Label styleClass="preference-subtitle" text="Auto Tagging">
                            <VBox.margin>
                               <Insets top="12.0" />

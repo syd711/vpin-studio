@@ -21,9 +21,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -44,8 +44,8 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -320,7 +320,7 @@ public class LauncherController implements Initializable {
 
   private void installServer() {
     try {
-      ServerInstallationUtil.install();
+      ServerInstallationUtil.createRunScripts();
       Updater.restartServer();
       main.getTop().setVisible(false);
 
@@ -344,9 +344,15 @@ public class LauncherController implements Initializable {
         LOG.info("Found server startup, running on version {}, starting table scan.",
             client.getSystemService().getVersion());
         Platform.runLater(() -> {
-          stage.close();
-          ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
-          Studio.loadStudio(WidgetFactory.createStage(), client);
+          try {
+            Platform.setImplicitExit(false);
+            stage.close();
+            ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
+            Studio.loadStudio(WidgetFactory.createStage(), client);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to launch Studio after server installation: {}", e.getMessage(), e);
+          }
         });
       }).start();
     } catch (Exception e) {
@@ -557,7 +563,8 @@ public class LauncherController implements Initializable {
   private String detectMacAddressViaArp(String host) {
     try {
       // Run the 'arp -a' command
-      Process process = Runtime.getRuntime().exec("arp -a " + host);
+      String[] cmd = {"arp","-a", host};
+      Process process = Runtime.getRuntime().exec(cmd);
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
       String line;

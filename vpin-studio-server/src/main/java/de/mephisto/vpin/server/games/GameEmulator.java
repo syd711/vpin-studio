@@ -1,14 +1,13 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +26,7 @@ public class GameEmulator {
   private String installationDirectory;
   private String gamesDirectory;
   private String mediaDirectory;
+  private String backglassDirectory;
 
   private String mameDirectory;
   private String romDirectory;
@@ -64,6 +64,17 @@ public class GameEmulator {
 
   public void setDatabase(String database) {
     this.database = database;
+  }
+
+  public String getBackglassDirectory() {
+    if(backglassDirectory == null) {
+      return getGamesDirectory();
+    }
+    return backglassDirectory;
+  }
+
+  public void setBackglassDirectory(String backglassDirectory) {
+    this.backglassDirectory = backglassDirectory;
   }
 
   public void setType(EmulatorType type) {
@@ -265,7 +276,7 @@ public class GameEmulator {
     return new File("./");
   }
 
-  @Nullable
+  @NonNull
   @JsonIgnore
   public File getInstallationFolder() {
     if (!StringUtils.isEmpty(installationDirectory)) {
@@ -296,6 +307,9 @@ public class GameEmulator {
   public String[] getVpsEmulatorFeatures() {
     if (this.type != null) {
       switch (this.type) {
+        case VisualPinball9: {
+          return new String[]{VpsFeatures.VP9};
+        }
         case VisualPinball: {
           return new String[]{VpsFeatures.VPX};
         }
@@ -310,6 +324,12 @@ public class GameEmulator {
         }
         case ZenFX3: {
           return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
+        }
+        case PinballM: {
+          return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
+        }
+        case Zaccaria: {
+          return new String[]{VpsFeatures.Zaccaria};
         }
       }
     }

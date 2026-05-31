@@ -1,11 +1,10 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Spinner;
 
 import java.util.Optional;
 
@@ -18,13 +17,13 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   @FXML
   private Spinner<Integer> wheelImageYSpinner;
 
-  public void setTemplate(CardTemplate cardTemplate, CardResolution res, Optional<GameRepresentation> game) {
+  public void setTemplate(CardTemplate cardTemplate, int cardWidth, int cardHeight, Optional<GameRepresentation> game) {
     setIconVisibility(cardTemplate.isRenderWheelIcon());
     setIconLock(cardTemplate.isLockWheelIcon(), cardTemplate.isTemplate());
 
-    LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", res.toWidth());
-    LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", res.toWidth());
-    LayerSubEditorPositionController.setValue(wheelImageYSpinner, cardTemplate, "wheelY", res.toHeight());
+    LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", cardWidth);
+    LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", cardWidth);
+    LayerSubEditorPositionController.setValue(wheelImageYSpinner, cardTemplate, "wheelY", cardHeight);
   }
 
   @Override

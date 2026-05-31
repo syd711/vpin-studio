@@ -27,12 +27,14 @@ public class WebConfig implements WebMvcConfigurer {
   @Value("${server.debug.enabled}")
   private boolean debugMode;
 
-  @Override
-  public void configurePathMatch(PathMatchConfigurer configurer) {
-    UrlPathHelper urlPathHelper = new UrlPathHelper();
-    urlPathHelper.setRemoveSemicolonContent(false);
-    configurer.setUrlPathHelper(urlPathHelper);
-  }
+   //No Longer needed? Claude says- Spring Boot 3+/4+ defaults to PathPatternParser which handles semicolons fine without explicit config.
+    //setURLPathHelper is deprecated and marked for removal
+//    @Override
+//  public void configurePathMatch(PathMatchConfigurer configurer) {
+//    UrlPathHelper urlPathHelper = new UrlPathHelper();
+//    urlPathHelper.setRemoveSemicolonContent(false);
+//    configurer.setUrlPathHelper(urlPathHelper);
+//  }
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {

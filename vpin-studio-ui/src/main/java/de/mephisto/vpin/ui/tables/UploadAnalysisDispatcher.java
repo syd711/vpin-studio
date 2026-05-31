@@ -12,8 +12,8 @@ import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -64,7 +64,7 @@ public class UploadAnalysisDispatcher {
                                        @NonNull UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(file, finalizer);
+        TableDialogs.onRomUploads(game != null ? game.getEmulatorId() : -1, file, finalizer);
         return;
       }
       case NV: {
@@ -87,6 +87,7 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
       }
+      case VPT:
       case VPX: {
         TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis, finalizer);
         return;
@@ -139,7 +140,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case MUSIC: {
-        TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
+        TableDialogs.openMusicUploadDialog(file, analysis, game.getId(), finalizer);
         break;
       }
       case PUP_PACK: {
@@ -186,7 +187,7 @@ public class UploadAnalysisDispatcher {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(parentStage, model);
       List<Object> results = progressDialog.getResults();
       if (!results.isEmpty()) {
-        return (UploaderAnalysis) results.get(0);
+        return (UploaderAnalysis) results.getFirst();
       }
       else {
         WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
@@ -221,7 +222,7 @@ public class UploadAnalysisDispatcher {
           TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         }
         else if (assetTypes.size() == 1) {
-          dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
+          dispatchBySuffix(file, game, assetTypes.getFirst(), analysis, finalizer);
         }
         else {
           TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);

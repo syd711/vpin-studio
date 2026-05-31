@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -24,10 +26,11 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -144,13 +147,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private byte[] generatePreview(Game game, ScoreSummary summary, CardTemplate template) {
     try {
       BufferedImage bufferedImage = doGenerateCardImage(game, summary, template);
-      return ImageUtil.toBytes(bufferedImage);
+      if (bufferedImage != null) {
+        return ImageUtil.toBytes(bufferedImage);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to generate highscore preview", e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
-      return null;
     }
+    return null;
   }
 
   /**
@@ -167,7 +172,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
 
       if (!wheelTemplate && (summary.getScores().isEmpty() || StringUtils.isEmpty(summary.getRaw()))) {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        LOG.info("Skipped card generation for \"{}\", no scores found.", game.getGameDisplayName());
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
         return false;
       }
@@ -179,7 +184,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
 
       if (!wheelTemplate && game.isCardDisabled()) {
-        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+        LOG.info("Skipped card generation for \"{}\", generation not enabled.", game.getGameDisplayName());
         SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
         return false;
       }
@@ -198,7 +203,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         }
         else {
           ImageUtil.writePNG(bufferedImage, highscoreCard, "Highscore Card");
-          LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+          LOG.info("Written highscore card: {}", highscoreCard.getAbsolutePath());
           SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
         }
       }
@@ -215,22 +220,27 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    * The card must be drawn synchronized and in a FX thread.
    * We need to wait until finished, because otherwise the UI would show the previous result
    */
+  @Nullable
   private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    if (summary.getScores().isEmpty()) {
+      return null;
+    }
+
+    // fetch DB data before entering the FX thread to avoid blocking the JavaFX Application Thread
+    int[] res = getCardResolution(template.getTemplateType());
+    CardData data = getCardData(game, summary, template, true);
+
     // sync between FX thread and calling thread
     CountDownLatch latch = new CountDownLatch(1);
     BufferedImage[] generatedImage = {null};
     Platform.runLater(() -> {
       try {
-        CardResolution res = getCardResolution(template.getTemplateType());
-
         CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
         cardGraphics.setTemplate(template);
 
-        CardData data = getCardData(game, summary, template, true);
-
-        cardGraphics.setData(data, res);
+        cardGraphics.setData(data, res[0], res[1]);
         // resize the cards to the needed resolution
-        cardGraphics.resize(res.toWidth(), res.toHeight());
+        cardGraphics.resize(res[0], res[1]);
 
         // then export image
         generatedImage[0] = cardGraphics.snapshot();
@@ -247,17 +257,17 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return generatedImage[0];
   }
 
-  public CardResolution getCardResolution(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD:
-        return cardSettings.getCardResolution();
-      case INSTRUCTIONS_CARD:
-        //TODO add settings like Highscore, reuse same ?
-        return CardResolution.HDReady;
-      case WHEEL:
-        return CardResolution.WHEEL;
-    }
-    return null;
+  public int[] getCardResolution(CardTemplateType templateType) {
+    return switch (templateType) {
+      case HIGSCORE_CARD -> {
+        if (cardSettings.isCustomResolution()) {
+          yield new int[]{cardSettings.getCardWidth(), cardSettings.getCardHeight()};
+        }
+        yield new int[]{cardSettings.getCardResolution().toWidth(), cardSettings.getCardResolution().toHeight()};
+      }
+      case INSTRUCTIONS_CARD -> new int[]{CardResolution.HDReady.toWidth(), CardResolution.HDReady.toHeight()};
+      case WHEEL -> new int[]{CardResolution.WHEEL.toWidth(), CardResolution.WHEEL.toHeight()};
+    };
   }
 
 //-----------------------------------------
@@ -361,7 +371,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
 
-      ObjectMapper mapper = new ObjectMapper();
+      JsonMapper mapper = JsonMapper.builder()
+          .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+          .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+          .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+          .build();
       ArrayList<ScoreRepresentation> scores = new ArrayList<>();
       for (Score score : summary.getScores()) {
         try {

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.application.Platform;
@@ -47,7 +48,7 @@ public class TableDataTabCommentsController implements Initializable {
 
   public boolean save(TableDetails tableDetails) {
     game.setComment(textArea.getText());
-    tableDetails.setTags(String.join(",", tagField.getTags()));
+    tableDetails.setTags(TaggingUtil.join(tagField.getTags()));
     try {
       client.getGameService().saveGame(game);
       return true;

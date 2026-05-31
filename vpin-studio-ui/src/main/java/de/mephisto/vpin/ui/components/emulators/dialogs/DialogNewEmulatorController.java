@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -113,7 +112,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
             if (validation.getErrorTitle() != null) {
               infoContainer.setVisible(false);
-              errorContainer.setVisible(validation.getErrorTitle() != null);
+              errorContainer.setVisible(true);
               errorTitle.setText(validation.getErrorTitle());
               errorText.setText(validation.getErrorText());
             }
@@ -122,6 +121,7 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
 
               validatedEmulator.setName(nameField.getText());
               infoContainer.setVisible(true);
+              errorContainer.setVisible(false);
               if (emulatorType.equals(EmulatorType.ZenFX) || emulatorType.equals(EmulatorType.ZenFX3) || emulatorType.equals(EmulatorType.Zaccaria) || emulatorType.equals(EmulatorType.PinballM)) {
                 validationText.setText("The games of this emulator type will be automatically imported.");
               }

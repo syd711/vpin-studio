@@ -4,8 +4,8 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -55,6 +55,10 @@ public interface StudioEventListener {
   }
 
   default void maintenanceEnabled(boolean b) {
+
+  }
+
+  default void vrModeEnabled(boolean b) {
 
   }
 }

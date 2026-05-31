@@ -24,7 +24,7 @@ public class VpsTablesColumnSorter implements BaseColumnSorter<VpsTableModel> {
     Comparator<VpsTableModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<VpsTableModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<VpsTableModel, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(vpsTablesController.installedColumn)) {
         comp = Comparator.comparing(o -> !o.isInstalled());
@@ -64,6 +64,9 @@ public class VpsTablesColumnSorter implements BaseColumnSorter<VpsTableModel> {
       }
       else if (column.equals(vpsTablesController.updatedColumn)) {
         comp = Comparator.comparing(o -> new Date(o.getVpsTable().getUpdatedAt()));
+      }
+      else if (column.equals(vpsTablesController.soundColumn)) {
+        comp = Comparator.comparing(o ->VpsUtil.isDataAvailable(o.getVpsTable().getSoundFiles()));
       }
 
       // optionally reverse order 

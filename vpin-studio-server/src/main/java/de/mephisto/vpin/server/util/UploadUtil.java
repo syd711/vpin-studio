@@ -31,9 +31,9 @@ public class UploadUtil {
       IOUtils.copy(in, fileOutputStream);
       in.close();
       fileOutputStream.close();
-      LOG.info("Written uploaded file: " + target.getAbsolutePath());
+      LOG.info("Written uploaded file: {}", target.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Failed to store asset: " + e.getMessage(), e);
+      LOG.error("Failed to store asset: {}", e.getMessage(), e);
       throw e;
     }
     return true;

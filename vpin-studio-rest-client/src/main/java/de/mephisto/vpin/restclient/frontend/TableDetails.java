@@ -1,9 +1,9 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import de.mephisto.vpin.restclient.tagging.TaggingUtil;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,15 +19,15 @@ public class TableDetails {
   private String gameDisplayName;
   private String gameType;
   private String gameVersion;
-  private Date dateAdded;
-  private Date dateModified;
+  private OffsetDateTime dateAdded;
+  private OffsetDateTime dateModified;
   private String gameTheme;
   private String notes;
   private Integer gameYear;
   private String romName;
   private String manufacturer;
   private Integer numberOfPlayers;
-  private Date lastPlayed;
+  private OffsetDateTime lastPlayed;
   private Integer numberPlays;
   private String tags;
   private String category;
@@ -57,10 +57,10 @@ public class TableDetails {
   private boolean mod;
 
   //Game Extra
-  private String gDetails;
-  private String gNotes;
-  private String gLog;
-  private String gPlayLog;
+  private String extraDetails;
+  private String extraNotes;
+  private String extraLog;
+  private String extraPlayLog;
 
   // mapped values
   private String hsFilename;
@@ -102,12 +102,12 @@ public class TableDetails {
     this.sqlVersion = sqlVersion;
   }
 
-  public String getgPlayLog() {
-    return gPlayLog;
+  public String getExtraPlayLog() {
+    return extraPlayLog;
   }
 
-  public void setgPlayLog(String gPlayLog) {
-    this.gPlayLog = gPlayLog;
+  public void setExtraPlayLog(String extraPlayLog) {
+    this.extraPlayLog = extraPlayLog;
   }
 
   public String getCustom2() {
@@ -174,28 +174,28 @@ public class TableDetails {
     this.tourneyId = tourneyId;
   }
 
-  public String getgDetails() {
-    return gDetails;
+  public String getExtraDetails() {
+    return extraDetails;
   }
 
-  public void setgDetails(String gDetails) {
-    this.gDetails = gDetails;
+  public void setExtraDetails(String extraDetails) {
+    this.extraDetails = extraDetails;
   }
 
-  public String getgNotes() {
-    return gNotes;
+  public String getExtraNotes() {
+    return extraNotes;
   }
 
-  public void setgNotes(String gNotes) {
-    this.gNotes = gNotes;
+  public void setExtraNotes(String extraNotes) {
+    this.extraNotes = extraNotes;
   }
 
-  public String getgLog() {
-    return gLog;
+  public String getExtraLog() {
+    return extraLog;
   }
 
-  public void setgLog(String gLog) {
-    this.gLog = gLog;
+  public void setExtraLog(String extraLog) {
+    this.extraLog = extraLog;
   }
 
   private List<String> launcherList = new ArrayList<>();
@@ -216,11 +216,11 @@ public class TableDetails {
     this.emulatorId = emulatorId;
   }
 
-  public Date getLastPlayed() {
+  public OffsetDateTime getLastPlayed() {
     return lastPlayed;
   }
 
-  public void setLastPlayed(Date lastPlayed) {
+  public void setLastPlayed(OffsetDateTime lastPlayed) {
     this.lastPlayed = lastPlayed;
   }
 
@@ -288,19 +288,19 @@ public class TableDetails {
     this.gameRating = gameRating;
   }
 
-  public Date getDateAdded() {
+  public OffsetDateTime getDateAdded() {
     return dateAdded;
   }
 
-  public void setDateAdded(Date dateAdded) {
+  public void setDateAdded(OffsetDateTime dateAdded) {
     this.dateAdded = dateAdded;
   }
 
-  public Date getDateModified() {
+  public OffsetDateTime getDateModified() {
     return dateModified;
   }
 
-  public void setDateModified(Date dateModified) {
+  public void setDateModified(OffsetDateTime dateModified) {
     this.dateModified = dateModified;
   }
 
@@ -373,7 +373,7 @@ public class TableDetails {
   }
 
   public void setTags(String tags) {
-    this.tags = TaggingUtil.merge(this.tags, tags);
+    this.tags = tags;
   }
 
   public String getAuthor() {
@@ -461,12 +461,12 @@ public class TableDetails {
     if (o == null || getClass() != o.getClass()) return false;
     TableDetails that = (TableDetails) o;
     //todo ignored dates because of different base objects
-    return sqlVersion == that.sqlVersion && emulatorId == that.emulatorId && status == that.status && mod == that.mod && Objects.equals(gameName, that.gameName) && Objects.equals(gameFileName, that.gameFileName) && Objects.equals(gameDisplayName, that.gameDisplayName) && Objects.equals(gameType, that.gameType) && Objects.equals(gameVersion, that.gameVersion) && Objects.equals(gameTheme, that.gameTheme) && Objects.equals(notes, that.notes) && Objects.equals(gameYear, that.gameYear) && Objects.equals(romName, that.romName) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(numberOfPlayers, that.numberOfPlayers) && Objects.equals(lastPlayed, that.lastPlayed) && Objects.equals(numberPlays, that.numberPlays) && Objects.equals(tags, that.tags) && Objects.equals(category, that.category) && Objects.equals(author, that.author) && Objects.equals(volume, that.volume) && Objects.equals(launchCustomVar, that.launchCustomVar) && Objects.equals(keepDisplays, that.keepDisplays) && Objects.equals(gameRating, that.gameRating) && Objects.equals(dof, that.dof) && Objects.equals(IPDBNum, that.IPDBNum) && Objects.equals(altRunMode, that.altRunMode) && Objects.equals(url, that.url) && Objects.equals(designedBy, that.designedBy) && Objects.equals(altLaunchExe, that.altLaunchExe) && Objects.equals(custom2, that.custom2) && Objects.equals(custom3, that.custom3) && Objects.equals(special, that.special) && Objects.equals(mediaSearch, that.mediaSearch) && Objects.equals(custom4, that.custom4) && Objects.equals(custom5, that.custom5) && Objects.equals(webGameId, that.webGameId) && Objects.equals(romAlt, that.romAlt) && Objects.equals(webLink2Url, that.webLink2Url) && Objects.equals(tourneyId, that.tourneyId) && Objects.equals(gDetails, that.gDetails) && Objects.equals(gNotes, that.gNotes) && Objects.equals(gLog, that.gLog) && Objects.equals(gPlayLog, that.gPlayLog) && Objects.equals(hsFilename, that.hsFilename) && Objects.equals(launcherList, that.launcherList);
+    return sqlVersion == that.sqlVersion && emulatorId == that.emulatorId && status == that.status && mod == that.mod && Objects.equals(gameName, that.gameName) && Objects.equals(gameFileName, that.gameFileName) && Objects.equals(gameDisplayName, that.gameDisplayName) && Objects.equals(gameType, that.gameType) && Objects.equals(gameVersion, that.gameVersion) && Objects.equals(gameTheme, that.gameTheme) && Objects.equals(notes, that.notes) && Objects.equals(gameYear, that.gameYear) && Objects.equals(romName, that.romName) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(numberOfPlayers, that.numberOfPlayers) && Objects.equals(lastPlayed, that.lastPlayed) && Objects.equals(numberPlays, that.numberPlays) && Objects.equals(tags, that.tags) && Objects.equals(category, that.category) && Objects.equals(author, that.author) && Objects.equals(volume, that.volume) && Objects.equals(launchCustomVar, that.launchCustomVar) && Objects.equals(keepDisplays, that.keepDisplays) && Objects.equals(gameRating, that.gameRating) && Objects.equals(dof, that.dof) && Objects.equals(IPDBNum, that.IPDBNum) && Objects.equals(altRunMode, that.altRunMode) && Objects.equals(url, that.url) && Objects.equals(designedBy, that.designedBy) && Objects.equals(altLaunchExe, that.altLaunchExe) && Objects.equals(custom2, that.custom2) && Objects.equals(custom3, that.custom3) && Objects.equals(special, that.special) && Objects.equals(mediaSearch, that.mediaSearch) && Objects.equals(custom4, that.custom4) && Objects.equals(custom5, that.custom5) && Objects.equals(webGameId, that.webGameId) && Objects.equals(romAlt, that.romAlt) && Objects.equals(webLink2Url, that.webLink2Url) && Objects.equals(tourneyId, that.tourneyId) && Objects.equals(extraDetails, that.extraDetails) && Objects.equals(extraNotes, that.extraNotes) && Objects.equals(extraLog, that.extraLog) && Objects.equals(extraPlayLog, that.extraPlayLog) && Objects.equals(hsFilename, that.hsFilename) && Objects.equals(launcherList, that.launcherList);
   }
 
   @Override
   public int hashCode() {
     //todo ignored dates because of different base objects
-    return Objects.hash(sqlVersion, emulatorId, status, gameName, gameFileName, gameDisplayName, gameType, gameVersion, gameTheme, notes, gameYear, romName, manufacturer, numberOfPlayers, lastPlayed, numberPlays, tags, category, author, volume, launchCustomVar, keepDisplays, gameRating, dof, IPDBNum, altRunMode, url, designedBy, altLaunchExe, custom2, custom3, special, mediaSearch, custom4, custom5, webGameId, romAlt, webLink2Url, tourneyId, mod, gDetails, gNotes, gLog, gPlayLog, hsFilename, launcherList);
+    return Objects.hash(sqlVersion, emulatorId, status, gameName, gameFileName, gameDisplayName, gameType, gameVersion, gameTheme, notes, gameYear, romName, manufacturer, numberOfPlayers, lastPlayed, numberPlays, tags, category, author, volume, launchCustomVar, keepDisplays, gameRating, dof, IPDBNum, altRunMode, url, designedBy, altLaunchExe, custom2, custom3, special, mediaSearch, custom4, custom5, webGameId, romAlt, webLink2Url, tourneyId, mod, extraDetails, extraNotes, extraLog, extraPlayLog, hsFilename, launcherList);
   }
 }

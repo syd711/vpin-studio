@@ -6,15 +6,15 @@ import de.mephisto.vpin.connectors.vps.matcher.TableMatcher;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
@@ -23,8 +23,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,6 +38,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,7 +190,7 @@ public class TableUploadController implements Initializable, DialogController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor("readme", stage, new MonitoredTextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new TextEditorFile(value), "README");
   }
 
   @FXML
@@ -260,7 +260,7 @@ public class TableUploadController implements Initializable, DialogController {
       if (!similar) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",
             "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
-        if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+        if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
           return false;
         }
       }
@@ -280,7 +280,7 @@ public class TableUploadController implements Initializable, DialogController {
         if (game != null) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Potential Table Match Found", "The selected file \"" + selection.getName() + "\" seems to match with the table \"" + game.getGameDisplayName() + "\".",
               "Would you like to proceed adding a new table?", "Yes, upload as new table");
-          if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+          if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
             return false;
           }
         }
@@ -350,12 +350,13 @@ public class TableUploadController implements Initializable, DialogController {
             }
 
             String analyzeVpx = uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPX);
-            String analyzeFpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT);
+            String analyzeVpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPT);
+            String _analyzeFpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT);
             subfolderCheckbox.setDisable(analyzeVpx != null);
 
             uploadBtn.setDisable(false);
             // If the analysis failed.
-            if (analyzeVpx != null && analyzeFpt != null) {
+            if (analyzeVpx != null && analyzeVpt != null && _analyzeFpt != null) {
               uploadBtn.setDisable(true);
               WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
               this.selection = null;
@@ -581,7 +582,7 @@ public class TableUploadController implements Initializable, DialogController {
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
-    emulatorRepresentation = gameEmulators.get(0);
+    emulatorRepresentation = gameEmulators.getFirst();
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulatorRepresentation);

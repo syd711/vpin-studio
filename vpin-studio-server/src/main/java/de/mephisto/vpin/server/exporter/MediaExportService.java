@@ -56,7 +56,7 @@ public class MediaExportService extends ExporterService {
             printer.printRecord(records);
           }
           catch (Exception e) {
-            LOG.error("Export failed for table \"" + game.getGameDisplayName() + "\":" + e.getMessage(), e);
+            LOG.error("Export failed for table \"{}\":{}", game.getGameDisplayName(), e.getMessage(), e);
           }
         }
       }
@@ -64,7 +64,7 @@ public class MediaExportService extends ExporterService {
       return builder.toString();
     }
     catch (Exception e) {
-      LOG.error("Failed to export media data: " + e.getMessage(), e);
+      LOG.error("Failed to export media data: {}", e.getMessage(), e);
       return "Failed to export media data: " + e.getMessage();
     }
   }

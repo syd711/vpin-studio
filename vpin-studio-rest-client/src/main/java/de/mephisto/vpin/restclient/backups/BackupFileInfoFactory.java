@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.backups;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

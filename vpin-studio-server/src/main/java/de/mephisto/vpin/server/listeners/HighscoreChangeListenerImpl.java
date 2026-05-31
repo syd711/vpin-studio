@@ -18,8 +18,8 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -95,7 +95,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
             discordCompetitionService.runDiscordServerUpdate(event.getGame(), event.getNewScore(), competition, competitionData);
           }
           else {
-            LOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
+            LOG.warn("Skipping Discord highscore update for {}, no or invalid competition data found.", competition.getName());
             SLOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
             competitionService.finishCompetition(competition);
           }
@@ -106,7 +106,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     //send the default message if no competition updates was sent
     if (!event.isInitialScore() && !event.isEventReplay()) {
       if (!StringUtils.isEmpty(raw)) {
-        LOG.info("Sending discord default notification for: " + game.getGameDisplayName());
+        LOG.info("Sending discord default notification for: {}", game.getGameDisplayName());
         SLOG.info("Sending discord default notification for: " + game.getGameDisplayName());
         discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(highscoreParsingService, event, raw));
       }

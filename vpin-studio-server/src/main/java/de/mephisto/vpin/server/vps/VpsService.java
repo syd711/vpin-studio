@@ -13,16 +13,19 @@ import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameDetails;
+import de.mephisto.vpin.server.games.GameDetailsRepositoryService;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.Version;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,8 +36,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -231,21 +234,21 @@ public class VpsService implements InitializingBean {
     return vpsDatabase.reload();
   }
 
-  public Date getChangeDate() {
+  public OffsetDateTime getChangeDate() {
     return vpsDatabase.getChangeDate();
   }
 
   private void applyVPSDiff(List<VpsDiffer> diff, List<Game> games) {
     for (VpsDiffer tableDiff : diff) {
       try {
-        List<Game> collect = games.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).collect(Collectors.toList());
+        List<Game> collect = games.stream().filter(g -> String.valueOf(g.getExtTableId()).equals(tableDiff.getId())).toList();
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(game.getId());
           if (gameDetails != null) {
             VPSChanges changes = tableDiff.getTableChanges();
             String json = changes.toJson();
             List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
-            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
+            LOG.info("Updating change list for \"{}\" ({} entries): {}", game.getGameDisplayName(), tableDiff.getChanges().getChanges().size(), String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
             gameDetailsRepositoryService.saveAndFlush(gameDetails);
             gameLifecycleService.notifyGameUpdated(game.getId());
@@ -253,7 +256,7 @@ public class VpsService implements InitializingBean {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to update game details for VPS changes: " + e.getMessage(), e);
+        LOG.error("Failed to update game details for VPS changes: {}", e.getMessage(), e);
       }
     }
   }
@@ -267,7 +270,7 @@ public class VpsService implements InitializingBean {
       return installer != null ? installer.login() : "Source not supported";
     }
     catch (IOException ioe) {
-      LOG.error("Check login for " + link + " failed, " + ioe.getMessage());
+      LOG.error("Check login for {} failed, {}", link, ioe.getMessage());
       return "Error while authenticating, please try again";
     }
   }
@@ -279,13 +282,13 @@ public class VpsService implements InitializingBean {
         LOG.info("Get all links for {}:", link);
         List<VpsInstallLink> links = installer.getInstallLinks(link);
         for (VpsInstallLink l : links) {
-          LOG.info("link " + l.getOrder() + ", " + l.getName() + " (" + l.getSize() + ")");
+          LOG.info("link {}, {} ({})", l.getOrder(), l.getName(), l.getSize());
         }
         return links;
       }
     }
     catch (IOException ioe) {
-      LOG.error("Couldn't get links for " + link + ", " + ioe.getMessage());
+      LOG.error("Couldn't get links for {}, {}", link, ioe.getMessage());
     }
     return new ArrayList<>();
   }
@@ -322,7 +325,7 @@ public class VpsService implements InitializingBean {
       this.vpsDatabase.reload();
     }
     catch (Exception e) {
-      LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
+      LOG.info("Failed to initialize VPS service: {}", e.getMessage(), e);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

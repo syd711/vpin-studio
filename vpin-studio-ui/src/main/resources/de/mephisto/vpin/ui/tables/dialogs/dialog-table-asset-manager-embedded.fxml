@@ -299,6 +299,9 @@
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
                            </graphic>
+                           <tooltip>
+                              <Tooltip text="Converts the selected media item, depending on its mime type" />
+                           </tooltip>
                         </MenuButton>
                         <Button fx:id="infoBtn" layoutX="407.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInfo" textFill="WHITE">
                            <font>

@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.*;
 
@@ -49,16 +50,16 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
             TableDetails manifest = VpxzArchiveUtil.readTableDetails(vpxzFile);
             if(manifest != null) {
               VPXZPackageInfo packageInfo = VpxzArchiveUtil.readPackageInfo(vpxzFile);
-              VPXZDescriptor descriptor = new VPXZDescriptor(source, manifest, packageInfo, new Date(vpxzFile.lastModified()), vpxzFile.getName(), vpxzFile.getAbsolutePath(), vpxzFile.length());
+              VPXZDescriptor descriptor = new VPXZDescriptor(source, manifest, packageInfo, Instant.ofEpochMilli(vpxzFile.lastModified()), vpxzFile.getName(), vpxzFile.getAbsolutePath(), vpxzFile.length());
               cache.add(descriptor);
             }
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + vpxzFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            LOG.error("Failed to read {}: {}", vpxzFile.getAbsolutePath(), e.getMessage(), e);
           }
         }
         if (!cache.isEmpty()) {
-          LOG.info("Loaded existing vpxz: {}, took " + (System.currentTimeMillis() - start) + "ms.", vpxzFiles.length);
+          LOG.info("Loaded existing vpxz: {}, took {}ms.", vpxzFiles.length, (System.currentTimeMillis() - start));
         }
       }
     }
@@ -74,9 +75,9 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
     if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
-      LOG.error("Failed moving file to trash: " + file.getAbsolutePath());
+      LOG.error("Failed moving file to trash: {}", file.getAbsolutePath());
       if (!file.delete()) {
-        LOG.error("Failed to delete " + file.getAbsolutePath());
+        LOG.error("Failed to delete {}", file.getAbsolutePath());
         return false;
       }
     }

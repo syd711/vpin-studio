@@ -31,7 +31,7 @@ public class FuturePinballResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.BAM_CFG.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.BAM_CFG.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.BAM_CFG + " upload failed: " + e.getMessage());
     }
     finally {
@@ -49,7 +49,7 @@ public class FuturePinballResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.FPL.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.FPL.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.FPL + " upload failed: " + e.getMessage());
     }
     finally {

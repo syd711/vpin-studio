@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,149 +23,150 @@ import de.mephisto.vpin.server.ipdb.IpdbSettings;
 import de.mephisto.vpin.server.ipdb.IpdbTable;
 
 /**
- * Small tool that takes a folder, match all filenames against VPS database 
+ * Small tool that takes a folder, match all filenames against VPS database
  * and proper rename all files, adding a number when several files for same table
  */
 public class MediaRenamer {
 
-	private final static Logger LOG = LoggerFactory.getLogger(MediaRenamer.class);
+  private final static Logger LOG = LoggerFactory.getLogger(MediaRenamer.class);
 
   public static void main(String[] args) throws Exception {
 
-	// adjust here !
-	Path path = Path.of("D:/Pincab Assets/_LOGO");
-	Path target = Path.of("D:/Pincab Assets/_LOGO2");
+    // adjust here !
+    Path path = Path.of("D:/Pincab Assets/_LOGO");
+    Path target = Path.of("D:/Pincab Assets/_LOGO2");
 
-	MediaRenamer renamer = new MediaRenamer();
-	renamer.renameAll(path, target, false);
+    MediaRenamer renamer = new MediaRenamer();
+    renamer.renameAll(path, target, false);
   }
 
   public void renameAll(Path path, Path target, boolean addExtras) {
 
-		VpsAutomatcher automatcher = new VpsAutomatcher(null);
+    VpsAutomatcher automatcher = new VpsAutomatcher(null);
 
-		// USE ONE DATABASE OR ANOTHER
-		boolean useIpdb = false;
+    // USE ONE DATABASE OR ANOTHER
+    boolean useIpdb = false;
 
-		final Function<TableNameParts, String> finder;
-		if (useIpdb) {
-			//FIXME Move in preferences
-			IpdbSettings settings = new IpdbSettings();
-			settings.setLogin("xxxx");
-			settings.setPassword("xxxx");
-			finder = useIpdb(settings);
-		}
-		else {
-			finder = useVPS(automatcher);
-		}
+    final Function<TableNameParts, String> finder;
+    if (useIpdb) {
+      //FIXME Move in preferences
+      IpdbSettings settings = new IpdbSettings();
+      settings.setLogin("xxxx");
+      settings.setPassword("xxxx");
+      finder = useIpdb(settings);
+    }
+    else {
+      finder = useVPS(automatcher);
+    }
 
-		StringBuilder undo = new StringBuilder();
-		try {
-			Files.list(path)
-				.filter(p -> !Files.isDirectory(p) )
-				.forEach(p -> {
-					String filename = FilenameUtils.getBaseName(p.getFileName().toString());
-					TableNameParts parts = automatcher.parseFilename(filename);
-					String name = finder.apply(parts);
-					
-					if (name != null) {
-						name = StringUtils.replace(name, "\"", "");
-						name = StringUtils.replace(name, "/", "-");
-						name = StringUtils.replace(name, ":", "-");
+    StringBuilder undo = new StringBuilder();
+    try {
+      Files.list(path)
+          .filter(p -> !Files.isDirectory(p))
+          .forEach(p -> {
+            String filename = FilenameUtils.getBaseName(p.getFileName().toString());
+            TableNameParts parts = automatcher.parseFilename(filename);
+            String name = finder.apply(parts);
 
-						renameToTable(p, target, path.relativize(p), name, parts, addExtras, undo);
-					}
-					else {
-						LOG.warn(" >>> No Match for " + p.getFileName());
-					}
-				});
+            if (name != null) {
+              name = Strings.CI.replace(name, "\"", "");
+              name = Strings.CI.replace(name, "/", "-");
+              name = Strings.CI.replace(name, ":", "-");
 
-			}
-		catch(IOException ioe) {
-			LOG.error("Error while listing files of " + path, ioe);
-		}
-		finally {
-			Path undotxt = path.resolve("undo.txt");
-			try {
-				Files.writeString(undotxt, undo);
-			}
-			catch (IOException ioe) {
-			}
-		}
-	}	
+              renameToTable(p, target, path.relativize(p), name, parts, addExtras, undo);
+            }
+            else {
+              LOG.warn(" >>> No Match for {}", p.getFileName());
+            }
+          });
 
-	//--------------------------
+    }
+    catch (IOException ioe) {
+      LOG.error("Error while listing files of {}", path, ioe);
+    }
+    finally {
+      Path undotxt = path.resolve("undo.txt");
+      try {
+        Files.writeString(undotxt, undo);
+      }
+      catch (IOException ioe) {
+      }
+    }
+  }
 
-	public Function<TableNameParts, String> useIpdb(IpdbSettings settings) {
-		IpdbDatabase db = new IpdbDatabase(settings);
-  	db.reload();
+  //--------------------------
 
-		return parts -> {
-			List<IpdbTable> tables = db.find(parts.getTableName());
-			if (tables.size() == 1) {
-				IpdbTable table = tables.get(0);
-				return table.getDisplayName();
-			}
-			else {
-				return null;
-			}
-		};
-	}
+  public Function<TableNameParts, String> useIpdb(IpdbSettings settings) {
+    IpdbDatabase db = new IpdbDatabase(settings);
+    db.reload();
 
-	public Function<TableNameParts, String> useVPS(VpsAutomatcher automatcher) {
-		VPS vpsDatabase = new VPS();
-  	vpsDatabase.reload();
+    return parts -> {
+      List<IpdbTable> tables = db.find(parts.getTableName());
+      if (tables.size() == 1) {
+        IpdbTable table = tables.getFirst();
+        return table.getDisplayName();
+      }
+      else {
+        return null;
+      }
+    };
+  }
 
-		return parts -> {
-			VpsTable table = automatcher.autoMatch(vpsDatabase, parts);
-			return table != null ? table.getDisplayName() : null;
-		};
-	}
+  public Function<TableNameParts, String> useVPS(VpsAutomatcher automatcher) {
+    VPS vpsDatabase = new VPS();
+    vpsDatabase.reload();
 
-	//--------------------------
+    return parts -> {
+      VpsTable table = automatcher.autoMatch(vpsDatabase, null, parts);
+      return table != null ? table.getDisplayName() : null;
+    };
+  }
 
-	/**
-	 * Rename 
-	 * @param p The file that comes from the folder 
-	 * @param table The closest table
-	 */
-	protected void renameToTable(Path p, Path target, Path relativePath, String tableName, TableNameParts parts, boolean addExtras, StringBuilder undo) {
+  //--------------------------
 
-		String subfolder = relativePath.toFile().getParent();
-		String ext = StringUtils.substringAfterLast(relativePath.toString(), ".").toLowerCase();
-		
-		LOG.info("Match " + relativePath.getFileName() + " with " + tableName);
+  /**
+   * Rename
+   *
+   * @param p     The file that comes from the folder
+   * @param - table The closest table
+   */
+  protected void renameToTable(Path p, Path target, Path relativePath, String tableName, TableNameParts parts, boolean addExtras, StringBuilder undo) {
 
-		String fileName = tableName;
-		if (addExtras && StringUtils.isNotEmpty(parts.getExtra())) {
-			fileName += " " + parts.getExtra();
-		}
-		
-		fileName = fileName.trim() + "." + ext;
+    String subfolder = relativePath.toFile().getParent();
+    String ext = StringUtils.substringAfterLast(relativePath.toString(), ".").toLowerCase();
 
-		fileName = StringUtils.replace(fileName, "\\", "-");
-		fileName = StringUtils.replace(fileName, "/", "-");
-		fileName = StringUtils.replace(fileName, ":", "-");
+    LOG.info("Match {} with {}", relativePath.getFileName(), tableName);
 
-		Path newPath = target;
-		if (subfolder != null) {
-			newPath = newPath.resolve(subfolder);
-		}
-		newPath = newPath.resolve(fileName);
+    String fileName = tableName;
+    if (addExtras && StringUtils.isNotEmpty(parts.getExtra())) {
+      fileName += " " + parts.getExtra();
+    }
 
-		File newFile = FileUtils.uniqueAsset(newPath.toFile());
-		newPath = newFile.toPath();
+    fileName = fileName.trim() + "." + ext;
 
-		// don't rename if same file
-		if (!p.equals(newPath)) {
-			try {
-				Files.createDirectories(newPath.getParent());
-				Files.move(p, newPath);
-				undo.append("mv \"").append(newPath.toAbsolutePath()).append("\" \"").append(p.toAbsolutePath()).append("\";\n");
-			}
-			catch (IOException ioe) {
-				LOG.error("Cannot move file " + p.toString(), ioe);
-			}
-		}
-	}
+    fileName = Strings.CI.replace(fileName, "\\", "-");
+    fileName = Strings.CI.replace(fileName, "/", "-");
+    fileName = Strings.CI.replace(fileName, ":", "-");
+
+    Path newPath = target;
+    if (subfolder != null) {
+      newPath = newPath.resolve(subfolder);
+    }
+    newPath = newPath.resolve(fileName);
+
+    File newFile = FileUtils.uniqueAsset(newPath.toFile());
+    newPath = newFile.toPath();
+
+    // don't rename if same file
+    if (!p.equals(newPath)) {
+      try {
+        Files.createDirectories(newPath.getParent());
+        Files.move(p, newPath);
+        undo.append("mv \"").append(newPath.toAbsolutePath()).append("\" \"").append(p.toAbsolutePath()).append("\";\n");
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot move file {}", p.toString(), ioe);
+      }
+    }
+  }
 }

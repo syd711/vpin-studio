@@ -16,10 +16,10 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
       "Hooks",
       "NvRams",
       "PinVol",
-      "Backglass",
+      "Backglasses",
       "Discord",
       "Image",
-      "GamesCache",
+      "Game Details",
       "Games",
       "System",
       "Mame",
@@ -29,7 +29,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
       "Emulator"
   };
   private final static String[] RELOADGAMES_CACHES_WITH_MAME = {
-      "PinVol", "Frontend", "Games", "GamesCache", "Mame", "Dmd", "System"
+      "PinVol", "Frontend", "Games", "Game Details", "Mame", "Dmd", "System"
   };
   private final static String[] RELOADGAMES_CACHES = {
       "PinVol", "Frontend", "Games", "Dmd", "System"
@@ -111,7 +111,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
         case "PinVol":
           client.getPinVolService().clearCache();
           break;
-        case "backglass":
+        case "Backglasses":
           client.getBackglassServiceClient().clearCache();
           break;
         case "Discord":
@@ -129,7 +129,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
           }
           break;
         }
-        case "GamesCache": {
+        case "Game Details": {
           if(emulatorId == TableOverviewController.ALL_VPX_ID) {
             client.getGameService().reload();
           }

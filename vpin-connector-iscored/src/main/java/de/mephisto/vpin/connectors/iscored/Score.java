@@ -1,23 +1,20 @@
 package de.mephisto.vpin.connectors.iscored;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.util.Date;
+import java.time.Instant;
 
 public class Score {
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-  private Date date;
+  private Instant date;
   private String game;
   private int losses;
   private String name;
   private long score;
   private int wins;
 
-  public Date getDate() {
+  public Instant getDate() {
     return date;
   }
 
-  public void setDate(Date date) {
+  public void setDate(Instant date) {
     this.date = date;
   }
 

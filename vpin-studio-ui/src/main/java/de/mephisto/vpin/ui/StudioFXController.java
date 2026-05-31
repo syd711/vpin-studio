@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.scene.input.KeyEvent;
 
 

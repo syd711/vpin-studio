@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.util;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -29,15 +27,14 @@ public class VPXFileScannerTest {
 
   @Test
   public void testScan() throws IOException {
-
-    if(folder.exists()) {
+    if (folder.exists()) {
       StringBuilder bld = new StringBuilder();
       try (Stream<Path> walkStream = Files.walk(folder.toPath())) {
         walkStream
-          .filter(p -> p.getFileName().toString().endsWith("vpx"))
-          .forEach(p -> {
-            doScan(bld, p);
-          });
+            .filter(p -> p.getFileName().toString().endsWith("vpx"))
+            .forEach(p -> {
+              doScan(bld, p);
+            });
       }
 
       try (InputStream in = getClass().getResourceAsStream("scanresult.txt")) {
@@ -45,6 +42,18 @@ public class VPXFileScannerTest {
         expected = StringUtils.remove(expected, '\r');
         assertEquals(expected, bld.toString());
       }
+    }
+  }
+
+  @Test
+  public void testExternal() {
+    File file = new File("C:/temp/Dark Crystal Pup.vpx");
+    File scriptsFolder = new File("C:\\vPinball\\VisualPinball\\Scripts");
+
+    if (file.exists() && scriptsFolder.exists()) {
+      ScanResult scan = VPXFileScanner.scan(file, scriptsFolder);
+      assertNotNull(scan);
+      System.out.println(scan.getAssets());
     }
   }
 
@@ -73,7 +82,7 @@ public class VPXFileScannerTest {
   }
 
   private void logScan(StringBuilder bld, Path p, String name, String newWay) {
-    bld.append(/*"For " + p.toString() + ", " +*/ name +  " = " + newWay).append("\n");
+    bld.append(/*"For " + p.toString() + ", " +*/ name + " = " + newWay).append("\n");
   }
 
   @Test
@@ -83,7 +92,7 @@ public class VPXFileScannerTest {
     //File f = new File(folder,"Austin Powers (Stern 2001).vpx");
     //File f = new File(folder,"Batman (Data East 1991).vpx");
 
-    if(f.exists()) {
+    if (f.exists()) {
       ScanResult scan = VPXFileScanner.scan(f, scripts);
 //      assertTrue(scan.isFoundControllerStop());
       assertNotNull(scan.getRom());

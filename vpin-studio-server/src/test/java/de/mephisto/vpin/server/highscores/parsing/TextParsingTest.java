@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,10 +34,11 @@ public class TextParsingTest extends AbstractVPinServerTest {
       String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
       assertNull(highscoreMetadata.getStatus());
       if (raw != null) {
-        List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, null, -1);
+        Instant date = Instant.ofEpochMilli(entry.length());
+        List<Score> scores = highscoreParsingService.parseScores(date, raw, null, -1);
         assertNotNull(scores, "Reading failed for " + entry);
         assertFalse(scores.isEmpty(), "No score entry found for " + entry);
-        assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);
+        assertNotNull(scores.getFirst().getPlayerInitials(), "No score initials found for " + entry);
         assertNull(highscoreMetadata.getStatus());
       }
     }
@@ -57,10 +58,11 @@ public class TextParsingTest extends AbstractVPinServerTest {
         String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
         assertNull(highscoreMetadata.getStatus());
         if (raw != null) {
-          List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, null, -1);
+          Instant date = Instant.ofEpochMilli(entry.lastModified());
+          List<Score> scores = highscoreParsingService.parseScores(date, raw, null, -1);
           assertNotNull(scores, "Reading failed for " + entry);
           assertFalse(scores.isEmpty(), "No score entry found for " + entry);
-          assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);
+          assertNotNull(scores.getFirst().getPlayerInitials(), "No score initials found for " + entry);
           assertNull(highscoreMetadata.getStatus());
         }
         break;

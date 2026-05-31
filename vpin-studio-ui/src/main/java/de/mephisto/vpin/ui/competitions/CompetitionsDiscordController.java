@@ -5,16 +5,18 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
@@ -46,7 +48,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,6 +146,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   private WaitOverlayController loaderController;
 
   private long discordBotId;
+  private final Map<String, String> playerNameCache = new HashMap<>();
 
   // Add a public no-args constructor
   public CompetitionsDiscordController() {
@@ -176,11 +181,11 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", Arrays.asList(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", List.of(c)));
         Platform.runLater(() -> {
           Platform.runLater(() -> {
             onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
           });
         });
       }
@@ -199,10 +204,10 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", Arrays.asList(c)));
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", List.of(c)));
           Platform.runLater(() -> {
             onReload();
-            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+            tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
           });
         }
         catch (Exception e) {
@@ -227,9 +232,9 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     CompetitionRepresentation c = CompetitionDialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", Arrays.asList(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", List.of(c)));
         onReload();
-        tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
+        tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
@@ -353,6 +358,17 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
+      playerNameCache.clear();
+      for (CompetitionRepresentation c : competitions) {
+        if (!StringUtils.isEmpty(c.getWinnerInitials())) {
+          String key = c.getDiscordServerId() + ":" + c.getWinnerInitials();
+          if (!playerNameCache.containsKey(key)) {
+            PlayerRepresentation player = client.getPlayerService().getPlayer(c.getDiscordServerId(), c.getWinnerInitials());
+            playerNameCache.put(key, player != null ? player.getName() : c.getWinnerInitials());
+          }
+        }
+      }
+
       Platform.runLater(() -> {
         competitionWidget.setVisible(true);
         if (competitions.isEmpty()) {
@@ -386,7 +402,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
+    NavigationController.setBreadCrumb(List.of("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
     try {
@@ -521,16 +537,18 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       return new SimpleObjectProperty(label);
     });
 
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault());
+
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getStartDate()));
+      Label label = new Label(dateTimeFormatter.format(value.getStartDate()));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateFormat.getDateTimeInstance().format(value.getEndDate()));
+      Label label = new Label(dateTimeFormatter.format(value.getEndDate()));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -540,11 +558,8 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       String winner = "-";
 
       if (!StringUtils.isEmpty(value.getWinnerInitials())) {
-        winner = value.getWinnerInitials();
-        PlayerRepresentation player = client.getPlayerService().getPlayer(value.getDiscordServerId(), value.getWinnerInitials());
-        if (player != null) {
-          winner = player.getName();
-        }
+        String key = value.getDiscordServerId() + ":" + value.getWinnerInitials();
+        winner = playerNameCache.getOrDefault(key, value.getWinnerInitials());
       }
       return new SimpleObjectProperty(winner);
     });

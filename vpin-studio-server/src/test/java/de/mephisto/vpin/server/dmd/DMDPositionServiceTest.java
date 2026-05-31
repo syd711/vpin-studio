@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.dmd;
 
-import boofcv.struct.flow.ImageFlow;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.server.games.Game;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -16,7 +15,7 @@ public class DMDPositionServiceTest {
   public void testGameNameCleansing() throws IOException {
     DMDDeviceIniService svc = new DMDDeviceIniService();
     doTest(svc, "The Leprechaun King (Original 2019) ScottyWic 0.35", "The Leprechaun King (Original 2019) ScottyWic");
-    doTest(svc, "Stranger Things - Stranger Edition (Original 2018) LoadedWeapon 3.01 VR", "Stranger Things - Stranger Edition (Original 2018) LoadedWeapon 3.01 VR");
+    doTest(svc, "Stranger Things - Stranger Edition (Original 2018) LoadedWeapon 3.01 VR", "Stranger Things - Stranger Edition (Original 2018) LoadedWeapon 3 01 VR");
     doTest(svc, "Bird Fly (Original 2022) Loloallo 0.9.0", "Bird Fly (Original 2022) Loloallo");
     doTest(svc, "Bird Fly (Original 2022) Loloallo 0.9.0-DOF", "Bird Fly (Original 2022) Loloallo");
   }

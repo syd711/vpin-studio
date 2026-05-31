@@ -19,7 +19,7 @@ public class MediaUploaderColumnSorter implements BaseColumnSorter<MediaUploadAr
   public Comparator<MediaUploadArchiveItem> buildComparator(TableView<MediaUploadArchiveItem> tableView) {
     Comparator<MediaUploadArchiveItem> comp = null;
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<MediaUploadArchiveItem, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<MediaUploadArchiveItem, ?> column = tableView.getSortOrder().getFirst();
 
       if (column.equals(mediaUploadController.columnAssetType)) {
         comp = Comparator.comparing(o -> o.getAssetType());

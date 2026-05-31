@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -43,6 +44,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -280,7 +282,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         if (tableData != null) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
+            boolean b = client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
+            if(!b) {
+              WidgetFactory.showAlert(Studio.stage, "Error", "Backglass deletion failed, check log file for details.");
+            }
+            client.getBackglassServiceClient().clearCache();
             EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
           }
         }
@@ -327,6 +333,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         }
       }
     });
+    dmdPositionBtn.managedProperty().bindBidirectional(dmdPositionBtn.visibleProperty());
 
 
     Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
@@ -565,9 +572,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     directB2SCombo.setItems(FXCollections.emptyObservableList());
 
-    deleteBtn.setDisable(!g.isPresent() || !directb2sAvailable);
-    dmdPositionBtn.setDisable(!g.isPresent() || !directb2sAvailable);
-    backglassManagerBtn.setDisable(!g.isPresent() || !directb2sAvailable);
+    deleteBtn.setDisable(g.isEmpty() || !directb2sAvailable);
+    dmdPositionBtn.setDisable(g.isEmpty() || !directb2sAvailable);
+    backglassManagerBtn.setDisable(g.isEmpty() || !directb2sAvailable);
 
     versionSelectorPane.setVisible(directb2sAvailable);
 
@@ -576,7 +583,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         noneActiveInfo.setVisible(false);
         directB2SCombo.setItems(FXCollections.observableList(g.get().getDirectB2SVersions()));
 
-        nameLabel.setText(tableData.getName());
+        GameRepresentation game = g.get();
+          GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+          dmdPositionBtn.setVisible(emulatorRepresentation.isVpxEmulator());nameLabel.setText(tableData.getName());
         typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
         authorLabel.setText(tableData.getAuthor());
         artworkLabel.setText(tableData.getArtwork());
@@ -585,7 +594,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
         filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
         bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-        modificationDateLabel.setText(tableData.getModificationDate() != null ? SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()) : "");
+        modificationDateLabel.setText(tableData.getModificationDate() != null ? SimpleDateFormat.getDateTimeInstance().format(Date.from(tableData.getModificationDate())) : "");
 
         hideGrill.setDisable(tableData.getGrillHeight() == 0);
 

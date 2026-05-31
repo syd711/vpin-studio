@@ -27,18 +27,18 @@ public class VpxScriptOptionsService {
   /* VPX uses TableOption to store data (not TableOptions) */
   static final String INI_SECTION = "TableOption";
 
-    private static final Pattern OPTION_PATTERN = Pattern.compile(
-            "^[^'\n]*\\w+\\.Option\\s*\\(\\s*" +
-                    "\"([^\"]+)\"\\s*,\\s*" +
-                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                    "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
-                    "([01])" +
-                    "(?:\\s*,\\s*Array\\s*\\((.*?)\\))?" +
-                    "\\s*\\)",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
-    );
+  private static final Pattern OPTION_PATTERN = Pattern.compile(
+      "^[^'\n]*\\w+\\.Option\\s*\\(\\s*" +
+          "\"([^\"]+)\"\\s*,\\s*" +
+          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+          "([+-]?[\\d]*\\.?[\\d]+(?:[eE][+-]?[\\d]+)?)\\s*,\\s*" +
+          "([01])" +
+          "(?:\\s*,\\s*Array\\s*\\((.*?)\\))?" +
+          "\\s*\\)",
+      Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
+  );
 
   private static final Pattern ARRAY_STRING_PATTERN = Pattern.compile("\"([^\"]+)\"");
 
@@ -84,20 +84,18 @@ public class VpxScriptOptionsService {
     try {
       INIConfiguration ini = loadOrCreateIni(iniFile);
 
- /*Clear the section first*/
-        ini.clearTree(INI_SECTION);
+      /*Clear the section first*/
+      ini.clearTree(INI_SECTION);
 
-/*Sort (VPX writes alphabetically, let's match) */
-        List<TableScriptOption> sorted = new ArrayList<>(options);
-        sorted.sort(Comparator.comparing(TableScriptOption::getName, String.CASE_INSENSITIVE_ORDER));
+      /*Sort (VPX writes alphabetically, let's match) */
+      List<TableScriptOption> sorted = new ArrayList<>(options);
+      sorted.sort(Comparator.comparing(TableScriptOption::getName, String.CASE_INSENSITIVE_ORDER));
 
-        for (TableScriptOption option : sorted) {
-            ini.setProperty(INI_SECTION + "." + option.getName(), formatValue(option.getCurrentValue()));
-        }
-
-      try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8))) {
-        ini.write(writer);
+      for (TableScriptOption option : sorted) {
+        ini.setProperty(INI_SECTION + "." + option.getName(), formatValue(option.getCurrentValue()));
       }
+
+      writeIni(ini, iniFile);
 
       LOG.info("saveOptions: saved {} options for game {} to {}", options.size(), gameId, iniFile);
       return true;
@@ -202,8 +200,33 @@ public class VpxScriptOptionsService {
     return ini;
   }
 
-    private String formatValue(double value) {
-     /* Formatted to match how VPX writes the options */
-        return String.format("%.6f", value);
+  private void writeIni(INIConfiguration ini, File iniFile) throws IOException {
+    try (PrintWriter pw = new PrintWriter(new BufferedWriter(
+        new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8)))) {
+      // Write global (sectionless) properties — INIConfiguration.write() NPEs on null section names
+      SubnodeConfiguration global = ini.getSection(null);
+      if (global != null) {
+        java.util.Iterator<String> keys = global.getKeys();
+        while (keys.hasNext()) {
+          String key = keys.next();
+          pw.println(key + " = " + global.getProperty(key));
+        }
+      }
+      for (String section : ini.getSections()) {
+        if (section == null) continue;
+        pw.println("[" + section + "]");
+        SubnodeConfiguration sectionConf = ini.getSection(section);
+        java.util.Iterator<String> keys = sectionConf.getKeys();
+        while (keys.hasNext()) {
+          String key = keys.next();
+          pw.println(key + " = " + sectionConf.getProperty(key));
+        }
+      }
     }
+  }
+
+  private String formatValue(double value) {
+    /* Formatted to match how VPX writes the options */
+    return String.format("%.6f", value).replaceAll(",", ".");
+  }
 }

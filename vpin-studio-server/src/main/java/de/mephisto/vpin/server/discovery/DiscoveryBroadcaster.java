@@ -11,6 +11,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class DiscoveryBroadcaster implements InitializingBean {
@@ -19,6 +21,7 @@ public class DiscoveryBroadcaster implements InitializingBean {
 
   private Thread thread;
   private boolean shouldRun = false;
+  private final Set<String> failedAddresses = new HashSet<>();
 
   public DiscoveryBroadcaster(PreferencesService preferencesService) {
     this.preferencesService = preferencesService;
@@ -56,6 +59,7 @@ public class DiscoveryBroadcaster implements InitializingBean {
     }
 
     shouldRun = true;
+    failedAddresses.clear();
 
     LOG.info("Starting {} thread", DiscoveryBroadcaster.class.getName());
 
@@ -120,13 +124,19 @@ public class DiscoveryBroadcaster implements InitializingBean {
   }
 
   protected void sendPacket(DatagramSocket socket, DatagramPacket packet, InetAddress address) {
+    String key = address.toString();
+    if (failedAddresses.contains(key)) {
+      return;
+    }
+
     packet.setAddress(address);
 
     try {
       socket.send(packet);
     }
     catch (Exception e) {
-      LOG.error("Unable to broadcast for {} on {}.", DiscoveryBroadcaster.class.getName(), address);
+      LOG.warn("Unable to broadcast for {} on {} — skipping this address in future iterations.", DiscoveryBroadcaster.class.getName(), address);
+      failedAddresses.add(key);
     }
   }
 

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 public class GithubUtil {
@@ -11,7 +12,7 @@ public class GithubUtil {
 
   public static String checkForUpdate(String referenceVersion, String latestReleaseUrl) {
     try {
-      URL obj = new URL(latestReleaseUrl);
+      URL obj = URI.create(latestReleaseUrl).toURL();
       HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
       conn.setInstanceFollowRedirects(true);
       HttpURLConnection.setFollowRedirects(true);
@@ -24,11 +25,11 @@ public class GithubUtil {
       String s = conn.getURL().toString();
       String versionSegment = s.substring(s.lastIndexOf("/") + 1);
       if (!referenceVersion.equalsIgnoreCase(versionSegment)) {
-        LOG.info("Found version diff: " + referenceVersion + " => " + versionSegment);
+        LOG.info("Found version diff: {} => {}", referenceVersion, versionSegment);
         return versionSegment;
       }
     } catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage());
+      LOG.error("Update check failed: {}", e.getMessage());
     }
     return null;
   }

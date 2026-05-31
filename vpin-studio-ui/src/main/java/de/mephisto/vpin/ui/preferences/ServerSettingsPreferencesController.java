@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -14,10 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -25,9 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -35,6 +35,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class ServerSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ServerSettingsPreferencesController.class);
+
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private Label startupTimeLabel;
@@ -76,6 +78,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private ComboBox<String> patchVersionCombo;
 
   @FXML
+  private Spinner<Integer> startupDelaySpinner;
+
+  @FXML
   private VBox popperDataMappingFields;
 
   @FXML
@@ -106,10 +111,10 @@ public class ServerSettingsPreferencesController implements Initializable {
       try {
         String backup = client.getSystemService().backupSystem();
         if (backup != null) {
-          String name = "VPin-Studio-Backup[" + new SimpleDateFormat("yyyy-MM-dd--HH-mm").format(new Date()) + "].json";
+          String name = "VPin-Studio-Backup[" + DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm").format(OffsetDateTime.now()) + "].json";
           File file = new File(selection, name);
           FileOutputStream fileOutputStream = new FileOutputStream(file);
-          IOUtils.write(backup, fileOutputStream);
+          IOUtils.write(backup, fileOutputStream, StandardCharsets.UTF_8);
           LOG.info("Written backup file {}", file.getAbsolutePath());
           fileOutputStream.close();
           WidgetFactory.showInformation(Studio.stage, "Backup Finished", "Written backup file \"" + file.getAbsolutePath() + "\".");
@@ -140,8 +145,8 @@ public class ServerSettingsPreferencesController implements Initializable {
     launchOnExitOption.setVisible(Features.MEDIA_ENABLED);
     launchFrontendCheckbox.setText("Launch " + frontend.getName() + " on maintenance exit.");
 
-    Date startupTime = client.getSystemService().getStartupTime();
-    startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
+    OffsetDateTime startupTime = client.getSystemService().getStartupTime();
+    startupTimeLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -155,7 +160,7 @@ public class ServerSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
-    List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM3", "CUSTOM4", "CUSTOM5");
     mappingVpsTableIdCombo.setItems(FXCollections.observableList(tableIdFields));
     mappingVpsTableIdCombo.setValue(serverSettings.getMappingVpsTableId());
     mappingVpsTableIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -210,6 +215,16 @@ public class ServerSettingsPreferencesController implements Initializable {
     uploadTableBackups.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(serverSettings);
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 120, 0);
+    factory.setValue(serverSettings.getStartupDelay());
+    startupDelaySpinner.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("startupDelaySpinner", () -> {
+        serverSettings.setStartupDelay(t1);
+        client.getPreferenceService().setJsonPreference(serverSettings);
+      }, 100);
     });
   }
 }

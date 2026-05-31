@@ -11,6 +11,8 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -152,7 +155,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
     String title = "Restore " + this.backupDescriptors.size() + " Tables?";
     if (this.backupDescriptors.size() == 1) {
-      title = "Restore \"" + this.backupDescriptors.get(0).getTableDetails().getGameDisplayName() + "\"?";
+      title = "Restore \"" + this.backupDescriptors.getFirst().getTableDetails().getGameDisplayName() + "\"?";
     }
     titleLabel.setText(title);
 
@@ -189,7 +192,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithoutAllVpx(uiSettings);
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
-    this.emulatorCombo.setValue(data.get(0));
+    this.emulatorCombo.setValue(data.getFirst());
 
 
     frontendColumn.managedProperty().bindBidirectional(frontendColumn.visibleProperty());
@@ -198,6 +201,22 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
 
     frontendColumn.setVisible(!Features.IS_STANDALONE);
     refreshImportsSelection(backupSettings);
+
+    if (backupSettings.getEmulatorId() > 0) {
+      Optional<GameEmulatorRepresentation> first = emulators.stream().filter(e -> e.getId() == backupSettings.getEmulatorId()).findFirst();
+      if (first.isPresent()) {
+        emulatorCombo.setValue(first.get());
+      }
+    }
+    emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+        if (newValue != null) {
+          backupSettings.setEmulatorId(newValue.getId());
+          client.getPreferenceService().setJsonPreference(backupSettings);
+        }
+      }
+    });
 
     directb2sCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       backupSettings.setDirectb2s(newValue);

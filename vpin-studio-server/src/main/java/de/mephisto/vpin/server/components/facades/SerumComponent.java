@@ -2,24 +2,26 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
-import de.mephisto.vpin.server.mame.MameService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class SerumComponent implements ComponentFacade {
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @NonNull
   @Override
@@ -41,15 +43,15 @@ public class SerumComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    return mameService.getMameFolder();
+    return vPinMameService.getMameFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate() {
-    File testExe = new File(mameService.getMameFolder(), "serum_test.exe");
+  public OffsetDateTime getModificationDate() {
+    File testExe = new File(vPinMameService.getMameFolder(), "serum_test.exe");
     if (testExe.exists()) {
-      return new Date(testExe.lastModified());
+      return OffsetDateTime.ofInstant(Instant.ofEpochMilli(testExe.lastModified()), ZoneId.systemDefault());
     }
     return null;
   }

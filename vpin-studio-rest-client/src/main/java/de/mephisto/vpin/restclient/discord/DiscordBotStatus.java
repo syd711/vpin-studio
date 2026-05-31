@@ -1,9 +1,12 @@
 package de.mephisto.vpin.restclient.discord;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DiscordBotStatus {
   private long botId;
   private String name;
-  private String botInitials;
+  private List<String> botInitials = new ArrayList<>();
   private boolean validDefaultChannel;
   private boolean canManageCategories;
   private long serverId;
@@ -50,11 +53,11 @@ public class DiscordBotStatus {
     this.serverId = serverId;
   }
 
-  public String getBotInitials() {
+  public List<String> getBotInitials() {
     return botInitials;
   }
 
-  public void setBotInitials(String botInitials) {
+  public void setBotInitials(List<String> botInitials) {
     this.botInitials = botInitials;
   }
 

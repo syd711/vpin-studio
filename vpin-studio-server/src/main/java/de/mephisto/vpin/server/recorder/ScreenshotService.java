@@ -22,8 +22,8 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +75,9 @@ public class ScreenshotService {
 
   private String lastScreenShotId = null;
 
-  public InputStream takeScreenshot() {
+  public InputStream takeScreenshot(boolean rotateMain) {
     try {
-      BufferedImage bufferedImage = takeMonitorsScreenshots();
+      BufferedImage bufferedImage = takeMonitorsScreenshots(rotateMain);
       byte[] bytes = toBytes(bufferedImage);
       return new ByteArrayInputStream(bytes);
     }
@@ -87,10 +87,10 @@ public class ScreenshotService {
     return new ByteArrayInputStream(new byte[]{});
   }
 
-  public String screenshot() {
+  public String screenshot(boolean rotateMain) {
     lastScreenShotId = UUID.randomUUID().toString();
 
-    BufferedImage bufferedImage = takeMonitorsScreenshots();
+    BufferedImage bufferedImage = takeMonitorsScreenshots(rotateMain);
     //return as fast as possible to speed up pause menu show
     new Thread(() -> {
       try {
@@ -190,7 +190,7 @@ public class ScreenshotService {
 
     for (File screenshotFile : screenshotFiles) {
       if (!screenshotFile.delete()) {
-        LOG.warn("Failed to delete temporary screenshot file " + screenshotFile.getAbsolutePath());
+        LOG.warn("Failed to delete temporary screenshot file {}", screenshotFile.getAbsolutePath());
       }
       else {
         LOG.info("Delete temporary screenshot {}", screenshotFile.getAbsolutePath());
@@ -233,7 +233,7 @@ public class ScreenshotService {
           file.renameTo(target);
 
           screenshotFiles.add(target);
-          LOG.info("Written screenshot " + target.getAbsolutePath());
+          LOG.info("Written screenshot {}", target.getAbsolutePath());
         }
       }
       catch (Exception e) {
@@ -245,7 +245,7 @@ public class ScreenshotService {
     return screenshotFiles;
   }
 
-  private BufferedImage takeMonitorsScreenshots() {
+  private BufferedImage takeMonitorsScreenshots(boolean rotateMain) {
     long start = System.currentTimeMillis();
     PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
@@ -280,7 +280,7 @@ public class ScreenshotService {
     for (MonitorInfo monitorInfo : screenshotMonitors) {
       try {
         BufferedImage bufferedImage = screenPreviewService.capture(monitorInfo);
-        if (monitorInfo.isPrimary() && !monitorInfo.isPortraitMode()) {
+        if (rotateMain && monitorInfo.isPrimary()) {
           bufferedImage = ImageUtil.rotateRight(bufferedImage);
         }
         images.add(bufferedImage);
@@ -308,16 +308,15 @@ public class ScreenshotService {
   private BufferedImage generateSummaryImage(List<BufferedImage> images) {
     try {
       int totalHeight = 0;
-      int totalWidth = images.get(0).getWidth();
-      int additionalWidth = totalWidth;
+      int totalWidth = images.getFirst().getWidth();
+      int additionalWidth = 0;
 
       int index = 0;
       for (BufferedImage image : images) {
-        if (image.getWidth() > additionalWidth) {
-          additionalWidth = image.getWidth();
-        }
-
         if (index > 0) {
+          if (image.getWidth() > additionalWidth) {
+            additionalWidth = image.getWidth();
+          }
           totalHeight = totalHeight + image.getHeight();
         }
         index++;
@@ -325,8 +324,8 @@ public class ScreenshotService {
 
       totalWidth = totalWidth + additionalWidth;
 
-      if (images.get(0).getHeight() > totalHeight) {
-        totalHeight = images.get(0).getHeight();
+      if (images.getFirst().getHeight() > totalHeight) {
+        totalHeight = images.getFirst().getHeight();
       }
 
 
@@ -340,7 +339,7 @@ public class ScreenshotService {
           g.drawImage(image, x, 0, null);
         }
         else {
-          g.drawImage(image, images.get(0).getWidth(), y, null);
+          g.drawImage(image, images.getFirst().getWidth(), y, null);
           y = y + image.getHeight();
         }
         index++;

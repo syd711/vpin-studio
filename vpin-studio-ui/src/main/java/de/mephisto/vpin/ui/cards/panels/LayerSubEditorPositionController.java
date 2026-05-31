@@ -1,16 +1,17 @@
 package de.mephisto.vpin.ui.cards.panels;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
-import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import org.apache.commons.beanutils.PropertyUtils;
 
 public class LayerSubEditorPositionController {
 
@@ -83,8 +84,9 @@ public class LayerSubEditorPositionController {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, 0);
     spinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      CardResolution res = binder.getResolution();
-      int size = useWidth ? res.toWidth(): res.toHeight();
+      int cardWith = binder.getWidth();
+      int cardHeight = binder.getHeight();
+      int size = useWidth ? cardWith: cardHeight;
       double val = Double.parseDouble(String.valueOf(t1)) / size;
       binder.setProperty(property, val);
     });
@@ -92,11 +94,11 @@ public class LayerSubEditorPositionController {
 
   //------------
 
-  public void setTemplate(String prefix, CardTemplate cardTemplate, CardResolution res, boolean useAlignment) {
-    setValue(xSpinner, cardTemplate, prefix + "X", res.toWidth());
-    setValue(ySpinner, cardTemplate, prefix + "Y", res.toHeight());
-    setValue(widthSpinner, cardTemplate, prefix + "Width", res.toWidth());
-    setValue(heightSpinner, cardTemplate, prefix + "Height", res.toHeight());
+  public void setTemplate(String prefix, CardTemplate cardTemplate, int cardWidth, int cardHeight, boolean useAlignment) {
+    setValue(xSpinner, cardTemplate, prefix + "X", cardWidth);
+    setValue(ySpinner, cardTemplate, prefix + "Y", cardHeight);
+    setValue(widthSpinner, cardTemplate, prefix + "Width", cardWidth);
+    setValue(heightSpinner, cardTemplate, prefix + "Height", cardHeight);
 
     if (useAlignment) {
       setAlignment(alignLeftButton, cardTemplate, prefix + "Alignment", CardTemplate.LEFT);

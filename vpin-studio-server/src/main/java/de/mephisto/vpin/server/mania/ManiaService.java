@@ -6,10 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.mania.ManiaConfig;
-import de.mephisto.vpin.restclient.mania.ManiaRegistration;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
-import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
+import de.mephisto.vpin.restclient.mania.*;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
@@ -23,9 +20,9 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,20 +35,17 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, HighscoreChangeListener, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
-
-  //the file contains the UUID of the cabinet
-  public static final String VPIN_MANIA_ID_TXT = ".vpin-mania-id.txt";
 
   @Value("${vpinmania.server.host}")
   private String maniaHost;
@@ -90,46 +84,49 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public ManiaTableSyncResult synchronizeHighscore(String vpsTableId) {
     ManiaTableSyncResult result = new ManiaTableSyncResult();
+    result.setVpsTableId(vpsTableId);
+
     VpsTable vpsTable = vpsService.getTableById(vpsTableId);
     if (vpsTable == null) {
-      result.setValid(false);
-      result.setResult("No matching VPS table found.");
+      result.setError("No matching VPS table found.");
       return result;
     }
-    result.setTableName(vpsTable.getDisplayName());
 
     maniaServiceCache.preCache();
 
-    Game game = maniaServiceCache.getGame(vpsTableId);
-    if (game == null || StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
-      String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
-      LOG.info(msg);
-      result.setValid(false);
-      result.setResult(msg);
-      return result;
+    List<Game> games = maniaServiceCache.getGamesByVpsId(vpsTableId);
+    for (Game game : games) {
+      if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+        String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
+        LOG.info(msg);
+        result.setError(msg);
+        continue;
+      }
+
+      List<ManiaTableSync> maniaTableSync = synchronizeHighscores(game, vpsTable);
+      result.getResults().addAll(maniaTableSync);
     }
 
-    result.setTableName(game.getGameDisplayName());
-    synchronizeHighscores(result, game, vpsTable);
     return result;
   }
 
-  private void synchronizeHighscores(@NonNull ManiaTableSyncResult result, @NonNull Game game, @NonNull VpsTable vpsTable) {
+  @NonNull
+  private List<ManiaTableSync> synchronizeHighscores(@NonNull Game game, @NonNull VpsTable vpsTable) {
+    List<ManiaTableSync> result = new ArrayList<>();
     if (!maniaSettings.isSubmitAllScores()) {
-      return;
+      return result;
     }
 
-    LOG.info("Synchronizing mania table scores for \"" + game + "\"");
+    LOG.info("Synchronizing mania table scores for \"{}\"", game);
     List<Account> cachedPlayerAccounts = maniaServiceCache.getCachedPlayerAccounts();
-    LOG.info("Found " + cachedPlayerAccounts.size() + " eligable local players to synchronize.");
+    LOG.info("Found {} eligable local players to synchronize.", cachedPlayerAccounts.size());
 
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
     if (scoreList.isEmpty()) {
       String msg = "No highscores found for \"" + game.getGameDisplayName() + "\", VPS ids: " + game.getExtTableId() + "/" + game.getExtTableVersionId();
       LOG.info(msg);
-      result.setResult(msg);
-      return;
+      return result;
     }
 
     List<String> submittedInitials = new ArrayList<>();
@@ -142,6 +139,11 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           continue;
         }
         if (maniaServiceCache.containsAccountForInitials(playerInitials)) {
+          ManiaTableSync tableSyncItem = new ManiaTableSync();
+          tableSyncItem.setTableName(vpsTable.getDisplayName());
+          tableSyncItem.setTableType(game.getEmulator().getType().shortName());
+          tableSyncItem.setGameId(game.getId());
+
           Account account = maniaServiceCache.getAccountForInitials(playerInitials);
 
           TableScore tableScore = new TableScore();
@@ -151,34 +153,34 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           tableScore.setVpsVersionId(game.getExtTableVersionId());
           tableScore.setTableName(game.getGameDisplayName());
           tableScore.setAccountId(account.getId());
-          tableScore.setCreationDate(score.getCreatedAt());
+          tableScore.setCreationDate(Date.from(score.getCreatedAt()));
           tableScore.setScoreSource(game.getRom());
-          tableScore.setCreationDate(score.getCreatedAt());
 
           if (isOnDenyList(deniedScoresByTableId, score, game)) {
-            result.setTableScore(tableScore);
-            result.setDenied(true);
-            result.setResult("A matching score has been found, but it is on the ignore list.");
+            tableSyncItem.setTableScore(tableScore);
+            tableSyncItem.setDenied(true);
+            tableSyncItem.setResult("Score for \"" + playerInitials + "\" is on the ignore list.");
+
+            result.add(tableSyncItem);
             continue;
           }
 
-          LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
+          LOG.info("Found score match to synchronize for {}: {}", playerInitials, score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
-          result.setTableScore(submitted);
-          result.setResult("The highscore was successfully synchronized.");
+          tableSyncItem.setTableScore(submitted != null ? submitted : tableScore);
+          tableSyncItem.setResult("Highscore for \"" + playerInitials + "\" successfully synchronized.");
           submittedInitials.add(playerInitials);
-        }
-        else {
-          result.setResult("No matching account found for initials \"" + playerInitials + "\"");
+
+          result.add(tableSyncItem);
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to submit mania highscore during sync: " + e.getMessage(), e);
-        result.setResult("Failed to submit mania highscore during sync: " + e.getMessage());
+        LOG.error("Failed to submit mania highscore during sync: {}", e.getMessage(), e);
       }
     }
 
     LOG.info("Highscore sync finished for \"{}\"/{}/{}.", vpsTable.getDisplayName(), game.getExtTableId(), game.getExtTableVersionId());
+    return result;
   }
 
   public VPinManiaClient getClient() {
@@ -262,7 +264,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contactCabinet.getId());
           for (Account account : accounts) {
             List<TableScore> highscoresByAccount = maniaClient.getHighscoreClient().getHighscoresByAccountAndTable(account.getUuid(), vpsTableId, vpsVersionId);
-            List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).collect(Collectors.toList());
+            List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).toList();
             result.addAll(scores);
           }
         }
@@ -282,7 +284,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   private Score toScores(Game game, Account account, TableScore accountScore) {
-    Score score = new Score(accountScore.getCreationDate(), game.getId(), account.getInitials(), null, accountScore.getScoreText(), accountScore.getScore(), -1);
+    Instant createdAt = accountScore.getCreationDate().toInstant();
+    Score score = new Score(createdAt, game.getId(), account.getInitials(), null, accountScore.getScoreText(), accountScore.getScore(), -1);
     score.setExternal(true);
     return score;
   }
@@ -302,7 +305,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.offline);
       }
       catch (Exception e) {
-        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
+        LOG.error("Error during tournament service shutdown: {}", e.getMessage(), e);
       }
     }
   }
@@ -321,40 +324,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.online);
       }
       catch (Exception e) {
-        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
+        LOG.error("Error during tournament service shutdown: {}", e.getMessage(), e);
       }
     }
-  }
-
-  private void checkAccount(Account account) {
-    List<Player> buildInPlayers = playerService.getBuildInPlayers();
-    boolean adminExists = !buildInPlayers.stream().filter(p -> p.isAdministrative()).collect(Collectors.toList()).isEmpty();
-
-    String name = account.getDisplayName();
-    String initial = account.getInitials();
-
-    for (Player buildInPlayer : buildInPlayers) {
-      //check if a matching player exists
-      if (buildInPlayer.getName().equals(name) && buildInPlayer.getInitials().equals(initial)) {
-        //check if the account id is set
-        if (buildInPlayer.getManiaAccountUuid() != null) {
-          return;
-        }
-
-        //the player exists, but no mania account id is set
-        buildInPlayer.setManiaAccountUuid(account.getUuid());
-        playerService.save(buildInPlayer);
-        return;
-      }
-    }
-
-    Player restoredPlayer = new Player();
-    restoredPlayer.setInitials(initial);
-    restoredPlayer.setName(name);
-    restoredPlayer.setManiaAccountUuid(account.getUuid());
-    restoredPlayer.setAdministrative(!adminExists);
-    Player update = playerService.save(restoredPlayer);
-    LOG.info("Restored VPin Mania player for account {}: {}", account.getUuid(), update.toString());
   }
 
   /**
@@ -374,14 +346,14 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       maniaClient.getRestClient().setApiKey(registration.getApiKey());
 
       BufferedImage avatar = ResourceLoader.getResource("avatar-default.png");
-      if (avatarEntry != null) {
+      if (avatarEntry != null && avatarEntry.getData() != null) {
         avatar = ImageIO.read(new ByteArrayInputStream(avatarEntry.getData()));
       }
 
       Cabinet newCab = new Cabinet();
       newCab.setCreationDate(new Date());
       newCab.setSettings(new CabinetSettings());
-      newCab.setUuid(null);
+      newCab.setUuid(registration.getCabinetUuid());
       newCab.setDisplayName(systemName != null ? systemName : "My VPin");
       Cabinet registeredCabinet = maniaClient.getCabinetClient().register(newCab, avatar, null);
       if (registeredCabinet == null) {
@@ -457,7 +429,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         List<Game> knownGames = gameService.getKnownGames(-1);
         List<InstalledTable> installedTables = new ArrayList<>();
         for (Game game : knownGames) {
-          if (!StringUtils.isEmpty(game.getExtTableVersionId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+          if (!StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
             InstalledTable installedTable = new InstalledTable();
             installedTable.setVpsTableId(game.getExtTableId());
             installedTable.setVpsVersionId(game.getExtTableVersionId());
@@ -483,7 +455,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         return true;
       }
       else {
-        if (cabinet != null && !cabinet.getSettings().getInstalledTables().isEmpty()) {
+        if (!cabinet.getSettings().getInstalledTables().isEmpty()) {
           cabinet.getSettings().setInstalledTables(new ArrayList<>());
           new Thread(() -> {
             try {
@@ -547,17 +519,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
         if (cabinet != null) {
           LOG.info("Updating mania played counter for \"{}\"", game.getGameDisplayName());
-          new Thread(() -> {
-            maniaClient.getVpsTableClient().updatePlayedCount(game.getExtTableId(), game.getExtTableVersionId());
-          }).start();
+          new Thread(() -> maniaClient.getVpsTableClient().updatePlayedCount(game.getExtTableId(), game.getExtTableVersionId())).start();
         }
       }
     }
-  }
-
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-    //ignore
   }
 
   //-------------------- GameDataChangedListener -----------------------------------------------------------------------
@@ -602,6 +567,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     try {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       maniaSettings.setCabinetUuid(null);
+      maniaSettings.setApiKey(null);
       preferencesService.savePreference(maniaSettings);
 
       return maniaClient.getCabinetClient().deleteCabinet();

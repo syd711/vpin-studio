@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 public class TableNameSplitter {
 
@@ -63,14 +64,14 @@ public class TableNameSplitter {
     if (StringUtils.isNotEmpty(parts.extra)) {
       parts.version = extractVersion(parts.extra);
       if (StringUtils.isNotEmpty(parts.version)) {
-        parts.extra = StringUtils.remove(parts.extra, parts.version).trim();
+        parts.extra = Strings.CI.remove(parts.extra, parts.version).trim();
       }
     }
     // when not found in extra, check in table name
     if (parts.version == null) {
       parts.version = extractVersion(parts.tableName);
       if (StringUtils.isNotEmpty(parts.version)) {
-        parts.tableName = StringUtils.remove(parts.tableName, parts.version);
+        parts.tableName = Strings.CI.remove(parts.tableName, parts.version);
       }
     }
 

@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class ScreenEntry {
       return transparency.trim().equals("1");
     }
     catch (Exception e) {
-      LOG.warn("Invalid transparency value: " + e.getMessage());
+      LOG.warn("Invalid transparency value: {}", e.getMessage());
       return false;
     }
   }
@@ -63,7 +63,7 @@ public class ScreenEntry {
       return ScreenMode.valueOf(screenMode);
     }
     catch (Exception e) {
-      LOG.warn("Invalid screen mode: " + e.getMessage());
+      LOG.warn("Invalid screen mode: {}", e.getMessage());
       return null;
     }
   }

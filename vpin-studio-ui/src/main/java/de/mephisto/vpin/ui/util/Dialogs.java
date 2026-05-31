@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -9,19 +10,17 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemData;
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
-import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
-import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +74,7 @@ public class Dialogs {
     FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
     Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
     UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
-    controller.setForUpdate(version);
+    controller.setData(stage, version);
     stage.showAndWait();
   }
 
@@ -86,16 +85,16 @@ public class Dialogs {
   public static boolean openUpdateDialog(VPinStudioClient client) {
     Stage stage = createStudioDialogStage("dialog-updater.fxml", "VPin Studio Updater");
     UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
-    controller.setClient(client);
+    controller.setData(stage, client);
     stage.showAndWait();
     return true;
   }
 
-  public static boolean openTextEditor(MonitoredTextFile file, String title) throws Exception {
+  public static boolean openTextEditor(TextEditorFile file, String title) throws Exception {
     return openTextEditor("text-editor", Studio.stage, file, title);
   }
 
-  public static boolean openTextEditor(String stateId, Stage s, MonitoredTextFile file, String title) {
+  public static boolean openTextEditor(String stateId, Stage s, TextEditorFile file, String title) {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
       Stage stage = WidgetFactory.createDialogStage(stateId, fxmlLoader, s, title, TextEditorController.class.getSimpleName());
@@ -212,17 +211,21 @@ public class Dialogs {
       }
       return false;
     }
-    else {
-      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage,
-          FrontendUtil.replaceName("[Frontend] is running.", frontend),
-          "Kill Processes", "Cancel",
-          FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
-          null);
-      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getFrontendService().terminateFrontend();
-        return true;
-      }
-      return false;
+    return Dialogs.killFrontend();
+  }
+
+  public static boolean killFrontend() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
+        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      JFXFuture.supplyAsync(() -> {
+        return client.getFrontendService().terminateFrontend();
+      }).thenAcceptLater((requestResult) -> {
+        LOG.info("Kill frontend request finished.");
+      });
+      return true;
     }
+    return false;
   }
 }

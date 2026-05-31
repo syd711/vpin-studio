@@ -1,21 +1,22 @@
 package de.mephisto.vpin.restclient.games;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class GameStatus {
   private int gameId = -1;
   private int lastActiveId = -1;
-  private Date started = null;
-  private Date pauseTime;
+  private OffsetDateTime started = null;
+  private OffsetDateTime pauseTime;
   private long pauseDuration = 0;
 
   public void startPause() {
-    this.pauseTime = new Date();
+    this.pauseTime = OffsetDateTime.now();
   }
 
   public void finishPause() {
     if (this.pauseTime != null) {
-      this.pauseDuration += (System.currentTimeMillis() - this.pauseTime.getTime());
+      this.pauseDuration += ChronoUnit.MILLIS.between(this.pauseTime, OffsetDateTime.now());
     }
     this.pauseTime = null;
   }
@@ -32,11 +33,11 @@ public class GameStatus {
     return gameId > 0;
   }
 
-  public Date getStarted() {
+  public OffsetDateTime getStarted() {
     return started;
   }
 
-  public void setStarted(Date started) {
+  public void setStarted(OffsetDateTime started) {
     this.started = started;
   }
 

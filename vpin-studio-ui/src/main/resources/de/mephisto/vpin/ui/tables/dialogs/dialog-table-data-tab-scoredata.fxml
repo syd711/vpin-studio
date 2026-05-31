@@ -56,11 +56,19 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
+            <!-- row 0: ROM Name -->
             <Label styleClass="default-text" text="ROM Name:">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
+            <ComboBox fx:id="romName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" />
+            <HBox fx:id="romStatusBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </HBox>
+            <!-- row 1: Alternative ROM Name -->
             <Label styleClass="default-text" text="Alternative ROM Name:" GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
@@ -71,24 +79,20 @@
                   <Font size="14.0" />
                </font>
             </TextField>
+            <!-- row 2: Highscore .txt File Name -->
             <Label styleClass="default-text" text="Highscore .txt File Name:" GridPane.rowIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox fx:id="romName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" />
             <ComboBox fx:id="highscoreFileName" editable="true" prefHeight="30.0" prefWidth="413.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <HBox fx:id="romStatusBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
-               <padding>
-                  <Insets left="3.0" />
-               </padding>
-            </HBox>
             <HBox fx:id="hsFileStatusBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <padding>
                   <Insets left="3.0" />
                </padding>
             </HBox>
+            <!-- row 3: mapping hint -->
+            <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
          <VBox.margin>
             <Insets top="12.0" />
@@ -120,15 +124,8 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
+                  <!-- row 0: Scanned ROM Name -->
                   <Label styleClass="default-text" text="Scanned ROM Name:">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets top="3.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Scanned Alt. ROM Name:" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -141,11 +138,37 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
+                  <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="Apply scanned ROM name to Popper field &quot;ROM Name&quot; to this save value permanently." wrapText="true" />
+                     </tooltip>
+                  </Button>
+                  <!-- row 1: Scanned Alt. ROM Name -->
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Scanned Alt. ROM Name:" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets top="3.0" />
+                     </GridPane.margin>
+                  </Label>
                   <TextField fx:id="scannedAltRomName" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
+                  <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="Apply scanned alternative ROM name to Popper field &quot;Alternative ROM Name&quot; to save this value permanently." wrapText="true" />
+                     </tooltip>
+                  </Button>
+                  <!-- row 2: Scanned Score .txt File Name -->
                   <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Scanned Score .txt File Name:" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
@@ -173,22 +196,6 @@
                         </VBox>
                      </children>
                   </VBox>
-                  <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <tooltip>
-                        <Tooltip prefWidth="300.0" text="Apply scanned ROM name to Popper field &quot;ROM Name&quot; to this save value permanently." wrapText="true" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <tooltip>
-                        <Tooltip prefWidth="300.0" text="Apply scanned alternative ROM name to Popper field &quot;Alternative ROM Name&quot; to save this value permanently." wrapText="true" />
-                     </tooltip>
-                  </Button>
                   <BorderPane GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets top="1.0" />

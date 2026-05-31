@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.directb2s;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -155,14 +156,24 @@ public class DirectB2SDataUpdater extends DefaultHandler {
       if (backup.exists()) {
         backup.delete();
       }
-      if (directB2SFile.renameTo(backup)) {
-        destination.renameTo(directB2SFile);
+      if (!directB2SFile.renameTo(backup)) {
+        destination.delete();
+        throw new IOException("Cannot rename " + directB2SFile + " to backup, update aborted");
+      }
+      if (!destination.renameTo(directB2SFile)) {
+        // original is now at backup — try to restore it before throwing
+        backup.renameTo(directB2SFile);
+        throw new IOException("Cannot rename temp file to " + directB2SFile + ", restored from backup");
       }
     }
     else {
-      if (directB2SFile.delete()) {
-        destination.renameTo(directB2SFile);
-      }      
+      if (!directB2SFile.delete()) {
+        destination.delete();
+        throw new IOException("Cannot delete " + directB2SFile + ", update aborted");
+      }
+      if (!destination.renameTo(directB2SFile)) {
+        throw new IOException("Cannot rename temp file to " + directB2SFile + ", original was deleted");
+      }
     }
   }
 

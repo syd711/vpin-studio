@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -88,7 +88,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       List<GameRepresentation> games = gameModels.stream().map(model -> model.getBean()).collect(Collectors.toList());
       String title = "Removing " + games.size() + " games from \"" + playlist.get().getName() + "\"";
       if (games.size() == 1) {
-        title = "Removing \"" + games.get(0).getGameDisplayName() + "\" from \"" + playlist.get().getName() + "\"";
+        title = "Removing \"" + games.getFirst().getGameDisplayName() + "\" from \"" + playlist.get().getName() + "\"";
       }
       ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist.get(), games, false));
 
@@ -220,7 +220,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
-      if (value.getDateAdded() != null) {
+      if (value.getDateUpdated() != null) {
         label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
       }
       else {

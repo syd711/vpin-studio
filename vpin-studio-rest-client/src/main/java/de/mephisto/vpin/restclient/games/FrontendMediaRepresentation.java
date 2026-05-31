@@ -1,8 +1,8 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ public class FrontendMediaRepresentation {
         // use first media as default
         fallback = gameMediaItem;
       }
-      if (gameMediaItem.getName().contains("[SCREEN")) {
+      if (gameMediaItem.getName().contains("[SCREEN") || gameMediaItem.getName().contains("(SCREEN")) {
         return gameMediaItem;
       }
     }

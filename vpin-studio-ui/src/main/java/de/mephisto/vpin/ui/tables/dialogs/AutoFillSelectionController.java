@@ -12,7 +12,7 @@ import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDataAutoFillProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -85,7 +85,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
         List<Object> results = progressDialog.getResults();
         if (!results.isEmpty()) {
           if (results.size() == 1) {
-            GameRepresentation game = (GameRepresentation) results.get(0);
+            GameRepresentation game = (GameRepresentation) results.getFirst();
             EventManager.getInstance().notifyTableChange(game.getId(), null);
           }
           else {
@@ -95,7 +95,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
       });
     }
     else {
-      GameRepresentation game = this.games.get(0);
+      GameRepresentation game = this.games.getFirst();
       try {
         tableDetails = client.getFrontendService().autoFillTableDetailsSimulated(game.getId(), tableDetails, vpsTableId, vpsVersionId);
       }

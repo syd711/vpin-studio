@@ -1,27 +1,25 @@
 package de.mephisto.vpin.commons.utils;
 
-import de.mephisto.vpin.commons.utils.scripts.MacOS;
+import de.mephisto.vpin.commons.MacOSUpdater;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -31,12 +29,19 @@ public class Updater {
   public static String LATEST_VERSION = null;
 
   public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
-  public final static String SERVER_EXE = "VPin-Studio-Server.exe";
   public final static long SERVER_ZIP_SIZE = 251 * 1000 * 1000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
   public final static long UI_ZIP_SIZE = 137 * 1000 * 1000;
+
+  private final static String JRE_MACOS_X64 = "zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz";
+  private final static String JRE_MACOS_ARCH64 = "zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz";
+  private final static String JRE_LINUX_X64 = "zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz";
+  private final static String JRE_WIN_X64 = "zulu25.34.17-ca-fx-jre25.0.3-win_x64.zip";
+
+  // must match the IMPLEMENTOR_VERSION prefix in the JRE release file (e.g. "Zulu25.34.17+21-CA")
+  private final static String JRE_VERSION_CHECK = "Zulu25.34";
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
@@ -62,7 +67,7 @@ public class Updater {
       percentage = 99;
     }
 
-    LOG.info(tmp.getAbsolutePath() + " download at " + percentage + "%");
+    LOG.info("{} download at {}%", tmp.getAbsolutePath(), percentage);
     return percentage;
   }
 
@@ -72,8 +77,8 @@ public class Updater {
 
   public static void downloadAndOverwrite(String downloadUrl, File target, boolean overwrite) {
     try {
-      LOG.info("Downloading " + downloadUrl);
-      URL url = new URL(downloadUrl);
+      LOG.info("Downloading {}", downloadUrl);
+      URL url = URI.create(downloadUrl).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
@@ -109,7 +114,7 @@ public class Updater {
       }
     }
     catch (Exception e) {
-      LOG.error("Updater Failed to execute download: " + e.getMessage(), e);
+      LOG.error("Updater Failed to execute download: {}", e.getMessage(), e);
     }
   }
 
@@ -125,7 +130,7 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\ncd /d %~dp0\ndel VPin-Studio-Server.exe\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nwscript server.vbs\nexit");
+    FileUtils.writeBatch("update-server.bat", loadTemplate("update-server.bat"));
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getWriteableBaseFolder());
@@ -135,9 +140,9 @@ public class Updater {
 
   public static boolean installClientUpdate(@Nullable String oldVersion, @Nullable String newVersion) throws IOException {
     if (OSUtil.isWindows()) {
-      String cmds = "timeout /T 4 /nobreak\ncd /d %~dp0\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
+      String cmds = loadTemplate("update-client-windows.bat");
       FileUtils.writeBatch("update-client.bat", cmds);
-      LOG.info("Written temporary batch: " + cmds);
+      LOG.info("Written temporary batch: {}", cmds);
       List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(getWriteableBaseFolder());
@@ -154,18 +159,18 @@ public class Updater {
     }
     else if (OSUtil.isLinux()) {
       try {
-        String cmds = "#!/bin/bash\nsleep 4\nunzip -o vpin-studio-ui-jar.zip\nrm vpin-studio-ui-jar.zip\n./VPin-Studio.sh &";
+        String cmds = loadTemplate("update-client-linux.sh");
         File file = FileUtils.writeBatch("update-client.sh", cmds);
-        LOG.info("Written temporary bash: " + cmds);
+        LOG.info("Written temporary bash: {}", cmds);
 
         Set<PosixFilePermission> perms = new HashSet<>();
         perms.add(PosixFilePermission.OWNER_READ);
         perms.add(PosixFilePermission.OWNER_WRITE);
         perms.add(PosixFilePermission.OWNER_EXECUTE);
         Files.setPosixFilePermissions(file.toPath(), perms);
-        LOG.info("Applied execute permissions to : " + file.getAbsolutePath());
+        LOG.info("Applied execute permissions to : {}", file.getAbsolutePath());
 
-        List<String> commands = Arrays.asList("./update-client.sh");
+        List<String> commands = List.of("./update-client.sh");
         SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
         executor.setDir(getWriteableBaseFolder());
         executor.enableLogging(true);
@@ -182,20 +187,20 @@ public class Updater {
         }).start();
       }
       catch (Exception e) {
-        LOG.error("Failed to execute update: " + e.getMessage(), e);
+        LOG.error("Failed to execute update: {}", e.getMessage(), e);
       }
     }
     else if (OSUtil.isMac()) {
       // For the macOS we'll use our startup bash to perform our upgrade.
       try {
         // Create update-client script.
-        MacOS.createUpdateScript();
+        MacOSUpdater.createUpdateScript();
 
-        MacOS.UpdateAppVersion(oldVersion, newVersion);
+        MacOSUpdater.UpdateAppVersion(oldVersion, newVersion);
 
         // Log the exit message
         LOG.info("Exiting VPin-Studio to perform update...");
-        MacOS.launchUpdateScript();
+        MacOSUpdater.launchUpdateScript();
       }
       catch (Exception e) {
         LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
@@ -205,7 +210,7 @@ public class Updater {
   }
 
   public static void restartServer() {
-    List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
+    List<String> commands = List.of("VPin-Studio-Server.exe");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getWriteableBaseFolder());
     executor.executeCommandAsync();
@@ -213,7 +218,7 @@ public class Updater {
 
   public static String checkForUpdate() {
     try {
-      URL obj = new URL(LATEST_RELEASE_URL);
+      URL obj = URI.create(LATEST_RELEASE_URL).toURL();
       HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
       conn.setInstanceFollowRedirects(true);
       HttpURLConnection.setFollowRedirects(true);
@@ -229,7 +234,7 @@ public class Updater {
       return LATEST_VERSION;
     }
     catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage());
+      LOG.error("Update check failed: {}", e.getMessage());
     }
     return null;
   }
@@ -239,8 +244,8 @@ public class Updater {
       return false;
     }
 
-    List<Integer> versionASegments = Arrays.asList(versionA.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
-    List<Integer> versionBSegments = Arrays.asList(versionB.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
+    List<Integer> versionASegments = Arrays.stream(versionA.split("\\.")).map(Integer::parseInt).toList();
+    List<Integer> versionBSegments = Arrays.stream(versionB.split("\\.")).map(Integer::parseInt).toList();
 
     for (int i = 0; i < versionBSegments.size(); i++) {
       if (versionASegments.get(i).intValue() == versionBSegments.get(i).intValue()) {
@@ -253,13 +258,23 @@ public class Updater {
     return false;
   }
 
+  public static String loadTemplate(String templateName) throws IOException {
+    String resourcePath = "/de/mephisto/vpin/commons/utils/" + templateName;
+    try (InputStream is = Updater.class.getResourceAsStream(resourcePath)) {
+      if (is == null) {
+        throw new IOException("Update template not found on classpath: " + resourcePath);
+      }
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    }
+  }
+
   public static File getWriteableBaseFolder() {
     if (!OSUtil.isMac()) {
       LOG.info("Setting Base Path for Download to ./");
       return new File("./");
     }
     else {
-      LOG.info("Setting Base Path for Mac Download to -" + System.getProperty("MAC_WRITE_PATH"));
+      LOG.info("Setting Base Path for Mac Download to -{}", System.getProperty("MAC_WRITE_PATH"));
       return new File(System.getProperty("MAC_WRITE_PATH"));
     }
   }

@@ -1856,8 +1856,8 @@ System3.StartupKeys =
 System3.NVRAMPath = 
 System3.DOFTitlePrefix = 
 System3.RunBeforePre = 
-System3.RunBefore = 
-System3.RunAfter = 
+System3.RunBefore = [NOWAIT HIDE]curl -X POST http://localhost:8089/service/gameLaunch --data-urlencode "table=[TABLEPATH]\[TABLEFILE]" --data-urlencode "emu=Visual Pinball 9" & :: Added by VPin Studio
+System3.RunAfter = [NOWAIT HIDE]curl -X POST http://localhost:8089/service/gameExit --data-urlencode "table=[TABLEPATH]\[TABLEFILE]" --data-urlencode "emu=Visual Pinball 9" & :: Added by VPin Studio
 System3.RunAfterPost = 
 System3.ShowWindowsWhileRunning = 
 System3.CloseWindowName = 
@@ -1882,8 +1882,8 @@ System2.StartupKeys =
 System2.NVRAMPath = 
 System2.DOFTitlePrefix = 
 System2.RunBeforePre = 
-System2.RunBefore = 
-System2.RunAfter = 
+System2.RunBefore = [NOWAIT HIDE]curl -X POST http://localhost:8089/service/gameLaunch --data-urlencode "table=[TABLEPATH]\[TABLEFILE]" --data-urlencode "emu=Visual Pinball 9.2" & :: Added by VPin Studio
+System2.RunAfter = [NOWAIT HIDE]curl -X POST http://localhost:8089/service/gameExit --data-urlencode "table=[TABLEPATH]\[TABLEFILE]" --data-urlencode "emu=Visual Pinball 9.2" & :: Added by VPin Studio
 System2.RunAfterPost = 
 System2.ShowWindowsWhileRunning = 
 System2.CloseWindowName = 
@@ -1908,8 +1908,8 @@ System1.StartupKeys =
 System1.NVRAMPath = ..\testsystem\vPinball\VisualPinball\VPinMAME\nvram
 System1.DOFTitlePrefix = 
 System1.RunBeforePre = 
-System1.RunBefore = 
-System1.RunAfter = 
+System1.RunBefore = [NOWAIT HIDE]curl -X POST http://localhost:8089/service/gameLaunch --data-urlencode "table=[TABLEPATH]\[TABLEFILE]" --data-urlencode "emu=Visual Pinball X" & :: Added by VPin Studio
+System1.RunAfter = [NOWAIT HIDE]curl -X POST http://localhost:8089/service/gameExit --data-urlencode "table=[TABLEPATH]\[TABLEFILE]" --data-urlencode "emu=Visual Pinball X" & :: Added by VPin Studio
 System1.RunAfterPost = 
 System1.ShowWindowsWhileRunning = 
 System1.CloseWindowName = 

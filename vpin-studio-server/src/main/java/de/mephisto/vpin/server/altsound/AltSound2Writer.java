@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.*;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class AltSound2Writer {
             try {
               iniConfiguration.write(fileWriter);
             } catch (Exception e) {
-              LOG.error("Failed to write altsound.ini: " + e.getMessage(), e);
+              LOG.error("Failed to write altsound.ini: {}", e.getMessage(), e);
             } finally {
               fileWriter.close();
             }
@@ -88,7 +88,7 @@ public class AltSound2Writer {
         new AltSoundWriter(altSoundFolder).write(altSound);
       }
     } catch (Exception e) {
-      LOG.error("Error altsound2: " + e.getMessage(), e);
+      LOG.error("Error altsound2: {}", e.getMessage(), e);
     }
   }
 

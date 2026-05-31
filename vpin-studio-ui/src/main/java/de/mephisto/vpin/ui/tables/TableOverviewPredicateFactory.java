@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.function.Predicate;
 
@@ -79,10 +80,14 @@ public class TableOverviewPredicateFactory {
         }
 
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null) {
+          boolean hasVisibleUpdate = false;
           for (VPSChange change : game.getVpsUpdates().getChanges()) {
             if (!VpsTableColumn.isFiltered(vpsSettings, change)) {
-              continue;
+              hasVisibleUpdate = true;
+              break;
             }
+          }
+          if (!hasVisibleUpdate) {
             return false;
           }
         }
@@ -150,10 +155,10 @@ public class TableOverviewPredicateFactory {
         }
 
         if (StringUtils.isNotEmpty(searchTerm)
-            && !StringUtils.containsIgnoreCase(game.getGameDisplayName(), searchTerm)
-            && !StringUtils.containsIgnoreCase(String.valueOf(game.getId()), searchTerm)
-            && !StringUtils.containsIgnoreCase(game.getRomAlias(), searchTerm)
-            && !StringUtils.containsIgnoreCase(game.getRom(), searchTerm)) {
+            && !Strings.CI.contains(game.getGameDisplayName(), searchTerm)
+            && !Strings.CI.contains(String.valueOf(game.getId()), searchTerm)
+            && !Strings.CI.contains(game.getRomAlias(), searchTerm)
+            && !Strings.CI.contains(game.getRom(), searchTerm)) {
           return false;
         }
 

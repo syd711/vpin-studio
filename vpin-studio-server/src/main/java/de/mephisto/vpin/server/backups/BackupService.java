@@ -5,8 +5,8 @@ import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
@@ -26,15 +26,16 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpauthenticators.VPAuthenticationService;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -185,7 +186,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     }
     else {
       backupSource = new BackupSource();
-      backupSource.setCreatedAt(new Date());
+      backupSource.setCreatedAt(Instant.now());
       backupSource.setType(representation.getType());
     }
 
@@ -202,7 +203,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, updatedSource, vpaService);
     backupSourcesCache.put(updatedSource.getId(), backupSourceAdapter);
-    LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
+    LOG.info("(Re)created archive source adapter \"{}\"", updatedSource);
     return updatedSource;
   }
 
@@ -217,10 +218,10 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);
-      LOG.info("Offered restore job for \"" + backupDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Offered restore job for \"{}\"", backupDescriptor.getTableDetails().getGameDisplayName());
     }
     catch (Exception e) {
-      LOG.error("Import failed: " + e.getMessage(), e);
+      LOG.error("Import failed: {}", e.getMessage(), e);
       return false;
     }
     return true;
@@ -237,7 +238,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
         }
       }
       else {
-        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+        LOG.error("Cancelled backup for id {}, invalid game data.", game);
         result = false;
       }
     }
@@ -256,7 +257,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     descriptor.setJob(new TableBackupJob(frontendService, backupSourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
-    LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
+    LOG.info("Offered export job for '{}'", game.getGameDisplayName());
     return true;
   }
 
@@ -281,7 +282,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     if (all.isEmpty()) {
       BackupSource backupSource = new BackupSource();
       backupSource = new BackupSource();
-      backupSource.setCreatedAt(new Date());
+      backupSource.setCreatedAt(Instant.now());
       backupSource.setName("Default Backups Folder");
       backupSource.setType(BackupSourceType.Folder.name());
       backupSource.setLocation(VpaBackupSource.FOLDER.getAbsolutePath());

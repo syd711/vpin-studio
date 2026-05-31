@@ -471,6 +471,7 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           </rowConstraints>
                                           <children>
                                               <Label text="Display Name:" textFill="WHITE">
@@ -492,6 +493,12 @@
                                                   </font>
                                               </Label>
                                               <Label fx:id="emulatorNameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label layoutX="10.0" layoutY="76.0" text="Game ID:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="gameIdLabel" layoutX="223.0" layoutY="76.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                           </children>
                                           <VBox.margin>
                                               <Insets right="12.0" top="6.0" />

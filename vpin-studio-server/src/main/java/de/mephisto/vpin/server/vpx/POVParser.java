@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.server.VPinStudioException;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -67,7 +67,7 @@ public class POVParser extends DefaultHandler {
         }
       }
 
-      LOG.info("Finished parsing of " + povFile.getAbsolutePath());
+      LOG.info("Finished parsing of {}", povFile.getAbsolutePath());
     } catch (Exception e) {
       String msg = "Failed to parse pov file '" + povFile.getAbsolutePath() + "': " + e.getMessage();
       LOG.error(msg, e);

@@ -22,7 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +132,7 @@ public class WovpMenuItemController implements Initializable {
       return players;
     }).thenAcceptLater(players -> {
       if (this.wovpPlayer == null) {
-        this.wovpPlayer = players.get(0);
+        this.wovpPlayer = players.getFirst();
       }
       this.playerSelectorBox.setVisible(players.size() > 1);
       this.rightBtn.setVisible(players.size() > 1);
@@ -197,7 +197,7 @@ public class WovpMenuItemController implements Initializable {
     });
   }
 
-  @NotNull
+  @NonNull
   private static BorderPane createScoreItem(CompetitionScore score) throws IOException {
     FXMLLoader loader = new FXMLLoader(WidgetWeeklyCompetitionScoreItemController.class.getResource("widget-weekly-competition-score-item.fxml"));
     BorderPane row = loader.load();

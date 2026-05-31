@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
-import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
+import de.mephisto.vpin.restclient.iscored.IScoredServiceClient;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
@@ -29,7 +29,6 @@ import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
-import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
@@ -46,12 +45,15 @@ import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
-import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxScriptOptionsServiceClient;
+import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
+import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
+import de.mephisto.vpin.restclient.vr.VRServiceClient;
 import de.mephisto.vpin.restclient.wovp.WOVPServiceClient;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -60,7 +62,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.lang.invoke.MethodHandles;
-import java.net.URL;
+import java.net.URI;
 
 public class VPinStudioClient {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -94,9 +96,10 @@ public class VPinStudioClient {
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
   private final HooksServiceClient hooksServiceClient;
   private final IniServiceClient iniServiceClient;
+  private final IScoredServiceClient iScoredServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
-  private final MameServiceClient mameServiceClient;
+  private final VPinMameServiceClient vPinMameServiceClient;
   private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
@@ -119,6 +122,7 @@ public class VPinStudioClient {
   private final VpsServiceClient vpsServiceClient;
   private final WOVPServiceClient wovpServiceClient;
   private final VpxScriptOptionsServiceClient vpxScriptOptionsServiceClient;
+  private final VRServiceClient vrServiceClient;
 
     public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
@@ -150,8 +154,9 @@ public class VPinStudioClient {
     this.hooksServiceClient = new HooksServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.iniServiceClient = new IniServiceClient(this);
+    this.iScoredServiceClient = new IScoredServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
-    this.mameServiceClient = new MameServiceClient(this);
+    this.vPinMameServiceClient = new VPinMameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
     this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
@@ -174,10 +179,20 @@ public class VPinStudioClient {
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
     this.wovpServiceClient = new WOVPServiceClient(this);
+    this.vrServiceClient = new VRServiceClient(this);
   }
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+
+  public IScoredServiceClient getiScoredService() {
+    return iScoredServiceClient;
+  }
+
+  public VRServiceClient getVRService() {
+    return vrServiceClient;
   }
 
   public WOVPServiceClient getWovpService() {
@@ -316,8 +331,8 @@ public class VPinStudioClient {
     return altColorServiceClient;
   }
 
-  public MameServiceClient getMameService() {
-    return mameServiceClient;
+  public VPinMameServiceClient getMameService() {
+    return vPinMameServiceClient;
   }
 
   public PupPackServiceClient getPupPackService() {
@@ -479,10 +494,10 @@ public class VPinStudioClient {
   public InputStream getScreenshot() {
     try {
       if (latestScreenshot != null) {
-        return new URL(getURL("recorder/screenshot/" + latestScreenshot)).openStream();
+        return URI.create(getURL("recorder/screenshot/" + latestScreenshot)).toURL().openStream();
       }
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to load screenshot: {}", e.getMessage(), e);
     }
     return null;
@@ -499,6 +514,16 @@ public class VPinStudioClient {
     }
     catch (Exception e) {
       LOG.info("Take screenshot failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
+    }
+  }
+
+  public void takeScoreScreenshot() {
+    try {
+      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(2000);
+      latestScreenshot = restTemplate.getForObject(getRestClient().getBaseUrl() + API + "recorder/scorescreenshot", String.class);
+    }
+    catch (Exception e) {
+      LOG.info("Take score screenshot failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
     }
   }
 

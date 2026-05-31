@@ -13,6 +13,33 @@ public class CardSettings extends JsonSettings {
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
   private CardResolution cardResolution = CardResolution.HDReady;
+  private boolean customResolution = false;
+  private int cardWidth = 1280;
+  private int cardHeight = 720;
+
+  public boolean isCustomResolution() {
+    return customResolution;
+  }
+
+  public void setCustomResolution(boolean customResolution) {
+    this.customResolution = customResolution;
+  }
+
+  public int getCardWidth() {
+    return cardWidth;
+  }
+
+  public void setCardWidth(int cardWidth) {
+    this.cardWidth = cardWidth;
+  }
+
+  public int getCardHeight() {
+    return cardHeight;
+  }
+
+  public void setCardHeight(int cardHeight) {
+    this.cardHeight = cardHeight;
+  }
 
   public CardResolution getCardResolution() {
     return cardResolution;

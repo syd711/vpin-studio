@@ -100,48 +100,22 @@ public class ValidatorsScreensPreferencesController implements Initializable {
   }
 
   private static VPinScreen getScreenForCode(int code) {
-    switch (code) {
-      case CODE_NO_AUDIO: {
-        return VPinScreen.Audio;
-      }
-      case CODE_NO_AUDIO_LAUNCH: {
-        return VPinScreen.AudioLaunch;
-      }
-      case CODE_NO_APRON: {
-        return VPinScreen.Menu;
-      }
-      case CODE_NO_INFO: {
-        return VPinScreen.GameInfo;
-      }
-      case CODE_NO_HELP: {
-        return VPinScreen.GameHelp;
-      }
-      case CODE_NO_TOPPER: {
-        return VPinScreen.Topper;
-      }
-      case CODE_NO_BACKGLASS: {
-        return VPinScreen.BackGlass;
-      }
-      case CODE_NO_DMD: {
-        return VPinScreen.DMD;
-      }
-      case CODE_NO_PLAYFIELD: {
-        return VPinScreen.PlayField;
-      }
-      case CODE_NO_LOADING: {
-        return VPinScreen.Loading;
-      }
-      case CODE_NO_OTHER2: {
-        return VPinScreen.Other2;
-      }
-      case CODE_NO_LOGO: {
-        return VPinScreen.Logo;
-      }
-      case CODE_NO_WHEEL_IMAGE: {
-        return VPinScreen.Wheel;
-      }
-    }
-    return null;
+      return switch (code) {
+          case CODE_NO_AUDIO -> VPinScreen.Audio;
+          case CODE_NO_AUDIO_LAUNCH -> VPinScreen.AudioLaunch;
+          case CODE_NO_APRON -> VPinScreen.Menu;
+          case CODE_NO_INFO -> VPinScreen.GameInfo;
+          case CODE_NO_HELP -> VPinScreen.GameHelp;
+          case CODE_NO_TOPPER -> VPinScreen.Topper;
+          case CODE_NO_BACKGLASS -> VPinScreen.BackGlass;
+          case CODE_NO_DMD -> VPinScreen.DMD;
+          case CODE_NO_PLAYFIELD -> VPinScreen.PlayField;
+          case CODE_NO_LOADING -> VPinScreen.Loading;
+          case CODE_NO_OTHER2 -> VPinScreen.Other2;
+          case CODE_NO_LOGO -> VPinScreen.Logo;
+          case CODE_NO_WHEEL_IMAGE -> VPinScreen.Wheel;
+          default -> null;
+      };
   }
 
   @FXML

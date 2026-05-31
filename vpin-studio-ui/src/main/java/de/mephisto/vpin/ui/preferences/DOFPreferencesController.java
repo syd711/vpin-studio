@@ -71,12 +71,12 @@ public class DOFPreferencesController implements Initializable {
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new DOFSyncProgressModel());
       List<Object> results = resultModel.getResults();
       if (!results.isEmpty()) {
-        Object o = results.get(0);
+        Object o = results.getFirst();
         if (o instanceof String) {
           WidgetFactory.showAlert(Studio.stage, "Error", "DOF config download failed: " + o);
         }
         else {
-          JobDescriptor result = (JobDescriptor) resultModel.getResults().get(0);
+          JobDescriptor result = (JobDescriptor) resultModel.getResults().getFirst();
           if (result.getError() != null) {
             WidgetFactory.showAlert(Studio.stage, "Error", "DOF configuration download failed: ", result.getError());
           }

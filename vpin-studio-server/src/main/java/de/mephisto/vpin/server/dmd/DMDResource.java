@@ -81,7 +81,7 @@ public class DMDResource {
       return descriptor;
     }
     catch (Exception e) {
-      LOG.error(AssetType.DMD_PACK.name() + " upload failed: " + e.getMessage(), e);
+      LOG.error("{} upload failed: {}", AssetType.DMD_PACK.name(), e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.DMD_PACK.name() + " upload failed: " + e.getMessage());
     }
     finally {

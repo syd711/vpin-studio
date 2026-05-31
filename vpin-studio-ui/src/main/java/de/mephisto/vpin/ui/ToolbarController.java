@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.hooks.HookCommand;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.VRSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -33,16 +34,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -96,6 +98,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private Label breadcrumb;
 
   @FXML
+  private ToggleButton vrModeButton;
+
+  @FXML
   private SplitMenuButton preferencesBtn;
 
   @FXML
@@ -126,6 +131,25 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }).thenAcceptLater((b) -> {
       preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
     });
+  }
+
+  @FXML
+  private void onVrToggle() {
+    boolean b = client.getVRService().toggleVR();
+    refreshVrState();
+    EventManager.getInstance().notifyVRModeEnabled(b);
+  }
+
+  private void refreshVrState() {
+    FontIcon fontIcon = (FontIcon) vrModeButton.getGraphic();
+    client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    if (vrSettings.isVrEnabled()) {
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_DARK_COLOR));
+    }
+    else {
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+    }
   }
 
   @FXML
@@ -217,13 +241,14 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   @FXML
   private void onDisconnect() {
     doDisconnect();
-    Studio.loadLauncher(new Stage());
+    Studio.loadLauncher(Studio.createLauncherStage());
   }
 
   @FXML
   private void onSettings(ActionEvent event) {
     PreferencesController.open();
   }
+
 
   @FXML
   private void toggleMonitor() {
@@ -310,6 +335,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    LOG.info("Initializing ToolbarController..."); // ADDED LOG
     INSTANCE = this;
 
     monitorBtn.managedProperty().bindBidirectional(monitorBtn.visibleProperty());
@@ -317,6 +343,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
     dropInsBtn.managedProperty().bindBidirectional(dropInsBtn.visibleProperty());
+    vrModeButton.managedProperty().bindBidirectional(vrModeButton.visibleProperty());
+    vrModeButton.setVisible(false);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
@@ -329,13 +357,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     FrontendUtil.replaceName(frontendMenuBtn.getTooltip(), frontend);
 
     if (frontend.getIconName() != null) {
-      Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      Image image1 = new Image(Objects.requireNonNull(Studio.class.getResourceAsStream(frontend.getIconName())));
       ImageView view1 = new ImageView(image1);
       view1.setPreserveRatio(true);
       view1.setFitHeight(18);
       frontendMenuItem.setGraphic(view1);
 
-      Image image2 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      Image image2 = new Image(Objects.requireNonNull(Studio.class.getResourceAsStream(frontend.getIconName())));
       ImageView view2 = new ImageView(image2);
       view2.setPreserveRatio(true);
       view2.setFitHeight(18);
@@ -369,7 +397,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     Platform.runLater(() -> {
       DropInManager.getInstance().init(dropInsBtn);
       MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-      if (settings.isOpen()) {
+       if (settings != null && settings.isOpen()) {
         toggleMonitor();
       }
     });
@@ -379,7 +407,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         debouncer.debounce("breadcrumb", () -> {
           Platform.runLater(() -> {
-            double maxWidth = newValue.intValue() - 800;
+            double maxWidth = newValue.intValue() - 900;
             breadcrumb.setMaxWidth(maxWidth);
           });
         }, DEBOUNCE_MS);
@@ -399,6 +427,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         preferencesBtn.getItems().add(new SeparatorMenuItem());
 
         List<String> hooks = hookList.getHooks();
+        hooks.sort(Comparator.comparingInt((String s) -> {
+          java.util.regex.Matcher m = java.util.regex.Pattern.compile("^(\\d+)").matcher(s);
+          return m.find() ? Integer.parseInt(m.group(1)) : Integer.MAX_VALUE;
+        }).thenComparing(Comparator.naturalOrder()));
         for (String hook : hooks) {
           MenuItem item = new MenuItem(hook);
           item.setOnAction(actionEvent -> {
@@ -455,6 +487,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     });
+
+    VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+    vrModeButton.setSelected(vrSettings.isVrEnabled());
+    vrModeButton.setVisible(vrSettings.isEnabled());
+
+    refreshVrState();
+    LOG.info("Finished Initializing ToolbarController."); // ADDED LOG
   }
 
   private void onCabSwitch(ConnectionEntry connection) {
@@ -475,7 +514,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+    if (key.equals(PreferenceNames.VR_SETTINGS)) {
+      client.getPreferenceService().clearCache(PreferenceNames.VR_SETTINGS);
+      VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+      vrModeButton.setVisible(vrSettings.isEnabled());
+      vrModeButton.setSelected(vrSettings.isVrEnabled());
+    }
+    else if (key.equals(PreferenceNames.DOF_SETTINGS)) {
       DOFSettings settings = client.getDofService().getSettings();
       boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
       dofSyncEntry.setDisable(!valid);

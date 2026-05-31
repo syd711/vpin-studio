@@ -134,7 +134,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Open VPMAlias.txt file" />
+                                          <Tooltip text="Open PupPack Options file" />
                                        </tooltip>
                                     </Button>
                                     <Label textFill="WHITE">

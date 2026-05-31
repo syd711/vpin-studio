@@ -7,11 +7,11 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore; // This import is correct for Jackson 3
 
 /**
  * {
@@ -33,8 +33,8 @@ public class GameRepresentation {
   private String gameDisplayName;
   private String gameFileName;
   private String mediaSearch;
-  private Date dateAdded;
-  private Date dateUpdated;
+  private OffsetDateTime dateAdded;
+  private OffsetDateTime dateUpdated;
   private String gameName;
   private String version;
   private long gameFileSize;
@@ -44,7 +44,7 @@ public class GameRepresentation {
   private int id;
   private String comment;
   private int rating;
-  private Date modified;
+  private OffsetDateTime modified;
   private ValidationState validationState;
   private boolean hasMissingAssets;
   private List<Integer> issueTypes = new ArrayList<>();
@@ -88,7 +88,9 @@ public class GameRepresentation {
   private String povPath;
   private String iniPath;
   private String resPath;
+  private String vbsPath;
   private boolean altSoundAvailable;
+  private boolean musicScripted;
 
   private List<String> tags = new ArrayList<>();
 
@@ -150,11 +152,11 @@ public class GameRepresentation {
     this.rating = rating;
   }
 
-  public Date getDateUpdated() {
+  public OffsetDateTime getDateUpdated() {
     return dateUpdated;
   }
 
-  public void setDateUpdated(Date dateUpdated) {
+  public void setDateUpdated(OffsetDateTime dateUpdated) {
     this.dateUpdated = dateUpdated;
   }
 
@@ -236,6 +238,14 @@ public class GameRepresentation {
     this.resPath = resPath;
   }
 
+  public String getVbsPath() {
+    return vbsPath;
+  }
+
+  public void setVbsPath(String vbsPath) {
+    this.vbsPath = vbsPath;
+  }
+
   public String getComment() {
     return comment;
   }
@@ -254,15 +264,11 @@ public class GameRepresentation {
 
   @JsonIgnore
   public Long getTemplateId(CardTemplateType templateType) {
-    switch (templateType) {
-      case HIGSCORE_CARD:
-        return getHighscoreCardTemplateId();
-      case INSTRUCTIONS_CARD:
-        return getInstructionCardTemplateId();
-      case WHEEL:
-        return getWheelTemplateId();
-    }
-    return null;
+      return switch (templateType) {
+          case HIGSCORE_CARD -> getHighscoreCardTemplateId();
+          case INSTRUCTIONS_CARD -> getInstructionCardTemplateId();
+          case WHEEL -> getWheelTemplateId();
+      };
   }
 
   public Long getHighscoreCardTemplateId() {
@@ -289,11 +295,11 @@ public class GameRepresentation {
     this.wheelTemplateId = wheelTemplateId;
   }
 
-  public Date getDateAdded() {
+  public OffsetDateTime getDateAdded() {
     return dateAdded;
   }
 
-  public void setDateAdded(Date dateAdded) {
+  public void setDateAdded(OffsetDateTime dateAdded) {
     this.dateAdded = dateAdded;
   }
 
@@ -385,6 +391,14 @@ public class GameRepresentation {
     this.altSoundAvailable = altSoundAvailable;
   }
 
+  public boolean isMusicScripted() {
+    return musicScripted;
+  }
+
+  public void setMusicScripted(boolean musicScripted) {
+    this.musicScripted = musicScripted;
+  }
+
   public String getAssets() {
     return assets;
   }
@@ -425,11 +439,11 @@ public class GameRepresentation {
     this.selected = selected;
   }
 
-  public Date getModified() {
+  public OffsetDateTime getModified() {
     return modified;
   }
 
-  public void setModified(Date modified) {
+  public void setModified(OffsetDateTime modified) {
     this.modified = modified;
   }
 

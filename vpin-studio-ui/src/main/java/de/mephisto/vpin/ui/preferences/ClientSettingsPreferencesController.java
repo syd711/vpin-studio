@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -25,13 +25,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class ClientSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ClientSettingsPreferencesController.class);
@@ -112,6 +111,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox sectionVps;
 
   @FXML
+  private CheckBox columnMusic;
+  @FXML
   private CheckBox columnAltColor;
   @FXML
   private CheckBox columnAltSound;
@@ -126,6 +127,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnComment;
   @FXML
+  private CheckBox columnBackupDate;
+  @FXML
   private CheckBox columnHighscore;
   @FXML
   private CheckBox columnEmulator;
@@ -133,6 +136,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox columnPinVol;
   @FXML
   private CheckBox columnIni;
+  @FXML
+  private CheckBox columnVbs;
   @FXML
   private CheckBox columnTutorials;
   @FXML
@@ -385,11 +390,12 @@ public class ClientSettingsPreferencesController implements Initializable {
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators();
-    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getEmulatorService().getBackglassGameEmulators();
+    gameEmulators.sort(Comparator.comparing(GameEmulatorRepresentation::getName));
+
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setUserData(gameEmulator);
-      checkBox.setDisable(gameEmulator.isVpxEmulator() || backglassGameEmulators.contains(gameEmulator));
+      checkBox.setDisable(gameEmulator.isVpxEmulator());
       if (checkBox.isDisabled()) {
         checkBox.setTooltip(new Tooltip("Emulators with backglasses can not be disabled here."));
       }
@@ -518,6 +524,13 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
+    columnMusic.setSelected(uiSettings.isColumnMusic());
+    columnMusic.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnMusic(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
     columnAltSound.setSelected(uiSettings.isColumnAltSound());
     columnAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnAltSound(t1);
@@ -553,6 +566,13 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
+    columnBackupDate.setSelected(uiSettings.isColumnBackupDate());
+    columnBackupDate.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnBackupDate(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
     columnDateModified.setSelected(uiSettings.isColumnDateModified());
     columnDateModified.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnDateModified(t1);
@@ -577,6 +597,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnIni.setSelected(uiSettings.isColumnIni());
     columnIni.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnIni(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnVbs.setSelected(uiSettings.isColumnVbs());
+    columnVbs.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnVbs(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

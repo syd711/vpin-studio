@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -96,11 +97,11 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     assertEquals(expectedNbEmulators, emulators.size());
 
     // first one should be visual pinball and with id=1 else other tests will fail
-    GameEmulator vpx = emulators.get(0);
+    GameEmulator vpx = emulators.getFirst();
     assertTrue(vpx.getType().isVpxEmulator());
     assertTrue(vpx.isEnabled());
     assertEquals(1, vpx.getId());
-    assertTrue(StringUtils.startsWithIgnoreCase(vpx.getName().replace(" ", ""), "VisualPinball"));
+    assertTrue(Strings.CI.startsWith(vpx.getName().replace(" ", ""), "VisualPinball"));
 
     int gameCount = connector.getGameCount(1);
     assertEquals(expectedNbGames, gameCount);

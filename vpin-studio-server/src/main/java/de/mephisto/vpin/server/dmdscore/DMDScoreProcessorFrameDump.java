@@ -64,23 +64,38 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
 
     writer.append(frame.getTimeStamp() + " / " + frame.getType() + " / " + width + " / " + height + "\n");
 
-    int[] palette = frame.getPalette();
-    for (int p = 0; p < palette.length; p++) {
-      if (p != 0) writer.append(",");
-      writer.append(Integer.toString(palette[p]));
-    }
-    writer.append("\n");
-
-    byte[] plane  = frame.getPlane();
+    int[] plane  = frame.getPlane();
     for (int j = 0; j < height; j++) {
       for (int i = 0; i < width; i++) {
-        int idx = plane[j * width + i];
-        writer.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
+        int color = plane[j * width + i];
+        writer.append(brightnessToChar(color, UNICODE_RAMP));
       }
       writer.append("\n");
     }
     writer.append("\n");
     return writer.toString();
+  }
+
+  // Characters ordered from darkest to lightest (denser = darker)
+  private static final char[] ASCII_CHARS = {
+      '@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.', ' '
+  };
+// Extended Unicode density ramp using geometric/box-draw characters
+  private static final char[] UNICODE_RAMP = {
+      '█','▓','▒','░','▪','·',' '
+  };
+
+  /** Maps a brightness value to an ASCII character. */
+  private static char brightnessToChar(int rgb, char[] chars) {
+    int r = (rgb >> 16) & 0xFF;
+    int g = (rgb >>  8) & 0xFF;
+    int b =  rgb        & 0xFF;
+    // Perceptual luminance (Rec. 709)
+    double brightness = 1 - (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+    int index = (int) (brightness * (chars.length - 1));
+    index = Math.max(0, Math.min(chars.length - 1, index));
+    return chars[index];
   }
 
   @Override

@@ -1,15 +1,17 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +19,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAdapter {
+public class DefaultAdapter implements ScoreListAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
+
+  private List<String> titles;
+
+  public DefaultAdapter(ScoringDB scoringDB) {
+    this.titles = scoringDB.getHighscoreTitles();
+  }
 
   @Override
   public boolean isApplicable(@NonNull Game game) {
@@ -27,10 +35,9 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
 
   @Override
   @NonNull
-  public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles) {
+  public List<Score> getScores(@Nullable Game game, @NonNull Instant createdAt, @NonNull List<String> lines, boolean parseAll) {
+    List<Score> scores = new ArrayList<>();
     try {
-      List<Score> scores = new ArrayList<>();
-
       int gameId = -1;
       String source = null;
       if (game != null) {
@@ -38,58 +45,80 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
         source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
       }
 
-      int index = 1;
+      String currentTitle = null;
+      String currentSuffix = null;
+      Score currentScore = null;
       for (int i = 0; i < lines.size(); i++) {
-        String line = lines.get(i);
-
-        //Check if there is a highscore title, in that case...
-        if (titles.contains(line.trim()) && ((i + 1) < titles.size())) {
-          if (i + 1 >= lines.size()) {
-            continue;
+        String line = lines.get(i).trim();
+        if (StringUtils.isEmpty(line)) {
+          if (currentSuffix != null && currentScore != null) {
+            currentScore.setSuffix(currentSuffix);
           }
-
-          String scoreLine = lines.get(i + 1);
-
-          //the next line could be a raw score without a positions
-          if (!isScoreLine(scoreLine, (i + 1))) {
-            Score score = createTitledScore(createdAt, line.trim(), scoreLine, source, gameId);
-            if (score != null) {
-              scores.add(score);
-            }
-            //do not increase index, as we still search for #1
-            continue;
-          }
-        }
-
-        if (isScoreLine(line, index)) {
-          Score score = createScore(createdAt, line, source, gameId);
-          if (score != null) {
-            score.setPosition(scores.size() + 1);
-            scores.add(score);
-            index++;
-          }
-        }
-
-        if (scores.size() >= 3 && StringUtils.isEmpty(line)) {
+          // restart a possible new sequence
+          currentTitle = null;
+          currentSuffix = null;
+          currentScore = null;
+          if (scores.size() >= 3 && !parseAll) {
             break;
+          }
+          continue;
         }
+
+        if (isScoreLine(line)) {
+          currentScore = createScore(createdAt, currentTitle, line, source, gameId);
+          if (currentScore != null) {
+            scores.add(currentScore);
+          }
+        }
+        else if (isTitleScoreLine(line)) {
+          if (parseAll || titles.contains(currentTitle)) {
+            currentScore = createTitledScore(createdAt, currentTitle, line, source, gameId);
+            if (currentScore != null) {
+              scores.add(currentScore);
+            }
+          }
+        }
+        else if (StringUtils.isNotEmpty(line)) {
+          if (currentScore != null) {
+            currentSuffix = " " + line;
+          }
+          currentTitle = line;
+        }
+      }
+      if (currentSuffix != null && currentScore != null) {
+        currentScore.setSuffix(currentSuffix);
       }
 
       return filterDuplicates(scores);
     }
     catch (Exception e) {
       if (game != null) {
-        LOG.error("Score parsing failed for \"" + game.getGameDisplayName() + "\": {}", e.getMessage(), e);
+        LOG.error("Score parsing failed for \"{}\": {}", game.getGameDisplayName(), e.getMessage(), e);
       }
       else {
         LOG.error("Score parsing failed: {}", e.getMessage(), e);
       }
-      throw e;
     }
+    return scores;
   }
 
-  public boolean isScoreLine(String line, int index) {
-    return line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1;
+  //-------------------------
+
+  private static final String _patternIndex = "(\\d+\\)|#\\d+|\\d+#|\\d+\\.:) +";
+  private static final String _patternScore = "(.{3})?(\\s+-)?(\\s+(\\d\\d?\\d?(?:[., ?\u00a0\u202f\ufffd\u00ff]?\\d\\d\\d)*(\\.\\d)?)((\\s?[a-zA-Z]+)*))+$";
+
+  private static final Pattern patternScoreLine = Pattern.compile(_patternIndex + _patternScore);
+  private static final Pattern patternScoreTitle = Pattern.compile(_patternScore);
+
+
+  public static boolean isTitleScoreLine(String line) {
+    Matcher m = patternScoreTitle.matcher(line);
+    return m.find();
+  }
+
+  public static boolean isScoreLine(String line) {
+    Matcher m = patternScoreLine.matcher(line);
+    return m.find();
   }
 
   /**
@@ -97,52 +126,78 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
    * These scores do not have a leading position number.
    */
   @Nullable
-  protected Score createTitledScore(@NonNull Date createdAt, @NonNull String title, @NonNull String line, @Nullable String source, int gameId) {
-    String initials = "???";
-    if (line.trim().length() >= 3) {
-      initials = line.trim().substring(0, 3);
-
-      String scoreString = line.substring(4).trim();
-      long scoreValue = toNumericScore(scoreString, source, false);
-      if (scoreValue == -1) {
-        return null;
+  protected Score createTitledScore(@NonNull Instant createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
+    Matcher m = patternScoreTitle.matcher(line);
+    if (m.find()) {
+      String initials = m.group(1);
+      if (StringUtils.isEmpty(initials)) {
+        initials = "???";
       }
 
-      Score sc = new Score(createdAt, gameId, initials, null, scoreString, scoreValue, 1);
-      sc.setLabel(title);
-      return sc;
-    }
+      String scoreString = m.group(4).trim();
+      long scoreValue = toNumericScore(scoreString, source, false);
+      if (scoreValue != -1) {
+        Score sc = new Score(createdAt, gameId, initials.trim(), null, scoreString, scoreValue, 1);
+        sc.setLabel(title);
 
-    long scoreValue = toNumericScore(line.trim(), source, false);
-    if (scoreValue == -1) {
-      return null;
+        // do not trim and keep spaces at beginning if present
+        String suffix = m.group(6);
+        if (StringUtils.isNotEmpty(suffix)) {
+          sc.setSuffix(suffix);
+        }
+        return sc;
+      }
     }
-
-    return new Score(createdAt, gameId, initials, null, line.trim(), scoreValue, 1);
+    return null;
   }
-
-
-  private static Pattern pattern = Pattern.compile("\\d?\\d?([., ?\u00a0\u202f\ufffd\u00ff]?\\d\\d\\d)*$");
 
   @Nullable
-  public Score createScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
-    if (line.indexOf(" ") < -1) {
-      return null;
-    }
-    line = StringUtils.substringAfter(line, " ").trim();
-    Matcher m = pattern.matcher(line);
-    if (m.find()) {
-      int p = m.start();
-      String score = line.substring(p);
-      long v = toNumericScore(score, source, true);
-      if (v == -1) {
-        return null;
-      }
-      String initials = p > 0 ? line.substring(0, p - 1).trim() : "";
-      initials = ScoreFormatUtil.cleanInitials(initials);
-      return new Score(createdAt, gameId, initials, null, score, v, -1);
-    }
-    throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
+  public Score createScore(@NonNull Instant createdAt, @Nullable String title, @NonNull String line, @Nullable String source, int gameId) {
+    String idx = StringUtils.substringBefore(line, " ");
+    idx = idx.replace(")", "");
+    idx = idx.replace("#", "");
+    idx = idx.replace(".:", "");
+    int index = Integer.parseInt(idx);
+
+    line = StringUtils.substringAfter(line, " ");
+    Score sc = createTitledScore(createdAt, title, line, source, gameId);
+    sc.setPosition(index);
+    return sc;
   }
 
+  protected long toNumericScore(@Nullable String score, @Nullable String source, boolean log) {
+    if (StringUtils.isEmpty(score)) {
+      if (log) {
+        LOG.warn("Cannot parse empty numeric highscore, ignoring this segment, source: {}", source);
+      }
+      return -1;
+    }
+    try {
+      String cleanScore = ScoreFormatUtil.cleanScore(score);
+      return Long.parseLong(cleanScore);
+    }
+    catch (NumberFormatException e) {
+      if (log) {
+        LOG.warn("Failed to parse numeric highscore string '{}', ignoring this segment, source: {}", score, source);
+      }
+
+      return -1;
+    }
+  }
+
+  protected List<Score> filterDuplicates(List<Score> scores) {
+    List<Score> scoreList = new ArrayList<>();
+    int pos = 1;
+    for (Score s : scores) {
+      Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
+      if (match.isPresent()) {
+        continue;
+      }
+
+      s.setPosition(pos);
+      scoreList.add(s);
+      pos++;
+    }
+    return scoreList;
+  }
 }

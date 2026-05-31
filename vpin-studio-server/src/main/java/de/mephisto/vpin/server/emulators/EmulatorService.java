@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.alx.AlxService;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.pupgames.PUPGameImporter;
@@ -11,7 +15,10 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
 import de.mephisto.vpin.server.games.GameMediaService;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +35,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class EmulatorService implements InitializingBean {
+public class EmulatorService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
   private GameEmulatorValidationService gameEmulatorValidationService;
 
   @Autowired
-  private MameService mameService;
+  private VPinMameService vPinMameService;
 
   @Autowired
   private EmulatorFactory emulatorFactory;
@@ -43,6 +50,16 @@ public class EmulatorService implements InitializingBean {
   @Lazy
   @Autowired
   private GameMediaService gameMediaService;
+
+  @Autowired
+  private DOFLinxService dofLinxService;
+
+  @Autowired
+  private PreferencesService preferencesService;
+
+  @Lazy
+  @Autowired
+  private AlxService alxService;
 
   private final List<EmulatorChangeListener> listeners = new ArrayList<>();
 
@@ -85,12 +102,12 @@ public class EmulatorService implements InitializingBean {
       List<ValidationState> validate = gameEmulatorValidationService.validate(frontendService.getFrontendType(), gameEmulator, true);
       gameEmulator.setValidationStates(validate);
     }
-    Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
+    gameEmulators.sort((o1, o2) -> o2.getName().compareTo(o1.getName()));
     return gameEmulators;
   }
 
   public List<GameEmulator> getValidGameEmulators() {
-    List<GameEmulator> gameEmulators = getGameEmulators().stream().filter(e -> e.isValid()).collect(Collectors.toList());
+    List<GameEmulator> gameEmulators = getGameEmulators().stream().filter(GameEmulator::isValid).collect(Collectors.toList());
     Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
     return gameEmulators;
   }
@@ -99,12 +116,16 @@ public class EmulatorService implements InitializingBean {
     return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
+  public List<GameEmulator> getFpGameEmulators() {
+    return getGameEmulators().stream().filter(e -> e.isFpEmulator() && e.isValid()).collect(Collectors.toList());
+  }
+
   public List<GameEmulator> getZenGameEmulators() {
     return getGameEmulators().stream().filter(e -> e.isZenEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
-    return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(e -> (e.isVpxEmulator() || e.isZenEmulator()) && e.isValid()).collect(Collectors.toList());
   }
 
   public void setFrontendService(FrontendService frontendService) {
@@ -127,7 +148,7 @@ public class EmulatorService implements InitializingBean {
     return true;
   }
 
-  public void loadEmulators() {
+  public void reloadEmulators() {
     FrontendConnector frontendConnector = frontendService.getFrontendConnector();
     frontendConnector.reloadCache();
     List<GameEmulator> ems = frontendConnector.getEmulators();
@@ -155,7 +176,7 @@ public class EmulatorService implements InitializingBean {
       if (emulator.isVpxEmulator()) {
         // mind that popper may set a specific romDirectory
         if (StringUtils.isEmpty(emulator.getRomDirectory())) {
-          File romFolder = mameService.getRomsFolder();
+          File romFolder = vPinMameService.getRomsFolder();
           if (romFolder != null && romFolder.exists()) {
             emulator.setRomDirectory(romFolder.getAbsolutePath());
           }
@@ -164,12 +185,20 @@ public class EmulatorService implements InitializingBean {
           }
         }
       }
+
+      if (emulator.isZenEmulator() && dofLinxService.isValid() && dofLinxService.getBackglassesFolder(emulator) != null) {
+        File backglassesFolder = dofLinxService.getBackglassesFolder(emulator);
+        if (backglassesFolder != null) {
+          emulator.setBackglassDirectory(backglassesFolder.getAbsolutePath());
+        }
+      }
+
       emulators.put(emulator.getId(), emulator);
 
-      LOG.info("Loaded Emulator: " + emulator);
+      LOG.info("Loaded Emulator: {}", emulator);
     }
     catch (Exception e) {
-      LOG.error("Emulator initialization failed: " + e.getMessage(), e);
+      LOG.error("Emulator initialization failed: {}", e.getMessage(), e);
     }
   }
 
@@ -187,8 +216,6 @@ public class EmulatorService implements InitializingBean {
 
   /**
    * Used to synchronize emulators with .pupgames files to the latest lists.
-   *
-   * @param emulator
    */
   private void synchronizeEmulator(GameEmulator emulator) {
     if (!emulator.isEnabled()) {
@@ -198,9 +225,9 @@ public class EmulatorService implements InitializingBean {
     int count = 0;
     if (emulator.isPupGameImportSupported()) {
       List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulator.getId());
+      List<TableDetails> fullGameList = PUPGameImporter.read(emulator.getType(), emulator.getId());
       if (gamesByEmulator.isEmpty()) {
-        List<TableDetails> tableDetailList = PUPGameImporter.read(emulator.getType(), emulator.getId());
-        for (TableDetails tableDetails : tableDetailList) {
+        for (TableDetails tableDetails : fullGameList) {
           int gameId = frontendService.importGame(tableDetails);
           if (gameId > 0) {
             gameMediaService.autoMatch(gameId, false);
@@ -209,11 +236,66 @@ public class EmulatorService implements InitializingBean {
         }
         LOG.info("\"{}\" emulator synchronization finished, added {} games.", emulator.getName(), count);
       }
+      else if (gamesByEmulator.size() != fullGameList.size()) {
+        for (TableDetails tableDetails : fullGameList) {
+          if (!containsGame(gamesByEmulator, tableDetails)) {
+            LOG.info("Found missing game for {}: {}", emulator.getName(), tableDetails.getGameDisplayName());
+//            LOG.info("Importing missing game for {}: {}", emulator.getName(), tableDetails.getGameDisplayName());
+//            int gameId = frontendService.importGame(tableDetails);
+//            if (gameId > 0) {
+//              gameMediaService.autoMatch(gameId, false);
+//              count++;
+//            }
+          }
+        }
+      }
+
+      cleanUpNonVPXDuplicates(emulator, gamesByEmulator);
     }
   }
 
+  private void cleanUpNonVPXDuplicates(GameEmulator emulator, List<Game> gamesByEmulator) {
+    Map<String, List<Game>> byBaseName = gamesByEmulator.stream()
+        .collect(Collectors.groupingBy(g -> FilenameUtils.getBaseName(g.getGameFileName()).toLowerCase()));
+
+    for (Map.Entry<String, List<Game>> entry : byBaseName.entrySet()) {
+      List<Game> duplicates = entry.getValue();
+      if (duplicates.size() > 1) {
+        LOG.warn("Found {} duplicate entries for base name \"{}\" in emulator {}", duplicates.size(), entry.getKey(), emulator.getName());
+        // Keep the game with the most playtime; fall back to first entry if all are zero
+        Game keepGame = duplicates.stream()
+            .max(Comparator.comparingInt(g -> alxService.getAlxSummary(g.getId()).getEntries().stream()
+                .mapToInt(TableAlxEntry::getTimePlayedSecs).sum()))
+            .orElse(duplicates.getFirst());
+        for (Game duplicate : duplicates) {
+          if (duplicate != keepGame) {
+            LOG.info("Removing duplicate with less playtime: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
+            gamesByEmulator.remove(duplicate);
+            frontendService.deleteGame(duplicate.getId());
+            LOG.info("Removed non-VPX from frontend database: [{}] {}", duplicate.getId(), duplicate.getGameFileName());
+          }
+        }
+      }
+    }
+  }
+
+  private boolean containsGame(List<Game> gamesByEmulator, TableDetails tableDetails) {
+    for (Game game : gamesByEmulator) {
+      if (game.getGameFileName().equals(tableDetails.getGameFileName())) {
+        return true;
+      }
+      if (game.getGameName().equals(tableDetails.getGameName())) {
+        return true;
+      }
+      if (game.getGameDisplayName().equals(tableDetails.getGameDisplayName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean clearCache() {
-    loadEmulators();
+    reloadEmulators();
     return true;
   }
 
@@ -227,8 +309,20 @@ public class EmulatorService implements InitializingBean {
     this.listeners.add(listener);
   }
 
+  public void removeEmulatorChangeListener(EmulatorChangeListener listener) {
+    this.listeners.remove(listener);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (PreferenceNames.DOFLINX_SETTINGS.equals(propertyName)) {
+      reloadEmulators();
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

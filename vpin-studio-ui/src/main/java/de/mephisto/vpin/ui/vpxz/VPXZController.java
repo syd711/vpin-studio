@@ -21,8 +21,6 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.vpxz.dialogs.VPXZInstallationProgressModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -36,13 +34,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -138,7 +139,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   public final void onFolder() {
     ObservableList<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      VPXZDescriptorRepresentation descriptor = selectedItems.get(0).getBean();
+      VPXZDescriptorRepresentation descriptor = selectedItems.getFirst().getBean();
       VPXZSourceRepresentation source = sourceCombo.getValue();
 
       File file = new File(source.getLocation(), descriptor.getFilename());
@@ -281,7 +282,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     if (!selectedItems.isEmpty()) {
       String title = "Delete the " + selectedItems.size() + " selected files?";
       if (selectedItems.size() == 1) {
-        title = "Delete File \"" + selectedItems.get(0).getName() + "\"?";
+        title = "Delete File \"" + selectedItems.getFirst().getName() + "\"?";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -353,7 +354,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       size.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(size);
 
-      Label created = new Label(new SimpleDateFormat().format(value.getCreatedAt()));
+      Label created = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
       created.getStyleClass().add("default-text");
       created.setStyle("-fx-font-size: 12px;");
       vBox.getChildren().add(created);
@@ -428,7 +429,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      Label label = new Label(DateFormat.getInstance().format(value.getCreatedAt()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
       label.getStyleClass().add("default-text");
       return label;
     }, this, true);
@@ -522,7 +523,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
+    NavigationController.setBreadCrumb(List.of(TAB_NAME));
     if (options == null) {
       refreshView(Optional.empty());
     }
@@ -551,7 +552,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   }
 
   private void updateSelection(Optional<VPXZDescriptorRepresentation> newSelection) {
-    NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
+    NavigationController.setBreadCrumb(List.of(TAB_NAME));
     if (newSelection.isPresent()) {
       VPXZDescriptorRepresentation descriptorRepresentation = newSelection.get();
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, descriptorRepresentation.getFilename()));

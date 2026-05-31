@@ -133,7 +133,7 @@ public class PinVolSettingsController implements Initializable {
     saveBtn.setVisible(games.isEmpty());
 
     if (games.size() == 1) {
-      tableLabel.setText("PinVol Settings for \"" + games.get(0).getGameDisplayName() + "\"");
+      tableLabel.setText("PinVol Settings for \"" + games.getFirst().getGameDisplayName() + "\"");
     }
     else {
       tableLabel.setText("PinVol Settings for " + games.size() + " tables");
@@ -158,7 +158,7 @@ public class PinVolSettingsController implements Initializable {
       setSpinnerValues(systemVolRearSpinner, -ssfDbLimit, ssfDbLimit, systemVolume.getSsfRearVolume());
 
       if (games.size() == 1) {
-        GameRepresentation game = games.get(0);
+        GameRepresentation game = games.getFirst();
         entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), client.getEmulatorService().isVpxGame(game), client.getEmulatorService().isFpGame(game));
       }
       else {

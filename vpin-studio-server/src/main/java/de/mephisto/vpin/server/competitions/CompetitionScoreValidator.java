@@ -8,8 +8,8 @@ import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.vpx.VPXUtil;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class CompetitionScoreValidator {
 
@@ -23,11 +23,11 @@ public class CompetitionScoreValidator {
       return "Highscore update has been skipped, initials with '?' are filtered.";
     }
 
-    if (!competition.getType().equals(CompetitionType.SUBSCRIPTION.name()) && !newScore.getPlayerInitials().equalsIgnoreCase(botStatus.getBotInitials())) {
+    if (!competition.getType().equals(CompetitionType.SUBSCRIPTION.name()) && botStatus.getBotInitials().stream().noneMatch(ini -> ini.equalsIgnoreCase(newScore.getPlayerInitials()))) {
       return "Highscore update has been skipped, the initials '" + newScore.getPlayerInitials() + "' do not belong to the our bot ('" + botStatus.getBotInitials() + "').";
     }
 
-    if(competitionData != null) {
+    if (competitionData != null) {
       String mode = competitionData.getMode();
       String competitionRom = competitionData.getRom();
 

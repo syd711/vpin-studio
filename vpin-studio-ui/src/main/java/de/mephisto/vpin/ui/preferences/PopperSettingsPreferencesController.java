@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.DatabaseLockException;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -14,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +105,9 @@ public class PopperSettingsPreferencesController implements Initializable {
 
   @FXML
   private CheckBox volumeChange;
+
+  @FXML
+  private CheckBox autoStart;
 
   private PopperSettings popperSettings;
 
@@ -299,6 +300,12 @@ public class PopperSettingsPreferencesController implements Initializable {
       popperSettings.setWatchDog(t1);
       save();
     });
+
+    autoStart.setSelected(popperSettings.isAutoStart());
+    autoStart.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      popperSettings.setAutoStart(t1);
+      save();
+    });
   }
 
   private void save() {
@@ -347,6 +354,7 @@ public class PopperSettingsPreferencesController implements Initializable {
     wheelUpdateMS.setDisable(b);
     joyAxisMove.setDisable(b);
     volumeChange.setDisable(b);
+    autoStart.setDisable(b);
   }
 
   static class FadeoutLoading {

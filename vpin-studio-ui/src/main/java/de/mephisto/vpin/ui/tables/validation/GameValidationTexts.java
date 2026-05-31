@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class GameValidationTexts {
       }
       case CODE_NVOFFSET_MISMATCH: {
         label = "\"NVOffset\" mismatch found.";
-        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" set, but table \"" + state.getOptions().get(0) + "\" has the NVOffset value \"" + state.getOptions().get(2) + "\".";
+        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" and shares the ROM with table \"" + state.getOptions().getFirst() + "\" which has the NVOffset value \"" + state.getOptions().get(2) + "\".";
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
@@ -186,6 +186,20 @@ public class GameValidationTexts {
         }
         else {
           text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
+        }
+        break;
+      }
+      case CODE_MUSIC_FILE_MISSING: {
+        label = "Music file is missing.";
+        if (state.getOptions().size() > 1) {
+          label = "Music files are missing.";
+        }
+        if (state.getOptions().size() > 2) {
+          List<String> entries = state.getOptions().subList(0, 2);
+          text = "The table script references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more files)";
+        }
+        else {
+          text = "The table script references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
         }
         break;
       }

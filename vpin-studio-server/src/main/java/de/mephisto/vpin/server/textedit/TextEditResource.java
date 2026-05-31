@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.textedit;
 
-import de.mephisto.vpin.restclient.textedit.MonitoredTextFile;
+import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +17,9 @@ public class TextEditResource {
 
   @PostMapping("/open")
   @ResponseBody
-  public MonitoredTextFile getText(@RequestBody MonitoredTextFile monitoredTextFile) {
+  public TextEditorFile getText(@RequestBody TextEditorFile textEditorFile) {
     try {
-      return textEditService.getText(monitoredTextFile);
+      return textEditService.getText(textEditorFile);
     }
     catch (Exception e) {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Reading file failed: " + e.getMessage());
@@ -27,7 +27,7 @@ public class TextEditResource {
   }
 
   @PostMapping("/save")
-  public MonitoredTextFile save(@RequestBody MonitoredTextFile monitoredTextFile) {
-    return textEditService.save(monitoredTextFile);
+  public TextEditorFile save(@RequestBody TextEditorFile textEditorFile) {
+    return textEditService.save(textEditorFile);
   }
 }

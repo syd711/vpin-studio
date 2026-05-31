@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UnzipChangeListener;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class PupPackInstallerJob implements Job {
   @Override
   public void execute(JobDescriptor result) {
     File pupFolder = new File(pupVideosFolder, rom);
-    LOG.info("Starting PUP pack installation of '" + pupTmpArchive.getAbsolutePath() + "' to '" + pupFolder.getAbsolutePath() + "', using archive root folder + '" + pupPackFolderInArchive + "' and ROM '" + rom + "'");
+    LOG.info("Starting PUP pack installation of '{}' to '{}', using archive root folder + '{}' and ROM '{}'", pupTmpArchive.getAbsolutePath(), pupFolder.getAbsolutePath(), pupPackFolderInArchive, rom);
     PackageUtil.unpackTargetFolder(pupTmpArchive, pupFolder, pupPackFolderInArchive, Collections.emptyList(), new UnzipChangeListener() {
       @Override
       public boolean unzipping(String name, int index, int total) {

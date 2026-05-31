@@ -28,7 +28,7 @@ public class UniversalUploadUtil {
 
       List<Object> results = uploadResultModel.getResults();
       if (!results.isEmpty()) {
-        final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
+        final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.getFirst();
         if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
           Platform.runLater(() -> {
             WidgetFactory.showAlert(Studio.stage, "Error", "Upload Failed: " + uploadDescriptor.getError());
@@ -51,7 +51,7 @@ public class UniversalUploadUtil {
     try {
       ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
       if (!progressDialogResult.getResults().isEmpty()) {
-        UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
+        UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().getFirst();
         if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
           Platform.runLater(() -> {
             WidgetFactory.showAlert(Studio.stage, "Error", "Error: " + uploadedAndImportedDescriptor.getError());

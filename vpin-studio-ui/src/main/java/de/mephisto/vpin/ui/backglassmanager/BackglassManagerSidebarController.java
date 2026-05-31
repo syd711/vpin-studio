@@ -23,8 +23,8 @@ import de.mephisto.vpin.ui.util.JFXHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -54,7 +54,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -228,6 +230,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Label gameFilenameLabel;
 
   @FXML
+  private Label gameIdLabel;
+
+  @FXML
   private Label emulatorNameLabel;
 
   @FXML
@@ -264,21 +269,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private void onBackglassDelete(Event e) {
-//    try {
-//      DirectB2SModel selection = backglassManagerController.getSelectedModel();
-//      if (selection != null) {
-//        //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", "This also deletes all version of this backglass.", "Delete");
-//        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-//          if (client.getBackglassServiceClient().deleteBackglass(selection.getEmulatorId(), selection.getFileName())) {
-//            backglassManagerController.delete(selection);
-//          }
-//        }
-//      }
-//    }
-//    catch (Exception ex) {
-//      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
-//    }
     try {
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       String selectedVersion = getSelectedVersion();
@@ -390,7 +380,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-        screenName + " Media Upload", Arrays.asList(tmp.toFile()), screen, append);
+        screenName + " Media Upload", List.of(tmp.toFile()), screen, append, null);
     ProgressDialog.createProgressDialog(model);
   }
 
@@ -633,7 +623,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         .setOnDragDropped(e -> {
           List<File> files = e.getDragboard().getFiles();
           if (files != null && files.size() == 1) {
-            File selection = files.get(0);
+            File selection = files.getFirst();
             Platform.runLater(() -> {
               BackglassManagerControllerUtils.updateDMDImage(getEmulatorId(), getSelectedVersion(), game, selection);
             });
@@ -736,7 +726,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       disableCombosFrames();
 
-      modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(directB2SData.getModificationDate()));
+      modificationDateLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()).format(directB2SData.getModificationDate()));
 
       reloadBtn.setDisable(false);
       deleteBtn.setDisable(false);
@@ -764,7 +754,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       emulatorNameLabel.setText("-");
       gameLabel.setText("-");
       gameFilenameLabel.setText("-");
-    
+      gameIdLabel.setText("-");
+
       // depend on the game selection
       useAsMediaBackglassBtn.setDisable(true);
       useAsMediaDMDBtn.setDisable(true);
@@ -788,6 +779,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       setLabelandTooltip(gameLabel, game.getGameDisplayName());
       setLabelandTooltip(gameFilenameLabel, game.getGameFileName());
+      setLabelandTooltip(gameIdLabel, String.valueOf(game.getId()));
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);
@@ -839,7 +831,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         directB2SCombo.setVisible(false);
         directB2SLabel.setVisible(true);
 
-        directB2SLabel.setText(versions.get(0));
+        directB2SLabel.setText(versions.getFirst());
       }  
     }
     else {

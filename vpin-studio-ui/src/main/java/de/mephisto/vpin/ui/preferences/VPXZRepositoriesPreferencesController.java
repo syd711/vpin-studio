@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceType;
-import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -72,6 +71,9 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
       else {
         WidgetFactory.showInformation(Studio.stage, "Ping Successful", "Version: " + ping.getVersion());
       }
+    }).onErrorLater(e -> {
+        testBtn.setDisable(false);
+        WidgetFactory.showAlert(Studio.stage, "Ping Failed", "An error occurred during the ping:", e.getMessage());
     });
   }
 

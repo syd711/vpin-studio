@@ -1,9 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.*;
 
 /**
  * Hold mapping between filename and gameId for connectors that do not manage id
@@ -14,7 +11,7 @@ import javax.persistence.Table;
 public class GameEntry {
 
   @Id
-  @Column(name = "id", nullable = false)
+  @Column(name = "id", nullable = false, unique = true)
   private int id;
 
   @Column(nullable = false)
