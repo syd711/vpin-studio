@@ -6,6 +6,9 @@
 - **VP-Spreadsheet**: Fixed VPS view which did not show all assets because of empty date values.
 - **Table Overview**: Added more logging to figure out why for some users the ROM column only shows "..." as a value.
 - **Text Editing**: Fixed various issues opening text or .vbs files with the internal editor.
+- **Table Scans**: Fixed critical issue for table scans which caused script change detections not being applied.
+- **MacOS/Linux Clients**: Fixed missing exports for apng supports which broke the clients.
+- **VPin Mania Sync**: Added result dialog for single score synchronizations from the sidebar.
 
 ---
 

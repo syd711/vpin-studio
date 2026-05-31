@@ -152,7 +152,16 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     }
     tableView.setItems(FXCollections.observableList(models));
     LOG.info(models.size() + " highscore have been submitted to vpin-mania.net.");
-    statsLabel.setText(models.size() + " highscore have been submitted to vpin-mania.net.");
+    if (models.size() == 1) {
+      statsLabel.setText(models.size() + " highscore has been submitted to vpin-mania.net.");
+    }
+    else {
+      statsLabel.setText(models.size() + " highscores have been submitted to vpin-mania.net.");
+    }
+
+    if(!tableView.getItems().isEmpty()) {
+      tableView.getSelectionModel().select(0);
+    }
   }
 
   class ManiaTableSyncResultModel {

@@ -28,7 +28,7 @@
          <left>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <VBox prefWidth="600.0" styleClass="info-container">
+                  <VBox styleClass="info-container">
                      <children>
                         <GridPane>
                           <columnConstraints>
