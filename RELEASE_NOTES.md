@@ -2,9 +2,10 @@
 
 ### Changes
 
-- Added automatic VPin Studio backups for minor versions.
-- Fixed VPS view which did not show all assets because of empty date values.
-- Added more logging to figure out why for some users the ROM column only shows "..." as a value.
+- **VPin Studio Backups**: Added automatic VPin Studio backups for minor versions.
+- **VP-Spreadsheet**: Fixed VPS view which did not show all assets because of empty date values.
+- **Table Overview**: Added more logging to figure out why for some users the ROM column only shows "..." as a value.
+- **Text Editing**: Fixed various issues opening text or .vbs files with the internal editor.
 
 ---
 
