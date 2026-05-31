@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -167,7 +169,11 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
       }
       if (!tables.isEmpty()) {
-        ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
+        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
+        if (!progressDialog.getResults().isEmpty()) {
+          List<ManiaTableSyncResult> results = (List<ManiaTableSyncResult>) (List<?>) progressDialog.getResults();
+          ManiaDialogs.openTableSyncResult(results);
+        }
       }
     }
   }
