@@ -83,7 +83,7 @@ public class BackglassServiceTest2 extends AbstractVPinServerTest {
     DirectB2S b2s = backglassService.getDirectB2SAndVersions(game);
     assertNotNull(b2s);
     assertEquals("Twister (1996).directb2s", b2s.getFileName());
-    assertEquals(2, b2s.getNbVersions());
+    assertEquals(2, b2s.getVersions().size());
   }
 
   @Test
