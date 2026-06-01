@@ -2,7 +2,13 @@
 
 ### Fixes
 - **Server Update**: Added fix for server not shutting down properly before trying to overwrite file
-- **Pinem Hi Font Selection**: Fixed font selector so buttons show and font can be set.  
+- **PinemHi Font Selection**: Fixed font selector so buttons show and font can be set.  
+- **Navigation Breadcrumbs**: Fix navigation breadcrumbs updating to designer when on tables
+### Changes
+- **PinemHi Display Settings**: Made numeric spinners editable so a number can be typed in. 
+- **PinVol Preferences**: Made numeric spinners editable so a number can be typed in.
+- **Player Ranking Preferences**: Made numeric spinners editable so a number can be typed in.
+- **Table Sidebar VpinMAME settings**: Made numeric spinner editable so a number can be typed in.
 
 ## Release Notes 5.0.1
 

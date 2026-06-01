@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
 
 public class LayerEditorFrameController extends LayerEditorBaseController implements Initializable {
 
@@ -101,18 +102,26 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
     zoomSlider.setValue(cardTemplate.getZoom());
 
     IntegerSpinnerValueFactory factoryX = (IntegerSpinnerValueFactory) backgroundXSpinner.getValueFactory();
+    addIntegerValidation(backgroundXSpinner);
     factoryX.setValue((int) (cardTemplate.getBackgroundX() * 100));
     IntegerSpinnerValueFactory factoryY = (IntegerSpinnerValueFactory) backgroundYSpinner.getValueFactory();
+    addIntegerValidation(backgroundYSpinner);
     factoryY.setValue((int) (cardTemplate.getBackgroundY() * 100));
 
     borderSizeSpinner.getValueFactory().setValue(cardTemplate.getBorderWidth());
+    addIntegerValidation(borderSizeSpinner);
     borderRadiusSpinner.getValueFactory().setValue(cardTemplate.getBorderRadius());
+      addIntegerValidation(borderRadiusSpinner);
     CardTemplateBinder.setColorPickerValue(borderColorSelector, cardTemplate, "borderColor");
 
     marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
+      addIntegerValidation(marginTopSpinner);
     marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());
+      addIntegerValidation(marginRightSpinner);
     marginBottomSpinner.getValueFactory().setValue(cardTemplate.getMarginBottom());
+      addIntegerValidation(marginBottomSpinner);
     marginLeftSpinner.getValueFactory().setValue(cardTemplate.getMarginLeft());
+      addIntegerValidation(marginLeftSpinner);
 
     String frameName = cardTemplate.getFrame();
     if (StringUtils.isEmpty(frameName)) {
@@ -155,13 +164,15 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryX = new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0);
     backgroundXSpinner.setValueFactory(factoryX);
-    factoryX.setConverter(converter);
+    addIntegerValidation(backgroundXSpinner);
+        factoryX.setConverter(converter);
     factoryX.valueProperty().addListener((observableValue, integer, t1) -> {
       templateBeanBinder.setProperty("backgroundX", Double.parseDouble(String.valueOf(t1)) / 100);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryY = new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0);
     backgroundYSpinner.setValueFactory(factoryY);
+    addIntegerValidation(backgroundYSpinner);
     factoryY.setConverter(converter);
     factoryY.valueProperty().addListener((observableValue, integer, t1) -> {
       templateBeanBinder.setProperty("backgroundY", Double.parseDouble(String.valueOf(t1)) / 100);
