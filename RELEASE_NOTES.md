@@ -1,3 +1,9 @@
+## Release Notes 5.0.2
+
+### Fixes
+- **Server Update**: Added fix for server not shutting down properly before trying to overwrite file
+- **Pinem Hi Font Selection**: Fixed font selector so buttons show and font can be set.  
+
 ## Release Notes 5.0.1
 
 ### Changes
