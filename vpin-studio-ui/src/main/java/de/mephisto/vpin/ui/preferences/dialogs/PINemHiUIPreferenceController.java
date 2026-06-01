@@ -187,26 +187,19 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
 
     Font font = Font.font(name, FontPosture.findByName(style), size);
 
-    FontSelectorDialog fs = new FontSelectorDialog(font);
-    fs.setHeight(500);
-    fs.setTitle("Select Font");
-    fs.setHeaderText("");
-    fs.show();
+      FontSelectorDialog fs = new FontSelectorDialog(font);
+      fs.setHeight(500);
+      fs.setTitle("Select Font");
+      fs.setHeaderText("");
 
-    fs.setOnCloseRequest(e -> {
-      if (fs.getResult() != null) {
-        Font result = fs.getResult();
-        debouncer.debounce("font", () -> {
-
+      fs.showAndWait().ifPresent(result -> {
           String special = result.getStyle().toLowerCase();
           if (special.equals("regular")) {
-            special = "";
-          }
-          else if (special.equals("bold regular")) {
-            special = "bold";
-          }
-          else if (special.equals("bold italic")) {
-            special = "bold";
+              special = "";
+          } else if (special.equals("bold regular")) {
+              special = "bold";
+          } else if (special.equals("bold italic")) {
+              special = "bold";
           }
 
           Map<String, Object> values = new HashMap<>();
@@ -228,10 +221,8 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
             sampleLabel.setText(labelText);
             sampleLabel.setTooltip(new Tooltip(labelText));
           });
-        }, 1000);
+        });
       }
-    });
-  }
 
   @FXML
   private void onRestart() {
