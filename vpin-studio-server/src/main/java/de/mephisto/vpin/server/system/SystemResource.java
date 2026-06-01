@@ -234,6 +234,7 @@ public class SystemResource {
   @GetMapping("/shutdown")
   public boolean shutdown() {
     systemService.shutdown();
+
     return true;
   }
 
@@ -324,18 +325,15 @@ public class SystemResource {
       return false;
     }
     LOG.info("{} file found, installing update.", Updater.SERVER_ZIP);
+
+    Updater.installServerUpdate();
     new Thread(() -> {
       try {
         Thread.sleep(2000);
         systemService.shutdown();
-        //Moving inside to prevent trying to overwrite before it's shutdown
-          Updater.installServerUpdate();
-
       }
       catch (InterruptedException e) {
         //ignore
-      } catch (IOException e) {
-          //throw new RuntimeException(e);
       }
     }).start();
     return true;
