@@ -2,8 +2,13 @@ package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
+import javafx.util.converter.IntegerStringConverter;
 import org.apache.commons.lang3.Strings;
+
+import java.util.function.UnaryOperator;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 
@@ -41,4 +46,19 @@ public class FrontendUtil {
         return Strings.CI.replace(replaceName(text, frontend), "[Emulator]", emulator);
     }
 
+    public static void addIntegerValidation(Spinner<Integer> spinner) {
+        //IF we're adding validation we want it editable.
+        spinner.setEditable(true);
+
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("-?\\d*")) {  // allow digits and optional leading minus
+                return change;
+            }
+            return null;  // reject the change
+        };
+
+        TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), 0, filter);
+        spinner.getEditor().setTextFormatter(formatter);
+    }
 }
