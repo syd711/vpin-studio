@@ -105,6 +105,11 @@ public class DropInContainerController implements Initializable {
   public void setData(@Nullable MenuButton dropInButton, @NonNull File file) {
     this.dropInButton = dropInButton;
     this.file = file;
+    dataPanel.setPrefWidth(250.0);
+    imageWrapper.setVisible(true);
+    imageView.setImage(null);
+    installBtn.setVisible(true);
+    installSeparator.setVisible(true);
     filenameLabel.setText(file.getName());
     filenameLabel.setStyle("-fx-font-size: 15px;-fx-font-weight: bold;");
     filenameLabel.setTooltip(new Tooltip(file.getName()));
@@ -145,8 +150,6 @@ public class DropInContainerController implements Initializable {
     dataPanel.setStyle("-fx-cursor: hand;");
     root.setOnDragDetected(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
-        /* drag was detected, start a drag-and-drop gesture*/
-        /* allow any transfer mode */
         Dragboard db = root.startDragAndDrop(TransferMode.ANY);
         db.setDragView(root.snapshot(null, null));
 
@@ -154,15 +157,15 @@ public class DropInContainerController implements Initializable {
         data.put(DataFormat.FILES, Arrays.asList(file));
         db.setContent(data);
         event.consume();
-
-        ((BorderPane) event.getSource()).getParent().getParent().getParent().setVisible(false);
       }
     });
 
     root.setOnDragDone(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
-        ((BorderPane) event.getSource()).getParent().getParent().getParent().setVisible(true);
+        if (dropInButton != null) {
+          dropInButton.hide();
+        }
       }
     });
   }

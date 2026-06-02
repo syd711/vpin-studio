@@ -1,16 +1,16 @@
 ## Release Notes 5.0.2
 
-### Fixes
-- **Server Update**: Added fix for server not shutting down properly before trying to overwrite file
-- **PinemHi Font Selection**: Fixed font selector so buttons show and font can be set.  
-- **Navigation Breadcrumbs**: Fix navigation breadcrumbs updating to designer when on tables
-- **Competition Resource Folder**: Fixed creation of competition resource folder on Mac
-
 ### Changes
-- **PinemHi Display Settings**: Made numeric spinners editable so a number can be typed in. 
-- **PinVol Preferences**: Made numeric spinners editable so a number can be typed in.
-- **Player Ranking Preferences**: Made numeric spinners editable so a number can be typed in.
-- **Table Sidebar VpinMAME settings**: Made numeric spinner editable so a number can be typed in.
+
+- **Server Update**: Added fix for server not shutting down properly before trying to overwrite file.
+- **PinemHi Font Selection**: Fixed font selector so buttons show and font can be set.  
+- **Navigation Breadcrumbs**: Fix navigation breadcrumbs updating to designer when on tables.
+- **Competition Resource Folder**: Fixed creation of competition resource folder on Mac.
+- **Usability**: Made numeric spinners editable so a number can be typed in for...
+  - PinemHi display settings
+  - PinVol preferences
+  - Player ranking preferences
+  - Table sidebar VpinMAME settings
 
 ## Release Notes 5.0.1
 
