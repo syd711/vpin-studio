@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -202,7 +203,12 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
     String flagFileName = FilenameUtils.getName(url.getFile());
     //Add basePath to make sure it writes to correct folder for Mac
     File basePath = Updater.getWriteableBaseFolder();
-    File flagsFolder = new File(basePath + RESOURCES, "flags/");
+    String resourcePath = RESOURCES;
+      if (OSUtil.isMac()) {
+          resourcePath = RESOURCES.replace(".","");
+      }
+      File flagsFolder = new File(basePath + resourcePath, "flags/");
+
     if (!flagsFolder.exists() && !flagsFolder.mkdirs()) {
       LOG.error("Failed to create flags folder at {}",basePath + RESOURCES + "flags/");
       return null;
