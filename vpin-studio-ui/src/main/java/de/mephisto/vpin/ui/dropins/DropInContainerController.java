@@ -148,6 +148,16 @@ public class DropInContainerController implements Initializable {
     imageWrapper.managedProperty().bindBidirectional(imageWrapper.visibleProperty());
     dragHandler.setStyle("-fx-cursor: hand;");
     dataPanel.setStyle("-fx-cursor: hand;");
+
+    root.setFocusTraversable(true);
+    root.setOnMousePressed(e -> root.requestFocus());
+    root.setOnKeyPressed(e -> {
+      if (e.getCode() == KeyCode.DELETE) {
+        onDelete();
+        e.consume();
+      }
+    });
+
     root.setOnDragDetected(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
         Dragboard db = root.startDragAndDrop(TransferMode.ANY);

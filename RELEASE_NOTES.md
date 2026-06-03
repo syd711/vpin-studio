@@ -11,6 +11,10 @@
   - PinVol preferences
   - Player ranking preferences
   - Table sidebar VpinMAME settings
+- **Drop-In Menu**
+  - Add lazy rendering which allows you to have hundreds of files in your drop-in folder without having performance issues while opening the menu.
+  - Added better focus management.
+  - Added DEL keyboard shortcut to delete focussed asset.
 
 ## Release Notes 5.0.1
 

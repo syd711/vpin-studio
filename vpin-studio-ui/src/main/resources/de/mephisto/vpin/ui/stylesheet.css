@@ -1206,6 +1206,12 @@
     -fx-background-color: transparent;
 }
 
+.dropin-menu-item:focused {
+    -fx-border-color: #5080ff;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+}
+
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
