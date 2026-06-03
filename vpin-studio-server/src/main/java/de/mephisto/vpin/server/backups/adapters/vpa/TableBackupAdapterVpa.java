@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.games.Game;
 import org.jspecify.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
+import java.util.regex.Pattern;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
@@ -35,6 +37,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final BackupSettings backupSettings;
   private final VpaService vpaService;
   private boolean cancelled = false;
+  private static final String INVALID_CHARS = "[\\\\/:*?\"<>|]";
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
                                @NonNull BackupSource backupSource,
@@ -48,130 +51,155 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     this.backupSettings = backupSettings;
   }
 
-  public void createBackup(JobDescriptor jobDescriptor) {
-    LOG.info("********************* Table Backup: {} ***********************************", game.getGameDisplayName());
-    BackupDescriptor backupDescriptor = new BackupDescriptor();
-    BackupPackageInfo packageInfo = new BackupPackageInfo();
+    public void createBackup(JobDescriptor jobDescriptor) {
+        LOG.info("********************* Table Backup: {} ***********************************", game.getGameDisplayName());
+        BackupDescriptor backupDescriptor = new BackupDescriptor();
+        BackupPackageInfo packageInfo = new BackupPackageInfo();
 
-    backupDescriptor.setCreatedAt(Instant.now());
-    backupDescriptor.setTableDetails(tableDetails);
-    backupDescriptor.setPackageInfo(packageInfo);
+        backupDescriptor.setCreatedAt(Instant.now());
+        backupDescriptor.setTableDetails(tableDetails);
+        backupDescriptor.setPackageInfo(packageInfo);
 
-    jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
-    long totalSizeExpected = vpaService.calculateTotalSize(game);
-    LOG.info("Calculated total approx. size of {} for the archive of {}", FileUtils.readableFileSize(totalSizeExpected), game.getGameDisplayName());
+        jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
+        long totalSizeExpected = vpaService.calculateTotalSize(game);
+        LOG.info("Calculated total approx. size of {} for the archive of {}", FileUtils.readableFileSize(totalSizeExpected), game.getGameDisplayName());
 
-    String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File targetFolder = new File(backupSource.getLocation());
-    if (!targetFolder.exists()) {
-      targetFolder = VpaBackupSource.FOLDER;
-    }
+        String baseName = FilenameUtils.getName(game.getGameDisplayName())
+                .replaceAll(INVALID_CHARS, "");
 
-    File target = new File(targetFolder, baseName + ".vpa");
-    if (target.exists() && !backupSettings.isOverwriteBackup()) {
-      target = FileUtils.uniqueFile(target);
-    }
-    backupDescriptor.setFilename(target.getName());
+        String oldBaseName = FilenameUtils.getBaseName(game.getGameFileName());
 
-    try {
-      File tempFile = File.createTempFile(target.getName(), ".bak");
-      //---------
-      LOG.info("Packaging {}", game.getGameDisplayName());
-      long start = System.currentTimeMillis();
-
-      LOG.info("Creating temporary archive file {}", tempFile.getAbsolutePath());
-
-      ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
-      vpaService.createBackup(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
-        if (cancelled) {
-          return;
+        File targetFolder = new File(backupSource.getLocation());
+        if (!targetFolder.exists()) {
+            targetFolder = VpaBackupSource.FOLDER;
         }
 
-        jobDescriptor.setStatus("Packing " + fileToZip.getAbsolutePath());
-        if (jobDescriptor.getProgress() < 1 && tempFile.exists()) {
-          if (totalSizeExpected > 0) {
-            long l = tempFile.length() * 100 / totalSizeExpected / 100;
-            jobDescriptor.setProgress(l);
-          }
+        File target = new File(targetFolder, baseName + ".vpa");
+        File oldTarget = new File(targetFolder, oldBaseName + ".vpa");
+
+        if (!backupSettings.isOverwriteBackup()) {
+            if ((oldTarget.exists() && !oldTarget.equals(target)) || target.exists()) {
+                target = FileUtils.uniqueFile(target);
+            }
         }
+
+        backupDescriptor.setFilename(target.getName());
+
         try {
-          ZipUtil.zipFileEncrypted(fileToZip, fileName, zipOut);
+            File tempFile = File.createTempFile(target.getName(), ".bak");
+            //---------
+            LOG.info("Packaging {}", game.getGameDisplayName());
+            long start = System.currentTimeMillis();
+
+            LOG.info("Creating temporary archive file {}", tempFile.getAbsolutePath());
+
+            ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
+            vpaService.createBackup(packageInfo, jobDescriptor, (fileToZip, fileName) -> {
+                if (cancelled) {
+                    return;
+                }
+
+                jobDescriptor.setStatus("Packing " + fileToZip.getAbsolutePath());
+                if (jobDescriptor.getProgress() < 1 && tempFile.exists()) {
+                    if (totalSizeExpected > 0) {
+                        long l = tempFile.length() * 100 / totalSizeExpected / 100;
+                        jobDescriptor.setProgress(l);
+                    }
+                }
+                try {
+                    ZipUtil.zipFileEncrypted(fileToZip, fileName, zipOut);
+                }
+                catch (IOException ioe) {
+                    LOG.error("Cannot add in zip {}", fileName, ioe);
+                }
+            }, game, tableDetails);
+
+            JsonMapper objectMapper = JsonMapper.builder()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+                    .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                    .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                    .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+                    .build();
+
+            String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
+
+            if (!cancelled) {
+                File manifestFile = File.createTempFile("package-info", "json");
+                manifestFile.deleteOnExit();
+                Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
+                jobDescriptor.setStatus("Packing " + manifestFile.getAbsolutePath());
+                ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
+                manifestFile.delete();
+            }
+
+            jobDescriptor.setProgress(1);
+
+            backupDescriptor.setSize(target.length());
+
+            File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
+            try {
+                LOG.info("Copying backup file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
+                jobDescriptor.setStatus("Copying backup file to " + temporaryTarget.getParentFile().getAbsolutePath());
+                org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
+            }
+            catch (IOException e) {
+                LOG.error("Failed to copy temporary file to target: {}", e.getMessage(), e);
+            }
+            finally {
+                if (!tempFile.delete()) {
+                    LOG.error("Failed to delete temporary target file {}", tempFile.getAbsolutePath());
+                }
+            }
+
+            if (backupSettings.isOverwriteBackup()) {
+                File[] filesToDelete = targetFolder.listFiles((dir, name) -> {
+                    String nameWithoutExt = FilenameUtils.getBaseName(name);
+                    String ext = FilenameUtils.getExtension(name);
+                    if (!"vpa".equalsIgnoreCase(ext)) {
+                        return false;
+                    }
+                    return nameWithoutExt.equals(baseName)
+                            || nameWithoutExt.matches(Pattern.quote(baseName) + " \\(\\d+\\)")
+                            || nameWithoutExt.equals(oldBaseName)
+                            || nameWithoutExt.matches(Pattern.quote(oldBaseName) + " \\(\\d+\\)");
+                });
+
+                if (filesToDelete != null) {
+                    for (File f : filesToDelete) {
+                        if (!f.delete()) {
+                            LOG.error("Failed to delete existing backup file {}", f.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+            else if (target.exists() && !target.delete()) {
+                target = FileUtils.uniqueFile(target);
+                LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
+            }
+
+            boolean renamed = temporaryTarget.renameTo(target);
+            if (renamed) {
+                LOG.info("Finished packing of {}, took {} seconds, {}", target.getAbsolutePath(), ((System.currentTimeMillis() - start) / 1000), FileUtils.readableFileSize(target.length()));
+            }
+            else {
+                LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
+                jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+            }
+
+            if (target.exists() && this.cancelled) {
+                target.delete();
+            }
         }
-        catch (IOException ioe) {
-          LOG.error("Cannot add in zip {}", fileName, ioe);
+        catch (Exception e) {
+            LOG.error("Create VPA for {} failed: {}", game.getGameDisplayName(), e.getMessage(), e);
+            jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+            return;
         }
-      }, game, tableDetails);
-
-        JsonMapper objectMapper = JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
-                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-                .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(EnumFeature.READ_ENUMS_USING_TO_STRING)
-                .build();
-
-
-      String packageInfoJson = objectMapper.writeValueAsString(packageInfo);
-
-      if (!cancelled) {
-        File manifestFile = File.createTempFile("package-info", "json");
-        manifestFile.deleteOnExit();
-        Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
-        jobDescriptor.setStatus("Packing " + manifestFile.getAbsolutePath());
-        ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
-        manifestFile.delete();
-      }
-
-      jobDescriptor.setProgress(1);
-
-      backupDescriptor.setSize(target.length());
-
-      File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
-      try {
-        LOG.info("Copying backup file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
-        jobDescriptor.setStatus("Copying backup file to " + temporaryTarget.getParentFile().getAbsolutePath());
-        org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to copy temporary file to target: {}", e.getMessage(), e);
-      }
-      finally {
-        if (!tempFile.delete()) {
-          LOG.error("Failed to delete temporary target file {}", tempFile.getAbsolutePath());
+        finally {
+            LOG.info("********************* /Table Backup: {} ***********************************", game.getGameDisplayName());
         }
-      }
-
-      if (target.exists() && backupSettings.isOverwriteBackup()) {
-        target.delete();
-      }
-
-      if (target.exists() && !target.delete()) {
-        target = FileUtils.uniqueFile(target);
-        LOG.error("Failed to delete existing backup file, create new one with unique name instead: {}", target.getAbsolutePath());
-      }
-
-      boolean renamed = temporaryTarget.renameTo(target);
-      if (renamed) {
-        LOG.info("Finished packing of {}, took {} seconds, {}", target.getAbsolutePath(), ((System.currentTimeMillis() - start) / 1000), FileUtils.readableFileSize(target.length()));
-      }
-      else {
-        LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
-        jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
-      }
-
-      if (target.exists() && this.cancelled) {
-        target.delete();
-      }
     }
-    catch (Exception e) {
-      LOG.error("Create VPA for {} failed: {}", game.getGameDisplayName(), e.getMessage(), e);
-      jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
-      return;
-    }
-    finally {
-      LOG.info("********************* /Table Backup: {} ***********************************", game.getGameDisplayName());
-    }
-  }
 
   @NonNull
   private static File createBackupTempFile(File target) {

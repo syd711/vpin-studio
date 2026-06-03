@@ -11,7 +11,7 @@
 - **PinVol Preferences**: Made numeric spinners editable so a number can be typed in.
 - **Player Ranking Preferences**: Made numeric spinners editable so a number can be typed in.
 - **Table Sidebar VpinMAME settings**: Made numeric spinner editable so a number can be typed in.
-
+- **Backup File Naming**: Change Backups to use Display Name of tables instead of File Name. This fixes existing backups not being overwritten (when overwrite is selected) when a version changes and the version is in the filename. 
 ## Release Notes 5.0.1
 
 ### Changes
