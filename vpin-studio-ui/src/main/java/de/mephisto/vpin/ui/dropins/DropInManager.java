@@ -30,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -91,7 +92,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
     dropInsBtn.getStyleClass().add("base-component");
 
-    filter.setPrefWidth(200);
+    HBox.setHgrow(filter, Priority.ALWAYS);
     filter.setStyle("-fx-font-size: 14px;");
     filter.setPromptText("Filter for assets...");
     HBox.setMargin(filter, new Insets(0, 0, 3, 3));
@@ -125,6 +126,17 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     this.dropInsBtn = dropInsBtn;
     this.dropInsBtn.setVisible(false);
     this.dropInsBtn.getGraphic().setVisible(false);
+    this.dropInsBtn.showingProperty().addListener((obs, oldVal, showing) -> {
+      if (showing) {
+        Platform.runLater(() -> {
+          ScrollBar hBar = (ScrollBar) fileListView.lookup(".scroll-bar:horizontal");
+          if (hBar != null) {
+            hBar.setVisible(false);
+            hBar.setManaged(false);
+          }
+        });
+      }
+    });
     this.dropInsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
@@ -135,7 +147,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     HBox box = new HBox(3);
     box.setAlignment(Pos.CENTER_RIGHT);
     Button btn = new Button("Delete All");
-    HBox.setMargin(btn, new Insets(0, 3, 3, 3));
+    HBox.setMargin(btn, new Insets(3, 3, 3, 3));
     btn.getStyleClass().add("default-text");
     btn.setTextFill(Paint.valueOf("#ff3333"));
     btn.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline", "#ff3333"));
@@ -168,6 +180,8 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     fileListView = new ListView<>();
     fileListView.setPlaceholder(placeholder);
     fileListView.setPrefHeight(50);
+    fileListView.setPrefWidth(500);
+    fileListView.setMinWidth(400);
     fileListView.setFocusTraversable(false);
     fileListView.setCellFactory(lv -> new DropInListCell(dropInsBtn));
     CustomMenuItem listMenuItem = new CustomMenuItem(fileListView, false);
@@ -204,7 +218,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     }
     if (fileListView != null) {
       fileListView.getItems().setAll(files);
-      double maxHeight = 450.0;
+      double maxHeight = 600.0;
       fileListView.setPrefHeight(files.isEmpty() ? 50 : Math.min(files.size() * 90.0, maxHeight));
     }
   }

@@ -105,7 +105,7 @@ public class DropInContainerController implements Initializable {
   public void setData(@Nullable MenuButton dropInButton, @NonNull File file) {
     this.dropInButton = dropInButton;
     this.file = file;
-    dataPanel.setPrefWidth(250.0);
+    dataPanel.setPrefWidth(180.0);
     imageWrapper.setVisible(true);
     imageView.setImage(null);
     installBtn.setVisible(true);
