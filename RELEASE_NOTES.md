@@ -15,6 +15,8 @@
   - Add lazy rendering which allows you to have hundreds of files in your drop-in folder without having performance issues while opening the menu.
   - Added better focus management.
   - Added DEL keyboard shortcut to delete focussed asset.
+- **Backup File Naming**: Change Backups to use Display Name of tables instead of File Name. This fixes existing backups not being overwritten (when overwrite is selected) when a version changes and the version is in the filename.
+
 
 ## Release Notes 5.0.1
 
