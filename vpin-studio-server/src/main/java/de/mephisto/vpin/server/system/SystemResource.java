@@ -234,6 +234,7 @@ public class SystemResource {
   @GetMapping("/shutdown")
   public boolean shutdown() {
     systemService.shutdown();
+
     return true;
   }
 
@@ -324,6 +325,7 @@ public class SystemResource {
       return false;
     }
     LOG.info("{} file found, installing update.", Updater.SERVER_ZIP);
+
     Updater.installServerUpdate();
     new Thread(() -> {
       try {

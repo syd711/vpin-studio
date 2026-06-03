@@ -1800,7 +1800,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
 
     if (getSelections().size() > 1) {
-      Optional<GameRepresentation> first = getSelections().stream().filter(g -> g.getValidationState() != null).findFirst();
+      Optional<GameRepresentation> first = getSelections().stream().filter(g -> g.getValidationState() != null && g.getValidationState().getCode() > 0).findFirst();
       if (first.isPresent()) {
         dismissBtn.setVisible(false);
 

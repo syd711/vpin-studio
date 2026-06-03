@@ -38,6 +38,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
 
 public class TablesSidebarMameController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -370,6 +371,7 @@ public class TablesSidebarMameController implements Initializable {
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4000, 0);
     volumeSpinner.setValueFactory(factory);
+    addIntegerValidation(volumeSpinner);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
       saveOptions();
     });

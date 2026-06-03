@@ -6,15 +6,41 @@
 
 
 
+## Release Notes 5.0.2
+
+### Changes
+
+- **Server Update**: Added fix for server not shutting down properly before trying to overwrite file.
+- **PinemHi Font Selection**: Fixed font selector so buttons show and font can be set.  
+- **Navigation Breadcrumbs**: Fix navigation breadcrumbs updating to designer when on tables.
+- **Competition Resource Folder**: Fixed creation of competition resource folder on Mac.
+- **Usability**: Made numeric spinners editable so a number can be typed in for...
+  - PinemHi display settings
+  - PinVol preferences
+  - Player ranking preferences
+  - Table sidebar VpinMAME settings
+- **Drop-In Menu**
+  - Add lazy rendering which allows you to have hundreds of files in your drop-in folder without having performance issues while opening the menu.
+  - Added better focus management.
+  - Added DEL keyboard shortcut to delete focussed asset.
+- **Backup File Naming**: Change Backups to use Display Name of tables instead of File Name. This fixes existing backups not being overwritten (when overwrite is selected) when a version changes and the version is in the filename.
+
+
 ## Release Notes 5.0.1
 
 ### Changes
 
-- Added automatic VPin Studio backups for minor versions.
-- Fixed VPS view which did not show all assets because of empty date values.
-- Added more logging to figure out why for some users the ROM column only shows "..." as a value.
+- **VPin Studio Backups**: Added automatic VPin Studio backups for minor versions.
+- **VP-Spreadsheet**: Fixed VPS view which did not show all assets because of empty date values.
+- **Table Overview**: Added more logging to figure out why for some users the ROM column only shows "..." as a value.
+- **Text Editing**: Fixed various issues opening text or .vbs files with the internal editor.
+- **Table Scans**: Fixed critical issue for table scans which caused script change detections not being applied.
+- **MacOS/Linux Clients**: Fixed missing exports for apng supports which broke the clients.
+- **VPin Mania Sync**: Added result dialog for single score synchronizations from the sidebar.
 
 ---
+
+
 ## Release Notes 5.0.0
 
 ### !!! Important Notice !!!
