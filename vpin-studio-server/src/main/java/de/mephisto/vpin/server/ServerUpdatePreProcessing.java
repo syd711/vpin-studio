@@ -169,7 +169,7 @@ public class ServerUpdatePreProcessing {
 
     private void updateEntry(ServerUpdateFileEntry entry, File localFile) {
         if (localFile.exists()) {
-            if (entry.getLength() < 0) {
+            if (entry.getLength() != null && entry.getLength() < 0) {
                 // Local file not updated, keep force getContentLength
                 return;
             }
