@@ -24,11 +24,13 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -60,9 +62,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   private FolderMonitoringThread dropinsMonitor;
 
   private GameRepresentation gameSelection;
-  private Stream<Path> stream;
-  private int itemCount;
-  private int itemLimit = 50;
+  private ListView<File> fileListView;
 
   private boolean enabled = false;
   private TextField filter = new TextField();
@@ -92,7 +92,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
     dropInsBtn.getStyleClass().add("base-component");
 
-    filter.setPrefWidth(200);
+    HBox.setHgrow(filter, Priority.ALWAYS);
     filter.setStyle("-fx-font-size: 14px;");
     filter.setPromptText("Filter for assets...");
     HBox.setMargin(filter, new Insets(0, 0, 3, 3));
@@ -126,6 +126,17 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     this.dropInsBtn = dropInsBtn;
     this.dropInsBtn.setVisible(false);
     this.dropInsBtn.getGraphic().setVisible(false);
+    this.dropInsBtn.showingProperty().addListener((obs, oldVal, showing) -> {
+      if (showing) {
+        Platform.runLater(() -> {
+          ScrollBar hBar = (ScrollBar) fileListView.lookup(".scroll-bar:horizontal");
+          if (hBar != null) {
+            hBar.setVisible(false);
+            hBar.setManaged(false);
+          }
+        });
+      }
+    });
     this.dropInsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
@@ -136,7 +147,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     HBox box = new HBox(3);
     box.setAlignment(Pos.CENTER_RIGHT);
     Button btn = new Button("Delete All");
-    HBox.setMargin(btn, new Insets(0, 3, 3, 3));
+    HBox.setMargin(btn, new Insets(3, 3, 3, 3));
     btn.getStyleClass().add("default-text");
     btn.setTextFill(Paint.valueOf("#ff3333"));
     btn.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline", "#ff3333"));
@@ -145,9 +156,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       public void handle(ActionEvent event) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete all drop in files?", "All files will be moved to the trash.");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          List<MenuItem> items = dropInsBtn.getItems();
-          for (MenuItem item : items) {
-            File f = (File) item.getUserData();
+          for (File f : new ArrayList<>(fileListView.getItems())) {
             if (!TrashBin.moveTo(f)) {
               WidgetFactory.showAlert(Studio.stage, "Error", "Deletion failed, another process is blocking this file.");
             }
@@ -166,6 +175,19 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     item.setContent(box);
     this.dropInsBtn.getItems().addFirst(item);
 
+    Label placeholder = new Label("No drop-in files found");
+    placeholder.setStyle("-fx-text-fill: #AAAAAA; -fx-font-size: 13px;");
+    fileListView = new ListView<>();
+    fileListView.setPlaceholder(placeholder);
+    fileListView.setPrefHeight(50);
+    fileListView.setPrefWidth(500);
+    fileListView.setMinWidth(400);
+    fileListView.setFocusTraversable(false);
+    fileListView.setCellFactory(lv -> new DropInListCell(dropInsBtn));
+    CustomMenuItem listMenuItem = new CustomMenuItem(fileListView, false);
+    listMenuItem.setUserData("list");
+    this.dropInsBtn.getItems().add(listMenuItem);
+
     this.reload();
     localSettingsChanged(LocalUISettings.DROP_IN_FOLDER_ENABLED, LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER_ENABLED));
   }
@@ -182,63 +204,22 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
    * Should run on JavaFX Thread !
    */
   public void reload() {
-    for (MenuItem item : new ArrayList<>(this.dropInsBtn.getItems())) {
-      if (item.getUserData() != null && item.getUserData().equals("menu")) {
-        continue;
-      }
-      this.dropInsBtn.getItems().remove(item);
-    }
-
-    itemCount = 0;
-    itemLimit = 100;
-
-    //TODO skipped a "Load More Item..." button for now and simply limit the items
+    List<File> files = new ArrayList<>();
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {
-      continueReading();
+      try (Stream<Path> paths = Files.walk(dropinsFolder.toPath())) {
+        String filterText = filter.getText();
+        paths.filter(p -> Files.isRegularFile(p) && !p.toFile().isHidden() && !FileUtils.isTempFile(p.toFile()))
+            .filter(p -> StringUtils.isEmpty(filterText) || p.toFile().getName().toLowerCase().contains(filterText.toLowerCase()))
+            .forEach(p -> files.add(p.toFile()));
+      }
+      catch (IOException e) {
+        LOG.error("Failed to walk drop in folder: " + e.getMessage(), e);
+      }
     }
-  }
-
-  private void continueReading() {
-    try (Stream<Path> stream = Files.walk(dropinsFolder.toPath())) {
-      stream.filter((p) -> Files.isRegularFile(p) && !p.toFile().isHidden() && !FileUtils.isTempFile(p.toFile()))
-          .forEach((p) -> {
-            if (itemCount > itemLimit) {
-              return;
-            }
-
-            String filterText = filter.getText();
-            if (!StringUtils.isEmpty(filterText)) {
-              if (!p.toFile().getName().toLowerCase().contains(filterText.toLowerCase())) {
-                return;
-              }
-            }
-
-
-            List<MenuItem> items = dropInsBtn.getItems();
-            for (MenuItem item : items) {
-              if (item.getUserData().equals(p.toFile())) {
-                return;
-              }
-            }
-            try {
-              FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
-              BorderPane root = loader.load();
-              root.getStyleClass().add("dropin-menu-item");
-              DropInContainerController containerController = loader.getController();
-              containerController.setData(dropInsBtn, p.toFile());
-              CustomMenuItem item = new CustomMenuItem();
-              item.setUserData(p.toFile());
-              item.setContent(root);
-              dropInsBtn.getItems().add(item);
-              itemCount++;
-            }
-            catch (IOException e) {
-              LOG.error("Failed to load drop in container: " + e.getMessage(), e);
-            }
-          });
-    }
-    catch (IOException e) {
-      LOG.error("Failed to walk through drop in container: " + e.getMessage(), e);
+    if (fileListView != null) {
+      fileListView.getItems().setAll(files);
+      double maxHeight = 600.0;
+      fileListView.setPrefHeight(files.isEmpty() ? 50 : Math.min(files.size() * 90.0, maxHeight));
     }
   }
 
@@ -383,5 +364,40 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       reload();
       dropInsBtn.getGraphic().setVisible(true);
     });
+  }
+
+  private static class DropInListCell extends ListCell<File> {
+    private final MenuButton menuButton;
+    private BorderPane root;
+    private DropInContainerController controller;
+
+    DropInListCell(MenuButton menuButton) {
+      this.menuButton = menuButton;
+      setPadding(Insets.EMPTY);
+    }
+
+    @Override
+    protected void updateItem(File file, boolean empty) {
+      super.updateItem(file, empty);
+      if (empty || file == null) {
+        setGraphic(null);
+        return;
+      }
+      if (root == null) {
+        try {
+          FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
+          root = loader.load();
+          root.getStyleClass().add("dropin-menu-item");
+          controller = loader.getController();
+        }
+        catch (IOException e) {
+          LOG.error("Failed to load drop in container: " + e.getMessage(), e);
+          setGraphic(null);
+          return;
+        }
+      }
+      controller.setData(menuButton, file);
+      setGraphic(root);
+    }
   }
 }

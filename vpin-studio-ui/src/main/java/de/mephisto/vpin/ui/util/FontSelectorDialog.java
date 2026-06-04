@@ -204,13 +204,13 @@ public class FontSelectorDialog extends Dialog<Font> {
     private final ListView<String> fontListView = new ListView<>(filteredFontList);
     private final ListView<FontSelectorDialog.FontStyle> styleListView = new ListView<>(filteredStyleList);
     private final ListView<Double> sizeListView = new ListView<>(filteredSizeList);
-    private final Text sample = new Text("ABCabc123"); //$NON-NLS-1$
+    private final Text sample = new Text("Sample Text: ABCabc123"); //$NON-NLS-1$
 
     public FontPanel() {
       setHgap(HGAP);
       setVgap(VGAP);
-      setPrefSize(800, 600);
-      setMinSize(800, 600);
+      setPrefSize(800, 420);
+      setMinSize(800, 420);
 
       ColumnConstraints c0 = new ColumnConstraints();
       c0.setPercentWidth(60);
@@ -300,7 +300,7 @@ public class FontSelectorDialog extends Dialog<Font> {
       Rectangle clip = new Rectangle(0, height);
       clip.widthProperty().bind(sampleWidth);
       sampleStack.setClip(clip);
-      add(sampleStack, 0, 3, 1, 3);
+      add(sampleStack, 0, 3, 1, 1);
     }
 
     public void setFont(final Font font) {

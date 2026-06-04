@@ -27,6 +27,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+import javafx.util.converter.IntegerStringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +35,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
 
 public class PinVolPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PinVolPreferencesController.class);
@@ -162,6 +165,8 @@ public class PinVolPreferencesController implements Initializable {
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, serverSettings.getVolume());
     volumeSpinner.setValueFactory(factory);
+    addIntegerValidation(volumeSpinner);
+
     volumeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("volume", () -> {
         serverSettings.setVolume(newValue);

@@ -9,11 +9,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
+
 
 public class PlayerRankingsPreferencesController implements Initializable {
 
@@ -33,12 +36,13 @@ public class PlayerRankingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinner1.setValueFactory(factory1);
-
+      addIntegerValidation(spinner1);
     SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinner2.setValueFactory(factory2);
-
+      addIntegerValidation(spinner2);
     SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinner3.setValueFactory(factory3);
+      addIntegerValidation(spinner3);
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryC = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinnerCompetitions.setValueFactory(factoryC);

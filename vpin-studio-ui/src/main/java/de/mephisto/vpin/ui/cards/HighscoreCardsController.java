@@ -187,8 +187,11 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @Override
   public void refreshView(GameRepresentationModel model) {
-    GameRepresentation game = model != null ? model.getBean() : null;
-    refreshView(game);
+      //Only refresh this if we're actually on that screen
+     if (NavigationController.getActiveNavigation().equals(NavigationItem.HighscoreCards)) {
+         GameRepresentation game = model != null ? model.getBean() : null;
+         refreshView(game);
+     }
   }
 
   public void refreshView(GameRepresentation game) {
@@ -384,4 +387,5 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       });
     }
   }
+
 }

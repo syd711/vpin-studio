@@ -29,11 +29,11 @@ public class Updater {
   public static String LATEST_VERSION = null;
 
   public final static String SERVER_ZIP = "VPin-Studio-Server.zip";
-  public final static long SERVER_ZIP_SIZE = 251 * 1000 * 1000;
+  public final static long SERVER_ZIP_SIZE = 306 * 1000 * 1000;
 
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
-  public final static long UI_ZIP_SIZE = 137 * 1000 * 1000;
+  public final static long UI_ZIP_SIZE = 157 * 1000 * 1000;
 
   private final static String JRE_MACOS_X64 = "zulu25.34.17-ca-fx-jre25.0.3-macosx_x64.tar.gz";
   private final static String JRE_MACOS_ARCH64 = "zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz";

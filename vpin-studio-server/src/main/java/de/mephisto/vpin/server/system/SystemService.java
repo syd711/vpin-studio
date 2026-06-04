@@ -28,6 +28,7 @@ import de.mephisto.vpin.server.vpx.VPXMonitoringService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
+import java.awt.GraphicsEnvironment;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -652,9 +653,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public boolean setMaintenanceMode(boolean enabled) {
-    Platform.runLater(() -> {
-      ServerFX.getInstance().setMaintenanceVisible(enabled);
-    });
+    if (ServerFX.getInstance() != null && !GraphicsEnvironment.isHeadless()) {
+      Platform.runLater(() -> {
+        ServerFX.getInstance().setMaintenanceVisible(enabled);
+      });
+    }
     return enabled;
   }
 

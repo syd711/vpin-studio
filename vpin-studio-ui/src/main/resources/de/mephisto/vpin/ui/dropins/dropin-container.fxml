@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.dropins.DropInContainerController">
+<BorderPane fx:id="root" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.dropins.DropInContainerController">
    <center>
       <BorderPane BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
