@@ -363,7 +363,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
     refreshEmulators();
 
-    if (tableView.getItems().isEmpty()) {
+    if (models.isEmpty()) {
       doReload(false);
     }
 

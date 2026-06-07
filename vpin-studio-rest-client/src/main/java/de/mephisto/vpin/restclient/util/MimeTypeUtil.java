@@ -62,7 +62,7 @@ public class MimeTypeUtil {
         mimeType = "text/xml";
       }
       else {
-        LOG.error("Failed to determine mime type for " + suffix);
+        LOG.warn("Failed to determine mime type for unknown extension: " + suffix);
       }
     }
     return mimeType;
