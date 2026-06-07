@@ -6,6 +6,7 @@
 - **Virtual Pinball Spreadsheet**: Fixed opening VPF links. 
 - **Uploads**: Fixed installation issues for .rar files.
 - **Table Overview**: Fixed issue ROM column not loading (hopefully this time).
+- **WOVP**: Fixed race condition errors during the server startup which may have blocked updates for some users.
 
 ---
 
