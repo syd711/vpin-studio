@@ -153,13 +153,14 @@ public class PINemHiService implements InitializingBean {
       Map<String, Object> entries = new HashMap<>();
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
+        if ("romfind".equals(section)) {
+          continue;
+        }
         SubnodeConfiguration s = iniConfiguration.getSection(section);
         Iterator<String> keys = s.getKeys();
         while (keys.hasNext()) {
           String key = keys.next();
-          if (!key.endsWith(".nv")) {
-            entries.put(key, s.getString(key));
-          }
+          entries.put(key, s.getString(key));
         }
       }
       return entries;
