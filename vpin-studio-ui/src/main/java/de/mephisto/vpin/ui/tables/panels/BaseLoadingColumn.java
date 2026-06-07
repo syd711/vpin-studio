@@ -39,6 +39,7 @@ public class BaseLoadingColumn {
           setGraphic(null);
         }
         else {
+          model.isLoaded(); // trigger background loading if no BaseLoadingTableCell column is visible
           setGraphic(renderer.render(model.getBean(), model));
         }
       }
