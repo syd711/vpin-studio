@@ -69,14 +69,10 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   private CompetitionIdUpdater competitionIdUpdater;
 
   @Autowired
-  private EmulatorService emulatorService;
-
-  @Autowired
   private GameCachingService gameCachingService;
 
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
     try {
-      LOG.info("------------------------------- WOVP SYNC -----------------------------------------------------------");
       WOVPSettings wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
       if (!StringUtils.isEmpty(apiKey) && wovpSettings.isEnabled()) {
         Wovp wovp = Wovp.create(apiKey);
@@ -96,9 +92,6 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
     catch (Exception e) {
       LOG.error("Failed to synchronize with WOVP: {}", e.getMessage(), e);
-    }
-    finally {
-      LOG.info("------------------------------- /WOVP SYNC ----------------------------------------------------------");
     }
     return false;
   }
