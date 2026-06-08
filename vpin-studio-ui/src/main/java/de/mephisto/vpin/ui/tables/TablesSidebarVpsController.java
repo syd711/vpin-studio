@@ -204,7 +204,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @FXML
   private void onOpen() {
     if (!games.isEmpty()) {
-      Studio.browse(VPS.getVpsTableUrl(games.getFirst().getExtTableId()));
+      String vpsTableUrl = VPS.getVpsTableUrl(games.getFirst().getExtTableId());
+      Studio.browse(vpsTableUrl);
     }
   }
 
