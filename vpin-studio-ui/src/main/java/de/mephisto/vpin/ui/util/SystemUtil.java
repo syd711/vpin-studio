@@ -140,7 +140,13 @@ public class SystemUtil {
    */
   private static void openFolderWithOS(String absolutePath) throws IOException {
     if (isWindows()) {
-      new ProcessBuilder("explorer.exe", absolutePath).start();
+      if (absolutePath.startsWith("\\\\")) {
+        // UNC paths require routing through cmd /c start; explorer.exe \\server\share silently fails
+        new ProcessBuilder("cmd.exe", "/c", "start", "explorer.exe", absolutePath).start();
+      }
+      else {
+        new ProcessBuilder("explorer.exe", absolutePath).start();
+      }
     }
     else if (isMac()) {
       new ProcessBuilder("open", absolutePath).start();  // macOS command

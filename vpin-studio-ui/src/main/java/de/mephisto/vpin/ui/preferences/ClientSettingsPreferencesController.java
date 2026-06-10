@@ -267,31 +267,6 @@ public class ClientSettingsPreferencesController implements Initializable {
     radioDoMove.setToggleGroup(toggleGroup);
     radioDoDelete.setToggleGroup(toggleGroup);
 
-    // disable fields depending toggle selection
-    toggleGroup.selectedToggleProperty().addListener((obs, old, t) -> {
-      dropInMoveTargetCheckbox.setDisable(t!=radioMoveToFolder);
-      dropInMoveTargetButton.setDisable(t!=radioMoveToFolder);
-      dropInMoveTargetTextField.setDisable(t!=radioMoveToFolder);
-      dropInMoveTrashCheckbox.setDisable(t!=radioDoDelete);
-
-      if (t==radioDoNothing) {
-        uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_DONOTHING);
-      }
-      else if (t==radioMoveToFolder) {
-        uiSettings.setDropinPostAction(dropInMoveTargetCheckbox.isSelected() ?
-             UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER : UISettings.DROP_IN_POSTACTION_MOVETOFOLDER);
-      }
-      else if (t==radioDoMove) {
-        uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_MOVETO);
-      }
-      else if (t==radioDoDelete) {
-        uiSettings.setDropinPostAction(dropInMoveTrashCheckbox.isSelected() ?
-             UISettings.DROP_IN_POSTACTION_MOVETOTRASH : UISettings.DROP_IN_POSTACTION_DELETE);
-      }
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-
     dropInMoveTargetCheckbox.setSelected(false);
     dropInMoveTrashCheckbox.setSelected(false);
     int postAction = uiSettings.getDropinPostAction();
@@ -321,6 +296,31 @@ public class ClientSettingsPreferencesController implements Initializable {
       default:
         break;
     }
+
+    // disable fields depending toggle selection
+    toggleGroup.selectedToggleProperty().addListener((obs, old, t) -> {
+      dropInMoveTargetCheckbox.setDisable(t!=radioMoveToFolder);
+      dropInMoveTargetButton.setDisable(t!=radioMoveToFolder);
+      dropInMoveTargetTextField.setDisable(t!=radioMoveToFolder);
+      dropInMoveTrashCheckbox.setDisable(t!=radioDoDelete);
+
+      if (t==radioDoNothing) {
+        uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_DONOTHING);
+      }
+      else if (t==radioMoveToFolder) {
+        uiSettings.setDropinPostAction(dropInMoveTargetCheckbox.isSelected() ?
+            UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER : UISettings.DROP_IN_POSTACTION_MOVETOFOLDER);
+      }
+      else if (t==radioDoMove) {
+        uiSettings.setDropinPostAction(UISettings.DROP_IN_POSTACTION_MOVETO);
+      }
+      else if (t==radioDoDelete) {
+        uiSettings.setDropinPostAction(dropInMoveTrashCheckbox.isSelected() ?
+            UISettings.DROP_IN_POSTACTION_MOVETOTRASH : UISettings.DROP_IN_POSTACTION_DELETE);
+      }
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
 
     dropInMoveTargetCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setDropinPostAction(t1? UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER : UISettings.DROP_IN_POSTACTION_MOVETOFOLDER);
