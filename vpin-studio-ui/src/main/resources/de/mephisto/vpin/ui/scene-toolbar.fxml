@@ -151,7 +151,7 @@
                                   </graphic>
                               </MenuItem>
                               <SeparatorMenuItem />
-                            <MenuItem mnemonicParsing="false" onAction="#onDisconnect" text="Disconnect">
+                            <MenuItem fx:id="disconnectMenuItem" mnemonicParsing="false" onAction="#onDisconnect" text="Disconnect">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-logout" iconSize="18" />
                                  </graphic>

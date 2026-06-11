@@ -102,6 +102,8 @@ public class Studio extends Application {
       LOG.info("\n" + txt);
     }
 
+    Platform.setImplicitExit(false);
+
     runOperatingSystemChecks();
     runExtensionsInstallation();
 

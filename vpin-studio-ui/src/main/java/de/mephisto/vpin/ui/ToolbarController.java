@@ -104,6 +104,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private SplitMenuButton preferencesBtn;
 
   @FXML
+  private MenuItem disconnectMenuItem;
+
+  @FXML
   private ProgressIndicator jobProgress;
 
   public static String newVersion;
@@ -445,27 +448,22 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       }
     });
 
-    if (!client.getSystemService().isLocal()) {
-      ConnectionProperties properties = new ConnectionProperties();
-      List<ConnectionEntry> connections = properties.getConnections();
-      if (!connections.isEmpty()) {
-        List<ConnectionEntry> filteredConnections = connections.stream().filter(c -> !c.getIp().equals(client.getHost())).collect(Collectors.toList());
-        if (!filteredConnections.isEmpty()) {
-          preferencesBtn.getItems().add(new SeparatorMenuItem());
-          for (ConnectionEntry connection : filteredConnections) {
-            MenuItem item = new MenuItem(connection.getName() + " (" + connection.getIp() + ")");
-            item.setUserData(connection);
-            item.setGraphic(WidgetFactory.createIcon("mdi2l-logout"));
-            item.setOnAction(new EventHandler<ActionEvent>() {
-              @Override
-              public void handle(ActionEvent event) {
-                onCabSwitch(connection);
-              }
-            });
-            preferencesBtn.getItems().add(item);
-          }
-        }
+    ConnectionProperties connectionProperties = new ConnectionProperties();
+    List<ConnectionEntry> otherConnections = connectionProperties.getConnections().stream()
+        .filter(c -> !c.getIp().equals(client.getHost()))
+        .collect(Collectors.toList());
+    if (!otherConnections.isEmpty()) {
+      int disconnectIndex = preferencesBtn.getItems().indexOf(disconnectMenuItem);
+      List<MenuItem> newItems = new ArrayList<>();
+      for (ConnectionEntry connection : otherConnections) {
+        MenuItem item = new MenuItem(connection.getName() + " (" + connection.getIp() + ")");
+        item.setUserData(connection);
+        item.setGraphic(WidgetFactory.createIcon("mdi2l-logout"));
+        item.setOnAction(event -> onCabSwitch(connection));
+        newItems.add(item);
       }
+      newItems.add(new SeparatorMenuItem());
+      preferencesBtn.getItems().addAll(disconnectIndex, newItems);
     }
 
     jobBtn.setOnShowing(new EventHandler<Event>() {
