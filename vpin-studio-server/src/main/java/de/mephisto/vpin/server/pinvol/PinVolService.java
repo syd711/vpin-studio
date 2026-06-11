@@ -37,6 +37,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Service
@@ -61,14 +62,15 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   private boolean enabled = false;
   private PinVolPreferences preferences = null;
+  private File cachedPinVolExe = null;
+  private final List<FileMonitoringThread> monitoringThreads = new ArrayList<>();
 
   public boolean isRunning() {
     return systemService.isProcessRunning("PinVol");
   }
 
   public boolean isValid() {
-    File pinVolExe = getPinVolExe();
-    return pinVolExe.exists();
+    return getPinVolExe().exists();
   }
 
   public boolean killPinVol() {
@@ -101,7 +103,6 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-
   private void setInitialMute() {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     if (serverSettings.isInitialMute()) {
@@ -122,6 +123,16 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   public boolean restart() {
     if (killPinVol()) {
+      long deadline = System.currentTimeMillis() + 5000;
+      while (isRunning() && System.currentTimeMillis() < deadline) {
+        try {
+          Thread.sleep(200);
+        }
+        catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          break;
+        }
+      }
       startPinVol();
     }
     return isRunning();
@@ -147,18 +158,14 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       try (FileInputStream fileInputStream = new FileInputStream(tablesIni)) {
         List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
 
-        //we may have messed up older configs.
-        List<String> filtered = new ArrayList<>();
+        LinkedHashSet<String> seen = new LinkedHashSet<>();
         for (String entry : entries) {
-          if (!filtered.contains(entry)) {
-            filtered.add(entry);
-          }
-          else {
+          if (!seen.add(entry)) {
             LOG.warn("Filtered duplicate PinVolTables.ini entry: {}", entry);
           }
         }
 
-        for (String entry : filtered) {
+        for (String entry : seen) {
           PinVolTableEntry e = loadEntry(entry, preferences.getSsfDbLimit());
           if (e != null) {
             preferences.getTableEntries().add(e);
@@ -169,7 +176,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       File volIni = getPinVolVolIniFile();
       if (volIni.exists()) {
         INIConfiguration iniConfiguration = new INIConfiguration();
-        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setCommentLeadingCharsUsedInInput("#;");
         iniConfiguration.setSeparatorUsedInOutput("=");
         iniConfiguration.setSeparatorUsedInInput("=");
 
@@ -194,15 +201,19 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private PinVolTableEntry loadEntry(String line, int ssfDbLimit) {
     String[] split = line.split("\\t");
     if (split.length == 6) {
-      PinVolTableEntry entry = new PinVolTableEntry();
-      entry.setName(split[0]);
-      entry.setPrimaryVolume(Integer.parseInt(split[1]));
-      entry.setSecondaryVolume(Integer.parseInt(split[2]));
-
-      entry.setSsfBassVolume(parseGainValue(split[3], ssfDbLimit));
-      entry.setSsfRearVolume(parseGainValue(split[4], ssfDbLimit));
-      entry.setSsfFrontVolume(parseGainValue(split[5], ssfDbLimit));
-      return entry;
+      try {
+        PinVolTableEntry entry = new PinVolTableEntry();
+        entry.setName(split[0]);
+        entry.setPrimaryVolume(Integer.parseInt(split[1]));
+        entry.setSecondaryVolume(Integer.parseInt(split[2]));
+        entry.setSsfBassVolume(parseGainValue(split[3], ssfDbLimit));
+        entry.setSsfRearVolume(parseGainValue(split[4], ssfDbLimit));
+        entry.setSsfFrontVolume(parseGainValue(split[5], ssfDbLimit));
+        return entry;
+      }
+      catch (NumberFormatException e) {
+        LOG.warn("Skipped malformed PinVolTables.ini entry: {}", line);
+      }
     }
     return null;
   }
@@ -221,21 +232,25 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   public File getPinVolTablesIniFile() {
-    File pinvolExe = getPinVolExe();
-    return new File(pinvolExe.getParentFile(), PIN_VOL_TABLES_INI);
+    return new File(getPinVolExe().getParentFile(), PIN_VOL_TABLES_INI);
   }
 
   public File getPinVolSettingsIniFile() {
-    File pinvolExe = getPinVolExe();
-    return new File(pinvolExe.getParentFile(), PIN_VOL_SETTINGS_INI);
+    return new File(getPinVolExe().getParentFile(), PIN_VOL_SETTINGS_INI);
   }
 
   public File getPinVolVolIniFile() {
-    File pinvolExe = getPinVolExe();
-    return new File(pinvolExe.getParentFile(), PIN_VOL_VOL_INI);
+    return new File(getPinVolExe().getParentFile(), PIN_VOL_VOL_INI);
   }
 
   private File getPinVolExe() {
+    if (cachedPinVolExe == null) {
+      cachedPinVolExe = resolvePinVolExe();
+    }
+    return cachedPinVolExe;
+  }
+
+  private File resolvePinVolExe() {
     String installFolderPreferences = (String) preferencesService.getPreferenceValue(PreferenceNames.PINVOL_FOLDER);
     return installFolderPreferences == null ?
         new File(SystemService.RESOURCES, "PinVol.exe") :
@@ -243,16 +258,23 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   private void initListener() {
+    for (FileMonitoringThread thread : monitoringThreads) {
+      thread.stopMonitoring();
+    }
+    monitoringThreads.clear();
+
     File pinvolTablesFile = getPinVolTablesIniFile();
     if (pinvolTablesFile.exists()) {
       FileMonitoringThread monitoringThread = new FileMonitoringThread(this, pinvolTablesFile, true);
       monitoringThread.startMonitoring();
+      monitoringThreads.add(monitoringThread);
     }
 
-    File pincolSettingsFile = getPinVolSettingsIniFile();
-    if (pincolSettingsFile.exists()) {
-      FileMonitoringThread settingsThread = new FileMonitoringThread(this, pincolSettingsFile, true);
+    File pinvolSettingsFile = getPinVolSettingsIniFile();
+    if (pinvolSettingsFile.exists()) {
+      FileMonitoringThread settingsThread = new FileMonitoringThread(this, pinvolSettingsFile, true);
       settingsThread.startMonitoring();
+      monitoringThreads.add(settingsThread);
     }
   }
 
@@ -266,30 +288,30 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   public PinVolPreferences update(@NonNull PinVolUpdate update) {
     loadIni();
-    PinVolPreferences preferences = getPinVolTablePreferences();
-    LOG.info("Loaded PinVolTables.ini with {} entries.", preferences.getTableEntries().size());
-    PinVolTableEntry systemVolume = preferences.getSystemVolume();
-    preferences.applyValues(systemVolume.getName(), update.getSystemVolume());
+    PinVolTableEntry systemVolume = this.preferences.getSystemVolume();
+    if (systemVolume != null) {
+      this.preferences.applyValues(systemVolume.getName(), update.getSystemVolume());
+    }
 
     List<Integer> gameIds = update.getGameIds();
     for (Integer gameId : gameIds) {
       Game game = gameService.getGame(gameId);
       if (game != null) {
         String key = PinVolPreferences.getKey(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
-        if (preferences.contains(key)) {
-          preferences.applyValues(key, update.getTableVolume());
+        if (this.preferences.contains(key)) {
+          this.preferences.applyValues(key, update.getTableVolume());
         }
         else {
           PinVolTableEntry entry = new PinVolTableEntry();
           entry.setName(key);
           entry.applyValues(update.getTableVolume());
-          preferences.getTableEntries().add(entry);
+          this.preferences.getTableEntries().add(entry);
         }
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PINVOL, null);
       }
     }
 
-    return saveIniFile(preferences);
+    return saveIniFile(this.preferences);
   }
 
   private PinVolPreferences saveIniFile(PinVolPreferences preferences) {
@@ -313,9 +335,9 @@ public class PinVolService implements InitializingBean, FileChangeListener {
         LOG.error("Saving failed, can not delete {}", iniFile.getAbsolutePath());
       }
       else {
-        FileOutputStream out = new FileOutputStream(iniFile);
-        IOUtils.write(builder.toString(), out, StandardCharsets.UTF_8);
-        out.close();
+        try (FileOutputStream out = new FileOutputStream(iniFile)) {
+          IOUtils.write(builder.toString(), out, StandardCharsets.UTF_8);
+        }
       }
     }
     catch (Exception e) {
@@ -343,7 +365,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       File volIni = getPinVolSettingsIniFile();
       if (volIni.exists()) {
         INIConfiguration iniConfiguration = new INIConfiguration();
-        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setCommentLeadingCharsUsedInInput("#;");
         iniConfiguration.setSeparatorUsedInOutput("=");
         iniConfiguration.setSeparatorUsedInInput("=");
 
@@ -382,14 +404,16 @@ public class PinVolService implements InitializingBean, FileChangeListener {
         LOG.info("Found PinVol.exe process: {}", pinVolFound);
       }
       setInitialMute();
-    }).start();
+    }, "pinvol-autostart").start();
 
     loadIni();
     initListener();
 
     preferencesService.addChangeListener((propertyName, oldValue, newValue) -> {
       if (PreferenceNames.PINVOL_FOLDER.equals(propertyName)) {
+        cachedPinVolExe = null;
         loadIni();
+        initListener();
       }
     });
 

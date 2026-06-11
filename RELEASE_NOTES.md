@@ -10,7 +10,10 @@
 
 ### Changes
 
-- **Updater Issue**: Fixed issue that the updater failed to update the server (because the shutdown took too long). In case you have faced this issue, you need to perform a manual update (one more time): Extract the VPin-Studio-Server.zip and double-click the server's .exe file (or reboot the cab).
+- **Updater Issue**: Fixed issue that the updater failed to update the server (because the shutdown took too long). In case you have faced this issue, you need to perform a manual update (one more time): Extract the VPin-Studio-Server.zip and double-click the server's .exe file (or reboot the cab). See also: https://github.com/syd711/vpin-studio/wiki#manual-updates
+- **Preferences**: Fixed issue that a table refresh was triggered even though no preference was changed.
+- **Remote Folder Open Button**: Added a blind fix for the folder resolving that does not work reliable.
+- **Pause Menu Settings**: The apron mode for the pause menu allows to increase the size now too, up to 500%.
 
 
 ---
