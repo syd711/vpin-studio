@@ -68,7 +68,6 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
         HttpClientBuilder.create().build());
-    clientHttpRequestFactory.setConnectionRequestTimeout(TIMEOUT); //implement TIMEOUT
     restTemplate = new RestTemplate(clientHttpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 

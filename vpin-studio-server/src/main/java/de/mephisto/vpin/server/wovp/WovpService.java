@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -280,6 +282,11 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
   public void afterPropertiesSet() throws Exception {
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     preferencesService.addChangeListener(this);
+    LOG.info("Initialized {}", this.getClass().getSimpleName());
+  }
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void onApplicationReady() {
     new Thread(() -> {
       Thread.currentThread().setName("WOVP Synchronizer");
       List<String> apiKeys = wovpSettings.getApiKeys();
@@ -290,7 +297,6 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
 
       frontendStatusService.addTableStatusChangeListener(this);
     }).start();
-    LOG.info("Initialized {}", this.getClass().getSimpleName());
   }
 
   @Override

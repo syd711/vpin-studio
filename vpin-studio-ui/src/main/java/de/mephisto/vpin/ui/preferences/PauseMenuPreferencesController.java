@@ -213,7 +213,7 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factoryScaling = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, pauseMenuSettings.getScaling());
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryScaling = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 500, pauseMenuSettings.getScaling());
     scalingSpinner.setValueFactory(factoryScaling);
     factoryScaling.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("scalingSpinner", () -> {
       pauseMenuSettings.setScaling(t1);

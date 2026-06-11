@@ -58,7 +58,17 @@ public class FrontendUtil {
             return null;  // reject the change
         };
 
-        TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), 0, filter);
+        Integer initialValue = spinner.getValue() != null ? spinner.getValue() : 0;
+        TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), initialValue, filter);
         spinner.getEditor().setTextFormatter(formatter);
+
+        spinner.getEditor().textProperty().addListener((obs, oldText, newText) -> {
+            if (newText != null && !newText.isEmpty() && !newText.equals("-")) {
+                try {
+                    spinner.getValueFactory().setValue(Integer.parseInt(newText));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        });
     }
 }

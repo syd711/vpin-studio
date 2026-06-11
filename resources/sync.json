@@ -135,4 +135,24 @@
   "name" : "DOFTest/DirectOutputComObject.dll",
   "length" : 2731008,
   "crc32" : "#3B6AAF8B"
+}, {
+  "name" : "pinemhi/PINemHi.exe",
+  "length" : 720896,
+  "crc32" : "#D14F43F0"
+}, {
+  "name" : "pinemhi/pinemhi_rom_monitor.exe",
+  "length" : 921600,
+  "crc32" : "#8BBF1AEF"
+}, {
+  "name" : "pinemhi/PINemHi_Leaderboard.exe",
+  "length" : 202240,
+  "crc32" : "#733FAD36"
+}, {
+  "name" : "pinemhi/romfind.ini",
+  "length" : 119722,
+  "crc32" : "#DA59EDFF"
+}, {
+  "name" : "pinemhi/showboard.exe",
+  "length" : 890880,
+  "crc32" : "#7A69B370"
 } ]

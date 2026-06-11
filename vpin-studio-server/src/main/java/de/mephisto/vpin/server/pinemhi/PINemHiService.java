@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.pinemhi;
 
-import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FuturePinballService;
@@ -154,13 +153,14 @@ public class PINemHiService implements InitializingBean {
       Map<String, Object> entries = new HashMap<>();
       Set<String> sections = iniConfiguration.getSections();
       for (String section : sections) {
+        if ("romfind".equals(section)) {
+          continue;
+        }
         SubnodeConfiguration s = iniConfiguration.getSection(section);
         Iterator<String> keys = s.getKeys();
         while (keys.hasNext()) {
           String key = keys.next();
-          if (!key.endsWith(".nv")) {
-            entries.put(key, s.getString(key));
-          }
+          entries.put(key, s.getString(key));
         }
       }
       return entries;
@@ -179,52 +179,6 @@ public class PINemHiService implements InitializingBean {
     return new File(SystemService.RESOURCES + "pinemhi", PINEMHI_COMMAND);
   }
 
-
-  //----------------------
-  private void checkForUpdates() {
-    try {
-      if (!new File("resources/pinemhi").exists()) {
-        LOG.info("Skipped PINemHi update check, wrong folder.");
-        return;
-      }
-
-      List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-v");
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File(SystemService.RESOURCES + "pinemhi"));
-      executor.executeCommand();
-
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      String[] split = standardOutputFromCommand.toString().split("\n");
-      for (String s : split) {
-        if (s.contains("Version")) {
-          String version = s.trim().split(" ")[1];
-          String pinemhiVersion = systemService.getScoringDatabase().getPinemhiVersion();
-          if (version.equals(pinemhiVersion)) {
-            LOG.info("Using latest version of PINemHi ({})", version);
-            break;
-          }
-          else {
-            LOG.info("PINemHi is outdated ({} vs. {}), checking for updates.", version, pinemhiVersion);
-            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe", "romfind.ini", "showboard.exe");
-            for (String resource : resources) {
-              File check = new File(SystemService.RESOURCES + "pinemhi", resource);
-              LOG.info("Downloading PINemHi file {}", check.getAbsolutePath());
-              Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
-            }
-
-            File nvramFolder = vPinMameService.getNvRamFolder();
-            if (nvramFolder != null && nvramFolder.exists()) {
-              adjustVPPathForEmulator(nvramFolder, true);
-            }
-          }
-        }
-      }
-
-    }
-    catch (Exception e) {
-      LOG.error("Failed to check for pinemhi updates: {}", e.getMessage(), e);
-    }
-  }
 
   /**
    * Set the path to the nvRamFolder so that nv files can be found
@@ -277,11 +231,6 @@ public class PINemHiService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    new Thread(() -> {
-      Thread.currentThread().setName("PinemHi Updater");
-      checkForUpdates();
-    }).start();
-
     try {
       this.enabled = getAutoStart();
       if (enabled) {

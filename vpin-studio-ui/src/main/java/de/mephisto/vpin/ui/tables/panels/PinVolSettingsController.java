@@ -31,9 +31,10 @@ import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PinVolSettingsController implements Initializable {
-    private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  public static final int DEBOUNCE_VALUE = 200;
 
-    @FXML
+  @FXML
     private VBox root;
 
     @FXML
@@ -249,70 +250,70 @@ public class PinVolSettingsController implements Initializable {
         SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         systemVolPrimarySpinner.setValueFactory(factory1);
         factory1.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce("systemVolPrimarySpinner", () -> systemVolume.setPrimaryVolume(t1), 300);
+            debouncer.debounce("systemVolPrimarySpinner", () -> systemVolume.setPrimaryVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         systemVolSecondarySpinner.setValueFactory(factory2);
         factory2.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce("systemVolSecondarySpinner", () -> systemVolume.setSecondaryVolume(t1), 300);
+            debouncer.debounce("systemVolSecondarySpinner", () -> systemVolume.setSecondaryVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         systemVolBassSpinner.setValueFactory(factory3);
         factory3.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce("systemVolBassSpinner", () -> systemVolume.setSsfBassVolume(t1), 300);
+            debouncer.debounce("systemVolBassSpinner", () -> systemVolume.setSsfBassVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory4 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         systemVolFrontSpinner.setValueFactory(factory4);
         factory4.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce("systemVolFrontSpinner", () -> systemVolume.setSsfFrontVolume(t1), 300);
+            debouncer.debounce("systemVolFrontSpinner", () -> systemVolume.setSsfFrontVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         systemVolRearSpinner.setValueFactory(factory5);
         factory5.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce("systemVolRearSpinner", () -> systemVolume.setSsfRearVolume(t1), 300);
+            debouncer.debounce("systemVolRearSpinner", () -> systemVolume.setSsfRearVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory6 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         tableVolPrimarySpinner.setValueFactory(factory6);
         factory6.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setPrimaryVolume(t1), 300);
+            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setPrimaryVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory7 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         tableVolSecondarySpinner.setValueFactory(factory7);
         factory7.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSecondaryVolume(t1), 300);
+            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSecondaryVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory8 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         tableVolBassSpinner.setValueFactory(factory8);
         factory8.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSsfBassVolume(t1), 300);
+            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSsfBassVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory9 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         tableVolFrontSpinner.setValueFactory(factory9);
         factory9.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSsfFrontVolume(t1), 300);
+            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSsfFrontVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
 
         SpinnerValueFactory.IntegerSpinnerValueFactory factory10 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 50);
         tableVolRearSpinner.setValueFactory(factory10);
         factory10.valueProperty().addListener((observableValue, integer, t1) -> {
-            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSsfRearVolume(t1), 300);
+            debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> entry.setSsfRearVolume(t1), DEBOUNCE_VALUE);
             dirty.set(true);
         });
     }

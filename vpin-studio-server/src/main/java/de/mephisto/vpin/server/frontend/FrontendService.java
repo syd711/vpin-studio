@@ -812,19 +812,4 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     gameDetailsRepositoryService.deleteByPupId(toDelete);
     LOG.info("Deleted {} orphaned GameDetail entries.", toDelete.size());
   }
-
-  @EventListener(ApplicationReadyEvent.class)
-  public void onApplicationReady() {
-    try {
-      if (getFrontend().getFrontendType().equals(FrontendType.Standalone)) {
-        return;
-      }
-
-      //this breaks with the game detection and should be executed manually from the frontend to avoid concurrent access.
-      //runDatabaseCleanup();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to cleanup GameDetails entries: {}", e.getMessage(), e);
-    }
-  }
 }

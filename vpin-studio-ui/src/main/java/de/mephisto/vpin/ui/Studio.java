@@ -471,12 +471,24 @@ public class Studio extends Application {
     if (!StringUtils.isEmpty(url)) {
       String osName = System.getProperty("os.name");
       if (osName.contains("Windows")) {
-//        Studio.hostServices.showDocument(url);
-        try {
-          new ProcessBuilder("cmd", "/c", "start", "", url).start();
+        if(url.startsWith("http")) {
+          Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+          if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+              desktop.browse(new URI(url));
+            }
+            catch (Exception e) {
+              LOG.error("Failed to open macOS file: " + e.getMessage(), e);
+            }
+          }
         }
-        catch (IOException e) {
-          LOG.error("Browse failed: {}", e.getMessage());
+        else {
+          try {
+            new ProcessBuilder("cmd", "/c", "start", "", url).start();
+          }
+          catch (IOException e) {
+            LOG.error("Browse failed: {}", e.getMessage());
+          }
         }
       }
       else if (osName.toLowerCase().contains("mac")) {

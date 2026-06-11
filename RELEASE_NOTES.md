@@ -1,3 +1,28 @@
+## Release Notes 5.0.4
+
+### Changes
+
+- **Updater Issue**: Fixed issue that the updater failed to update the server (because the shutdown took too long). In case you have faced this issue, you need to perform a manual update (one more time): Extract the VPin-Studio-Server.zip and double-click the server's .exe file (or reboot the cab). See also: https://github.com/syd711/vpin-studio/wiki#manual-updates
+- **Preferences**: Fixed issue that a table refresh was triggered even though no preference was changed.
+- **Remote Folder Open Button**: Added a blind fix for the folder resolving that does not work reliable.
+- **Pause Menu Settings**: The apron mode for the pause menu allows to increase the size now too, up to 500%.
+
+
+---
+
+## Release Notes 5.0.3
+
+### Changes
+
+- **Virtual Pinball Spreadsheet**: Fixed opening VPF links. 
+- **Uploads**: Fixed installation issues for .rar files.
+- **Table Overview**: Fixed issue ROM column not loading (hopefully this time).
+- **WOVP**: Fixed race condition errors during the server startup which may have blocked updates for some users.
+- **Media Recorder**: Fixed table loading which was sometimes empty for some users.
+- **PINemHi Settings**: Fixed issues saving numeric values for PINemHi.
+
+---
+
 ## Release Notes 5.0.2
 
 ### Changes
@@ -16,7 +41,9 @@
   - Added better focus management.
   - Added DEL keyboard shortcut to delete focussed asset.
 - **Backup File Naming**: Change Backups to use Display Name of tables instead of File Name. This fixes existing backups not being overwritten (when overwrite is selected) when a version changes and the version is in the filename.
+- **PinEMHigh Updates**: Changed the update mechanism. These files are now fetched like all others via the initial file sync. 
 
+---
 
 ## Release Notes 5.0.1
 

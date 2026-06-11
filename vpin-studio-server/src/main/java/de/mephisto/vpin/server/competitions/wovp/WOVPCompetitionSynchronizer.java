@@ -69,9 +69,6 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   private CompetitionIdUpdater competitionIdUpdater;
 
   @Autowired
-  private EmulatorService emulatorService;
-
-  @Autowired
   private GameCachingService gameCachingService;
 
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {

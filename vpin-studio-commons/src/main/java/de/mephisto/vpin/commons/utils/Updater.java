@@ -81,8 +81,10 @@ public class Updater {
       URL url = URI.create(downloadUrl).toURL();
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setReadTimeout(5000);
-      connection.setDoOutput(true);
-      BufferedInputStream in = new BufferedInputStream(url.openStream());
+      connection.setUseCaches(false);
+      connection.setRequestProperty("Cache-Control", "no-cache, no-store");
+      connection.setRequestProperty("Pragma", "no-cache");
+      BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
       File tmp = new File(getWriteableBaseFolder(), target.getName() + DOWNLOAD_SUFFIX);
 
       if (tmp.exists()) {
