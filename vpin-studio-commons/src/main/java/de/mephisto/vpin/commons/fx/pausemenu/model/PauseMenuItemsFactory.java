@@ -99,6 +99,11 @@ public class PauseMenuItemsFactory {
       createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
     }
 
+    if (pauseMenuSettings.isShowTodos()) {
+      PauseMenuItem todoItem = new PauseMenuItem(PauseMenuItemTypes.todos, "Todo List", "Todo List for this Table", new Image(PauseMenu.class.getResourceAsStream("todo.png")));
+      pauseMenuItems.add(todoItem);
+    }
+
     return pauseMenuItems;
   }
 

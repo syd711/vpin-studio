@@ -37,6 +37,7 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean showManiaScores = true;
   private boolean showWovpScores = true;
   private boolean showTutorials = true;
+  private boolean showTodos = false;
 
   private String pauseButton;
   private String startButton;
@@ -48,6 +49,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String recordingButton;
   private String vrToggleButton;
   private String inputFilterList;
+
+  public boolean isShowTodos() {
+    return showTodos;
+  }
+
+  public void setShowTodos(boolean showTodos) {
+    this.showTodos = showTodos;
+  }
 
   public boolean isAlwaysTakeScreenshot() {
     return alwaysTakeScreenshot;

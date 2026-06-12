@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -92,9 +93,9 @@ public class PauseMenu extends Application {
 
     GameStatus gameStatus = null;
 
-    //gameStatus = new GameStatus();
-    //gameStatus.setGameId(1786095766);
-    //gameStatus.setStarted(OffsetDateTime.now());
+    gameStatus = new GameStatus();
+    gameStatus.setGameId(8100);
+    gameStatus.setStarted(OffsetDateTime.now());
 
     INSTANCE.togglePauseMenu(gameStatus, true);
   }
