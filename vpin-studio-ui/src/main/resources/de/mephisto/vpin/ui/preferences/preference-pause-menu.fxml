@@ -60,7 +60,7 @@
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -145,12 +145,53 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <CheckBox fx:id="pauseMenuOrientation" mnemonicParsing="false" styleClass="default-text" text="Desktop Mode" textFill="WHITE">
+                              <VBox spacing="6.0">
+                                 <children>
+                                    <RadioButton fx:id="viewModelCabinetRadio" mnemonicParsing="false" text="Cabinet Mode" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="viewModeGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="viewModelDesktopRadio" mnemonicParsing="false" text="Desktop Mode" textFill="WHITE" toggleGroup="$viewModeGroup">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </RadioButton>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <RadioButton fx:id="viewModelApronRadio" mnemonicParsing="false" text="Apron Mode" textFill="WHITE" toggleGroup="$viewModeGroup">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </RadioButton>
+                                          <Label fx:id="publicReadAPIHint1112" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The navigation bar is not shown, but you can still navigate. This is useful for small screens." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox spacing="6.0" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-label" text="View Mode:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                              </CheckBox>
-                              <Label>
+                              </Label>
+                              <Label visible="false">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -163,11 +204,6 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="Screen Orientation:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
                         <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label" text="Pause Trigger:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
@@ -479,7 +515,7 @@
                         </VBox>
                      </children>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="535.0" styleClass="preference-subtitle" text="Apron Mode" />
+                  <Label layoutX="34.0" layoutY="535.0" styleClass="preference-subtitle" text="View Settings" />
                   <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="This section allows you to adjust some visual settings in case the pause menu layout does not fit." textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -492,40 +528,14 @@
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="574.0" minWidth="10.0" prefWidth="574.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="Apron Mode:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                           <children>
-                              <CheckBox fx:id="apronModeCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Apron Mode" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label fx:id="publicReadAPIHint1112" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The navigation bar is not shown, but you can still navigate. This is useful for small screens." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </HBox>
-                        <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="Margin Left:" textFill="WHITE" GridPane.rowIndex="3" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="Margin Left:" textFill="WHITE" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="stageMarginTopSpinner" editable="true" prefWidth="90.0">
                                  <HBox.margin>
@@ -535,7 +545,7 @@
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="43.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <Spinner fx:id="stageMarginLeftSpinner" editable="true" prefWidth="90.0">
                                  <HBox.margin>
@@ -545,12 +555,12 @@
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="UI Scaling:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="UI Scaling:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
                               <Spinner fx:id="scalingSpinner" editable="true" prefWidth="90.0" />
                               <Label styleClass="preference-label" text="\% (0 will use the system defaults)" textFill="WHITE">

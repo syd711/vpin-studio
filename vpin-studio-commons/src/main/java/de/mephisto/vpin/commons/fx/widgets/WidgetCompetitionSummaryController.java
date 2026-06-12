@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.PaginatedTableScoreDetails;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -14,7 +15,6 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,9 +23,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jspecify.annotations.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -219,8 +220,14 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         }
       }
       else if (competitionType.equals(CompetitionType.MANIA)) {
-        PaginatedTableScoreDetails highscoresByTable = ServerFX.maniaClient.getHighscoreClient().getHighscoresByTable(game.getExtTableId());
-        scoreSummary = fromManiaScores(highscoresByTable.getData());
+        String extTableId = game.getExtTableId();
+        if (!StringUtils.isEmpty(extTableId)) {
+          PaginatedTableScoreDetails highscoresByTable = ServerFX.maniaClient.getHighscoreClient().getHighscoresByTable(extTableId);
+          scoreSummary = fromManiaScores(highscoresByTable.getData());
+        }
+        else {
+          scoreSummary = new ScoreSummaryRepresentation();
+        }
       }
       else {
         scoreSummary = client.getCompetitionService().getCompetitionScore(competition.getId());
@@ -274,7 +281,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
           if (item != null) {
             if (competition.getType().equalsIgnoreCase(CompetitionType.MANIA.name())) {
-              InputStream imageInput = TarcisioWheelsDB.getWheelImage(ServerFX.class, client, game.getExtTableId());
+              InputStream imageInput = getWheelImage(client, game.getExtTableId());
               Image image = new Image(imageInput);
               competitionWheelImage.setImage(image);
             }
@@ -378,5 +385,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       }
     }
     return summary;
+  }
+
+
+  public static InputStream getWheelImage(VPinStudioClient client, String vpsTableId) {
+    return client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + vpsTableId + ".png");
   }
 }

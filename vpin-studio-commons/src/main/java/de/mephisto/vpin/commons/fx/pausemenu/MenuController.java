@@ -122,7 +122,7 @@ public class MenuController implements Initializable {
     this.game = state.getGame();
     this.state = state;
     enterMenuItemSelection();
-    if (state.isApronMode()) {
+    if (state.isApronMode() || state.isDesktopMode()) {
       footerStack.setVisible(false);
       rowImage.setVisible(false);
       baseSelector.setVisible(false);

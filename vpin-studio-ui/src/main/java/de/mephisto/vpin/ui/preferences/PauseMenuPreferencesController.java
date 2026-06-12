@@ -51,9 +51,6 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox pauseMenuMuteCheckbox;
 
   @FXML
-  private CheckBox pauseMenuOrientation;
-
-  @FXML
   private CheckBox tutorialsCheckbox;
 
   @FXML
@@ -61,9 +58,6 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @FXML
   private CheckBox includeDmdCheckbox;
-
-  @FXML
-  private CheckBox apronModeCheckbox;
 
   @FXML
   private Spinner<Integer> delaySpinner;
@@ -97,6 +91,13 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @FXML
   private RadioButton tutorialItemRadio;
+
+  @FXML
+  private RadioButton viewModelDesktopRadio;
+  @FXML
+  private RadioButton viewModelCabinetRadio;
+  @FXML
+  private RadioButton viewModelApronRadio;
 
   @FXML
   private Pane tutorialDetailsBox;
@@ -200,12 +201,6 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
-    pauseMenuOrientation.setSelected(pauseMenuSettings.getRotation() != 90);
-    pauseMenuOrientation.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setRotation(newValue ? 0 : 90);
-      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    });
-
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 10000, pauseMenuSettings.getUnpauseDelay());
     delaySpinner.setValueFactory(factory1);
     factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("delaySpinner", () -> {
@@ -269,17 +264,33 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
-    apronModeCheckbox.setSelected(pauseMenuSettings.isApronMode());
-    apronModeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setApronMode(newValue);
-      try {
+    viewModelDesktopRadio.setSelected(pauseMenuSettings.getRotation() == 0 && !pauseMenuSettings.isApronMode());
+    viewModelApronRadio.setSelected(pauseMenuSettings.isApronMode());
+    viewModelCabinetRadio.setSelected(pauseMenuSettings.getRotation() == 90 && !pauseMenuSettings.isApronMode());
+
+    viewModelDesktopRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        pauseMenuSettings.setRotation(newValue ? 0 : 90);
+        pauseMenuSettings.setApronMode(false);
         client.getPreferenceService().setJsonPreference(pauseMenuSettings);
       }
-      catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+    });
+    viewModelCabinetRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        pauseMenuSettings.setRotation(newValue ? 90 : 0);
+        pauseMenuSettings.setApronMode(false);
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
       }
     });
-
+    viewModelApronRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        pauseMenuSettings.setApronMode(true);
+        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+      }
+    });
 
     screenTutorialComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
     rotationComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
