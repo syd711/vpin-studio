@@ -60,8 +60,11 @@ public class TileFactory {
   //--------------------------------------------------------------------------------------------------------------------
 
   public static AlxTileEntry toSessionDurationTile(OffsetDateTime startDate) {
+    if (startDate == null) {
+      return new AlxTileEntry("Play Time", "(Current playtime of this table)", "-");
+    }
     long durationMin = Duration.between(startDate, OffsetDateTime.now()).toMinutes();
-    if(durationMin == 0) {
+    if (durationMin == 0) {
       durationMin = 1;
     }
     return new AlxTileEntry("Play Time", "(Current playtime of this table)", durationMin + " min");
