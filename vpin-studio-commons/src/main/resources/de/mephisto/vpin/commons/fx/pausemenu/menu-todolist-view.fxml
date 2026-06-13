@@ -24,7 +24,7 @@
          <top>
             <VBox alignment="CENTER" minHeight="50.0" styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="infoLabel" maxWidth="620.0" text="Tag the tables with one or more from the predefined values from the Pause Menu preferences. " textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Label fx:id="infoLabel" maxWidth="620.0" text="The list of selectable todos can be configured in the Pause Menu preferences. " textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
