@@ -38,6 +38,9 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean showWovpScores = true;
   private boolean showTutorials = true;
   private boolean showTodos = false;
+  private boolean showRules = true;
+  private boolean showInfoCard = true;
+
 
   private String pauseButton;
   private String startButton;
@@ -49,6 +52,22 @@ public class PauseMenuSettings extends JsonSettings {
   private String recordingButton;
   private String vrToggleButton;
   private String inputFilterList;
+
+  public boolean isShowRules() {
+    return showRules;
+  }
+
+  public void setShowRules(boolean showRules) {
+    this.showRules = showRules;
+  }
+
+  public boolean isShowInfoCard() {
+    return showInfoCard;
+  }
+
+  public void setShowInfoCard(boolean showInfoCard) {
+    this.showInfoCard = showInfoCard;
+  }
 
   public boolean isShowTodos() {
     return showTodos;

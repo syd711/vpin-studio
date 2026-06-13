@@ -18,8 +18,10 @@ import de.mephisto.vpin.restclient.cards.CardTemplateType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Transition;
+import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -283,6 +285,7 @@ public class MenuController implements Initializable {
       animating.set(false);
       int updatedSteps = steps - 1;
       int updatedOldIndex = left ? oldIndex - 1 : oldIndex + 1;
+      updateItemVisibility(updatedOldIndex);
       if (updatedSteps > 0) {
         animateMenuSteps(left, updatedOldIndex, updatedSteps, duration);
         return;
@@ -291,6 +294,19 @@ public class MenuController implements Initializable {
       animating.set(false);
     });
     parallelTransition.play();
+  }
+
+  private void updateItemVisibility(int currentIndex) {
+    List<Node> children = menuItemsRow.getChildren();
+    for (int i = 0; i < children.size(); i++) {
+      Node item = children.get(i);
+      double targetOpacity = Math.abs(i - currentIndex) <= PauseMenuUIDefaults.MENU_VISIBLE_ITEM_RANGE ? 1.0 : 0.0;
+      if (Math.abs(item.getOpacity() - targetOpacity) > 0.01) {
+        FadeTransition ft = new FadeTransition(Duration.millis(TransitionUtil.FADER_DEFAULT), item);
+        ft.setToValue(targetOpacity);
+        ft.play();
+      }
+    }
   }
 
   private void updateSelection(Node oldNode, Node node) {
@@ -492,6 +508,11 @@ public class MenuController implements Initializable {
   private void initGameBarSelection() {
     if (menuItemsRow.getChildren().isEmpty()) {
       return;
+    }
+
+    List<Node> children = menuItemsRow.getChildren();
+    for (int i = 0; i < children.size(); i++) {
+      children.get(i).setOpacity(Math.abs(i - selectionIndex) <= PauseMenuUIDefaults.MENU_VISIBLE_ITEM_RANGE ? 1.0 : 0.0);
     }
 
     //ensures that the scrolling row is centered to the screen.

@@ -38,4 +38,6 @@ public class PauseMenuUIDefaults {
   public static int SCROLL_OFFSET = 120;
 
   public static int MAX_REFRESH_COUNT = 10;
+
+  public static int MENU_VISIBLE_ITEM_RANGE = 3;
 }

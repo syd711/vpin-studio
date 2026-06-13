@@ -86,13 +86,17 @@ public class PauseMenuItemsFactory {
 
     //only load the media of those screens that are not the highscore card screen or if no highscore card screen is set
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
-      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");
+      if (pauseMenuSettings.isShowInfoCard()) {
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");
+      }
     }
     if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "tutorial.png");
     }
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
-      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
+      if (pauseMenuSettings.isShowRules()) {
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
+      }
     }
 
     if (pauseMenuSettings.isShowTutorials() && !pauseMenuSettings.isTutorialsOnScreen()) {

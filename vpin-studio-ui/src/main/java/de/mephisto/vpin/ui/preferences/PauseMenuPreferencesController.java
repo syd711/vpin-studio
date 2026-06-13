@@ -66,6 +66,12 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox todoCheckbox;
 
   @FXML
+  private CheckBox rulesCheckbox;
+
+  @FXML
+  private CheckBox infoCardCheckbox;
+
+  @FXML
   private Spinner<Integer> delaySpinner;
 
   @FXML
@@ -221,6 +227,18 @@ public class PauseMenuPreferencesController implements Initializable {
     tutorialsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowTutorials(newValue);
       setTutorialsDisabled(!newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    rulesCheckbox.setSelected(pauseMenuSettings.isShowRules());
+    rulesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setShowRules(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    infoCardCheckbox.setSelected(pauseMenuSettings.isShowInfoCard());
+    infoCardCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setShowInfoCard(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 

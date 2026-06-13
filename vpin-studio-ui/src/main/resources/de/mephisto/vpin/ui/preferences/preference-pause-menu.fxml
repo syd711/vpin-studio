@@ -461,6 +461,8 @@
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label styleClass="preference-label" text="VPin Mania Scores:" textFill="WHITE">
@@ -488,6 +490,26 @@
                               </Label>
                            </children>
                         </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Info Cards:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="infoCardCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show Info Cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="Rule Cards:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="rulesCheckbox" layoutX="173.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="Show Rule Cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
                      </children>
                   </GridPane>
                   <GridPane hgap="3.0" vgap="3.0">
@@ -503,7 +525,7 @@
                         <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <VBox.margin>
-                        <Insets />
+                        <Insets top="3.0" />
                      </VBox.margin>
                      <children>
                         <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE">
