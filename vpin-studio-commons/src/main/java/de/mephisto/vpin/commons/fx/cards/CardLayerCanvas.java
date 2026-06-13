@@ -17,6 +17,9 @@ public class CardLayerCanvas extends Rectangle implements CardLayer {
 
     int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
     String hex = Integer.toHexString(value);
+    if (hex.length() == 1) {
+      hex = "0" + hex;
+    }
     String color = Objects.toString(template.getCanvasBackground(), "#FFFFFF");
     this.setFill(Paint.valueOf(color + hex));
     this.setArcWidth(template.getCanvasBorderRadius() * zoomX);
