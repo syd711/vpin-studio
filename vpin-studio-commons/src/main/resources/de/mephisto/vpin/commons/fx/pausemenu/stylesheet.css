@@ -58,6 +58,19 @@
     -fx-text-fill: #fff8f8;
 }
 
+/**
+ * Common Component Theme
+ */
+.base-component {
+    -fx-text-fill: #FFFFFF;
+    -fx-base : #111111;
+}
+
+.check-box:focused .box {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
 
 .debug {
     -fx-border-style: solid;

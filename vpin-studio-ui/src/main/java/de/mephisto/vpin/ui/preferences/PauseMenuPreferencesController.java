@@ -7,13 +7,16 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -109,6 +112,10 @@ public class PauseMenuPreferencesController implements Initializable {
   private VBox monitorsPane;
 
   @FXML
+  private Pane tagPane;
+  private TagField tagField;
+
+  @FXML
   private void onPauseTest() {
     PreferencesDialogs.openPauseMenuTestDialog();
   }
@@ -117,6 +124,8 @@ public class PauseMenuPreferencesController implements Initializable {
   private void onDMDDeviceLink(ActionEvent event) {
     PreferencesController.navigate("dmd");
   }
+
+  private TaggingSettings taggingSettings;
 
   @FXML
   private void onRestart() {
@@ -156,6 +165,21 @@ public class PauseMenuPreferencesController implements Initializable {
       monitorsPane.getChildren().add(checkBox);
     }
 
+    taggingSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.TAGGING_SETTINGS, TaggingSettings.class);
+    List<String> suggestions = client.getTaggingService().getTags();
+    tagField = new TagField(suggestions);
+    tagField.setAllowCustomTags(true);
+    tagField.setTags(taggingSettings.getPauseMenuTags());
+    tagField.addListener(new ListChangeListener<String>() {
+      @Override
+      public void onChanged(Change<? extends String> c) {
+        List<String> list = (List<String>) c.getList();
+        taggingSettings.setPauseMenuTags(new ArrayList<>(list));
+        tagField.setDisable(list.size() == TaggingSettings.MAX_TODO_TAGS);
+        client.getPreferenceService().setJsonPreference(taggingSettings);
+      }
+    });
+    tagPane.getChildren().add(tagField);
 
     screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getMonitorInfos()));
     if (pauseMenuSettings.getPauseMenuScreenId() == -1) {
@@ -185,14 +209,18 @@ public class PauseMenuPreferencesController implements Initializable {
     });
 
     todoCheckbox.setSelected(pauseMenuSettings.isShowTodos());
+    tagField.setDisable(!pauseMenuSettings.isShowTodos());
     todoCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowTodos(newValue);
+      tagField.setDisable(!newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
     tutorialsCheckbox.setSelected(pauseMenuSettings.isShowTutorials());
+    setTutorialsDisabled(!pauseMenuSettings.isShowTutorials());
     tutorialsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowTutorials(newValue);
+      setTutorialsDisabled(!newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
@@ -363,5 +391,14 @@ public class PauseMenuPreferencesController implements Initializable {
         }
       }
     });
+  }
+
+  private void setTutorialsDisabled(boolean b) {
+    tutorialItemRadio.setDisable(b);
+    tutorialScreenRadio.setDisable(b);
+    screenTutorialComboBox.setDisable(b);
+    rotationComboBox.setDisable(b);
+    marginLeftSpinner.setDisable(b);
+    marginTopSpinner.setDisable(b);
   }
 }

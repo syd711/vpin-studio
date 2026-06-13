@@ -424,6 +424,8 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <VBox.margin>
                         <Insets />
@@ -524,6 +526,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
+                        <VBox fx:id="tagPane" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                   <Label layoutX="34.0" layoutY="535.0" styleClass="preference-subtitle" text="View Settings" />

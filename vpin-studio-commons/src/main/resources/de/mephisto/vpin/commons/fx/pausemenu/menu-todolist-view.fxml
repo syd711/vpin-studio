@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="700.0" prefWidth="1200.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.pausemenu.TodoListMenuItemController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <center>
+            <HBox spacing="48.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="24.0" right="24.0" top="48.0" />
+               </BorderPane.margin>
+               <children>
+                  <VBox fx:id="column1" prefHeight="150.0" prefWidth="550.0" spacing="12.0" />
+                  <VBox fx:id="column2" layoutX="10.0" layoutY="10.0" prefHeight="150.0" prefWidth="550.0" spacing="12.0" />
+               </children>
+            </HBox>
+         </center>
+         <top>
+            <VBox alignment="CENTER" minHeight="50.0" styleClass="info-container" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="infoLabel" maxWidth="620.0" text="Tag the tables with one or more from the predefined values from the Pause Menu preferences. " textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="infoLabel1" layoutX="300.0" layoutY="25.0" maxWidth="796.0" prefWidth="796.0" text="The applied tags can be found in the &quot;Tags &amp; Comments&quot; tab of the table details dialog and you can filter by them." textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </top>
+      </BorderPane>
+   </children>
+</VBox>

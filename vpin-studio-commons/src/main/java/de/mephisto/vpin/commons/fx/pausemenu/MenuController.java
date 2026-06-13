@@ -53,6 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.SELECTION_SCALE_DURATION;
+import static de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes.todos;
 import static de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes.wovp;
 
 public class MenuController implements Initializable {
@@ -114,6 +115,7 @@ public class MenuController implements Initializable {
   private MenuCustomViewController customViewController;
   private Node currentSelection;
   private WovpMenuItemController wovpMenuItemController;
+  private TodoListMenuItemController todoMenuItemController;
   private VPinScreen cardScreen = null;
   private FrontendMediaRepresentation frontendMedia;
   private VpsTable vpsTable;
@@ -182,11 +184,21 @@ public class MenuController implements Initializable {
         wovpMenuItemController.enter();
         break;
       }
+      case todos: {
+        todoMenuItemController.enter();
+        break;
+      }
     }
   }
 
   public void right() {
     PauseMenuItemTypes itemType = getSelection().getItemType();
+    if (itemType.equals(todos)) {
+      if (todoMenuItemController != null && !todoMenuItemController.right()) {
+        scroll(false);
+      }
+      return;
+    }
     if (!itemType.equals(wovp) || !wovpMenuItemController.right()) {
       scroll(false);
     }
@@ -194,6 +206,12 @@ public class MenuController implements Initializable {
 
   public void left() {
     PauseMenuItemTypes itemType = getSelection().getItemType();
+    if (itemType.equals(todos)) {
+      if (todoMenuItemController != null && !todoMenuItemController.left()) {
+        scroll(true);
+      }
+      return;
+    }
     if (!itemType.equals(wovp) || !wovpMenuItemController.left()) {
       scroll(true);
     }
@@ -341,6 +359,20 @@ public class MenuController implements Initializable {
       }
       catch (IOException e) {
         LOG.error("Failed to init pause component: " + e.getMessage(), e);
+      }
+    }
+    else if (activeSelection.getItemType().equals(todos)) {
+      try {
+        String resource = "menu-todolist-view.fxml";
+        FXMLLoader loader = new FXMLLoader(TodoListMenuItemController.class.getResource(resource));
+        Pane widgetRoot = loader.load();
+        todoMenuItemController = loader.getController();
+        todoMenuItemController.setData(game, activeSelection);
+        scoreView.setCenter(widgetRoot);
+        scoreView.setVisible(true);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to init todo component: " + e.getMessage(), e);
       }
     }
     else if (activeSelection.getItemType().equals(PauseMenuItemTypes.highscores)) {
