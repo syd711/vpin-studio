@@ -51,7 +51,7 @@ public class PupPacksService implements InitializingBean {
 
   private final Map<String, PupPack> pupPackCache = new ConcurrentHashMap<>();
 
-  private AtomicBoolean pupPackScanActive = new AtomicBoolean(false);
+  private final AtomicBoolean pupPackScanActive = new AtomicBoolean(false);
 
   /**
    * Return where pinup player is installed, read it today from installation directory,

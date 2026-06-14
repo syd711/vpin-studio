@@ -99,6 +99,9 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Label authorNameLabel;
 
   @FXML
+  private Label labelPupPackName;
+
+  @FXML
   private TextArea tableBlurbLabel;
 
   @FXML
@@ -293,6 +296,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     authorEmailLabel.setText("-");
     releaseDateLabel.setText("-");
     tableDescriptionLabel.setText("-");
+    labelPupPackName.setText("-");
 
     openTableRulesBtn.setDisable(true);
     openTableDescriptionBtn.setDisable(true);
@@ -315,6 +319,7 @@ public class TablesSidebarScriptDataController implements Initializable {
         openTableDescriptionBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableDescription()));
       }
 
+      labelPupPackName.setText(game.getPupPackName() != null ? String.valueOf(game.getPupPackName()) : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");

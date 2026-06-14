@@ -642,7 +642,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="todoCheckbox" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="Show Todo List" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <CheckBox fx:id="todoCheckbox" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="Show Todo List (limited to 16 items)" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
