@@ -78,6 +78,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private Spinner<Integer> scalingSpinner;
 
   @FXML
+  private Spinner<Integer> visibleItemsSpinner;
+
+  @FXML
   private Spinner<Integer> stageMarginLeftSpinner;
 
   @FXML
@@ -289,10 +292,18 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getStageOffsetY());
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getStageOffsetX());
     stageMarginLeftSpinner.setValueFactory(factory5);
     factory5.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("stageMarginLeftSpinner", () -> {
       pauseMenuSettings.setStageOffsetX(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory6 = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 6, pauseMenuSettings.getVisibleItemCount());
+    visibleItemsSpinner.setValueFactory(factory6);
+    factory6.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("visibleItemsSpinner", () -> {
+      pauseMenuSettings.setVisibleItemCount(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 

@@ -300,7 +300,7 @@ public class MenuController implements Initializable {
     List<Node> children = menuItemsRow.getChildren();
     for (int i = 0; i < children.size(); i++) {
       Node item = children.get(i);
-      double targetOpacity = Math.abs(i - currentIndex) <= PauseMenuUIDefaults.MENU_VISIBLE_ITEM_RANGE ? 1.0 : 0.0;
+      double targetOpacity = Math.abs(i - currentIndex) <= state.getVisibleItemCount() ? 1.0 : 0.0;
       if (Math.abs(item.getOpacity() - targetOpacity) > 0.01) {
         FadeTransition ft = new FadeTransition(Duration.millis(TransitionUtil.FADER_DEFAULT), item);
         ft.setToValue(targetOpacity);
@@ -512,7 +512,7 @@ public class MenuController implements Initializable {
 
     List<Node> children = menuItemsRow.getChildren();
     for (int i = 0; i < children.size(); i++) {
-      children.get(i).setOpacity(Math.abs(i - selectionIndex) <= PauseMenuUIDefaults.MENU_VISIBLE_ITEM_RANGE ? 1.0 : 0.0);
+      children.get(i).setOpacity(Math.abs(i - selectionIndex) <= state.getVisibleItemCount() ? 1.0 : 0.0);
     }
 
     //ensures that the scrolling row is centered to the screen.

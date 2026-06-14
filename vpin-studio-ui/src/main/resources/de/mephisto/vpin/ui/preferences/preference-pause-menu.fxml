@@ -353,6 +353,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" GridPane.rowIndex="1" />
@@ -403,6 +404,28 @@
                                     </Label>
                                  </children>
                               </HBox>
+                              <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Visible Item Count:" textFill="WHITE" GridPane.rowIndex="3" />
+                              <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <children>
+                                    <Spinner fx:id="visibleItemsSpinner" editable="true" prefWidth="90.0">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </Spinner>
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="menu items" textFill="WHITE" />
+                                    <Label fx:id="publicReadAPIHint111211" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="The number of menu items to show before/after the current selection." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                            </children>
                            <VBox.margin>
                               <Insets top="12.0" />
@@ -415,6 +438,7 @@
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
                   </Label>
+                  <Label styleClass="preference-description" text="Select the menu items you want to see in the pause menu." textFill="WHITE" />
                   <GridPane fx:id="iScoredScoresBox" hgap="3.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
@@ -451,7 +475,7 @@
                         </HBox>
                      </children>
                      <VBox.margin>
-                        <Insets />
+                        <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
                   <GridPane fx:id="maniaScoresBox" hgap="3.0" vgap="3.0">

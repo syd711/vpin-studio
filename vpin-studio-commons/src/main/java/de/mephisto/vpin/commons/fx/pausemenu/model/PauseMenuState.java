@@ -7,6 +7,15 @@ public class PauseMenuState {
   private boolean apronMode;
   private boolean desktopMode;
   private boolean scoreSubmitterEnabled;
+  private int visibleItemCount;
+
+  public int getVisibleItemCount() {
+    return visibleItemCount;
+  }
+
+  public void setVisibleItemCount(int visibleItemCount) {
+    this.visibleItemCount = visibleItemCount;
+  }
 
   public boolean isDesktopMode() {
     return desktopMode;

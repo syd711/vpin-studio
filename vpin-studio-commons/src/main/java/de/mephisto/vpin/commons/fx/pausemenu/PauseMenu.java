@@ -290,6 +290,7 @@ public class PauseMenu extends Application {
         state.setGame(game);
         state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
         state.setApronMode(pauseMenuSettings.isApronMode());
+        state.setVisibleItemCount(pauseMenuSettings.getVisibleItemCount());
         state.setDesktopMode(pauseMenuSettings.getRotation() == 0);
 
         StateMananger.getInstance().setState(state);

@@ -41,6 +41,7 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean showRules = true;
   private boolean showInfoCard = true;
 
+  private int visibleItemCount = 3;
 
   private String pauseButton;
   private String startButton;
@@ -52,6 +53,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String recordingButton;
   private String vrToggleButton;
   private String inputFilterList;
+
+  public int getVisibleItemCount() {
+    return visibleItemCount;
+  }
+
+  public void setVisibleItemCount(int visibleItemCount) {
+    this.visibleItemCount = visibleItemCount;
+  }
 
   public boolean isShowRules() {
     return showRules;

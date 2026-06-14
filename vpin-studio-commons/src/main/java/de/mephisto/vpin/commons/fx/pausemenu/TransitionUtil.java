@@ -13,6 +13,7 @@ import static javafx.animation.Animation.INDEFINITE;
 public class TransitionUtil {
 
   public static final int FADER_DEFAULT = 200;
+  public static final int FADER_QUICK = 100;
 
   /**
    * Creates a fade in effect without playing it
