@@ -57,6 +57,8 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter {
       de.mephisto.vpin.restclient.util.FileUtils.findFileRecursive(folder, Arrays.asList("png", "apng", "mov", "mp4", "mp3", "ogg", "mkv"), term, result);
     }
 
+    result = result.stream().filter(f -> !f.getName().contains("@2x")).collect(Collectors.toList());
+
     if (source.getLookupStrategy().equals(AssetLookupStrategy.autoDetect)) {
       result = result.stream().filter(f -> matches(screenSegment, f.getAbsolutePath())).collect(Collectors.toList());
     }
@@ -76,7 +78,6 @@ public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter {
   public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset, long start, long length) throws Exception {
     String decoded = URLDecoder.decode(tableAsset.getUrl(), StandardCharsets.UTF_8);
     String fileName = decoded.substring("/".length());
-    fileName = fileName.replaceAll("@2x", "");
     File source = new File(fileName);
     if (source.exists()) {
       // exception are thrown and are caught buy caller 
