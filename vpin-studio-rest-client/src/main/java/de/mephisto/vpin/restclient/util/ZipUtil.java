@@ -71,6 +71,9 @@ public class ZipUtil {
                 continue;
               }
               itempath = itempath.substring(archiveFolder.length());
+              if (itempath.startsWith("/") || itempath.startsWith("\\")) {
+                itempath = itempath.substring(1);
+              }
             }
 
 

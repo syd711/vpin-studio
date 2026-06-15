@@ -270,6 +270,8 @@ public class Studio extends Application {
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
         if (!sevenZipTempFolder.exists()) {
           sevenZipTempFolder.mkdirs();
+        }
+        if (!SevenZip.isInitializedSuccessfully()) {
           SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
           LOG.info("Installed sevenZip");
         }

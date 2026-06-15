@@ -203,7 +203,7 @@ public class UploaderAnalysis {
         if (name.contains("/")) {
           return name.substring(0, name.lastIndexOf("/"));
         }
-        return "/";
+        return null;
       }
     }
     return null;

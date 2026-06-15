@@ -148,6 +148,7 @@ public class RarUtil {
 //            entryName = "/" + entryName;
 //          }
           boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
+          LOG.info("Checking extraction of {}", entryName);
           if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
             String itempath = entryName;
             if (archiveFolder != null) {
@@ -155,6 +156,9 @@ public class RarUtil {
                 continue;
               }
               itempath = itempath.substring(archiveFolder.length());
+              if (itempath.startsWith("/") || itempath.startsWith("\\")) {
+                itempath = itempath.substring(1);
+              }
             }
             File target = new File(targetFolder, itempath);
             // delete existing file and don't simply write in it
