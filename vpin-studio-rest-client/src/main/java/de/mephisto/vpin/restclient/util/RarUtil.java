@@ -144,9 +144,9 @@ public class RarUtil {
           String entryName = item.getPath().replaceAll("\\\\", "/");
           String suffix = FilenameUtils.getExtension(entryName);
 
-          if (!entryName.startsWith("/")) {
-            entryName = "/" + entryName;
-          }
+//          if (!entryName.startsWith("/")) {
+//            entryName = "/" + entryName;
+//          }
           boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
           if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
             String itempath = entryName;

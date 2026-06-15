@@ -2,22 +2,22 @@
 
 ### Changes
 
+- **Pause Menu**:
+    - Added new "Todo List" menu item. Here you can quickly tag issues you experience with the table so you don't forget them after playing.
+    - Changed view mode settings which simply differs now between Cabinet, Desktop and Apron mode view, selectable via radio group.
+    - The view settings with scaling, top and left margins are now applied for all view modes. Most likely this will only be used for apron screens and non 16:9 screens.
+    - The design when used in desktop mode can now be improved by downscaling and limiting the number of visible menu items.
+    - Fixed the "Mania Scores" menu item which shows highscores now again.
+    - Fixed loading of wheel images for the "Mania Scores" view which was using an outdated database.
+    - Fixed wrong initialization of the "Margin Left" view setting.
+    - Added option to disable rule cards.
+    - Added option to disable info cards.
 - **Table Management**: Added backglass selector to the backglass sidebar.
 - **Preferences Menu**: Added cabinet selector to the preferences drop-down menu, so that you can immediately switch to other cabinets.
 - **Designer**: Fixed color value parsing issues that broke the UI.
 - **Script Details Section**: Added the information about the PUP pack name that was scanned by the Studio.
-- **Pause Menu**:
-  - Added new "Todo List" menu item. Here you can quickly tag issues you experience with the table so you don't forget them after playing. 
-  - Changed view mode settings which simply differs now between Cabinet, Desktop and Apron mode view, selectable via radio group.
-  - The view settings with scaling, top and left margins are now applied for all view modes. Most likely this will only be used for apron screens and non 16:9 screens.
-  - The design when used in desktop mode can now be improved by downscaling and limiting the number of visible menu items.
-  - Fixed the "Mania Scores" menu item which shows highscores now again.
-  - Fixed loading of wheel images for the "Mania Scores" view which was using an outdated database.
-  - Fixed wrong initialization of the "Margin Left" view setting. 
-  - Added option to disable rule cards.
-  - Added option to disable info cards.
 - **PinUP Popper Media Search**:
   - Added caching.
   - Fixed URLs with @2a segments.
-- **PUP Packs**:
-  - Added **pGameName** as additional script parsing variable for resolving PUP packs.
+- **Misc**:
+  - Fixed .rar extraction for PUP packs.
