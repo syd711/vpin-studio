@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -74,10 +77,21 @@ public class DMDService implements InitializingBean {
         File dmdFolder = getDmdFolder(game);
         if (dmdFolder.exists()) {
           dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
-          File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
-          if (dmdFiles != null && dmdFiles.length > 0) {
-            dmdPackage.setFiles(Arrays.stream(dmdFiles).map(File::getName).collect(Collectors.toList()));
-            Arrays.stream(dmdFiles).forEach(f -> dmdPackage.setSize(dmdPackage.getSize() + f.length()));
+          try {
+            Path base = dmdFolder.toPath();
+            List<File> dmdFiles = Files.walk(base)
+                .filter(Files::isRegularFile)
+                .map(Path::toFile)
+                .collect(Collectors.toList());
+            if (!dmdFiles.isEmpty()) {
+              dmdPackage.setFiles(dmdFiles.stream()
+                  .map(f -> base.relativize(f.toPath()).toString())
+                  .collect(Collectors.toList()));
+              dmdFiles.forEach(f -> dmdPackage.setSize(dmdPackage.getSize() + f.length()));
+            }
+          }
+          catch (IOException e) {
+            LOG.error("Failed to list DMD files for {}: {}", game, e.getMessage(), e);
           }
         }
         else {

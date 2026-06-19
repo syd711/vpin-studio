@@ -672,6 +672,17 @@ public class VPXFileScanner {
     else if (Strings.CI.contains(line, ".ProjectFolder")) {
       prjFolder = extractAfterPatternsValue(line, ".ProjectFolder", "=");
     }
+    else if (Strings.CI.contains(line, ".FlexDMD\\")) {
+      int idx = StringUtils.indexOfIgnoreCase(line, ".FlexDMD\\");
+      String upToFolder = line.substring(0, idx + ".FlexDMD".length());
+      int quoteIdx = upToFolder.lastIndexOf('"');
+      if (quoteIdx != -1) {
+        String folder = upToFolder.substring(quoteIdx + 1);
+        if (!StringUtils.isEmpty(folder)) {
+          result.setDMDProjectFolder(folder);
+        }
+      }
+    }
 
     if (prjFolder != null) {
       evalctxt.onEvaluateString(prjFolder, res -> {

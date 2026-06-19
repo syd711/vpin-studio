@@ -30,6 +30,7 @@ public class PauseMenuScreensFactory {
     asset.setDuration(0);
     asset.setMimeType(defaultMediaItem.getMimeType());
     asset.setName(defaultMediaItem.getName());
+    asset.setFullScreen(pauseMenuSettings.isTutorialFullscreen());
     asset.setUrl(URI.create(client.getURL(defaultMediaItem.getUri())).toURL());
 
     FrontendScreensManager.getInstance().showScreen(asset);

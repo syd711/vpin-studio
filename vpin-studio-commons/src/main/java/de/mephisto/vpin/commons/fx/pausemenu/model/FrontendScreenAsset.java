@@ -16,6 +16,7 @@ public class FrontendScreenAsset {
   private String name;
   private int offsetX;
   private int offsetY;
+  private boolean fullScreen;
 
   private FrontendScreenController frontendScreenController;
 
@@ -29,6 +30,14 @@ public class FrontendScreenAsset {
 
   public int getOffsetX() {
     return offsetX;
+  }
+
+  public boolean isFullScreen() {
+    return fullScreen;
+  }
+
+  public void setFullScreen(boolean fullScreen) {
+    this.fullScreen = fullScreen;
   }
 
   public void setOffsetX(int offsetX) {

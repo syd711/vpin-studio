@@ -15,6 +15,7 @@ public class PauseMenuSettings extends JsonSettings {
   private int tutorialMarginLeft = 0;
   private int tutorialMarginTop = 0;
   private int tutorialsRotation = 0;
+  private boolean tutorialFullscreen = true;
   private boolean pressPause = true;
   private boolean alwaysTakeScreenshot = false;
 
@@ -43,6 +44,7 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean showRules = true;
   private boolean showInfoCard = true;
 
+
   private int visibleItemCount = 3;
 
   private String pauseButton;
@@ -55,6 +57,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String recordingButton;
   private String vrToggleButton;
   private String inputFilterList;
+
+  public boolean isTutorialFullscreen() {
+    return tutorialFullscreen;
+  }
+
+  public void setTutorialFullscreen(boolean tutorialFullscreen) {
+    this.tutorialFullscreen = tutorialFullscreen;
+  }
 
   public boolean isDesktopMode() {
     return desktopMode;

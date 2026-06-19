@@ -69,6 +69,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox rulesCheckbox;
 
   @FXML
+  private CheckBox tutorialFullscreenCheckbox;
+
+  @FXML
   private CheckBox infoCardCheckbox;
 
   @FXML
@@ -257,6 +260,14 @@ public class PauseMenuPreferencesController implements Initializable {
     pauseMenuMuteCheckbox.setSelected(pauseMenuSettings.isMuteOnPause());
     pauseMenuMuteCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setMuteOnPause(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    tutorialFullscreenCheckbox.setSelected(pauseMenuSettings.isTutorialFullscreen());
+    setTutorialsViewParamsDisabled(pauseMenuSettings.isTutorialFullscreen());
+    tutorialFullscreenCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setTutorialFullscreen(newValue);
+      setTutorialsViewParamsDisabled(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
@@ -453,6 +464,13 @@ public class PauseMenuPreferencesController implements Initializable {
     tutorialItemRadio.setDisable(b);
     tutorialScreenRadio.setDisable(b);
     screenTutorialComboBox.setDisable(b);
+    rotationComboBox.setDisable(b);
+    tutorialFullscreenCheckbox.setDisable(b);
+    tutorialMarginLeftSpinner.setDisable(b);
+    tutorialMarginTopSpinner.setDisable(b);
+  }
+
+  private void setTutorialsViewParamsDisabled(boolean b) {
     rotationComboBox.setDisable(b);
     tutorialMarginLeftSpinner.setDisable(b);
     tutorialMarginTopSpinner.setDisable(b);

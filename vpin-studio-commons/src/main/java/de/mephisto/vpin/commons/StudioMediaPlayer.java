@@ -75,14 +75,13 @@ public class StudioMediaPlayer {
             screenStageY = screenStageY + display.getHeight();
           }
 
-          List<String> cmds = new ArrayList<>(List.of("vlc.exe",
-              "\"" + asset.getUrl().toExternalForm() + "\"",
+          List<String> cmds = new ArrayList<>(List.of(vlcExe.getAbsolutePath(),
+              asset.getUrl().toExternalForm(),
               "--mouse-hide-timeout=0",
-              "--intf", "rc",
               "--intf", "dummy",
-              "--rc-quiet",
+              "--dummy-quiet",
+              "--no-embedded-video",
               "--no-qt-privacy-ask",
-              "--reset-plugins-cache",
               "--ignore-config",
               "--aout=directsound",
               "--directx-audio-device=default",
@@ -90,19 +89,26 @@ public class StudioMediaPlayer {
               "--no-media-library",
               "--no-video-deco",
               "--no-video-title-show",
-              "--qt-minimal-view",
               "--video-on-top",
               "--no-qt-name-in-title",
-              "--no-qt-fs-controller",
-              "--video-x=" + screenStageX,
-              "--video-y=" + screenStageY,
-              "--width=" + width,
-              "--height=" + height
+              "--no-qt-fs-controller"
           ));
+
+          if (asset.isFullScreen()) {
+            cmds.add("--vout=directdraw");
+            cmds.add("--directx-device=\\\\.\\" + "DISPLAY" + (display.getMonitor() + 1));
+            cmds.add("--fullscreen");
+          }
+          else {
+            cmds.add("--video-x=" + (int) screenStageX);
+            cmds.add("--video-y=" + (int) screenStageY);
+            cmds.add("--width=" + (int) width);
+            cmds.add("--height=" + (int) height);
+          }
 
           LOG.info("VLC is playing: {}", asset.getUrl().toExternalForm());
           LOG.info("VLC command: {}", String.join(" ", cmds));
-          if (rotation != 0) {
+          if (rotation != 0 && !asset.isFullScreen()) {
             cmds.add("--video-filter=transform");
             cmds.add("--transform-type=" + rotation);
           }

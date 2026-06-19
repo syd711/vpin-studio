@@ -12,6 +12,8 @@
     - Fixed wrong initialization of the "Margin Left" view setting.
     - Added option to disable rule cards.
     - Added option to disable info cards.
+    - Added full-screen option for tutorial videos.
+    - Improved startup speed for tutorial videos.
 - **Table Management**: Added backglass selector to the backglass sidebar.
 - **Preferences Menu**: Added cabinet selector to the preferences drop-down menu, so that you can immediately switch to other cabinets.
 - **Designer**: Fixed color value parsing issues that broke the UI.
@@ -19,5 +21,8 @@
 - **PinUP Popper Media Search**:
   - Added caching.
   - Fixed URLs with @2a segments.
+- **DMD Info Section**: 
+  - Improved detection of FlexDMD folders.
+  - Fixed DMD bundle size calculation.
 - **Misc**:
   - Fixed .rar extraction for PUP packs.
