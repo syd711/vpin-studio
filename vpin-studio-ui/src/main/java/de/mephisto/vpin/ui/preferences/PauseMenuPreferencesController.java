@@ -102,6 +102,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private ComboBox<Integer> rotationComboBox;
 
   @FXML
+  private ComboBox<Integer> menuRotationComboBox;
+
+  @FXML
   private RadioButton tutorialScreenRadio;
 
   @FXML
@@ -307,6 +310,13 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 
+    menuRotationComboBox.setItems(FXCollections.observableList(Arrays.asList(0, 90, 180, 270)));
+    menuRotationComboBox.setValue(pauseMenuSettings.getRotation());
+    menuRotationComboBox.setDisable(pauseMenuSettings.isDesktopMode());
+    menuRotationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setRotation(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
 
     triggerCheckbox.setSelected(pauseMenuSettings.isPressPause());
     delaySpinner.setDisable(!pauseMenuSettings.isPressPause());
@@ -328,31 +338,44 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
-    viewModelDesktopRadio.setSelected(pauseMenuSettings.getRotation() == 0 && !pauseMenuSettings.isApronMode());
+    viewModelDesktopRadio.setSelected(pauseMenuSettings.isDesktopMode());
     viewModelApronRadio.setSelected(pauseMenuSettings.isApronMode());
-    viewModelCabinetRadio.setSelected(pauseMenuSettings.getRotation() == 90 && !pauseMenuSettings.isApronMode());
+    viewModelCabinetRadio.setSelected(pauseMenuSettings.isCabinetMode());
 
     viewModelDesktopRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        pauseMenuSettings.setRotation(newValue ? 0 : 90);
-        pauseMenuSettings.setApronMode(false);
-        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        if (newValue) {
+          pauseMenuSettings.setDesktopMode(true);
+          pauseMenuSettings.setCabinetMode(false);
+          pauseMenuSettings.setApronMode(false);
+          menuRotationComboBox.setDisable(true);
+          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        }
       }
     });
     viewModelCabinetRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        pauseMenuSettings.setRotation(newValue ? 90 : 0);
-        pauseMenuSettings.setApronMode(false);
-        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        if (newValue) {
+          pauseMenuSettings.setCabinetMode(true);
+          pauseMenuSettings.setDesktopMode(false);
+          pauseMenuSettings.setApronMode(false);
+          menuRotationComboBox.setDisable(false);
+          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        }
       }
     });
     viewModelApronRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        pauseMenuSettings.setApronMode(true);
-        client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        if (newValue) {
+          pauseMenuSettings.setApronMode(true);
+          pauseMenuSettings.setDesktopMode(false);
+          pauseMenuSettings.setCabinetMode(false);
+          menuRotationComboBox.setDisable(false);
+          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+        }
       }
     });
 
