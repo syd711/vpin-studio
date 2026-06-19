@@ -156,7 +156,7 @@ public class PauseMenu extends Application {
 
     stage.setY(monitorInfo.getMinY());
 
-    if (pauseMenuSettings.getRotation() != 0) {
+    if (!pauseMenuSettings.isDesktopMode()) {
       LOG.info("Window Mode: Cab"); //scaling is ignored here!!!
       rootPane.setRotate(-(pauseMenuSettings.getRotation()));
       stage.setX(PauseMenuUIDefaults.getScaledScreenX() + PauseMenuUIDefaults.getScreenWidth() / 2 / 2);
@@ -175,6 +175,7 @@ public class PauseMenu extends Application {
     }
     else {
       LOG.info("Window Mode: Desktop");
+      rootPane.setRotate(0);
       stage.setX(PauseMenuUIDefaults.getScaledScreenX());
 
       double screenHeight = PauseMenuUIDefaults.getScreenHeight();
@@ -291,7 +292,7 @@ public class PauseMenu extends Application {
         state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
         state.setApronMode(pauseMenuSettings.isApronMode());
         state.setVisibleItemCount(pauseMenuSettings.getVisibleItemCount());
-        state.setDesktopMode(pauseMenuSettings.getRotation() == 0);
+        state.setDesktopMode(pauseMenuSettings.isDesktopMode());
 
         StateMananger.getInstance().setState(state);
         stage.getScene().setCursor(Cursor.NONE);
