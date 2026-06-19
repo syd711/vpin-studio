@@ -111,14 +111,10 @@ public class PauseMenuPreferencesController implements Initializable {
   private RadioButton tutorialScreenRadio;
 
   @FXML
-  private RadioButton tutorialItemRadio;
+  private CheckBox apronCheckbox;
 
   @FXML
-  private RadioButton viewModelDesktopRadio;
-  @FXML
-  private RadioButton viewModelCabinetRadio;
-  @FXML
-  private RadioButton viewModelApronRadio;
+  private RadioButton tutorialItemRadio;
 
   @FXML
   private Pane tutorialDetailsBox;
@@ -323,7 +319,6 @@ public class PauseMenuPreferencesController implements Initializable {
 
     menuRotationComboBox.setItems(FXCollections.observableList(Arrays.asList(0, 90, 180, 270)));
     menuRotationComboBox.setValue(pauseMenuSettings.getRotation());
-    menuRotationComboBox.setDisable(pauseMenuSettings.isDesktopMode());
     menuRotationComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setRotation(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
@@ -349,54 +344,12 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
-    //migration of old settings
-    if (!pauseMenuSettings.isDesktopMode() && !pauseMenuSettings.isApronMode() && pauseMenuSettings.getRotation() == 0) {
-      pauseMenuSettings.setDesktopMode(true);
-      pauseMenuSettings.setCabinetMode(false);
-      menuRotationComboBox.setDisable(true);
+    apronCheckbox.setSelected(pauseMenuSettings.isApronMode());
+    apronCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setApronMode(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }
+    });
 
-    viewModelDesktopRadio.setSelected(pauseMenuSettings.isDesktopMode());
-    viewModelApronRadio.setSelected(pauseMenuSettings.isApronMode());
-    viewModelCabinetRadio.setSelected(pauseMenuSettings.isCabinetMode());
-
-    viewModelDesktopRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue) {
-          pauseMenuSettings.setDesktopMode(true);
-          pauseMenuSettings.setCabinetMode(false);
-          pauseMenuSettings.setApronMode(false);
-          menuRotationComboBox.setDisable(true);
-          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-        }
-      }
-    });
-    viewModelCabinetRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue) {
-          pauseMenuSettings.setCabinetMode(true);
-          pauseMenuSettings.setDesktopMode(false);
-          pauseMenuSettings.setApronMode(false);
-          menuRotationComboBox.setDisable(false);
-          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-        }
-      }
-    });
-    viewModelApronRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue) {
-          pauseMenuSettings.setApronMode(true);
-          pauseMenuSettings.setDesktopMode(false);
-          pauseMenuSettings.setCabinetMode(false);
-          menuRotationComboBox.setDisable(false);
-          client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-        }
-      }
-    });
 
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> screens = new ArrayList<>(frontend.getSupportedScreens());
@@ -439,6 +392,7 @@ public class PauseMenuPreferencesController implements Initializable {
           tutorialMarginLeftSpinner.setDisable(true);
           tutorialMarginTopSpinner.setDisable(true);
           pauseMenuSettings.setTutorialsOnScreen(false);
+          tutorialFullscreenCheckbox.setDisable(true);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }
       }
@@ -454,6 +408,7 @@ public class PauseMenuPreferencesController implements Initializable {
           tutorialMarginLeftSpinner.setDisable(false);
           tutorialMarginTopSpinner.setDisable(false);
           pauseMenuSettings.setTutorialsOnScreen(true);
+          tutorialFullscreenCheckbox.setDisable(false);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }
       }
