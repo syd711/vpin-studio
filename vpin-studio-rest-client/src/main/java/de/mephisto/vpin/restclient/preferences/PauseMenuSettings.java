@@ -33,8 +33,6 @@ public class PauseMenuSettings extends JsonSettings {
 
   //default is 90 degree rotation
   private int rotation = 90;
-  private boolean desktopMode = false;
-  private boolean cabinetMode = true;
 
   private boolean showIscoredScores = true;
   private boolean showManiaScores = true;
@@ -64,22 +62,6 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setTutorialFullscreen(boolean tutorialFullscreen) {
     this.tutorialFullscreen = tutorialFullscreen;
-  }
-
-  public boolean isDesktopMode() {
-    return desktopMode;
-  }
-
-  public void setDesktopMode(boolean desktopMode) {
-    this.desktopMode = desktopMode;
-  }
-
-  public boolean isCabinetMode() {
-    return cabinetMode;
-  }
-
-  public void setCabinetMode(boolean cabinetMode) {
-    this.cabinetMode = cabinetMode;
   }
 
   public int getVisibleItemCount() {

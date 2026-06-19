@@ -344,241 +344,6 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="Pause Menu Items">
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label styleClass="preference-description" text="Select the menu items you want to see in the pause menu." textFill="WHITE" />
-                        <GridPane fx:id="iScoredScoresBox" hgap="3.0" vgap="3.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="540.2000732421875" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label styleClass="preference-label" text="iScored Scores:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <CheckBox fx:id="iScoredScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show iScored Scores" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label fx:id="publicReadAPIHint111" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The menu entry is only shown when the table is linked via its Virtual Pinball Spreadsheet ID to an iScored Game Room." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </GridPane>
-                        <GridPane fx:id="maniaScoresBox" hgap="3.0" vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="577.5999755859375" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label styleClass="preference-label" text="VPin Mania Scores:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <CheckBox fx:id="maniaScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show VPin Mania Highscores " textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label fx:id="publicReadAPIHint1111" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The menu entry is only shown when the table has a Virtual Pinball Spreadsheet ID and a score exists on VPin Mania for it." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Info Cards:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="infoCardCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show Info Cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="Rule Cards:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="rulesCheckbox" layoutX="173.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="Show Rule Cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                           </children>
-                        </GridPane>
-                        <GridPane hgap="3.0" vgap="3.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="tutorialsCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show Tutorial Videos" textFill="WHITE" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <VBox fx:id="tutorialDetailsBox" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <RadioButton fx:id="tutorialItemRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos as Menu Item">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="tutorialScreenGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <RadioButton fx:id="tutorialScreenRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos on VPin Screen" toggleGroup="$tutorialScreenGroup" />
-                                          <Label fx:id="publicReadAPIHint11111" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="If you use PinUP Popper as frontend for your cabinet, this is the recommended setting." wrapText="true" />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <ComboBox fx:id="screenTutorialComboBox" prefWidth="250.0">
-                                       <VBox.margin>
-                                          <Insets left="24.0" />
-                                       </VBox.margin>
-                                    </ComboBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <CheckBox fx:id="tutorialFullscreenCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Fullscreen Mode" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label fx:id="publicReadAPIHint111111" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="This will take the screen from the VPin Screen and open the video there in fullscreen mode." wrapText="true" />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <Label styleClass="default-text" text="Rotate Screen:" textFill="WHITE" />
-                                          <ComboBox fx:id="rotationComboBox" prefWidth="90.0" />
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="degrees" textFill="WHITE" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox>
-                                       <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                             <children>
-                                                <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" />
-                                                <Spinner fx:id="tutorialMarginTopSpinner" editable="true" prefWidth="90.0">
-                                                   <HBox.margin>
-                                                      <Insets left="14.0" />
-                                                   </HBox.margin>
-                                                </Spinner>
-                                                <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                       <children>
-                                          <Label styleClass="default-text" text="Margin Left:" textFill="WHITE" />
-                                          <Spinner fx:id="tutorialMarginLeftSpinner" editable="true" prefWidth="90.0">
-                                             <HBox.margin>
-                                                <Insets left="14.0" />
-                                             </HBox.margin>
-                                          </Spinner>
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets left="26.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                 </children>
-                                 <GridPane.margin>
-                                    <Insets top="3.0" />
-                                 </GridPane.margin>
-                              </VBox>
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Todo List:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="todoCheckbox" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="Show Todo List (limited to 16 items)" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                           </children>
-                        </GridPane>
-                     </children>
-                  </VBox>
-                  <VBox>
-                     <children>
                         <Label styleClass="preference-subtitle" text="Screenshot Generation">
                            <VBox.margin>
                               <Insets top="12.0" />
@@ -592,6 +357,7 @@
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label styleClass="preference-label" text="Scoring Screenshots:" textFill="WHITE" GridPane.rowIndex="1">
@@ -651,6 +417,246 @@
                         </GridPane>
                      </children>
                   </VBox>
+                  <Label styleClass="preference-subtitle" text="Pause Menu Items">
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="preference-description" text="Select the menu items you want to see in the pause menu." textFill="WHITE" />
+                  <GridPane fx:id="iScoredScoresBox" hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="540.2000732421875" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="preference-label" text="iScored Scores:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="iScoredScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show iScored Scores" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint111" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The menu entry is only shown when the table is linked via its Virtual Pinball Spreadsheet ID to an iScored Game Room." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <GridPane fx:id="maniaScoresBox" hgap="3.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="577.5999755859375" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label styleClass="preference-label" text="VPin Mania Scores:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="maniaScoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show VPin Mania Highscores " textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label fx:id="publicReadAPIHint1111" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The menu entry is only shown when the table has a Virtual Pinball Spreadsheet ID and a score exists on VPin Mania for it." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Info Cards:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="infoCardCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show Info Cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="Rule Cards:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="rulesCheckbox" layoutX="173.0" layoutY="49.0" mnemonicParsing="false" styleClass="default-text" text="Show Rule Cards" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </GridPane>
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label styleClass="preference-label" text="Tutorial Videos:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="tutorialsCheckbox" mnemonicParsing="false" styleClass="default-text" text="Show Tutorial Videos" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <VBox fx:id="tutorialDetailsBox" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <RadioButton fx:id="tutorialItemRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos as Menu Item">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="tutorialScreenGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <RadioButton fx:id="tutorialScreenRadio" mnemonicParsing="false" styleClass="default-text" text="Display Tutorial Videos on VPin Screen" toggleGroup="$tutorialScreenGroup" />
+                                    <Label fx:id="publicReadAPIHint11111" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="If you use PinUP Popper as frontend for your cabinet, this is the recommended setting." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <ComboBox fx:id="screenTutorialComboBox" prefWidth="250.0">
+                                 <VBox.margin>
+                                    <Insets left="24.0" />
+                                 </VBox.margin>
+                              </ComboBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <CheckBox fx:id="tutorialFullscreenCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Fullscreen Mode" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label fx:id="publicReadAPIHint111111" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="This will take the screen from the VPin Screen and open the video there in fullscreen mode." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Rotate Screen:" textFill="WHITE" />
+                                    <ComboBox fx:id="rotationComboBox" prefWidth="90.0" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="degrees" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" />
+                                          <Spinner fx:id="tutorialMarginTopSpinner" editable="true" prefWidth="90.0">
+                                             <HBox.margin>
+                                                <Insets left="14.0" />
+                                             </HBox.margin>
+                                          </Spinner>
+                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="default-text" text="Margin Left:" textFill="WHITE" />
+                                    <Spinner fx:id="tutorialMarginLeftSpinner" editable="true" prefWidth="90.0">
+                                       <HBox.margin>
+                                          <Insets left="14.0" />
+                                       </HBox.margin>
+                                    </Spinner>
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="pixel" textFill="WHITE" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                           <GridPane.margin>
+                              <Insets top="3.0" />
+                           </GridPane.margin>
+                        </VBox>
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Todo List:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="todoCheckbox" layoutX="173.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="Show Todo List (limited to 16 items)" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <VBox fx:id="tagPane" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
                </children>
                <padding>
                   <Insets bottom="48.0" left="24.0" right="24.0" top="24.0" />

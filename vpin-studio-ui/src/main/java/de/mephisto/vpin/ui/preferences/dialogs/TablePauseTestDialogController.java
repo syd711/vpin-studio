@@ -90,7 +90,7 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
       public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
         debouncer.debounce("pauseMenuTestTime", () -> {
           pauseMenuSettings.setTestDuration(newValue);
-        }, 500);
+        }, 200);
       }
     });
 

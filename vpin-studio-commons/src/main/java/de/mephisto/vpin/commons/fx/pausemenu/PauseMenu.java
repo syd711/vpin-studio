@@ -42,6 +42,7 @@ import java.awt.event.KeyEvent;
 import java.lang.invoke.MethodHandles;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -124,9 +125,9 @@ public class PauseMenu extends Application {
       pauseMenuStage.setAlwaysOnTop(true);
       stage = pauseMenuStage;
 
-        if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
-            stage.getIcons().add(new Image(Objects.requireNonNull(PauseMenu.class.getResourceAsStream("logo-64.png"))));
-        }
+      if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
+        stage.getIcons().add(new Image(Objects.requireNonNull(PauseMenu.class.getResourceAsStream("logo-64.png"))));
+      }
       PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
       int pauseMenuScreenId = pauseMenuSettings.getPauseMenuScreenId();
 
@@ -151,15 +152,31 @@ public class PauseMenu extends Application {
 
   private Scene scalePauseMenuStage(MonitorInfo monitorInfo, BorderPane rootPane, PauseMenuSettings pauseMenuSettings) {
     double scaling = 1;
-    double max = Math.max(PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
-    Scene scene = new Scene(rootPane, PauseMenuUIDefaults.getScreenWidth(), PauseMenuUIDefaults.getScreenHeight());
 
-    stage.setY(monitorInfo.getMinY());
+    // Use JavaFX Screen bounds for positioning to avoid AWT/JNA vs JavaFX coordinate system mismatches
+    // (AWT getBounds() and JNA EnumDisplayMonitors use different DPI reference scales than JavaFX Stage.setX())
+    Screen targetScreen = Screen.getScreens().stream()
+        .min(Comparator.comparingDouble(s ->
+            Math.pow(s.getBounds().getMinX() - monitorInfo.getScaledX(), 2) +
+            Math.pow(s.getBounds().getMinY() - monitorInfo.getMinY(), 2)))
+        .orElse(Screen.getPrimary());
 
-    if (!pauseMenuSettings.isDesktopMode() && pauseMenuSettings.getRotation() != 0) {
+    PauseMenuUIDefaults.init(targetScreen);
+
+    double screenWidth = targetScreen.getBounds().getWidth();
+    double screenHeight = targetScreen.getBounds().getHeight();
+    double screenX = targetScreen.getBounds().getMinX();
+    double screenY = targetScreen.getBounds().getMinY();
+
+    double max = Math.max(screenWidth, screenHeight);
+    Scene scene = new Scene(rootPane, screenWidth, screenHeight);
+
+    stage.setY(screenY);
+
+    if (pauseMenuSettings.getRotation() == 90 || pauseMenuSettings.getRotation() == 270) {
       LOG.info("Window Mode: Cab"); //scaling is ignored here!!!
       rootPane.setRotate(-(pauseMenuSettings.getRotation()));
-      stage.setX(PauseMenuUIDefaults.getScaledScreenX() + PauseMenuUIDefaults.getScreenWidth() / 2 / 2);
+      stage.setX(screenX + screenWidth / 2 / 2);
 
       if (max > 2560) {
         scaling = 1.4;
@@ -169,16 +186,14 @@ public class PauseMenu extends Application {
       }
       else {
         //falls down too much
-        stage.setX(PauseMenuUIDefaults.getScaledScreenX() + PauseMenuUIDefaults.getScreenWidth() / 2 / 2 / 2);
+        stage.setX(screenX + screenWidth / 2 / 2 / 2);
         scaling = 0.7;
       }
     }
     else {
       LOG.info("Window Mode: Desktop");
-      rootPane.setRotate(0);
-      stage.setX(PauseMenuUIDefaults.getScaledScreenX());
-
-      double screenHeight = PauseMenuUIDefaults.getScreenHeight();
+      rootPane.setRotate(pauseMenuSettings.getRotation());
+      stage.setX(screenX);
       if (screenHeight == 1440) {
         scaling = 0.9;
       }
@@ -210,6 +225,7 @@ public class PauseMenu extends Application {
       rootPane.setScaleY(scaling);
     }
 
+
     stage.setX(stage.getX() + pauseMenuSettings.getStageOffsetX());
     stage.setY(stage.getY() + pauseMenuSettings.getStageOffsetY());
 
@@ -218,6 +234,7 @@ public class PauseMenu extends Application {
       stage.setWidth(monitorInfo.getWidth() + Math.abs(pauseMenuSettings.getStageOffsetX()));
     }
 
+    LOG.info("Showing pause menu: X={}, Y={}, Width={}, Height={}, Scaling={}", stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), rootPane.getScaleX() + "/" + rootPane.getScaleY());
     return scene;
   }
 
@@ -292,7 +309,6 @@ public class PauseMenu extends Application {
         state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
         state.setApronMode(pauseMenuSettings.isApronMode());
         state.setVisibleItemCount(pauseMenuSettings.getVisibleItemCount());
-        state.setDesktopMode(pauseMenuSettings.isDesktopMode());
 
         StateMananger.getInstance().setState(state);
         stage.getScene().setCursor(Cursor.NONE);

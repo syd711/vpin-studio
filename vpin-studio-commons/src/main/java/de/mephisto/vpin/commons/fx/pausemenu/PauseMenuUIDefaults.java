@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import javafx.stage.Screen;
 
 public class PauseMenuUIDefaults {
   private static double screenX = 0;
@@ -15,6 +16,12 @@ public class PauseMenuUIDefaults {
     screenWidth = (int) (monitorInfo.getWidth() / scaling);
     screenHeight = (int) (monitorInfo.getHeight() / scaling);
     screenX = monitorInfo.getScaledX();
+  }
+
+  public static void init(Screen screen) {
+    screenWidth = screen.getBounds().getWidth();
+    screenHeight = screen.getBounds().getHeight();
+    screenX = screen.getBounds().getMinX();
   }
 
   public static double getScaledScreenX() {
