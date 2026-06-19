@@ -613,7 +613,7 @@
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
                                           <Label styleClass="default-text" text="Margin Top:" textFill="WHITE" />
-                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="90.0">
+                                          <Spinner fx:id="tutorialMarginTopSpinner" editable="true" prefWidth="90.0">
                                              <HBox.margin>
                                                 <Insets left="14.0" />
                                              </HBox.margin>
@@ -629,7 +629,7 @@
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
                                     <Label styleClass="default-text" text="Margin Left:" textFill="WHITE" />
-                                    <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="90.0">
+                                    <Spinner fx:id="tutorialMarginLeftSpinner" editable="true" prefWidth="90.0">
                                        <HBox.margin>
                                           <Insets left="14.0" />
                                        </HBox.margin>

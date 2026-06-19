@@ -156,7 +156,7 @@ public class PauseMenu extends Application {
 
     stage.setY(monitorInfo.getMinY());
 
-    if (!pauseMenuSettings.isDesktopMode()) {
+    if (!pauseMenuSettings.isDesktopMode() && pauseMenuSettings.getRotation() != 0) {
       LOG.info("Window Mode: Cab"); //scaling is ignored here!!!
       rootPane.setRotate(-(pauseMenuSettings.getRotation()));
       stage.setX(PauseMenuUIDefaults.getScaledScreenX() + PauseMenuUIDefaults.getScreenWidth() / 2 / 2);

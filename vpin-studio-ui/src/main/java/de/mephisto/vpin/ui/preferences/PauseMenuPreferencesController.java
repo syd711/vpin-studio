@@ -87,10 +87,10 @@ public class PauseMenuPreferencesController implements Initializable {
   private Spinner<Integer> stageMarginTopSpinner;
 
   @FXML
-  private Spinner<Integer> marginTopSpinner;
+  private Spinner<Integer> tutorialMarginTopSpinner;
 
   @FXML
-  private Spinner<Integer> marginLeftSpinner;
+  private Spinner<Integer> tutorialMarginLeftSpinner;
 
   @FXML
   private ComboBox<MonitorInfo> screenInfoComboBox;
@@ -275,14 +275,14 @@ public class PauseMenuPreferencesController implements Initializable {
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 10000, pauseMenuSettings.getTutorialMarginTop());
-    marginTopSpinner.setValueFactory(factory2);
+    tutorialMarginTopSpinner.setValueFactory(factory2);
     factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("marginTopSpinner", () -> {
       pauseMenuSettings.setTutorialMarginTop(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getTutorialMarginLeft());
-    marginLeftSpinner.setValueFactory(factory3);
+    tutorialMarginLeftSpinner.setValueFactory(factory3);
     factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("marginLeftSpinner", () -> {
       pauseMenuSettings.setTutorialMarginLeft(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
@@ -338,6 +338,14 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
+    //migration of old settings
+    if (!pauseMenuSettings.isDesktopMode() && !pauseMenuSettings.isApronMode() && pauseMenuSettings.getRotation() == 0) {
+      pauseMenuSettings.setDesktopMode(true);
+      pauseMenuSettings.setCabinetMode(false);
+      menuRotationComboBox.setDisable(true);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }
+
     viewModelDesktopRadio.setSelected(pauseMenuSettings.isDesktopMode());
     viewModelApronRadio.setSelected(pauseMenuSettings.isApronMode());
     viewModelCabinetRadio.setSelected(pauseMenuSettings.isCabinetMode());
@@ -379,10 +387,6 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
-    screenTutorialComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
-    rotationComboBox.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
-    marginLeftSpinner.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
-    marginTopSpinner.setDisable(!pauseMenuSettings.isTutorialsOnScreen());
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> screens = new ArrayList<>(frontend.getSupportedScreens());
     screens.remove(VPinScreen.Audio);
@@ -421,8 +425,8 @@ public class PauseMenuPreferencesController implements Initializable {
         if (newValue) {
           screenTutorialComboBox.setDisable(true);
           rotationComboBox.setDisable(true);
-          marginLeftSpinner.setDisable(true);
-          marginTopSpinner.setDisable(true);
+          tutorialMarginLeftSpinner.setDisable(true);
+          tutorialMarginTopSpinner.setDisable(true);
           pauseMenuSettings.setTutorialsOnScreen(false);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }
@@ -436,8 +440,8 @@ public class PauseMenuPreferencesController implements Initializable {
         if (newValue) {
           screenTutorialComboBox.setDisable(false);
           rotationComboBox.setDisable(false);
-          marginLeftSpinner.setDisable(false);
-          marginTopSpinner.setDisable(false);
+          tutorialMarginLeftSpinner.setDisable(false);
+          tutorialMarginTopSpinner.setDisable(false);
           pauseMenuSettings.setTutorialsOnScreen(true);
           client.getPreferenceService().setJsonPreference(pauseMenuSettings);
         }
@@ -450,7 +454,7 @@ public class PauseMenuPreferencesController implements Initializable {
     tutorialScreenRadio.setDisable(b);
     screenTutorialComboBox.setDisable(b);
     rotationComboBox.setDisable(b);
-    marginLeftSpinner.setDisable(b);
-    marginTopSpinner.setDisable(b);
+    tutorialMarginLeftSpinner.setDisable(b);
+    tutorialMarginTopSpinner.setDisable(b);
   }
 }
