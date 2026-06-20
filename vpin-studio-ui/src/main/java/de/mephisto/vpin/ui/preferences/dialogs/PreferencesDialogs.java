@@ -7,8 +7,8 @@ import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
-import org.jspecify.annotations.NonNull;
 import javafx.stage.Stage;
+import org.jspecify.annotations.NonNull;
 
 public class PreferencesDialogs {
   public static void openMediaSource(@NonNull TableAssetSource source) {
@@ -81,11 +81,6 @@ public class PreferencesDialogs {
     Stage stage = Dialogs.createStudioDialogStage(PINemHiUIPreferenceController.class, "preference-pinemhi-ui.fxml", "PINemHi UI Settings");
     PINemHiUIPreferenceController controller = (PINemHiUIPreferenceController) stage.getUserData();
     controller.setSettings(settings);
-    stage.showAndWait();
-  }
-
-  public static void openPauseMenuTestDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(TablePauseTestDialogController.class, "preference-table-pause-test-dialog.fxml", "Pause Menu Test");
     stage.showAndWait();
   }
 

@@ -19,6 +19,7 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean pressPause = true;
   private boolean alwaysTakeScreenshot = false;
 
+  private boolean autoScale = true;
   private boolean apronMode = false;
   private int stageOffsetX = 0;
   private int stageOffsetY = 0;
@@ -55,6 +56,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String recordingButton;
   private String vrToggleButton;
   private String inputFilterList;
+
+  public boolean isAutoScale() {
+    return autoScale;
+  }
+
+  public void setAutoScale(boolean autoScale) {
+    this.autoScale = autoScale;
+  }
 
   public boolean isTutorialFullscreen() {
     return tutorialFullscreen;

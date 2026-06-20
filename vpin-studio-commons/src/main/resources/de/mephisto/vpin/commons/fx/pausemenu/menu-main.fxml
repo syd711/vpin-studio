@@ -168,6 +168,5 @@
     </center>
     <styleClass>
         <String fx:value="root"/>
-        <String fx:value="debug"/>
     </styleClass>
 </BorderPane>

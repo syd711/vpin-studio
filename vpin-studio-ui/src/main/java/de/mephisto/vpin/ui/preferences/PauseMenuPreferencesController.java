@@ -1,17 +1,17 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +34,7 @@ import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PauseMenuPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuPreferencesController.class);
+  public static final int DEBOUNCE_MS = 100;
 
   @FXML
   private CheckBox pauseMenuCheckbox;
@@ -114,6 +115,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox apronCheckbox;
 
   @FXML
+  private CheckBox autoScaleCheckbox;
+
+  @FXML
   private RadioButton tutorialItemRadio;
 
   @FXML
@@ -127,8 +131,21 @@ public class PauseMenuPreferencesController implements Initializable {
   private TagField tagField;
 
   @FXML
-  private void onPauseTest() {
-    PreferencesDialogs.openPauseMenuTestDialog();
+  private ComboBox<GameRepresentation> tablesCombo;
+
+  @FXML
+  private Spinner<Integer> timeSpinner;
+
+  @FXML
+  private Button testBtn;
+
+  @FXML
+  private void onTestClick() {
+    testBtn.setDisable(true);
+    JFXFuture.runAsync(() -> {
+      client.getSystemService().testPauseMenu(tablesCombo.getSelectionModel().getSelectedItem(), timeSpinner.getValueFactory().getValue());
+      testBtn.setDisable(false);
+    });
   }
 
   @FXML
@@ -137,15 +154,6 @@ public class PauseMenuPreferencesController implements Initializable {
   }
 
   private TaggingSettings taggingSettings;
-
-  @FXML
-  private void onRestart() {
-    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Server Restart", "Cancel", "Restart Server", "Are you sure you want to restart the VPin Studio Server?", null);
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getSystemService().restart();
-      ProgressDialog.createProgressDialog(new RestartProgressModel());
-    }
-  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -207,6 +215,15 @@ public class PauseMenuPreferencesController implements Initializable {
       }
     });
 
+    autoScaleCheckbox.setSelected(pauseMenuSettings.isAutoScale());
+    scalingSpinner.setDisable(pauseMenuSettings.isAutoScale());
+    autoScaleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setAutoScale(newValue);
+      scalingSpinner.setDisable(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+
     iScoredScoresCheckbox.setSelected(pauseMenuSettings.isShowIscoredScores());
     iScoredScoresCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowIscoredScores(newValue);
@@ -260,7 +277,7 @@ public class PauseMenuPreferencesController implements Initializable {
     });
 
     tutorialFullscreenCheckbox.setSelected(pauseMenuSettings.isTutorialFullscreen());
-    setTutorialsViewParamsDisabled(pauseMenuSettings.isTutorialFullscreen());
+    setTutorialsViewParamsDisabled(pauseMenuSettings.isTutorialFullscreen() || !pauseMenuSettings.isShowTutorials());
     tutorialFullscreenCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setTutorialFullscreen(newValue);
       setTutorialsViewParamsDisabled(newValue);
@@ -272,42 +289,42 @@ public class PauseMenuPreferencesController implements Initializable {
     factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("delaySpinner", () -> {
       pauseMenuSettings.setUnpauseDelay(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryScaling = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 500, pauseMenuSettings.getScaling());
     scalingSpinner.setValueFactory(factoryScaling);
     factoryScaling.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("scalingSpinner", () -> {
       pauseMenuSettings.setScaling(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 10000, pauseMenuSettings.getTutorialMarginTop());
     tutorialMarginTopSpinner.setValueFactory(factory2);
     factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("marginTopSpinner", () -> {
       pauseMenuSettings.setTutorialMarginTop(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getTutorialMarginLeft());
     tutorialMarginLeftSpinner.setValueFactory(factory3);
     factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("marginLeftSpinner", () -> {
       pauseMenuSettings.setTutorialMarginLeft(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory4 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getStageOffsetY());
     stageMarginTopSpinner.setValueFactory(factory4);
     factory4.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("stageMarginTopSpinner", () -> {
       pauseMenuSettings.setStageOffsetY(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10000, 8000, pauseMenuSettings.getStageOffsetX());
     stageMarginLeftSpinner.setValueFactory(factory5);
     factory5.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("stageMarginLeftSpinner", () -> {
       pauseMenuSettings.setStageOffsetX(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory6 = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 6, pauseMenuSettings.getVisibleItemCount());
@@ -315,7 +332,7 @@ public class PauseMenuPreferencesController implements Initializable {
     factory6.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("visibleItemsSpinner", () -> {
       pauseMenuSettings.setVisibleItemCount(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
+    }, DEBOUNCE_MS));
 
     menuRotationComboBox.setItems(FXCollections.observableList(Arrays.asList(0, 90, 180, 270)));
     menuRotationComboBox.setValue(pauseMenuSettings.getRotation());
@@ -413,6 +430,29 @@ public class PauseMenuPreferencesController implements Initializable {
         }
       }
     });
+
+    List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
+    gamesCached.sort(Comparator.comparing(GameRepresentation::getGameDisplayName));
+    tablesCombo.setItems(FXCollections.observableList(gamesCached));
+    tablesCombo.getSelectionModel().select(0);
+    for (GameRepresentation game : gamesCached) {
+      if (game.getId() == pauseMenuSettings.getTestGameId()) {
+        tablesCombo.setValue(game);
+        break;
+      }
+    }
+    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setTestGameId(newValue.getId());
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factoryTime = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 60, pauseMenuSettings.getTestDuration());
+    timeSpinner.setValueFactory(factoryTime);
+    factoryTime.valueProperty().addListener((observable, oldValue, newValue) -> debouncer.debounce("pauseMenuTestTime", () -> {
+      pauseMenuSettings.setTestDuration(newValue);
+    }, 200));
+
+    testBtn.setDisable(gamesCached.isEmpty());
   }
 
   private void setTutorialsDisabled(boolean b) {

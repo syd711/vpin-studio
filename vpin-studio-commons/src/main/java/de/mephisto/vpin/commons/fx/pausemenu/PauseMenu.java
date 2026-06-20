@@ -168,7 +168,7 @@ public class PauseMenu extends Application {
     double screenX = targetScreen.getBounds().getMinX();
     double screenY = targetScreen.getBounds().getMinY();
 
-    double max = Math.max(screenWidth, screenHeight);
+    double maxWidth = Math.max(screenWidth, screenHeight);
     Scene scene = new Scene(rootPane, screenWidth, screenHeight);
 
     stage.setY(screenY);
@@ -178,44 +178,52 @@ public class PauseMenu extends Application {
       rootPane.setRotate(-(pauseMenuSettings.getRotation()));
       stage.setX(screenX + screenWidth / 2 / 2);
 
-      if (max > 2560) {
-        scaling = 1.4;
-      }
-      else if (max > 2000) {
-        scaling = 0.9;
-      }
-      else {
-        //falls down too much
-        stage.setX(screenX + screenWidth / 2 / 2 / 2);
-        scaling = 0.7;
+      if(pauseMenuSettings.isAutoScale()) {
+        if (maxWidth > 2560) {
+          scaling = 1.4;
+        }
+        else if (maxWidth > 2000) {
+          scaling = 0.9;
+        }
+        else {
+          //falls down too much
+          stage.setX(screenX + screenWidth / 2 / 2 / 2);
+          scaling = 0.7;
+        }
       }
     }
     else {
       LOG.info("Window Mode: Desktop");
       rootPane.setRotate(pauseMenuSettings.getRotation());
       stage.setX(screenX);
-      if (screenHeight == 1440) {
-        scaling = 0.9;
-      }
-      else if (max > 2560) {
-        rootPane.setTranslateY(500);
-        scaling = 1.4;
-      }
-      else if (max > 2000) {
-        scaling = 1;
-      }
-      else if (max > 1200) {
-        scaling = 0.9;
-      }
-      else {
-        //falls down too much
-        scaling = 0.65;
-        stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
+
+      if(pauseMenuSettings.isAutoScale()) {
+        if (screenHeight == 1440) {
+          scaling = 0.9;
+        }
+        else if (maxWidth > 2560) {
+          rootPane.setTranslateY(500);
+          scaling = 1.4;
+        }
+        else if (maxWidth > 2000) {
+          scaling = 1;
+        }
+        else if (maxWidth > 1600) {
+          scaling = 0.75;
+        }
+        else if (maxWidth > 1200) {
+          scaling = 0.6;
+        }
+        else {
+          //falls down too much
+          scaling = 0.65;
+          stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
+        }
       }
     }
 
     int scalingSetting = pauseMenuSettings.getScaling();
-    if (scalingSetting != 0) {
+    if (scalingSetting != 0 && !pauseMenuSettings.isAutoScale()) {
       scaling = (double) scalingSetting / 100;
       rootPane.setScaleX(scaling);
       rootPane.setScaleY(scaling);

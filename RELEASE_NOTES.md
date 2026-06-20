@@ -14,6 +14,8 @@
     - Added option to disable info cards.
     - Added full-screen option for tutorial videos.
     - Improved startup speed for tutorial videos.
+    - The tester has been integrated into the preferences panel to have less clicks for testing.
+    - No server restart is required anymore to apply all changes.
 - **Table Management**: Added backglass selector to the backglass sidebar.
 - **Preferences Menu**: Added cabinet selector to the preferences drop-down menu, so that you can immediately switch to other cabinets.
 - **Designer**: Fixed color value parsing issues that broke the UI.
