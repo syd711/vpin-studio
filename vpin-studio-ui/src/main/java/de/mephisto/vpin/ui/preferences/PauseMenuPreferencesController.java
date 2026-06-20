@@ -249,6 +249,7 @@ public class PauseMenuPreferencesController implements Initializable {
     tutorialsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowTutorials(newValue);
       setTutorialsDisabled(!newValue);
+      setTutorialsViewParamsDisabled(!newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 

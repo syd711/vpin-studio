@@ -279,7 +279,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="This settings allows to scale the size of the complete pause menu. The Studio tries to adjust the scaling by itself depending on the resolution. Changing this setting will overwrite the default." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="This settings allows to scale the size of the complete pause menu." wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
