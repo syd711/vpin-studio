@@ -125,9 +125,10 @@ public class MenuController implements Initializable {
   public void setInitialState(@NonNull PauseMenuState state) {
     this.game = state.getGame();
     this.state = state;
+    footerStack.setVisible(!state.isApronMode());
+
     enterMenuItemSelection();
     if (state.isApronMode()) {
-      footerStack.setVisible(false);
       rowImage.setVisible(false);
       baseSelector.setVisible(false);
       bluePanel.setVisible(false);
@@ -555,10 +556,6 @@ public class MenuController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     rowImage.setFitWidth(PauseMenuUIDefaults.getScreenWidth());
-
-    if (PauseMenuUIDefaults.getScreenWidth() < 2000) {
-      footerStack.setVisible(false);
-    }
 
     try {
       String resource = "menu-custom-view.fxml";
