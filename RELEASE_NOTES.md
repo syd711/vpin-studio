@@ -22,7 +22,7 @@
 - **Script Details Section**: Added the information about the PUP pack name that was scanned by the Studio.
 - **PinUP Popper Media Search**:
   - Added caching.
-  - Fixed URLs with @2a segments.
+  - Fixed URLs with "@2a" segments.
 - **DMD Info Section**: 
   - Improved detection of FlexDMD folders.
   - Fixed DMD bundle size calculation.
