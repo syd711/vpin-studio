@@ -144,6 +144,8 @@ public class MenuController implements Initializable {
 
   private void enterMenuItemSelection() {
     blueLabel.setText("Loading...");
+    bluePanel.setOpacity(1);
+    loadMask.setOpacity(0);
     JFXFuture.supplyAsync(() -> {
       CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       cardScreen = null;
@@ -161,15 +163,12 @@ public class MenuController implements Initializable {
       resetGameRow();
       TransitionUtil.createOutFader(bluePanel).play();
       TransitionUtil.createInFader(menuItemsRow).play();
-      TransitionUtil.createInFader(loadMask).play();
       footer.setTranslateY(310);
       setLoadLabel(msg);
 
       Platform.runLater(() -> {
         loadMenuItems();
         initGameBarSelection();
-
-        TransitionUtil.createOutFader(loadMask).play();
       });
     });
   }
