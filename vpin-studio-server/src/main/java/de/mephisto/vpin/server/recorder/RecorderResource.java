@@ -123,6 +123,10 @@ public class RecorderResource {
     return screenshotService.screenshot(rotate);
   }
 
+  /**
+   * Use from the pause menu
+   * @return
+   */
   @GetMapping("/scorescreenshot")
   public String takeScoreScreenshot() {
     PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
