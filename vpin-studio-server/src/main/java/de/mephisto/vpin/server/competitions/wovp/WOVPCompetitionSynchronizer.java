@@ -273,6 +273,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     if (challenge.getChallengeTypeCode().name().equals("tournament")) {
       return "KO";
     }
+    if (challenge.getChallengeTypeCode().name().equals("monthly_contracts")) {
+      return "Monthly Contracts";
+    }
     return StringUtils.capitalize(challenge.getChallengeTypeCode().name());
   }
 

@@ -589,6 +589,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       if (competition.getMode().equals("tournament")) {
         return "KO";
       }
+      if (competition.getMode().equals("monthly_contracts")) {
+        return "Monthly Challenge";
+      }
       return StringUtils.capitalize(competition.getMode());
     }
   }
