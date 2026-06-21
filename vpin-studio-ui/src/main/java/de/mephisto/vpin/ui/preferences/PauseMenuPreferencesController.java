@@ -64,6 +64,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox includeDmdCheckbox;
 
   @FXML
+  private CheckBox pauseMenuScreenshotCheckbox;
+
+  @FXML
   private CheckBox todoCheckbox;
 
   @FXML
@@ -360,6 +363,12 @@ public class PauseMenuPreferencesController implements Initializable {
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
       }
+    });
+
+    pauseMenuScreenshotCheckbox.setSelected(pauseMenuSettings.isAlwaysTakeScreenshot());
+    pauseMenuScreenshotCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setAlwaysTakeScreenshot(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
     apronCheckbox.setSelected(pauseMenuSettings.isApronMode());

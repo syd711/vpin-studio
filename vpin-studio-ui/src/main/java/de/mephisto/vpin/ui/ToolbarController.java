@@ -381,7 +381,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       preferencesBtn.getItems().remove(shutdownMenuItem);
     }
 
-    this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty() && !client.getSystemService().isLocal());
+    this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty() && (!client.getSystemService().isLocal() || new File("./").getAbsolutePath().contains("workspace")));
 //    this.monitorBtn.setVisible(true);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
@@ -400,7 +400,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     Platform.runLater(() -> {
       DropInManager.getInstance().init(dropInsBtn);
       MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-       if (settings != null && settings.isOpen()) {
+      if (settings != null && settings.isOpen()) {
         toggleMonitor();
       }
     });

@@ -2,12 +2,10 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.beans.property.SimpleObjectProperty;
@@ -41,9 +39,6 @@ public class WebhooksPreferencesController implements Initializable {
 
   @FXML
   private Button deleteBtn;
-
-  @FXML
-  private CheckBox pauseMenuScreenshotCheckbox;
 
   @FXML
   private TextField startScriptPath;
@@ -197,13 +192,6 @@ public class WebhooksPreferencesController implements Initializable {
         }
       });
       return row;
-    });
-
-    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-    pauseMenuScreenshotCheckbox.setSelected(pauseMenuSettings.isAlwaysTakeScreenshot());
-    pauseMenuScreenshotCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setAlwaysTakeScreenshot(newValue);
-      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);

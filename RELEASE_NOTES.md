@@ -1,3 +1,15 @@
+## Release Notes 5.1.1
+
+### Changes
+
+- **Pause Menu/Screenshot Generation**
+  - Moved option to always generate a screenshot when the pause menu is shown from the "Integration Settings" to the "Pause Menu" settings.
+  - Fixed playfield rotation for screenshots.
+  - The key event based screenshot creation (see Controller Inputs) does now also check which monitors are enabled for screenshotting.
+
+---
+
+
 ## Release Notes 5.1.0
 
 ### Changes

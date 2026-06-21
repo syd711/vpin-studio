@@ -200,18 +200,20 @@ public class ScreenshotService {
 
   private List<File> takeScreenshots() {
     MonitoringSettings monitoringSettings = preferencesService.getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-    return takeFrontendScreenshots(monitoringSettings);
+    PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    return takeFrontendScreenshots(monitoringSettings, pauseMenuSettings);
   }
 
-  private List<File> takeFrontendScreenshots(MonitoringSettings monitoringSettings) {
+  private List<File> takeFrontendScreenshots(MonitoringSettings monitoringSettings, PauseMenuSettings pauseMenuSettings) {
     List<File> screenshotFiles = new ArrayList<>();
     List<VPinScreen> disabledScreens = monitoringSettings.getDisabledScreens();
+    List<Integer> multiScreenIds = pauseMenuSettings.getMultiScreenIds();
     List<FrontendPlayerDisplay> recordingScreens = recorderService.getRecordingScreens();
     List<BufferedImage> images = new ArrayList<>();
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         VPinScreen screen = recordingScreen.getScreen();
-        if (!disabledScreens.contains(screen)) {
+        if (!disabledScreens.contains(screen) && (multiScreenIds.isEmpty() || multiScreenIds.contains(recordingScreen.getMonitor()))) {
           File file = File.createTempFile("screenshot", ".jpg");
           ByteArrayOutputStream out = new ByteArrayOutputStream();
           recorderService.refreshPreview(out, screen);
@@ -228,6 +230,10 @@ public class ScreenshotService {
           }
 
           BufferedImage bufferedImage = loadImage(file);
+          if (screen == VPinScreen.PlayField) {
+            bufferedImage = rotateRight(bufferedImage);
+            write(bufferedImage, file);
+          }
           images.add(bufferedImage);
           drawTimestamp(bufferedImage);
           file.renameTo(target);
@@ -259,10 +265,11 @@ public class ScreenshotService {
       dmdImage = screenDmdRecorder.getCurrentImage();
     }
 
+    List<Integer> multiScreenIds = pauseMenuSettings.getMultiScreenIds();
     List<BufferedImage> images = new ArrayList<>();
     List<MonitorInfo> screenshotMonitors = new ArrayList<>();
     for (MonitorInfo monitorInfo : systemService.getMonitorInfos()) {
-      if (pauseMenuSettings.getMultiScreenIds().contains(monitorInfo.getId())) {
+      if (multiScreenIds.isEmpty() || multiScreenIds.contains(monitorInfo.getId())) {
         screenshotMonitors.add(monitorInfo);
       }
     }
