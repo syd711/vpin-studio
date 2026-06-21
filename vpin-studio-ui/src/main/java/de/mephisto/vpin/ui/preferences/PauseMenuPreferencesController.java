@@ -21,6 +21,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -149,6 +151,23 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getSystemService().testPauseMenu(tablesCombo.getSelectionModel().getSelectedItem(), timeSpinner.getValueFactory().getValue());
       testBtn.setDisable(false);
     });
+  }
+
+  @FXML
+  private void onScreenshotOpen() {
+    String host = client.getRestClient().getHost();
+    String text = "http://" + host + ":8089/api/v1/recorder/screenshot/latest";
+    Studio.browse(text);
+  }
+
+  @FXML
+  private void onCopy() {
+    String host = client.getRestClient().getHost();
+    String text = "http://" + host + ":8089/api/v1/recorder/screenshot/latest";
+    Clipboard clipboard = Clipboard.getSystemClipboard();
+    ClipboardContent content = new ClipboardContent();
+    content.putString(text);
+    clipboard.setContent(content);
   }
 
   @FXML

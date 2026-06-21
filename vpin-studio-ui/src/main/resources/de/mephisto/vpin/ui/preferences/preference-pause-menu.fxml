@@ -437,7 +437,30 @@
                                  <children>
                                     <CheckBox fx:id="pauseMenuScreenshotCheckbox" mnemonicParsing="false" styleClass="default-text" text="Always take a screenshot before opening the pause menu." />
                                     <Label styleClass="checkbox-description" text="The screenshot can be read from the URL:" textFill="WHITE" />
-                                    <Label styleClass="checkbox-description" text="http://&lt;HOST&gt;:8089/api/v1/recorder/screenshot/latest" textFill="WHITE" />
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="checkbox-description" text="http://&lt;HOST&gt;:8089/api/v1/recorder/screenshot/latest" textFill="WHITE" />
+                                          <Button mnemonicParsing="false" onAction="#onCopy">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="12" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Copy VPS Table Version URL" />
+                                             </tooltip>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#onScreenshotOpen" styleClass="external-component">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="14" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Open script in Visual Pinball X" />
+                                             </tooltip>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="3.0" />
