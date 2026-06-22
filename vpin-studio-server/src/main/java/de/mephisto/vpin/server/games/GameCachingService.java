@@ -58,60 +58,60 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener, EmulatorChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
+    private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
 
-  @Autowired
-  private FrontendService frontendService;
+    @Autowired
+    private FrontendService frontendService;
 
-  @Autowired
-  private EmulatorService emulatorService;
+    @Autowired
+    private EmulatorService emulatorService;
 
-  @Autowired
-  private GameDetailsRepositoryService gameDetailsRepositoryService;
+    @Autowired
+    private GameDetailsRepositoryService gameDetailsRepositoryService;
 
-  @Autowired
-  private VPinMameRomAliasService VPinMameRomAliasService;
+    @Autowired
+    private VPinMameRomAliasService VPinMameRomAliasService;
 
-  @Autowired
-  private BackglassService backglassService;
+    @Autowired
+    private BackglassService backglassService;
 
-  @Autowired
-  private VpsService vpsService;
+    @Autowired
+    private VpsService vpsService;
 
-  @Autowired
-  private GameValidationService gameValidationService;
+    @Autowired
+    private GameValidationService gameValidationService;
 
-  @Autowired
-  private HighscoreService highscoreService;
+    @Autowired
+    private HighscoreService highscoreService;
 
-  @Autowired
-  private AltSoundService altSoundService;
+    @Autowired
+    private AltSoundService altSoundService;
 
-  @Autowired
-  private AltColorService altColorService;
+    @Autowired
+    private AltColorService altColorService;
 
-  @Autowired
-  private PupPacksService pupPacksService;
+    @Autowired
+    private PupPacksService pupPacksService;
 
-  @Autowired
-  private PreferencesService preferencesService;
+    @Autowired
+    private PreferencesService preferencesService;
 
-  @Autowired
-  private VPinMameService vPinMameService;
+    @Autowired
+    private VPinMameService vPinMameService;
 
-  @Autowired
-  private RomService romService;
+    @Autowired
+    private RomService romService;
 
-  @Autowired
-  private GameLifecycleService gameLifecycleService;
+    @Autowired
+    private GameLifecycleService gameLifecycleService;
 
-  @Autowired
-  private CompetitionLifecycleService competitionLifecycleService;
+    @Autowired
+    private CompetitionLifecycleService competitionLifecycleService;
 
-  @Autowired
-  private SystemService systemService;
+    @Autowired
+    private SystemService systemService;
 
-  private ServerSettings serverSettings;
+    private ServerSettings serverSettings;
 
   private final Map<Integer, GameEmulatorCache> allGamesByEmulatorId = new ConcurrentHashMap<>();
   private final Object saveLock = new Object();
