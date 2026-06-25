@@ -130,6 +130,10 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
+        if (filterSettings.isNotBackedUp() && game.isBackedUp()) {
+          return false;
+        }
+
         if (filterSettings.getGameStatus() != -1 && game.getGameStatus() != filterSettings.getGameStatus()) {
           return false;
         }

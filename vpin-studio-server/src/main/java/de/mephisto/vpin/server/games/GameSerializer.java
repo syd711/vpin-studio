@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.backups.BackupService;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -12,38 +13,42 @@ import java.util.Iterator;
 
 public class GameSerializer extends ValueSerializer<Game> {
 
-    private final VPinMameService vPinMameService;
-    private final ValueSerializer<Object> defaultSerializer;
+  private final VPinMameService vPinMameService;
+  private final BackupService backupService;
+  private final ValueSerializer<Object> defaultSerializer;
 
-    public GameSerializer(VPinMameService vPinMameService, ValueSerializer<Object> defaultSerializer) {
-        this.vPinMameService = vPinMameService;
-        this.defaultSerializer = defaultSerializer;
-    }
+  public GameSerializer(VPinMameService vPinMameService, BackupService backupService, ValueSerializer<Object> defaultSerializer) {
+    this.vPinMameService = vPinMameService;
+    this.backupService = backupService;
+    this.defaultSerializer = defaultSerializer;
+  }
 
-    @Override
-    public void resolve(SerializationContext context) {
-        defaultSerializer.resolve(context);
-    }
+  @Override
+  public void resolve(SerializationContext context) {
+    defaultSerializer.resolve(context);
+  }
 
-    @Override
-    public void serialize(Game game, JsonGenerator gen, SerializationContext context) throws JacksonException {
-        gen.writeStartObject();
+  @Override
+  public void serialize(Game game, JsonGenerator gen, SerializationContext context) throws JacksonException {
+    gen.writeStartObject();
 
-        if (defaultSerializer instanceof BeanSerializerBase) {
-            BeanSerializerBase beanSerializer = (BeanSerializerBase) defaultSerializer;
-            Iterator<PropertyWriter> it = beanSerializer.properties();
-            while (it.hasNext()) {
-                PropertyWriter writer = it.next();
-                try {
-                    writer.serializeAsProperty(game, gen, context);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
+    if (defaultSerializer instanceof BeanSerializerBase) {
+      BeanSerializerBase beanSerializer = (BeanSerializerBase) defaultSerializer;
+      Iterator<PropertyWriter> it = beanSerializer.properties();
+      while (it.hasNext()) {
+        PropertyWriter writer = it.next();
+        try {
+          writer.serializeAsProperty(game, gen, context);
         }
-
-        gen.writeBooleanProperty("romExists", vPinMameService.isRomExists(game));
-
-        gen.writeEndObject();
+        catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
     }
+
+    gen.writeBooleanProperty("romExists", vPinMameService.isRomExists(game));
+    gen.writeBooleanProperty("backedUp", !backupService.getBackupDescriptorForGame(game.getId()).isEmpty());
+
+    gen.writeEndObject();
+  }
 }

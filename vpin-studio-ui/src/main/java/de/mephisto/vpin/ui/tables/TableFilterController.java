@@ -62,6 +62,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private CheckBox notPlayedCheckBox;
 
   @FXML
+  private CheckBox notBackedUpCheckbox;
+
+  @FXML
   private CheckBox noHighscoreSettingsCheckBox;
 
   @FXML
@@ -172,6 +175,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
       versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
       notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
+      notBackedUpCheckbox.setSelected(filterSettings.isNotBackedUp());
       noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
       noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
       noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
@@ -265,6 +269,11 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
     notPlayedCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNotPlayed(newValue);
+      applyFilters();
+    });
+    notBackedUpCheckbox.setSelected(filterSettings.isNotBackedUp());
+    notBackedUpCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setNotBackedUp(newValue);
       applyFilters();
     });
     iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());

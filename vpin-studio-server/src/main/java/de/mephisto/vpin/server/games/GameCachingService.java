@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.backups.BackupService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
@@ -47,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -476,7 +478,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setAssets(gameDetails.getAssets());
     game.setMusicScripted(gameDetails.getAssets() != null && (gameDetails.getAssets().contains(".mp3") || gameDetails.getAssets().contains(".wav") || gameDetails.getAssets().contains(".ogg")));
     game.setScannedRom(gameDetails.getRomName());
-    game.setRomExists(vPinMameService.isRomExists(game));
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
     game.setIgnoreUpdates(gameDetails.getIgnoreUpdates() != null ? gameDetails.getIgnoreUpdates() : false);

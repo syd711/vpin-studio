@@ -16,6 +16,7 @@ public class FilterSettings extends JsonSettings {
   private boolean iScored;
   private boolean versionUpdates;
   private boolean notPlayed;
+  private boolean isNotBackedUp;
   private boolean noHighscoreSettings;
   private boolean noHighscoreSupport;
   private boolean withBackglass;
@@ -173,6 +174,14 @@ public class FilterSettings extends JsonSettings {
 
   public void setWithAltColor(boolean withAltColor) {
     this.withAltColor = withAltColor;
+  }
+
+  public boolean isNotBackedUp() {
+    return isNotBackedUp;
+  }
+
+  public void setNotBackedUp(boolean notBackedUp) {
+    isNotBackedUp = notBackedUp;
   }
 
   public boolean isNotPlayed() {

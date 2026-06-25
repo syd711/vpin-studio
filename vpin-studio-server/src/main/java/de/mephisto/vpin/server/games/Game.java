@@ -26,7 +26,6 @@ public class Game {
   private String romAlias;
   private String scannedRom;
   private String scannedAltRom;
-  private boolean romExists;
 
   private String gameDisplayName;
   private String gameFileName;
@@ -638,14 +637,6 @@ public class Game {
   public void setScannedRom(String scannedRom) {
     this.scannedRom = scannedRom;
   }
-
-    public boolean getRomExists() {
-        return romExists;
-    }
-
-    public void setRomExists(boolean romExists) {
-        this.romExists = romExists;
-    }
 
   public String getScannedAltRom() {
     return scannedAltRom;
