@@ -1309,19 +1309,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         });
       }
 
-      BackupDescriptorRepresentation backup = client.getBackupService().getBackup(value);
-      if (backup != null) {
-        Button compBtn = new Button();
-        compBtn.getStyleClass().add("table-media-button");
-        compBtn.setTooltip(new Tooltip("Show the backup of this table in the backups view."));
-        FontIcon cmpIcon = WidgetFactory.createIcon("mdi2a-archive-outline");
-        compBtn.setGraphic(cmpIcon);
-        row.getChildren().add(compBtn);
-        compBtn.setOnAction(event -> {
-          Platform.runLater(() -> {
-            getTablesController().switchToBackupsTab(backup);
+      if (value.isBackedUp()) {
+        BackupDescriptorRepresentation backup = client.getBackupService().getBackup(value);
+        if (backup != null) {
+          Button compBtn = new Button();
+          compBtn.getStyleClass().add("table-media-button");
+          compBtn.setTooltip(new Tooltip("Show the backup of this table in the backups view."));
+          FontIcon cmpIcon = WidgetFactory.createIcon("mdi2a-archive-outline");
+          compBtn.setGraphic(cmpIcon);
+          row.getChildren().add(compBtn);
+          compBtn.setOnAction(event -> {
+            Platform.runLater(() -> {
+              getTablesController().switchToBackupsTab(backup);
+            });
           });
-        });
+        }
       }
 
       ValidationState validationState = value.getValidationState();

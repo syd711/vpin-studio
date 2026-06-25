@@ -106,7 +106,17 @@ public class Game {
   private int rating = 0;
   private List<String> tags = new ArrayList<>();
 
+  private boolean backedUp;
+
   public Game() {
+  }
+
+  public boolean isBackedUp() {
+    return backedUp;
+  }
+
+  public void setBackedUp(boolean backedUp) {
+    this.backedUp = backedUp;
   }
 
   public List<String> getTags() {

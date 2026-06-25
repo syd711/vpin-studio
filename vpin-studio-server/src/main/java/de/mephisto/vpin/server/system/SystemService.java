@@ -51,6 +51,7 @@ import java.lang.reflect.Field;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -109,6 +110,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
+
+  @Value("${spring.lifecycle.timeout-per-shutdown-phase:30s}")
+  private Duration lifecycleShutdownTimeout;
 
   private ScoringDB db;
 
@@ -704,12 +708,24 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       executor.shutdownNow();
     }
 
+    ExecutorService contextCloseExecutor = Executors.newSingleThreadExecutor();
     try {
       SpringApplication.exit(context, () -> 0);
-      ((ConfigurableApplicationContext) context).close();
+      long contextCloseTimeoutSeconds = lifecycleShutdownTimeout.getSeconds() + 5;
+      contextCloseExecutor.submit(() -> {
+        try {
+          ((ConfigurableApplicationContext) context).close();
+        }
+        catch (Exception e) {
+          LOG.error("Server Context Shutdown failed: {}", e.getMessage());
+        }
+      }).get(contextCloseTimeoutSeconds, TimeUnit.SECONDS);
     }
     catch (Exception e) {
       LOG.error("Server Context Shutdown failed: {}", e.getMessage());
+    }
+    finally {
+      contextCloseExecutor.shutdownNow();
     }
 
     System.exit(0);

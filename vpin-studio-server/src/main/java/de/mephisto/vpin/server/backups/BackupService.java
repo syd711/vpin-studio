@@ -44,9 +44,6 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   private final static Logger LOG = LoggerFactory.getLogger(BackupService.class);
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private GameService gameService;
 
   @Autowired

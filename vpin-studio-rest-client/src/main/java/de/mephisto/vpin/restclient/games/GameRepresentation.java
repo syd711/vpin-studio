@@ -92,9 +92,19 @@ public class GameRepresentation {
   private boolean altSoundAvailable;
   private boolean musicScripted;
 
+  private boolean backedUp;
+
   private List<String> tags = new ArrayList<>();
 
   private List<String> directB2SVersions = new ArrayList<>();
+
+  public boolean isBackedUp() {
+    return backedUp;
+  }
+
+  public void setBackedUp(boolean backedUp) {
+    this.backedUp = backedUp;
+  }
 
   public List<String> getTags() {
     return tags;

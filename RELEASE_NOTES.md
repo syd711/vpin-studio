@@ -6,6 +6,8 @@
   - Moved option to always generate a screenshot when the pause menu is shown from the "Integration Settings" to the "Pause Menu" settings.
   - Fixed playfield rotation for screenshots.
   - The key event based screenshot creation (see Controller Inputs) does now also check which monitors are enabled for screenshots.
+- **Updater**
+  - Added additional updater fixes. In case you have faced issues, you need to perform a manual update: Extract the VPin-Studio-Server.zip and double-click the server's .exe file (or reboot the cab). See also: https://github.com/syd711/vpin-studio/wiki#manual-updates
 
 ---
 
