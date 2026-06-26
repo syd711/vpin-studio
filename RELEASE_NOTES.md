@@ -7,7 +7,9 @@
   - Fixed playfield rotation for screenshots.
   - The key event based screenshot creation (see Controller Inputs) does now also check which monitors are enabled for screenshots.
 - **Updater**
-  - Added additional updater fixes. In case you have faced issues, you need to perform a manual update: Extract the VPin-Studio-Server.zip and double-click the server's .exe file (or reboot the cab). See also: https://github.com/syd711/vpin-studio/wiki#manual-updates
+  - Added additional updater fixes to force the server update shutdown. In case you have faced issues, you need to perform a manual update: Extract the VPin-Studio-Server.zip and double-click the server's .exe file (or reboot the cab). See also: https://github.com/syd711/vpin-studio/wiki#manual-updates
+- **Table Overview**
+  - Added filter option for non-backed-up tables.
 
 ---
 
