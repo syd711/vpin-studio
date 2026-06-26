@@ -1,5 +1,13 @@
+## Release Notes 5.1.2
+
+### Changes
+
+- **QA**
+  - Removed two older dependencies whose functions could be replaced with other dependencies already included.
+
+---
+
 ## Release Notes 5.1.1
-- Removed 2 older dependencies whose functions could be replaced with other dependencies already included.
 
 ### Changes
 
@@ -13,7 +21,6 @@
   - Added filter option for non-backed-up tables.
 
 ---
-
 
 ## Release Notes 5.1.0
 
