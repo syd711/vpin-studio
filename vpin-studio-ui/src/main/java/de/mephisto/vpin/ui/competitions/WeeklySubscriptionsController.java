@@ -590,7 +590,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         return "KO";
       }
       if (competition.getMode().equals("monthly_contracts")) {
-        return "Monthly Challenge";
+        return "Monthly Contracts";
       }
       return StringUtils.capitalize(competition.getMode());
     }
