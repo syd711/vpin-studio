@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.games;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//TODO change to a record?
 public class GameList {
 
   private List<GameListItem> items = new ArrayList<>();

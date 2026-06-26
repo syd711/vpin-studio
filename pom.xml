@@ -10,8 +10,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <docs.directory>${project.basedir}/documentation</docs.directory>
@@ -67,11 +66,9 @@
         <commons-math3.version>3.6.1</commons-math3.version>
         <xstream.version>1.4.21</xstream.version>
         <commons-csv.version>1.13.0</commons-csv.version>
-        <jcodec.version>0.2.5</jcodec.version>
         <imgscalr.version>4.2</imgscalr.version>
         <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
         <guava.version>33.4.0-jre</guava.version>
-        <jetbrains-annotations.version>13.0</jetbrains-annotations.version>
         <jhlabs-filters.version>2.0.235</jhlabs-filters.version>
         <controlsfx.version>11.2.3</controlsfx.version>
         <commonmark.version>0.28.0</commonmark.version>
@@ -181,6 +178,10 @@
                         <argLine>
                             --add-exports javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED
                             --add-exports javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED
+                            --enable-native-access=javafx.graphics
+                            --enable-native-access=javafx.web
+                            --enable-native-access=ALL-UNNAMED
+
                         </argLine>
                     </configuration>
                 </plugin>

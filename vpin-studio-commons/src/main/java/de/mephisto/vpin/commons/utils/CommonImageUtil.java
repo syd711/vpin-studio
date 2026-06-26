@@ -1,6 +1,10 @@
 package de.mephisto.vpin.commons.utils;
 
-import com.jhlabs.image.GaussianFilter;
+import boofcv.alg.filter.blur.BlurImageOps;
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.ImageType;
+import boofcv.struct.image.Planar;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.SnapshotParameters;
@@ -231,8 +235,10 @@ public class CommonImageUtil {
 
   @SuppressWarnings("unused")
   public static BufferedImage blurImage(BufferedImage originalImage, int radius) {
-    GaussianFilter filter = new GaussianFilter(radius);
-    return filter.filter(originalImage, null);
+      Planar<GrayF32> input = ConvertBufferedImage.convertFrom(originalImage, true, ImageType.pl(3, GrayF32.class));
+      Planar<GrayF32> output = input.createSameShape();
+      BlurImageOps.gaussian(input, output, -1, radius, null);
+      return ConvertBufferedImage.convertTo(output, null, true);
   }
 
   public static void write(BufferedImage image, File file) throws IOException {

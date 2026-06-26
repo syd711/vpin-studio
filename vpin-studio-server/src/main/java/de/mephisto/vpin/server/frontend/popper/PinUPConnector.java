@@ -27,7 +27,7 @@ import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jetbrains.annotations.NotNull;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -1643,9 +1643,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         final Path[] fileFound = {null};
         try {
           Files.walkFileTree(Paths.get(dirGames), new SimpleFileVisitor<Path>() {
-            @NotNull
+          @NonNull
             @Override
-            public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attributes) {
+            public FileVisitResult visitFile(@NonNull Path file, @NonNull BasicFileAttributes attributes) {
               if (Strings.CI.endsWith(file.toString(), ext)) {
                 fileFound[0] = file;
                 return FileVisitResult.TERMINATE;
@@ -1653,9 +1653,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
               return FileVisitResult.CONTINUE;
             }
 
-            @NotNull
+          @NonNull
             @Override
-            public FileVisitResult visitFileFailed(@NotNull Path file, @NotNull IOException exc) {
+            public FileVisitResult visitFileFailed(@NonNull Path file, @NonNull IOException exc) {
               return FileVisitResult.CONTINUE;
             }
           });

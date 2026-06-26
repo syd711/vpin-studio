@@ -43,7 +43,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -60,60 +60,60 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener, EmulatorChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
+    private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
 
-  @Autowired
-  private FrontendService frontendService;
+    @Autowired
+    private FrontendService frontendService;
 
-  @Autowired
-  private EmulatorService emulatorService;
+    @Autowired
+    private EmulatorService emulatorService;
 
-  @Autowired
-  private GameDetailsRepositoryService gameDetailsRepositoryService;
+    @Autowired
+    private GameDetailsRepositoryService gameDetailsRepositoryService;
 
-  @Autowired
-  private VPinMameRomAliasService VPinMameRomAliasService;
+    @Autowired
+    private VPinMameRomAliasService VPinMameRomAliasService;
 
-  @Autowired
-  private BackglassService backglassService;
+    @Autowired
+    private BackglassService backglassService;
 
-  @Autowired
-  private VpsService vpsService;
+    @Autowired
+    private VpsService vpsService;
 
-  @Autowired
-  private GameValidationService gameValidationService;
+    @Autowired
+    private GameValidationService gameValidationService;
 
-  @Autowired
-  private HighscoreService highscoreService;
+    @Autowired
+    private HighscoreService highscoreService;
 
-  @Autowired
-  private AltSoundService altSoundService;
+    @Autowired
+    private AltSoundService altSoundService;
 
-  @Autowired
-  private AltColorService altColorService;
+    @Autowired
+    private AltColorService altColorService;
 
-  @Autowired
-  private PupPacksService pupPacksService;
+    @Autowired
+    private PupPacksService pupPacksService;
 
-  @Autowired
-  private PreferencesService preferencesService;
+    @Autowired
+    private PreferencesService preferencesService;
 
-  @Autowired
-  private VPinMameService vPinMameService;
+    @Autowired
+    private VPinMameService vPinMameService;
 
-  @Autowired
-  private RomService romService;
+    @Autowired
+    private RomService romService;
 
-  @Autowired
-  private GameLifecycleService gameLifecycleService;
+    @Autowired
+    private GameLifecycleService gameLifecycleService;
 
-  @Autowired
-  private CompetitionLifecycleService competitionLifecycleService;
+    @Autowired
+    private CompetitionLifecycleService competitionLifecycleService;
 
-  @Autowired
-  private SystemService systemService;
+    @Autowired
+    private SystemService systemService;
 
-  private ServerSettings serverSettings;
+    private ServerSettings serverSettings;
 
   private final Map<Integer, GameEmulatorCache> allGamesByEmulatorId = new ConcurrentHashMap<>();
   private final Object saveLock = new Object();
@@ -564,12 +564,12 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     return new GameDetailsInfo(game, gameDetails, tableDetails, newGame);
   }
 
-  private void applyGameValidation(@NotNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
-    //run validations at the end!!!
-    Game game = gameDetailsInfo.game;
-    List<ValidationState> validationStates = gameValidationService.validate(gameDetailsInfo.game, findFirstIssueOnly);
-    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
-    game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
+    private void applyGameValidation(@NonNull GameDetailsInfo gameDetailsInfo, boolean findFirstIssueOnly) {
+        //run validations at the end!!!
+        Game game = gameDetailsInfo.game;
+        List<ValidationState> validationStates = gameValidationService.validate(gameDetailsInfo.game, findFirstIssueOnly);
+        game.setHasMissingAssets(gameValidationService.hasMissingAssets(validationStates));
+        game.setIssueTypes(validationStates.stream().map(ValidationState::getCode).collect(Collectors.toList()));
 
     if (validationStates.isEmpty()) {
       validationStates.add(ValidationStateFactory.empty());
@@ -698,15 +698,15 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   //---------- Highscore Change Listener ---------------------
 
-  @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    invalidate(event.getGame().getId());
-  }
+    @Override
+    public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
+        invalidate(event.getGame().getId());
+    }
 
-  @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
-    invalidate(game.getId());
-  }
+    @Override
+    public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
+        invalidate(game.getId());
+    }
 
   //---------- Emulator Change Listener ---------------------
 

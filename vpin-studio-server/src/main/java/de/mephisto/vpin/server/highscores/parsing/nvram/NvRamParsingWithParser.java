@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
-import org.jetbrains.annotations.NotNull;
+
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +86,9 @@ public class NvRamParsingWithParser implements NvRamOutputToRaw, ScoreListAdapte
     return isSupportedRom(rom);
   }
 
-  @NotNull
+@NonNull
   @Override
-  public List<Score> getScores(@NotNull Game game, @NotNull Instant createdAt, @NotNull List<String> lines, boolean parseAll) throws IOException {
+  public List<Score> getScores(@NonNull Game game, @NonNull Instant createdAt, @NonNull List<String> lines, boolean parseAll) throws IOException {
     Locale locale = Locale.getDefault();
     String rom = game != null ? game.getRom().toLowerCase() : "<no rom>";
     if (isSupportedRom(rom)) {
