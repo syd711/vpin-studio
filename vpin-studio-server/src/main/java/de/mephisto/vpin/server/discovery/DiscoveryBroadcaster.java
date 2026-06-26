@@ -4,7 +4,8 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.net.*;
@@ -15,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class DiscoveryBroadcaster implements InitializingBean {
+public class DiscoveryBroadcaster {
   private final static Logger LOG = LoggerFactory.getLogger(DiscoveryBroadcaster.class);
   private final PreferencesService preferencesService;
 
@@ -140,8 +141,8 @@ public class DiscoveryBroadcaster implements InitializingBean {
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
+  @EventListener(ApplicationReadyEvent.class)
+  public void onApplicationReady() {
     start();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

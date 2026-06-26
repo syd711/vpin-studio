@@ -13,7 +13,6 @@ public class WakeOnLan {
 
   public static final int DEFAULT_PORT = 9; // Default WoL port
 
-  // Main method with port as a parameter
   public static void sendMagicPacket(String ipAddress, String macAddress, Integer port) throws Exception {
     port = port != null ? port : DEFAULT_PORT;
 
@@ -29,19 +28,21 @@ public class WakeOnLan {
       System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
     }
 
-    // Create a datagram packet to send the Magic Packet
-    InetAddress address = InetAddress.getByName(ipAddress);
-    DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
-    DatagramSocket socket = new DatagramSocket();
-    socket.send(packet);
-    socket.close();
+    // Broadcast so the packet reaches the NIC at Layer 2 even when the target
+    // machine is asleep and cannot respond to ARP requests.
+    InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
+    DatagramPacket packet = new DatagramPacket(bytes, bytes.length, broadcastAddress, port);
+    try (DatagramSocket socket = new DatagramSocket()) {
+      socket.setBroadcast(true);
+      socket.send(packet);
+    }
 
-    LOG.info("Magic packet sent to " + macAddress + " on port " + port);
+    LOG.info("Magic packet sent to {} on port {}", macAddress, port);
   }
 
   // Utility to parse the MAC address into bytes
   private static byte[] getMacBytes(String macAddress) throws IllegalArgumentException {
-    String[] hex = macAddress.split("(\\:|\\-)");
+    String[] hex = macAddress.split("[-:]");
     if (hex.length != 6) {
       throw new IllegalArgumentException("Invalid MAC address.");
     }

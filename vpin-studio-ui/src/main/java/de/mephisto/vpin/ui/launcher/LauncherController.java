@@ -166,6 +166,9 @@ public class LauncherController implements Initializable {
         if (connection != null) {
           connection.setConnectionId(entry.getId());
           connection.setDiscovered(entry.getType().equals(ConnectionEntry.ConnectionType.DISCOVERED));
+          if (!StringUtils.isEmpty(connection.getMacAddress()) && StringUtils.isEmpty(entry.getMacAddress())) {
+            connectionProperties.upsertConnection(ipAddress, connection.getName(), connection.getMacAddress(), entry.getType());
+          }
           result.add(connection);
         } else {
           // Create a placeholder for an asleep connection
