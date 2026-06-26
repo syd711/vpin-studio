@@ -194,6 +194,9 @@ public class WovpMenuItemController implements Initializable {
       scoresBox.getChildren().addAll(children);
       scoresBox.setVisible(!children.isEmpty());
       scoresLoader.setVisible(false);
+    }).onErrorLater(ex -> {
+      LOG.error("Failed to load competition scores: {}", ex.getMessage(), ex);
+      scoresLoader.setVisible(false);
     });
   }
 
@@ -243,6 +246,12 @@ public class WovpMenuItemController implements Initializable {
         errorContainer.setVisible(true);
         errorMsg.setText(result.getErrorMessage());
       }
+    }).onErrorLater(ex -> {
+      loadingIndicator.setVisible(false);
+      submitBtn.setDisable(false);
+      submitBtn.setVisible(false);
+      errorContainer.setVisible(true);
+      errorMsg.setText("Failed to connect to World of VPin: " + ex.getMessage());
     });
   }
 
@@ -329,6 +338,12 @@ public class WovpMenuItemController implements Initializable {
       }).thenAcceptLater((b) -> {
         refreshScores(pauseMenuItem);
       });
+    }).onErrorLater(ex -> {
+      blink.stop();
+      submitBtn.setVisible(false);
+      playerSelectorBox.setVisible(false);
+      errorContainer.setVisible(true);
+      errorMsg.setText("Failed to connect to World of VPin: " + ex.getMessage());
     });
   }
 

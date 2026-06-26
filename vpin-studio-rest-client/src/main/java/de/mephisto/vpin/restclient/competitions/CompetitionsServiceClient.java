@@ -35,7 +35,12 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
 
   public ScoreSubmitResult submitScore(WovpPlayer player, boolean simulate) {
-    return getRestClient().get(API + "competitions/weekly/submit/" + player.getId() + "/" + simulate, ScoreSubmitResult.class);
+    ScoreSubmitResult result = getRestClient().get(API + "competitions/weekly/submit/" + player.getId() + "/" + simulate, ScoreSubmitResult.class);
+    if (result == null) {
+      result = new ScoreSubmitResult();
+      result.setErrorMessage("VPin Studio server is not available.");
+    }
+    return result;
   }
 
   public boolean hasChannelManagePermissions(long serverId, long channelId) {

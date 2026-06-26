@@ -2,6 +2,8 @@
 
 ### Changes
 
+- **WOVP Score Submitter**
+  - Fixed issues in the error handling so that failed score submissions are reflected to the user. 
 - **QA**
   - Removed two older dependencies whose functions could be replaced with other dependencies already included.
 
