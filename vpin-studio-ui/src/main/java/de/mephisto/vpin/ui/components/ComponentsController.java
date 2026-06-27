@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.components.doftester.DOFTesterController;
 import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
 import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -48,6 +49,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
   public static final int TAB_UPDATES = 0;
   public static final int TAB_EMULATORS = 1;
   public static final int TAB_SCREENS = 2;
+  public static final int TAB_DOF_TESTER = 3;
 
   @FXML
   private Parent root;
@@ -69,6 +71,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   private Tab serumTab;
+
+  @FXML
+  private Tab dofTesterTab;
 
   @FXML
   private Tab doflinxTab;
@@ -175,6 +180,12 @@ public class ComponentsController implements Initializable, StudioFXController, 
         emulatorsController.onViewDeactivated();
       }
     }
+    else if (t1.intValue() == TAB_DOF_TESTER) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF Tester"));
+      if (emulatorsController != null) {
+        emulatorsController.onViewDeactivated();
+      }
+    }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
     }
@@ -234,6 +245,20 @@ public class ComponentsController implements Initializable, StudioFXController, 
     }
     else {
       rootTabPane.getTabs().remove(screensTab);
+    }
+
+    if (Features.DOF_TESTER_ENABLED) {
+      try {
+        FXMLLoader loader = new FXMLLoader(DOFTesterController.class.getResource("tab-dof-tester.fxml"));
+        Parent builtInRoot = loader.load();
+        dofTesterTab.setContent(builtInRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load tab: " + e.getMessage(), e);
+      }
+    }
+    else {
+      rootTabPane.getTabs().remove(dofTesterTab);
     }
 
     if (Features.EMULATORS_ENABLED) {

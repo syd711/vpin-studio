@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDPositionServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
+import de.mephisto.vpin.restclient.doftester.DOFTesterServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.emulators.EmulatorServiceClient;
 import de.mephisto.vpin.restclient.fp.FuturePinballServiceClient;
@@ -84,6 +85,7 @@ public class VPinStudioClient {
   private final DMDServiceClient dmdServiceClient;
   private final DMDPositionServiceClient dmdPositionServiceClient;
   private final DOFServiceClient dofServiceClient;
+  private final DOFTesterServiceClient dofTesterServiceClient;
   private final DOFLinxServiceClient dofLinxServiceClient;
   private final EmulatorServiceClient emulatorServiceClient;
   private final FuturePinballServiceClient futurePinballServiceClient;
@@ -141,6 +143,7 @@ public class VPinStudioClient {
     this.dmdServiceClient = new DMDServiceClient(this);
     this.dmdPositionServiceClient = new DMDPositionServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
+    this.dofTesterServiceClient = new DOFTesterServiceClient(this);
     this.dofLinxServiceClient = new DOFLinxServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.emulatorServiceClient = new EmulatorServiceClient(this);
@@ -293,6 +296,10 @@ public class VPinStudioClient {
 
   public DOFServiceClient getDofService() {
     return dofServiceClient;
+  }
+
+  public DOFTesterServiceClient getDofTesterService() {
+    return dofTesterServiceClient;
   }
 
   public ComponentServiceClient getComponentService() {

@@ -89,6 +89,15 @@
                               </Label>
                            </graphic>
                         </Tab>
+                        <Tab fx:id="dofTesterTab" closable="false" text="DOF Tester">
+                           <graphic>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </graphic>
+                        </Tab>
                      </tabs>
                   </TabPane>
                </center>

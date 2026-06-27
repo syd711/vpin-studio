@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class DOFSyncProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(DOFSyncProgressModel.class);
 
@@ -53,8 +55,9 @@ public class DOFSyncProgressModel extends ProgressModel<String> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, String msg) {
     try {
-      JobDescriptor sync = Studio.client.getDofService().sync(true);
+      JobDescriptor sync = client.getDofService().sync(true);
       progressResultModel.getResults().add(sync);
+      client.getDofTesterService().clearCache();
     } catch (Exception e) {
       progressResultModel.getResults().add("Error synchronizing DOF: " + e.getMessage());
       LOG.error("Error synchronizing DOF: " + e.getMessage(), e);
