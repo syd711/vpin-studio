@@ -57,6 +57,9 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDOFMapping;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnROM;
+
+  @FXML
   private Button tableEditBtn;
 
   @FXML
@@ -224,7 +227,8 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     }
     NavigationController.setBreadCrumb(breadcrumb);
 
-    dofToysController.selectTable(Optional.ofNullable(game));
+    ToySummary toySummary = game != null ? gamesDofStatus.getSummaries().get(game.getId()) : null;
+    dofToysController.selectTable(Optional.ofNullable(game), toySummary);
     tableView.refresh();
   }
 
@@ -268,6 +272,12 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
       label.setTooltip(new Tooltip(value.getGameDisplayName()));
+      label.getStyleClass().add("default-text");
+      return label;
+    }, this, true);
+
+    BaseLoadingColumn.configureColumn(columnROM, (value, model) -> {
+      Label label = new Label(value.getRom() != null ? value.getRom() : "-");
       label.getStyleClass().add("default-text");
       return label;
     }, this, true);

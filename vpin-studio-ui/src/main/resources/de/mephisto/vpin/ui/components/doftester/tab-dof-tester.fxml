@@ -31,6 +31,7 @@
                                             <columns>
                                                 <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                     <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="DOF Mapped" />
+                                    <TableColumn fx:id="columnROM" minWidth="100.0" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                             </columns>
                                         </TableView>
                                     </children>

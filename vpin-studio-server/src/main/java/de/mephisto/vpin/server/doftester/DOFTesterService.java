@@ -27,10 +27,10 @@ public class DOFTesterService {
   private static final String SCRIPT_NAME = "dof-test.ps1";
 
   private static final String PS_SCRIPT =
-      "param([string]$DllPath, [string]$ConfigFile, [string]$RomName, [string]$Type, [int]$Number, [int]$DurationMs = 200)\n" +
+      "param([string]$DllPath, [string]$RomName, [string]$Type, [int]$Number, [int]$DurationMs = 200)\n" +
           "Add-Type -Path $DllPath\n" +
           "$dof = New-Object DirectOutputCom.ComObject\n" +
-          "$dof.Init('VPinStudio', $ConfigFile, $RomName)\n" +
+          "$dof.Init('VPinStudio', $RomName)\n" +
           "$dof.UpdateTableElement($Type, $Number, 255)\n" +
           "Start-Sleep -Milliseconds $DurationMs\n" +
           "$dof.UpdateTableElement($Type, $Number, 0)\n" +
@@ -187,6 +187,10 @@ public class DOFTesterService {
       String err = executor.getStandardErrorFromCommand().toString().trim();
       if (!StringUtils.isEmpty(err)) {
         LOG.warn("DOF test script stderr: {}", err);
+      }
+      String out = executor.getStandardOutputFromCommand().toString().trim();
+      if (!StringUtils.isEmpty(out)) {
+        LOG.info("DOF test script stdout: {}", out);
       }
       return true;
     }

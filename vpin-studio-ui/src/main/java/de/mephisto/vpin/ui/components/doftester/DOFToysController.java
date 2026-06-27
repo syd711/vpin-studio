@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.components.doftester;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.doftester.DOFTesterSettings;
 import de.mephisto.vpin.restclient.doftester.ToySummary;
@@ -9,6 +10,8 @@ import de.mephisto.vpin.ui.PreferencesController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.Pane;
@@ -51,12 +54,25 @@ public class DOFToysController implements Initializable {
     this.dofTesterController = dofTesterController;
   }
 
-  public void selectTable(Optional<GameRepresentation> game) {
+  public void selectTable(Optional<GameRepresentation> game, ToySummary toySummary) {
     toyListPane.getChildren().removeAll(toyListPane.getChildren());
 
     if (game.isPresent()) {
       GameRepresentation gameRepresentation = game.get();
       ToySummary toys = client.getDofTesterService().getToys(gameRepresentation.getId());
+
+      if (!toys.isDofMapped() && !toys.getToys().isEmpty()) {
+        VBox info = new VBox();
+        VBox msg = new VBox(3);
+        msg.setPadding(new Insets(12));
+        info.getChildren().add(msg);
+        info.getStyleClass().add("info-container");
+        Label defaultLabel = WidgetFactory.createDefaultLabel("The following events have been extracted from the table script.");
+        defaultLabel.getStyleClass().add("infoLabel");
+        msg.getChildren().add(defaultLabel);
+        toyListPane.getChildren().add(info);
+      }
+
       for (String toy : toys.getToys()) {
         try {
           FXMLLoader loader = new FXMLLoader(ToyContainerController.class.getResource("toy-container.fxml"));
