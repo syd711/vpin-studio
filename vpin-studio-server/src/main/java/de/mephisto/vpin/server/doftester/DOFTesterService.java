@@ -175,7 +175,6 @@ public class DOFTesterService {
       List<String> cmd = Arrays.asList(
           "powershell", "-ExecutionPolicy", "Bypass", "-File", scriptFile.getAbsolutePath(),
           "-DllPath", dllFile.getAbsolutePath(),
-          "-ConfigFile", iniFile.getAbsolutePath(),
           "-RomName", romName,
           "-Type", code.getType(),
           "-Number", String.valueOf(code.getNumber()),
@@ -256,15 +255,13 @@ public class DOFTesterService {
 
   private File ensureScript(File configFolder) {
     File scriptFile = new File(configFolder, SCRIPT_NAME);
-    if (!scriptFile.exists()) {
-      try {
-        Files.write(scriptFile.toPath(), PS_SCRIPT.getBytes(StandardCharsets.UTF_8));
-        LOG.info("Written DOF test script to {}", scriptFile.getAbsolutePath());
-      }
-      catch (IOException e) {
-        LOG.error("Failed to write DOF test script: {}", e.getMessage(), e);
-        return null;
-      }
+    try {
+      Files.write(scriptFile.toPath(), PS_SCRIPT.getBytes(StandardCharsets.UTF_8));
+      LOG.info("Written DOF test script to {}", scriptFile.getAbsolutePath());
+    }
+    catch (IOException e) {
+      LOG.error("Failed to write DOF test script: {}", e.getMessage(), e);
+      return null;
     }
     return scriptFile;
   }
