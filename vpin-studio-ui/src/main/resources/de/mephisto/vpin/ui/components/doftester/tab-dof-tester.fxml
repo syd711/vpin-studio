@@ -30,7 +30,7 @@
                                         <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                             <columns>
                                                 <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                    <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="70.0" style="-fx-alignment: BASELINE_CENTER;" text="Mapped" />
+                                    <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="DOF Mapped" />
                                             </columns>
                                         </TableView>
                                     </children>
