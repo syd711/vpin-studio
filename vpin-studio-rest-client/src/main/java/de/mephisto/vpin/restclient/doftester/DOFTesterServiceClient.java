@@ -6,9 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /*********************************************************************************************************************
  * DOF Tester
@@ -18,6 +15,16 @@ public class DOFTesterServiceClient extends VPinStudioClientService {
 
   public DOFTesterServiceClient(VPinStudioClient client) {
     super(client);
+  }
+
+  public ToySummaries getGamesDofStatus() {
+    try {
+      return getRestClient().get(API + "doftester/games/status", ToySummaries.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to get DOF games status: {}", e.getMessage(), e);
+      return new ToySummaries();
+    }
   }
 
   public ToySummary getToys(int gameId) {

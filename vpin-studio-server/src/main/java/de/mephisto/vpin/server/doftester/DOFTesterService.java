@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.doftester;
 
+import de.mephisto.vpin.restclient.doftester.ToySummaries;
 import de.mephisto.vpin.restclient.doftester.ToySummary;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.dof.DOFService;
@@ -262,6 +263,24 @@ public class DOFTesterService {
       }
     }
     return scriptFile;
+  }
+
+  public ToySummaries getGamesDofStatus() {
+    Map<Integer, ToySummary> result = new LinkedHashMap<>();
+    DOFTesterIniParser parser = getParser();
+    for (Game game : gameService.getGames()) {
+      String rom = game.getRom();
+      ToySummary summary = new ToySummary();
+      if (!StringUtils.isEmpty(rom) && parser != null) {
+        List<String> toys = parser.getToys(rom);
+        summary.setDofMapped(!toys.isEmpty());
+        summary.setToys(toys);
+      }
+      result.put(game.getId(), summary);
+    }
+    ToySummaries toySummaries = new ToySummaries();
+    toySummaries.setSummaries(result);
+    return toySummaries;
   }
 
   public void invalidateCache() {

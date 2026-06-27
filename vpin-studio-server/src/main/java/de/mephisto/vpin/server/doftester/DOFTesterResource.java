@@ -1,12 +1,11 @@
 package de.mephisto.vpin.server.doftester;
 
+import de.mephisto.vpin.restclient.doftester.ToySummaries;
 import de.mephisto.vpin.restclient.doftester.ToySummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -17,6 +16,11 @@ public class DOFTesterResource {
 
   @Autowired
   private DOFTesterService dofTesterService;
+
+  @GetMapping("/games/status")
+  public ToySummaries getGamesDofStatus() {
+    return dofTesterService.getGamesDofStatus();
+  }
 
   @GetMapping("/toys/{gameId}")
   public ToySummary getToys(@PathVariable("gameId") int gameId) {

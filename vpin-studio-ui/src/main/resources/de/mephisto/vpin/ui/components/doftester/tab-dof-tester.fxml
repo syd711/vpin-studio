@@ -19,7 +19,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.doftester.DOFTesterController">
     <center>
-        <SplitPane fx:id="splitPane" dividerPositions="0.3">
+        <SplitPane fx:id="splitPane" dividerPositions="0.4">
             <items>
                 <BorderPane minWidth="200.0" prefWidth="440.0">
                     <center>
@@ -97,6 +97,28 @@
                                                 <Tooltip text="Open Table in Table Overview" />
                                             </tooltip>
                                         </Button>
+                              <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScriptEdit" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Edit script with the linked .vbs file system editor" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="tableOpenBtn" mnemonicParsing="false" onAction="#onTableData" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Edit Table Data (Ctrl+O)" />
+                                 </tooltip>
+                              </Button>
                                     </items>
                                 </ToolBar>
                                 <ToolBar prefHeight="40.0" prefWidth="200.0">
