@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FolderChooserDialog;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -153,6 +154,7 @@ public class DOFPreferencesController implements Initializable {
         try {
           settings.setInstallationPath(t1);
           client.getDofService().saveSettings(settings);
+          PreferencesController.markDirty(PreferenceType.dofSettings);
           refresh();
         }
         catch (Exception e) {

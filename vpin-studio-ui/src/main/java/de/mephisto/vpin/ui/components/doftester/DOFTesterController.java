@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
@@ -37,6 +38,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.preferences.PreferenceType.dofSettings;
 
 public class DOFTesterController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, StudioEventListener {
@@ -111,12 +113,14 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
       });
     }
     else {
-      toysEditorPane.setCenter(toysRoot);
+      Platform.runLater(() -> {
+        toysEditorPane.setCenter(toysRoot);
+        startReload("Loading Tables...");
+        refreshEmulators();
+      });
     }
 
-    startReload("Loading Tables...");
 
-    refreshEmulators();
     client.getDofTesterService().clearCache();
 
     // load in parallel games and templates, it will ensure templates are cached before the columns access them
@@ -304,6 +308,12 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     return new GameRepresentationModel(game);
   }
 
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType != null && preferenceType.equals(dofSettings)) {
+      doReload(true);
+    }
+  }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
