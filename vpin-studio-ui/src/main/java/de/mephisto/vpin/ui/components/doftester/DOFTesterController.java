@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.components.doftester;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
@@ -16,12 +17,16 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +61,8 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
   private DOFTesterController.GameEmulatorChangeListener gameEmulatorChangeListener;
 
   private DOFToysController dofToysController;
+  private Parent toysRoot;
+  private boolean validDOF;
 
   public DOFTesterController() {
   }
@@ -77,6 +84,36 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
 
   public void doReload(boolean force) {
+    if (force) {
+      validateDOF();
+    }
+
+    if (!validDOF) {
+      Platform.runLater(() -> {
+        VBox msg = new VBox(3);
+        msg.setPadding(new Insets(12));
+        Label defaultLabel = WidgetFactory.createDefaultLabel("Invalid DOF Settings");
+        defaultLabel.getStyleClass().add("default-title");
+
+        Button button = new Button("DOF Settings", WidgetFactory.createIcon("mdi2c-cog"));
+        button.getStyleClass().add("default-text");
+        button.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            PreferencesController.open("dof");
+          }
+        });
+
+        msg.getChildren().add(defaultLabel);
+        msg.getChildren().add(WidgetFactory.createDefaultLabel("Open the DOF settings and configure the path to your DOF configuration."));
+        msg.getChildren().add(button);
+        toysEditorPane.setCenter(msg);
+      });
+    }
+    else {
+      toysEditorPane.setCenter(toysRoot);
+    }
+
     startReload("Loading Tables...");
 
     refreshEmulators();
@@ -84,52 +121,55 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
     // load in parallel games and templates, it will ensure templates are cached before the columns access them
     JFXFuture.supplyAllAsync(
-            () -> client.getHighscoreCardTemplatesClient().getTemplates(),
-            () -> {
-              if (force) {
-                client.getGameService().clearCache();
-              }
-
-              List<GameRepresentation> games = new ArrayList<>();
-              if (emulatorCombo.getValue() != null) {
-                GameEmulatorRepresentation emu = emulatorCombo.getValue();
-                games.addAll(client.getGameService().getGamesByEmulator(emu.getId()));
-              }
-              else {
-                games.addAll(client.getGameService().getVpxGamesCached());
-                games.addAll(client.getGameService().getFPGamesCached());
-              }
-
-              return games;
-            }
-        )
-        .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
-          return new Object[]{Collections.emptyList(), Collections.emptyList()};
-        })
-        .thenAcceptLater(objs -> {
-          @SuppressWarnings({"unchecked", "unused"})
-          List<CardTemplate> _templates = (List<CardTemplate>) objs[0];
-          @SuppressWarnings("unchecked")
-          List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
-
-          // keep current selection
-          GameRepresentationModel selectedItem = getSelectedModel();
-
-          setItems(games);
-
-          if (games.isEmpty()) {
-            tableView.setPlaceholder(new Label("No tables found"));
+        () -> client.getHighscoreCardTemplatesClient().getTemplates(),
+        () -> {
+          if (force) {
+            client.getGameService().clearCache();
           }
-          toysEditorPane.setVisible(!games.isEmpty());
 
-          tableView.refresh();
-          tableView.requestFocus();
+          List<GameRepresentation> games = new ArrayList<>();
+          if (emulatorCombo.getValue() != null) {
+            GameEmulatorRepresentation emu = emulatorCombo.getValue();
+            games.addAll(client.getGameService().getGamesByEmulator(emu.getId()));
+          }
+          else {
+            games.addAll(client.getGameService().getVpxGamesCached());
+            games.addAll(client.getGameService().getFPGamesCached());
+          }
 
-          // select the game, it will refresh the view and select associated template
-          setSelectionOrFirst(selectedItem);
-          endReload();
-        });
+          return games;
+        }
+    ).onErrorSupply(e -> {
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+      return new Object[]{Collections.emptyList(), Collections.emptyList()};
+    }).thenAcceptLater(objs -> {
+      @SuppressWarnings({"unchecked", "unused"})
+      List<CardTemplate> _templates = (List<CardTemplate>) objs[0];
+      @SuppressWarnings("unchecked")
+      List<GameRepresentation> games = (List<GameRepresentation>) objs[1];
+
+      // keep current selection
+      GameRepresentationModel selectedItem = getSelectedModel();
+
+      setItems(games);
+
+      if (games.isEmpty()) {
+        tableView.setPlaceholder(new Label("No tables found"));
+      }
+
+      tableView.refresh();
+      tableView.requestFocus();
+
+      // select the game, it will refresh the view and select associated template
+      setSelectionOrFirst(selectedItem);
+      endReload();
+    });
+  }
+
+  private boolean validateDOF() {
+    DOFSettings settings = client.getDofService().getSettings();
+    validDOF = settings.isValidDOFFolder();
+    return validDOF;
   }
 
   @Override
@@ -142,8 +182,6 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
   }
 
   public void refreshView(GameRepresentation game) {
-    toysEditorPane.setVisible(game != null);
-
     List<String> breadcrumb = new ArrayList<>(Arrays.asList("System Manager", "DOF Tester"));
     if (game != null) {
       breadcrumb.add(game.getGameDisplayName());
@@ -178,10 +216,10 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
     try {
       FXMLLoader loader = new FXMLLoader(DOFToysController.class.getResource("dof-toys.fxml"));
-      Parent editorRoot = loader.load();
+      toysRoot = loader.load();
       dofToysController = loader.getController();
       dofToysController.setParentController(this);
-      toysEditorPane.setCenter(editorRoot);
+      toysEditorPane.setCenter(toysRoot);
     }
     catch (IOException e) {
       LOG.error("failed to load template editor: " + e.getMessage(), e);
@@ -207,10 +245,13 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
       refreshView(newSelection);
     });
 
-    EventManager.getInstance().addListener(this);
-
-    this.gameEmulatorChangeListener = new DOFTesterController.GameEmulatorChangeListener();
-    doReload(false);
+    JFXFuture.supplyAsync(() -> {
+      return validateDOF();
+    }).thenAcceptLater((b) -> {
+      EventManager.getInstance().addListener(this);
+      this.gameEmulatorChangeListener = new DOFTesterController.GameEmulatorChangeListener();
+      doReload(false);
+    });
   }
 
 

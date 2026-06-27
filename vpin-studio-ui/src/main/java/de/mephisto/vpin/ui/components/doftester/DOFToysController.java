@@ -2,12 +2,10 @@ package de.mephisto.vpin.ui.components.doftester;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.doftester.DOFTesterSettings;
 import de.mephisto.vpin.restclient.doftester.ToySummary;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -54,33 +52,26 @@ public class DOFToysController implements Initializable {
   }
 
   public void selectTable(Optional<GameRepresentation> game) {
-    if(isValid()) {
-      toyListPane.getChildren().removeAll(toyListPane.getChildren());
+    toyListPane.getChildren().removeAll(toyListPane.getChildren());
 
-      if (game.isPresent()) {
-        GameRepresentation gameRepresentation = game.get();
-        ToySummary toys = client.getDofTesterService().getToys(gameRepresentation.getId());
-        for (String toy : toys.getToys()) {
-          try {
-            FXMLLoader loader = new FXMLLoader(ToyContainerController.class.getResource("toy-container.fxml"));
-            Pane root = loader.load();
-            root.getStyleClass().add("dropin-menu-item");
-            ToyContainerController controller = loader.getController();
-            controller.setData(game, toy);
+    if (game.isPresent()) {
+      GameRepresentation gameRepresentation = game.get();
+      ToySummary toys = client.getDofTesterService().getToys(gameRepresentation.getId());
+      for (String toy : toys.getToys()) {
+        try {
+          FXMLLoader loader = new FXMLLoader(ToyContainerController.class.getResource("toy-container.fxml"));
+          Pane root = loader.load();
+          root.getStyleClass().add("dropin-menu-item");
+          ToyContainerController controller = loader.getController();
+          controller.setData(game, toy);
 
-            toyListPane.getChildren().add(root);
-          }
-          catch (IOException e) {
-            LOG.error("Failed to load toy container: " + e.getMessage(), e);
-          }
+          toyListPane.getChildren().add(root);
+        }
+        catch (IOException e) {
+          LOG.error("Failed to load toy container: " + e.getMessage(), e);
         }
       }
     }
-  }
-
-  private boolean isValid() {
-    DOFSettings settings = client.getDofService().getSettings();
-    return settings.isValidDOFFolder();
   }
 
   @Override
