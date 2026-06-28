@@ -49,13 +49,17 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
     try {
       List<String> strings = new ArrayList<>();
-      strings.add(vpxExe.getName());
+      strings.add(vpxExe.getAbsolutePath());
       for (String commandParam : commandParams) {
         strings.add(commandParam);
       }
-      strings.add("\"" + gameFile.getAbsolutePath() + "\"");
+      strings.add(gameFile.getAbsolutePath());
       LOG.info("Executing VPX command: {}", String.join(" ", strings));
-      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+      // prependCmd=false: bypasses cmd.exe so ProcessBuilder calls CreateProcess directly with a UTF-16
+      // path. cmd.exe on en_US Windows uses OEM code page 437 which cannot represent characters like the
+      // en dash (U+2013), causing table filenames containing such characters to be garbled and not found.
+      // The exe must be an absolute path because ProcessBuilder does not search the working directory.
+      SystemCommandExecutor executor = new SystemCommandExecutor(strings, false);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
@@ -79,9 +83,10 @@ public class VPXCommandLineService implements ApplicationContextAware {
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
+      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath(), commandParam, gameFile.getAbsolutePath());
       LOG.info("Executing VPX {}command: {}", commandParam, String.join(" ", strings));
-      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+      // prependCmd=false: see execute() for the code page rationale
+      SystemCommandExecutor executor = new SystemCommandExecutor(strings, false);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 

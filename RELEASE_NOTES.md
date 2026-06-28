@@ -4,12 +4,14 @@
 
 - **WOVP Score Submitter**
   - Fixed issues in the error handling so that failed score submissions are reflected to the user. 
-- **QA**
-  - Removed two older dependencies whose functions could be replaced with other dependencies already included.
 - **Wake-On-Lan**
-  - Add several blind-fixes to repair the wake-on-lan functionality. See also: https://github.com/syd711/vpin-studio/wiki/Wake-On-Lan-Support.   
+  - Add several blind-fixes(!) to repair the wake-on-lan functionality. See also: https://github.com/syd711/vpin-studio/wiki/Wake-On-Lan-Support.   
 - **Server Discovery**
   - Improved server discovery when the client has been started before the server.
+- **VPX Emulator Execution**
+  - Improved launch command for the VPX.exe which is more robust now against special characters in the file name.
+- **Misc**
+  - Removed two older dependencies whose functions could be replaced with other dependencies already included.
 
 ---
 
