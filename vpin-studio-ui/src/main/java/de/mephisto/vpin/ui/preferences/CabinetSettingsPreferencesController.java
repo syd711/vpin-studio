@@ -116,7 +116,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
     PreferenceEntryRepresentation idle = ServerFX.client.getPreferenceService().getPreference(PreferenceNames.IDLE_TIMEOUT);
     int timeout = idle.getIntValue();
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, timeout);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5000, timeout);
     idleSpinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));

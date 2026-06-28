@@ -219,7 +219,7 @@ public class PopperSettingsPreferencesController implements Initializable {
       save();
     });
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 240, 0);
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 99999, 0);
     autoExitEmuSeconds.setValueFactory(factory);
     factory.valueProperty().set(popperSettings.getAutoExitEmuSeconds());
     factory.valueProperty().addListener((observableValue, integer, t1) -> {

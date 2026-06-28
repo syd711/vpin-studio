@@ -259,11 +259,6 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
-  private void onSystemSettings(ActionEvent event) throws IOException {
-    load("preference-system-settings.fxml", event);
-  }
-
-  @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
     load("preference-validators_screens.fxml", event);
   }
