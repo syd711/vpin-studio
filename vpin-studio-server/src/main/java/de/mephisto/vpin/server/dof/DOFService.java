@@ -113,7 +113,7 @@ public class DOFService implements InitializingBean {
   }
 
   public boolean isValid() {
-    return getInstallationFolder() != null && getInstallationFolder().exists();
+    return getInstallationFolder() != null && getInstallationFolder().exists() && new File(getInstallationFolder(), "DirectOutputComObject.dll").exists();
   }
 
   public ComponentSummary getComponentSummary() {

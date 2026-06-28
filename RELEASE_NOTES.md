@@ -12,6 +12,7 @@
   - Improved launch command for the VPX.exe which is more robust now against special characters in the file name.
 - **Misc**
   - Removed two older dependencies whose functions could be replaced with other dependencies already included.
+  - Increased max timeouts values in Popper and cabinet settings. 
 
 ---
 
