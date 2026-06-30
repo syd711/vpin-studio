@@ -30,7 +30,7 @@ public class DOFTesterService {
       "param([string]$DllPath, [string]$RomName, [string]$Type, [int]$Number, [int]$DurationMs = 200)\n" +
           "Add-Type -Path $DllPath\n" +
           "$dof = New-Object DirectOutputCom.ComObject\n" +
-          "$dof.Init('VPinStudio', $RomName)\n" +
+          "$dof.Init('B2SServer', '', $RomName)\n" +
           "$dof.UpdateTableElement($Type, $Number, 255)\n" +
           "Start-Sleep -Milliseconds $DurationMs\n" +
           "$dof.UpdateTableElement($Type, $Number, 0)\n" +
@@ -172,8 +172,11 @@ public class DOFTesterService {
 
   private boolean runScript(File scriptFile, File dllFile, File iniFile, String romName, DOFEventCode code, int durationMs) {
     try {
+      String windir = System.getenv("WINDIR");
+      if (windir == null) windir = "C:\\Windows";
+      String ps32 = windir + "\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe";
       List<String> cmd = Arrays.asList(
-          "powershell", "-ExecutionPolicy", "Bypass", "-File", scriptFile.getAbsolutePath(),
+          ps32, "-ExecutionPolicy", "Bypass", "-File", scriptFile.getAbsolutePath(),
           "-DllPath", dllFile.getAbsolutePath(),
           "-RomName", romName,
           "-Type", code.getType(),
