@@ -163,7 +163,7 @@ public class ScreenshotService {
       String dateSuffix = DateUtil.formatTimeString(new Date()) + ".zip";
       String name = game != null ? FileUtils.replaceWindowsChars(game.getGameDisplayName()) + dateSuffix : "menu-" + dateSuffix;
       File target = new File(targetFolder, name);
-      List<File> files = takeScreenshots();
+      List<File> files = takeVPinScreenScreenshots(Collections.emptyList());
       zipScreenshots(target, files);
     }
     catch (IOException e) {
@@ -172,7 +172,9 @@ public class ScreenshotService {
   }
 
   public void takeScreenshots(@NonNull File targetArchive) throws IOException {
-    List<File> files = takeScreenshots();
+    MonitoringSettings monitoringSettings = preferencesService.getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+    List<VPinScreen> disabledScreens = monitoringSettings.getDisabledScreens();
+    List<File> files = takeVPinScreenScreenshots(disabledScreens);
     zipScreenshots(targetArchive, files);
   }
 
@@ -198,22 +200,14 @@ public class ScreenshotService {
     }
   }
 
-  private List<File> takeScreenshots() {
-    MonitoringSettings monitoringSettings = preferencesService.getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-    PauseMenuSettings pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-    return takeFrontendScreenshots(monitoringSettings, pauseMenuSettings);
-  }
-
-  private List<File> takeFrontendScreenshots(MonitoringSettings monitoringSettings, PauseMenuSettings pauseMenuSettings) {
+  private List<File> takeVPinScreenScreenshots(List<VPinScreen> disabledScreens) {
     List<File> screenshotFiles = new ArrayList<>();
-    List<VPinScreen> disabledScreens = monitoringSettings.getDisabledScreens();
-    List<Integer> multiScreenIds = pauseMenuSettings.getMultiScreenIds();
     List<FrontendPlayerDisplay> recordingScreens = recorderService.getRecordingScreens();
     List<BufferedImage> images = new ArrayList<>();
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         VPinScreen screen = recordingScreen.getScreen();
-        if (!disabledScreens.contains(screen) && (multiScreenIds.isEmpty() || multiScreenIds.contains(recordingScreen.getMonitor()))) {
+        if (!disabledScreens.contains(screen)) {
           File file = File.createTempFile("screenshot", ".jpg");
           ByteArrayOutputStream out = new ByteArrayOutputStream();
           recorderService.refreshPreview(out, screen);

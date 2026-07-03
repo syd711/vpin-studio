@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
@@ -124,12 +126,14 @@ public class DOFTesterService {
   }
 
   public boolean testToy(int gameId, String toyName, int durationMs) {
-    File dllFile = new File(dofService.getInstallationFolder(), "DirectOutputComObject.dll");
+    File x64Folder = new File(dofService.getInstallationFolder(), "x64");
+    File dllFile = new File(x64Folder, "DirectOutputComObject.dll");
     if (!dllFile.exists()) {
       LOG.error("DirectOutputComObject.dll not found at {}", dllFile.getAbsolutePath());
       return false;
     }
 
+    LOG.info("DOF tests is using {}", dllFile.getAbsolutePath());
     // Raw event code path (e.g., "E101", "S24") — used for unmapped / script-driven tables
     if (RAW_EVENT_CODE_PATTERN.matcher(toyName).matches()) {
       DOFEventCode code = new DOFEventCode(String.valueOf(Character.toUpperCase(toyName.charAt(0))), Integer.parseInt(toyName.substring(1)));
@@ -174,9 +178,11 @@ public class DOFTesterService {
     try {
       String windir = System.getenv("WINDIR");
       if (windir == null) windir = "C:\\Windows";
-      String ps32 = windir + "\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe";
+      String powershell = isDll64Bit(dllFile)
+          ? windir + "\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+          : windir + "\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe";
       List<String> cmd = Arrays.asList(
-          ps32, "-ExecutionPolicy", "Bypass", "-File", scriptFile.getAbsolutePath(),
+          powershell, "-ExecutionPolicy", "Bypass", "-File", scriptFile.getAbsolutePath(),
           "-DllPath", dllFile.getAbsolutePath(),
           "-RomName", romName,
           "-Type", code.getType(),
@@ -189,6 +195,7 @@ public class DOFTesterService {
       String err = executor.getStandardErrorFromCommand().toString().trim();
       if (!StringUtils.isEmpty(err)) {
         LOG.warn("DOF test script stderr: {}", err);
+        return false;
       }
       String out = executor.getStandardOutputFromCommand().toString().trim();
       if (!StringUtils.isEmpty(out)) {
@@ -198,6 +205,27 @@ public class DOFTesterService {
     }
     catch (Exception e) {
       LOG.error("Failed to run DOF test script for {}: {}", code, e.getMessage(), e);
+      return false;
+    }
+  }
+
+  // Loading a DLL into a PowerShell host of the wrong bitness throws BadImageFormatException, so read the PE header to pick System32 (x64) vs SysWOW64 (x86)
+  private boolean isDll64Bit(File dllFile) {
+    try (RandomAccessFile raf = new RandomAccessFile(dllFile, "r")) {
+      raf.seek(0x3C);
+      byte[] peOffsetBytes = new byte[4];
+      raf.readFully(peOffsetBytes);
+      int peOffset = ByteBuffer.wrap(peOffsetBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+      raf.seek(peOffset + 4);
+      byte[] machineBytes = new byte[2];
+      raf.readFully(machineBytes);
+      int machine = ByteBuffer.wrap(machineBytes).order(ByteOrder.LITTLE_ENDIAN).getShort() & 0xFFFF;
+      // IMAGE_FILE_MACHINE_AMD64 = 0x8664, IMAGE_FILE_MACHINE_I386 = 0x14c
+      return machine == 0x8664;
+    }
+    catch (IOException e) {
+      LOG.warn("Failed to determine bitness of {}, defaulting to 32-bit PowerShell: {}", dllFile.getAbsolutePath(), e.getMessage());
       return false;
     }
   }

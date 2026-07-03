@@ -38,7 +38,7 @@ public class FeaturesInfo {
   public boolean BACKUPS_ENABLED = true; //highscore restore is missing!
 
   public boolean SCREEN_MANAGER_ENABLED = true;
-  public boolean DOF_TESTER_ENABLED = true;
+  public boolean DOF_TESTER_ENABLED = false;
 
   /* Whether Emulator configs are supported or not */
   public boolean EMULATORS_ENABLED = true;

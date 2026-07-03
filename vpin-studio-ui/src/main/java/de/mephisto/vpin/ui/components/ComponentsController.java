@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentInstallation;
@@ -247,7 +248,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
       rootTabPane.getTabs().remove(screensTab);
     }
 
-    if (Features.DOF_TESTER_ENABLED) {
+    if (Features.DOF_TESTER_ENABLED || LocalUISettings.getBoolean("doftester.enabled")) {
       try {
         FXMLLoader loader = new FXMLLoader(DOFTesterController.class.getResource("tab-dof-tester.fxml"));
         Parent builtInRoot = loader.load();

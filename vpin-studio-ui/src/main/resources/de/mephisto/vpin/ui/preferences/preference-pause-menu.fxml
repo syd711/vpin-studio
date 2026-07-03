@@ -393,7 +393,7 @@
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="Screens included in the screenshot:" textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="The following monitors are included for pause menu based screenshots:" textFill="WHITE" />
                                     <VBox fx:id="monitorsPane" spacing="3.0">
                                        <VBox.margin>
                                           <Insets bottom="6.0" top="6.0" />

@@ -306,6 +306,7 @@ public class PauseMenu extends Application {
         //we need to take the screenshot before the menu is shown
         boolean scoreSubmitterEnabled = client.getCompetitionService().isScoreSubmitterEnabled();
         boolean alwaysTakeScreenshot = pauseMenuSettings.isAlwaysTakeScreenshot();
+        test = false;
         if (!test && (scoreSubmitterEnabled || alwaysTakeScreenshot)) {
           client.takeScoreScreenshot();
         }

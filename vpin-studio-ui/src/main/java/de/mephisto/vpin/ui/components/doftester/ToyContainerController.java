@@ -59,9 +59,6 @@ public class ToyContainerController implements Initializable {
   @FXML
   private Label sizeLabel;
 
-  @FXML
-  private Separator installSeparator;
-
   private Optional<GameRepresentation> game;
   private String toy;
 
@@ -93,7 +90,6 @@ public class ToyContainerController implements Initializable {
     this.game = game;
     this.toy = toy;
 
-    installSeparator.setVisible(true);
     filenameLabel.setText(toy);
     filenameLabel.setStyle("-fx-font-size: 15px;-fx-font-weight: bold;");
     sizeLabel.setText("---");
@@ -102,38 +98,37 @@ public class ToyContainerController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    installSeparator.managedProperty().bindBidirectional(installSeparator.visibleProperty());
     dragHandler.setStyle("-fx-cursor: hand;");
     dataPanel.setStyle("-fx-cursor: hand;");
-
-    root.setFocusTraversable(true);
-    root.setOnMousePressed(e -> root.requestFocus());
-    root.setOnKeyPressed(e -> {
-      if (e.getCode() == KeyCode.DELETE) {
-        onDelete();
-        e.consume();
-      }
-    });
-
-    root.setOnDragDetected(new EventHandler<MouseEvent>() {
-      public void handle(MouseEvent event) {
-        Dragboard db = root.startDragAndDrop(TransferMode.ANY);
-        db.setDragView(root.snapshot(null, null));
-
-        Map<DataFormat, Object> data = new HashMap<>();
-//        data.put(DataFormat.FILES, Arrays.asList(file));
-        db.setContent(data);
-        event.consume();
-      }
-    });
-
-    root.setOnDragDone(new EventHandler<DragEvent>() {
-      @Override
-      public void handle(DragEvent event) {
-//        if (dropInButton != null) {
-//          dropInButton.hide();
-//        }
-      }
-    });
+//
+//    root.setFocusTraversable(true);
+//    root.setOnMousePressed(e -> root.requestFocus());
+//    root.setOnKeyPressed(e -> {
+//      if (e.getCode() == KeyCode.DELETE) {
+//        onDelete();
+//        e.consume();
+//      }
+//    });
+//
+//    root.setOnDragDetected(new EventHandler<MouseEvent>() {
+//      public void handle(MouseEvent event) {
+//        Dragboard db = root.startDragAndDrop(TransferMode.ANY);
+//        db.setDragView(root.snapshot(null, null));
+//
+//        Map<DataFormat, Object> data = new HashMap<>();
+////        data.put(DataFormat.FILES, Arrays.asList(file));
+//        db.setContent(data);
+//        event.consume();
+//      }
+//    });
+//
+//    root.setOnDragDone(new EventHandler<DragEvent>() {
+//      @Override
+//      public void handle(DragEvent event) {
+////        if (dropInButton != null) {
+////          dropInButton.hide();
+////        }
+//      }
+//    });
   }
 }

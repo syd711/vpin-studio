@@ -5,11 +5,15 @@
 - **WOVP Score Submitter**
   - Fixed issues in the error handling so that failed score submissions are reflected to the user. 
 - **Wake-On-Lan**
-  - Add several blind-fixes(!) to repair the wake-on-lan functionality. See also: https://github.com/syd711/vpin-studio/wiki/Wake-On-Lan-Support.   
+  - Add several blind-fixes(!!!) to repair the wake-on-lan functionality. See also: https://github.com/syd711/vpin-studio/wiki/Wake-On-Lan-Support.   
 - **Server Discovery**
   - Improved server discovery when the client has been started before the server.
 - **VPX Emulator Execution**
   - Improved launch command for the VPX.exe which is more robust now against special characters in the file name.
+- **Pause Menu**
+  - Fixed the creation of screenshot bundles created via shortcut which were empty.
+  - Improved description texts for screenshots to clarify the settings (hopefully).
+  - Fixed issue that taking screenshots via shortcut was bound to the "Cabinet Monitor" and the view settings used there. 
 - **Misc**
   - Removed two older dependencies whose functions could be replaced with other dependencies already included.
   - Increased max timeouts values in Popper and cabinet settings. 

@@ -27,7 +27,7 @@ public class LocalUISettings {
 
   private static List<LocalSettingsChangeListener> listeners;
 
-  private static Map<String, Object> jsonSettingsCache = new HashMap<>();
+  private static final Map<String, Object> jsonSettingsCache = new HashMap<>();
   private static File propertiesFile;
 
   static {
