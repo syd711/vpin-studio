@@ -266,7 +266,7 @@ jobs:
         run: copy "${{ github.workspace }}\resources\jvm\jinput-dx8_64.dll" "$env:JAVA_HOME\bin\"
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots clean package -DmacOSBuild=false -DskipTests
+        run: mvn --batch-mode --update-snapshots clean package -DskipTests
 
       - name: Download macOS x64 Artifacts
         uses: actions/download-artifact@v8
