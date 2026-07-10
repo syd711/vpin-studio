@@ -86,16 +86,16 @@ public class SystemUtil {
       return;
     }
 
-    while (!folder.exists()) {
-      folder = folder.getParentFile();
-    }
-
-    if (!folder.exists() && (fallback != null && !fallback.exists())) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
-      return;
-    }
-
     if (isLocal()) {
+      while (!folder.exists()) {
+        folder = folder.getParentFile();
+      }
+
+      if (!folder.exists() && (fallback != null && !fallback.exists())) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
+        return;
+      }
+
       try {
         if (folder.exists()) {
           openFolderWithOS(folder.getAbsolutePath());
@@ -112,6 +112,10 @@ public class SystemUtil {
       }
     }
     else {
+      // The folder/fallback paths are only meaningful on the server's filesystem, so they
+      // must not be existence-checked against the client's local disk (see #network folder bug:
+      // conventional install paths like "C:\vPinball" can coincidentally exist on the client too,
+      // which previously caused the wrong ancestor folder to be resolved and opened).
       if (isWindows() || isMac()) {
         try {
           String path = folder.getAbsolutePath();
@@ -120,6 +124,13 @@ public class SystemUtil {
           LOG.info("Resolved network path '{}', use publicUrl '{}' and path '{}'", remotePath, publicUrl, path);
           if (remotePath != null) {
             openFolderWithOS(remotePath);
+          }
+          else if (fallback != null) {
+            String fallbackRemotePath = resolveNetworkPath(publicUrl, fallback.getAbsolutePath());
+            LOG.info("Resolved fallback network path '{}', use publicUrl '{}' and path '{}'", fallbackRemotePath, publicUrl, fallback.getAbsolutePath());
+            if (fallbackRemotePath != null) {
+              openFolderWithOS(fallbackRemotePath);
+            }
           }
         }
         catch (Exception e) {

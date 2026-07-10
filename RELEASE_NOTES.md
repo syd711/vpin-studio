@@ -1,3 +1,13 @@
+## Release Notes 5.1.3
+
+### Changes
+
+- **Misc**
+    - Blind fix for repairing opening remote folders.
+
+
+---
+
 ## Release Notes 5.1.2
 
 ### Changes
