@@ -2,6 +2,10 @@
 
 ### Changes
 
+- **Uploader Analysis**
+  - Fixed issue that PUP packs have been installed into the VPX "Music" folder. A stricter check has been added.
+  - Improved PUP pack detection of the VPX archives. Folder with whitespaces are not recognized as valid PUP pack target folder now.
+  - Fixed issues in the "Media Selection" dialog which previews the detected assets.
 - **Misc**
     - Blind fix for repairing opening remote folders.
 

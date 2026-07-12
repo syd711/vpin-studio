@@ -46,6 +46,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -695,7 +696,7 @@ public class WidgetFactory {
       stage.setResizable(true);
 
       Rectangle position = LocalUISettings.getPosition(stateId);
-      if (position != null) {
+      if (position != null && isOnScreen(position)) {
         //let dialog open on the screen the main window is
         stage.setX(position.getX());
         stage.setY(position.getY());
@@ -736,6 +737,16 @@ public class WidgetFactory {
     );
 
     return stage;
+  }
+
+  /**
+   * Guards against restoring a dialog position from a monitor that is no longer attached
+   * (disconnected screen, resolution change, undocked laptop, etc.), which would otherwise
+   * place an application-modal dialog off-screen and make the whole app appear to hang.
+   */
+  private static boolean isOnScreen(Rectangle position) {
+    double minVisible = 20;
+    return !Screen.getScreensForRectangle(position.getX(), position.getY(), Math.max(position.getWidth(), minVisible), Math.max(position.getHeight(), minVisible)).isEmpty();
   }
 
   private static boolean isIgnoredState(String stateId) {
