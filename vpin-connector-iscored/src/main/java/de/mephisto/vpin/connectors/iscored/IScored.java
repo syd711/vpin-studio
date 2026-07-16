@@ -89,8 +89,9 @@ public class IScored {
     try {
       long start = System.currentTimeMillis();
 
-      // parse and align room URL 
-      URL roomurl = URI.create(url).toURL();
+      // parse and align room URL, tolerating accidental leading/trailing whitespace
+      String sanitizedUrl = url.trim();
+      URL roomurl = URI.create(sanitizedUrl).toURL();
       String baseUrl = getBaseURL(roomurl);
       Map<String, Object> params = getBaseParams(roomurl);
 
@@ -141,7 +142,7 @@ public class IScored {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to load iScored Game Room: {}", e.getMessage());
+      LOG.error("Failed to load iScored Game Room \"{}\": {}", url, e.getMessage());
     }
 
     return null;

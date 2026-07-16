@@ -156,6 +156,9 @@ public class IScoredPreferencesController implements Initializable {
 
     readApiColumn.setCellValueFactory(cellData -> {
       IScoredGameRoomModel value = cellData.getValue();
+      if (value.gameRoom == null || value.gameRoom.getSettings() == null) {
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
+      }
       if (value.gameRoom.getSettings().isApiReadingEnabled()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
@@ -164,6 +167,9 @@ public class IScoredPreferencesController implements Initializable {
 
     scoreApiColumn.setCellValueFactory(cellData -> {
       IScoredGameRoomModel value = cellData.getValue();
+      if (value.gameRoom == null || value.gameRoom.getSettings() == null) {
+        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
+      }
       if (value.gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
@@ -181,6 +187,14 @@ public class IScoredPreferencesController implements Initializable {
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
           onEdit();
+        }
+      });
+      row.itemProperty().addListener((obs, oldItem, newItem) -> {
+        if (newItem != null && newItem.gameRoom == null) {
+          row.setTooltip(new Tooltip("Failed to load this game room. The URL may be invalid or the room may no longer exist."));
+        }
+        else {
+          row.setTooltip(null);
         }
       });
       return row;

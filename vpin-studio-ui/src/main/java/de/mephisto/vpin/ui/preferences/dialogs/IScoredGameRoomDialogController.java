@@ -227,7 +227,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private void onSaveClick(ActionEvent e) {
     result = true;
 
-    gameRoom.setUrl(urlField.getText());
+    gameRoom.setUrl(urlField.getText().trim());
     gameRoom.setScoreReset(resetCheckbox.isSelected());
     gameRoom.setSynchronize(synchronizationCheckbox.isSelected());
     gameRoom.setIgnoreHidden(ignoreHiddenCheckbox.isSelected());

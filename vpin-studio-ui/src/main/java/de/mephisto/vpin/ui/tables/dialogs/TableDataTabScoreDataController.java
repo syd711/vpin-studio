@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.Studio;
@@ -95,6 +96,12 @@ public class TableDataTabScoreDataController implements Initializable {
 
   private GameRepresentation game;
 
+  /**
+   * Incremented on every setGame() call so that an async response that resolves after
+   * a subsequent Next/Prev navigation can detect it is stale and discard itself.
+   */
+  private int gameLoadSequence = 0;
+
   @FXML
   private void onScoreReset() {
     TableDialogs.openHighscoresResetDialog(Arrays.asList(game));
@@ -142,78 +149,96 @@ public class TableDataTabScoreDataController implements Initializable {
 
   public void setGame(GameRepresentation game, TableDetails tableDetails, ServerSettings serverSettings) {
     this.game = game;
+    int sequence = ++gameLoadSequence;
 
     JFXFuture.supplyAsync(() -> {
       return client.getGameService().getHighscoreFiles(game.getId());
     }).thenAcceptLater((highscoreFiles) -> {
-      this.altRomName.setPromptText("");
-      this.highscoreFileName.setPromptText("");
-
-      List<String> availableRoms = new ArrayList<>();
-      if (highscoreFiles.getNvRams() != null) {
-        availableRoms.addAll(highscoreFiles.getNvRams());
-      }
-      if (highscoreFiles.getVpRegEntries() != null) {
-        availableRoms.addAll(highscoreFiles.getVpRegEntries());
-      }
-      Collections.sort(availableRoms);
-      availableRoms.addFirst(null);
-      romName.setItems(FXCollections.observableList(availableRoms));
-
-      List<String> availableHsFiles = new ArrayList<>();
-      if (highscoreFiles.getTextFiles() != null) {
-        availableHsFiles.addAll(highscoreFiles.getTextFiles());
-      }
-      Collections.sort(availableHsFiles);
-      availableHsFiles.addFirst(null);
-      highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
-
-      refreshScannedValues();
-
-
-      applyRomBtn.setDisable(true);
-      String tableRomName = tableDetails != null ? tableDetails.getRomName() : null;
-      romName.setValue(tableRomName);
-
-      if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
-        if (!StringUtils.isEmpty(game.getRomAlias())) {
-          romName.setPromptText(game.getRom() + " (aliased ROM)");
-        }
-        else {
-          romName.setPromptText(game.getScannedRom() + " (scanned value)");
-        }
-
-        applyRomBtn.setDisable(false);
+      if (sequence != gameLoadSequence) {
+        // a newer setGame() call has already superseded this one, discard the stale response
+        return;
       }
 
-      applyAltRomBtn.setDisable(true);
-      String tableRomAlt = tableDetails != null ? tableDetails.getRomAlt() : null;
-      altRomName.setText(tableRomAlt);
-
-      if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
-        altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
-        applyAltRomBtn.setDisable(false);
-      }
-
-      resetBtn.setVisible(client.getEmulatorService().isVpxGame(game));
-
-      scannedRomName.setText(game.getScannedRom());
-      applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
-
-      scannedAltRomName.setText(game.getScannedAltRom());
-      applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
-
-      scannedHighscoreFileName.setText(game.getScannedHsFileName());
-      applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
-      hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
-
-      highscoreFileName.setValue(game.getHsFileName());
-
-      tableDataController.setHsFilenameValue(highscoreFileName.getValue());
-      if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
-        highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
-      }
+      tableDataController.withDirtyTrackingSuppressed(() -> populateFromHighscoreFiles(highscoreFiles, game, tableDetails, serverSettings));
     });
+  }
+
+  private void populateFromHighscoreFiles(HighscoreFiles highscoreFiles, GameRepresentation game, TableDetails tableDetails, ServerSettings serverSettings) {
+    this.altRomName.setPromptText("");
+    this.highscoreFileName.setPromptText("");
+
+    List<String> availableRoms = new ArrayList<>();
+    if (highscoreFiles.getNvRams() != null) {
+      availableRoms.addAll(highscoreFiles.getNvRams());
+    }
+    if (highscoreFiles.getVpRegEntries() != null) {
+      availableRoms.addAll(highscoreFiles.getVpRegEntries());
+    }
+    Collections.sort(availableRoms);
+    availableRoms.addFirst(null);
+    romName.setItems(FXCollections.observableList(availableRoms));
+
+    List<String> availableHsFiles = new ArrayList<>();
+    if (highscoreFiles.getTextFiles() != null) {
+      availableHsFiles.addAll(highscoreFiles.getTextFiles());
+    }
+    Collections.sort(availableHsFiles);
+    availableHsFiles.addFirst(null);
+    highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
+
+    refreshScannedValues();
+
+
+    applyRomBtn.setDisable(true);
+    String tableRomName = tableDetails != null ? tableDetails.getRomName() : null;
+    romName.setValue(tableRomName);
+
+    if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
+        romName.setPromptText(game.getRom() + " (aliased ROM)");
+      }
+      else {
+        romName.setPromptText(game.getScannedRom() + " (scanned value)");
+      }
+
+      applyRomBtn.setDisable(false);
+    }
+
+    applyAltRomBtn.setDisable(true);
+    String tableRomAlt = tableDetails != null ? tableDetails.getRomAlt() : null;
+    altRomName.setText(tableRomAlt);
+
+    if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+      altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
+      applyAltRomBtn.setDisable(false);
+    }
+
+    resetBtn.setVisible(client.getEmulatorService().isVpxGame(game));
+
+    scannedRomName.setText(game.getScannedRom());
+    applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
+
+    scannedAltRomName.setText(game.getScannedAltRom());
+    applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
+
+    scannedHighscoreFileName.setText(game.getScannedHsFileName());
+    applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
+    hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
+
+    highscoreFileName.setValue(game.getHsFileName());
+
+    tableDataController.setHsFilenameValue(highscoreFileName.getValue());
+    if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
+      highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
+    }
+
+    // setValue() above already committed the value synchronously (and within the dirty-tracking
+    // pause), but it also touches the editor text, which schedules a *debounced* write-back
+    // (see initBindings()) that fires ~300ms later, outside the pause window. That debounced
+    // write is redundant here and, if the field is empty, writes "" over a null bean value and
+    // falsely marks the dialog dirty. Cancel it since population already applied the real value.
+    debouncer.cancel("romName");
+    debouncer.cancel("highscoreFileName");
   }
 
   public boolean save() {
@@ -289,9 +314,15 @@ public class TableDataTabScoreDataController implements Initializable {
   private void refreshStatusIcons() {
     // get the score validations with the modified TableDetails (real time check)
     TableDetails tableDetails = tableDataController.getTableDetails();
+    int sequence = gameLoadSequence;
     JFXFuture.supplyAsync(() -> {
       return client.getGameService().getGameScoreValidation(game.getId(), tableDetails);
     }).thenAcceptLater((gameScoreValidation) -> {
+      if (sequence != gameLoadSequence) {
+        // the game has since been switched, this validation result is no longer relevant
+        return;
+      }
+
       romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
       hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
 

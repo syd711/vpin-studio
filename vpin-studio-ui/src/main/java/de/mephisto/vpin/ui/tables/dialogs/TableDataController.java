@@ -1189,6 +1189,22 @@ public class TableDataController extends BasePrevNextController implements AutoC
     tableDetailsBinder.setProperty(property, value);
   }
 
+  /**
+   * Runs the given block with the tableDetailsBinder's dirty-change notifications suppressed.
+   * Use this when programmatically re-populating fields from server data (e.g. an async
+   * load triggered by switchGame()) so it doesn't falsely mark the dialog as dirty.
+   */
+  public void withDirtyTrackingSuppressed(Runnable r) {
+    boolean wasPaused = tableDetailsBinder.isPaused();
+    tableDetailsBinder.setPaused(true);
+    try {
+      r.run();
+    }
+    finally {
+      tableDetailsBinder.setPaused(wasPaused);
+    }
+  }
+
   // Use scarefully, in readonly as modifications are not monitored 
   public TableDetails getTableDetails() {
     return tableDetailsBinder.getBean();
