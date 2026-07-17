@@ -239,7 +239,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onAssetFilter() {
-    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE, -1);
+    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE, emulatorRepresentation.getId());
     updateAnalysis();
   }
 

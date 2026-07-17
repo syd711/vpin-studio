@@ -262,6 +262,11 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
           catch (Exception e) {
             LOG.error("Media refresh failed: {}", e.getMessage(), e);
           }
+        })
+        .onErrorLater(e -> {
+          LOG.error("Media preview generation failed: {}", e.getMessage(), e);
+          endReload();
+          WidgetFactory.showAlert(stage, "Error", "Media preview generation failed: " + e.getMessage());
         });
   }
 
