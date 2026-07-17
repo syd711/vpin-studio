@@ -137,40 +137,19 @@ public class UploaderAnalysis {
       return null;
     }
 
-    String pupFolderFile = containsWithPath("scriptonly.txt");
-    if (pupFolderFile == null) {
-      String batPath = containsWithPath(".bat");
-      String pupPath = containsWithPath(".pup");
-
-      if (batPath != null && pupPath == null) {
-        pupFolderFile = batPath;
-      }
-      if (batPath == null && pupPath != null) {
-        pupFolderFile = pupPath;
-      }
-
-      if (batPath != null && pupPath != null) {
-        String[] batSegments = batPath.split("/");
-        String[] pupSegments = pupPath.split("/");
-        pupFolderFile = pupSegments.length <= batSegments.length ? pupPath : batPath;
-      }
+    String pupPackRoot = getPupPackRootDirectory();
+    if (pupPackRoot == null) {
+      return null;
     }
 
-    if (pupFolderFile != null) {
-      String rom = null;
-      if (pupFolderFile.contains("/")) {
-        String pupBasePath = pupFolderFile.substring(0, pupFolderFile.lastIndexOf("/"));
-        pupFolder = pupBasePath;
+    String basePath = pupPackRoot.endsWith("/") ? pupPackRoot.substring(0, pupPackRoot.length() - 1) : pupPackRoot;
+    pupFolder = basePath;
 
-        rom = pupBasePath;
-        if (rom.contains("/")) {
-          rom = rom.substring(rom.lastIndexOf("/") + 1);
-        }
-      }
-      return rom;
+    String rom = basePath;
+    if (rom.contains("/")) {
+      rom = rom.substring(rom.lastIndexOf("/") + 1);
     }
-
-    return pupFolderFile;
+    return rom;
   }
 
   public String getMusicFolder() {
@@ -1013,6 +992,11 @@ public class UploaderAnalysis {
     return false;
   }
 
+  //a folder is very likely a pup pack root if it directly contains at least this many
+  //subfolders, and those subfolders together hold at least this many video files
+  private final static int PUP_PACK_MIN_SUBFOLDERS = 10;
+  private final static int PUP_PACK_MIN_VIDEOS = 10;
+
   public String getPupPackRootDirectory() {
     String match = null;
     for (String name : getFilteredFilenamesWithPath()) {
@@ -1039,11 +1023,56 @@ public class UploaderAnalysis {
         parentFolder = parentFolder.substring(parentFolder.lastIndexOf("/") + 1);
       }
       if (parentFolder.contains(" ")) {
-        return null;
+        match = null;
       }
     }
 
+    if (match == null) {
+      match = findPupPackRootDirectoryByVideoFolderStructure();
+    }
+
     return match;
+  }
+
+  /**
+   * Fallback for pup packs that ship without any of the usual marker files:
+   * finds a folder that directly contains a large number of subfolders that
+   * together hold a large number of video files, which is the typical shape
+   * of a pup pack's screen folders (e.g. "topper", "fulldmd", "videointro", ...).
+   */
+  private String findPupPackRootDirectoryByVideoFolderStructure() {
+    Map<String, Set<String>> subFoldersByParent = new HashMap<>();
+    for (String folder : getFilteredFolders()) {
+      int lastSlash = folder.lastIndexOf("/");
+      if (lastSlash < 0) {
+        continue;
+      }
+      String parent = folder.substring(0, lastSlash);
+      String subFolder = folder.substring(lastSlash + 1);
+      subFoldersByParent.computeIfAbsent(parent, k -> new HashSet<>()).add(subFolder);
+    }
+
+    String bestMatch = null;
+    int bestSubFolderCount = PUP_PACK_MIN_SUBFOLDERS - 1;
+    for (Map.Entry<String, Set<String>> entry : subFoldersByParent.entrySet()) {
+      int subFolderCount = entry.getValue().size();
+      if (subFolderCount <= bestSubFolderCount) {
+        continue;
+      }
+
+      String parentPath = entry.getKey() + "/";
+      long videoCount = getFilteredFilenamesWithPath().stream()
+          .filter(name -> isFileBelowFolder(parentPath, name))
+          .filter(name -> videoSuffixes.contains(FilenameUtils.getExtension(name).toLowerCase()))
+          .count();
+
+      if (videoCount >= PUP_PACK_MIN_VIDEOS) {
+        bestMatch = parentPath;
+        bestSubFolderCount = subFolderCount;
+      }
+    }
+
+    return bestMatch;
   }
 
   public byte[] readFile(String name) {

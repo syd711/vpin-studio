@@ -2,10 +2,10 @@
 
 ### Changes
 
-- **Uploader Analysis**
+- **Uploader Dialog / Analysis**
   - Fixed issue that PUP packs have been installed into the VPX "Music" folder. A stricter check has been added.
-  - Improved PUP pack detection of the VPX archives. Folder with whitespaces are not recognized as valid PUP pack target folder now.
-  - Fixed issues in the "Media Selection" dialog which previews the detected assets.
+  - Improved PUP pack detection of the VPX archives. 
+  - Fixed various issues in the "Media Selection" dialog which previews the detected assets.
 - **Table Data Manager**
   - Fixed issue that clicking forward and backwards button, the editor was marked dirty although nothing was changed.
 - **iScored Settings**

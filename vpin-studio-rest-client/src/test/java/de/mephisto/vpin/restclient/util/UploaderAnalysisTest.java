@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.util;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -92,6 +93,72 @@ public class UploaderAnalysisTest {
   public void testPupPackRootDirectoryNullWithoutMarkerFiles() {
     UploaderAnalysis analysis = newAnalysis("MyGame/table.vpx");
     assertNull(analysis.getPupPackRootDirectory());
+  }
+
+  @Test
+  public void testPupPackRootDirectoryResolvedByVideoFolderStructureFallback() {
+    // no screens.pup/options.bat/scriptonly.txt marker anywhere, but the folder shape
+    // (>= 10 subfolders holding >= 10 videos in total) mirrors a real-world pup pack,
+    // e.g. "BJBJ" in "Beetlejuice Beetlejuice 1.2.0 VPX 2026.zip"
+    List<String> files = new ArrayList<>();
+    files.add("MyGame/table.vpx");
+    for (int i = 0; i < 10; i++) {
+      files.add("MyGame/BJBJ/videoscreen" + i + "/video.mkv");
+    }
+    UploaderAnalysis analysis = newAnalysis(files.toArray(new String[0]));
+
+    assertEquals("MyGame/BJBJ/", analysis.getPupPackRootDirectory());
+  }
+
+  @Test
+  public void testPupPackRootDirectoryFallbackRequiresEnoughSubfolders() {
+    List<String> files = new ArrayList<>();
+    files.add("MyGame/table.vpx");
+    for (int i = 0; i < 9; i++) {
+      files.add("MyGame/BJBJ/videoscreen" + i + "/video.mkv");
+    }
+    UploaderAnalysis analysis = newAnalysis(files.toArray(new String[0]));
+
+    assertNull(analysis.getPupPackRootDirectory());
+  }
+
+  @Test
+  public void testPupPackRootDirectoryFallbackRequiresEnoughVideos() {
+    List<String> files = new ArrayList<>();
+    files.add("MyGame/table.vpx");
+    for (int i = 0; i < 10; i++) {
+      // 10 subfolders, but only readme files inside - no videos
+      files.add("MyGame/BJBJ/screen" + i + "/notes.txt");
+    }
+    UploaderAnalysis analysis = newAnalysis(files.toArray(new String[0]));
+
+    assertNull(analysis.getPupPackRootDirectory());
+  }
+
+  @Test
+  public void testPupPackRootDirectoryFromRealWorldBeetlejuiceArchive() throws Exception {
+    File archive = new File("C:/vPinball/vpin-dropins/Beetlejuice Beetlejuice 1.2.0 VPX 2026.zip");
+    Assumptions.assumeTrue(archive.exists(), "Real-world fixture archive not available on this machine, skipping.");
+
+    UploaderAnalysis analysis = new UploaderAnalysis(true, archive);
+    analysis.analyze();
+
+    String pupPackRootDirectory = analysis.getPupPackRootDirectory();
+    assertNotNull(pupPackRootDirectory, "BJBJ should be detected as pup pack root via the video folder structure fallback");
+    assertTrue(pupPackRootDirectory.endsWith("BJBJ/"));
+  }
+
+  @Test
+  public void testPUPPackFolderFromRealWorldBeetlejuiceArchive() throws Exception {
+    File archive = new File("C:/vPinball/vpin-dropins/Beetlejuice Beetlejuice 1.2.0 VPX 2026.zip");
+    Assumptions.assumeTrue(archive.exists(), "Real-world fixture archive not available on this machine, skipping.");
+
+    UploaderAnalysis analysis = new UploaderAnalysis(true, archive);
+    analysis.analyze();
+
+    String pupPackFolder = analysis.getPUPPackFolder();
+    assertNotNull(pupPackFolder, "BJBJ should be detected as pup pack root");
+    assertTrue(pupPackFolder.endsWith("BJBJ"), "Expected BJBJ but got: " + pupPackFolder);
   }
 
   // ---------------------------------------------------------------------

@@ -60,14 +60,14 @@
 
 .window-header {
     -fx-background-color: -fx-base-7;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
+    -fx-border-radius: 6x 6x 0 0;
+    -fx-background-radius: 6px 6px 0 0;
 }
 
 .dialog-header {
     -fx-background-color: -fx-base-7;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
+    -fx-border-radius: 6x 6x 0 0;
+    -fx-background-radius: 6px 6px 0 0;
 }
 
 .main-toolbar {
