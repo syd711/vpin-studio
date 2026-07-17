@@ -122,10 +122,7 @@ public class DMDDeviceIniService {
 
   public boolean saveVirtualDMDInfoInIni(@NonNull Game game, DMDInfo dmdinfo, DMDInfoZone dmdinfoZone, boolean locallySaved) {
     INIConfiguration iniConfiguration = getIniConfiguration(game);
-    String dmdStoreName = dmdinfo.getDmdStoreName();
-    if (dmdinfo.getDmdStoreName().contains(".")) {
-      dmdStoreName = dmdStoreName.replace(".", "..");
-    }
+    String dmdStoreName = escapeIniSectionName(dmdinfo.getDmdStoreName());
 
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
@@ -176,7 +173,7 @@ public class DMDDeviceIniService {
 
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
+    SubnodeConfiguration conf = iniConfiguration.getSection(escapeIniSectionName(rom));
 
     // if the global virtualDMD is enabled, force enable=false
     if (safeGetBoolean(virtualdmdConf, "enabled", false)) {
@@ -214,7 +211,7 @@ public class DMDDeviceIniService {
     if (iniConfiguration != null && rom != null) {
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
       SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-      SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
+      SubnodeConfiguration conf = iniConfiguration.getSection(escapeIniSectionName(rom));
 
       // if the global virtualconf is enabled, force enable=false
       if (safeGetBoolean(virtualdmdConf, "enabled", false)) {
@@ -245,7 +242,7 @@ public class DMDDeviceIniService {
     // mind that iniConfiguration can be null if externalDMD is not used
     INIConfiguration iniConfiguration = getIniConfiguration(game);
     if (iniConfiguration != null) {
-      SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
+      SubnodeConfiguration conf = iniConfiguration.getSection(escapeIniSectionName(rom));
       conf.clear();
 
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
@@ -265,7 +262,7 @@ public class DMDDeviceIniService {
     if (!StringUtils.isEmpty(storeName)) {
       INIConfiguration iniConfiguration = getIniConfiguration(game);
       if (iniConfiguration != null) {
-        SubnodeConfiguration conf = iniConfiguration.getSection(storeName);
+        SubnodeConfiguration conf = iniConfiguration.getSection(escapeIniSectionName(storeName));
         if (conf != null) {
           DMDBackupData data = new DMDBackupData();
           data.setX(safeGet(conf, "virtualdmd left", safeGet(conf, "left")));
@@ -292,8 +289,16 @@ public class DMDDeviceIniService {
       // cf https://github.com/vbousquet/flexdmd/blob/6357c1874e896777a53348094eafa86f386dd8fe/FlexDMD/FlexDMD.cs#L188
       storeName = storeName.replaceAll("[\\s_vV][\\d_\\.]+[a-z]?(-DOF)?\\*?$", "").trim();
     }
-    storeName = storeName.replaceAll("\\.", " ");
     return storeName;
+  }
+
+  /**
+   * Commons Configuration2 treats "." as the hierarchical delimiter between section and key names,
+   * so a literal dot in a ROM/store name (e.g. a version number like "1.0.0") must be escaped by
+   * doubling it, or it would otherwise be misread as a nested section path.
+   */
+  public String escapeIniSectionName(String name) {
+    return name != null && name.contains(".") ? name.replace(".", "..") : name;
   }
 
   @Nullable
@@ -334,7 +339,7 @@ public class DMDDeviceIniService {
       if (dmdDeviceIni != null && !dmdDeviceIni.isUseRegistry()) {
         INIConfiguration iniConfiguration = getIniConfiguration(game);
         if (iniConfiguration != null) {
-          String dmdStoreName = getStoreName(game);
+          String dmdStoreName = escapeIniSectionName(getStoreName(game));
 
           LOG.info("Restoring DMDDevice.ini entry {}", dmdDeviceIni);
           iniConfiguration.setProperty(dmdStoreName + ".virtualdmd left", (int) dmdBackupData.getX());

@@ -122,7 +122,7 @@ public class DMDPositionService {
         if (type == null) {
           SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
           SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-          SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName());
+          SubnodeConfiguration conf = iniConfiguration.getSection(dmdDeviceIniService.escapeIniSectionName(dmdinfo.getDmdStoreName()));
           Boolean virtualDmdEnabled = safeGetBoolean(conf, "virtualdmd enabled", safeGetBoolean(virtualdmdConf, "enabled", null));
           boolean alphaNumericEnabled = safeGetBoolean(conf, "alphanumeric enabled", safeGetBoolean(alphaNumericConf, "enabled", false));
           type = alphaNumericEnabled ? DMDType.AlphaNumericDMD :
@@ -257,7 +257,7 @@ public class DMDPositionService {
   private boolean fillDMDInfoFromIni(DMDInfo info, DMDInfoZone main, List<DMDInfoZone> alphaNumZones, INIConfiguration iniConfiguration) {
     if (info.getDmdStoreName() != null) {
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-      SubnodeConfiguration conf = iniConfiguration.getSection(info.getDmdStoreName());
+      SubnodeConfiguration conf = iniConfiguration.getSection(dmdDeviceIniService.escapeIniSectionName(info.getDmdStoreName()));
 
       info.setLocallySaved(!conf.isEmpty());
       info.setUseRegistry(false);

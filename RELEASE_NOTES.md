@@ -10,6 +10,8 @@
   - Fixed issue that clicking forward and backwards button, the editor was marked dirty although nothing was changed.
 - **iScored Settings**
   - Fixed issue loading Game Rooms because the URL was not trimmed before saving.
+- **DMD Positioning**
+  - Fixed issue that dot (".") version delimiters have been replaced with whitespaces.
 - **Misc**
   - Blind fix for repairing opening remote folders.
 
