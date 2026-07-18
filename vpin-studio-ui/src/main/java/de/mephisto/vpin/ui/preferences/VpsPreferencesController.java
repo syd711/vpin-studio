@@ -49,6 +49,27 @@ public class VpsPreferencesController implements Initializable {
   private CheckBox vpsWheel;
 
   @FXML
+  private CheckBox vpsAltSoundColumn;
+  @FXML
+  private CheckBox vpsAltColorColumn;
+  @FXML
+  private CheckBox vpsBackglassColumn;
+  @FXML
+  private CheckBox vpsPOVColumn;
+  @FXML
+  private CheckBox vpsPUPPackColumn;
+  @FXML
+  private CheckBox vpsRomColumn;
+  @FXML
+  private CheckBox vpsSoundColumn;
+  @FXML
+  private CheckBox vpsToppperColumn;
+  @FXML
+  private CheckBox vpsTutorialColumn;
+  @FXML
+  private CheckBox vpsWheelColumn;
+
+  @FXML
   private CheckBox uiShowVPSUpdates;
 
   @FXML
@@ -67,6 +88,7 @@ public class VpsPreferencesController implements Initializable {
     VpsSettings vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
 
     boolean disabled = vpsSettings.isHideVPSUpdates();
+
     vpsAltSound.setDisable(disabled);
     vpsAltSound.setSelected(vpsSettings.isVpsAltSound());
     vpsAltColor.setDisable(disabled);
@@ -87,6 +109,27 @@ public class VpsPreferencesController implements Initializable {
     vpsTutorial.setSelected(vpsSettings.isVpsTutorial());
     vpsWheel.setDisable(disabled);
     vpsWheel.setSelected(vpsSettings.isVpsWheel());
+
+    vpsAltSoundColumn.setDisable(disabled);
+    vpsAltSoundColumn.setSelected(vpsSettings.isVpsColumnAltSound());
+    vpsAltColorColumn.setDisable(disabled);
+    vpsAltColorColumn.setSelected(vpsSettings.isVpsColumnAltColor());
+    vpsBackglassColumn.setDisable(disabled);
+    vpsBackglassColumn.setSelected(vpsSettings.isVpsColumnBackglass());
+    vpsPOVColumn.setDisable(disabled);
+    vpsPOVColumn.setSelected(vpsSettings.isVpsColumnPOV());
+    vpsPUPPackColumn.setDisable(disabled);
+    vpsPUPPackColumn.setSelected(vpsSettings.isVpsColumnPUPPack());
+    vpsRomColumn.setDisable(disabled);
+    vpsRomColumn.setSelected(vpsSettings.isVpsColumnRom());
+    vpsSoundColumn.setDisable(disabled);
+    vpsSoundColumn.setSelected(vpsSettings.isVpsColumnSound());
+    vpsToppperColumn.setDisable(disabled);
+    vpsToppperColumn.setSelected(vpsSettings.isVpsColumnToppper());
+    vpsTutorialColumn.setDisable(disabled);
+    vpsTutorialColumn.setSelected(vpsSettings.isVpsColumnTutorial());
+    vpsWheelColumn.setDisable(disabled);
+    vpsWheelColumn.setSelected(vpsSettings.isVpsColumnWheel());
 
     vpsAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       vpsSettings.setVpsAltSound(t1);
@@ -135,6 +178,57 @@ public class VpsPreferencesController implements Initializable {
     });
     vpsWheel.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       vpsSettings.setVpsWheel(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+
+    vpsAltSoundColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnAltSound(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsAltColorColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnAltColor(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsBackglassColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnBackglass(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsPOVColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnPOV(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsPUPPackColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnPUPPack(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsRomColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnRom(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsSoundColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnSound(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsToppperColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnToppper(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsTutorialColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnTutorial(t1);
+      PreferencesController.markDirty(PreferenceType.vpsSettings);
+      client.getPreferenceService().setJsonPreference(vpsSettings);
+    });
+    vpsWheelColumn.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      vpsSettings.setVpsColumnWheel(t1);
       PreferencesController.markDirty(PreferenceType.vpsSettings);
       client.getPreferenceService().setJsonPreference(vpsSettings);
     });

@@ -113,8 +113,8 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, 
-        String targetDirectory, boolean forceDownload) {
+  public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
+                                        String targetDirectory, boolean forceDownload) {
     Component component = getComponent(type);
     ComponentFacade componentFacade = getComponentFacade(type);
     if (targetDirectory != null) {
@@ -182,8 +182,8 @@ public class ComponentService implements InitializingBean {
   }
 
   @NonNull
-  public ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, 
-        String targetDirectory, boolean simulate) {
+  public ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
+                                          String targetDirectory, boolean simulate) {
     Component component = getComponent(type);
     List<GithubRelease> githubReleases = getCached(component);
     Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
@@ -195,6 +195,10 @@ public class ComponentService implements InitializingBean {
       File targetFolder = new File(targetDirectory);
       if (simulate) {
         return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
+      }
+
+      if (type.equals(ComponentType.b2sbackglass)) {
+        systemService.killProcesses("DFOLinx");
       }
 
       componentFacade.preProcess(releaseArtifact, install);
@@ -258,17 +262,17 @@ public class ComponentService implements InitializingBean {
   }
 
   public ComponentFacade getComponentFacade(ComponentType type) {
-      return switch (type) {
-          case vpinmame -> vPinMAMEComponent;
-          case vpinball -> vpxComponent;
-          case b2sbackglass -> backglassComponent;
-          case flexdmd -> flexDMDComponent;
-          case freezy -> freezyComponent;
-          case serum -> serumComponent;
-          case doflinx -> dofLinxComponent;
-          case dof -> dofComponent;
-          default -> throw new UnsupportedOperationException("Invalid component type " + type);
-      };
+    return switch (type) {
+      case vpinmame -> vPinMAMEComponent;
+      case vpinball -> vpxComponent;
+      case b2sbackglass -> backglassComponent;
+      case flexdmd -> flexDMDComponent;
+      case freezy -> freezyComponent;
+      case serum -> serumComponent;
+      case doflinx -> dofLinxComponent;
+      case dof -> dofComponent;
+      default -> throw new UnsupportedOperationException("Invalid component type " + type);
+    };
   }
 
   @Override

@@ -2,6 +2,19 @@
 
 ### Changes
 
+- **System Updater**
+  - The process for **DOFLinx** is now killed when the backglass server is updated.
+- **VPS Settings**
+  - Added different configuration options for the columns visible in the VPS tab and updates shown for the VPS update indicator.
+
+
+---
+
+
+## Release Notes 5.1.3
+
+### Changes
+
 - **Uploader Dialog / Analysis**
   - Fixed issue that PUP packs have been installed into the VPX "Music" folder. A stricter check has been added.
   - Improved PUP pack detection of the VPX archives. 

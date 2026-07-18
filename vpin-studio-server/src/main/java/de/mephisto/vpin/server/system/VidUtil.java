@@ -57,6 +57,7 @@ public class VidUtil {
                 "-i", file.getAbsolutePath(),
                 "-vf", "select=eq(n\\," + FRAME_INDEX + ")",
                 "-vframes", "1",
+                "-update", "1",
                 outputFile.getAbsolutePath()
         );
 

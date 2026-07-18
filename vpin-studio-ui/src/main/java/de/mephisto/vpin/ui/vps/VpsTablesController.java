@@ -398,16 +398,18 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
     if (PreferenceType.vpsSettings.equals(preferenceType)) {
-      VpsSettings vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
-      directB2SColumn.setVisible(vpsSettings.isVpsBackglass());
-      pupPackColumn.setVisible(vpsSettings.isVpsPUPPack());
-      romColumn.setVisible(vpsSettings.isVpsRom());
-      topperColumn.setVisible(vpsSettings.isVpsToppper());
-      povColumn.setVisible(vpsSettings.isVpsPOV());
-      soundColumn.setVisible(vpsSettings.isVpsSound());
-      altSoundColumn.setVisible(vpsSettings.isVpsAltSound());
-      altColorColumn.setVisible(vpsSettings.isVpsAltColor());
-      tutorialColumn.setVisible(vpsSettings.isVpsTutorial());
+      Platform.runLater(() -> {
+        VpsSettings vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+        directB2SColumn.setVisible(vpsSettings.isVpsColumnBackglass());
+        pupPackColumn.setVisible(vpsSettings.isVpsColumnPUPPack());
+        romColumn.setVisible(vpsSettings.isVpsColumnRom());
+        topperColumn.setVisible(vpsSettings.isVpsColumnToppper());
+        povColumn.setVisible(vpsSettings.isVpsColumnPOV());
+        soundColumn.setVisible(vpsSettings.isVpsColumnSound());
+        altSoundColumn.setVisible(vpsSettings.isVpsColumnAltSound());
+        altColorColumn.setVisible(vpsSettings.isVpsColumnAltColor());
+        tutorialColumn.setVisible(vpsSettings.isVpsColumnTutorial());
+      });
     }
   }
 

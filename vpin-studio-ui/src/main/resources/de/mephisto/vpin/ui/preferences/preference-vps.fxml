@@ -4,10 +4,10 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -46,6 +46,11 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
+                   <Label styleClass="default-headline" text="Show Updates for Assets" textFill="WHITE">
+                       <VBox.margin>
+                           <Insets top="24.0" />
+                       </VBox.margin>
+                   </Label>
                   <HBox>
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
@@ -119,6 +124,84 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </HBox>
+                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox layoutX="10.0" layoutY="161.0">
+                           <children>
+                              <VBox prefWidth="180.0" spacing="6.0">
+                                 <children>
+                                    <CheckBox fx:id="vpsAltColorColumn" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsAltSoundColumn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsBackglassColumn" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsPOVColumn" mnemonicParsing="false" text="POV" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </VBox>
+                              <VBox prefWidth="180.0" spacing="6.0">
+                                 <children>
+                                    <CheckBox fx:id="vpsPUPPackColumn" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsRomColumn" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsSoundColumn" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsToppperColumn" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
+                                 <children>
+                                    <CheckBox fx:id="vpsTutorialColumn" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vpsWheelColumn" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                              <VBox spacing="6.0" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </HBox>
                </children>
                <VBox.margin>
                   <Insets top="12.0" />
@@ -134,7 +217,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
               </rowConstraints>
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets top="24.0" />
                </VBox.margin>
                <children>
                   <Label styleClass="default-text" text="Author Deny List:" />

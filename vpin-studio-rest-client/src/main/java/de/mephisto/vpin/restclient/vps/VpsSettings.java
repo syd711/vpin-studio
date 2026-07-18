@@ -17,7 +17,98 @@ public class VpsSettings extends JsonSettings {
   private boolean vpsTutorial = true;
   private boolean vpsWheel = true;
 
+  private boolean vpsColumnAltSound = true;
+  private boolean vpsColumnAltColor = true;
+  private boolean vpsColumnBackglass = true;
+  private boolean vpsColumnPOV = true;
+  private boolean vpsColumnPUPPack = true;
+  private boolean vpsColumnRom = true;
+  private boolean vpsColumnSound = true;
+  private boolean vpsColumnToppper = true;
+  private boolean vpsColumnTutorial = true;
+  private boolean vpsColumnWheel = true;
+
   private String authorDenyList;
+
+  public boolean isVpsColumnAltSound() {
+    return vpsColumnAltSound;
+  }
+
+  public void setVpsColumnAltSound(boolean vpsColumnAltSound) {
+    this.vpsColumnAltSound = vpsColumnAltSound;
+  }
+
+  public boolean isVpsColumnAltColor() {
+    return vpsColumnAltColor;
+  }
+
+  public void setVpsColumnAltColor(boolean vpsColumnAltColor) {
+    this.vpsColumnAltColor = vpsColumnAltColor;
+  }
+
+  public boolean isVpsColumnBackglass() {
+    return vpsColumnBackglass;
+  }
+
+  public void setVpsColumnBackglass(boolean vpsColumnBackglass) {
+    this.vpsColumnBackglass = vpsColumnBackglass;
+  }
+
+  public boolean isVpsColumnPOV() {
+    return vpsColumnPOV;
+  }
+
+  public void setVpsColumnPOV(boolean vpsColumnPOV) {
+    this.vpsColumnPOV = vpsColumnPOV;
+  }
+
+  public boolean isVpsColumnPUPPack() {
+    return vpsColumnPUPPack;
+  }
+
+  public void setVpsColumnPUPPack(boolean vpsColumnPUPPack) {
+    this.vpsColumnPUPPack = vpsColumnPUPPack;
+  }
+
+  public boolean isVpsColumnRom() {
+    return vpsColumnRom;
+  }
+
+  public void setVpsColumnRom(boolean vpsColumnRom) {
+    this.vpsColumnRom = vpsColumnRom;
+  }
+
+  public boolean isVpsColumnSound() {
+    return vpsColumnSound;
+  }
+
+  public void setVpsColumnSound(boolean vpsColumnSound) {
+    this.vpsColumnSound = vpsColumnSound;
+  }
+
+  public boolean isVpsColumnToppper() {
+    return vpsColumnToppper;
+  }
+
+  public void setVpsColumnToppper(boolean vpsColumnToppper) {
+    this.vpsColumnToppper = vpsColumnToppper;
+  }
+
+  public boolean isVpsColumnTutorial() {
+    return vpsColumnTutorial;
+  }
+
+  public void setVpsColumnTutorial(boolean vpsColumnTutorial) {
+    this.vpsColumnTutorial = vpsColumnTutorial;
+  }
+
+  public boolean isVpsColumnWheel() {
+    return vpsColumnWheel;
+  }
+
+  public void setVpsColumnWheel(boolean vpsColumnWheel) {
+    this.vpsColumnWheel = vpsColumnWheel;
+  }
 
   public String getAuthorDenyList() {
     return authorDenyList;
