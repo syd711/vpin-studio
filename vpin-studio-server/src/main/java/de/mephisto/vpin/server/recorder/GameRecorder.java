@@ -26,6 +26,8 @@ import java.util.concurrent.*;
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
   private final static int TIMEOUT_MINUTES = 10;
+  private final static int DELETE_RETRY_ATTEMPTS = 5;
+  private final static long DELETE_RETRY_DELAY_MILLIS = 200;
 
   private final FrontendConnector frontend;
   private final Game game;
@@ -206,7 +208,7 @@ public class GameRecorder {
 
     RecordingWriteMode recordingWriteMode = result.getRecordingScreenOptions().getRecordMode();
 
-    LOG.info("Finalizing temporary recording file {} for screen {}", recordingTempFile.getAbsolutePath(), screen.name());
+    LOG.info("Finalizing temporary recording file {} ({}) for screen {}", recordingTempFile.getAbsolutePath(), FileUtils.byteCountToDisplaySize(recordingTempFile.length()), screen.name());
 
     try {
       // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4
@@ -223,7 +225,7 @@ public class GameRecorder {
             for (File screenMediaFile : screenMediaFiles) {
               if (screenMediaFile.getParentFile().equals(mediaFolder) &&
                   Strings.CI.equals(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
-                if (!screenMediaFile.delete()) {
+                if (!deleteWithRetry(screenMediaFile)) {
                   LOG.error("Failed to delete {}, can't overwrite file with media recording for {}, file will be appended instead", screenMediaFile.getAbsolutePath(), screen.name());
                 }
                 else {
@@ -237,7 +239,7 @@ public class GameRecorder {
         }
         case ifMissing: {
           copyRecordingToTarget(game, screen, recordingTempFile, target);
-          LOG.info("Added recorded file {} to screen {}, copied {}, used ifMissing mode.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+          LOG.info("Added recorded file {} to screen {}, copied {} ({}), used ifMissing mode.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name(), FileUtils.byteCountToDisplaySize(target.length()));
           break;
         }
         case append: {
@@ -246,7 +248,7 @@ public class GameRecorder {
             // another temporary not existing file that will be deleted
             target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
             copyRecordingToTarget(game, screen, recordingTempFile, target);
-            LOG.info("Appended recorded file {} of screen {} with {}, used overwrite mode.", recordingTempFile.getAbsolutePath(), target.getAbsolutePath(), screen.name());
+            LOG.info("Appended recorded file {} of screen {} with {} ({}), used overwrite mode.", recordingTempFile.getAbsolutePath(), target.getAbsolutePath(), screen.name(), FileUtils.byteCountToDisplaySize(target.length()));
           }
           break;
         }
@@ -266,14 +268,14 @@ public class GameRecorder {
 
   private void copyRecordingToTarget(Game game, VPinScreen screen, File recordingTempFile, File target) throws IOException {
     try {
-      if (target.exists() && !target.delete()) {
+      if (target.exists() && !deleteWithRetry(target)) {
         target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
         FileUtils.copyFile(recordingTempFile, target);
-        LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+        LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" ({}, original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name(), FileUtils.byteCountToDisplaySize(target.length()));
       }
       else {
         FileUtils.copyFile(recordingTempFile, target);
-        LOG.info("Copied media file {} of screen {} with {}.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+        LOG.info("Copied media file {} of screen {} with {} ({}).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name(), FileUtils.byteCountToDisplaySize(target.length()));
       }
     }
     catch (IOException e) {
@@ -281,5 +283,28 @@ public class GameRecorder {
       target = frontend.getMediaAccessStrategy().createMedia(game, screen, "mp4", true);
       FileUtils.copyFile(recordingTempFile, target);
     }
+  }
+
+  /**
+   * The frontend processes holding the previous media file open are killed just before this runs;
+   * Windows can take a moment to actually release the file handle, so a single delete() attempt
+   * right after the kill can fail intermittently. Retry with a short backoff before giving up.
+   */
+  private boolean deleteWithRetry(File file) {
+    for (int attempt = 1; attempt <= DELETE_RETRY_ATTEMPTS; attempt++) {
+      if (file.delete()) {
+        return true;
+      }
+      if (attempt < DELETE_RETRY_ATTEMPTS) {
+        try {
+          Thread.sleep(DELETE_RETRY_DELAY_MILLIS);
+        }
+        catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return false;
+        }
+      }
+    }
+    return false;
   }
 }

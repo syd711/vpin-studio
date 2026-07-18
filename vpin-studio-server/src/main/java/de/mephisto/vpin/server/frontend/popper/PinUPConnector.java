@@ -2542,10 +2542,22 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       return true;
     }
 
+    List<CompletableFuture<ProcessHandle>> exitFutures = new ArrayList<>();
     for (ProcessHandle pinUpProcess : pinUpProcesses) {
       String cmd = pinUpProcess.info().command().get();
       boolean b = pinUpProcess.destroyForcibly();
       LOG.info("Destroyed process '{}', result: {}", cmd, b);
+      exitFutures.add(pinUpProcess.onExit());
+    }
+
+    // destroyForcibly() only requests termination, it does not wait for the process (and its open file handles,
+    // e.g. media files it was playing) to actually be released, so wait here to avoid races with callers
+    // that immediately try to overwrite media files these processes had open.
+    try {
+      CompletableFuture.allOf(exitFutures.toArray(new CompletableFuture[0])).get(5, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.warn("Timed out waiting for PinUP processes to fully exit, file handles may still be held: {}", e.getMessage());
     }
 
     //actually redundant, but who knows what else is in there

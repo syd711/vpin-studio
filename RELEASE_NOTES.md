@@ -6,7 +6,8 @@
   - The process for **DOFLinx** is now killed when the backglass server is updated.
 - **VPS Settings**
   - Added different configuration options for the columns visible in the VPS tab and updates shown for the VPS update indicator.
-
+- **Media Recorder**
+  - Fixed issues with possible race conditions which resulted in problems overwriting existing files.
 
 ---
 
