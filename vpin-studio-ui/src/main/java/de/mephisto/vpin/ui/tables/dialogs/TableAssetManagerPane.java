@@ -69,7 +69,7 @@ public class TableAssetManagerPane<P extends TableAssetManagerPane.MediaPane> ex
     audio = factory.createPane(this, "Audio", VPinScreen.Audio, "mp3");
     loading = factory.createPane(this, "Loading", VPinScreen.Loading, "mp4");
     other2 = factory.createPane(this, "Other2", VPinScreen.Other2, "mp4", "png", "jpg");
-    wheel = factory.createPane(this, "Wheel", VPinScreen.Wheel, "apng", "png", "jpg");
+    wheel = factory.createPane(this, "Wheel", VPinScreen.Wheel, "apng", "png", "jpg", "webp");
     logo = factory.createPane(this, "Logo", VPinScreen.Logo, "png", "jpg");
 
     allpanes = Arrays.asList(

@@ -19,8 +19,8 @@ public class ImageViewer extends AssetMediaPlayer {
 
   public void render(String url,  @Nullable VPinScreen screen, boolean invertPlayfield) {
     setLoading();
-    JFXFuture.supplyAsync(() -> CommonImageUtil.loadImageFromUrl(url)).thenAcceptLater(i -> {
-        assert i != null;
+      JFXFuture.supplyAsync(() -> new Image(url)).thenAcceptLater(i -> {
+          assert i != null;
         if (i.isError()) {
             LOG.error("Image failed to load: {}", i.getException().getMessage(), i.getException());
             return;
