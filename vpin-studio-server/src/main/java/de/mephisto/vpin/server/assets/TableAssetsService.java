@@ -117,7 +117,7 @@ public class TableAssetsService {
       catch (Exception e) {
         LOG.error("Failed to execute download: {}", e.getMessage(), e);
       }
-      CommonImageUtil.convertWebPToPngIfNeeded(target);
+      target = CommonImageUtil.convertWebPToPngIfNeeded(target);
     }
   }
 
