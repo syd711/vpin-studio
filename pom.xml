@@ -29,6 +29,8 @@
         <logback.version>1.5.32</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
         <jspecify.version>1.0.0</jspecify.version>
+        <twelvemonkeys.version>3.13.1</twelvemonkeys.version>
+
 
         <!-- Plugin versions -->
         <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>

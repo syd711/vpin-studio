@@ -14,13 +14,18 @@ import javafx.scene.image.WritableImage;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.Nullable;
+
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+import java.net.HttpURLConnection;
+import java.net.URI;
 
 public class CommonImageUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -267,4 +272,72 @@ public class CommonImageUtil {
     long duration = System.currentTimeMillis() - writeDuration;
     LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
   }
+
+    /**
+     * Loads a JavaFX {@link Image} from an HTTP/HTTPS URL, with transparent
+     * handling for servers that return WebP data despite a {@code .png} extension
+     * or {@code image/png} Content-Type header.
+     *
+     * <p>The response bytes are fetched first so the format can be sniffed before
+     * handing off to the appropriate decoder:
+     * <ul>
+     *   <li>WebP ({@code RIFF....WEBP} header): decoded via
+     *       {@link ImageIO} using the TwelveMonkeys {@code imageio-webp} plugin,
+     *       then converted to a JavaFX {@link Image} via {@link SwingFXUtils}.</li>
+     *   <li>Everything else: passed directly to {@code new Image(InputStream)},
+     *       which handles PNG, JPEG, GIF, and APNG via the registered loaders.</li>
+     * </ul>
+     *
+     * @param -url the image URL (HTTP or HTTPS)
+     * @return the decoded {@link Image}, or {@code null} if loading failed
+     *         (error is logged; the caller need not log again)
+     */
+
+    @Nullable
+    public static Image loadImageFromUrl(String url) {
+        try {
+            HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
+            conn.setConnectTimeout(5_000);
+            conn.setReadTimeout(30_000);
+            conn.setRequestProperty("Accept", "image/*");
+
+            try (InputStream is = conn.getInputStream()) {
+                byte[] bytes = is.readAllBytes();
+
+                if (isWebP(bytes)) {
+                    LOG.info("Detected WebP content at URL, decoding via TwelveMonkeys ImageIO: {}", url);
+                    BufferedImage buffered = ImageIO.read(new ByteArrayInputStream(bytes));
+                    if (buffered == null) {
+                        LOG.error("WebP decode returned null for URL: {}", url);
+                        return null;
+                    }
+                    return SwingFXUtils.toFXImage(buffered, null);
+                }
+
+                // All other formats — delegate to JavaFX's registered image loaders
+                return new Image(new ByteArrayInputStream(bytes));
+            } finally {
+                conn.disconnect();
+            }
+        } catch (Exception e) {
+            LOG.error("Failed to load image from URL {}: {}", url, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Returns {@code true} if {@code bytes} begins with a WebP file header
+     * ({@code RIFF} at offset 0, {@code WEBP} at offset 8).
+     */
+    private static boolean isWebP(byte[] bytes) {
+        return bytes.length >= 12
+                && bytes[0]  == (byte) 'R'
+                && bytes[1]  == (byte) 'I'
+                && bytes[2]  == (byte) 'F'
+                && bytes[3]  == (byte) 'F'
+                && bytes[8]  == (byte) 'W'
+                && bytes[9]  == (byte) 'E'
+                && bytes[10] == (byte) 'B'
+                && bytes[11] == (byte) 'P';
+    }
 }
