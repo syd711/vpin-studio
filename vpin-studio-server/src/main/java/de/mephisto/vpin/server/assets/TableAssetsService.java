@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
@@ -116,6 +117,7 @@ public class TableAssetsService {
       catch (Exception e) {
         LOG.error("Failed to execute download: {}", e.getMessage(), e);
       }
+      CommonImageUtil.convertWebPToPngIfNeeded(target);
     }
   }
 

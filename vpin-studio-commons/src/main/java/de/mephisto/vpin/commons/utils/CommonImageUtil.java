@@ -340,4 +340,25 @@ public class CommonImageUtil {
                 && bytes[10] == (byte) 'B'
                 && bytes[11] == (byte) 'P';
     }
+
+    public static void convertWebPToPngIfNeeded(File file) {
+        try {
+            byte[] header = new byte[12];
+            try (FileInputStream fis = new FileInputStream(file)) {
+                if (fis.read(header) < 12 || !isWebP(header)) {
+                    return;
+                }
+            }
+            LOG.info("Detected WebP content in {}, converting to PNG", file.getAbsolutePath());
+            BufferedImage image = ImageIO.read(file);
+            if (image == null) {
+                LOG.error("WebP decode returned null for file: {}", file.getAbsolutePath());
+                return;
+            }
+            ImageIO.write(image, "PNG", file);
+            LOG.info("Converted WebP to PNG: {}", file.getAbsolutePath());
+        } catch (Exception e) {
+            LOG.error("Failed to convert WebP file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
+        }
+    }
 }

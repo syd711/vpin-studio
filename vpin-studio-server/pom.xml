@@ -25,6 +25,8 @@
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <jspecify.version>1.0.0</jspecify.version>
         <spotbugs.version>4.9.8</spotbugs.version>
+        <twelvemonkeys.version>3.13.1</twelvemonkeys.version>
+
 
         <!-- Plugin versions -->
         <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
@@ -766,6 +768,8 @@
                                 <ignoredUnusedDeclaredDependency>org.imgscalr:imgscalr-lib</ignoredUnusedDeclaredDependency>
                                 <!-- Test aggregation jar -->
                                 <ignoredUnusedDeclaredDependency>org.junit.jupiter:junit-jupiter</ignoredUnusedDeclaredDependency>
+                                <!--Twelvemonkeys Image Processing -->
+                                <ignoredUnusedDeclaredDependency>com.twelvemonkeys.imageio:imageio-webp</ignoredUnusedDeclaredDependency>
                             </ignoredUnusedDeclaredDependencies>
                         </configuration>
                     </execution>
