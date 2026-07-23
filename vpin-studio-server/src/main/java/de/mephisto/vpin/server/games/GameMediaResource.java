@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -419,6 +420,9 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
+      if ("webp".equalsIgnoreCase(suffix)) {
+          suffix = "png";
+      }
       File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, append);
       if (out == null) {
         LOG.error("No game found for media upload.");
@@ -426,7 +430,8 @@ public class GameMediaResource {
       }
 
       LOG.info("Uploading {}", out.getAbsolutePath());
-      UploadUtil.upload(file, out);
+      UploadUtil.upload(file,out);
+      out = CommonImageUtil.convertWebPToPngIfNeeded(out);
 
       if (vPinScreen != null) {
         VPinScreen loadingScreen = VPinScreen.valueOfScreen(vPinScreen);

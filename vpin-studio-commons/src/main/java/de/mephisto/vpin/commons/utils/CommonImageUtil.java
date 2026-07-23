@@ -15,12 +15,15 @@ import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import javax.imageio.ImageIO;
+import org.apache.commons.io.FilenameUtils;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.invoke.MethodHandles;
+
 
 public class CommonImageUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -267,4 +270,55 @@ public class CommonImageUtil {
     long duration = System.currentTimeMillis() - writeDuration;
     LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
   }
+
+    /**
+     * Returns {@code true} if {@code bytes} begins with a WebP file header
+     * ({@code RIFF} at offset 0, {@code WEBP} at offset 8).
+     */
+    private static boolean isWebP(byte[] bytes) {
+        return bytes.length >= 12
+                && bytes[0]  == (byte) 'R'
+                && bytes[1]  == (byte) 'I'
+                && bytes[2]  == (byte) 'F'
+                && bytes[3]  == (byte) 'F'
+                && bytes[8]  == (byte) 'W'
+                && bytes[9]  == (byte) 'E'
+                && bytes[10] == (byte) 'B'
+                && bytes[11] == (byte) 'P';
+    }
+
+    public static File convertWebPToPngIfNeeded(File file) {
+        try {
+            byte[] header = new byte[12];
+            try (FileInputStream fis = new FileInputStream(file)) {
+                if (fis.read(header) < 12 || !isWebP(header)) {
+                    return file;
+                }
+            }
+            LOG.info("Detected WebP content in {}, converting to PNG", file.getAbsolutePath());
+            BufferedImage image = ImageIO.read(file);
+            if (image == null) {
+                LOG.error("WebP decode returned null for file: {}", file.getAbsolutePath());
+                return file;
+            }
+
+            // If the file has a .webp extension, write to a new .png file and delete the original
+            File target = file;
+            if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("webp")) {
+                target = new File(file.getParentFile(), FilenameUtils.getBaseName(file.getName()) + ".png");
+            }
+
+            ImageIO.write(image, "PNG", target);
+
+            if (!target.equals(file) && !file.delete()) {
+                LOG.warn("Failed to delete original WebP file: {}", file.getAbsolutePath());
+            }
+
+            LOG.info("Converted WebP to PNG: {}", target.getAbsolutePath());
+            return target;
+        } catch (Exception e) {
+            LOG.error("Failed to convert WebP file {}: {}", file.getAbsolutePath(), e.getMessage(), e);
+            return file;
+        }
+    }
 }
