@@ -1,4 +1,4 @@
-## Release Notes 5.1.3
+## Release Notes 5.1.4
 
 ### Changes
 
@@ -8,6 +8,10 @@
   - Added different configuration options for the columns visible in the VPS tab and updates shown for the VPS update indicator.
 - **Media Recorder**
   - Fixed issues with possible race conditions which resulted in problems overwriting existing files.
+- **Table Asset Management**
+  - Fixed issue that webp files that were named as .png could not be downloaded or previewed.
+- **Asset Uploads**
+  - Fixed .cROMc file detection in table bundles.
 
 ---
 
