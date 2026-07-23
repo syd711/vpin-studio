@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>5.0.0</version>
+    <version>5.1.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -619,7 +619,7 @@
   </dependencies>
   <properties>
     <zulu.jre.bundle.macosarch>zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz</zulu.jre.bundle.macosarch>
-    <macOSBuild>false</macOSBuild>
+    <macOSBuild>macOSBuild</macOSBuild>
     <zulu.jre.bundle.win>zulu25.34.17-ca-fx-jre25.0.3-win_x64.zip</zulu.jre.bundle.win>
     <skipMacOSBuild>true</skipMacOSBuild>
     <zulu.jre.bundle.macosx64>zulu25.34.17-ca-fx-jre25.0.3-macosx_aarch64.tar.gz</zulu.jre.bundle.macosx64>
