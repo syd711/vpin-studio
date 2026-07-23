@@ -20,6 +20,8 @@ public class MediaTypesSelector {
       fileSelection.add("*.jpg");
       fileSelection.add("*.png");
       fileSelection.add("*.apng");
+      fileSelection.add("*.webp");
+
     }
     else {
       fileSelection.add("*.jpg");
