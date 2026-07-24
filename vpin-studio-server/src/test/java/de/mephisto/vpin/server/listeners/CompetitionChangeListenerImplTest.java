@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -161,6 +162,36 @@ public class CompetitionChangeListenerImplTest {
     listener.competitionDeleted(competition);
 
     verify(frontendStatusService, never()).deAugmentWheel(any());
+  }
+
+  @Test
+  void runCheckedDeAugmentation_gameStillHasActiveCompetition_doesNotDeAugment() {
+    // game 1 has a stale finished-by-date row, but also a still-active WEEKLY competition
+    activeCompetition.setBadge(null);
+    Game otherGame = mock(Game.class);
+    when(gameService.getGame(1)).thenReturn(otherGame);
+    when(frontendStatusService.isWheelAugmented(otherGame)).thenReturn(false);
+    when(competitionService.getFinishedByDateCompetitions()).thenReturn(List.of(inactiveCompetition));
+    when(competitionService.getCompetitionForGame(1)).thenReturn(List.of(inactiveCompetition, activeCompetition));
+
+    listener.competitionStarted(activeCompetition);
+
+    verify(frontendStatusService, never()).deAugmentWheel(otherGame);
+  }
+
+  @Test
+  void runCheckedDeAugmentation_gameHasNoActiveCompetition_deAugments() {
+    // game 1's only competitions are finished/inactive, so the stale badge should be cleared
+    activeCompetition.setBadge(null);
+    Game otherGame = mock(Game.class);
+    when(gameService.getGame(1)).thenReturn(otherGame);
+    when(frontendStatusService.isWheelAugmented(otherGame)).thenReturn(false);
+    when(competitionService.getFinishedByDateCompetitions()).thenReturn(List.of(inactiveCompetition));
+    when(competitionService.getCompetitionForGame(1)).thenReturn(List.of(inactiveCompetition));
+
+    listener.competitionStarted(activeCompetition);
+
+    verify(frontendStatusService).deAugmentWheel(otherGame);
   }
 
   @Test

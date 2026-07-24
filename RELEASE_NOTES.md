@@ -14,6 +14,8 @@
   - Fixed .cROMc file detection in table bundles.
 - **WOVP Competitions**
   - Added custom WOVP badges that are applied for every competition type.
+- **Wheel Augmentation**
+  - Fixed critical badge synchronization issue so that augmented wheel icons stay augmented for the duration of the competition now.
 
 ---
 

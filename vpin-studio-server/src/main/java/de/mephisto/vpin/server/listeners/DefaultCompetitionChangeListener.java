@@ -20,7 +20,10 @@ abstract public class DefaultCompetitionChangeListener implements CompetitionCha
     for (Integer competedGameId : competedGameIds) {
       Game game = gameService.getGame(competedGameId);
       if (game != null) {
-        frontendStatusService.deAugmentWheel(game);
+        boolean stillActive = competitionService.getCompetitionForGame(competedGameId).stream().anyMatch(Competition::isActive);
+        if (!stillActive) {
+          frontendStatusService.deAugmentWheel(game);
+        }
       }
     }
   }
