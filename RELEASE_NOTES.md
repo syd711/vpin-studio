@@ -12,6 +12,8 @@
   - Fixed issue that webp files that were named as .png could not be downloaded or previewed.
 - **Asset Uploads**
   - Fixed .cROMc file detection in table bundles.
+- **WOVP Competitions**
+  - Added custom WOVP badges that are applied for every competition type.
 
 ---
 

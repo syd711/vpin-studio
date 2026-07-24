@@ -182,6 +182,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       //refresh re-synced tables
       for (CompetitionRepresentation weeklySubscription : weeklySubscriptions) {
         int gameId = weeklySubscription.getGameId();
+        client.getAssetService().clearWheelIconCache(gameId);
         EventManager.getInstance().notifyTableChange(gameId, null);
       }
 

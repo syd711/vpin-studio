@@ -164,7 +164,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     competition.setUrl("https://worldofvirtualpinball.com/en/challenge/ranking?tab=challenges");
     competition.setUuid(challenge.getId());
     competition.setName(challenge.getName());
-    competition.setBadge(wovpSettings.isBadgeEnabled() ? "wovp" : null);
+    competition.setBadge(wovpSettings.isBadgeEnabled() ? getBadgeName(challenge) : null);
     competition.setOwner("World Of Virtual Pinball");
     competition.setVpsTableId(challenge.getPinballTable().getExternalId());
 
@@ -265,6 +265,24 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
           tableDetails.setTags(TaggingUtil.join(tagList));
           frontendService.saveTableDetails(game.getId(), tableDetails);
         }
+      }
+    }
+  }
+
+  private String getBadgeName(Challenge challenge) {
+    switch (challenge.getChallengeTypeCode()) {
+      case tournament: {
+        return "wovp-ko";
+      }
+      case monthly_contracts: {
+        return "wovp-contracts";
+      }
+      case extra: {
+        return "wovp-extra";
+      }
+      case season:
+      default: {
+        return "wovp-main";
       }
     }
   }

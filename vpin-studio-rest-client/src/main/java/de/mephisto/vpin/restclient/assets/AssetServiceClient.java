@@ -81,6 +81,10 @@ public class AssetServiceClient extends VPinStudioClientService {
     return new ByteArrayInputStream(imageBytes);
   }
 
+  public void clearWheelIconCache(int gameId) {
+    client.getImageCache().clear(API + "media/" + gameId + "/" + VPinScreen.Wheel.name());
+  }
+
   @Nullable
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen, String name) {
     try {

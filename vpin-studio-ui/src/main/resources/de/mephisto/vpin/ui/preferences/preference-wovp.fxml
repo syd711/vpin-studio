@@ -198,13 +198,13 @@
                                  </GridPane.margin></Label>
                               <VBox GridPane.columnIndex="1">
                                  <children>
-                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="Apply &quot;Weekly Challenge&quot; badge to the active table wheel icon" textFill="WHITE">
+                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="Apply WOVP competition badges to the active table wheel icon" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
                                     <Label styleClass="checkbox-description" text="If a matching table is found, the wheel icon of the table will be augmented with the" textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="logo of the organizer for the duration of the challenge." textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="logo of the competition type for the duration of the challenge." textFill="WHITE" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="6.0" />
@@ -220,7 +220,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="When a table is selected for the weekly competition, a backup is made of the existing highscore" textFill="WHITE" />
+                                    <Label styleClass="checkbox-description" text="When a table is selected for the competition, a backup is made of the existing highscore" textFill="WHITE" />
                                     <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="and resetted, so that all new highscores can be submitted." textFill="WHITE" />
                                  </children>
                                  <GridPane.margin>
