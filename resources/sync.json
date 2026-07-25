@@ -82,6 +82,14 @@
   "length" : 119296,
   "crc32" : "#25E7120C"
 }, {
+  "name" : "7z.exe",
+  "length" : 576000,
+  "crc32" : "#9447D2B9"
+}, {
+  "name" : "7z.dll",
+  "length" : 1906688,
+  "crc32" : "#E9C82A86"
+}, {
   "name" : "competition-badges/wovp.png",
   "length" : 165579,
   "crc32" : "#631AA95C"

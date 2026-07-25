@@ -2,11 +2,11 @@ package de.mephisto.vpin.server.doftester;
 
 import de.mephisto.vpin.restclient.doftester.ToySummaries;
 import de.mephisto.vpin.restclient.doftester.ToySummary;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.dof.DOFService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
+import jakarta.annotation.PreDestroy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +28,50 @@ public class DOFTesterService {
 
   private static final String SCRIPT_NAME = "dof-test.ps1";
 
+  // Long-running session script: Init() is called once, Finish() only when the session is torn down.
+  // DOF's Finish() turns off every output on the physical controller (LedWiz/PacLed/etc.), not just the
+  // tested one, so it must never run between individual toy tests.
   private static final String PS_SCRIPT =
-      "param([string]$DllPath, [string]$RomName, [string]$Type, [int]$Number, [int]$DurationMs = 200)\n" +
-          "Add-Type -Path $DllPath\n" +
-          "$dof = New-Object DirectOutputCom.ComObject\n" +
-          "$dof.Init('B2SServer', '', $RomName)\n" +
-          "$dof.UpdateTableElement($Type, $Number, 255)\n" +
-          "Start-Sleep -Milliseconds $DurationMs\n" +
-          "$dof.UpdateTableElement($Type, $Number, 0)\n" +
-          "$dof.Finish()\n";
+      "param([string]$DllPath, [string]$RomName)\n" +
+          "try {\n" +
+          "  Add-Type -Path $DllPath\n" +
+          "  $dof = New-Object DirectOutputCom.ComObject\n" +
+          "  $dof.Init('B2SServer', '', $RomName)\n" +
+          "  [Console]::Out.WriteLine('READY')\n" +
+          "  [Console]::Out.Flush()\n" +
+          "}\n" +
+          "catch {\n" +
+          "  [Console]::Out.WriteLine('ERR:' + $_.Exception.Message)\n" +
+          "  [Console]::Out.Flush()\n" +
+          "  exit 1\n" +
+          "}\n" +
+          "\n" +
+          "while ($true) {\n" +
+          "  $line = [Console]::In.ReadLine()\n" +
+          "  if ($null -eq $line -or $line -eq 'EXIT') {\n" +
+          "    break\n" +
+          "  }\n" +
+          "  try {\n" +
+          "    $parts = $line.Split(',')\n" +
+          "    $type = $parts[0]\n" +
+          "    $number = [int]$parts[1]\n" +
+          "    $duration = [int]$parts[2]\n" +
+          "    $dof.UpdateTableElement($type, $number, 255)\n" +
+          "    Start-Sleep -Milliseconds $duration\n" +
+          "    $dof.UpdateTableElement($type, $number, 0)\n" +
+          "    [Console]::Out.WriteLine('OK')\n" +
+          "  }\n" +
+          "  catch {\n" +
+          "    [Console]::Out.WriteLine('ERR:' + $_.Exception.Message)\n" +
+          "  }\n" +
+          "  [Console]::Out.Flush()\n" +
+          "}\n" +
+          "\n" +
+          "try {\n" +
+          "  $dof.Finish()\n" +
+          "}\n" +
+          "catch {\n" +
+          "}\n";
 
   @Autowired
   private DOFService dofService;
@@ -50,6 +85,7 @@ public class DOFTesterService {
 
   private DOFTesterIniParser cachedParser;
   private File cachedIniFile;
+  private DOFTestSession activeSession;
 
   public ToySummary getToys(int gameId) {
     ToySummary result = new ToySummary();
@@ -142,8 +178,7 @@ public class DOFTesterService {
       if (iniFile == null) {
         return false;
       }
-      File scriptFile = ensureScript(iniFile.getParentFile());
-      return scriptFile != null && runScript(scriptFile, dllFile, iniFile, romName, code, durationMs);
+      return fireEvent(dllFile, iniFile.getParentFile(), romName, code, durationMs);
     }
 
     // Named toy path — ROM must be in the DOF config
@@ -163,49 +198,62 @@ public class DOFTesterService {
       return false;
     }
     File iniFile = cachedIniFile;
-    File scriptFile = ensureScript(iniFile.getParentFile());
-    if (scriptFile == null) {
-      return false;
-    }
     boolean success = true;
     for (DOFEventCode code : codes) {
-      success &= runScript(scriptFile, dllFile, iniFile, romName, code, durationMs);
+      success &= fireEvent(dllFile, iniFile.getParentFile(), romName, code, durationMs);
     }
     return success;
   }
 
-  private boolean runScript(File scriptFile, File dllFile, File iniFile, String romName, DOFEventCode code, int durationMs) {
+  /**
+   * Fires a single toy event on the persistent DOF test session for the given ROM, starting or
+   * restarting the session as needed. The session's Init()/Finish() bracket the whole test session
+   * rather than a single toy so that Finish()'s "turn off every output" behavior isn't triggered per click.
+   */
+  private synchronized boolean fireEvent(File dllFile, File configFolder, String romName, DOFEventCode code, int durationMs) {
+    DOFTestSession session = getOrCreateSession(dllFile, configFolder, romName);
+    if (session == null) {
+      return false;
+    }
+    LOG.info("DOF test: firing {} for ROM '{}'", code, romName);
+    return session.fire(code, durationMs);
+  }
+
+  private DOFTestSession getOrCreateSession(File dllFile, File configFolder, String romName) {
+    if (activeSession != null) {
+      if (activeSession.isAlive() && activeSession.matches(romName)) {
+        return activeSession;
+      }
+      activeSession.close();
+      activeSession = null;
+    }
+
+    File scriptFile = ensureScript(configFolder);
+    if (scriptFile == null) {
+      return null;
+    }
     try {
       String windir = System.getenv("WINDIR");
       if (windir == null) windir = "C:\\Windows";
       String powershell = isDll64Bit(dllFile)
           ? windir + "\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
           : windir + "\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe";
-      List<String> cmd = Arrays.asList(
-          powershell, "-ExecutionPolicy", "Bypass", "-File", scriptFile.getAbsolutePath(),
-          "-DllPath", dllFile.getAbsolutePath(),
-          "-RomName", romName,
-          "-Type", code.getType(),
-          "-Number", String.valueOf(code.getNumber()),
-          "-DurationMs", String.valueOf(durationMs)
-      );
-      LOG.info("DOF test: firing {} for ROM '{}', toy event {}", code, romName, code);
-      SystemCommandExecutor executor = new SystemCommandExecutor(cmd, false);
-      executor.executeCommand();
-      String err = executor.getStandardErrorFromCommand().toString().trim();
-      if (!StringUtils.isEmpty(err)) {
-        LOG.warn("DOF test script stderr: {}", err);
-        return false;
-      }
-      String out = executor.getStandardOutputFromCommand().toString().trim();
-      if (!StringUtils.isEmpty(out)) {
-        LOG.info("DOF test script stdout: {}", out);
-      }
-      return true;
+      activeSession = DOFTestSession.start(powershell, scriptFile, dllFile, romName);
+      LOG.info("Started DOF test session for ROM '{}'", romName);
+      return activeSession;
     }
-    catch (Exception e) {
-      LOG.error("Failed to run DOF test script for {}: {}", code, e.getMessage(), e);
-      return false;
+    catch (IOException e) {
+      LOG.error("Failed to start DOF test session for ROM '{}': {}", romName, e.getMessage(), e);
+      activeSession = null;
+      return null;
+    }
+  }
+
+  @PreDestroy
+  public void shutdown() {
+    if (activeSession != null) {
+      activeSession.close();
+      activeSession = null;
     }
   }
 
