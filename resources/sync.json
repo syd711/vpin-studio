@@ -94,6 +94,66 @@
   "length" : 165579,
   "crc32" : "#631AA95C"
 }, {
+  "name" : "competition-badges/discord-2.png",
+  "length" : 52505,
+  "crc32" : "#2C6A9C6A"
+}, {
+  "name" : "competition-badges/discord.png",
+  "length" : 115249,
+  "crc32" : "#6DBAE447"
+}, {
+  "name" : "competition-badges/iScored.png",
+  "length" : 55836,
+  "crc32" : "#82C8CCEC"
+}, {
+  "name" : "competition-badges/mania.png",
+  "length" : 14573,
+  "crc32" : "#92CC74A9"
+}, {
+  "name" : "competition-badges/medal.png",
+  "length" : 19869,
+  "crc32" : "#E6E53717"
+}, {
+  "name" : "competition-badges/trophy-1.png",
+  "length" : 15066,
+  "crc32" : "#3AB44E33"
+}, {
+  "name" : "competition-badges/trophy-2.png",
+  "length" : 18896,
+  "crc32" : "#2446DD36"
+}, {
+  "name" : "competition-badges/trophy-3.png",
+  "length" : 16977,
+  "crc32" : "#E458E976"
+}, {
+  "name" : "competition-badges/trophy-4.png",
+  "length" : 13890,
+  "crc32" : "#A07249E7"
+}, {
+  "name" : "competition-badges/wovp-contracts.png",
+  "length" : 419332,
+  "crc32" : "#5C86F825"
+}, {
+  "name" : "competition-badges/wovp-extra.png",
+  "length" : 412018,
+  "crc32" : "#768C58D4"
+}, {
+  "name" : "competition-badges/wovp-ko.png",
+  "length" : 404565,
+  "crc32" : "#1DB54A90"
+}, {
+  "name" : "competition-badges/wovp-main.png",
+  "length" : 410713,
+  "crc32" : "#0E4D868D"
+}, {
+  "name" : "competition-badges/wreath-1.png",
+  "length" : 38048,
+  "crc32" : "#46BBB12F"
+}, {
+  "name" : "competition-badges/wreath-2.png",
+  "length" : 43519,
+  "crc32" : "#B8419F9A"
+}, {
   "name" : "logos.txt",
   "length" : 119856,
   "crc32" : "#4B326E1F"
