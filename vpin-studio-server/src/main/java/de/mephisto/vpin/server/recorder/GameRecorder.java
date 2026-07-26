@@ -206,6 +206,12 @@ public class GameRecorder {
       return;
     }
 
+    if (recordingTempFile.length() == 0) {
+      LOG.error("GameRecorder finalization cancelled for screen {}, recording failed and produced an empty file, keeping existing media untouched. Error log: {}", screen.name(), result.getErrorLog());
+      recordingTempFile.delete();
+      return;
+    }
+
     RecordingWriteMode recordingWriteMode = result.getRecordingScreenOptions().getRecordMode();
 
     LOG.info("Finalizing temporary recording file {} ({}) for screen {}", recordingTempFile.getAbsolutePath(), FileUtils.byteCountToDisplaySize(recordingTempFile.length()), screen.name());
