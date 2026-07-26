@@ -54,6 +54,34 @@ public class ScreenRecorder {
     result.setFileName(temporaryTarget.getAbsolutePath());
 
     try {
+      int width = recordingScreen.getWidth();
+      if (width % 2 == 1) {
+        width--;
+      }
+
+      int height = recordingScreen.getHeight();
+      if (height % 2 == 1) {
+        height--;
+      }
+      int x = recordingScreen.getX();
+      int y = recordingScreen.getY();
+
+      Rectangle captureArea = new Rectangle(x, y, width, height);
+      Rectangle desktopBounds = getVirtualDesktopBounds();
+      if (!desktopBounds.contains(captureArea)) {
+        String msg = String.format(
+            "%s capture area (%d,%d)-(%d,%d) extends outside the desktop bounds (%d,%d)-(%d,%d). " +
+                "This usually means the screen configuration in PinUpPlayer.ini (ScreenXPos/ScreenYPos/ScreenWidth/ScreenHeight for '%s') " +
+                "is out of sync with the actual monitor layout. Skipping recording to avoid producing an empty video file.",
+            this, captureArea.x, captureArea.y, captureArea.x + captureArea.width, captureArea.y + captureArea.height,
+            desktopBounds.x, desktopBounds.y, desktopBounds.x + desktopBounds.width, desktopBounds.y + desktopBounds.height,
+            recordingScreen.getTechnicalName());
+        LOG.error(msg);
+        result.setErrorLog(msg);
+        result.setDuration(System.currentTimeMillis() - start);
+        return result;
+      }
+
       if (options.getInitialDelay() > 0) {
         LOG.info("{} is waiting for the initial recording delay of {} seconds.", this, options.getInitialDelay());
         for (int i = 0; i < options.getInitialDelay(); i++) {
@@ -67,17 +95,6 @@ public class ScreenRecorder {
         LOG.info("Recording delay for {} has been skipped because it is set to {} seconds.", this, options.getInitialDelay());
       }
 
-      int width = recordingScreen.getWidth();
-      if (width % 2 == 1) {
-        width--;
-      }
-
-      int height = recordingScreen.getHeight();
-      if (height % 2 == 1) {
-        height--;
-      }
-      int x = recordingScreen.getX();
-      int y = recordingScreen.getY();
       long duration = options.getRecordingDuration();
 
       String command = getDefaultCommand(options);
@@ -97,6 +114,14 @@ public class ScreenRecorder {
       result.setErrorLog(e.getMessage());
     }
     return result;
+  }
+
+  private Rectangle getVirtualDesktopBounds() {
+    Rectangle bounds = new Rectangle();
+    for (GraphicsDevice screen : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+      bounds = bounds.union(screen.getDefaultConfiguration().getBounds());
+    }
+    return bounds;
   }
 
   private String getDefaultCommand(RecordingScreenOptions options) {
