@@ -8,7 +8,7 @@
 - **Drop-In Folders**
   - Added option to skip the confirmation dialog when moving a file to trash.
 - **Misc**
-  - All files deleted by the VPin-Studio server are now moved to trash instead of being deleted.
+  - When a game is deleted though the VPin-Studio, all files are moved to the trash now.
 
 ---
 
