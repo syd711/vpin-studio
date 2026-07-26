@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
@@ -692,7 +693,7 @@ public class GameMediaService extends MediaService {
         }
 
         if (descriptor.isDeleteTable()) {
-          if (!FileUtils.delete(game.getGameFile())) {
+          if (!SystemUtil.deleteFileOrFolder(game.getGameFile())) {
             success = false;
           }
         }
@@ -701,38 +702,38 @@ public class GameMediaService extends MediaService {
           if (!defaultPictureService.deleteAllPictures(game)) {
             success = false;
           }
-          if (!FileUtils.delete(game.getDirectB2SFile())) {
+          if (!SystemUtil.deleteFileOrFolder(game.getDirectB2SFile())) {
             success = false;
           }
         }
 
         if (descriptor.isDeleteIni()) {
-          if (!FileUtils.delete(game.getIniFile())) {
+          if (!SystemUtil.deleteFileOrFolder(game.getIniFile())) {
             success = false;
           }
         }
 
         if (descriptor.isDeleteBAMCfg()) {
           File BAMCfgFile = game.getBAMCfgFile();
-          if (!FileUtils.delete(BAMCfgFile)) {
+          if (!SystemUtil.deleteFileOrFolder(BAMCfgFile)) {
             success = false;
           }
         }
 
         if (descriptor.isDeleteRes()) {
-          if (!FileUtils.delete(game.getResFile())) {
+          if (!SystemUtil.deleteFileOrFolder(game.getResFile())) {
             success = false;
           }
         }
 
         if (descriptor.isDeleteVbs()) {
-          if (!FileUtils.delete(game.getVBSFile())) {
+          if (!SystemUtil.deleteFileOrFolder(game.getVBSFile())) {
             success = false;
           }
         }
 
         if (descriptor.isDeletePov()) {
-          if (!FileUtils.delete(game.getPOVFile())) {
+          if (!SystemUtil.deleteFileOrFolder(game.getPOVFile())) {
             success = false;
           }
         }
@@ -778,7 +779,7 @@ public class GameMediaService extends MediaService {
           //Only relevant for tables that are located in a separate folder
           File b2STableSettingsFile = game.getB2STableSettingsFile();
           if (b2STableSettingsFile != null && b2STableSettingsFile.exists()) {
-            if (!b2STableSettingsFile.delete()) {
+            if (!SystemUtil.deleteFileOrFolder(b2STableSettingsFile)) {
               success = false;
             }
           }
@@ -861,7 +862,7 @@ public class GameMediaService extends MediaService {
                     new WheelIconDelete(mediaFile).delete();
                   }
 
-                  if (mediaFile.exists() && !mediaFile.delete()) {
+                  if (mediaFile.exists() && !SystemUtil.deleteFileOrFolder(mediaFile)) {
                     success = false;
                     LOG.warn("Failed to delete media asset \"{}\" for \"{}\"", mediaFile.getAbsolutePath(), game.getGameDisplayName());
                   }
@@ -882,7 +883,7 @@ public class GameMediaService extends MediaService {
         if (gameFolder.exists() && !gameFolder.equals(game.getEmulator().getGamesFolder())) {
           String[] list = gameFolder.list();
           if (list == null || list.length == 0) {
-            if (gameFolder.delete()) {
+            if (SystemUtil.deleteFileOrFolder(gameFolder)) {
               LOG.info("Deleted table folder {}", gameFolder.getAbsolutePath());
             }
           }

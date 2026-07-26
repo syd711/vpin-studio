@@ -1,3 +1,17 @@
+## Release Notes 5.1.5
+
+### Changes
+
+- **Media Recorder**
+  - Fixed issue that recordings with 0 bytes overwrite existing videos.
+  - Fixed issue that recordings were even made with 0 byte because they were outside the visible screen area.
+- **Drop-In Folders**
+  - Added option to skip the confirmation dialog when moving a file to trash.
+- **Misc**
+  - All files deleted by the VPin-Studio server are now moved to trash instead of being deleted.
+
+---
+
 ## Release Notes 5.1.4
 
 ### Changes

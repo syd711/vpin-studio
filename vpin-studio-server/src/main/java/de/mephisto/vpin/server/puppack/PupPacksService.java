@@ -5,13 +5,14 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.jobs.JobService;
-import de.mephisto.vpin.server.system.VidUtil;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.system.VidUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -259,7 +260,7 @@ public class PupPacksService implements InitializingBean {
     File pupPackFolder = new File(pupVideosFolder, rom);
     if (pupPackFolder.exists() && pupPackFolder.isDirectory()) {
       LOG.info("Existing PUP pack folder \"{}\" found, deleting it first.", rom);
-      de.mephisto.vpin.restclient.util.FileUtils.deleteFolder(pupPackFolder);
+      SystemUtil.deleteFileOrFolder(pupPackFolder);
       pupPackFolder.mkdirs();
     }
 

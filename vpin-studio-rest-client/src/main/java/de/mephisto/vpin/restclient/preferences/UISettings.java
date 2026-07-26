@@ -48,6 +48,7 @@ public class UISettings extends JsonSettings {
   public static final int DROP_IN_POSTACTION_MOVETO = 3;
   public static final int DROP_IN_POSTACTION_MOVETOTRASH = 4;
   public static final int DROP_IN_POSTACTION_DELETE = 5;
+  public boolean confirmDropInMoveToTrash = true;
 
   private int dropinPostAction = DROP_IN_POSTACTION_MOVETOTRASH;
   private String dropinPostTargetFolder;
@@ -105,6 +106,14 @@ public class UISettings extends JsonSettings {
   private boolean columnTutorial = false;
 
   private LaunchConfiguration launchConfiguration;
+
+  public boolean isConfirmDropInMoveToTrash() {
+    return confirmDropInMoveToTrash;
+  }
+
+  public void setConfirmDropInMoveToTrash(boolean confirmDropInMoveToTrash) {
+    this.confirmDropInMoveToTrash = confirmDropInMoveToTrash;
+  }
 
   public boolean isAutoSaveEnabled() {
     return autoSaveEnabled;

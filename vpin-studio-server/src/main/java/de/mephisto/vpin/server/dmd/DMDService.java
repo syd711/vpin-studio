@@ -4,12 +4,12 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -54,8 +54,7 @@ public class DMDService implements InitializingBean {
       if (dmdPackage != null && dmdPackage.isValid()) {
         File dir = getDmdFolder(game);
         if (dir.exists()) {
-          FileUtils.deleteDirectory(dir);
-          return true;
+          return SystemUtil.deleteFileOrFolder(dir);
         }
       }
     }

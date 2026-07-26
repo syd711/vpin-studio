@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
-import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -67,7 +67,7 @@ public class FreezyComponent implements ComponentFacade {
   @Override
   public void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
     for (String deleteFile : INVALID_MAME_FILES) {
-      FileUtils.delete(new File(vPinMameService.getMameFolder(), deleteFile));
+      SystemUtil.deleteFileOrFolder(new File(vPinMameService.getMameFolder(), deleteFile));
     }
   }
 

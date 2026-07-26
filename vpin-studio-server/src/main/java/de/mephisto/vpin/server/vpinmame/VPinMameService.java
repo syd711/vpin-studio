@@ -4,9 +4,9 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.server.games.Game;
@@ -250,12 +250,12 @@ public class VPinMameService implements InitializingBean {
 
   public boolean deleteCfg(@NonNull Game game) {
     File cfgFile = folderLookupService.getCfgFile(game);
-    return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
+    return cfgFile != null && cfgFile.exists() && SystemUtil.deleteFileOrFolder(cfgFile);
   }
 
   public boolean deleteRom(@NonNull Game game) {
     File romFile = folderLookupService.getRomFile(game);
-    return romFile != null && romFile.exists() && FileUtils.delete(romFile);
+    return romFile != null && romFile.exists() && SystemUtil.deleteFileOrFolder(romFile);
   }
 
   //--------------------------------

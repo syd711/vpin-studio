@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -179,14 +180,14 @@ public class HighscoreService implements InitializingBean {
 
     File highscoreTextFile = folderLookupService.getHighscoreTextFile(game);
     if (highscoreTextFile != null && highscoreTextFile.exists()) {
-      if (!highscoreTextFile.delete()) {
+      if (!SystemUtil.deleteFileOrFolder(highscoreTextFile)) {
         LOG.error("Failed to delete highscore text file {}", highscoreTextFile.getAbsolutePath());
       }
     }
 
     File highscoreIniFile = highscoreResolver.getHighscoreIniFile(game);
     if (highscoreIniFile != null && highscoreIniFile.exists()) {
-      if (!highscoreIniFile.delete()) {
+      if (!SystemUtil.deleteFileOrFolder(highscoreIniFile)) {
         LOG.error("Failed to delete ini file {}", highscoreIniFile.getAbsolutePath());
       }
     }

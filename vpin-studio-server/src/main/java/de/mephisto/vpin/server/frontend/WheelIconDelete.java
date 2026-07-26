@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,10 @@ public class WheelIconDelete {
   }
 
   public void delete() {
-    if (wheelIconThumbnail.exists() && wheelIconThumbnail.delete()) {
+    if (wheelIconThumbnail.exists() && SystemUtil.deleteFileOrFolder(wheelIconThumbnail)) {
       LOG.info("Deleted wheel thumbnail icon {}", wheelIconThumbnail.getAbsolutePath());
     }
-    if (wheelIconThumbnailSm.exists() && wheelIconThumbnailSm.delete()) {
+    if (wheelIconThumbnailSm.exists() && SystemUtil.deleteFileOrFolder(wheelIconThumbnailSm)) {
       LOG.info("Deleted wheel thumbnail sm icon {}", wheelIconThumbnailSm.getAbsolutePath());
     }
   }

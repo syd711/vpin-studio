@@ -8,8 +8,8 @@ import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
@@ -231,10 +231,10 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
   public boolean deleteDefaultPictures(@NonNull Game game) {
     boolean success = true;
-    if (!FileUtils.delete(getRawDefaultPicture(game))) {
+    if (!SystemUtil.deleteFileOrFolder(getRawDefaultPicture(game))) {
       success = false;
     }
-    if (!FileUtils.delete(getDefaultPreview(game))) {
+    if (!SystemUtil.deleteFileOrFolder(getDefaultPreview(game))) {
       success = false;
     }
     return success;
@@ -242,7 +242,7 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
 
   public boolean deleteAllPictures(@NonNull Game game) {
     boolean success = deleteDefaultPictures(game);
-    if (!FileUtils.delete(getDMDPicture(game))) {
+    if (!SystemUtil.deleteFileOrFolder(getDMDPicture(game))) {
       success = false;
     }
     return success;

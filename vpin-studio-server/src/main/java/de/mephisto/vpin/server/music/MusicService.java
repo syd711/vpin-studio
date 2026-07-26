@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.music;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -162,7 +163,7 @@ public class MusicService {
     List<File> mp3Files = getMp3Files(game);
     boolean result = true;
     for (File mp3File : mp3Files) {
-      if (!mp3File.delete()) {
+      if (!SystemUtil.deleteFileOrFolder(mp3File)) {
         result = false;
         LOG.warn("Deleted failed for {}", mp3File.getAbsolutePath());
       }

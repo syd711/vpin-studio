@@ -129,18 +129,18 @@ public class FileUtils {
     return rename(file, newFile);
   }
 
-  public static boolean delete(@Nullable File file) {
-    if (file != null && file.exists()) {
-      if (file.delete()) {
-        LOG.info("Deleted " + file.getAbsolutePath());
-      }
-      else {
-        LOG.warn("Failed to delete " + file.getAbsolutePath());
-        return false;
-      }
-    }
-    return true;
-  }
+//  public static boolean delete(@Nullable File file) {
+//    if (file != null && file.exists()) {
+//      if (file.delete()) {
+//        LOG.info("Deleted " + file.getAbsolutePath());
+//      }
+//      else {
+//        LOG.warn("Failed to delete " + file.getAbsolutePath());
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
 
   public static boolean rename(File file, File newFile) {
     if (file.exists()) {
@@ -209,19 +209,19 @@ public class FileUtils {
     return path;
   }
 
-  public static boolean deleteFolder(File folder) {
-    if (folder == null || !folder.exists()) {
-      return true;
-    }
-    try {
-      LOG.info("Deleting folder {}", folder.getAbsolutePath());
-      org.apache.commons.io.FileUtils.deleteDirectory(folder);
-    }
-    catch (IOException e) {
-      return false;
-    }
-    return true;
-  }
+//  public static boolean deleteFolder(File folder) {
+//    if (folder == null || !folder.exists()) {
+//      return true;
+//    }
+//    try {
+//      LOG.info("Deleting folder {}", folder.getAbsolutePath());
+//      org.apache.commons.io.FileUtils.deleteDirectory(folder);
+//    }
+//    catch (IOException e) {
+//      return false;
+//    }
+//    return true;
+//  }
 
   public static File uniqueFile(File target) {
     int index = 1;

@@ -121,6 +121,11 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <CheckBox fx:id="dropInConfirmDeletionCheckbox" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="Confirm Deletion" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                  </children>
                               </HBox>
                            </children>

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.popper;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.frontend.DefaultMediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -41,7 +42,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
     if (screenFolder.exists()) {
       File[] files = screenFolder.listFiles();
       for (File file : files) {
-        FileUtils.delete(file);
+        SystemUtil.deleteFileOrFolder(file);
       }
     }
     return true;
@@ -54,7 +55,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
     if (playlistScreen.exists()) {
       File[] files = playlistScreen.listFiles();
       for (File file : files) {
-        FileUtils.delete(file);
+        SystemUtil.deleteFileOrFolder(file);
       }
     }
     return true;

@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.GameEntry;
@@ -208,7 +209,7 @@ public class PinballXConnector extends BaseConnector {
 
         // also delete old folder if empty
         if (FileUtils.isEmpty(oldDb.getParentFile())) {
-          FileUtils.deleteFolder(oldDb.getParentFile());
+          SystemUtil.deleteFileOrFolder(oldDb.getParentFile());
         }
 
         // change now the name

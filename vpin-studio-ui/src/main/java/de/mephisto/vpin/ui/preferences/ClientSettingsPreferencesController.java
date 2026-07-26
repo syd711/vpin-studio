@@ -79,6 +79,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox dropInMoveTargetCheckbox;
   @FXML
   private CheckBox dropInMoveTrashCheckbox;
+  @FXML
+  private CheckBox dropInConfirmDeletionCheckbox;
 
   @FXML
   private TextField dropInTextField;
@@ -327,6 +329,14 @@ public class ClientSettingsPreferencesController implements Initializable {
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
+
+    dropInConfirmDeletionCheckbox.setSelected(uiSettings.isConfirmDropInMoveToTrash());
+    dropInConfirmDeletionCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setConfirmDropInMoveToTrash(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
     dropInMoveTargetTextField.setText(uiSettings.getDropinPostTargetFolder());
     dropInMoveTargetTextField.textProperty().addListener((observableValue, old, newFolder) -> {
       uiSettings.setDropinPostTargetFolder(newFolder);

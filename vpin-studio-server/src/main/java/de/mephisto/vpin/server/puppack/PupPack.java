@@ -4,8 +4,8 @@ import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -95,7 +95,7 @@ public class PupPack {
 
   public boolean delete() {
     if (packFolder.exists()) {
-      return FileUtils.deleteFolder(packFolder);
+      return SystemUtil.deleteFileOrFolder(packFolder);
     }
     return true;
   }

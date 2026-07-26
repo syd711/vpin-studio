@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -88,11 +89,11 @@ public class DOFLinxComponent implements ComponentFacade {
     if (dofLinxService.isValid()) {
       File starter1 = new File(dofLinxService.getInstallationFolder(), "Starter 32 bit");
       if (starter1.exists()) {
-        FileUtils.deleteFolder(starter1);
+        SystemUtil.deleteFileOrFolder(starter1);
       }
       File starter2 = new File(dofLinxService.getInstallationFolder(), "Starter 64 bit");
       if (starter2.exists()) {
-        FileUtils.deleteFolder(starter2);
+        SystemUtil.deleteFileOrFolder(starter2);
       }
     }
   }

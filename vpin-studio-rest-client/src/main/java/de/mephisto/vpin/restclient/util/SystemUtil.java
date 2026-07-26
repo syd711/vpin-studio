@@ -3,11 +3,14 @@ package de.mephisto.vpin.restclient.util;
 import de.mephisto.vpin.restclient.RestClient;
 import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
+import java.awt.Desktop;
+import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -68,6 +71,31 @@ public class SystemUtil {
       }
     }
     return true;
+  }
+
+  /**
+   * Deletes a file or folder, moving it to the OS trash/recycle bin by default. Falls back to a
+   * permanent delete if the trash is not supported on the current platform or the move fails.
+   */
+  public static boolean deleteFileOrFolder(@Nullable File fileOrFolder) {
+    if (fileOrFolder == null || !fileOrFolder.exists()) {
+      return true;
+    }
+
+    try {
+      if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
+        if (Desktop.getDesktop().moveToTrash(fileOrFolder)) {
+          LOG.info("Moved \"{}\" to trash", fileOrFolder.getAbsolutePath());
+          return true;
+        }
+        LOG.warn("Failed to move \"{}\" to trash, deleting permanently instead", fileOrFolder.getAbsolutePath());
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to move \"{}\" to trash, deleting permanently instead: {}", fileOrFolder.getAbsolutePath(), e.getMessage());
+    }
+
+    return deleteFileOrFolder(fileOrFolder);
   }
 
   public static List<String> getAudioDevices() {

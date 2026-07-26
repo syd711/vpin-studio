@@ -5,8 +5,8 @@ import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
@@ -89,7 +89,7 @@ public class AltSoundService implements InitializingBean {
     if (folder != null && folder.exists()) {
       altSoundFolder2AltSound.remove(folder.getAbsolutePath().toLowerCase());
       LOG.info("Deleting ALTSound folder {}", folder.getAbsolutePath());
-      if (FileUtils.deleteFolder(folder)) {
+      if (SystemUtil.deleteFileOrFolder(folder)) {
         return clearCache();
       }
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());

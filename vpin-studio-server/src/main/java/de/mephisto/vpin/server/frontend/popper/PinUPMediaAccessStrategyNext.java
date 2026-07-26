@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.frontend.popper;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +67,7 @@ public class PinUPMediaAccessStrategyNext extends PinUPMediaAccessStrategy {
     }
 
     List<File> screenMediaFiles = getScreenMediaFiles(game, screen, null);
-    screenMediaFiles.forEach(FileUtils::delete);
+    screenMediaFiles.forEach(SystemUtil::deleteFileOrFolder);
     return true;
   }
 

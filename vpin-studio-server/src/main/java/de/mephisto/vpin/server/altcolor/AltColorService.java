@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
@@ -83,7 +84,7 @@ public class AltColorService implements InitializingBean {
           File[] files = dir.listFiles();
           if (files != null) {
             for (File file : files) {
-              if (file.isFile() && !file.delete()) {
+              if (file.isFile() && !SystemUtil.deleteFileOrFolder(file)) {
                 LOG.error("Failed to delete ALT color file {}", file.getAbsolutePath());
               }
             }

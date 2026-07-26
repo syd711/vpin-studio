@@ -280,14 +280,14 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
           .thenAcceptLater(uiSettings -> {
             int postAction = uiSettings.getDropinPostAction();
             switch (postAction) {
-              case UISettings.DROP_IN_POSTACTION_DONOTHING:
+              case UISettings.DROP_IN_POSTACTION_DONOTHING: {
                 break;
-
-              case UISettings.DROP_IN_POSTACTION_MOVETOFOLDER:
+              }
+              case UISettings.DROP_IN_POSTACTION_MOVETOFOLDER: {
                 moveFile(file, new File(uiSettings.getDropinPostTargetFolder()), null);
                 break;
-
-              case UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER:
+              }
+              case UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER: {
                 if (gameSelection != null) {
                   moveFile(file, new File(uiSettings.getDropinPostTargetFolder()), gameSelection.getGameDisplayName());
                 }
@@ -295,29 +295,33 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
                   WidgetFactory.showAlert(Studio.stage, "No game selected !", "No game selected so cannot determine target folder !");
                 }
                 break;
-
-              case UISettings.DROP_IN_POSTACTION_MOVETO:
+              }
+              case UISettings.DROP_IN_POSTACTION_MOVETO: {
                 StudioFolderChooser chooser = new StudioFolderChooser();
                 chooser.setTitle("Select Target Folder");
                 File targetFolder = chooser.showOpenDialog(Studio.stage);
                 moveFile(file, targetFolder, null);
                 break;
-
-              case UISettings.DROP_IN_POSTACTION_MOVETOTRASH:
-                Optional<ButtonType> result1 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
-                boolean confirmed1 = result1.isPresent() && result1.get().equals(ButtonType.OK);
+              }
+              case UISettings.DROP_IN_POSTACTION_MOVETOTRASH: {
+                boolean confirmed1 = true;
+                if (uiSettings.isConfirmDropInMoveToTrash()) {
+                  Optional<ButtonType> result1 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
+                  confirmed1 = result1.isPresent() && result1.get().equals(ButtonType.OK);
+                }
                 if (confirmed1 && !Desktop.getDesktop().moveToTrash(file)) {
                   WidgetFactory.showAlert(Studio.stage, "Cannot move file to trash !", "The file \"" + file.getAbsolutePath() + "\" couldn't be moved to trash !");
                 }
                 break;
-
-              case UISettings.DROP_IN_POSTACTION_DELETE:
+              }
+              case UISettings.DROP_IN_POSTACTION_DELETE: {
                 Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete file \"" + file.getAbsolutePath() + "\"?", "The file cannot be recovered.");
                 boolean confirmed2 = result2.isPresent() && result2.get().equals(ButtonType.OK);
                 if (confirmed2 && !file.delete()) {
                   WidgetFactory.showAlert(Studio.stage, "Cannot delete file !", "The file \"" + file.getAbsolutePath() + "\" couldn't be deleted !");
                 }
                 break;
+              }
             }
           });
     });
