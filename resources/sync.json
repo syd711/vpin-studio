@@ -52,8 +52,8 @@
 }, {
   "name" : "maps/main.zip",
   "url" : "https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip",
-  "length" : 611883,
-  "crc32" : "#42D4E95F",
+  "length" : 821760,
+  "crc32" : "#349AE6FF",
   "archiveFolder" : "pinmame-nvram-maps-main",
   "emptyParentFolder" : true
 }, {
