@@ -12,6 +12,9 @@ import java.awt.*;
 import java.util.HashMap;
 
 /**
+ * Adds drag-to-move and edge-drag-to-resize behavior to an undecorated (StageStyle.TRANSPARENT)
+ * JavaFX Stage.
+ *
  * @author Simon Reinisch
  * @version 0.0.2
  */
@@ -75,18 +78,27 @@ public class FXResizeHelper {
     STAGE.setIconified(true);
   }
 
+  // tolerance for comparing stage size against screen bounds, to absorb DPI-scaling rounding
+  private static final double MAXIMIZED_EPSILON = 1.0;
+
   private static Screen getScreen(Stage stage) {
     double centerX = stage.getX() + stage.getWidth() / 2;
     double centerY = stage.getY() + stage.getHeight() / 2;
 
     ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(centerX, centerY, 1, 1);
+    if (screensForRectangle.isEmpty()) {
+      return Screen.getPrimary();
+    }
     return screensForRectangle.getFirst();
   }
 
+  private static boolean isMaximized(Stage stage, Screen screen) {
+    return Math.abs(stage.getWidth() - screen.getVisualBounds().getWidth()) < MAXIMIZED_EPSILON
+        && Math.abs(stage.getHeight() - screen.getVisualBounds().getHeight()) < MAXIMIZED_EPSILON;
+  }
+
   public static boolean isMaximized(Stage stage) {
-    Screen screen = getScreen(stage);
-    return stage.getWidth() == screen.getVisualBounds().getWidth()
-        && stage.getHeight() == screen.getVisualBounds().getHeight();
+    return isMaximized(stage, getScreen(stage));
   }
 
   /**
@@ -96,8 +108,7 @@ public class FXResizeHelper {
   public boolean switchWindowedMode(MouseEvent e) {
     Screen screen = getScreen(STAGE);
 
-    boolean mIsMaximized = STAGE.getWidth() == screen.getVisualBounds().getWidth()
-        && STAGE.getHeight() == screen.getVisualBounds().getHeight();
+    boolean mIsMaximized = isMaximized(STAGE, screen);
 
     if (mIsMaximized) {
       STAGE.setX(mXStore);
@@ -128,8 +139,8 @@ public class FXResizeHelper {
         STAGE.setX(screenInsets.left);
       }
       else {
-        STAGE.setX(screen.getBounds().getMinX());
-        STAGE.setY(screen.getBounds().getMinY());
+        STAGE.setX(screen.getVisualBounds().getMinX());
+        STAGE.setY(screen.getVisualBounds().getMinY());
       }
 
 
@@ -236,7 +247,10 @@ public class FXResizeHelper {
 
   private void launch() {
 
-    SCENE.setOnMousePressed(event -> {
+    // Registered as capturing-phase filters (not bubble-phase handlers) so the resize/drag
+    // gesture is captured before a descendant control - e.g. a ToolBar, which is known to
+    // swallow MOUSE_PRESSED/MOUSE_DRAGGED even over its empty background - can consume it first.
+    SCENE.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
       mPresSceneX = event.getSceneX();
       mPresSceneY = event.getSceneY();
 
@@ -245,6 +259,13 @@ public class FXResizeHelper {
 
       mPresStageW = STAGE.getWidth();
       mPresStageH = STAGE.getHeight();
+    });
+
+    SCENE.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
+      EventHandler<MouseEvent> handler = LISTENER.get(SCENE.getCursor());
+      if (handler != null) {
+        handler.handle(event);
+      }
     });
 
     SCENE.setOnMouseMoved(event -> {
@@ -287,12 +308,19 @@ public class FXResizeHelper {
         fireAction(Cursor.DEFAULT);
       }
     });
+
+    // Once the pointer leaves the window, no further MOUSE_MOVED events arrive on this scene,
+    // so a cursor set while hovering the drag/resize zones (e.g. OPEN_HAND) would otherwise stay
+    // stuck. Skip the reset while a drag/resize is in progress (button held) to avoid glitching it.
+    SCENE.setOnMouseExited(event -> {
+      if (!event.isPrimaryButtonDown()) {
+        fireAction(Cursor.DEFAULT);
+      }
+    });
   }
 
   private void fireAction(Cursor c) {
     SCENE.setCursor(c);
-    if (c != Cursor.DEFAULT) SCENE.setOnMouseDragged(LISTENER.get(c));
-    else SCENE.setOnMouseDragged(null);
   }
 
   public void setVerticalOnly() {

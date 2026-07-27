@@ -5,10 +5,14 @@
 - **Media Recorder**
   - Fixed issue that recordings with 0 bytes overwrite existing videos.
   - Fixed issue that recordings were even made with 0 byte because they were outside the visible screen area.
+- **Table Data Manager**
+  - Fixed issue that PinVOL settings might get lost on save.
 - **Drop-In Folders**
   - Added option to skip the confirmation dialog when moving a file to trash.
 - **Misc**
   - When a game is deleted though the VPin-Studio, all files are moved to the trash now.
+  - Fixed various issued with the dialog resize handling.
+  - Added blind fix for Linux client updates.
 
 ---
 

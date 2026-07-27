@@ -2,4 +2,4 @@
 sleep 4
 unzip -o vpin-studio-ui-jar.zip
 rm vpin-studio-ui-jar.zip
-./VPin-Studio.sh &
+./VPin-Studio-linux_x64.sh &

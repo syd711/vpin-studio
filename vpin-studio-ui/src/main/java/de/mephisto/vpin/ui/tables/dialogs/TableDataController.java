@@ -576,17 +576,20 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     boolean success = true;
     try {
+      // save the table details (and any resulting game file rename) first, so that
+      // subsequent saves below key their data (e.g. PinVol entries) to the final filename
+      // instead of a stale name that gets orphaned by the rename.
+      if (tableDetails != null) {
+        tableDetails = client.getFrontendService().saveTableDetails(tableDetails, game.getId());
+      }
+      client.getFrontendService().saveVpsMapping(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
+
       // do not notify TableChange as it will be done globally once all controllers are saved
       success &= pinVolController.save(false);
       success &= tableScreensController.save();
       success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
       success &= tableDataTabScriptOptionsController.save();
-
-      if (tableDetails != null) {
-        tableDetails = client.getFrontendService().saveTableDetails(tableDetails, game.getId());
-      }
-      client.getFrontendService().saveVpsMapping(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
 
       setDialogDirty(false);
 
