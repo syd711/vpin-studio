@@ -1,31 +1,27 @@
-package de.mephisto.vpin.ui.tables;
+package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.CommentType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.vps.VpsChangeFilter;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
-import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
+import de.mephisto.vpin.server.playlists.Playlist;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 
 import java.util.function.Predicate;
 
-import static de.mephisto.vpin.ui.Studio.client;
+/**
+ * Server-side, structural port of the UI's TableOverviewPredicateFactory (vpin-studio-ui),
+ * operating on the server's Game entity instead of the client's GameRepresentation DTO.
+ * Keep the condition order in sync with that class when either one changes.
+ */
+public class GameFilterPredicateFactory {
 
-public class TableOverviewPredicateFactory {
-  /**
-   * We need a new Predicate each time else TableView does not detect the changes
-   */
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings, VpsSettings vpsSettings) {
-    return new Predicate<GameRepresentationModel>() {
+  public Predicate<Game> buildPredicate(String searchTerm, Playlist playlist, Integer emulatorId, FilterSettings filterSettings, VpsSettings vpsSettings) {
+    return new Predicate<Game>() {
       @Override
-      public boolean test(GameRepresentationModel model) {
-        GameRepresentation game = model.getGame();
-
-        boolean vpxGame = client.getEmulatorService().isVpxGame(game);
+      public boolean test(Game game) {
+        boolean vpxGame = game.isVpxGame();
         if (vpxGame) {
           if (filterSettings.isNoHighscoreSettings() && (!StringUtils.isEmpty(game.getRom()) || !StringUtils.isEmpty(game.getHsFileName()) || !StringUtils.isEmpty(game.getHsFileName()))) {
             return false;
@@ -82,7 +78,7 @@ public class TableOverviewPredicateFactory {
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null) {
           boolean hasVisibleUpdate = false;
           for (VPSChange change : game.getVpsUpdates().getChanges()) {
-            if (!VpsTableColumn.isFiltered(vpsSettings, change)) {
+            if (!VpsChangeFilter.isFiltered(vpsSettings, change)) {
               hasVisibleUpdate = true;
               break;
             }
@@ -150,7 +146,7 @@ public class TableOverviewPredicateFactory {
 
         //--------------------------
 
-        if (emulator != null && game.getEmulatorId() != emulator.getId()) {
+        if (emulatorId != null && game.getEmulatorId() != emulatorId) {
           return false;
         }
 
@@ -159,10 +155,10 @@ public class TableOverviewPredicateFactory {
         }
 
         if (StringUtils.isNotEmpty(searchTerm)
-            && !Strings.CI.contains(game.getGameDisplayName(), searchTerm)
-            && !Strings.CI.contains(String.valueOf(game.getId()), searchTerm)
-            && !Strings.CI.contains(game.getRomAlias(), searchTerm)
-            && !Strings.CI.contains(game.getRom(), searchTerm)) {
+            && !StringUtils.containsIgnoreCase(game.getGameDisplayName(), searchTerm)
+            && !StringUtils.containsIgnoreCase(String.valueOf(game.getId()), searchTerm)
+            && !StringUtils.containsIgnoreCase(game.getRomAlias(), searchTerm)
+            && !StringUtils.containsIgnoreCase(game.getRom(), searchTerm)) {
           return false;
         }
 
@@ -171,5 +167,4 @@ public class TableOverviewPredicateFactory {
       }
     };
   }
-
 }

@@ -8,8 +8,10 @@ import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import org.jspecify.annotations.NonNull;
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.util.Duration;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -57,11 +59,17 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
   }
 
   public void bindSearchField(TextField textfieldSearch, Button clearBtn) {
+    // Debounced: filtering may now involve a server round-trip (see TableFilterController),
+    // so avoid firing a request per keystroke.
+    PauseTransition debounce = new PauseTransition(Duration.millis(300));
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableController.clearSelection();
-      searchTerm = filterValue;
-      tableController.applyFilter();
       clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
+      searchTerm = filterValue;
+      debounce.setOnFinished(e -> {
+        tableController.clearSelection();
+        tableController.applyFilter();
+      });
+      debounce.playFromStart();
     });
   }
 

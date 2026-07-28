@@ -40,6 +40,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -312,6 +314,33 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public BaseFilterController<T, M> getFilterController() {
     return filterController;
+  }
+
+  /**
+   * Reconciles the table to exactly the given set of server-matched ids: fetches (via
+   * missingFetcher) whatever ids aren't yet present in the currently loaded models, appends
+   * them, and filters the table down to exactly this id set. A null id set means "no server-side
+   * id constraint yet" (e.g. before the first async filter round-trip has resolved) and shows
+   * everything currently loaded.
+   */
+  public void applyFilteredIds(Set<Integer> matchingIds, Function<M, Integer> idExtractor, Function<List<Integer>, List<T>> missingFetcher) {
+    if (this.filteredModels == null) {
+      return;
+    }
+
+    if (matchingIds != null) {
+      Set<Integer> loadedIds = models.stream().map(idExtractor).collect(Collectors.toSet());
+      List<Integer> missingIds = matchingIds.stream().filter(id -> !loadedIds.contains(id)).collect(Collectors.toList());
+      if (!missingIds.isEmpty()) {
+        for (T bean : missingFetcher.apply(missingIds)) {
+          models.add(toModel(bean));
+        }
+      }
+    }
+
+    Predicate<M> idPredicate = matchingIds == null ? m -> true : m -> matchingIds.contains(idExtractor.apply(m));
+    this.filteredModels.setPredicate(idPredicate);
+    applyTableCount();
   }
 
   protected void applyTableCount() {

@@ -247,6 +247,17 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return gameCachingService.getGame(id);
   }
 
+  public List<Game> getGames(List<Integer> ids) {
+    List<Game> result = new ArrayList<>();
+    for (Integer id : ids) {
+      Game game = gameCachingService.getGame(id);
+      if (game != null) {
+        result.add(game);
+      }
+    }
+    return result;
+  }
+
   /**
    * Returns the current highscore for the given game
    */

@@ -361,6 +361,38 @@ public class GamesServiceClient extends VPinStudioClientService {
     return Collections.emptyList();
   }
 
+  /**
+   * Returns only the ids of the games matching the given filter criteria.
+   * Use getGamesByIds() to lazily fetch full game data for exactly those ids.
+   */
+  public List<Integer> filterGameIds(GameFilterRequest request) {
+    try {
+      Integer[] ids = getRestClient().post(API + "games/filter", request, Integer[].class);
+      return Arrays.asList(ids);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to filter game ids: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * Batch-fetches full game data for exactly the given ids (no full-emulator load).
+   */
+  public List<GameRepresentation> getGamesByIds(List<Integer> ids) {
+    if (ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+    try {
+      GameRepresentation[] games = getRestClient().post(API + "games/batch", ids, GameRepresentation[].class);
+      return new ArrayList<>(Arrays.asList(games));
+    }
+    catch (Exception e) {
+      LOG.error("Failed to batch-fetch games " + ids + ": " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
   public List<Integer> getGameIdsCached(int emuId) {
     return getGamesCached(emuId).stream().map(g -> g.getId()).collect(Collectors.toList());
   }

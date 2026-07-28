@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.*;
+import de.mephisto.vpin.restclient.vps.VpsChangeFilter;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Pos;
@@ -133,38 +134,6 @@ public class VpsTableColumn extends HBox {
   }
 
   public static boolean isFiltered(VpsSettings vpsSettings, VPSChange change) {
-    if (vpsSettings != null) {
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.b2s) && !vpsSettings.isVpsBackglass()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.topper) && !vpsSettings.isVpsToppper()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pov) && !vpsSettings.isVpsPOV()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.rom) && !vpsSettings.isVpsRom()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altColor) && !vpsSettings.isVpsAltColor()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altSound) && !vpsSettings.isVpsAltSound()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pupPack) && !vpsSettings.isVpsPUPPack()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.sound) && !vpsSettings.isVpsSound()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.wheel) && !vpsSettings.isVpsWheel()) {
-        return true;
-      }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.tutorial) && !vpsSettings.isVpsTutorial()) {
-        return true;
-      }
-    }
-    return false;
+    return VpsChangeFilter.isFiltered(vpsSettings, change);
   }
 }

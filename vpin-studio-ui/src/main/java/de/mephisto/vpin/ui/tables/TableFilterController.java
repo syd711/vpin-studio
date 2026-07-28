@@ -6,12 +6,12 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.CommentType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
-import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -130,17 +130,18 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   @FXML
   private ComboBox<CommentType> commentsCombo;
 
-  private VpsSettings vpsSettings;
-
-  private final TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
   private TagField tagField;
 
+  /**
+   * Ids matching the current server-side filter. Null means no filter round-trip has
+   * resolved yet, which is treated as "no id constraint" (show everything currently loaded).
+   */
+  private volatile Set<Integer> matchingIds;
 
   public void applyFilters() {
     // as we do not call filterGames() anymore, manually call saveFilterSettings to persist the reset
     JFXFuture.runAsync(() -> {
       client.getPreferenceService().setJsonPreference(filterSettings);
-      vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
     }).thenLater(() -> {
       super.applyFilters();
     });
@@ -158,8 +159,29 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   @Override
   public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
+    refreshMatchingIds(searchTerm, playlist);
+    Set<Integer> ids = matchingIds;
+    return model -> ids == null || ids.contains(model.getGameId());
+  }
+
+  /**
+   * Asynchronously resolves the ids matching the current filter criteria on the server,
+   * then reconciles the table (fetching only the ids not yet loaded) once resolved.
+   */
+  private void refreshMatchingIds(String searchTerm, PlaylistRepresentation playlist) {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings, vpsSettings);
+
+    GameFilterRequest request = new GameFilterRequest();
+    request.setFilterSettings(filterSettings);
+    request.setSearchTerm(searchTerm);
+    request.setEmulatorId(emulatorSelection != null ? emulatorSelection.getId() : GameFilterRequest.ALL_VPX_ID);
+    request.setPlaylistId(playlist != null ? playlist.getId() : null);
+
+    JFXFuture.supplyAsync(() -> client.getGameService().filterGameIds(request))
+        .thenAcceptLater(ids -> {
+          matchingIds = new HashSet<>(ids);
+          tableController.applyFilteredIds(matchingIds, GameRepresentationModel::getGameId, missingIds -> client.getGameService().getGamesByIds(missingIds));
+        });
   }
 
   protected void resetFilters() {

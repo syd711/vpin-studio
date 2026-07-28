@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -44,6 +45,9 @@ public class GamesResource {
   private GameService gameService;
 
   @Autowired
+  private GameFilterService gameFilterService;
+
+  @Autowired
   private GameMediaService gameMediaService;
 
   @Autowired
@@ -81,6 +85,20 @@ public class GamesResource {
   @GetMapping("/ids")
   public List<Integer> getGameIds() {
     return gameService.getGameIds();
+  }
+
+  /**
+   * Returns only the ids of the games matching the given filter criteria, so the client
+   * can lazily fetch full game data (see /batch) only for the tables it needs to display.
+   */
+  @PostMapping("/filter")
+  public List<Integer> filterGameIds(@RequestBody GameFilterRequest request) {
+    return gameFilterService.filterGameIds(request);
+  }
+
+  @PostMapping("/batch")
+  public List<Game> getGames(@RequestBody List<Integer> ids) {
+    return gameService.getGames(ids);
   }
 
   @GetMapping("/reload")
