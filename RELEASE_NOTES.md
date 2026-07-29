@@ -7,6 +7,8 @@
   - Fixed issue that recordings were even made with 0 byte because they were outside the visible screen area.
 - **Table Data Manager**
   - Fixed issue that PinVOL settings might get lost on save.
+- **Table Overview**
+  - Switched to server-side filtering. This will enable more flexible playlists creations in the future.
 - **Drop-In Folders**
   - Added option to skip the confirmation dialog when moving a file to trash.
 - **Misc**
