@@ -429,6 +429,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return !filteredProceses.isEmpty();
   }
 
+  public boolean isPinUPPopperRunning() {
+    return isProcessRunning("PinUPMenu");
+  }
+
   public static List<ProcessHandle> getProcesses() {
     return ProcessHandle.allProcesses()
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
@@ -443,6 +447,13 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     System.out.println(SystemService.isPinballEmulatorRunning());
   }
 
+  public boolean isFrontendOrEmulatorRunning() {
+    boolean frontendRunning = false;
+    if(getFrontendType() != null && getFrontendType().equals(FrontendType.Popper)) {
+      frontendRunning = isPinUPPopperRunning();
+    }
+    return frontendRunning || SystemService.isPinballEmulatorRunning();
+  }
 
   public static boolean isPinballEmulatorRunning() {
     List<ProcessHandle> processes = getProcesses();

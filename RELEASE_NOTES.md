@@ -15,6 +15,7 @@
   - When a game is deleted though the VPin-Studio, all files are moved to the trash now.
   - Fixed various issued with the dialog resize handling.
   - Added blind fix for Linux client updates.
+  - Improved key handling: There are more checks now if the frontend or emulator is running so that when cabinet is maintained, Studio ignores these keystrokes.
 
 ---
 

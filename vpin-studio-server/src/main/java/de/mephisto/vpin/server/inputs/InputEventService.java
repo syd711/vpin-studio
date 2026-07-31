@@ -116,7 +116,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     String resetBtn = pauseMenuSettings.getResetButton();
     String vrToggleBtn = pauseMenuSettings.getVrToggleButton();
 
-    if (name.equals("Q")) {
+    if (name.equals("Q") && frontendStatusService.getGameStatus().isActive()) {
       HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
       if (highscoreEventLog != null) {
         gameService.saveEventLog(highscoreEventLog);
@@ -137,7 +137,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
 
-    if (name.equals(screenshotBtn)) {
+    if (name.equals(screenshotBtn) && SystemService.isPinballEmulatorRunning()) {
       if (frontendStatusService.getGameStatus().isActive()) {
         LOG.info("Active game found for to screenshot, starting generation.");
         screenshotService.takeScreenshots(frontendStatusService.getGameStatus().getGameId());
@@ -150,7 +150,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
 
-    if (overlayBtn != null) {
+    if (overlayBtn != null && systemService.isFrontendOrEmulatorRunning()) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
         if (showPauseInsteadOfOverlay && emulatorRunning) {
           onTogglePauseMenu();
@@ -165,19 +165,19 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     }
 
     //handle pause menu toggling
-    if (name.equals(pauseBtn)) {
+    if (name.equals(pauseBtn) && SystemService.isPinballEmulatorRunning()) {
       onPauseMenuEvent();
       return;
     }
 
     //handle key based reset
-    if (name.equals(resetBtn)) {
+    if (name.equals(resetBtn) && systemService.isFrontendOrEmulatorRunning()) {
       onResetEvent();
       return;
     }
 
     //handle key based vr toggle
-    if (name.equals(vrToggleBtn)) {
+    if (name.equals(vrToggleBtn) && systemService.isFrontendOrEmulatorRunning()) {
       onVrToggle();
       return;
     }
