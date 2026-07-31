@@ -81,8 +81,8 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   private ShutdownThread shutdownThread;
   private boolean launchOverlayOnStartup = false;
 
-  private boolean frontendIsRunning = false;
-  private boolean emulatorRunning = false;
+  private volatile boolean frontendIsRunning = false;
+  private volatile boolean emulatorRunning = false;
 
   private final Map<String, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
@@ -93,6 +93,11 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   public void controllerEvent(String name) {
     //reset shutdown thread
     shutdownThread.notifyKeyEvent();
+
+    if (pauseMenuSettings == null) {
+      LOG.warn("Ignoring key event '{}', pause menu settings have not been loaded yet.", name);
+      return;
+    }
 
     if (isEventDebounced(name)) {
       return;
@@ -124,7 +129,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       return;
     }
 
-    if (name.equals(recordBtn) && SystemService.isPinballEmulatorRunning()) {
+    if (name.equals(recordBtn) && emulatorRunning) {
       if (frontendStatusService.getGameStatus().isActive()) {
         LOG.info("Active game found for to recording, triggering recorder.");
         SLOG.info("Active game found for to recording, triggering recorder.");
@@ -137,7 +142,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
 
-    if (name.equals(screenshotBtn) && SystemService.isPinballEmulatorRunning()) {
+    if (name.equals(screenshotBtn) && emulatorRunning) {
       if (frontendStatusService.getGameStatus().isActive()) {
         LOG.info("Active game found for to screenshot, starting generation.");
         screenshotService.takeScreenshots(frontendStatusService.getGameStatus().getGameId());
@@ -150,7 +155,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
 
-    if (overlayBtn != null && systemService.isFrontendOrEmulatorRunning()) {
+    if (overlayBtn != null && (frontendIsRunning || emulatorRunning)) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
         if (showPauseInsteadOfOverlay && emulatorRunning) {
           onTogglePauseMenu();
@@ -165,19 +170,19 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     }
 
     //handle pause menu toggling
-    if (name.equals(pauseBtn) && SystemService.isPinballEmulatorRunning()) {
+    if (name.equals(pauseBtn) && emulatorRunning) {
       onPauseMenuEvent();
       return;
     }
 
     //handle key based reset
-    if (name.equals(resetBtn) && systemService.isFrontendOrEmulatorRunning()) {
+    if (name.equals(resetBtn) && (frontendIsRunning || emulatorRunning)) {
       onResetEvent();
       return;
     }
 
     //handle key based vr toggle
-    if (name.equals(vrToggleBtn) && systemService.isFrontendOrEmulatorRunning()) {
+    if (name.equals(vrToggleBtn) && (frontendIsRunning || emulatorRunning)) {
       onVrToggle();
       return;
     }
@@ -202,7 +207,6 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   }
 
   private void onPauseMenuEvent() {
-    boolean emulatorRunning = systemService.isPinballEmulatorRunning();
     if (emulatorRunning) {
       ServerFX.getInstance().togglePauseMenu();
     }
