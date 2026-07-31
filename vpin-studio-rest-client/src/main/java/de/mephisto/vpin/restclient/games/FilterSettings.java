@@ -233,6 +233,7 @@ public class FilterSettings extends JsonSettings {
     this.iScored = false;
     this.versionUpdates = false;
     this.notPlayed = false;
+    this.isNotBackedUp = false;
     this.noHighscoreSettings = false;
     this.noHighscoreSupport = false;
     this.withBackglass = false;
@@ -256,6 +257,7 @@ public class FilterSettings extends JsonSettings {
           && !this.noHighscoreSettings
           && !this.noHighscoreSupport
           && !this.notPlayed
+          && !this.isNotBackedUp
           && !this.noVpsTableMapping
           && !this.noVpsVersionMapping
           && !this.vpsUpdates
@@ -277,6 +279,7 @@ public class FilterSettings extends JsonSettings {
 
     return !this.missingAssets
         && !this.notPlayed
+        && !this.isNotBackedUp
         && this.tags.isEmpty()
         && this.noteType == null
         && this.gameStatus == -1;

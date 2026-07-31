@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
+import de.mephisto.vpin.server.backups.BackupService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.playlists.PlaylistService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -26,6 +27,9 @@ public class GameFilterService {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private BackupService backupService;
+
   private final GameFilterPredicateFactory predicateFactory = new GameFilterPredicateFactory();
 
   public List<Integer> filterGameIds(GameFilterRequest request) {
@@ -44,7 +48,7 @@ public class GameFilterService {
     VpsSettings vpsSettings = preferencesService.getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
 
     Integer emulatorId = request.getEmulatorId() == GameFilterRequest.ALL_VPX_ID ? null : request.getEmulatorId();
-    Predicate<Game> predicate = predicateFactory.buildPredicate(request.getSearchTerm(), playlist, emulatorId, filterSettings, vpsSettings);
+    Predicate<Game> predicate = predicateFactory.buildPredicate(request.getSearchTerm(), playlist, emulatorId, filterSettings, vpsSettings, backupService);
 
     return candidates.stream()
         .filter(predicate)

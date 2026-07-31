@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.games.CommentType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.vps.VpsChangeFilter;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
+import de.mephisto.vpin.server.backups.BackupService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +18,7 @@ import java.util.function.Predicate;
  */
 public class GameFilterPredicateFactory {
 
-  public Predicate<Game> buildPredicate(String searchTerm, Playlist playlist, Integer emulatorId, FilterSettings filterSettings, VpsSettings vpsSettings) {
+  public Predicate<Game> buildPredicate(String searchTerm, Playlist playlist, Integer emulatorId, FilterSettings filterSettings, VpsSettings vpsSettings, BackupService backupService) {
     return new Predicate<Game>() {
       @Override
       public boolean test(Game game) {
@@ -126,7 +127,7 @@ public class GameFilterPredicateFactory {
           return false;
         }
 
-        if (filterSettings.isNotBackedUp() && game.isBackedUp()) {
+        if (filterSettings.isNotBackedUp() && !backupService.getBackupDescriptorForGame(game.getId()).isEmpty()) {
           return false;
         }
 

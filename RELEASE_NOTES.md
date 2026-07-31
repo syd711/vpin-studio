@@ -1,3 +1,13 @@
+## Release Notes 5.1.6
+
+### Changes
+
+- **Table Overview**
+    - Repaired "Not backed up" filter that got broken with the last server-side filter change.
+
+
+---
+
 ## Release Notes 5.1.5
 
 ### Changes

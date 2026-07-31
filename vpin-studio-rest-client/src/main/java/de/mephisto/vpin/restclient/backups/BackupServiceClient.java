@@ -3,12 +3,8 @@ package de.mephisto.vpin.restclient.backups;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -120,15 +116,4 @@ public class BackupServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "backups/restore", descriptor, Boolean.class);
   }
 
-  @Nullable
-  public BackupDescriptorRepresentation getBackup(@NonNull GameRepresentation value) {
-    List<BackupDescriptorRepresentation> backups = getBackups();
-    for (BackupDescriptorRepresentation backup : backups) {
-      TableDetails tableDetails = backup.getTableDetails();
-      if (tableDetails != null && String.valueOf(tableDetails.getGameFileName()).equals(value.getGameFileName())) {
-        return backup;
-      }
-    }
-    return null;
-  }
 }

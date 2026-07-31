@@ -1310,7 +1310,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
 
       if (value.isBackedUp()) {
-        BackupDescriptorRepresentation backup = client.getBackupService().getBackup(value);
+        List<BackupDescriptorRepresentation> backups = client.getBackupService().getBackupsForGame(value.getId());
+        BackupDescriptorRepresentation backup = backups.isEmpty() ? null : backups.get(0);
         if (backup != null) {
           Button compBtn = new Button();
           compBtn.getStyleClass().add("table-media-button");
