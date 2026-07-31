@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Strings;
@@ -79,7 +80,8 @@ public class GameRecorder {
           Callable<RecordingResult> screenRecordable = new Callable<RecordingResult>() {
             @Override
             public RecordingResult call() {
-              option.setOpenGlCommand(recorderSettings.isCustomLauncherEnabled() && recorderSettings.getCustomLauncher() != null && recorderSettings.getCustomLauncher().toLowerCase().contains("gl"));
+              boolean useOpenGl = recorderSettings.isCustomLauncherEnabled() && recorderSettings.getCustomLauncher() != null && recorderSettings.getCustomLauncher().toLowerCase().contains("gl");
+              option.setOpenGlCommand(SystemService.isFPRunning() || useOpenGl);
               LOG.info("Starting [glmode={}] recording for \"{}\", {}: {}", option.isOpenGlCommand(), game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
 
               recorderSettings.getRecordingScreenOption(screen);

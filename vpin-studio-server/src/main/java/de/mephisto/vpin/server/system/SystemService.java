@@ -460,6 +460,16 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return isVPXRunning(processes) || isFPRunning(processes) || isMameRunning(processes) || isZenRunning(processes) || isZaccariaRunning(processes);
   }
 
+  public static boolean isFPRunning() {
+    List<ProcessHandle> processes = getProcesses();
+    return isFPRunning(processes);
+  }
+
+  public static boolean isVPXRunning() {
+    List<ProcessHandle> processes = getProcesses();
+    return isVPXRunning(processes);
+  }
+
   private static boolean isZaccariaRunning(List<ProcessHandle> processes) {
     for (ProcessHandle p : processes) {
       if (p.info().command().isPresent()) {

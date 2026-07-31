@@ -129,8 +129,8 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       return;
     }
 
-    if (name.equals(recordBtn) && emulatorRunning) {
-      if (frontendStatusService.getGameStatus().isActive()) {
+    if (name.equals(recordBtn)) {
+      if (frontendStatusService.getGameStatus().isActive() && SystemService.isPinballEmulatorRunning()) {
         LOG.info("Active game found for to recording, triggering recorder.");
         SLOG.info("Active game found for to recording, triggering recorder.");
         recorderService.startInGameRecording();
@@ -142,8 +142,8 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
 
-    if (name.equals(screenshotBtn) && emulatorRunning) {
-      if (frontendStatusService.getGameStatus().isActive()) {
+    if (name.equals(screenshotBtn)) {
+      if (frontendStatusService.getGameStatus().isActive() && SystemService.isPinballEmulatorRunning()) {
         LOG.info("Active game found for to screenshot, starting generation.");
         screenshotService.takeScreenshots(frontendStatusService.getGameStatus().getGameId());
         return;
@@ -155,9 +155,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
     }
 
-    if (overlayBtn != null && (frontendIsRunning || emulatorRunning)) {
+    if (overlayBtn != null) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
-        if (showPauseInsteadOfOverlay && emulatorRunning) {
+        if (showPauseInsteadOfOverlay && SystemService.isPinballEmulatorRunning()) {
           onTogglePauseMenu();
           return;
         }

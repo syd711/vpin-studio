@@ -20,11 +20,13 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(InGameRecorderJob.class);
 
   private final NotificationSettings notificationSettings;
+  private final boolean showNotifications;
 
   public InGameRecorderJob(RecorderService recorderService, NotificationSettings notificationSettings,  
                            RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
     super(recorderService, settings, recordingDataSummary, recordingScreens);
     this.notificationSettings = notificationSettings;
+    this.showNotifications = !recorderService.isEmulatorInFullscreenMode();
   }
 
   @Override
@@ -86,14 +88,14 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   }
 
   private void showEndNotification(JobDescriptor jobDescriptor, RecordingData data) {
-    if (notificationSettings.isRecordingEndNotification()) {
+    if (showNotifications && notificationSettings.isRecordingEndNotification()) {
       Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder End", "The recording has been finished.");
       recorderService.showNotificationNow(notification);
     }
   }
 
   private boolean showStartNotification(JobDescriptor jobDescriptor, RecordingData data) throws InterruptedException {
-    if (notificationSettings.isRecordingStartNotification()) {
+    if (showNotifications && notificationSettings.isRecordingStartNotification()) {
       int seconds = notificationSettings.getDurationSec();
 
       int wait = 0;

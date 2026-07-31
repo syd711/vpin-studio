@@ -209,6 +209,16 @@ public class RecorderService {
     return null;
   }
 
+  public boolean isEmulatorInFullscreenMode() {
+    if (SystemService.isVPXRunning()) {
+      return vpxService.isFullscreenEnabled();
+    }
+    if (SystemService.isFPRunning()) {
+      return futurePinballService.isFullscreenEnabled();
+    }
+    return true;
+  }
+
   //-----------------------------------------------
   // Package methods used by jobs, all jobs to get access to services
 

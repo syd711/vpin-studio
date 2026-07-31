@@ -281,6 +281,11 @@ public class VPXService implements InitializingBean {
     return null;
   }
 
+  public boolean isFullscreenEnabled() {
+    Configuration playerConfiguration = getPlayerConfiguration(true);
+    return playerConfiguration.getBoolean("PlayfieldFullScreen", true);
+  }
+
   public boolean setNvOffset(Game game, int nvOffset, boolean keepVbsFiles) throws Exception {
     if (game.isVpxGame() && game.getNvOffset() != nvOffset) {
       String script = VPXUtil.exportVBS(game.getGameFile(), true);

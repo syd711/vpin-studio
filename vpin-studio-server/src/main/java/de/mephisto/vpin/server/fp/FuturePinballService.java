@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.fp;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FuturePinballService {
@@ -133,5 +135,14 @@ public class FuturePinballService {
     else {
       LOG.error("Failed to install FP model file, no game found");
     }
+  }
+
+  public boolean isFullscreenEnabled() {
+    Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues("Software\\Future Pinball\\GamePlayer");
+    if (currentUserValues.containsKey("FullScreen")) {
+      Object fullScreen = currentUserValues.get("FullScreen");
+      return String.valueOf(fullScreen).equalsIgnoreCase("1");
+    }
+    return false;
   }
 }
