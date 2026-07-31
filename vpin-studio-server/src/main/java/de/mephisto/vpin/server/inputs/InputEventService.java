@@ -124,7 +124,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       return;
     }
 
-    if (name.equals(recordBtn)) {
+    if (name.equals(recordBtn) && SystemService.isPinballEmulatorRunning()) {
       if (frontendStatusService.getGameStatus().isActive()) {
         LOG.info("Active game found for to recording, triggering recorder.");
         SLOG.info("Active game found for to recording, triggering recorder.");
