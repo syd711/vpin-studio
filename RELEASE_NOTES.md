@@ -18,6 +18,7 @@
   - Added blind fix for Linux client updates.
   - Improved key handling: There are more checks now if the frontend or emulator is running so that when cabinet is maintained, the server ignores these keystrokes.
 
+
 ---
 
 ## Release Notes 5.1.4
