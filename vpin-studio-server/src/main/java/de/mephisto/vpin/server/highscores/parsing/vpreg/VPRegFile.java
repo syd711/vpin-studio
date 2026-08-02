@@ -76,7 +76,7 @@ public class VPRegFile {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read VPReg: {}", e.getMessage());
+      LOG.error("Failed to read VPReg: {}", e.getMessage(), e);
     }
     finally {
       if (fs != null) {
@@ -122,7 +122,7 @@ public class VPRegFile {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to read VPReg: {}", e.getMessage());
+      LOG.error("Failed to read VPReg: {}", e.getMessage(), e);
     }
     finally {
       if (fs != null) {

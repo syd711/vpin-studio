@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.RestClient;
 import javafx.stage.Screen;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -95,7 +96,19 @@ public class SystemUtil {
       LOG.warn("Failed to move \"{}\" to trash, deleting permanently instead: {}", fileOrFolder.getAbsolutePath(), e.getMessage());
     }
 
-    return deleteFileOrFolder(fileOrFolder);
+    try {
+      if (fileOrFolder.isDirectory()) {
+        FileUtils.deleteDirectory(fileOrFolder);
+      }
+      else {
+        FileUtils.forceDelete(fileOrFolder);
+      }
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to permanently delete \"{}\": {}", fileOrFolder.getAbsolutePath(), e.getMessage(), e);
+      return false;
+    }
   }
 
   public static List<String> getAudioDevices() {

@@ -33,6 +33,7 @@
     /* set the entire area's font size to the given size */
     -fx-font-size: 14;
     -fx-font-color: #C7C3C3;
+    -fx-fill: #C7C3C3;
 }
 
 .styled-text-area .text {

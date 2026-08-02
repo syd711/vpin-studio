@@ -4,6 +4,9 @@
 
 - **Table Overview**
     - Repaired "Not backed up" filter that got broken with the last server-side filter change.
+    - Added a table refresh after backups so that a table gets the backup-indicator immediately.
+- **Misc**
+  - Fixed critical stack overflow error when bulk deleting folders like PUP packs.
 
 
 ---

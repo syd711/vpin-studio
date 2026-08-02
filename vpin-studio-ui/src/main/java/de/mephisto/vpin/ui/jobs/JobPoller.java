@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.jobs;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -134,6 +135,10 @@ public class JobPoller implements StudioEventListener {
       if ((job.isCancelled() || job.isFinished()) && !finishedJobs.contains(job)) {
         finishedJobs.add(job);
         EventManager.getInstance().notifyJobFinished(job);
+
+        if (job.getJobType() == JobType.TABLE_BACKUP && job.isFinished() && !job.isCancelled() && job.getGameId() > 0) {
+          EventManager.getInstance().notifyTableChange(job.getGameId(), null);
+        }
       }
     }
   }
