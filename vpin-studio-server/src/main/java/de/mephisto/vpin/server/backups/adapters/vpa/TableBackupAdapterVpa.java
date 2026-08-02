@@ -133,8 +133,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
                 manifestFile.delete();
             }
 
-            jobDescriptor.setProgress(1);
-
             backupDescriptor.setSize(target.length());
 
             File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
@@ -186,6 +184,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
                 LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
                 jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
             }
+
+            jobDescriptor.setProgress(1);
 
             if (target.exists() && this.cancelled) {
                 target.delete();
