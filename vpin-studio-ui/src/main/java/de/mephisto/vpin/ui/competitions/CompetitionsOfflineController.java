@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -332,7 +333,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnStartDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getStartDate().atZone(ZoneId.systemDefault())));
       if (value.isActive()) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }
@@ -341,7 +342,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     columnEndDate.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate()));
+      Label label = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getEndDate().atZone(ZoneId.systemDefault())));
       if (value.isActive()) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00;");
       }
