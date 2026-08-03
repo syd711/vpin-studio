@@ -9,7 +9,7 @@
 - **Installer**
   - Removed check if any other Java process is running.
 - **Pause Menu**
-  - ...
+  - Fixed regression from 5.1.5 where the pause button could stop working entirely after the first table of a session.
 
 ---
 

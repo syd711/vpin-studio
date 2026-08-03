@@ -2,9 +2,11 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
+import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -93,5 +95,66 @@ public class FrontendStatusServiceTest {
   void getPinUPControls_delegatesToFrontendService() {
     frontendStatusService.getPinUPControls();
     verify(frontendService).getControls();
+  }
+
+  // ---- listener isolation: one failing listener must not block the others ----
+
+  @Test
+  void notifyTableStatusChange_launched_failingListenerDoesNotBlockLaterListeners() {
+    TableStatusChangeListener failing = mock(TableStatusChangeListener.class);
+    doThrow(new RuntimeException("boom")).when(failing).tableLaunched(any());
+    TableStatusChangeListener healthy = mock(TableStatusChangeListener.class);
+
+    frontendStatusService.addTableStatusChangeListener(failing);
+    frontendStatusService.addTableStatusChangeListener(healthy);
+
+    Game game = mock(Game.class);
+    frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
+
+    verify(healthy).tableLaunched(any());
+  }
+
+  @Test
+  void notifyTableStatusChange_exited_failingListenerDoesNotBlockLaterListeners() {
+    TableStatusChangeListener failing = mock(TableStatusChangeListener.class);
+    doThrow(new RuntimeException("boom")).when(failing).tableExited(any());
+    TableStatusChangeListener healthy = mock(TableStatusChangeListener.class);
+
+    frontendStatusService.addTableStatusChangeListener(failing);
+    frontendStatusService.addTableStatusChangeListener(healthy);
+
+    Game game = mock(Game.class);
+    frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
+
+    verify(healthy).tableExited(any());
+  }
+
+  @Test
+  void notifyFrontendLaunch_failingListenerDoesNotBlockLaterListeners() {
+    FrontendStatusChangeListener failing = mock(FrontendStatusChangeListener.class);
+    doThrow(new RuntimeException("boom")).when(failing).frontendLaunched();
+    FrontendStatusChangeListener healthy = mock(FrontendStatusChangeListener.class);
+
+    frontendStatusService.addFrontendStatusChangeListener(failing);
+    frontendStatusService.addFrontendStatusChangeListener(healthy);
+
+    frontendStatusService.notifyFrontendLaunch();
+
+    verify(healthy).frontendLaunched();
+  }
+
+  @Test
+  void notifyFrontendExit_failingListenerDoesNotBlockLaterListeners() {
+    FrontendStatusChangeListener failing = mock(FrontendStatusChangeListener.class);
+    doThrow(new RuntimeException("boom")).when(failing).frontendExited();
+    FrontendStatusChangeListener healthy = mock(FrontendStatusChangeListener.class);
+
+    frontendStatusService.addFrontendStatusChangeListener(failing);
+    frontendStatusService.addFrontendStatusChangeListener(healthy);
+    when(gameStatusService.getStatus()).thenReturn(new GameStatus());
+
+    frontendStatusService.notifyFrontendExit();
+
+    verify(healthy).frontendExited();
   }
 }

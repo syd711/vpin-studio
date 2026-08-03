@@ -170,6 +170,12 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     }
 
     //handle pause menu toggling
+    //fall back to a live process check: emulatorRunning is only updated via tableLaunched/tableExited callbacks,
+    //so if that notification was ever missed the cached flag would otherwise wedge the pause button permanently.
+    if (name.equals(pauseBtn) && !emulatorRunning && SystemService.isPinballEmulatorRunning()) {
+      LOG.warn("emulatorRunning flag was stale (false) while the emulator process is actually running, correcting it.");
+      emulatorRunning = true;
+    }
     if (name.equals(pauseBtn) && emulatorRunning) {
       onPauseMenuEvent();
       return;

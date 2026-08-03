@@ -100,11 +100,20 @@ public class FrontendStatusService implements InitializingBean {
     };
 
     for (TableStatusChangeListener listener : this.tableStatusChangeListeners) {
-      if (started) {
-        listener.tableLaunched(event);
+      try {
+        if (started) {
+          listener.tableLaunched(event);
+        }
+        else {
+          listener.tableExited(event);
+        }
       }
-      else {
-        listener.tableExited(event);
+      catch (Exception e) {
+        // A single misbehaving listener must not stop the remaining listeners from being notified,
+        // e.g. InputEventService (which tracks emulatorRunning for the pause button) registers last
+        // and would otherwise silently stop receiving table launch/exit events until a restart.
+        LOG.error("Listener {} failed to handle table {} event for \"{}\": {}",
+            listener.getClass().getSimpleName(), started ? "launch" : "exit", game.getGameDisplayName(), e.getMessage(), e);
       }
     }
   }
