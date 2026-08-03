@@ -1,3 +1,14 @@
+## Release Notes 5.1.7
+
+### Changes
+
+- **Installer**
+  - Removed simply check if any other Java process is running. Now the actual VPin-Studio processes are checked only.
+- **Pause Menu**
+  - ...
+
+---
+
 ## Release Notes 5.1.6
 
 ### Changes

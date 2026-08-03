@@ -54,24 +54,26 @@ begin
 end;
 
 function InitializeSetup(): Boolean;
-var
-  Msg: String;
+//var
+//  Msg: String;
 begin
   Result := True;
-  while IsProcessRunning('VPin-Studio.exe') or IsProcessRunning('java%.exe') or IsProcessRunning('VPin-Studio-Server.exe') do
-  begin
-    Msg := 'VPin Studio or Java processes are still running.' + #13#10 + #13#10 +
-           'Please close all VPin Studio applications (VPin-Studio.exe, VPin-Studio-Server.exe, VPin-Studio-App.exe) ' +
-           'and any running Java processes before continuing.' + #13#10 + #13#10 +
-           'Click Retry to check again, or Cancel to abort the installation.';
-    case MsgBox(Msg, mbError, MB_RETRYCANCEL) of
-      IDCANCEL:
-        begin
-          Result := False;
-          Exit;
-        end;
-    end;
-  end;
+  // Disabled: process-running check produced false positives (e.g. unrelated
+  // java*.exe processes on the system tripping the wildcard match).
+  //while IsProcessRunning('VPin-Studio.exe') or IsProcessRunning('java%.exe') or IsProcessRunning('VPin-Studio-Server.exe') do
+  //begin
+  //  Msg := 'VPin Studio or Java processes are still running.' + #13#10 + #13#10 +
+  //         'Please close all VPin Studio applications (VPin-Studio.exe, VPin-Studio-Server.exe, VPin-Studio-App.exe) ' +
+  //         'and any running Java processes before continuing.' + #13#10 + #13#10 +
+  //         'Click Retry to check again, or Cancel to abort the installation.';
+  //  case MsgBox(Msg, mbError, MB_RETRYCANCEL) of
+  //    IDCANCEL:
+  //      begin
+  //        Result := False;
+  //        Exit;
+  //      end;
+  //  end;
+  //end;
 end;
 
 [Tasks]

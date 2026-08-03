@@ -234,16 +234,19 @@ public class GamesServiceClient extends VPinStudioClientService {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
       if (gameRepresentation != null && !this.allGames.isEmpty()) {
         int emulatorId = gameRepresentation.getEmulatorId();
-        // get and from cache and possibly update the cache
-        List<GameRepresentation> games = this.getGamesCached(emulatorId);
-        int index = games.indexOf(gameRepresentation);
-        if (index != -1) {
-          games.remove(index);
-          games.add(index, gameRepresentation);
-        }
-        else {
-          games.add(gameRepresentation);
-          games.sort(Comparator.comparing(GameRepresentation::getGameDisplayName));
+        // update the cache in place if it is already populated for this emulator
+        // (must mutate the cache-backed list directly, getGamesCached() only hands out copies)
+        List<GameRepresentation> games = this.allGames.get(emulatorId);
+        if (games != null) {
+          int index = games.indexOf(gameRepresentation);
+          if (index != -1) {
+            games.remove(index);
+            games.add(index, gameRepresentation);
+          }
+          else {
+            games.add(gameRepresentation);
+            games.sort(Comparator.comparing(GameRepresentation::getGameDisplayName));
+          }
         }
       }
       return gameRepresentation;
@@ -336,6 +339,9 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> gamesCached = getVpxGamesCached();
     List<GameRepresentation> hits = new ArrayList<>();
     for (GameRepresentation game : gamesCached) {
+      if (game == null) {
+        continue;
+      }
       if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
         if (vpsTableVersionId == null) {
           hits.add(game);
@@ -530,7 +536,9 @@ public class GamesServiceClient extends VPinStudioClientService {
 
     List<GameRepresentation> gameRepresentations = Collections.emptyList();
     if (allGames.containsKey(emulatorId) && allGames.get(emulatorId) != null) {
-      gameRepresentations = this.allGames.get(emulatorId);
+      // defensive copy: never hand out the cache-backed list itself, it may be mutated
+      // in place (e.g. by getGame()/deleteGame()) from another thread concurrently
+      gameRepresentations = new ArrayList<>(this.allGames.get(emulatorId));
     }
     else {
       LOG.warn("Failed to load client cached games, there is no emulator with id {} available!", emulatorId);
