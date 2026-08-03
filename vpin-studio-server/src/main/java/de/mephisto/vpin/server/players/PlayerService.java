@@ -155,13 +155,15 @@ public class PlayerService {
     if (byId.isPresent()) {
       Player player = byId.get();
       Asset avatar = player.getAvatar();
+
+      playerRepository.deleteById(id);
+      LOG.info("Deleted player {}", id);
+
       if (avatar != null) {
         assetRepository.delete(avatar);
         LOG.info("Deleted asset {}", avatar);
       }
 
-      playerRepository.deleteById(id);
-      LOG.info("Deleted player {}", id);
       notifyPlayerDeleted(player);
     }
   }

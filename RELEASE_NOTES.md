@@ -2,8 +2,12 @@
 
 ### Changes
 
+- **Offline Competition**
+  - Fixed remaining Java 25 migration issue that broke the offline competitions view.
+- **Player Management**
+  - Fixed the deletion of players.
 - **Installer**
-  - Removed simply check if any other Java process is running. Now the actual VPin-Studio processes are checked only.
+  - Removed check if any other Java process is running.
 - **Pause Menu**
   - ...
 
