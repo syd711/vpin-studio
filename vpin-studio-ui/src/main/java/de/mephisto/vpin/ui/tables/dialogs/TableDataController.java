@@ -576,6 +576,12 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     boolean success = true;
     try {
+      // Let sub-controllers write their values into tableDetails BEFORE persisting,
+      // so that keepDisplays (Screens tab) and tags (Comments tab) are included
+      // in the single saveTableDetails call below.
+      success &= tableScreensController.save();
+      success &= tableDataTabCommentsController.save(tableDetails);
+
       // save the table details (and any resulting game file rename) first, so that
       // subsequent saves below key their data (e.g. PinVol entries) to the final filename
       // instead of a stale name that gets orphaned by the rename.
@@ -586,8 +592,6 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
       // do not notify TableChange as it will be done globally once all controllers are saved
       success &= pinVolController.save(false);
-      success &= tableScreensController.save();
-      success &= tableDataTabCommentsController.save(tableDetails);
       success &= tableDataTabScoreDataController.save();
       success &= tableDataTabScriptOptionsController.save();
 
