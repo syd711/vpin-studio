@@ -611,6 +611,20 @@ public class TableDataController extends BasePrevNextController implements AutoC
     return success;
   }
 
+  public void reloadGame() {
+    TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
+    doSave(false);
+    int gameId = this.game.getId();
+    stage.close();
+    Platform.runLater(() -> {
+      GameRepresentation reloaded = client.getGameService().getGame(gameId);
+      if (reloaded != null) {
+        int commentsTabIndex = tabPane.getTabs().indexOf(commentsTab);
+        TableDialogs.openTableDataDialog(tableOverviewController, reloaded, commentsTabIndex);
+      }
+    });
+  }
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();

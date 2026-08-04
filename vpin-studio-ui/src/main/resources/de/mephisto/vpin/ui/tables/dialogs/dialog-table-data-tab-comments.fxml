@@ -74,6 +74,18 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </VBox>
+                  <HBox alignment="BASELINE_RIGHT">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onReload" styleClass="default-button" text="Reload">
+                           <HBox.margin>
+                              <Insets top="6.0" />
+                           </HBox.margin>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>

@@ -45,6 +45,7 @@ public class TableDataTabCommentsController implements Initializable {
 
   private GameRepresentation game;
   private TagField tagField;
+  private TableDataController tableDataController;
 
   public boolean save(TableDetails tableDetails) {
     game.setComment(textArea.getText());
@@ -65,6 +66,13 @@ public class TableDataTabCommentsController implements Initializable {
   @FXML
   private void onDelete() {
     this.textArea.clear();
+  }
+
+  @FXML
+  private void onReload() {
+    if (tableDataController != null) {
+      tableDataController.reloadGame();
+    }
   }
 
   private void appendTextAndFocus(String text) {
@@ -105,6 +113,7 @@ public class TableDataTabCommentsController implements Initializable {
   }
 
   public void initBindings(TableDataController tableDataController) {
+    this.tableDataController = tableDataController;
     this.textArea.textProperty().addListener((obs, oldValue, newValue) -> {
       tableDataController.setDialogDirty(true);
     });
