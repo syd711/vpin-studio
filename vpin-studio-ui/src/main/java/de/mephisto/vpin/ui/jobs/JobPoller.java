@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import org.jspecify.annotations.NonNull;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +14,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,6 +137,7 @@ public class JobPoller implements StudioEventListener {
         EventManager.getInstance().notifyJobFinished(job);
 
         if (job.getJobType() == JobType.TABLE_BACKUP && job.isFinished() && !job.isCancelled() && job.getGameId() > 0) {
+          client.getBackupService().invalidateBackupCache();
           EventManager.getInstance().notifyTableChange(job.getGameId(), null);
         }
       }

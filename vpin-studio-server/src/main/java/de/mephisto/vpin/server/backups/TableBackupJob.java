@@ -33,6 +33,10 @@ public class TableBackupJob implements Job {
         frontendService.deleteFromPlaylists(gameId);
       }
       sourceAdapter.invalidate();
+      // only mark the job as finished once the cache has actually been invalidated,
+      // otherwise pollers can observe "finished" and refresh clients before the new
+      // backup is visible to getBackupDescriptorForGame()/GameSerializer
+      result.setProgress(1);
     }
   }
 

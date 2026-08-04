@@ -8,6 +8,8 @@
   - Fixed the deletion of players.
 - **Installer**
   - Removed check if any other Java process is running.
+- **Table Data Manager**
+  - Fixed issue that the dialog did not save anymore, cause by the previous attempt to fix saving PinVOL data.
 - **Pause Menu**
   - Fixed regression from 5.1.5 where the pause button could stop working entirely after the first table of a session.
 

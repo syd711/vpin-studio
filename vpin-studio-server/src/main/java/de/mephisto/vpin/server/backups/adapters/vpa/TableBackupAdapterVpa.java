@@ -185,7 +185,9 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
                 jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
             }
 
-            jobDescriptor.setProgress(1);
+            // capped below 1: TableBackupJob still has to invalidate the backup cache
+            // after this returns, and progress >= 1 marks the job as finished for pollers
+            jobDescriptor.setProgress(0.99);
 
             if (target.exists() && this.cancelled) {
                 target.delete();

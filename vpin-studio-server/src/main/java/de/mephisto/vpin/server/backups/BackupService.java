@@ -250,7 +250,9 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
     Optional<BackupSource> byId = backupSourceRepository.findById(exportDescriptor.getBackupSourceId());
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game, byId.get());
-    BackupSourceAdapter backupSourceAdapter = BackupSourceAdapterFactory.create(this, byId.get(), vpaService);
+    // reuse the cached adapter instance so that TableBackupJob#invalidate() actually
+    // invalidates the cache that all read endpoints (and GameSerializer) query from
+    BackupSourceAdapter backupSourceAdapter = getBackupSourceAdapter(exportDescriptor.getBackupSourceId());
 
     descriptor.setJob(new TableBackupJob(frontendService, backupSourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
