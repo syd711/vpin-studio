@@ -1,3 +1,13 @@
+## Release Notes 5.1.8
+
+### Changes
+
+- **Player Management**
+  - Fixed issue that the player highscores were not sorted by modification/creation date.
+
+
+---
+
 ## Release Notes 5.1.7
 
 ### Changes

@@ -308,7 +308,7 @@ public class HighscoreService implements InitializingBean {
    */
   public ScoreSummary getAllHighscoresForPlayer(long serverId, String initials) {
     ScoreSummary summary = new ScoreSummary();
-    List<Highscore> all = highscoreRepository.findAllByOrderByCreatedAtDesc();
+    List<Highscore> all = highscoreRepository.findAllByOrderByLastModifiedDesc();
     for (Highscore highscore : all) {
       if (StringUtils.isEmpty(highscore.getRaw())) {
         continue;
