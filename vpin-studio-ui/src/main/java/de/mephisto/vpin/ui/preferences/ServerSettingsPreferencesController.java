@@ -51,9 +51,6 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox keepModificationDateCheckbox;
 
   @FXML
-  private CheckBox vpxMonitoringCheckbox;
-
-  @FXML
   private CheckBox uploadTableBackups;
 
   @FXML
@@ -136,7 +133,7 @@ public class ServerSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     vpxMonitorSettings.managedProperty().bindBidirectional(vpxMonitorSettings.visibleProperty());
     launchOnExitOption.managedProperty().bindBidirectional(launchOnExitOption.visibleProperty());
-    vpxMonitorSettings.setVisible(Features.VPX_MONITORING);
+    vpxMonitorSettings.setVisible(Features.HIGHSCORE_MONITORING);
 
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
@@ -202,12 +199,6 @@ public class ServerSettingsPreferencesController implements Initializable {
     keepModificationDateCheckbox.setSelected(serverSettings.isKeepModificationDate());
     keepModificationDateCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepModificationDate(t1);
-      client.getPreferenceService().setJsonPreference(serverSettings);
-    });
-
-    vpxMonitoringCheckbox.setSelected(serverSettings.isUseVPXTableMonitor());
-    vpxMonitoringCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      serverSettings.setUseVPXTableMonitor(t1);
       client.getPreferenceService().setJsonPreference(serverSettings);
     });
 

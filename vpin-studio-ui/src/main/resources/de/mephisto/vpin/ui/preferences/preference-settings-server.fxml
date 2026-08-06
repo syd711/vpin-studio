@@ -265,21 +265,6 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="1167.0" styleClass="checkbox-description" text="If checked, the modification date of replaced VPX files won't be updated." textFill="WHITE" />
-                  <VBox fx:id="vpxMonitorSettings">
-                     <children>
-                        <CheckBox fx:id="vpxMonitoringCheckbox" mnemonicParsing="false" text="Use VPX Table Monitor for Table Launch/Exit Events." textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <Label styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="This way, tables must not be launched through Popper/PinballX to use VPin-Studio services." textFill="WHITE" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </VBox>
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

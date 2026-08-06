@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -22,6 +23,9 @@ public class HighscorePreferencesController implements Initializable {
   private CheckBox filterCheckbox;
 
   @FXML
+  private CheckBox monitorCheckbox;
+
+  @FXML
   private void onNvRamReset() {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new NvRamDownloadProgressModel("NVRam Synchronization"));
     if (!progressDialog.getResults().isEmpty()) {
@@ -36,6 +40,14 @@ public class HighscorePreferencesController implements Initializable {
     filterCheckbox.setSelected(filerEnabled);
     filterCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       client.getPreferenceService().setPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED, t1);
+    });
+
+
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    monitorCheckbox.setSelected(serverSettings.isHighscoreMonitorEnabled());
+    monitorCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setHighscoreMonitorEnabled(t1);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
   }
 }

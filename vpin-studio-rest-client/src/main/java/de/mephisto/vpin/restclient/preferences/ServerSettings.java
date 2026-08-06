@@ -11,7 +11,7 @@ public class ServerSettings extends JsonSettings {
   private boolean keepModificationDate = false;
   private boolean useSubfolders = false;
   private boolean launchPopperOnExit = false;
-  private boolean useVPXTableMonitor = false;
+  private boolean highscoreMonitorEnabled = false;
   private int volume = 0;
   private boolean initialMute = false;
   private String mappingVpsTableId = "WEBGameID";
@@ -60,12 +60,12 @@ public class ServerSettings extends JsonSettings {
     this.keepModificationDate = keepModificationDate;
   }
 
-  public boolean isUseVPXTableMonitor() {
-    return useVPXTableMonitor;
+  public boolean isHighscoreMonitorEnabled() {
+    return highscoreMonitorEnabled;
   }
 
-  public void setUseVPXTableMonitor(boolean useVPXTableMonitor) {
-    this.useVPXTableMonitor = useVPXTableMonitor;
+  public void setHighscoreMonitorEnabled(boolean highscoreMonitorEnabled) {
+    this.highscoreMonitorEnabled = highscoreMonitorEnabled;
   }
 
   public boolean isUseSubfolders() {

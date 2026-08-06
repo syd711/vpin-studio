@@ -24,7 +24,7 @@ import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.VersionUtil;
 import de.mephisto.vpin.server.util.WindowsUtil;
-import de.mephisto.vpin.server.vpx.VPXMonitoringService;
+import de.mephisto.vpin.server.highscores.HighscoreMonitoringService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
@@ -707,7 +707,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
             ManiaService maniaService = context.getBean(ManiaService.class);
             maniaService.shutdown();
 
-            VPXMonitoringService monitoringService = context.getBean(VPXMonitoringService.class);
+            HighscoreMonitoringService monitoringService = context.getBean(HighscoreMonitoringService.class);
             monitoringService.shutdown();
 
             HikariDataSource dataSource = (HikariDataSource) context.getBean("dataSource");

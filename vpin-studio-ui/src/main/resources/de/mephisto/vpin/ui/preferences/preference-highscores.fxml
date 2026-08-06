@@ -22,18 +22,19 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="HIGHSCORE PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Highscore Filter">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Highscore Settings">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
             <GridPane vgap="6.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.2000732421875" minWidth="10.0" prefWidth="219.19999084472656" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="529.6000091552734" minWidth="10.0" prefWidth="529.6000091552734" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.2000732421875" minWidth="10.0" prefWidth="159.20009765625" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="639.2000488281249" minWidth="10.0" prefWidth="591.19990234375" />
               </columnConstraints>
               <rowConstraints>
                   <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
@@ -59,6 +60,28 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="Filter Highscores:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="Highscore Monitor:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="Enable highscore monitor that monitors all highscore files and folders." textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="If enabled, the server monitor all highscore related folders and files for VPX and FP." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="This is useful e.g. for VR players that launch tables only through Studio. " textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="checkbox-description" text="Not manual highscore is required anymore then after playing." textFill="WHITE" />
+                           </children>
+                        </VBox>
                </children>
                <VBox.margin>
                   <Insets top="6.0" />

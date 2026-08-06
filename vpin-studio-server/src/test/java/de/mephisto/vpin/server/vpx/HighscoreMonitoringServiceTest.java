@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
+import de.mephisto.vpin.server.highscores.HighscoreMonitoringService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class VPXMonitoringServiceTest {
+public class HighscoreMonitoringServiceTest {
 
   @Mock
   private GameStatusService gameStatusService;
@@ -30,7 +31,7 @@ public class VPXMonitoringServiceTest {
   private PreferencesService preferencesService;
 
   @InjectMocks
-  private VPXMonitoringService vpxMonitoringService;
+  private HighscoreMonitoringService highscoreMonitoringService;
 
   @Test
   void preferenceChanged_withServerSettings_enabledTrue_setsRunningTrue() throws Exception {
@@ -39,7 +40,7 @@ public class VPXMonitoringServiceTest {
     when(preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class))
         .thenReturn(settings);
 
-    vpxMonitoringService.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    highscoreMonitoringService.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
 
     // run() checks running flag; if running=true with no windows (no JNA) it just returns
     // No exception = success
@@ -52,14 +53,14 @@ public class VPXMonitoringServiceTest {
     when(preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class))
         .thenReturn(settings);
 
-    vpxMonitoringService.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    highscoreMonitoringService.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
 
     // No exception = success; running flag is set to false internally
   }
 
   @Test
   void preferenceChanged_withUnrelatedProperty_doesNothing() throws Exception {
-    vpxMonitoringService.preferenceChanged("some.other.property", null, null);
+    highscoreMonitoringService.preferenceChanged("some.other.property", null, null);
 
     verifyNoInteractions(preferencesService);
   }
@@ -67,7 +68,7 @@ public class VPXMonitoringServiceTest {
   @Test
   void run_whenNotRunning_returnsImmediately() {
     // running flag defaults to false — run() should return without querying emulators
-    vpxMonitoringService.run();
+    highscoreMonitoringService.run();
 
     verifyNoInteractions(emulatorService);
     verifyNoInteractions(gameService);
@@ -76,6 +77,6 @@ public class VPXMonitoringServiceTest {
 
   @Test
   void shutdown_doesNotThrow() {
-    vpxMonitoringService.shutdown();
+    highscoreMonitoringService.shutdown();
   }
 }

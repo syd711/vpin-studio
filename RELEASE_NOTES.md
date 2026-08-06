@@ -4,6 +4,8 @@
 
 - **Player Management**
   - Fixed issue that the player highscores were not sorted by modification/creation date.
+- **Highscore Monitoring**
+  - ...finally. 
 
 
 ---

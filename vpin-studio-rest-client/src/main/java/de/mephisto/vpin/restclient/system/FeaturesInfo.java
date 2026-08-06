@@ -9,7 +9,7 @@ public class FeaturesInfo {
   public boolean COMPETITIONS_ENABLED = true;
 
   public boolean NOTIFICATIONS_ENABLED = true;
-  public boolean VPX_MONITORING = false;
+  public boolean HIGHSCORE_MONITORING = true;
 
   public boolean VP_UNIVERSE = true;
   public boolean VP_FORUMS = true;
