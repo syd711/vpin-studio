@@ -9,7 +9,9 @@
 - **Wheel Designer**
   - Fixed issue that the background image position couldn't be modified.
 - **Playlist Management**
-  - Fixed issue with Favorites and Global Favorites playlists from PinUP Popper. 
+  - Fixed issue with Favorites and Global Favorites playlists from PinUP Popper.
+- **Highscore Lookup**
+  - Fixed issue looking up the VPReg.stg file.
 - **Highscore Monitoring**
   - ...finally. 
 

@@ -269,9 +269,10 @@ public class FolderLookupService {
     }
 
     if (isPreferLegacyFileStructure(emulator)) {
-      stgFile = new File(game.getGameFile().getParentFile(), "user/VPReg.stg");
-      if (!stgFile.exists()) {
-        File grandparent = game.getGameFile().getParentFile().getParentFile();
+      File gameFileParent = game.getGameFile().getParentFile();
+      stgFile = new File(gameFileParent, "user/VPReg.stg");
+      if (!stgFile.exists() && gameFileParent != null) {
+        File grandparent = gameFileParent.getParentFile();
         if (grandparent != null) {
           stgFile = new File(grandparent, "user/VPReg.stg");
         }
