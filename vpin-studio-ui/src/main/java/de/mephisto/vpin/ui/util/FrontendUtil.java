@@ -71,4 +71,33 @@ public class FrontendUtil {
             }
         });
     }
+
+    /**
+     * Like addIntegerValidation, but for spinners whose value factory renders a "%" suffix
+     * (via a custom StringConverter). Uses the spinner's own converter instead of a plain
+     * IntegerStringConverter so the formatted text ("45%") is not rejected by the input filter.
+     */
+    public static void addPercentIntegerValidation(Spinner<Integer> spinner) {
+        spinner.setEditable(true);
+
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("-?\\d*%?")) {  // allow digits, optional leading minus, optional trailing %
+                return change;
+            }
+            return null;  // reject the change
+        };
+
+        TextFormatter<Integer> formatter = new TextFormatter<>(spinner.getValueFactory().getConverter(), spinner.getValue(), filter);
+        spinner.getEditor().setTextFormatter(formatter);
+
+        spinner.getEditor().textProperty().addListener((obs, oldText, newText) -> {
+            if (newText != null && !newText.isEmpty() && !newText.equals("-")) {
+                try {
+                    spinner.getValueFactory().setValue(Integer.parseInt(newText.replace("%", "").trim()));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        });
+    }
 }

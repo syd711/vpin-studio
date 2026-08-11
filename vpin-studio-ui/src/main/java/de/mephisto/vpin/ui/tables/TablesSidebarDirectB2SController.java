@@ -1,31 +1,24 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.tables.models.B2SDualMode;
-import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
-import de.mephisto.vpin.ui.tables.models.B2SGlowing;
-import de.mephisto.vpin.ui.tables.models.B2SLedType;
-import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
-import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import de.mephisto.vpin.ui.tables.models.*;
 import de.mephisto.vpin.ui.util.JFXHelper;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,11 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -363,6 +352,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     hideGrill.setItems(FXCollections.observableList(VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      if (refreshing) {
+        return;
+      }
       tableSettings.setHideGrill(t1.getId());
       save();
 
@@ -372,12 +364,18 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     });
 
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (refreshing) {
+        return;
+      }
       tableSettings.setHideB2SDMD(newValue);
       save();
       refreshView(this.game);
     });
 
     hideB2SBackglass.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (refreshing) {
+        return;
+      }
       tableSettings.setHideB2SBackglass(newValue);
       save();
       refreshView(this.game);
@@ -637,8 +635,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           directB2SCombo.getSelectionModel().selectFirst();
         }
         latestSelection = directB2SCombo.getValue();
-        // version selector is populated, re-enable the combo listener
-        refreshing = false;
 
         // load the data for the actually selected version (may differ from the game's default)
         String selectedVersion = getSelectedVersion();
@@ -736,6 +732,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
         dualModes.setDisable(tableData.getDualBackglass() == 0);
 
+        // all controls are populated now, re-enable the settings listeners
+        refreshing = false;
         setSaveEnabled(true);
       });
     }

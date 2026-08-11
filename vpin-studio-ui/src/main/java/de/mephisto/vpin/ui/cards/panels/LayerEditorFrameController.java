@@ -27,6 +27,7 @@ import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
+import static de.mephisto.vpin.ui.util.FrontendUtil.addPercentIntegerValidation;
 
 public class LayerEditorFrameController extends LayerEditorBaseController implements Initializable {
 
@@ -102,10 +103,8 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
     zoomSlider.setValue(cardTemplate.getZoom());
 
     IntegerSpinnerValueFactory factoryX = (IntegerSpinnerValueFactory) backgroundXSpinner.getValueFactory();
-    addIntegerValidation(backgroundXSpinner);
     factoryX.setValue((int) (cardTemplate.getBackgroundX() * 100));
     IntegerSpinnerValueFactory factoryY = (IntegerSpinnerValueFactory) backgroundYSpinner.getValueFactory();
-    addIntegerValidation(backgroundYSpinner);
     factoryY.setValue((int) (cardTemplate.getBackgroundY() * 100));
 
     borderSizeSpinner.getValueFactory().setValue(cardTemplate.getBorderWidth());
@@ -164,16 +163,16 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryX = new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0);
     backgroundXSpinner.setValueFactory(factoryX);
-    addIntegerValidation(backgroundXSpinner);
-        factoryX.setConverter(converter);
+    factoryX.setConverter(converter);
+    addPercentIntegerValidation(backgroundXSpinner);
     factoryX.valueProperty().addListener((observableValue, integer, t1) -> {
       templateBeanBinder.setProperty("backgroundX", Double.parseDouble(String.valueOf(t1)) / 100);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryY = new SpinnerValueFactory.IntegerSpinnerValueFactory(-100, 100, 0);
     backgroundYSpinner.setValueFactory(factoryY);
-    addIntegerValidation(backgroundYSpinner);
     factoryY.setConverter(converter);
+    addPercentIntegerValidation(backgroundYSpinner);
     factoryY.valueProperty().addListener((observableValue, integer, t1) -> {
       templateBeanBinder.setProperty("backgroundY", Double.parseDouble(String.valueOf(t1)) / 100);
     });

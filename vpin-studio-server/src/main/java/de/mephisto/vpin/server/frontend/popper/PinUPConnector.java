@@ -1012,11 +1012,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @NonNull
   public Playlist getPlaylist(int id) {
-    if (id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
-      return getFavsPlaylist();
-    }
-    if (id == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
-      return getGlobalFavsPlaylist();
+    if (id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID || id == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      // the virtual fav playlists are aggregated across all playlists, so resolve them via the bulk path
+      return getPlaylists().stream()
+          .filter(p -> p.getId() == id)
+          .findFirst()
+          .orElseGet(id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID ? this::getFavsPlaylist : this::getGlobalFavsPlaylist);
     }
     // else
 
