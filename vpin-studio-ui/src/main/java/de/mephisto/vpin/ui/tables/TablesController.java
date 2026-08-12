@@ -658,30 +658,28 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void onKeyEvent(KeyEvent ke) {
-    if (ke.isShiftDown() || ke.isControlDown() || ke.isAltDown()) {
-      return;
-    }
-
-    if (ke.getCode() == KeyCode.F2) {
-      tabPane.getSelectionModel().select(tablesTab);
-    }
-    else if (ke.getCode() == KeyCode.F3) {
-      tabPane.getSelectionModel().select(backglassManagerTab);
-    }
-    else if (ke.getCode() == KeyCode.F4) {
-      tabPane.getSelectionModel().select(vpsTablesTab);
-    }
-    else if (ke.getCode() == KeyCode.F5) {
-      tabPane.getSelectionModel().select(tablesStatisticsTab);
-    }
-    else if (ke.getCode() == KeyCode.F6) {
-      tabPane.getSelectionModel().select(tableBackupsTab);
-    }
-    else if (ke.getCode() == KeyCode.F7) {
-      tabPane.getSelectionModel().select(vpxMobileTab);
-    }
-    else if (ke.getCode() == KeyCode.F8 && Features.RECORDER) {
-      tabPane.getSelectionModel().select(recorderTab);
+    if (!ke.isShiftDown() && !ke.isControlDown() && !ke.isAltDown()) {
+      if (ke.getCode() == KeyCode.F2) {
+        tabPane.getSelectionModel().select(tablesTab);
+      }
+      else if (ke.getCode() == KeyCode.F3) {
+        tabPane.getSelectionModel().select(backglassManagerTab);
+      }
+      else if (ke.getCode() == KeyCode.F4) {
+        tabPane.getSelectionModel().select(vpsTablesTab);
+      }
+      else if (ke.getCode() == KeyCode.F5) {
+        tabPane.getSelectionModel().select(tablesStatisticsTab);
+      }
+      else if (ke.getCode() == KeyCode.F6) {
+        tabPane.getSelectionModel().select(tableBackupsTab);
+      }
+      else if (ke.getCode() == KeyCode.F7) {
+        tabPane.getSelectionModel().select(vpxMobileTab);
+      }
+      else if (ke.getCode() == KeyCode.F8 && Features.RECORDER) {
+        tabPane.getSelectionModel().select(recorderTab);
+      }
     }
 
     if (ke.isConsumed()) {
