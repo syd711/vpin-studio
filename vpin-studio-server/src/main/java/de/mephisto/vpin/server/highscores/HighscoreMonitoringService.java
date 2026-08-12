@@ -1,14 +1,14 @@
 package de.mephisto.vpin.server.highscores;
 
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import jakarta.annotation.PreDestroy;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -27,40 +27,40 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
+/**
+ * Watches the nvram/User/fpRAM folders of all VPX and Future Pinball emulators for highscore related
+ * file changes. Whenever a relevant file is created or modified, the game matching the file's ROM name
+ * or highscore/table filename is resolved and a highscore scan is triggered for it.
+ */
 @Service
-public class HighscoreMonitoringService implements InitializingBean, PreferenceChangedListener, Runnable {
+public class HighscoreMonitoringService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreMonitoringService.class);
 
   private final static String VPREG_FILE_NAME = "VPReg.stg";
   private final static String HIGHSCORE_DEBOUNCE_KEY = "vpx-highscore-file-change";
   private final static int HIGHSCORE_DEBOUNCE_MS = 1000;
 
-  private final AtomicBoolean running = new AtomicBoolean(false);
-
-  @Autowired
-  private GameStatusService gameStatusService;
+  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+  private volatile boolean emulatorWasRunning = false;
 
   @Autowired
   private GameService gameService;
 
   @Autowired
   private EmulatorService emulatorService;
-
-  @Autowired
-  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -71,7 +71,6 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   @Autowired
   private HighscoreService highscoreService;
 
-  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
   private final Debouncer debouncer = new Debouncer();
 
   /**
@@ -81,90 +80,25 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   private final List<FolderMonitoringThread> folderMonitors = new CopyOnWriteArrayList<>();
 
   /**
-   * Set while a highscore-relevant file changes while a game is active. Flushed (i.e. the highscore
-   * scan is finally triggered) once no pinball emulator process is running anymore, instead of firing
-   * on every single file write while the table is being played.
+   * Files reported as changed since the last debounce flush, together with the folder watch that
+   * detected them (which tells us how to resolve the game for that file).
    */
-  private final AtomicInteger pendingHighscoreGameId = new AtomicInteger(-1);
-  private volatile boolean emulatorWasRunning = false;
+  private final Map<File, FolderWatch> pendingFileChanges = new ConcurrentHashMap<>();
 
-  @Override
-  public void run() {
-    try {
-      if (!running.get()) {
-        return;
-      }
-      Thread.currentThread().setName("Highscore Monitor Thread");
-
-      boolean emulatorRunning = SystemService.isPinballEmulatorRunning();
-      if (emulatorWasRunning && !emulatorRunning) {
-        flushPendingHighscoreChange();
-      }
-      emulatorWasRunning = emulatorRunning;
-
-      List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
-
-      List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-      boolean playerRunning = windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), "Visual Pinball Player"));
-
-      if (playerRunning && !gameStatusService.isActive()) {
-        int emuId = -1;
-        String tableName = null;
-
-        for (DesktopWindow wdw : windows) {
-          for (GameEmulator emu : emulators) {
-            if (Strings.CI.startsWith(wdw.getFilePath(), emu.getInstallationDirectory())) {
-              String windowTitle = wdw.getTitle();
-              //LOG.info("VPX process detected with window title " + wdw.getTitle());
-              if (windowTitle.contains("[") && windowTitle.contains("]")) {
-                emuId = emu.getId();
-                tableName = windowTitle.substring(windowTitle.indexOf("[") + 1, windowTitle.length() - 1);
-              }
-            }
-          }
-        }
-        if (tableName != null) {
-          notifyTableStartByFileName(emuId, tableName);
-        }
-      }
-      else if (!playerRunning && gameStatusService.isActive()) {
-        notifyTableEnd();
-      }
-    }
-    catch (Exception e) {
-      LOG.info("VPX Monitor Thread failed: {}", e.getMessage(), e);
-    }
+  private enum FileKind {
+    NVRAM, VPX_USER, FP_RAM
   }
 
-  private void notifyTableEnd() {
-    int gameId = gameStatusService.getStatus().getGameId();
-    Game game = gameId > 0 ? gameService.getGame(gameId) : null;
+  /**
+   * A monitored folder, the kind of highscore files expected in it, and all emulators that share it.
+   */
+  private static class FolderWatch {
+    private final FileKind kind;
+    private final List<GameEmulator> emulators = new CopyOnWriteArrayList<>();
 
-    if (game != null) {
-      LOG.info("{} notifying table end event of \"{}\"", this.getClass().getSimpleName(), game.getGameDisplayName());
-      frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
-    }
-    else {
-      LOG.info("{} unregistered a VPX window, but the game could not be resolved", this.getClass().getSimpleName());
-      gameStatusService.setForceActive(false);
-    }
-  }
-
-  private void notifyTableStartByFileName(int emuId, @NonNull String tableName) {
-    LOG.info("Detected VPX running with table filename \"{}.vpx\", resolving game for it.", tableName);
-
-    Game game = gameService.getGameByFilename(emuId, tableName + ".vpx");
-    if (game == null) {
-      game = gameService.getGameByFilename(emuId, tableName + ".vpt");
-    }
-
-    if (game != null) {
-      LOG.info("{} notifying table start event of \"{}\"", this.getClass().getSimpleName(), game.getGameDisplayName());
-      frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
-    }
-    else {
-      LOG.info("{} registered a VPX window, but the game could not be resolved for name \"{}\"", this.getClass().getSimpleName(), tableName);
-      gameStatusService.setForceActive(true);
+    FolderWatch(@NonNull FileKind kind, @NonNull GameEmulator emulator) {
+      this.kind = kind;
+      this.emulators.add(emulator);
     }
   }
 
@@ -173,14 +107,18 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   private void startFolderMonitors() {
     stopFolderMonitors();
 
-    Set<String> registeredPaths = new HashSet<>();
+    Map<String, FolderWatch> watchesByPath = new LinkedHashMap<>();
     for (GameEmulator emulator : emulatorService.getVpxGameEmulators()) {
-      registerFolderMonitor(registeredPaths, resolveNvRamFolder(emulator), HighscoreMonitoringService::isNvRamFile);
-      registerFolderMonitor(registeredPaths, resolveUserFolder(emulator), HighscoreMonitoringService::isVpxUserHighscoreFile);
+      registerWatch(watchesByPath, resolveNvRamFolder(emulator), FileKind.NVRAM, emulator);
+      registerWatch(watchesByPath, resolveUserFolder(emulator), FileKind.VPX_USER, emulator);
     }
 
     for (GameEmulator emulator : emulatorService.getFpGameEmulators()) {
-      registerFolderMonitor(registeredPaths, resolveFpRamFolder(emulator), HighscoreMonitoringService::isFpRamFile);
+      registerWatch(watchesByPath, resolveFpRamFolder(emulator), FileKind.FP_RAM, emulator);
+    }
+
+    for (Map.Entry<String, FolderWatch> entry : watchesByPath.entrySet()) {
+      startFolderMonitor(new File(entry.getKey()), entry.getValue());
     }
   }
 
@@ -189,9 +127,11 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
       monitor.stopMonitoring();
     }
     folderMonitors.clear();
+    pendingFileChanges.clear();
   }
 
-  private void registerFolderMonitor(@NonNull Set<String> registeredPaths, @Nullable File folder, @NonNull Predicate<File> filter) {
+  private void registerWatch(@NonNull Map<String, FolderWatch> watchesByPath, @Nullable File folder,
+                              @NonNull FileKind kind, @NonNull GameEmulator emulator) {
     if (folder == null || !folder.isDirectory()) {
       return;
     }
@@ -204,42 +144,195 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
       canonicalPath = folder.getAbsolutePath();
     }
 
-    if (!registeredPaths.add(canonicalPath)) {
-      //already monitored, e.g. multiple emulators sharing the same installation/nvram folder
-      return;
+    FolderWatch watch = watchesByPath.get(canonicalPath);
+    if (watch == null) {
+      watchesByPath.put(canonicalPath, new FolderWatch(kind, emulator));
     }
+    else if (!watch.emulators.contains(emulator)) {
+      //multiple emulators sharing the same installation/nvram folder
+      watch.emulators.add(emulator);
+    }
+  }
 
+  private void startFolderMonitor(@NonNull File folder, @NonNull FolderWatch watch) {
     FolderMonitoringThread monitor = new FolderMonitoringThread((changedFolder, file) -> {
-      if (file == null || filter.test(file)) {
-        debouncer.debounce(HIGHSCORE_DEBOUNCE_KEY, this::onHighscoreFileChanged, HIGHSCORE_DEBOUNCE_MS);
+      if (file != null && isRelevantFile(watch.kind, file)) {
+        pendingFileChanges.put(file, watch);
+        debouncer.debounce(HIGHSCORE_DEBOUNCE_KEY, this::flushPendingFileChanges, HIGHSCORE_DEBOUNCE_MS);
       }
     }, true, false);
     monitor.setFolder(folder);
     monitor.startMonitoring();
     folderMonitors.add(monitor);
-    LOG.info("Monitoring \"{}\" for highscore file changes.", canonicalPath);
+    LOG.info("Monitoring \"{}\" for highscore file changes.", folder.getAbsolutePath());
   }
 
-  private void onHighscoreFileChanged() {
-    if (gameStatusService.isActive()) {
-      int gameId = gameStatusService.getStatus().getGameId();
-      if (gameId > 0) {
-        pendingHighscoreGameId.set(gameId);
-        LOG.info("Detected highscore related file change for active game id {}, deferring highscore scan until the emulator exits.", gameId);
-      }
+  private void flushPendingFileChanges() {
+    if (SystemService.isPinballEmulatorRunning()) {
+      //a table is still being played, wait for the emulator to exit before scanning its highscore file
+      LOG.info("Deferring highscore scan of {} pending file change(s), a pinball emulator is still running.", pendingFileChanges.size());
+      return;
+    }
+
+    Map<File, FolderWatch> changes = new LinkedHashMap<>(pendingFileChanges);
+    pendingFileChanges.clear();
+
+    for (Map.Entry<File, FolderWatch> entry : changes.entrySet()) {
+      onHighscoreFileChanged(entry.getKey(), entry.getValue());
     }
   }
 
-  private void flushPendingHighscoreChange() {
-    int gameId = pendingHighscoreGameId.getAndSet(-1);
-    if (gameId > 0) {
-      Game game = gameService.getGame(gameId);
+  /**
+   * Polled periodically so that file changes which arrived while a table was still being played get
+   * flushed as soon as the emulator exits, instead of waiting for another file write to trigger it.
+   */
+  private void checkEmulatorState() {
+    boolean emulatorRunning = SystemService.isPinballEmulatorRunning();
+    if (emulatorWasRunning && !emulatorRunning) {
+      flushPendingFileChanges();
+    }
+    emulatorWasRunning = emulatorRunning;
+  }
+
+  private void onHighscoreFileChanged(@NonNull File file, @NonNull FolderWatch watch) {
+    List<Game> games = resolveGames(file, watch);
+    if (games.isEmpty()) {
+      LOG.info("Detected highscore file change of \"{}\", but no matching game was found.", file.getAbsolutePath());
+      return;
+    }
+
+    for (Game game : games) {
+      LOG.info("Detected highscore file change of \"{}\", triggering highscore scan for \"{}\".", file.getAbsolutePath(), game.getGameDisplayName());
+      highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
+    }
+  }
+
+  //--------------------------------------------------------------- game resolution
+
+  @NonNull
+  private List<Game> resolveGames(@NonNull File file, @NonNull FolderWatch watch) {
+    switch (watch.kind) {
+      case NVRAM:
+        return resolveGamesByRomOrTableName(watch.emulators, extractNvRamRomName(file));
+      case VPX_USER:
+        return resolveVpxUserGames(watch.emulators, file);
+      case FP_RAM:
+        return resolveFpRamGames(watch.emulators, file);
+      default:
+        return Collections.emptyList();
+    }
+  }
+
+  @NonNull
+  private List<Game> resolveVpxUserGames(@NonNull List<GameEmulator> emulators, @NonNull File file) {
+    if (VPREG_FILE_NAME.equalsIgnoreCase(file.getName())) {
+      return resolveVpRegGames(emulators, file);
+    }
+    return resolveVpxHighscoreTextGames(emulators, file);
+  }
+
+  /**
+   * Text-based highscore files (e.g. for EM tables) live in the same folder as VPReg.stg. A changed
+   * file is resolved by ROM or table name as usual, plus the game's highscore filename, since EM tables
+   * are frequently identified by their highscore text filename rather than a ROM.
+   */
+  @NonNull
+  private List<Game> resolveVpxHighscoreTextGames(@NonNull List<GameEmulator> emulators, @NonNull File file) {
+    String baseName = FilenameUtils.getBaseName(file.getName());
+    if (StringUtils.isEmpty(baseName)) {
+      return Collections.emptyList();
+    }
+
+    List<Game> games = new ArrayList<>(resolveGamesByRomOrTableName(emulators, baseName));
+    for (GameEmulator emulator : emulators) {
+      for (Game game : gameService.getKnownGames(emulator.getId())) {
+        if (!games.contains(game) && matchesEntries(List.of(file.getName()), game)) {
+          games.add(game);
+        }
+      }
+    }
+    return games;
+  }
+
+  /**
+   * VPReg.stg is a shared registry file for all tables of the emulator, so the changed entry cannot be
+   * identified from the file event alone. Instead, every known game of the emulator is checked against
+   * the registry's entries, matched by ROM, table name or highscore filename, and a scan is triggered
+   * for each game that has a matching entry.
+   */
+  @NonNull
+  private List<Game> resolveVpRegGames(@NonNull List<GameEmulator> emulators, @NonNull File file) {
+    List<String> entries = new VPRegFile(file, null, null).getEntries();
+    if (entries.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Game> games = new ArrayList<>();
+    for (GameEmulator emulator : emulators) {
+      for (Game game : gameService.getKnownGames(emulator.getId())) {
+        if (matchesEntries(entries, game)) {
+          games.add(game);
+        }
+      }
+    }
+    return games;
+  }
+
+  private static boolean matchesEntries(@NonNull List<String> entries, @NonNull Game game) {
+    String rom = game.getRom();
+    for (String entry : entries) {
+      if (equalsCandidate(entry, game.getRom())
+          || equalsCandidate(entry, game.getTableName())
+          || equalsCandidate(entry, game.getScannedRom())
+          || equalsCandidate(entry, game.getScannedAltRom())
+          || equalsCandidate(entry, game.getHsFileName())
+          || equalsCandidate(entry, game.getScannedHsFileName())
+          || (!StringUtils.isEmpty(rom) && entry.equalsIgnoreCase(rom + "_VPX"))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean equalsCandidate(@NonNull String entry, @Nullable String candidate) {
+    return !StringUtils.isEmpty(candidate) && (entry.equalsIgnoreCase(FilenameUtils.getBaseName(candidate))
+      || entry.equalsIgnoreCase(candidate));
+  }
+
+  @NonNull
+  private List<Game> resolveFpRamGames(@NonNull List<GameEmulator> emulators, @NonNull File file) {
+    String baseName = FilenameUtils.getBaseName(file.getName());
+    List<Game> games = new ArrayList<>();
+    for (GameEmulator emulator : emulators) {
+      Game game = gameService.getGameByBaseFilename(emulator.getId(), baseName);
       if (game != null) {
-        LOG.info("{} emulator process ended, firing deferred highscore scan for \"{}\".", this.getClass().getSimpleName(), game.getGameDisplayName());
-        highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
+        games.add(game);
       }
     }
+    return games;
   }
+
+  @NonNull
+  private List<Game> resolveGamesByRomOrTableName(@NonNull List<GameEmulator> emulators, @Nullable String name) {
+    if (StringUtils.isEmpty(name)) {
+      return Collections.emptyList();
+    }
+
+    List<Game> games = new ArrayList<>();
+    for (GameEmulator emulator : emulators) {
+      games.addAll(gameService.getGamesByRom(emulator.getId(), name));
+    }
+    return games;
+  }
+
+  @NonNull
+  private static String extractNvRamRomName(@NonNull File file) {
+    String baseName = FilenameUtils.getBaseName(file.getName());
+    int nvOffsetIndex = baseName.indexOf(' ');
+    return nvOffsetIndex > 0 ? baseName.substring(0, nvOffsetIndex) : baseName;
+  }
+
+  //--------------------------------------------------------------- folder/file resolution
 
   @Nullable
   private File resolveNvRamFolder(@NonNull GameEmulator emulator) {
@@ -258,6 +351,19 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   @NonNull
   private File resolveFpRamFolder(@NonNull GameEmulator emulator) {
     return new File(emulator.getInstallationFolder(), "fpRAM");
+  }
+
+  private static boolean isRelevantFile(@NonNull FileKind kind, @NonNull File file) {
+    switch (kind) {
+      case NVRAM:
+        return isNvRamFile(file);
+      case VPX_USER:
+        return isVpxUserHighscoreFile(file);
+      case FP_RAM:
+        return isFpRamFile(file);
+      default:
+        return false;
+    }
   }
 
   private static boolean isNvRamFile(@NonNull File file) {
@@ -281,28 +387,26 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
       if (PreferenceNames.SERVER_SETTINGS.equalsIgnoreCase(propertyName)) {
         ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
         if (serverSettings.isHighscoreMonitorEnabled()) {
-          running.set(true);
           startFolderMonitors();
           LOG.info("Enabled Highscore Monitor");
         }
         else {
-          running.set(false);
           stopFolderMonitors();
           LOG.info("Disabled Highscore Monitor");
         }
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to update VPX monitoring: {}", e.getMessage(), e);
+      LOG.error("Failed to update highscore monitoring: {}", e.getMessage(), e);
     }
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.HIGHSCORE_MONITORING) {
-      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+      scheduler.scheduleAtFixedRate(this::checkEmulatorState, 5, 5, TimeUnit.SECONDS);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
@@ -312,6 +416,6 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
     scheduler.shutdownNow();
     stopFolderMonitors();
     debouncer.shutdown();
-    LOG.info("Folder monitoring scheduler has been shut down.");
+    LOG.info("Folder monitoring has been shut down.");
   }
 }

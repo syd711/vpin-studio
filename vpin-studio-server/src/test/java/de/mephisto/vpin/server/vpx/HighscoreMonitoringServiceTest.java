@@ -3,11 +3,11 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.highscores.HighscoreMonitoringService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,42 +20,44 @@ import static org.mockito.Mockito.*;
 public class HighscoreMonitoringServiceTest {
 
   @Mock
-  private GameStatusService gameStatusService;
-  @Mock
   private GameService gameService;
   @Mock
   private EmulatorService emulatorService;
   @Mock
-  private FrontendStatusService frontendStatusService;
-  @Mock
   private PreferencesService preferencesService;
+  @Mock
+  private VPinMameService vPinMameService;
+  @Mock
+  private HighscoreService highscoreService;
 
   @InjectMocks
   private HighscoreMonitoringService highscoreMonitoringService;
 
   @Test
-  void preferenceChanged_withServerSettings_enabledTrue_setsRunningTrue() throws Exception {
+  void preferenceChanged_withServerSettings_enabledTrue_startsFolderMonitors() throws Exception {
     ServerSettings settings = new ServerSettings();
-    settings.setUseVPXTableMonitor(true);
+    settings.setHighscoreMonitorEnabled(true);
     when(preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class))
         .thenReturn(settings);
 
     highscoreMonitoringService.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
 
-    // run() checks running flag; if running=true with no windows (no JNA) it just returns
-    // No exception = success
+    // emulatorService is consulted to enumerate emulator folders to watch
+    verify(emulatorService).getVpxGameEmulators();
+    verify(emulatorService).getFpGameEmulators();
   }
 
   @Test
-  void preferenceChanged_withServerSettings_enabledFalse_setsRunningFalse() throws Exception {
+  void preferenceChanged_withServerSettings_enabledFalse_stopsFolderMonitors() throws Exception {
     ServerSettings settings = new ServerSettings();
-    settings.setUseVPXTableMonitor(false);
+    settings.setHighscoreMonitorEnabled(false);
     when(preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class))
         .thenReturn(settings);
 
     highscoreMonitoringService.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
 
-    // No exception = success; running flag is set to false internally
+    // No exception = success, no folder monitors get started
+    verifyNoInteractions(highscoreService);
   }
 
   @Test
@@ -63,16 +65,7 @@ public class HighscoreMonitoringServiceTest {
     highscoreMonitoringService.preferenceChanged("some.other.property", null, null);
 
     verifyNoInteractions(preferencesService);
-  }
-
-  @Test
-  void run_whenNotRunning_returnsImmediately() {
-    // running flag defaults to false — run() should return without querying emulators
-    highscoreMonitoringService.run();
-
     verifyNoInteractions(emulatorService);
-    verifyNoInteractions(gameService);
-    verifyNoInteractions(frontendStatusService);
   }
 
   @Test

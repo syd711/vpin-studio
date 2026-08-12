@@ -224,6 +224,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return gameCachingService.getGamesByRom(emulatorId, rom);
   }
 
+  public List<Game> getGamesByEmulator(int emulatorId) {
+    return frontendService.getGamesByEmulator(emulatorId);
+  }
+
   public boolean resetGame(int gameId, long score) {
     Game game = this.getGame(gameId);
     if (game == null) {

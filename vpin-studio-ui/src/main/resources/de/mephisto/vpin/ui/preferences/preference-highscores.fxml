@@ -80,6 +80,12 @@
                               <Label styleClass="checkbox-description" text="If enabled, the server monitor all highscore related folders and files for VPX and FP." textFill="WHITE" />
                               <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="This is useful e.g. for VR players that launch tables only through Studio. " textFill="WHITE" />
                               <Label layoutX="10.0" layoutY="52.0" styleClass="checkbox-description" text="Not manual highscore is required anymore then after playing." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description" text="You can use this monitor in addition to the regular table start and exit events from" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="101.0" styleClass="checkbox-description" text="your Frontend." textFill="WHITE" />
                            </children>
                         </VBox>
                </children>
