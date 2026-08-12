@@ -399,7 +399,36 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   }
 
   private static boolean isFpRamFile(@NonNull File file) {
-    return "fpram".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()));
+    return "fpram".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())) && !isPinemhiSanitizedCopy(file);
+  }
+
+  /**
+   * PinemhiRamParser#executePINemHi copies .fpram files whose name contains whitespace to a
+   * whitespace-stripped temp copy in the SAME folder (PINemHi cannot handle spaces in filenames), then
+   * deletes it again afterwards. Both the copy and the delete are picked up by this folder watch and
+   * resolve back to the same game (see the normalizeFpRamName fallback below), which re-triggers a scan
+   * that invokes PINemHi again, recreating the temp copy - an infinite, self-sustaining loop. Detect and
+   * ignore that generated copy: it has no whitespace of its own, but a sibling .fpram file exists whose
+   * whitespace-stripped name matches it exactly.
+   */
+  private static boolean isPinemhiSanitizedCopy(@NonNull File file) {
+    String fileName = file.getName().toLowerCase();
+    if (fileName.contains(" ")) {
+      return false;
+    }
+
+    File[] siblings = file.getParentFile().listFiles((dir, name) -> "fpram".equalsIgnoreCase(FilenameUtils.getExtension(name)));
+    if (siblings == null) {
+      return false;
+    }
+
+    for (File sibling : siblings) {
+      String siblingName = sibling.getName().toLowerCase();
+      if (siblingName.contains(" ") && siblingName.replaceAll("\\s+", "").equals(fileName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   //---------------------------------------------------------------
