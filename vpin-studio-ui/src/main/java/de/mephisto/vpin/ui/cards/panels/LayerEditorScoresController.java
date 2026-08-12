@@ -29,6 +29,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   @FXML
   private CheckBox renderFriendsHighscore;
   @FXML
+  private CheckBox renderNamesHighscore;
+  @FXML
   private CheckBox renderPositionsCheckbox;
   @FXML
   private CheckBox renderScoreDatesCheckbox;
@@ -65,6 +67,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
     renderFriendsHighscore.setSelected(cardTemplate.isRenderFriends());
+    renderNamesHighscore.setSelected(cardTemplate.isRenderNames());
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
     renderPositionsCheckbox.setSelected(cardTemplate.isRenderPositions());
     renderScoreDatesCheckbox.setSelected(cardTemplate.isRenderScoreDates());
@@ -77,6 +80,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
 
     friendsFontColorSelector.managedProperty().bindBidirectional(friendsFontColorSelector.visibleProperty());
     renderFriendsHighscore.managedProperty().bindBidirectional(renderFriendsHighscore.visibleProperty());
+    renderNamesHighscore.managedProperty().bindBidirectional(renderNamesHighscore.visibleProperty());
 
     friendsFontColorSelector.setVisible(Features.MANIA_ENABLED && Features.MANIA_SOCIAL_ENABLED);
     renderFriendsHighscore.setVisible(Features.MANIA_ENABLED && Features.MANIA_SOCIAL_ENABLED);
@@ -92,12 +96,14 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     templateBeanBinder.bindSpinner(maxScoresSpinner, "maxScores", 0, 100);
     templateBeanBinder.bindSpinner(rowSeparatorSpinner, "rowMargin", 0, 300);
     templateBeanBinder.bindCheckbox(renderRawHighscore, "rawScore");
+    templateBeanBinder.bindCheckbox(renderNamesHighscore, "renderNames");
 
     renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       maxScoresSpinner.setDisable(t1);
       renderPositionsCheckbox.setDisable(t1);
       renderScoreDatesCheckbox.setDisable(t1);
       renderFriendsHighscore.setDisable(t1);
+      renderNamesHighscore.setDisable(t1);
     });
   }
 

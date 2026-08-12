@@ -121,6 +121,7 @@ public class CardTemplate extends JsonSettings {
   private String scoreFontStyle = "Regular";
 
   private boolean renderFriends = true;
+  private boolean renderNames = false;
   private boolean renderPositions = true;
   private boolean renderScoreDates = true;
 
@@ -331,6 +332,14 @@ public class CardTemplate extends JsonSettings {
 
   public void setRenderFriends(boolean renderFriends) {
     this.renderFriends = renderFriends;
+  }
+
+  public boolean isRenderNames() {
+    return renderNames;
+  }
+
+  public void setRenderNames(boolean renderNames) {
+    this.renderNames = renderNames;
   }
 
   public boolean isOverlayMode() {

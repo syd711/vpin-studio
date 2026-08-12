@@ -47,7 +47,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
         if (template.getMaxScores() > 0 && scores.size() > template.getMaxScores()) {
           scores = scores.subList(0, template.getMaxScores());
         }
-        addCardDataScoreFromScoreList(textBlock, scores, template.isRenderPositions(), template.isRenderScoreDates());
+        addCardDataScoreFromScoreList(textBlock, scores, template.isRenderPositions(), template.isRenderScoreDates(), template.isRenderNames());
       }
     }
 
@@ -361,15 +361,22 @@ public class CardLayerScores extends Canvas implements CardLayer {
     }
   }
 
-  public void addCardDataScoreFromScoreList(TextBlock text, List<ScoreRepresentation> scores, boolean renderPositions, boolean renderDate) {
+  private String getPlayerDisplayName(ScoreRepresentation score, boolean renderNames) {
+    if (renderNames && score.hasPlayer() && StringUtils.isNotEmpty(score.getPlayer().getName())) {
+      return score.getPlayer().getName();
+    }
+    return score.getPlayerInitials();
+  }
+
+  public void addCardDataScoreFromScoreList(TextBlock text, List<ScoreRepresentation> scores, boolean renderPositions, boolean renderDate, boolean renderNames) {
     //calc max length of scores
     int scoreLength = 0;
-    int initialsLength = 0;
+    int nameLength = 0;
     int maxPosition = 0;
     if (scores != null) {
       for (ScoreRepresentation score : scores) {
         scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
-        initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
+        nameLength = Math.max(nameLength, getPlayerDisplayName(score, renderNames).length());
         maxPosition = Math.max(maxPosition, score.getPosition());
       }
       DateTimeFormatter df = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
@@ -381,7 +388,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
           renderString += ". ";
         }
 
-        renderString += StringUtils.rightPad(score.getPlayerInitials(), initialsLength);
+        renderString += StringUtils.rightPad(getPlayerDisplayName(score, renderNames), nameLength);
         renderString += "   ";
 
         String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
