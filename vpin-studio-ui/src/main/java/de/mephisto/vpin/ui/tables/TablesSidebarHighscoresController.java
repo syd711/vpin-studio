@@ -86,6 +86,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button maniaSyncBtn;
 
   @FXML
+  private Button vpSaveEditBtn;
+
+  @FXML
   private SplitMenuButton scanHighscoreBtn;
 
   @FXML
@@ -126,9 +129,6 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private VBox dataPane;
-
-  @FXML
-  private Button vpSaveEditBtn;
 
   @FXML
   private ImageView cardImage;
@@ -333,10 +333,22 @@ public class TablesSidebarHighscoresController implements Initializable {
 
     maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
 
+    resetBtn.setVisible(false);
+//    maniaBtn.setVisible(false);
+//    maniaSyncBtn.setVisible(false);
+    vpSaveEditBtn.setVisible(false);
+
     if (g.isPresent() && this.games.size() == 1) {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
       restoreBtn.setDisable(false);
+
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      boolean isVpx = gameEmulator.isVpxEmulator();
+      resetBtn.setVisible(isVpx);
+//      maniaBtn.setVisible(isVpx && Features.MANIA_ENABLED);
+//      maniaSyncBtn.setVisible(isVpx && Features.MANIA_ENABLED);
+      vpSaveEditBtn.setVisible(isVpx && client.getSystemService().isLocal());
 
       cardsEnabledCheckbox.setDisable(false);
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
@@ -364,7 +376,6 @@ public class TablesSidebarHighscoresController implements Initializable {
       boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
       dataPane.setVisible(hasHighscore);
 
-      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       statusPane.setVisible(!hasHighscore);
       infoContainer.setVisible(!hasHighscore && gameEmulator.isVpxEmulator());
 
@@ -456,11 +467,10 @@ public class TablesSidebarHighscoresController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataPane.managedProperty().bindBidirectional(dataPane.visibleProperty());
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
-    vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
+    resetBtn.managedProperty().bindBidirectional(resetBtn.visibleProperty());
+    vpSaveEditBtn.managedProperty().bindBidirectional(vpSaveEditBtn.visibleProperty());
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
-    maniaBtn.setVisible(Features.MANIA_ENABLED);
     maniaSyncBtn.managedProperty().bindBidirectional(maniaSyncBtn.visibleProperty());
-    maniaSyncBtn.setVisible(Features.MANIA_ENABLED);
 
     Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMania = new ImageView(imageMania);
