@@ -17,7 +17,10 @@ public class Debouncer {
 
    public void debounce(final String key, final Runnable runnable, int ms, boolean runLater) {
     if (delayedMap.containsKey(key)) {
-      delayedMap.get(key).cancel(true);
+      //mayInterruptIfRunning must be false: interrupting a task that is already executing (e.g. one
+      //blocked on an external process via Process#waitFor()) would abort it mid-work instead of just
+      //cancelling redundant *pending* runs, which defeats debouncing and corrupts in-flight work.
+      delayedMap.get(key).cancel(false);
     }
 
     final Future<?> prev = delayedMap.put(key, scheduler.schedule(new Runnable() {

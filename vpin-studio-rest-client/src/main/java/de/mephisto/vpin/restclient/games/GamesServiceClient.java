@@ -339,6 +339,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
     List<GameRepresentation> gamesCached = getVpxGamesCached();
+    gamesCached.addAll(getFPGamesCached());
     return getGameByVpsTableId(gamesCached, vpsTableId, vpsTableVersionId);
   }
 
@@ -362,7 +363,8 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   @NonNull
   public List<GameRepresentation> getGamesByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
-    List<GameRepresentation> gamesCached = getVpxGamesCached();
+    List<GameRepresentation> gamesCached = new ArrayList<>(getVpxGamesCached());
+    gamesCached.addAll(getFPGamesCached());
     List<GameRepresentation> hits = new ArrayList<>();
     for (GameRepresentation game : gamesCached) {
       if (game == null) {

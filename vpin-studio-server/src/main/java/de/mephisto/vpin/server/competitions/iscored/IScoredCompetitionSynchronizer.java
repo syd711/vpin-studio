@@ -53,7 +53,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     LOG.info("---------- Starting iScored Sync -----------------");
     List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
     IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-    List<Game> knownGames = gameService.getKnownGames(-1);
+    List<Game> knownGames = getAllKnownGames();
 
     synchronizeExistingCompetitions(iScoredSubscriptions, knownGames, iScoredSettings);
 
@@ -72,8 +72,18 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   }
 
   public IScoredSyncModel synchronize(IScoredSyncModel syncModel) {
-    List<Game> knownGames = gameService.getKnownGames(-1);
+    List<Game> knownGames = getAllKnownGames();
     return synchronize(syncModel, knownGames);
+  }
+
+  /**
+   * iScored game rooms are not restricted to a table format, so local lookups must include
+   * both VPX and Future Pinball tables, not just gameService.getKnownGames(-1) (VPX only).
+   */
+  private List<Game> getAllKnownGames() {
+    List<Game> knownGames = new ArrayList<>(gameService.getKnownGames(-1));
+    knownGames.addAll(gameService.getKnownFpGames(-1));
+    return knownGames;
   }
 
   private IScoredSyncModel synchronize(IScoredSyncModel syncModel, List<Game> knownGames) {
@@ -297,7 +307,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     Game game = event.getGame();
     LOG.info("Running iScored game room sync after table exit for '{}'.", game.getGameDisplayName());
 
-    List<Game> knownGames = gameService.getKnownGames(-1);
+    List<Game> knownGames = getAllKnownGames();
     for (IScoredGameRoom gameRoom : iScoredSettings.getGameRooms()) {
       if (!gameRoom.isSynchronize()) {
         continue;

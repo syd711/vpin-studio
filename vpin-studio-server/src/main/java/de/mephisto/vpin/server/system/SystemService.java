@@ -536,7 +536,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("future pinball")) {
+        //FP tables are launched via BAM's FPLoader.exe by default (see FPCommandLineService/EmulatorFactory),
+        //not "Future Pinball.exe", so both process names must be matched to reliably detect an active table.
+        if (fileName.toLowerCase().contains("future pinball") || fileName.toLowerCase().contains("fploader")) {
           LOG.info("Found active FP process: {}", fileName);
           return true;
         }

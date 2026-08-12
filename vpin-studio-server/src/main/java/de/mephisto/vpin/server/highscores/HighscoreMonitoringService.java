@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -70,6 +71,9 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private GameStatusService gameStatusService;
 
   private final Debouncer debouncer = new Debouncer();
 
@@ -309,7 +313,26 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
         games.add(game);
       }
     }
+
+    if (games.isEmpty()) {
+      //Future Pinball sometimes persists the highscore file using a normalized name derived from the
+      //table's internal name (whitespace stripped, lower-cased), which does not match the table's actual
+      //filename. Fall back to a whitespace/case-insensitive comparison against the known games' filenames.
+      String normalizedBaseName = normalizeFpRamName(baseName);
+      for (GameEmulator emulator : emulators) {
+        for (Game game : gameService.getKnownGames(emulator.getId())) {
+          if (normalizedBaseName.equals(normalizeFpRamName(FilenameUtils.getBaseName(game.getGameFileName())))) {
+            games.add(game);
+          }
+        }
+      }
+    }
     return games;
+  }
+
+  @NonNull
+  private static String normalizeFpRamName(@Nullable String name) {
+    return name == null ? "" : name.replaceAll("\\s+", "").toLowerCase();
   }
 
   @NonNull
