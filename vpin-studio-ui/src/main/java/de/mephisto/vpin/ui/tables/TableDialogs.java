@@ -421,6 +421,13 @@ public class TableDialogs {
   }
 
 
+  public static void openTableMoveCloneDialog(TableOverviewController tableOverviewController, GameRepresentation game, boolean move) {
+    Stage stage = Dialogs.createStudioDialogStage(TableMoveCloneController.class, "dialog-table-move-clone.fxml", move ? "Move Table" : "Clone Table");
+    TableMoveCloneController controller = (TableMoveCloneController) stage.getUserData();
+    controller.setData(tableOverviewController, game, move);
+    stage.showAndWait();
+  }
+
   public static boolean openEventLogDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(EventLogController.class, "dialog-event-log.fxml", "Event Log", "eventLog");
     EventLogController controller = (EventLogController) stage.getUserData();

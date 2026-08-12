@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.MoveCloneDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
@@ -314,5 +315,10 @@ public class GamesResource {
   public Game findMatch(@RequestBody Map<String, String> params) throws Exception {
     String term = params.get("term");
     return gameService.findMatch(term);
+  }
+
+  @PostMapping("/moveOrClone")
+  public Game moveOrClone(@RequestBody MoveCloneDescriptor descriptor) throws Exception {
+    return gameMediaService.moveOrCloneGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove());
   }
 }

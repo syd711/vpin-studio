@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.MoveCloneDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -130,6 +131,31 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
     catch (Exception e) {
       LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Moves or clones a VPX table to a different VPX emulator. Clears the local caches for the
+   * source and target emulator so subsequent getGamesByEmulator() calls reload from the server.
+   */
+  public GameRepresentation moveOrCloneGame(int gameId, int targetEmulatorId, boolean move) throws Exception {
+    try {
+      MoveCloneDescriptor descriptor = new MoveCloneDescriptor();
+      descriptor.setGameId(gameId);
+      descriptor.setTargetEmulatorId(targetEmulatorId);
+      descriptor.setMove(move);
+
+      GameRepresentation sourceGame = getGameCached(gameId);
+      GameRepresentation result = getRestClient().post(API + "games/moveOrClone", descriptor, GameRepresentation.class);
+      if (sourceGame != null) {
+        clearCache(sourceGame.getEmulatorId());
+      }
+      clearCache(targetEmulatorId);
+      return result;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to " + (move ? "move" : "clone") + " game " + gameId + ": " + e.getMessage(), e);
+      throw e;
     }
   }
 
