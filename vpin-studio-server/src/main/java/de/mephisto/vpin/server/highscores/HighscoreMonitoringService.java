@@ -53,7 +53,7 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   private final static String HIGHSCORE_DEBOUNCE_KEY = "vpx-highscore-file-change";
   private final static int HIGHSCORE_DEBOUNCE_MS = 1000;
 
-  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+  private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Highscore Monitor"));
   private volatile boolean emulatorWasRunning = false;
 
   @Autowired
