@@ -59,7 +59,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.time.OffsetDateTime;
@@ -562,116 +561,6 @@ public class GameMediaService extends MediaService {
 
     //update the game id to the new table
     uploadDescriptor.setGameId(returningGameId);
-  }
-
-  /**
-   * Moves or clones a VPX table to a different VPX emulator, copying the table file plus its directly
-   * associated files (.directb2s/.pov/.ini/.res) and frontend media. For a move, the original table
-   * entry and its files are deleted once the copy at the target emulator has succeeded; assets that
-   * are not carried over by cloning (highscores, altsound/altcolor, DMDs, PinVol, roms, ...) are left
-   * untouched at the source emulator since they are tied to that emulator's own MAME installation.
-   */
-  public Game moveOrCloneGame(int gameId, int targetEmulatorId, boolean move) throws Exception {
-    Game original = gameService.getGame(gameId);
-    if (original == null) {
-      throw new Exception("No game found for id " + gameId);
-    }
-    if (!original.isVpxGame()) {
-      throw new Exception("Only VPX tables can be moved or cloned between emulators.");
-    }
-
-    GameEmulator targetEmulator = emulatorService.getGameEmulator(targetEmulatorId);
-    if (targetEmulator == null || !targetEmulator.isVpxEmulator()) {
-      throw new Exception("No VPX emulator found for id " + targetEmulatorId);
-    }
-    if (targetEmulator.getId() == original.getEmulatorId()) {
-      throw new Exception("Source and target emulator are identical.");
-    }
-
-    File sourceFile = original.getGameFile();
-    if (!sourceFile.exists()) {
-      throw new Exception("The table file \"" + sourceFile.getName() + "\" does not exist.");
-    }
-
-    LOG.info("Starting {} of \"{}\" from emulator \"{}\" to \"{}\"", move ? "move" : "clone",
-        original.getGameDisplayName(), original.getEmulator().getName(), targetEmulator.getName());
-
-    //resolve the target file, preserving a possible subfolder structure
-    String relativeName = original.getGameFileName();
-    File target;
-    File targetSubFolder = null;
-    if (relativeName.contains("\\")) {
-      String subFolderName = relativeName.substring(0, relativeName.lastIndexOf("\\"));
-      targetSubFolder = FileUtils.uniqueFolder(new File(targetEmulator.getGamesFolder(), subFolderName));
-      targetSubFolder.mkdirs();
-      target = new File(targetSubFolder, sourceFile.getName());
-    }
-    else {
-      target = FileUtils.uniqueFile(new File(targetEmulator.getGamesFolder(), sourceFile.getName()));
-    }
-
-    org.apache.commons.io.FileUtils.copyFile(sourceFile, target);
-    LOG.info("Copied \"{}\" to \"{}\"", sourceFile.getAbsolutePath(), target.getAbsolutePath());
-
-    int returningGameId = frontendService.importGame(target, true, -1, targetEmulator.getId());
-    if (returningGameId < 0) {
-      throw new Exception("Failed to register \"" + target.getName() + "\" with emulator \"" + targetEmulator.getName() + "\".");
-    }
-
-    Game importedGame = gameService.scanGame(returningGameId, true);
-
-    String targetFileName = targetSubFolder != null ? targetSubFolder.getName() + "\\" + target.getName() : target.getName();
-    TableDetails clonedTableDetails = getTableDetails(returningGameId);
-    clonedTableDetails.setEmulatorId(targetEmulator.getId());
-    clonedTableDetails.setGameFileName(targetFileName);
-    clonedTableDetails.setGameName(importedGame.getGameName());
-    clonedTableDetails.setGameDisplayName(move ? original.getGameDisplayName() : original.getGameDisplayName() + " (cloned)");
-    saveTableDetails(clonedTableDetails, returningGameId, false);
-    frontendService.updateTableFileUpdated(returningGameId);
-
-    //clone media and directly associated files
-    cloneGameMedia(original, importedGame);
-    File targetParent = target.getParentFile();
-    FileUtils.cloneFile(original.getDirectB2SFile(), targetParent, target.getName());
-    FileUtils.cloneFile(original.getPOVFile(), targetParent, target.getName());
-    FileUtils.cloneFile(original.getIniFile(), targetParent, target.getName());
-    FileUtils.cloneFile(original.getResFile(), targetParent, target.getName());
-
-    frontendService.vpsLink(importedGame.getId(), original.getExtTableId(), original.getExtTableVersionId());
-
-    if (move) {
-      //clean up the original table now that the copy at the target emulator succeeded;
-      //assets not covered by cloning above are intentionally left in place, see method javadoc
-      DeleteDescriptor descriptor = new DeleteDescriptor();
-      descriptor.setGameIds(Collections.singletonList(original.getId()));
-      descriptor.setDeleteTable(true);
-      descriptor.setDeleteDirectB2s(true);
-      descriptor.setDeletePov(true);
-      descriptor.setDeleteIni(true);
-      descriptor.setDeleteRes(true);
-      descriptor.setDeleteVbs(true);
-      descriptor.setDeleteFromFrontend(true);
-      descriptor.setKeepAssets(false);
-      descriptor.setDeleteBAMCfg(false);
-      descriptor.setDeleteHighscores(false);
-      descriptor.setDeleteDMDs(false);
-      descriptor.setDeletePinVol(false);
-      descriptor.setDeleteAlias(false);
-      descriptor.setDeleteB2STableSettings(false);
-      descriptor.setDeleteDMDDeviceIni(false);
-      descriptor.setDeletePupPack(false);
-      descriptor.setDeleteMusic(false);
-      descriptor.setDeleteAltSound(false);
-      descriptor.setDeleteAltColor(false);
-      descriptor.setDeleteCfg(false);
-      descriptor.setDeleteRom(false);
-      if (!deleteGame(descriptor)) {
-        LOG.warn("Failed to fully clean up the original table \"{}\" after moving it.", original.getGameDisplayName());
-      }
-    }
-
-    LOG.info("{} of \"{}\" to emulator \"{}\" successful.", move ? "Move" : "Clone", importedGame.getGameDisplayName(), targetEmulator.getName());
-    return gameService.getGame(returningGameId);
   }
 
   public void cloneGameMedia(Game original, Game clone) {

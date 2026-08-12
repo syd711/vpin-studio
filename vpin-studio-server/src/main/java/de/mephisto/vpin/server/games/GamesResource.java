@@ -52,6 +52,9 @@ public class GamesResource {
   private GameMediaService gameMediaService;
 
   @Autowired
+  private GameMoveCloneService gameMoveCloneService;
+
+  @Autowired
   private VPXService vpxService;
 
   @Autowired
@@ -319,6 +322,6 @@ public class GamesResource {
 
   @PostMapping("/moveOrClone")
   public Game moveOrClone(@RequestBody MoveCloneDescriptor descriptor) throws Exception {
-    return gameMediaService.moveOrCloneGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove());
+    return gameMoveCloneService.moveOrCloneGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove());
   }
 }

@@ -658,6 +658,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void onKeyEvent(KeyEvent ke) {
+    if (ke.isShiftDown() || ke.isControlDown() || ke.isAltDown()) {
+      return;
+    }
+
     if (ke.getCode() == KeyCode.F2) {
       tabPane.getSelectionModel().select(tablesTab);
     }
@@ -700,23 +704,23 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   private StudioFXController getController(int tab) {
-      return switch (tab) {
-          case TAB_TABLE -> tableOverviewController;
-          case TAB_BACKGLASS -> backglassManagerController;
-          case TAB_VPS -> vpsTablesController;
-          case TAB_STATISTICS -> alxController;
-          case TAB_BACKUPS -> backupsController;
-          case TAB_VPXZ -> vpxzController;
-          case TAB_RECORDER -> recorderController;
-          default -> null;
-      };
+    return switch (tab) {
+      case TAB_TABLE -> tableOverviewController;
+      case TAB_BACKGLASS -> backglassManagerController;
+      case TAB_VPS -> vpsTablesController;
+      case TAB_STATISTICS -> alxController;
+      case TAB_BACKUPS -> backupsController;
+      case TAB_VPXZ -> vpxzController;
+      case TAB_RECORDER -> recorderController;
+      default -> null;
+    };
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.VPXZ_SETTINGS.equalsIgnoreCase(key)) {
       VPXZSettings vpxzSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPXZ_SETTINGS, VPXZSettings.class);
-      if(vpxzSettings.isEnabled()) {
+      if (vpxzSettings.isEnabled()) {
         tabPane.getTabs().add(5, vpxMobileTab);
       }
       else {
