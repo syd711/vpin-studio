@@ -60,9 +60,6 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Node launchOnExitOption;
 
   @FXML
-  private VBox vpxMonitorSettings;
-
-  @FXML
   private ComboBox<String> mappingHsFileNameCombo;
 
   @FXML
@@ -131,9 +128,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    vpxMonitorSettings.managedProperty().bindBidirectional(vpxMonitorSettings.visibleProperty());
     launchOnExitOption.managedProperty().bindBidirectional(launchOnExitOption.visibleProperty());
-    vpxMonitorSettings.setVisible(Features.HIGHSCORE_MONITORING);
 
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
