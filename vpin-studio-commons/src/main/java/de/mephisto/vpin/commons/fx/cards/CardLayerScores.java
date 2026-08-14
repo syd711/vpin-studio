@@ -11,6 +11,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -352,7 +353,7 @@ public class CardLayerScores extends Canvas implements CardLayer {
 
 */
 
-  private void addCardDataScoreFromRaw(TextBlock text, String raw) {
+  private void addCardDataScoreFromRaw(@NonNull TextBlock text, @Nullable String raw) {
     if (raw != null) {
       String formattedRaw = ScoreFormatUtil.formatRaw(raw);
       for (String line : formattedRaw.split("\n")) {

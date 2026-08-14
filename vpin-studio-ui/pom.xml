@@ -374,6 +374,8 @@
                                     <opt>--add-exports=javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</opt>
                                     <opt>--add-exports=javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</opt>
                                     <opt>--enable-native-access=javafx.graphics</opt>
+                                    <!-- Works around JDK-8341382 (awt.dll crash on WM_DISPLAYCHANGE); does not affect JavaFX/Prism rendering -->
+                                    <opt>-Dsun.java2d.d3d=false</opt>
                                 </opts>
                             </jre>
                             <versionInfo>

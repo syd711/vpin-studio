@@ -353,6 +353,13 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     if (selectedEmu == null) {
       this.emulatorCombo.getSelectionModel().selectFirst();
     }
+    else {
+      int selectedId = selectedEmu.getId();
+      filtered.stream().filter(e -> e.getId() == selectedId).findFirst()
+          .ifPresentOrElse(
+              e -> this.emulatorCombo.getSelectionModel().select(e),
+              () -> this.emulatorCombo.getSelectionModel().selectFirst());
+    }
 
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
@@ -421,10 +428,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
 
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
-
-    this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      //TODO
-    });
 
     client.getPreferenceService().addListener(this);
     NavigationController.setBreadCrumb(List.of("Media Recorder"));
@@ -817,6 +820,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      LOG.info("Emulator selection changed to {}", newValue);
       selection.clear();
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {

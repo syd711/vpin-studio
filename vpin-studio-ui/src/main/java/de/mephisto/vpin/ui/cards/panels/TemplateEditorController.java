@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.cards.*;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
@@ -650,10 +652,26 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private void onGenerateWithConfirmationClick() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Generate Wheel Icon", "Generate wheel icon for \"" + this.gameRepresentation.get().getGameDisplayName() + "\"?",
-        "The existing wheel icon will be overwritten.");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (uiSettings.isHideWheelIconGenerationConfirmation()) {
       onGenerate();
+      return;
+    }
+
+    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Generate Wheel Icon", "Generate Wheel Icon", "Cancel",
+        "Generate wheel icon for \"" + this.gameRepresentation.get().getGameDisplayName() + "\"? The existing wheel icon will be overwritten.",
+        "Select the checkbox below if you do not wish to see this question anymore.", "Do not show again", false);
+    if (confirmationResult.isCancelClicked()) {
+      return;
+    }
+
+    if (confirmationResult.isOkClicked()) {
+      onGenerate();
+    }
+
+    if (confirmationResult.isChecked()) {
+      uiSettings.setHideWheelIconGenerationConfirmation(true);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     }
   }
 

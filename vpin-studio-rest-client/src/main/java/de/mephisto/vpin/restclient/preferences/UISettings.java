@@ -16,6 +16,7 @@ public class UISettings extends JsonSettings {
   private boolean hideComponentWarning;
   private boolean hideVPXStartInfo;
   private boolean hideFrontendLaunchQuestion;
+  private boolean hideWheelIconGenerationConfirmation;
 
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
@@ -203,6 +204,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideFrontendLaunchQuestion(boolean hideFrontendLaunchQuestion) {
     this.hideFrontendLaunchQuestion = hideFrontendLaunchQuestion;
+  }
+
+  public boolean isHideWheelIconGenerationConfirmation() {
+    return hideWheelIconGenerationConfirmation;
+  }
+
+  public void setHideWheelIconGenerationConfirmation(boolean hideWheelIconGenerationConfirmation) {
+    this.hideWheelIconGenerationConfirmation = hideWheelIconGenerationConfirmation;
   }
 
   public boolean isColumnBackupDate() {

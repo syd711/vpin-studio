@@ -221,11 +221,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    * We need to wait until finished, because otherwise the UI would show the previous result
    */
   @Nullable
-  private BufferedImage doGenerateCardImage(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
-    if (summary.getScores().isEmpty()) {
-      return null;
-    }
-
+  private BufferedImage doGenerateCardImage(@NonNull Game game, @Nullable ScoreSummary summary, CardTemplate template) throws Exception {
     // fetch DB data before entering the FX thread to avoid blocking the JavaFX Application Thread
     int[] res = getCardResolution(template.getTemplateType());
     CardData data = getCardData(game, summary, template, true);

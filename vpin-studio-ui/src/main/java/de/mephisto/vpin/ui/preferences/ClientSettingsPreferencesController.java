@@ -198,9 +198,9 @@ public class ClientSettingsPreferencesController implements Initializable {
       uiSettings.setHideVPXStartInfo(false);
       uiSettings.setHideRatingSyncInfo(false);
       uiSettings.setHideFrontendLaunchQuestion(false);
+      uiSettings.setHideWheelIconGenerationConfirmation(false);
 
       client.getPreferenceService().setJsonPreference(uiSettings);
-      EventManager.getInstance().notifyPreferenceChanged(PreferenceType.uiSettings);
     }
   }
 

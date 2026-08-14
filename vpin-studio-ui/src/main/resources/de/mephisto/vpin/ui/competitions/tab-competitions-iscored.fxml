@@ -187,7 +187,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Show table in table overview" />
+                        <Tooltip text="Open Event Log" />
                      </tooltip>
                   </Button>
                     </items>
