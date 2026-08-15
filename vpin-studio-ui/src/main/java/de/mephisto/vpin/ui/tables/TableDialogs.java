@@ -52,6 +52,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -422,9 +423,13 @@ public class TableDialogs {
 
 
   public static void openTableMoveCloneDialog(TableOverviewController tableOverviewController, GameRepresentation game, boolean move) {
+    openTableMoveCloneDialog(tableOverviewController, Collections.singletonList(game), move);
+  }
+
+  public static void openTableMoveCloneDialog(TableOverviewController tableOverviewController, List<GameRepresentation> games, boolean move) {
     Stage stage = Dialogs.createStudioDialogStage(TableMoveCloneController.class, "dialog-table-move-clone.fxml", move ? "Move Table" : "Clone Table");
     TableMoveCloneController controller = (TableMoveCloneController) stage.getUserData();
-    controller.setData(tableOverviewController, game, move);
+    controller.setData(tableOverviewController, games, move);
     stage.showAndWait();
   }
 

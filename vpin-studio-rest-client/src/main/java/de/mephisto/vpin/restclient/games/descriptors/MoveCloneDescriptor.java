@@ -4,6 +4,8 @@ public class MoveCloneDescriptor {
   private int gameId;
   private int targetEmulatorId;
   private boolean move;
+  private boolean createSubfolder;
+  private SubfolderNaming subfolderNaming = SubfolderNaming.TABLE_NAME;
 
   public int getGameId() {
     return gameId;
@@ -27,5 +29,21 @@ public class MoveCloneDescriptor {
 
   public void setMove(boolean move) {
     this.move = move;
+  }
+
+  public boolean isCreateSubfolder() {
+    return createSubfolder;
+  }
+
+  public void setCreateSubfolder(boolean createSubfolder) {
+    this.createSubfolder = createSubfolder;
+  }
+
+  public SubfolderNaming getSubfolderNaming() {
+    return subfolderNaming;
+  }
+
+  public void setSubfolderNaming(SubfolderNaming subfolderNaming) {
+    this.subfolderNaming = subfolderNaming;
   }
 }

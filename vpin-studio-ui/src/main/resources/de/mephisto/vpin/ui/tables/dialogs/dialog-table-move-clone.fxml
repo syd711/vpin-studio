@@ -2,8 +2,11 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -38,6 +41,26 @@
                </VBox.margin>
             </Label>
             <ComboBox fx:id="targetEmulatorCombo" maxWidth="1.7976931348623157E308" />
+            <CheckBox fx:id="subfolderCheckBox" mnemonicParsing="false" onAction="#onSubfolderToggle" styleClass="default-text" text="Move into a subfolder">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label layoutX="22.0" layoutY="90.0" styleClass="checkbox-description" text="Use the following subfolder naming pattern:" />
+            <VBox fx:id="subfolderNamingBox" spacing="6.0">
+               <VBox.margin>
+                  <Insets left="20.0" top="6.0" />
+               </VBox.margin>
+               <children>
+                  <RadioButton fx:id="tableNameRadio" mnemonicParsing="false" selected="true" styleClass="default-text" text="Table Name (Asset Basename)">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="subfolderNamingGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="tableDisplayNameRadio" mnemonicParsing="false" styleClass="default-text" text="Table Display Name" toggleGroup="$subfolderNamingGroup" />
+                  <RadioButton fx:id="tableFilenameRadio" mnemonicParsing="false" styleClass="default-text" text="Table Filename" toggleGroup="$subfolderNamingGroup" />
+               </children>
+            </VBox>
          </children>
          <BorderPane.margin>
             <Insets bottom="6.0" />

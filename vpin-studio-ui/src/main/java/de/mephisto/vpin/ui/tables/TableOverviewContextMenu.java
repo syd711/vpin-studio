@@ -291,20 +291,18 @@ public class TableOverviewContextMenu {
       if (vpxEmulators.size() > 1) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem moveTableItem = new MenuItem("Move Table");
+        MenuItem moveTableItem = new MenuItem(multiSelection ? "Move Tables" : "Move Table");
         KeyCombination moveTableItemKey = new KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN);
         moveTableItem.setAccelerator(moveTableItemKey);
-        moveTableItem.setDisable(multiSelection);
         moveTableItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-move-outline"));
-        moveTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, game, true));
+        moveTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, tableOverviewController.getSelections(), true));
         ctxMenu.getItems().add(moveTableItem);
 
-        MenuItem cloneTableItem = new MenuItem("Clone Table");
+        MenuItem cloneTableItem = new MenuItem(multiSelection ? "Clone Tables" : "Clone Table");
         KeyCombination cloneTableItemKey = new KeyCodeCombination(KeyCode.F7, KeyCombination.SHIFT_DOWN);
         cloneTableItem.setAccelerator(cloneTableItemKey);
-        cloneTableItem.setDisable(multiSelection);
         cloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2c-content-copy"));
-        cloneTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, game, false));
+        cloneTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, tableOverviewController.getSelections(), false));
         ctxMenu.getItems().add(cloneTableItem);
       }
 

@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.MoveCloneDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.SubfolderNaming;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -139,11 +140,22 @@ public class GamesServiceClient extends VPinStudioClientService {
    * source and target emulator so subsequent getGamesByEmulator() calls reload from the server.
    */
   public GameRepresentation moveOrCloneGame(int gameId, int targetEmulatorId, boolean move) throws Exception {
+    return moveOrCloneGame(gameId, targetEmulatorId, move, false, SubfolderNaming.TABLE_NAME);
+  }
+
+  /**
+   * Moves or clones a VPX table to a different VPX emulator, optionally placing it into a new
+   * subfolder named after the table. Clears the local caches for the source and target emulator
+   * so subsequent getGamesByEmulator() calls reload from the server.
+   */
+  public GameRepresentation moveOrCloneGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
     try {
       MoveCloneDescriptor descriptor = new MoveCloneDescriptor();
       descriptor.setGameId(gameId);
       descriptor.setTargetEmulatorId(targetEmulatorId);
       descriptor.setMove(move);
+      descriptor.setCreateSubfolder(createSubfolder);
+      descriptor.setSubfolderNaming(subfolderNaming);
 
       GameRepresentation sourceGame = getGameCached(gameId);
       GameRepresentation result = getRestClient().post(API + "games/moveOrClone", descriptor, GameRepresentation.class);

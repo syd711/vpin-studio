@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.SubfolderNaming;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
+import org.apache.commons.io.FilenameUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Moves or clones a VPX table between VPX emulators, see {@link #moveOrCloneGame(int, int, boolean)}.
+ * Moves or clones a VPX table between VPX emulators, see {@link #moveOrCloneGame(int, int, boolean, boolean, SubfolderNaming)}.
  */
 @Service
 public class GameMoveCloneService {
@@ -72,8 +74,12 @@ public class GameMoveCloneService {
    * files (this also matches how the ROM/NVRAM folders are frequently a single, registry-configured
    * location shared by every VPX emulator on the machine, in which case source and target resolve to
    * the same file and the copy is a no-op).
+   * <p>
+   * When {@code createSubfolder} is set, the table is placed into a new subfolder of the target
+   * emulator's games folder instead of preserving any existing subfolder structure, named after the
+   * table according to {@code subfolderNaming}.
    */
-  public Game moveOrCloneGame(int gameId, int targetEmulatorId, boolean move) throws Exception {
+  public Game moveOrCloneGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
     Game original = gameService.getGame(gameId);
     if (original == null) {
       throw new Exception("No game found for id " + gameId);
@@ -102,7 +108,13 @@ public class GameMoveCloneService {
     String relativeName = original.getGameFileName();
     File target;
     File targetSubFolder = null;
-    if (relativeName.contains("\\")) {
+    if (createSubfolder) {
+      String subFolderName = resolveSubfolderName(original, subfolderNaming);
+      targetSubFolder = FileUtils.uniqueFolder(new File(targetEmulator.getGamesFolder(), subFolderName));
+      targetSubFolder.mkdirs();
+      target = new File(targetSubFolder, sourceFile.getName());
+    }
+    else if (relativeName.contains("\\")) {
       String subFolderName = relativeName.substring(0, relativeName.lastIndexOf("\\"));
       targetSubFolder = FileUtils.uniqueFolder(new File(targetEmulator.getGamesFolder(), subFolderName));
       targetSubFolder.mkdirs();
@@ -267,6 +279,27 @@ public class GameMoveCloneService {
     catch (Exception e) {
       LOG.error("Failed to copy music for \"{}\": {}", original.getGameDisplayName(), e.getMessage(), e);
     }
+  }
+
+  /**
+   * Resolves the subfolder name a table is placed into when {@code createSubfolder} is enabled,
+   * sanitizing it for use as a Windows folder name.
+   */
+  private String resolveSubfolderName(Game original, SubfolderNaming subfolderNaming) {
+    String name;
+    switch (subfolderNaming) {
+      case TABLE_DISPLAY_NAME:
+        name = original.getGameDisplayName();
+        break;
+      case TABLE_FILENAME:
+        name = FilenameUtils.getBaseName(original.getGameFileName());
+        break;
+      case TABLE_NAME:
+      default:
+        name = original.getGameName();
+        break;
+    }
+    return FileUtils.replaceWindowsChars(name).trim();
   }
 
   private void copyFolderIfPresent(@Nullable File source, @Nullable File target, String label) {

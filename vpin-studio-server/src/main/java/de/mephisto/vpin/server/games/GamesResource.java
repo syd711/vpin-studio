@@ -322,6 +322,7 @@ public class GamesResource {
 
   @PostMapping("/moveOrClone")
   public Game moveOrClone(@RequestBody MoveCloneDescriptor descriptor) throws Exception {
-    return gameMoveCloneService.moveOrCloneGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove());
+    return gameMoveCloneService.moveOrCloneGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove(),
+        descriptor.isCreateSubfolder(), descriptor.getSubfolderNaming());
   }
 }
