@@ -54,7 +54,7 @@
   "url" : "https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip",
   "length" : 821760,
   "crc32" : "#349AE6FF",
-  "archiveFolder" : "pinmame-nvram-maps-main",
+  "archiveFolder" : "pinball-memory-maps-main",
   "emptyParentFolder" : true
 }, {
   "name" : "superhac/roms.json",
