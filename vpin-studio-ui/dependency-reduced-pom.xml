@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>5.1.4</version>
+    <version>5.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -134,6 +134,7 @@
                   <opt>--add-exports=javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</opt>
                   <opt>--add-exports=javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</opt>
                   <opt>--enable-native-access=javafx.graphics</opt>
+                  <opt>-Dsun.java2d.d3d=false</opt>
                 </opts>
               </jre>
               <versionInfo>

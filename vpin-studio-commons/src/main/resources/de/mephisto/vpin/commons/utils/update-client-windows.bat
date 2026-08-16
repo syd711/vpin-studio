@@ -2,8 +2,39 @@
 timeout /T 4 /nobreak
 cd /d %~dp0
 
+set retries=0
+
+:waitforfile
+del VPin-Studio.exe >nul 2>&1
+if exist VPin-Studio.exe (
+    set /a retries+=1
+    if %retries% geq 15 (
+        echo %date% %time% ERROR: Failed to delete VPin-Studio.exe after 15 retries >> vpin-studio-ui.log
+        pause
+        exit /b 1
+    )
+    timeout /T 2 /nobreak
+    goto waitforfile
+)
+
+set retries=0
+
 :update
 resources\7z.exe -aoa x "VPin-Studio.zip"
+if errorlevel 1 (
+    set /a retries+=1
+    if %retries% geq 3 (
+        echo %date% %time% ERROR: 7-Zip extraction failed after %retries% attempts - the downloaded archive is corrupt, not locked, so retrying extraction cannot fix it. >> vpin-studio-ui.log
+        del VPin-Studio.zip >nul 2>&1
+        echo.
+        echo Update failed: the downloaded update archive is corrupt.
+        echo The corrupt file has been deleted - please retry the update from VPin Studio so it can be re-downloaded.
+        pause
+        exit /b 1
+    )
+    timeout /T 3 /nobreak
+    goto update
+)
 timeout /T 4 /nobreak
 del VPin-Studio.zip
 VPin-Studio.exe
