@@ -2,8 +2,15 @@
 
 ### Changes
 
-- **Wheel Designer**: Fixed issue that for some tables the wheel icon has not been generated.
-- **Java Runtime**: Fixed JDK issue by adding some JVM parameters that should avoid that. This fix can't be applied through an update, only by a reinstallation. If you experience regular crashes of the server or client you can re-install the Studio over the existing installation to rewrite the affected settings.
+- **Wheel Designer**: 
+  - Fixed issue that for some tables the wheel icon has not been generated.
+- **Java Runtime**: 
+  - Fixed JDK issue by adding some JVM parameters that should avoid that. This fix can't be applied through an update, only by a reinstallation. If you experience regular crashes of the server or client you can re-install the Studio over the existing installation to rewrite the affected settings.
+- **Move/Copy Tables**
+  - Added bulk action support.
+  - Added option to move/copy tables into subfolders.
+- **Updater**
+  - Improved integrity check of downloaded updates, resulting is more graceful errors when failing.
 
 ## Release Notes 5.2.1
 

@@ -20,9 +20,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Updater {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  // guards against two overlapping downloads writing to the same temp/target file concurrently
+  private final static Set<String> ACTIVE_DOWNLOADS = ConcurrentHashMap.newKeySet();
 
   public final static String BASE_URL = "https://github.com/syd711/vpin-studio/releases/download/%s/";
   private final static String LATEST_RELEASE_URL = "https://github.com/syd711/vpin-studio/releases/latest";
@@ -51,8 +55,7 @@ public class Updater {
       out.delete();
     }
     String url = String.format(BASE_URL, versionSegment) + targetZip;
-    download(url, out);
-    return true;
+    return download(url, out);
   }
 
   public static int getDownloadProgress(String targetZip, long estimatedSize) {
@@ -71,11 +74,17 @@ public class Updater {
     return percentage;
   }
 
-  public static void download(String downloadUrl, File target) {
-    downloadAndOverwrite(downloadUrl, target, false);
+  public static boolean download(String downloadUrl, File target) {
+    return downloadAndOverwrite(downloadUrl, target, false);
   }
 
-  public static void downloadAndOverwrite(String downloadUrl, File target, boolean overwrite) {
+  public static boolean downloadAndOverwrite(String downloadUrl, File target, boolean overwrite) {
+    String downloadKey = target.getAbsolutePath();
+    if (!ACTIVE_DOWNLOADS.add(downloadKey)) {
+      LOG.warn("Download of \"{}\" is already in progress, skipping duplicate request for {}", downloadKey, downloadUrl);
+      return false;
+    }
+
     try {
       LOG.info("Downloading {}", downloadUrl);
       URL url = URI.create(downloadUrl).toURL();
@@ -84,28 +93,40 @@ public class Updater {
       connection.setUseCaches(false);
       connection.setRequestProperty("Cache-Control", "no-cache, no-store");
       connection.setRequestProperty("Pragma", "no-cache");
-      BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
-      File tmp = new File(getWriteableBaseFolder(), target.getName() + DOWNLOAD_SUFFIX);
 
+      File tmp = new File(getWriteableBaseFolder(), target.getName() + DOWNLOAD_SUFFIX);
       if (tmp.exists()) {
         tmp.delete();
       }
-      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        fileOutputStream.write(dataBuffer, 0, bytesRead);
+
+      long expectedLength;
+      long bytesWritten = 0;
+      try (BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
+           FileOutputStream fileOutputStream = new FileOutputStream(tmp)) {
+        expectedLength = connection.getContentLengthLong();
+        byte[] dataBuffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+          fileOutputStream.write(dataBuffer, 0, bytesRead);
+          bytesWritten += bytesRead;
+        }
       }
-      in.close();
-      fileOutputStream.close();
+
+      if (expectedLength > 0 && bytesWritten != expectedLength) {
+        LOG.error("Download of \"{}\" is incomplete or corrupt: expected {} bytes, but received {} bytes. Discarding download.",
+            downloadUrl, expectedLength, bytesWritten);
+        tmp.delete();
+        return false;
+      }
 
       if (overwrite && target.exists() && !target.delete()) {
         LOG.error("Failed to overwrite target file \"{}\"", target.getAbsolutePath());
-        return;
+        return false;
       }
 
       if (!FileUtils.checkedCopy(tmp, target)) {
         LOG.error("Failed to copy download temp file {} to {}", tmp.getAbsolutePath(), target.getAbsolutePath());
+        return false;
       }
       LOG.info("Download of {}/({}) finished", target.getAbsolutePath(), target.length());
       if (tmp.delete()) {
@@ -114,9 +135,14 @@ public class Updater {
       else {
         LOG.info("Failed to deleted downloaded temp file {}", tmp.getAbsolutePath());
       }
+      return true;
     }
     catch (Exception e) {
       LOG.error("Updater Failed to execute download: {}", e.getMessage(), e);
+      return false;
+    }
+    finally {
+      ACTIVE_DOWNLOADS.remove(downloadKey);
     }
   }
 

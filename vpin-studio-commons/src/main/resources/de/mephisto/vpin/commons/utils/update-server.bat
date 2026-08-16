@@ -25,8 +25,12 @@ set retries=0
 resources\7z.exe -aoa x "VPin-Studio-Server.zip"
 if errorlevel 1 (
     set /a retries+=1
-    if %retries% geq 20 (
-        echo %date% %time% ERROR: 7-Zip extraction failed after 20 retries >> vpin-studio-server.log
+    if %retries% geq 3 (
+        echo %date% %time% ERROR: 7-Zip extraction failed after %retries% attempts - the downloaded archive is corrupt, not locked, so retrying extraction cannot fix it. >> vpin-studio-server.log
+        del VPin-Studio-Server.zip >nul 2>&1
+        echo.
+        echo Update failed: the downloaded update archive is corrupt.
+        echo The corrupt file has been deleted - please retry the update from VPin Studio so it can be re-downloaded.
         pause
         exit /b 1
     )
