@@ -111,10 +111,12 @@ public class AltColorService implements InitializingBean {
       File altColorFolderRoot = vPinMameService.getAltColorFolder();
       altColorFolder = new File(altColorFolderRoot, dofLinxService.getGameNameForAltColor(game));
     }
-    else if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
+
+    if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
       altColorFolder = getAltColorFolder(game, game.getRomAlias());
     }
-    else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
+
+     if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
       altColorFolder = getAltColorFolder(game, game.getRom());
     }
     if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getTableName()) && game.getEmulator() != null) {

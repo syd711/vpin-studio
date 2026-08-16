@@ -9,6 +9,8 @@
 - **Move/Copy Tables**
   - Added bulk action support.
   - Added option to move/copy tables into subfolders.
+- **ALT Color**
+  - Fixed issue with aliased cROMc based ALT color files. 
 - **Updater**
   - Improved integrity check of downloaded updates, resulting is more graceful errors when failing.
 
