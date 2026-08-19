@@ -21,6 +21,7 @@ import java.util.Locale;
  * <p>The {@link MessageSource} loads message bundles from
  * {@code messages/messages.properties} (English) and
  * {@code messages/messages_de.properties} (German) on the server classpath.
+ * German umlauts are stored as escaped sequences in the properties file.
  */
 @Configuration
 public class I18nConfiguration {
@@ -45,7 +46,7 @@ public class I18nConfiguration {
   /**
    * MessageSource backed by classpath resource bundles.
    * Encoding is UTF-8 so German umlauts are read correctly from the
-   * {@code messages_de.properties} file stored in ISO-8859-1 escapes (\uXXXX).
+   * {@code messages_de.properties} file (stored as native-to-ascii escaped sequences).
    */
   @Bean
   public MessageSource messageSource() {
