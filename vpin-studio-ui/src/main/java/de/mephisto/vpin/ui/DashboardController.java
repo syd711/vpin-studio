@@ -65,7 +65,7 @@ public class DashboardController implements Initializable, StudioFXController, C
 
 //    try {
 //      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
-      loader.setResources(Messages.getBundle());
+      //loader.setResources(Messages.getBundle());
 //      BorderPane activeCompetitionBorderPane = loader.load();
 //      activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
 //      offlineCompetitionWidgetController = loader.getController();
@@ -80,7 +80,7 @@ public class DashboardController implements Initializable, StudioFXController, C
 //
 //    try {
 //      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
-      loader.setResources(Messages.getBundle());
+      //loader.setResources(Messages.getBundle());
 //      discordCompetitionsRoot = loader.load();
 //      discordCompetitionsRoot.setMaxWidth(Double.MAX_VALUE);
 //      discordCompetitionWidgetController = loader.getController();
