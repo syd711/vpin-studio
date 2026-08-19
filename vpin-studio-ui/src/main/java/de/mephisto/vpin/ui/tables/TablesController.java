@@ -60,6 +60,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -227,6 +228,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       FXMLLoader loader = new FXMLLoader(TableOverviewController.class.getResource("scene-tables-overview.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tableOverviewController = loader.getController();
       tableOverviewController.setRootController(this);
@@ -240,6 +242,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       FXMLLoader loader = new FXMLLoader(BackglassManagerController.class.getResource("scene-directb2s-admin.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent directb2sRoot = loader.load();
       backglassManagerController = loader.getController();
       backglassManagerController.setRootController(this);
@@ -258,6 +261,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxController.class.getResource("scene-alx.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
       alxController.setTablesController(this);
@@ -270,6 +274,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     try {
       if (Features.BACKUPS_ENABLED) {
         FXMLLoader loader = new FXMLLoader(BackupsController.class.getResource("scene-backups.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent repositoryRoot = loader.load();
         backupsController = loader.getController();
         backupsController.setRootController(this);
@@ -285,6 +290,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       FXMLLoader loader = new FXMLLoader(VPXZController.class.getResource("scene-vpxz.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent vpxMobileRoot = loader.load();
       vpxzController = loader.getController();
       vpxzController.setRootController(this);
@@ -296,6 +302,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       FXMLLoader loader = new FXMLLoader(VpsTablesController.class.getResource("scene-vps-tables.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent repositoryRoot = loader.load();
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
@@ -314,6 +321,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty()) {
       try {
         FXMLLoader loader = new FXMLLoader(RecorderController.class.getResource("scene-recorder.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent repositoryRoot = loader.load();
         recorderController = loader.getController();
         recorderController.setRootController(this);

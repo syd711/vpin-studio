@@ -35,6 +35,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MenuCustomViewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -149,6 +150,7 @@ public class MenuCustomViewController implements Initializable {
         for (ScoreRepresentation score : scores) {
           try {
             FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+            loader.setResources(Messages.getBundle());
             Pane row = loader.load();
             row.setPrefWidth(stats3Col.getPrefWidth() - 24);
             WidgetLatestScoreItemController controller = loader.getController();

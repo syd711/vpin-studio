@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionsController.class);
@@ -390,6 +391,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -567,6 +569,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
@@ -632,6 +635,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);

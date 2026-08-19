@@ -42,6 +42,7 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class HighscoreCardsController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, StudioEventListener {
@@ -241,6 +242,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
     try {
       FXMLLoader loader = new FXMLLoader(TemplateEditorController.class.getResource("template-editor.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent editorRoot = loader.load();
       templateEditorController = loader.getController();
       templateEditorController.setCardsController(this);

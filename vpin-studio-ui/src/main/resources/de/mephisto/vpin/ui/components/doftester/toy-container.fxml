@@ -20,7 +20,7 @@
          <center>
             <VBox fx:id="dataPanel" prefWidth="450.0">
                <children>
-                  <Label fx:id="filenameLabel" text="file name" textFill="WHITE">
+                  <Label fx:id="filenameLabel" text="%ui.file_name_6528" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -28,7 +28,7 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="size label" textFill="WHITE">
+                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="%ui.size_label_2c3e" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="3.0" />
                      </VBox.margin></Label>
@@ -40,9 +40,9 @@
    <right>
       <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button mnemonicParsing="false" onAction="#onTest" text="Test">
+            <Button mnemonicParsing="false" onAction="#onTest" text="%ui.test_0cbc">
                <tooltip>
-                  <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />
+                  <Tooltip prefWidth="300.0" text="%ui.updates_can_only_be_installed_when_ffda" wrapText="true" />
                </tooltip>
                <font>
                   <Font size="14.0" />

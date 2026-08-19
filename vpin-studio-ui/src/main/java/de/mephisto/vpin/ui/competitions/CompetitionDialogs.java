@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionDialogs {
 
@@ -31,6 +32,7 @@ public class CompetitionDialogs {
     }
 
     FXMLLoader fxmlLoader = new FXMLLoader(CompetitionDiscordDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
+    fxmlLoader.setResources(Messages.getBundle());
     Stage stage = WidgetFactory.createDialogStage(CompetitionDiscordDialogController.class, Studio.stage, title, "dialog-discord-competition-edit.fxml");
     CompetitionDiscordDialogController controller = (CompetitionDiscordDialogController) stage.getUserData();
     controller.setCompetition(all, selection);

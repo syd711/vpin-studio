@@ -21,7 +21,7 @@
                <left>
                   <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                      <children>
-                        <Hyperlink onAction="#onReset" text="Reset All">
+                        <Hyperlink onAction="#onReset" text="%ui.reset_all_b69a">
                            <HBox.margin>
                               <Insets left="-5.0" top="-9.0" />
                            </HBox.margin>
@@ -50,7 +50,7 @@
             <VBox fx:id="titlePaneRoot" prefWidth="230.0">
                <children>
 
-                  <Label styleClass="default-title" text="Emulator Filters">
+                  <Label styleClass="default-title" text="%ui.emulator_filters_c7b7">
                      <VBox.margin>
                         <Insets top="3.0" />
                      </VBox.margin>
@@ -60,7 +60,7 @@
                      </children>
                   </VBox>
                   
-                 <Label styleClass="default-title" text="Template Filters">
+                 <Label styleClass="default-title" text="%ui.template_filters_9cc7">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>

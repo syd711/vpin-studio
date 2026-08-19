@@ -28,8 +28,8 @@
                            <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                         </padding>
                         <children>
-                           <Label styleClass="default-title" text="Most Played" />
-                           <Label styleClass="default-text" text="(Number of times a table has been launched)" wrapText="true">
+                           <Label styleClass="default-title" text="%ui.most_played_9756" />
+                           <Label styleClass="default-text" text="%ui.number_of_times_a_table_has_fdbb" wrapText="true">
                               <VBox.margin>
                                  <Insets bottom="12.0" />
                               </VBox.margin>
@@ -49,8 +49,8 @@
                            <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                         </padding>
                         <children>
-                           <Label styleClass="default-title" text="Time Played" />
-                           <Label styleClass="default-text" text="(Total emulation time by table)" wrapText="true">
+                           <Label styleClass="default-title" text="%ui.time_played_471f" />
+                           <Label styleClass="default-text" text="%ui.total_emulation_time_by_table_d6f1" wrapText="true">
                               <VBox.margin>
                                  <Insets bottom="12.0" />
                               </VBox.margin>
@@ -67,8 +67,8 @@
                            <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                         </padding>
                         <children>
-                           <Label styleClass="default-title" text="Recorded Scores" />
-                           <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio)" wrapText="true">
+                           <Label styleClass="default-title" text="%ui.recorded_scores_898f" />
+                           <Label styleClass="default-text" text="%ui.total_number_of_scores_recorded_by_dc45" wrapText="true">
                               <VBox.margin>
                                  <Insets bottom="12.0" />
                               </VBox.margin>
@@ -85,8 +85,8 @@
                            <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                         </padding>
                         <children>
-                           <Label styleClass="default-title" text="Last Played" />
-                           <Label styleClass="default-text" text="(Last 20 Tables Played and Date/Time Played)" wrapText="true">
+                           <Label styleClass="default-title" text="%ui.last_played_ff84" />
+                           <Label styleClass="default-text" text="%ui.last_20_tables_played_and_date_aaaf" wrapText="true">
                               <VBox.margin>
                                  <Insets bottom="12.0" />
                               </VBox.margin>
@@ -127,11 +127,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Reload all table data" />
+                  <Tooltip text="%ui.reload_all_table_data_90bc" />
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%ui.all_vpx_tables_e7c0" />
             <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
             <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                <font>
@@ -141,7 +141,7 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Delete Statistics" />
+                  <Tooltip text="%ui.delete_statistics_ee8b" />
                </tooltip>
             </Button>
         </items>

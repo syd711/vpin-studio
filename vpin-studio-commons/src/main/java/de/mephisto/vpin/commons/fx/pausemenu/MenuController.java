@@ -57,6 +57,7 @@ import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.SELECTION_SCALE_DURATION;
 import static de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes.todos;
 import static de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes.wovp;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MenuController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -337,6 +338,7 @@ public class MenuController implements Initializable {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iscored.png"));
         String resource = "menu-score-view.fxml";
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
         customViewController.setData(game, vpsTable, activeSelection, sectionImage);
@@ -352,6 +354,7 @@ public class MenuController implements Initializable {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png"));
         String resource = "menu-score-view.fxml";
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
         customViewController.setData(game, vpsTable, activeSelection, sectionImage);
@@ -367,6 +370,7 @@ public class MenuController implements Initializable {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png"));
         String resource = "menu-submitter-view.fxml";
         FXMLLoader loader = new FXMLLoader(WovpMenuItemController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
         Pane widgetRoot = loader.load();
         wovpMenuItemController = loader.getController();
         wovpMenuItemController.setData(game, activeSelection, vpsTable, sectionImage);
@@ -381,6 +385,7 @@ public class MenuController implements Initializable {
       try {
         String resource = "menu-todolist-view.fxml";
         FXMLLoader loader = new FXMLLoader(TodoListMenuItemController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
         Pane widgetRoot = loader.load();
         todoMenuItemController = loader.getController();
         todoMenuItemController.setData(game, activeSelection);
@@ -560,6 +565,7 @@ public class MenuController implements Initializable {
     try {
       String resource = "menu-custom-view.fxml";
       FXMLLoader loader = new FXMLLoader(MenuCustomViewController.class.getResource(resource));
+      loader.setResources(Messages.getBundle());
       Parent widgetRoot = loader.load();
       customView.setCenter(widgetRoot);
       customViewController = loader.getController();

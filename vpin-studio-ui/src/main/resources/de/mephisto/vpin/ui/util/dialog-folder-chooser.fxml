@@ -18,12 +18,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="openBtn" cancelButton="true" layoutX="348.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenClick" styleClass="submit-button" text="Open" />
+            <Button fx:id="openBtn" cancelButton="true" layoutX="348.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenClick" styleClass="submit-button" text="%ui.open_c3bf" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -43,7 +43,7 @@
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="Selected Folder:" />
+                        <Label styleClass="default-text" text="%ui.selected_folder_c450" />
                         <TextField fx:id="pathField" editable="false" minWidth="350.0">
                            <font>
                               <Font size="14.0" />

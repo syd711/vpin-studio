@@ -36,14 +36,14 @@
                <center>
                   <HBox spacing="6.0" alignment="CENTER_LEFT" >
                      <children>
-                        <Label text="Table: " textFill="WHITE" >
+                        <Label text="%ui.table_852d" textFill="WHITE" >
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <StackPane alignment="CENTER_RIGHT" >
                            <children>
-                              <TextField fx:id="tableNameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="Enter Table Name...">
+                              <TextField fx:id="tableNameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="%ui.enter_table_name_58e4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -64,7 +64,7 @@
                            </font>
                         </Button>
 
-                        <Label text="Language: " textFill="WHITE" >
+                        <Label text="%ui.language_c961" textFill="WHITE" >
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -87,7 +87,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.jump_to_the_previous_entry_in_96e7" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#onNextImage">
@@ -98,10 +98,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.jump_to_the_next_entry_in_a465" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%ui.auto_save_106c" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -130,7 +130,7 @@
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Table id:" styleClass="default-text" textFill="WHITE" />
+                  <Label text="%ui.table_id_e369" styleClass="default-text" textFill="WHITE" />
                   <Label fx:id="tableId" styleClass="default-text" text="-" GridPane.columnIndex="1" />
                </children>
             </GridPane>
@@ -156,7 +156,7 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" styleClass="default-button" text="Save">
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" styleClass="default-button" text="%ui.save_c9cc">
             </Button>
          </children>
          <BorderPane.margin>

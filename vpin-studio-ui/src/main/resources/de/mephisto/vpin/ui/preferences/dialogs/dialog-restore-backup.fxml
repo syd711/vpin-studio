@@ -25,8 +25,8 @@
          <right>
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
-                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreateClick" styleClass="submit-button" text="Restore Backup" />
+                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" />
+                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreateClick" styleClass="submit-button" text="%ui.restore_backup_6b57" />
                </children>
             </HBox>
          </right>
@@ -47,7 +47,7 @@
                <children>
                   <HBox GridPane.columnIndex="1">
                      <children>
-                        <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="440.0" promptText="Select the backup file to restore...">
+                        <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="440.0" promptText="%ui.select_the_backup_file_to_restore_f53f">
                            <HBox.margin>
                               <Insets right="12.0" />
                            </HBox.margin>
@@ -57,8 +57,8 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <Label styleClass="default-text" text="Backup File:" />
-                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2">
+                  <Label styleClass="default-text" text="%ui.backup_file_f1cb" />
+                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb" GridPane.columnIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -68,70 +68,70 @@
                   <Insets bottom="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Select data you want to restore:" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%ui.select_data_you_want_to_restore_dd4d" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="12.0" top="12.0" />
                </VBox.margin></Label>
-            <CheckBox fx:id="preferencesCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="Preferences" />
-            <Label layoutX="22.0" layoutY="22.0" styleClass="checkbox-description" text="Contains all preferences, like enabled columns, highscore cards and 3rd party system settings." textFill="WHITE" />
-            <Label layoutX="22.0" layoutY="129.0" styleClass="checkbox-description" text="These settings also contain sensitive data like the Discord BOT token." textFill="WHITE" />
-            <CheckBox fx:id="playersCheckbox" layoutX="22.0" layoutY="55.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Players">
+            <CheckBox fx:id="preferencesCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.preferences_d083" />
+            <Label layoutX="22.0" layoutY="22.0" styleClass="checkbox-description" text="%ui.contains_all_preferences_like_enabled_columns_365d" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="129.0" styleClass="checkbox-description" text="%ui.these_settings_also_contain_sensitive_data_4d66" textFill="WHITE" />
+            <CheckBox fx:id="playersCheckbox" layoutX="22.0" layoutY="55.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.players_93ec">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="75.0" styleClass="checkbox-description" text="Include all of your local players." textFill="WHITE" />
-            <CheckBox fx:id="vpsNotesCheckbox" layoutX="22.0" layoutY="102.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Virtual Pinball Spreadsheet Comments">
+            <Label layoutX="22.0" layoutY="75.0" styleClass="checkbox-description" text="%ui.include_all_of_your_local_players_c240" textFill="WHITE" />
+            <CheckBox fx:id="vpsNotesCheckbox" layoutX="22.0" layoutY="102.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.virtual_pinball_spreadsheet_comments_c9eb">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="Include all comments you have written for Virtual Pinball Spreadsheet tables." textFill="WHITE" />
-            <CheckBox fx:id="gamesCheckbox" layoutX="22.0" layoutY="102.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Table Data">
+            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="%ui.include_all_comments_you_have_written_f4f8" textFill="WHITE" />
+            <CheckBox fx:id="gamesCheckbox" layoutX="22.0" layoutY="102.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.table_data_b3d1">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="This data will be restored for the filename of the table. " textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="%ui.this_data_will_be_restored_for_685e" textFill="WHITE" />
             <VBox>
                <VBox.margin>
                   <Insets left="26.0" top="6.0" />
                </VBox.margin>
                <children>
-                  <CheckBox fx:id="gameNotesCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="Notes" />
-                  <Label styleClass="checkbox-description" text="Includes the notes you have taken for tables." textFill="WHITE" />
-                  <CheckBox fx:id="gamesVpsMappingCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Virtual Pinball Spreadsheet Mappings">
+                  <CheckBox fx:id="gameNotesCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.notes_f4c6" />
+                  <Label styleClass="checkbox-description" text="%ui.includes_the_notes_you_have_taken_95d3" textFill="WHITE" />
+                  <CheckBox fx:id="gamesVpsMappingCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.virtual_pinball_spreadsheet_mappings_6d16">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description" text="Includes the VPS table and version id." textFill="WHITE" />
-                  <CheckBox fx:id="gamesCardSettingsCheckbox" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Highscore Card Settings">
+                  <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description" text="%ui.includes_the_vps_table_and_version_2828" textFill="WHITE" />
+                  <CheckBox fx:id="gamesCardSettingsCheckbox" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.highscore_card_settings_8827">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="77.0" styleClass="checkbox-description" text="Whether to create a highscore card for the table or not." textFill="WHITE" />
-                  <CheckBox fx:id="gamesVersionCheckbox" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Table Version">
+                  <Label layoutX="10.0" layoutY="77.0" styleClass="checkbox-description" text="%ui.whether_to_create_a_highscore_card_e24a" textFill="WHITE" />
+                  <CheckBox fx:id="gamesVersionCheckbox" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.table_version_69db">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="124.0" styleClass="checkbox-description" text="Includes the table versions." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="124.0" styleClass="checkbox-description" text="%ui.includes_the_table_versions_c530" textFill="WHITE" />
                </children>
             </VBox>
-            <CheckBox fx:id="pinVolCheckbox" layoutX="22.0" layoutY="228.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="PinVol.ini Files">
+            <CheckBox fx:id="pinVolCheckbox" layoutX="22.0" layoutY="228.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.pinvol_ini_files_cecc">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="248.0" styleClass="checkbox-description" text="All .ini files for the PinVol Studio installation." textFill="WHITE" />
-            <CheckBox fx:id="pinemHiCheckbox" layoutX="22.0" layoutY="509.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="pinemhi.ini File">
+            <Label layoutX="22.0" layoutY="248.0" styleClass="checkbox-description" text="%ui.all_ini_files_for_the_pinvol_8931" textFill="WHITE" />
+            <CheckBox fx:id="pinemHiCheckbox" layoutX="22.0" layoutY="509.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.pinemhi_ini_file_3d0d">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="529.0" styleClass="checkbox-description" text="Your customized pinemhi.ini file from the PinemHI Studio installation." textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="529.0" styleClass="checkbox-description" text="%ui.your_customized_pinemhi_ini_file_from_f50a" textFill="WHITE" />
          </children>
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

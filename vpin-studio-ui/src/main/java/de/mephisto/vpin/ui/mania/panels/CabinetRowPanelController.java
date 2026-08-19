@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CabinetRowPanelController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CabinetRowPanelController.class);
@@ -113,6 +114,7 @@ public class CabinetRowPanelController implements Initializable {
         for (Account account : accounts) {
           try {
             FXMLLoader loader = new FXMLLoader(AccountRowPanelController.class.getResource("account-row-panel.fxml"));
+            loader.setResources(Messages.getBundle());
             Pane node = loader.load();
             AccountRowPanelController friendController = loader.getController();
             friendController.setData(cabinetUuid, account);

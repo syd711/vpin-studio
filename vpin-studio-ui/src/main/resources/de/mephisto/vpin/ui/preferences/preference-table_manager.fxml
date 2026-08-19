@@ -19,18 +19,18 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="TABLE MANAGEMENT" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Table Manager">
+            <Label styleClass="preference-title" text="%ui.table_management_ebb3" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="%ui.table_manager_17ab">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="The table manager is an optional UI that can be launched as a regular game via your frontend." textFill="WHITE">
+            <Label styleClass="preference-description" text="%ui.the_table_manager_is_an_optional_2af7" textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="It can be used to install archived table or create backups." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%ui.it_can_be_used_to_install_2cfc" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -45,7 +45,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label styleClass="preference-label" text="Add Table Manager to Playlist:" textFill="WHITE">
+                  <Label styleClass="preference-label" text="%ui.add_table_manager_to_playlist_a7d0" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

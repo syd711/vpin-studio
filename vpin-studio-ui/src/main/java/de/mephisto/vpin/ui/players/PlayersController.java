@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
@@ -151,6 +152,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(BuiltInPlayersController.class.getResource("tab-builtin-users.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       builtInPlayersController = loader.getController();
       builtInPlayersController.setPlayersController(this);
@@ -161,6 +163,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(DiscordPlayersController.class.getResource("tab-discord-users.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       discordPlayersController = loader.getController();
       discordPlayersController.setPlayersController(this);

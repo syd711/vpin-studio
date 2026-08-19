@@ -61,6 +61,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TemplateEditorController implements Initializable, MediaPlayerListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
@@ -808,6 +809,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
       // load overlay
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Media...");

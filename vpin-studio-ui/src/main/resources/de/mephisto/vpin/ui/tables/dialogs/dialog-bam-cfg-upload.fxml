@@ -19,12 +19,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_9141">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -43,7 +43,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="preference-description" text="The selected .cfg file will be uploaded into the BAM &quot;cfg&quot; folder of Future Pinball." />
+                  <Label styleClass="preference-description" text="%ui.the_selected_cfg_file_will_be_9be8" />
                </children>
             </VBox>
          </top>
@@ -75,9 +75,9 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <Label styleClass="default-text" text="BAM .cfg File:" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Game:" />
-                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Label styleClass="default-text" text="%ui.bam_cfg_file_6fc1" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.game_736d" />
+                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

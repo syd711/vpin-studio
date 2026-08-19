@@ -21,8 +21,8 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="HIGHSCORE PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Highscore Settings">
+            <Label styleClass="preference-title" text="%ui.highscore_preferences_3f4c" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.highscore_settings_fc58">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
@@ -41,13 +41,13 @@
                      <children>
                         <VBox>
                            <children>
-                              <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter highscores events and dashboard by the list of built-in users. " textFill="WHITE">
+                              <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%ui.filter_highscores_events_and_dashboard_by_72e9" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="If enabled, only highscores will be processed where the initials match to one" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="of the players that are setup in the players section." textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="%ui.if_enabled_only_highscores_will_be_8814" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%ui.of_the_players_that_are_setup_2a94" textFill="WHITE" />
                            </children>
                            <HBox.margin>
                               <Insets />
@@ -55,37 +55,37 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="49.0" prefHeight="20.0" styleClass="preference-label" text="Filter Highscores:" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="49.0" prefHeight="20.0" styleClass="preference-label" text="%ui.filter_highscores_569d" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="Filter Highscores:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="%ui.filter_highscores_569d" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="Highscore Monitor:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="%ui.highscore_monitor_d21b" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="Enable highscore monitor that monitors all highscore files and folders." textFill="WHITE">
+                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="%ui.enable_highscore_monitor_that_monitors_all_785d" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="If enabled, the server monitor all highscore related folders and files for VPX and FP." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="This is useful e.g. for VR players that launch tables only through Studio. " textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="checkbox-description" text="Not manual highscore is required anymore then after playing." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description" text="You can use this monitor in addition to the regular table start and exit events from" textFill="WHITE">
+                              <Label styleClass="checkbox-description" text="%ui.if_enabled_the_server_monitor_all_8726" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%ui.this_is_useful_e_g_for_4104" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="checkbox-description" text="%ui.not_manual_highscore_is_required_anymore_0744" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description" text="%ui.you_can_use_this_monitor_in_a760" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label layoutX="10.0" layoutY="101.0" styleClass="checkbox-description" text="your Frontend." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="101.0" styleClass="checkbox-description" text="%ui.your_frontend_2fdb" textFill="WHITE" />
                            </children>
                         </VBox>
                </children>
@@ -93,20 +93,20 @@
                   <Insets top="6.0" />
                </VBox.margin>
             </GridPane>
-            <Label layoutX="34.0" layoutY="250.0" styleClass="preference-subtitle" text="Resetted NVRam Files">
+            <Label layoutX="34.0" layoutY="250.0" styleClass="preference-subtitle" text="%ui.resetted_nvram_files_7ad9">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="New resetted NVRams are automatically downloaded by the server on startup." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%ui.new_resetted_nvrams_are_automatically_downloaded_ed30" textFill="WHITE">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description" text="They are used to lower the initial score values that are required for a new highscore entry." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description" text="You can download all available resetted nvrams again, in case they have been updated" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="388.0" styleClass="preference-description" text="(e.g. when an existing one has been updated with a higher default volume)." textFill="WHITE" />
-            <Button mnemonicParsing="false" onAction="#onNvRamReset" text="Download NVRams">
+            <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description" text="%ui.they_are_used_to_lower_the_71f6" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description" text="%ui.you_can_download_all_available_resetted_91de" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="388.0" styleClass="preference-description" text="%ui.e_g_when_an_existing_one_2559" textFill="WHITE" />
+            <Button mnemonicParsing="false" onAction="#onNvRamReset" text="%ui.download_nvrams_ab6c">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>

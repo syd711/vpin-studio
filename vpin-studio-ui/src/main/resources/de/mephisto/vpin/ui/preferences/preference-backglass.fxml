@@ -19,20 +19,20 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Backglass Server">
+            <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="%ui.backglass_server_9766">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="This section configures the Backglass server:" textFill="WHITE">
+            <Label styleClass="preference-description" text="%ui.this_section_configures_the_backglass_server_ffcb" textFill="WHITE">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE" />
 
-            <Label fx:id="b2STableSettingsDescr" styleClass="preference-description" text="B2STableSettings.xml:" textFill="WHITE">
+            <Label fx:id="b2STableSettingsDescr" styleClass="preference-description" text="%ui.b2stablesettings_xml_d950" textFill="WHITE">
                <VBox.margin>
                   <Insets top="8.0" />
                </VBox.margin>
@@ -41,7 +41,7 @@
 
             <VBox>
                <children>
-                  <Label fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" styleClass="error-title" text="No backglass server found." textFill="WHITE" wrapText="true">
+                  <Label fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" styleClass="error-title" text="%ui.no_backglass_server_found_419f" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets left="79.0" top="3.0" />
                      </VBox.margin>
@@ -49,72 +49,72 @@
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </padding>
                   </Label>
-                  <CheckBox fx:id="pluginsCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Activate Plugins" textFill="WHITE">
+                  <CheckBox fx:id="pluginsCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.activate_plugins_5ba8" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="This should always be in enabled in order for PinUP Player and DOF to work." textFill="WHITE" wrapText="true">
+                  <Label styleClass="checkbox-description" text="%ui.this_should_always_be_in_enabled_ad1c" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="backglassMissingCheckbox" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Error Message Without Backglass" textFill="WHITE">
+                  <CheckBox fx:id="backglassMissingCheckbox" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.error_message_without_backglass_5bc7" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="If enabled, a pop-up window will be shown if no matching backglass file was found." textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="extendedSearchCheckbox" layoutX="10.0" layoutY="354.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Extended &quot;B2STableSettings.xml&quot; Search" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="%ui.if_enabled_a_pop_up_window_6c33" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="extendedSearchCheckbox" layoutX="10.0" layoutY="354.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.extended_b2stablesettings_xml_search_747a" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="392.0" styleClass="checkbox-description" text="If enabled, the server will try to find B2STableSettings.xml in current directory" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="10.0" layoutY="204.0" styleClass="checkbox-description" text="and then installation directory (for some the &quot;Tables&quot; directory)." textFill="WHITE" wrapText="true" />
-                  <Label layoutX="10.0" layoutY="226.0" styleClass="checkbox-description" text="This extended search is activated in the registry using" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="10.0" layoutY="248.0" styleClass="checkbox-description" text="&quot;HKEY_CURRENT_USER\Software\B2S\B2STableSettingsExtendedPath&quot; set to String &quot;1&quot;." textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="fuzzyMatchingCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Disable Fuzzy Matching" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="392.0" styleClass="checkbox-description" text="%ui.if_enabled_the_server_will_try_fc10" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="204.0" styleClass="checkbox-description" text="%ui.and_then_installation_directory_for_some_fbc4" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="226.0" styleClass="checkbox-description" text="%ui.this_extended_search_is_activated_in_cf7e" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="248.0" styleClass="checkbox-description" text="%ui.hkey_current_user_software_b2s_b2stablesettingsextendedpath_2c44" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="fuzzyMatchingCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.disable_fuzzy_matching_3bca" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="145.0" styleClass="checkbox-description" text="While fuzzy matching is disabled, backglass files must have the same name as the VPX file." textFill="WHITE" wrapText="true" />
-                  <Label layoutX="10.0" layoutY="205.0" styleClass="checkbox-description" text="(You can enable fuzzy matching, but note that the VPin Studio does not support it " textFill="WHITE" wrapText="true">
+                  <Label layoutX="10.0" layoutY="145.0" styleClass="checkbox-description" text="%ui.while_fuzzy_matching_is_disabled_backglass_8b12" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="205.0" styleClass="checkbox-description" text="%ui.you_can_enable_fuzzy_matching_but_5931" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="227.0" styleClass="checkbox-description" text="and will always only look for exact matches when looking for .directb2s files)." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="227.0" styleClass="checkbox-description" text="%ui.and_will_always_only_look_for_ad75" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="startModeCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Launch as .exe" textFill="WHITE">
+                  <CheckBox fx:id="startModeCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.launch_as_exe_3954" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="Configures the default start mode of the backglass server to &quot;in EXE&quot;." textFill="WHITE" wrapText="true" />
-                  <Label layoutX="10.0" layoutY="312.0" styleClass="checkbox-description" text="This should improve performance." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="%ui.configures_the_default_start_mode_of_56e6" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="312.0" styleClass="checkbox-description" text="%ui.this_should_improve_performance_3887" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="hideGrillCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Hide Grill" textFill="WHITE">
+                  <CheckBox fx:id="hideGrillCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.hide_grill_737d" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Default visibility for grill, used when table grill visibility is standard." textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description" text="%ui.default_visibility_for_grill_used_when_c6e7" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="hideB2SDMDCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Hide B2S DMD" textFill="WHITE">
+                  <CheckBox fx:id="hideB2SDMDCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.hide_b2s_dmd_019d" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Default visibility for B2S DMD, used when table B2S DMD visibility is standard." textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description" text="%ui.default_visibility_for_b2s_dmd_used_7172" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="hideDMDCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Hide DMD" textFill="WHITE">
+                  <CheckBox fx:id="hideDMDCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.hide_dmd_753d" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Default visibility for DMD, used when table DMD visibility is standard." textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description" text="%ui.default_visibility_for_dmd_used_when_e7eb" textFill="WHITE" wrapText="true" />
                   <GridPane hgap="3.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="305.199951171875" minWidth="10.0" prefWidth="117.199951171875" />
@@ -126,7 +126,7 @@
                     </rowConstraints>
                      <children>
                         <ComboBox fx:id="usedLEDType" prefWidth="150.0" GridPane.columnIndex="1" />
-                        <Label text="Used LED Type:" textFill="WHITE">
+                        <Label text="%ui.used_led_type_a5ac" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -137,7 +137,7 @@
                      </VBox.margin>
                   </GridPane>
 
-                  <Label styleClass="default-text" text="Bring Forms" textFill="WHITE">
+                  <Label styleClass="default-text" text="%ui.bring_forms_a1a2" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -145,19 +145,19 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="Select the default position of backglass and optional background" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-description" text="%ui.select_the_default_position_of_backglass_f0e2" textFill="WHITE" wrapText="true" />
                   <ComboBox fx:id="formToPosition" prefWidth="320.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ComboBox>
 
-                  <CheckBox fx:id="formNoFocusCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="No Focus" textFill="WHITE">
+                  <CheckBox fx:id="formNoFocusCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.no_focus_571e" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="Complementing FormToFront, When set, also FormToFront will stay in front and will ignore mouse key presses." textFill="WHITE" wrapText="true" >
+                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="%ui.complementing_formtofront_when_set_also_formtofront_7e2c" textFill="WHITE" wrapText="true" >
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin>

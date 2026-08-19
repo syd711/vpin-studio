@@ -22,14 +22,14 @@
    <children>
       <BorderPane>
          <left>
-            <Label styleClass="default-title" text="Score Data" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label styleClass="default-title" text="%ui.score_data_4821" textFill="WHITE" BorderPane.alignment="CENTER">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
          </left>
          <right>
-            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="Reset Highscore" textFill="#ff3333" BorderPane.alignment="CENTER">
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%ui.reset_highscore_1a19" textFill="#ff3333" BorderPane.alignment="CENTER">
                <graphic>
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-reload-alert" iconSize="18" text="󱄋" />
                </graphic>
@@ -37,12 +37,12 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Reset Highscores" />
+                  <Tooltip text="%ui.reset_highscores_90b6" />
                </tooltip>
             </Button>
          </right>
       </BorderPane>
-      <Label styleClass="preference-description" text="The given fields are used to read the highscore from the table." />
+      <Label styleClass="preference-description" text="%ui.the_given_fields_are_used_to_ef54" />
       <GridPane hgap="3.0" vgap="3.0">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
@@ -57,7 +57,7 @@
          </rowConstraints>
          <children>
             <!-- row 0: ROM Name -->
-            <Label styleClass="default-text" text="ROM Name:">
+            <Label styleClass="default-text" text="%ui.rom_name_b9d2">
                <font>
                   <Font size="14.0" />
                </font>
@@ -69,7 +69,7 @@
                </padding>
             </HBox>
             <!-- row 1: Alternative ROM Name -->
-            <Label styleClass="default-text" text="Alternative ROM Name:" GridPane.rowIndex="1">
+            <Label styleClass="default-text" text="%ui.alternative_rom_name_ab6a" GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
@@ -80,7 +80,7 @@
                </font>
             </TextField>
             <!-- row 2: Highscore .txt File Name -->
-            <Label styleClass="default-text" text="Highscore .txt File Name:" GridPane.rowIndex="2">
+            <Label styleClass="default-text" text="%ui.highscore_txt_file_name_9c24" GridPane.rowIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
@@ -92,7 +92,7 @@
                </padding>
             </HBox>
             <!-- row 3: mapping hint -->
-            <Label fx:id="hsMappingLabel" styleClass="preference-description" text="The value is mapped to Popper field &quot;&quot;." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="hsMappingLabel" styleClass="preference-description" text="%ui.the_value_is_mapped_to_popper_5180" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
          <VBox.margin>
             <Insets top="12.0" />
@@ -100,17 +100,17 @@
       </GridPane>
       <VBox styleClass="navigation-panel">
          <children>
-            <Label styleClass="default-title" text="Scanned Values" textFill="WHITE">
+            <Label styleClass="default-title" text="%ui.scanned_values_f165" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label styleClass="preference-description" text="This section shows several values extracted from the VPX script by the VPin Studio Server.">
+            <Label styleClass="preference-description" text="%ui.this_section_shows_several_values_extracted_7863">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
-            <Label styleClass="preference-description" text="The values are used as fallback for the matching Popper fields." />
-            <Label styleClass="preference-description" text="Click &quot;Apply&quot; to save them to the PinUP Popper database." />
+            <Label styleClass="preference-description" text="%ui.the_values_are_used_as_fallback_26db" />
+            <Label styleClass="preference-description" text="%ui.click_apply_to_save_them_to_5d51" />
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="185.5999755859375" prefWidth="188.0" />
@@ -125,7 +125,7 @@
                </rowConstraints>
                <children>
                   <!-- row 0: Scanned ROM Name -->
-                  <Label styleClass="default-text" text="Scanned ROM Name:">
+                  <Label styleClass="default-text" text="%ui.scanned_rom_name_3e5c">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -138,16 +138,16 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2">
+                  <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="%ui.apply_9639" GridPane.columnIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="Apply scanned ROM name to Popper field &quot;ROM Name&quot; to this save value permanently." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%ui.apply_scanned_rom_name_to_popper_5e6c" wrapText="true" />
                      </tooltip>
                   </Button>
                   <!-- row 1: Scanned Alt. ROM Name -->
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Scanned Alt. ROM Name:" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.scanned_alt_rom_name_31ef" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -160,16 +160,16 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="%ui.apply_9639" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="Apply scanned alternative ROM name to Popper field &quot;Alternative ROM Name&quot; to save this value permanently." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%ui.apply_scanned_alternative_rom_name_to_b8da" wrapText="true" />
                      </tooltip>
                   </Button>
                   <!-- row 2: Scanned Score .txt File Name -->
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Scanned Score .txt File Name:" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.scanned_score_txt_file_name_882c" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -186,12 +186,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label styleClass="preference-description" text="Used by tables that store highscores in .txt files.">
+                              <Label styleClass="preference-description" text="%ui.used_by_tables_that_store_highscores_23b7">
                                  <VBox.margin>
                                     <Insets top="3.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="The &quot;Alt. ROM Name&quot; is used as additional fallback file name." />
+                              <Label layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="%ui.the_alt_rom_name_is_used_9d1a" />
                            </children>
                         </VBox>
                      </children>
@@ -203,12 +203,12 @@
                      <top>
                         <HBox spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="Apply">
+                              <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="%ui.apply_9639">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Apply scanned highscore file name to Popper to save this value permanently." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.apply_scanned_highscore_file_name_to_22eb" wrapText="true" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="openHsFileBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="folder-component">
@@ -216,7 +216,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Open the &quot;tables&quot; folder of VPX" />
+                                    <Tooltip text="%ui.open_the_tables_folder_of_vpx_c3c9" />
                                  </tooltip>
                                  <HBox.margin>
                                     <Insets top="1.0" />
@@ -226,7 +226,7 @@
                         </HBox>
                      </top>
                      <bottom>
-                        <Button mnemonicParsing="false" onAction="#onTableScan" text="Scan Table" textFill="WHITE" BorderPane.alignment="CENTER">
+                        <Button mnemonicParsing="false" onAction="#onTableScan" text="%ui.scan_table_c999" textFill="WHITE" BorderPane.alignment="CENTER">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>

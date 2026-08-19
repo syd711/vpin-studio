@@ -20,12 +20,12 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="FRONTEND PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%ui.frontend_preferences_9671" textFill="WHITE" />
             <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
                <content>
                   <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="PinballY Settings" />
+                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.pinbally_settings_882f" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="163.200048828125" />
@@ -36,7 +36,7 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Database File Encoding:" textFill="WHITE">
+                              <Label text="%ui.database_file_encoding_681f" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -44,8 +44,8 @@
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <VBox />
-                                    <Label styleClass="preference-description" text="The encoding should match with that of your cabinets operating system, e.g. &quot;Windows-1252&quot;." textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="You can check the encoding by opening the database XML file with an editor like Notepad++." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.the_encoding_should_match_with_that_0284" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.you_can_check_the_encoding_by_650b" textFill="WHITE" />
                                  </children>
                               </VBox>
                               <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1">

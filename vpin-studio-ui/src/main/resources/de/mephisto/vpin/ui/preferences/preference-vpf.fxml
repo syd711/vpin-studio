@@ -21,15 +21,15 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VP Forums Settings">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.vp_forums_settings_d6e2">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Enter the account settings from VP Forums." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.enter_the_account_settings_from_vp_69f4" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -47,12 +47,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="Login:" textFill="WHITE">
+                        <Label text="%ui.login_0516" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Password:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%ui.password_b341" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -67,7 +67,7 @@
                               <Font size="14.0" />
                            </font>
                         </PasswordField>
-                        <Button mnemonicParsing="false" onAction="#onConnectionTest" text="Save" fx:id="saveBtn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%ui.save_c9cc" fx:id="saveBtn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

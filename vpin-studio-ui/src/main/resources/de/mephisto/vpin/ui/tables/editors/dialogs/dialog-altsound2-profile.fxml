@@ -23,12 +23,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Apply Changes">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.apply_changes_0ec1">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -66,7 +66,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="MUSIC" textFill="WHITE">
+                              <Label text="%ui.music_d74c" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -82,7 +82,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="The background music, only one can play at a time" />
+                                    <Tooltip prefWidth="400.0" text="%ui.the_background_music_only_one_can_72ee" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -122,7 +122,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="CALLOUT" textFill="WHITE">
+                              <Label text="%ui.callout_46f4" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -138,7 +138,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="Voice interludes and callouts. Only one can play at a time." />
+                                    <Tooltip prefWidth="400.0" text="%ui.voice_interludes_and_callouts_only_one_497f" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -178,7 +178,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="SFX" textFill="WHITE">
+                              <Label text="%ui.sfx_da10" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -194,7 +194,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="Short sounds to supplement table sounds. Multiple can play at a time." />
+                                    <Tooltip prefWidth="400.0" text="%ui.short_sounds_to_supplement_table_sounds_bf49" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -234,7 +234,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="SOLO" textFill="WHITE">
+                              <Label text="%ui.solo_ca17" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -250,7 +250,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Sound played at end-of-ball/game, or tilt. Only one can play at a time." />
+                                    <Tooltip text="%ui.sound_played_at_end_of_ball_50d7" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -290,7 +290,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="OVERLAY" textFill="WHITE">
+                              <Label text="%ui.overlay_0395" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -306,7 +306,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="Sounds played over music/sfx. Only one can play at a time." />
+                                    <Tooltip prefWidth="400.0" text="%ui.sounds_played_over_music_sfx_only_966d" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -346,7 +346,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Profile's Sample Type:" textFill="WHITE" />
+                        <Label styleClass="default-text" text="%ui.profile_s_sample_type_7614" textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="sampleCombo" prefWidth="150.0" />
@@ -358,7 +358,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="SOLO and MUSIC types cannot duck other types and are excluded here." />
+                                    <Tooltip text="%ui.solo_and_music_types_cannot_duck_14d0" />
                                  </tooltip>
                                  <HBox.margin>
                                     <Insets left="6.0" />
@@ -366,7 +366,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Profile Id:" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.profile_id_f1b3" GridPane.rowIndex="1" />
                         <Label fx:id="profileIdLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -379,14 +379,14 @@
          <bottom>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="default-text" text="Notes" />
-                  <Label styleClass="preference-description" text="- A sample type cannot duck/pause another sample of the same type." />
-                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="- Ducking values are specified as a percentage of the gain of the affected sample type(s). " />
-                  <Label layoutX="10.0" layoutY="52.0" styleClass="preference-description" text="  Values range from 0 to 100 where 0 completely mutes the sample, and 100 effectively negates ducking." />
-                  <Label layoutX="10.0" layoutY="73.0" styleClass="preference-description" text="- If multiple ducking values apply to a single sample, the lowest ducking value is used. " />
-                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="  When the sample with the lowest duck value ends, the next lowest duck value is used, and so on, until all affecting samples have ended." />
-                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="- Ducking/pausing ends when the last affecting sample that set it has ended." />
-                  <Label layoutX="10.0" layoutY="138.0" styleClass="preference-description" text="- If &quot;ducks&quot; variable is set, there must be at least one ducking_profile defined." />
+                  <Label styleClass="default-text" text="%ui.notes_f4c6" />
+                  <Label styleClass="preference-description" text="%ui.a_sample_type_cannot_duck_pause_d651" />
+                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%ui.ducking_values_are_specified_as_a_3648" />
+                  <Label layoutX="10.0" layoutY="52.0" styleClass="preference-description" text="%ui.values_range_from_0_to_100_bbf9" />
+                  <Label layoutX="10.0" layoutY="73.0" styleClass="preference-description" text="%ui.if_multiple_ducking_values_apply_to_8921" />
+                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="%ui.when_the_sample_with_the_lowest_d90c" />
+                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="%ui.ducking_pausing_ends_when_the_last_d4d5" />
+                  <Label layoutX="10.0" layoutY="138.0" styleClass="preference-description" text="%ui.if_ducks_variable_is_set_there_2f5b" />
                </children>
             </VBox>
          </bottom>

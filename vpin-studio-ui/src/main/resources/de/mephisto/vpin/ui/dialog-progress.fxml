@@ -16,7 +16,7 @@
    <center>
       <VBox alignment="BASELINE_LEFT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="titleLabel" text="Label" textFill="WHITE">
+            <Label fx:id="titleLabel" text="%ui.label_b021" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
@@ -46,8 +46,8 @@
    <bottom>
       <ToolBar fx:id="bottomToolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="33.0" prefWidth="492.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
         <items>
-          <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="submit-button" stylesheets="@stylesheet.css" text="Cancel" />
-          <Button fx:id="backgroundButton" mnemonicParsing="false" styleClass="default-button" stylesheets="@stylesheet.css" text="Run in Background" />
+          <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="submit-button" stylesheets="@stylesheet.css" text="%ui.cancel_ea47" />
+          <Button fx:id="backgroundButton" mnemonicParsing="false" styleClass="default-button" stylesheets="@stylesheet.css" text="%ui.run_in_background_0ba9" />
         </items>
          <BorderPane.margin>
             <Insets bottom="6.0" right="6.0" top="6.0" />

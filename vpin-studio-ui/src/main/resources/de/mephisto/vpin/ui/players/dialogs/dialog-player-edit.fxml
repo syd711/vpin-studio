@@ -24,12 +24,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -53,21 +53,21 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Name:" textFill="WHITE">
+                  <Label text="%ui.name_4e14" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nameField" promptText="Enter the name of the player here..." GridPane.columnIndex="1">
+                  <TextField fx:id="nameField" promptText="%ui.enter_the_name_of_the_player_f528" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="Initials:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%ui.initials_1845" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="initialsField" layoutX="164.0" layoutY="16.0" promptText="Enter the three letter initials here..." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="initialsField" layoutX="164.0" layoutY="16.0" promptText="%ui.enter_the_three_letter_initials_here_769f" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -85,7 +85,7 @@
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label text="Competition Name:" textFill="WHITE">
+                        <Label text="%ui.competition_name_5b87" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -95,12 +95,12 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="400.0" text="You can input a different name here that will overwrite the regular name for highscores posts." wrapText="true" />
+                              <Tooltip prefWidth="400.0" text="%ui.you_can_input_a_different_name_731b" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
-                  <TextField fx:id="iScoredNameField" promptText="Enter the competition name for the player here... (optional)" GridPane.columnIndex="1">
+                  <TextField fx:id="iScoredNameField" promptText="%ui.enter_the_competition_name_for_the_5535" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -119,7 +119,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label layoutX="10.0" layoutY="33.0" text="VPin Default Player:" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="33.0" text="%ui.vpin_default_player_ae91" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -136,7 +136,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="400.0" text="This user is the default owner of competitions and anonymous highscores." wrapText="true" />
+                              <Tooltip prefWidth="400.0" text="%ui.this_user_is_the_default_owner_a8c6" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
@@ -159,7 +159,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="49.0" text="VPin Mania Player:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="49.0" text="%ui.vpin_mania_player_eff9" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -176,12 +176,12 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="If checked, a copy of this player will be registered for the VPin Mania service." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="%ui.if_checked_a_copy_of_this_7280" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="VPin Mania Name:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%ui.vpin_mania_name_8add" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -198,19 +198,19 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="This is the public name that will be used for all VPin Mania services. If empty the player name will be used instead." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="%ui.this_is_the_public_name_that_aea5" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="Visibility:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="%ui.visibility_8ad7" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" layoutX="160.0" layoutY="10.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Public Player" textFill="WHITE">
+                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="%ui.public_player_d371" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -220,7 +220,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="If checked, the highscores of the player are visible for on vpin-mania and the player will be ranked." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="%ui.if_checked_the_highscores_of_the_b122" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -242,12 +242,12 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label layoutX="10.0" layoutY="189.0" text="Avatar:" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="189.0" text="%ui.avatar_0849" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onFileSelect" text="Select Image..." textFill="WHITE" GridPane.columnIndex="1">
+                  <Button mnemonicParsing="false" onAction="#onFileSelect" text="%ui.select_image_a371" textFill="WHITE" GridPane.columnIndex="1">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
@@ -255,14 +255,14 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label text="Avatar Preview:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label text="%ui.avatar_preview_94f1" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Reset" textFill="WHITE">
+                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%ui.reset_526d" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

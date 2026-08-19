@@ -16,7 +16,7 @@
    <center>
       <VBox BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label fx:id="textLabel" text="Label" textFill="WHITE">
+            <Label fx:id="textLabel" text="%ui.label_b021" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
@@ -24,7 +24,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label fx:id="descriptionLabel" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
+            <Label fx:id="descriptionLabel" styleClass="preference-description" text="%ui.label_b021" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
@@ -42,7 +42,7 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" stylesheets="@stylesheet.css" text="   OK   " />
+          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" stylesheets="@stylesheet.css" text="%ui.ok_4f99" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

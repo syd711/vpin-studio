@@ -23,6 +23,11 @@ import java.io.File;
 import java.time.*;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Service
 public class DOFService implements InitializingBean {
@@ -60,7 +65,7 @@ public class DOFService implements InitializingBean {
   public JobDescriptor asyncSync() {
     DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings(), SystemService.RESOURCES);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.DOF_SYNC);
-    jobDescriptor.setTitle("Synchronizing DOF Settings");
+    jobDescriptor.setTitle(ServerMessages.get("dof.sync.title", resolveLocale()));
     jobDescriptor.setJob(job);
 
     jobService.offer(jobDescriptor);
@@ -72,7 +77,7 @@ public class DOFService implements InitializingBean {
     if (wait) {
       DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings(), SystemService.RESOURCES);
       JobDescriptor result = new JobDescriptor();
-      result.setTitle("Synchronizing DOF Settings");
+      result.setTitle(ServerMessages.get("dof.sync.title", resolveLocale()));
       result.setJob(job);
       job.execute(result);
       return result;

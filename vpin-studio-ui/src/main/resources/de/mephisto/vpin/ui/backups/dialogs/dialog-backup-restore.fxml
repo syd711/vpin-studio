@@ -22,12 +22,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="importBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" styleClass="submit-button" text="Restore">
+            <Button fx:id="importBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onImport" styleClass="submit-button" text="%ui.restore_2bd3">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -48,7 +48,7 @@
                <center>
                   <VBox>
                      <children>
-                        <Label layoutX="10.0" layoutY="103.0" styleClass="preference-description" text="Select the emulator the backups should be restored for.">
+                        <Label layoutX="10.0" layoutY="103.0" styleClass="preference-description" text="%ui.select_the_emulator_the_backups_should_2259">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -63,7 +63,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Target Emulator:">
+                              <Label text="%ui.target_emulator_9cd2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -74,12 +74,12 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label styleClass="default-headline" text="Settings">
+                        <Label styleClass="default-headline" text="%ui.settings_f4f7">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="76.0" styleClass="preference-description" text="Select the data that should be restored for the selected backups.">
+                        <Label layoutX="10.0" layoutY="76.0" styleClass="preference-description" text="%ui.select_the_data_that_should_be_7ed4">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -88,7 +88,7 @@
                            <children>
                               <VBox spacing="3.0">
                                  <children>
-                                    <Label text="Table Files">
+                                    <Label text="%ui.table_files_8c47">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -96,14 +96,14 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="vpxCheckBox" disable="true" mnemonicParsing="false" selected="true" text="Table File" textFill="WHITE">
+                                    <CheckBox fx:id="vpxCheckBox" disable="true" mnemonicParsing="false" selected="true" text="%ui.table_file_8a76" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="directb2sCheckBox" mnemonicParsing="false" text="DirectB2S Files" textFill="WHITE">
+                                          <CheckBox fx:id="directb2sCheckBox" mnemonicParsing="false" text="%ui.directb2s_files_321f" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -116,37 +116,37 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="VPin Studio supports multiple backglass files for one table. All available .directb2s files will be restored." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%ui.vpin_studio_supports_multiple_backglass_files_81bc" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <CheckBox fx:id="povCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="POV File" textFill="WHITE">
+                                    <CheckBox fx:id="povCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%ui.pov_file_cd1d" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="resCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="RES File" textFill="WHITE">
+                                    <CheckBox fx:id="resCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%ui.res_file_5618" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="iniCheckBox" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" text="INI File" textFill="WHITE">
+                                    <CheckBox fx:id="iniCheckBox" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" text="%ui.ini_file_d297" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vbsCheckBox" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" text="VBS File" textFill="WHITE">
+                                    <CheckBox fx:id="vbsCheckBox" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" text="%ui.vbs_file_9776" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="dmdCheckBox" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" text="DMD Files" textFill="WHITE">
+                                    <CheckBox fx:id="dmdCheckBox" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" text="%ui.dmd_files_3eca" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="musicCheckBox" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" text="Music" textFill="WHITE">
+                                    <CheckBox fx:id="musicCheckBox" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" text="%ui.music_47dc" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -155,7 +155,7 @@
                               </VBox>
                               <VBox spacing="3.0">
                                  <children>
-                                    <Label text="VPin MAME Files">
+                                    <Label text="%ui.vpin_mame_files_7183">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -163,22 +163,22 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="romCheckBox" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                    <CheckBox fx:id="romCheckBox" mnemonicParsing="false" text="%ui.rom_2ab3" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="nvRamCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="NVRAM" textFill="WHITE">
+                                    <CheckBox fx:id="nvRamCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="%ui.nvram_e3f3" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="altSoundCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                    <CheckBox fx:id="altSoundCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%ui.alt_sound_f59a" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="altColorCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                    <CheckBox fx:id="altColorCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%ui.alt_color_af82" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -187,7 +187,7 @@
                               </VBox>
                               <VBox fx:id="frontendColumn" layoutX="98.0" layoutY="10.0" spacing="3.0">
                                  <children>
-                                    <Label text="Frontend Media">
+                                    <Label text="%ui.frontend_media_0b02">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -195,12 +195,12 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="popperMediaCheckBox" mnemonicParsing="false" text="Screen Media Files" textFill="WHITE">
+                                    <CheckBox fx:id="popperMediaCheckBox" mnemonicParsing="false" text="%ui.screen_media_files_abd2" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="pupPackCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                    <CheckBox fx:id="pupPackCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="%ui.pup_pack_d548" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -209,7 +209,7 @@
                               </VBox>
                               <VBox layoutX="134.0" layoutY="10.0" spacing="3.0">
                                  <children>
-                                    <Label text="Additional Metadata">
+                                    <Label text="%ui.additional_metadata_f905">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -219,7 +219,7 @@
                                     </Label>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="highscoreCheckBox" mnemonicParsing="false" text="Highscore Data" textFill="WHITE">
+                                          <CheckBox fx:id="highscoreCheckBox" mnemonicParsing="false" text="%ui.highscore_data_b39f" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -232,14 +232,14 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="If the .nvram file is included, this represents the highscore already." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%ui.if_the_nvram_file_is_included_a2a9" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="registryDataCheckBox" mnemonicParsing="false" text="Windows Registry Entries" textFill="WHITE">
+                                          <CheckBox fx:id="registryDataCheckBox" mnemonicParsing="false" text="%ui.windows_registry_entries_421a" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -252,14 +252,14 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="This might include the DMD position for tables." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%ui.this_might_include_the_dmd_position_77e4" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>
                                     <HBox layoutX="10.0" layoutY="63.0" spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="b2sSettingsCheckbox" mnemonicParsing="false" text="B2STableSettings" textFill="WHITE">
+                                          <CheckBox fx:id="b2sSettingsCheckbox" mnemonicParsing="false" text="%ui.b2stablesettings_36f6" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -272,14 +272,14 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="Restores the B2STableSettings.xml entry if available." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%ui.restores_the_b2stablesettings_xml_entry_if_04c3" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="studioDataCheckBox" mnemonicParsing="false" text="VPin Studio Data" textFill="WHITE">
+                                          <CheckBox fx:id="studioDataCheckBox" mnemonicParsing="false" text="%ui.vpin_studio_data_eaa1" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -292,14 +292,14 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="This contains additional table data and comments." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%ui.this_contains_additional_table_data_and_3953" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <CheckBox fx:id="dmdDataCheckBox" mnemonicParsing="false" text="DMDDevice.ini Entry" textFill="WHITE">
+                                          <CheckBox fx:id="dmdDataCheckBox" mnemonicParsing="false" text="%ui.dmddevice_ini_entry_b877" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -312,7 +312,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="This contains the DMD position if stored there and not in the registry." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%ui.this_contains_the_dmd_position_if_900a" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>

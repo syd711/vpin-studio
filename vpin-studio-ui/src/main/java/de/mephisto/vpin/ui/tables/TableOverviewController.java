@@ -93,6 +93,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel> implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
 
@@ -697,6 +698,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (!StringUtils.isEmpty(tableSource)) {
       try {
         FXMLLoader loader = new FXMLLoader(AltSoundEditorController.class.getResource("editor-altsound.fxml"));
+        loader.setResources(Messages.getBundle());
         BorderPane root = loader.load();
         root.setMaxWidth(Double.MAX_VALUE);
         root.setMaxHeight(Double.MAX_VALUE);
@@ -723,6 +725,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (!StringUtils.isEmpty(tableSource)) {
       try {
         FXMLLoader loader = new FXMLLoader(AltSound2EditorController.class.getResource("editor-altsound2.fxml"));
+        loader.setResources(Messages.getBundle());
         BorderPane root = loader.load();
         root.setMaxWidth(Double.MAX_VALUE);
         root.setMaxHeight(Double.MAX_VALUE);
@@ -2084,6 +2087,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       playBtn = loader.load();
       playButtonController = loader.getController();
       int i = toolbar.getItems().indexOf(stopBtn);
@@ -2095,6 +2099,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       importUploadButtonGroup.getChildren().add(1, uploadsButton);

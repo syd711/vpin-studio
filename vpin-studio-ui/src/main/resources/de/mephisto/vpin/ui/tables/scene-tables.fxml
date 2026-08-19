@@ -24,7 +24,7 @@
                     <children>
                         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
-                                <Tab fx:id="tablesTab" closable="false" text="All Tables">
+                                <Tab fx:id="tablesTab" closable="false" text="%ui.all_tables_a562">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -32,10 +32,10 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="All Tables (F2)" />
+                                        <Tooltip text="%ui.all_tables_f2_897e" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="backglassManagerTab" closable="false" text="Backglasses">
+                                <Tab fx:id="backglassManagerTab" closable="false" text="%ui.backglasses_1368">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -43,10 +43,10 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" text="" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Backglasses (F3)" />
+                                        <Tooltip text="%ui.backglasses_f3_fe9c" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
+                                <Tab fx:id="vpsTablesTab" closable="false" text="%ui.vps_tables_84ed">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -54,10 +54,10 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Visual Pinball Spreadsheet (F4)" />
+                                        <Tooltip text="%ui.visual_pinball_spreadsheet_f4_4472" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
+                                <Tab fx:id="tablesStatisticsTab" closable="false" text="%ui.table_statistics_dee1">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -65,10 +65,10 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18" text="" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Table Statistics (F5)" />
+                                        <Tooltip text="%ui.table_statistics_f5_3371" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="tableBackupsTab" text=" Table Backups">
+                                <Tab fx:id="tableBackupsTab" text="%ui.table_backups_1f71">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -76,10 +76,10 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Table Backups (F6)" />
+                                        <Tooltip text="%ui.table_backups_f6_6de4" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="vpxMobileTab" text=" VPX Mobile">
+                                <Tab fx:id="vpxMobileTab" text="%ui.vpx_mobile_6f03">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -87,10 +87,10 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cellphone" iconSize="18" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="VPX Mobile (F7)" />
+                                        <Tooltip text="%ui.vpx_mobile_f7_9154" />
                                     </tooltip>
                                 </Tab>
-                                <Tab fx:id="recorderTab" text=" Media Recorder">
+                                <Tab fx:id="recorderTab" text="%ui.media_recorder_e7f7">
                                 <content>
                                     <BorderPane />
                                 </content>
@@ -98,7 +98,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2v-video-outline" iconSize="18" />
                                 </graphic>
                                 <tooltip>
-                                    <Tooltip text="Media Recorder (F8)" />
+                                    <Tooltip text="%ui.media_recorder_f8_0b55" />
                                 </tooltip>
                                 </Tab>
                             </tabs>
@@ -114,7 +114,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Toggle Sidebar [F3]" />
+                                <Tooltip text="%ui.toggle_sidebar_f3_8d71" />
                             </tooltip>
                         </Button>
                         <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT">
@@ -125,7 +125,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Open Settings" />
+                                <Tooltip text="%ui.open_settings_638c" />
                             </tooltip>
                             <StackPane.margin>
                                 <Insets right="43.0" top="6.0" />

@@ -37,6 +37,7 @@ import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BuiltInPlayersController extends BasePlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
@@ -216,6 +217,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       playersLoadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Players...");

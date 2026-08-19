@@ -19,12 +19,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -49,12 +49,12 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Time Played:" textFill="WHITE">
+                  <Label text="%ui.time_played_e337" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="Times Played:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" text="%ui.times_played_077c" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -62,7 +62,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <Spinner fx:id="timeSpinner" />
-                        <Label text="minutes" textFill="WHITE">
+                        <Label text="%ui.minutes_640f" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -82,7 +82,7 @@
          <top>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="preference-description" text="You can manually configure the table statistics here." textFill="WHITE">
+                  <Label styleClass="preference-description" text="%ui.you_can_manually_configure_the_table_1304" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

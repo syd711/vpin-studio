@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collections;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class PupPackInstallerJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackInstallerJob.class);
@@ -42,7 +47,7 @@ public class PupPackInstallerJob implements Job {
       public boolean unzipping(String name, int index, int total) {
         double progress = (double) (100 * index / total) / 100;
         result.setProgress(progress);
-        result.setStatus("Unpacking " + index + " of " + total);
+        result.setStatus(ServerMessages.get("puppack.install.status", resolveLocale(), index, total));
 
         boolean cancelled = result.isCancelled();
         return !cancelled;

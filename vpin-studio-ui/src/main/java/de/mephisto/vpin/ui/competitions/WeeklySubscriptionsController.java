@@ -49,6 +49,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WeeklySubscriptionsController extends BaseCompetitionController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(WeeklySubscriptionsController.class);
@@ -209,6 +210,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -410,6 +412,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);

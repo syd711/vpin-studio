@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -79,7 +80,7 @@ public class ServerUpdatePreProcessorUI {
     Platform.runLater(() -> {
       Stage stage = new Stage();
       stage.initStyle(StageStyle.UNDECORATED);
-      stage.setTitle("VPin Studio - Resource Installation");
+      stage.setTitle(ServerMessages.get("server.update.title", java.util.Locale.getDefault()));
 
       Label titleLabel = new Label("VPin Studio Server Resource Installation");
       titleLabel.setTextFill(Color.WHITE);

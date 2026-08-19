@@ -19,7 +19,7 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </padding>
          <children>
-            <Label fx:id="titleLabel" styleClass="default-title" text="TYPE" />
+            <Label fx:id="titleLabel" styleClass="default-title" text="%ui.type_9484" />
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="150.0" />
@@ -31,34 +31,34 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Endpoint URL:" textFill="WHITE">
+                  <Label text="%ui.endpoint_url_7fef" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="endpointText" promptText="Enter the endpoint URL here." GridPane.columnIndex="1">
+                  <TextField fx:id="endpointText" promptText="%ui.enter_the_endpoint_url_here_3d48" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="24.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <CheckBox fx:id="createCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="Create" />
-                        <CheckBox fx:id="updateCheckbox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Update" />
-                        <CheckBox fx:id="deleteCheckbox" layoutX="100.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Delete" />
+                        <CheckBox fx:id="createCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.create_686e" />
+                        <CheckBox fx:id="updateCheckbox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.update_0693" />
+                        <CheckBox fx:id="deleteCheckbox" layoutX="100.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.delete_f2a6" />
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="15.0" text="Event Types:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" text="%ui.event_types_3e96" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="Custom Parameters:" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="15.0" text="%ui.custom_parameters_417f" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="parametersText" layoutX="164.0" layoutY="10.0" promptText="Additional parameters (&lt;KEY&gt;=&lt;VALUE&gt; separated by a semicolon)" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <TextField fx:id="parametersText" layoutX="164.0" layoutY="10.0" promptText="%ui.additional_parameters_key_value_separated_by_6f77" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

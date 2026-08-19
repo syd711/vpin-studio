@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 
 public class WidgetFactory {
@@ -586,12 +587,14 @@ public class WidgetFactory {
 
   public static Stage createDialogStage(Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 
   public static Stage createDialogStage(String stateId, Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 

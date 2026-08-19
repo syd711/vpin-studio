@@ -25,7 +25,7 @@
          <center>
             <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="tableLabel" text="Loading..." textFill="WHITE">
+                  <Label fx:id="tableLabel" text="%ui.loading_8524" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>

@@ -14,6 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
@@ -62,14 +67,14 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus("Launching Emulator");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_emulator", resolveLocale()));
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
-        jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", resolveLocale(), game.getGameDisplayName()));
 
         recorderService.launchGame(game, recorderSettings);
 
@@ -81,12 +86,12 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         }
 
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled() || secondToWait <= 0) {
-          jobDescriptor.setStatus("Timeout waiting for emulator.");
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.timeout", resolveLocale()));
           break;
         }
         updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
 
-        jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", resolveLocale(), game.getGameDisplayName()));
 
         //create the game recorder which includes all screens
         gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingScreens);

@@ -28,21 +28,21 @@
 
                   <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                      <columns>
-                        <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="Installed" />
-                        <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Comment" />
-                        <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                        <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: BASELINE_CENTER;" text="Status" />
-                        <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Updated" />
-                        <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="Versions" />
-                        <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
-                        <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                        <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ROM" />
-                        <TableColumn fx:id="topperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Topper Media" />
-                        <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="POV" />
-                        <TableColumn fx:id="soundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Sound/Music" />
-                        <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
-                        <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
-                        <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="Tutorials" />
+                        <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="%ui.installed_98dd" />
+                        <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.comment_0be8" />
+                        <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
+                        <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.status_ec53" />
+                        <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="%ui.updated_ff0a" />
+                        <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="%ui.versions_9e69" />
+                        <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.directb2s_3a9c" />
+                        <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="%ui.pup_pack_d548" />
+                        <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.rom_2ab3" />
+                        <TableColumn fx:id="topperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%ui.topper_media_6d44" />
+                        <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="%ui.pov_3e50" />
+                        <TableColumn fx:id="soundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.sound_music_87fa" />
+                        <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.alt_sound_f59a" />
+                        <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.alt_color_af82" />
+                        <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.tutorials_130d" />
                      </columns>
                   </TableView>
 
@@ -59,7 +59,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Toggle Filter View" />
+                  <Tooltip text="%ui.toggle_filter_view_e9c1" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -73,13 +73,13 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Reload all VPS data" />
+                  <Tooltip text="%ui.reload_all_vps_data_6399" />
                </tooltip>
             </Button>
             <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <StackPane alignment="CENTER_RIGHT">
                <children>
-                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_table_7b9c">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -105,7 +105,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Edit table data" />
+                  <Tooltip text="%ui.edit_table_data_cb57" />
                </tooltip>
             </Button>
             <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
@@ -116,11 +116,11 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Open Table in Table Overview" />
+                  <Tooltip text="%ui.open_table_in_table_overview_05d1" />
                </tooltip>
             </Button>
             <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" text="Open Table" textFill="WHITE">
+            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" text="%ui.open_table_7684" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
                </graphic>
@@ -128,7 +128,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Open table information on VPS." />
+                  <Tooltip text="%ui.open_table_information_on_vps_189a" />
                </tooltip>
             </Button>
          </items>

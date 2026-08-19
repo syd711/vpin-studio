@@ -45,7 +45,7 @@
                                     <Insets bottom="6.0" />
                                  </VBox.margin>
                                  <left>
-                                    <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+                                    <Label fx:id="assetSearchLabel" text="%ui.assets_search_bb93" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -59,7 +59,7 @@
                                  <items>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <TextField fx:id="searchField" promptText="Enter search term here...">
+                                          <TextField fx:id="searchField" promptText="%ui.enter_search_term_here_b0d0">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -69,7 +69,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <tooltip>
-                                                <Tooltip fx:id="mediaSearchTooltip" prefWidth="300.0" text="The selected table has the media search term {} set. You may not see downloaded assets in the &quot;Installed Assets&quot; list." wrapText="true" />
+                                                <Tooltip fx:id="mediaSearchTooltip" prefWidth="300.0" text="%ui.the_selected_table_has_the_media_2e00" wrapText="true" />
                                              </tooltip>
                                              <graphic>
                                                 <FontIcon iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
@@ -100,7 +100,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Configure Asset Source" />
+                                          <Tooltip text="%ui.configure_asset_source_f935" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" textFill="WHITE">
@@ -111,7 +111,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Rebuilds the search index to fetch the latest assets." />
+                                          <Tooltip text="%ui.rebuilds_the_search_index_to_fetch_6834" />
                                        </tooltip>
                                     </Button>
                                  </items>
@@ -126,7 +126,7 @@
                                        <bottom>
                                           <HBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
                                              <children>
-                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%ui.download_801a" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -137,7 +137,7 @@
                                                       <Insets bottom="3.0" />
                                                    </HBox.margin>
                                                 </Button>
-                                                <Button fx:id="webPreviewBtn" mnemonicParsing="false" onAction="#onWebPreview" styleClass="link-component" text="Preview">
+                                                <Button fx:id="webPreviewBtn" mnemonicParsing="false" onAction="#onWebPreview" styleClass="link-component" text="%ui.preview_31fd">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -145,7 +145,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                      <Tooltip text="%ui.https_virtual_pinball_spreadsheet_web_app_e4f3" />
                                                    </tooltip>
                                                 </Button>
                                              </children>
@@ -158,7 +158,7 @@
                         </VBox>
                         <VBox fx:id="installedAssetsBox" prefHeight="400" VBox.vgrow="ALWAYS">
                            <children>
-                              <Label text="Installed Assets" textFill="WHITE">
+                              <Label text="%ui.installed_assets_1c34" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -176,11 +176,11 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Open system folder for this asset type" />
+                                          <Tooltip text="%ui.open_system_folder_for_this_asset_7746" />
                                        </tooltip>
                                     </Button>
                                     <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                    <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                                    <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="%ui.upload_9141" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -188,7 +188,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
+                                    <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="%ui.download_801a" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -196,7 +196,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetDefault" text="Set As Default" textFill="WHITE">
+                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetDefault" text="%ui.set_as_default_2c29" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -204,22 +204,22 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-check-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Use this file as default asset file" />
+                                          <Tooltip text="%ui.use_this_file_as_default_asset_3a27" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="%ui.rename_904a" textFill="WHITE">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Rename the asset file" />
+                                          <Tooltip text="%ui.rename_the_asset_file_e444" />
                                        </tooltip>
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                     <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                    <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                    <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="%ui.reload_4d1c" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -241,12 +241,12 @@
                                           <Font size="14.0" />
                                        </font>
                                        <items>
-                                          <MenuItem fx:id="screenDeleteBtn" mnemonicParsing="false" onAction="#onScreenDelete" text="Delete Screen Assets">
+                                          <MenuItem fx:id="screenDeleteBtn" mnemonicParsing="false" onAction="#onScreenDelete" text="%ui.delete_screen_assets_9da8">
                                              <graphic>
                                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                              </graphic>
                                           </MenuItem>
-                                          <MenuItem fx:id="gameDeleteBtn" mnemonicParsing="false" onAction="#onGameDelete" text="Delete Game Assets">
+                                          <MenuItem fx:id="gameDeleteBtn" mnemonicParsing="false" onAction="#onGameDelete" text="%ui.delete_game_assets_5dc8">
                                              <graphic>
                                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                              </graphic>
@@ -261,7 +261,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Open Help" />
+                                          <Tooltip text="%ui.open_help_58f9" />
                                        </tooltip>
                                     </Button>
                                     <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " textFill="WHITE">
@@ -272,7 +272,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Converts the selected media item, depending on its mime type" />
+                                          <Tooltip text="%ui.converts_the_selected_media_item_depending_ed12" />
                                        </tooltip>
                                     </MenuButton>
                                     <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#onInfo" textFill="WHITE">
@@ -283,7 +283,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-variant" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="350.0" text="Shows all metadata extracted from the selected asset." wrapText="true" />
+                                          <Tooltip prefWidth="350.0" text="%ui.shows_all_metadata_extracted_from_the_e1a2" wrapText="true" />
                                        </tooltip>
                                     </Button>
                                     <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
@@ -295,7 +295,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
+                                          <Tooltip prefWidth="350.0" text="%ui.adds_a_blank_media_so_that_5879" wrapText="true" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" textFill="WHITE">
@@ -306,7 +306,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="350.0" text="Adds a blank media so that the default sound is not played." wrapText="true" />
+                                          <Tooltip prefWidth="350.0" text="%ui.adds_a_blank_media_so_that_994d" wrapText="true" />
                                        </tooltip>
                                     </Button>
                                  </items>
@@ -337,7 +337,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.jump_to_the_previous_entry_in_96e7" wrapText="true" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
@@ -348,7 +348,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.jump_to_the_next_entry_in_a465" wrapText="true" />
                                  </tooltip>
                               </Button>
                            </children>
@@ -359,13 +359,13 @@
                            <children>
                               <HBox fx:id="tableSelection" alignment="CENTER_LEFT">
                                        <children>
-                                          <Label fx:id="tablesComboLabel" prefWidth="60.0" text="Table:" textFill="WHITE">
+                                          <Label fx:id="tablesComboLabel" prefWidth="60.0" text="%ui.table_4e77" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
                                           <ComboBox fx:id="tablesCombo" prefWidth="407.0" />
-                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE">
+                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="%ui.vps_assets_b50a" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -377,7 +377,7 @@
                               </HBox>
                               <HBox fx:id="playlistSelection" alignment="CENTER_LEFT">
                                        <children>
-                                          <Label fx:id="playlistComboLabel" prefWidth="67.0" text="Playlist:" textFill="WHITE">
+                                          <Label fx:id="playlistComboLabel" prefWidth="67.0" text="%ui.playlist_7b6a" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -391,12 +391,12 @@
                      <center>
                         <HBox alignment="CENTER_RIGHT" spacing="12.0" BorderPane.alignment="CENTER_RIGHT">
                            <children>
-                              <RadioButton fx:id="playlistsRadio" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                              <RadioButton fx:id="playlistsRadio" mnemonicParsing="false" text="%ui.playlists_008e" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
-                              <RadioButton fx:id="tablesRadio" mnemonicParsing="false" selected="true" text="Tables" textFill="WHITE">
+                              <RadioButton fx:id="tablesRadio" mnemonicParsing="false" selected="true" text="%ui.tables_651a" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -419,16 +419,16 @@
          <right>
             <HBox fx:id="buttonsBox" spacing="6.0">
                <children>
-                  <Button fx:id="openPlaylistManagerBtn" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="default-button" text="Open Playlist Manager" />
-                  <Button fx:id="openDataManager" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="Open Data Manager" />
-                  <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" />
+                  <Button fx:id="openPlaylistManagerBtn" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="default-button" text="%ui.open_playlist_manager_d22e" />
+                  <Button fx:id="openDataManager" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="%ui.open_data_manager_6ba2" />
+                  <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="%ui.close_d3d2" />
                </children>
             </HBox>
          </right>
          <left>
             <HBox fx:id="playlistHint" alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="preference-description" text="Default loading videos are shown by playlist. Set your default on each playlist. or set it for the HOME playlist for global defaults." />
+                  <Label styleClass="preference-description" text="%ui.default_loading_videos_are_shown_by_fe3a" />
                </children>
             </HBox>
          </left>

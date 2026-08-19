@@ -6,7 +6,7 @@
 
 <StackPane fx:id="rootStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" rotate="-90.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.OverlayController">
    <children>
-      <Label fx:id="titleLabel" text="Label" textFill="WHITE" translateY="-1740.0">
+      <Label fx:id="titleLabel" text="%ui.label_b021" textFill="WHITE" translateY="-1740.0">
          <font>
             <Font name="System Bold" size="124.0" />
          </font>

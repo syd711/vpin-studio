@@ -56,10 +56,10 @@
                               </TextField>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="DMD Archive:" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
+                        <Label styleClass="default-text" text="%ui.dmd_archive_d7b1" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.emulator_920c" />
                         <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -73,8 +73,8 @@
                <top>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <Label styleClass="preference-description" text="Download a DMD pack and upload it here." />
-                        <Label styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder.">
+                        <Label styleClass="preference-description" text="%ui.download_a_dmd_pack_and_upload_9ede" />
+                        <Label styleClass="preference-description" text="%ui.the_file_will_be_analyzed_and_a314">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin></Label>
@@ -89,12 +89,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_9141">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

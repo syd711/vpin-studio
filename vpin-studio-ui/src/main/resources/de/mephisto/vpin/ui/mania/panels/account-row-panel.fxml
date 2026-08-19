@@ -42,7 +42,7 @@
                <items>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Public Player" textFill="WHITE">
+                        <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="%ui.public_player_d371" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -58,7 +58,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="If checked, the player is visible and ranked on vpin-mania.net. The highscores of this player can be merged with the ones of your friends." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.if_checked_the_player_is_visible_dd8e" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>

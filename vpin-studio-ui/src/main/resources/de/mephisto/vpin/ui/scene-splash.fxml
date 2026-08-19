@@ -10,7 +10,7 @@
    <children>
       <ImageView fx:id="splashImage" fitHeight="534.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
       </ImageView>
-      <Label fx:id="versionLabel" text="Label" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
+      <Label fx:id="versionLabel" text="%ui.label_b021" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
          <font>
             <Font size="14.0" />
          </font>
@@ -18,7 +18,7 @@
             <Insets bottom="32.0" left="17.0" />
          </StackPane.margin>
       </Label>
-      <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Label" textAlignment="RIGHT" textFill="WHITE" wrapText="true" StackPane.alignment="TOP_RIGHT">
+      <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="%ui.label_b021" textAlignment="RIGHT" textFill="WHITE" wrapText="true" StackPane.alignment="TOP_RIGHT">
          <StackPane.margin>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
          </StackPane.margin>
@@ -26,7 +26,7 @@
             <Font name="System Bold Italic" size="16.0" />
          </font>
       </Label>
-      <Label fx:id="versionLabel1" layoutX="27.0" layoutY="492.0" text="VPin Studio" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
+      <Label fx:id="versionLabel1" layoutX="27.0" layoutY="492.0" text="%ui.vpin_studio_0d99" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
          <font>
             <Font name="Impact" size="48.0" />
          </font>

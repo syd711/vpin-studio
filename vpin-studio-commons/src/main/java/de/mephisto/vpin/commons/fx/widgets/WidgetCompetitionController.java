@@ -47,6 +47,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WidgetCompetitionController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -137,6 +138,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
       summaryWidgetController = loader.getController();
@@ -148,6 +150,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Competition...");

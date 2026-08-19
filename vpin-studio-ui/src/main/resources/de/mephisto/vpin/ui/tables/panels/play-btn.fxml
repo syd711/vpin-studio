@@ -15,7 +15,7 @@
               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
          </graphic>
          <tooltip>
-              <Tooltip text="Launch the table with the selected emulator" />
+              <Tooltip text="%ui.launch_the_table_with_the_selected_bab0" />
          </tooltip>
          <font>
             <Font size="14.0" />

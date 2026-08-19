@@ -16,8 +16,8 @@
                     <bottom>
                         <VBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                             <children>
-                                <Label fx:id="scoreLabel" text="score" textFill="WHITE" />
-                                <Label fx:id="changeDateLabel" text="Label" textFill="WHITE" />
+                                <Label fx:id="scoreLabel" text="%ui.score_ca1c" textFill="WHITE" />
+                                <Label fx:id="changeDateLabel" text="%ui.label_b021" textFill="WHITE" />
                             </children>
                         </VBox>
                     </bottom>
@@ -32,7 +32,7 @@
                                         <Font size="18.0" />
                                     </font>
                                 </Label>
-                                <Label fx:id="nameLabel" text="name" textFill="WHITE">
+                                <Label fx:id="nameLabel" text="%ui.name_b068" textFill="WHITE">
                                     <font>
                                         <Font size="18.0" />
                                     </font>

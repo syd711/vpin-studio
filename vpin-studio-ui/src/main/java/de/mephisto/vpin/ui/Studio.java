@@ -239,6 +239,7 @@ public class Studio extends Application {
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(LauncherController.class.getResource("scene-launcher.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent root = loader.load();
 
 
@@ -352,6 +353,7 @@ public class Studio extends Application {
               splashController.setStatus("Building user interface...");
             }
             FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent root = null;
             try {
               root = loader.load();
@@ -418,6 +420,7 @@ public class Studio extends Application {
   private static Stage createSplash() throws Exception {
     LOG.info("Load FXML for splash screen...");
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
+    loader.setResources(Messages.getBundle());
     StackPane root = loader.load();
     splashController = loader.getController();
 

@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabOverviewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabOverviewController.class);
@@ -36,6 +37,7 @@ public class TabOverviewController implements Initializable {
         for (ComponentRepresentation component : components) {
           try {
             FXMLLoader loader = new FXMLLoader(ComponentShortSummaryController.class.getResource("component-short-summary-panel.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             ComponentShortSummaryController controller = loader.getController();
             controller.refresh(component);

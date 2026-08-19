@@ -27,22 +27,22 @@
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="nameLabel" text="Label" textFill="WHITE" wrapText="true">
+                  <Label fx:id="nameLabel" text="%ui.label_b021" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Label fx:id="versionLabel" layoutX="10.0" layoutY="104.0" text="Label" textFill="WHITE" wrapText="true">
+                  <Label fx:id="versionLabel" layoutX="10.0" layoutY="104.0" text="%ui.label_b021" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="authorsLabel" layoutX="10.0" layoutY="10.0" text="Label" textFill="WHITE" wrapText="true">
+                  <Label fx:id="authorsLabel" layoutX="10.0" layoutY="10.0" text="%ui.label_b021" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="scoreInfoLabel" layoutX="10.0" layoutY="105.0" text="Label" textFill="WHITE" wrapText="true">
+                  <Label fx:id="scoreInfoLabel" layoutX="10.0" layoutY="105.0" text="%ui.label_b021" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -57,7 +57,7 @@
             <VBox fx:id="stats2Col" prefHeight="200.0" prefWidth="300.0" spacing="24.0" />
             <VBox styleClass="subpanel">
                <children>
-                  <Label text="Latest Scores" textFill="WHITE">
+                  <Label text="%ui.latest_scores_d193" textFill="WHITE">
                      <font>
                         <Font size="24.0" />
                      </font>

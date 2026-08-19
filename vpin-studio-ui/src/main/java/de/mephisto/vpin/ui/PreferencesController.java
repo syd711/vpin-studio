@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PreferencesController extends SettingsSceneController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
@@ -170,6 +171,7 @@ public class PreferencesController extends SettingsSceneController implements In
     if (instance == null) {
       try {
         FXMLLoader loader = new FXMLLoader(PreferencesController.class.getResource("scene-preferences.fxml"));
+        loader.setResources(Messages.getBundle());
         Node preferencesRoot = loader.load();
         PreferencesController controller = loader.getController();
         preferencesRoot.setUserData(controller);
@@ -480,6 +482,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
     try {
       FXMLLoader loader = new FXMLLoader(ClientSettingsPreferencesController.class.getResource(screen));
+      loader.setResources(Messages.getBundle());
       Node node = loader.load();
       preferencesMain.setCenter(node);
     }

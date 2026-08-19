@@ -18,10 +18,10 @@
             <center>
                 <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                     <columns>
-                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="111.20007634162903" style="-fx-alignment: CENTER;" text="Avatar" />
-                        <TableColumn fx:id="nameColumn" prefWidth="358.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                  <TableColumn fx:id="botColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="BOT" />
-                  <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="Initials" />
+                  <TableColumn fx:id="avatarColumn" minWidth="0.0" prefWidth="111.20007634162903" style="-fx-alignment: CENTER;" text="%ui.avatar_3203" />
+                        <TableColumn fx:id="nameColumn" prefWidth="358.40000915527344" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
+                  <TableColumn fx:id="botColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="%ui.bot_b244" />
+                  <TableColumn fx:id="initialsColumn" minWidth="0.0" prefWidth="92.800048828125" style="-fx-alignment: CENTER;" text="%ui.initials_6581" />
                     </columns>
                 </TableView>
             </center>
@@ -39,7 +39,7 @@
                   <Separator layoutX="240.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                        <TextField fx:id="searchTextField" prefWidth="200.0" promptText="Search Player...">
+                        <TextField fx:id="searchTextField" prefWidth="200.0" promptText="%ui.search_player_7108">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -55,7 +55,7 @@
                      </children>
                   </StackPane>
                   <Separator layoutX="188.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <CheckBox fx:id="validPlayersCheckbox" mnemonicParsing="false" selected="true" text="Only Valid Players" textFill="WHITE">
+                  <CheckBox fx:id="validPlayersCheckbox" mnemonicParsing="false" selected="true" text="%ui.only_valid_players_6f2a" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

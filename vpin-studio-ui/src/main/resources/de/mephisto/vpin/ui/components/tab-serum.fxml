@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="external-component" text="Open Folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="external-component" text="%ui.open_folder_49f9" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -26,11 +26,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Open Serum Installation Folder" />
+                     <Tooltip text="%ui.open_serum_installation_folder_d35c" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button" text="DmdDevice.ini" textFill="WHITE">
+               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button" text="%ui.dmddevice_ini_17ca" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -38,11 +38,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Open DmdDevice.ini" />
+                     <Tooltip text="%ui.open_dmddevice_ini_79c6" />
                   </tooltip>
                </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%ui.reload_4d1c">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -64,9 +64,9 @@
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                           <Label styleClass="default-text" text="The installer will extract the latest update into the VPinMAME folder." />
-                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="Make sure that the resolved target path matches with your installation." />
-                           <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="Check also the &quot;Plugins&quot; section of the Freezy installation. The Serum DLL files should be listed there." />
+                           <Label styleClass="default-text" text="%ui.the_installer_will_extract_the_latest_426a" />
+                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="%ui.make_sure_that_the_resolved_target_f6fe" />
+                           <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="%ui.check_also_the_plugins_section_of_26e8" />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

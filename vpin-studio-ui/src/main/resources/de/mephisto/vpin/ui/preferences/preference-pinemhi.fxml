@@ -24,26 +24,26 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="PINemHi Settings">
+                  <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%ui.pinemhi_settings_5c4c">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challenges." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.this_section_configures_all_configuration_option_1c2c" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin></Label>
-                  <Label styleClass="preference-description" text="For more information, visit" textFill="WHITE" />
-                  <Hyperlink onAction="#onLink" text="http://pinemhi.com/hiscores.php" />
-                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="Note that all text here were copied from the original settings documentation." textFill="WHITE" />
-                  <CheckBox fx:id="autoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-start PINemHi Rom Monitor" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%ui.for_more_information_visit_3364" textFill="WHITE" />
+                  <Hyperlink onAction="#onLink" text="%ui.http_pinemhi_com_hiscores_php_05e9" />
+                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="%ui.note_that_all_text_here_were_fa62" textFill="WHITE" />
+                  <CheckBox fx:id="autoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.auto_start_pinemhi_rom_monitor_f30c" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="If enabled, the monitor process will automatically be launched with the VPin Server." textFill="WHITE" wrapText="true" />
-                  <Label styleClass="checkbox-description" text="Note that the monitor will consume key events while working with the VPin Studio on the cabinet." textFill="WHITE" wrapText="true">
+                  <Label styleClass="checkbox-description" text="%ui.if_enabled_the_monitor_process_will_d62b" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description" text="%ui.note_that_the_monitor_will_consume_aea0" textFill="WHITE" wrapText="true">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Label>
@@ -52,7 +52,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                      <children>
-                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PINemHi Monitor" textFill="WHITE">
+                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%ui.re_start_pinemhi_monitor_bffe" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,7 +60,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" />
                            </graphic>
                         </Button>
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop PINemHi Monitor" textFill="WHITE">
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%ui.stop_pinemhi_monitor_9036" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -68,7 +68,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" />
                            </graphic>
                         </Button>
-                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="external-component" text="Edit pinemhi.ini" textFill="WHITE" visible="false">
+                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="external-component" text="%ui.edit_pinemhi_ini_3562" textFill="WHITE" visible="false">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
                            </graphic>
@@ -78,7 +78,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Label styleClass="preference-subtitle" text="Display" textFill="WHITE">
+                  <Label styleClass="preference-subtitle" text="%ui.display_b998" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -86,7 +86,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onUIEdit" text="Edit PINemHi Display Settings" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onUIEdit" text="%ui.edit_pinemhi_display_settings_f3c7" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -94,7 +94,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Button>
-                  <Label styleClass="preference-subtitle" text="Options" textFill="WHITE">
+                  <Label styleClass="preference-subtitle" text="%ui.options_dae8" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -102,10 +102,10 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="Enable these if you want to see them in your output." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="%ui.enable_these_if_you_want_to_b29a" textFill="WHITE" />
                   <VBox>
                      <children>
-                        <CheckBox fx:id="replays" mnemonicParsing="false" styleClass="preference-checkbox" text="Replays" textFill="WHITE">
+                        <CheckBox fx:id="replays" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.replays_a185" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -113,12 +113,12 @@
                               <Insets top="-12.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <CheckBox fx:id="buyins" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Buyins" textFill="WHITE">
+                        <CheckBox fx:id="buyins" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.buyins_1712" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="preference-subtitle" text="User Credentials" textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="%ui.user_credentials_32af" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -126,7 +126,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="Use the website http://www.pinemhi.com/hiscores.php to register your name and get a code." textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%ui.use_the_website_http_www_pinemhi_f0e8" textFill="WHITE" />
                         <GridPane vgap="3.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -148,12 +148,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label text="Name:" textFill="WHITE">
+                              <Label text="%ui.name_4e14" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Code:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="15.0" text="%ui.code_bcc7" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -163,7 +163,7 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="125.0" styleClass="preference-subtitle" text="Keys" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="125.0" styleClass="preference-subtitle" text="%ui.keys_a73e" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -171,15 +171,15 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="164.0" styleClass="preference-description" text="You could map the challenge and key to the same button/key if you want." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="164.0" styleClass="preference-description" text="%ui.you_could_map_the_challenge_and_f51c" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="306.0" styleClass="preference-description" text="You can also use joystickbuttons here , Joy1 , Joy2 or Joy3 etc." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="328.0" styleClass="preference-description" text="To change the key to display the popup, don't use a key that is used by the frontend or visual pinball." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="349.0" styleClass="preference-description" text="Press this key multiple times to cycle through the different popups." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="371.0" styleClass="preference-description" text="This key can only be used ingame." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="306.0" styleClass="preference-description" text="%ui.you_can_also_use_joystickbuttons_here_48a4" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="328.0" styleClass="preference-description" text="%ui.to_change_the_key_to_display_9cde" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="349.0" styleClass="preference-description" text="%ui.press_this_key_multiple_times_to_3449" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="371.0" styleClass="preference-description" text="%ui.this_key_can_only_be_used_77e5" textFill="WHITE" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -189,7 +189,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Key:" textFill="WHITE">
+                              <Label text="%ui.key_efeb" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -200,15 +200,15 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="392.0" styleClass="preference-description" text="The &quot;Challenge Key&quot; is to start the challenges, don't use a key that is used by the frontend or visual pinball." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="392.0" styleClass="preference-description" text="%ui.the_challenge_key_is_to_start_fc94" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="451.0" styleClass="preference-description" text="This key can only be used when not playing a game." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="472.0" styleClass="preference-description" text="I would suggest using the backtick (accent grave in europe) for this key (key left from the 1)" textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="494.0" styleClass="preference-description" text="because if the pinemhi_rom_monitor runs this key can't be used for anything other." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="528.0" styleClass="preference-description" text="This is especially true when you start pinemhi_rom_monitor on windows startup." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="451.0" styleClass="preference-description" text="%ui.this_key_can_only_be_used_1ff8" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="472.0" styleClass="preference-description" text="%ui.i_would_suggest_using_the_backtick_7f5e" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="494.0" styleClass="preference-description" text="%ui.because_if_the_pinemhi_rom_monitor_469a" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="528.0" styleClass="preference-description" text="%ui.this_is_especially_true_when_you_a9be" textFill="WHITE" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -218,7 +218,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Challenge Key:" textFill="WHITE">
+                              <Label text="%ui.challenge_key_1774" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -229,7 +229,7 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="463.0" styleClass="preference-description" text="The &quot;Weekly Challenge Key&quot; shows what game it is for this week and interim scores and winner previous week." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="463.0" styleClass="preference-description" text="%ui.the_weekly_challenge_key_shows_what_cb87" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
@@ -243,7 +243,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Weekly Challenge Key:" textFill="WHITE">
+                              <Label text="%ui.weekly_challenge_key_8c39" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -254,13 +254,13 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="620.0" styleClass="preference-description" text="This key activates 5-minute mode, this will stop gameplay after 5 minutes if game is compatible." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="620.0" styleClass="preference-description" text="%ui.this_key_activates_5_minute_mode_f1f8" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="678.0" styleClass="preference-description" text="5-minute mode can only be activated and deactivated outside of a game." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="700.0" styleClass="preference-description" text="If using pinup system as frontend, set the exit key you use (this to make 5-minute mode work properly)." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="678.0" styleClass="preference-description" text="%ui.5_minute_mode_can_only_be_e117" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="700.0" styleClass="preference-description" text="%ui.if_using_pinup_system_as_frontend_51e4" textFill="WHITE" />
                         <GridPane layoutX="10.0" layoutY="678.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -270,7 +270,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="5 Minutes Key" textFill="WHITE">
+                              <Label text="%ui.5_minutes_key_c8e1" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -290,7 +290,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="PINUp System Exit Key:" textFill="WHITE">
+                              <Label text="%ui.pinup_system_exit_key_e34b" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -301,7 +301,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="268.0" styleClass="preference-subtitle" text="Sounds" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="268.0" styleClass="preference-subtitle" text="%ui.sounds_d7bf" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -309,19 +309,19 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="sound5MinStatus" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="5 minutes mode status" textFill="WHITE">
+                        <CheckBox fx:id="sound5MinStatus" layoutX="10.0" layoutY="124.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.5_minutes_mode_status_61a4" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="Will tell you when you turn 5minute mode on or off." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="sound5MinWarning" layoutX="10.0" layoutY="177.0" mnemonicParsing="false" styleClass="preference-checkbox" text="5 minutes mode game warning" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="%ui.will_tell_you_when_you_turn_e899" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="sound5MinWarning" layoutX="10.0" layoutY="177.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.5_minutes_mode_game_warning_8f5d" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="977.0" styleClass="checkbox-description" text="At the start of a game this will warn you that you are about to play in 5-minute mode if enabled." textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="776.0" styleClass="preference-description" text="Choose which voice you want to use." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="977.0" styleClass="checkbox-description" text="%ui.at_the_start_of_a_game_c8a9" textFill="WHITE" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="776.0" styleClass="preference-description" text="%ui.choose_which_voice_you_want_to_6970" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
@@ -335,7 +335,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Voice:" textFill="WHITE">
+                              <Label text="%ui.voice_984f" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -346,7 +346,7 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="900.0" styleClass="preference-subtitle" text="Online" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="900.0" styleClass="preference-subtitle" text="%ui.online_54f6" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -354,42 +354,42 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="onlinePersonalScores" layoutX="10.0" layoutY="939.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Personal Scores" textFill="WHITE">
+                        <CheckBox fx:id="onlinePersonalScores" layoutX="10.0" layoutY="939.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.personal_scores_5807" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="977.0" styleClass="checkbox-description" text="Personal scores gives the top 10 from your scores on the table." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="onlinePersonalSpecialScores" layoutX="10.0" layoutY="1168.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Personal Special Scores" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="977.0" styleClass="checkbox-description" text="%ui.personal_scores_gives_the_top_10_5be9" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlinePersonalSpecialScores" layoutX="10.0" layoutY="1168.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.personal_special_scores_4a55" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="1206.0" styleClass="checkbox-description" text="Personal special scores gives the special scores you made for the table." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="onlineBestScore" layoutX="10.0" layoutY="1228.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Best Scores" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="1206.0" styleClass="checkbox-description" text="%ui.personal_special_scores_gives_the_special_e80c" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineBestScore" layoutX="10.0" layoutY="1228.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.best_scores_c677" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="1266.0" styleClass="checkbox-description" text="Best scores gives the top 10 best scores for the table." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="onlineFriendScores" layoutX="10.0" layoutY="1288.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Friend Scores" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="1266.0" styleClass="checkbox-description" text="%ui.best_scores_gives_the_top_10_78d7" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineFriendScores" layoutX="10.0" layoutY="1288.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.friend_scores_787b" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="1326.0" styleClass="checkbox-description" text="Friend scores gives the top 10 best scores from you and your friend(s)." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="onlineCubScores" layoutX="10.0" layoutY="1348.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Cup Scores" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="1326.0" styleClass="checkbox-description" text="%ui.friend_scores_gives_the_top_10_e341" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineCubScores" layoutX="10.0" layoutY="1348.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.cup_scores_c707" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="1386.0" styleClass="checkbox-description" text="Cup scores gives the top 10 cup standings and your position in it." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="onlineBadges" layoutX="10.0" layoutY="1420.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Badges" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="1386.0" styleClass="checkbox-description" text="%ui.cup_scores_gives_the_top_10_7b05" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="onlineBadges" layoutX="10.0" layoutY="1420.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.badges_ff56" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="1458.0" styleClass="checkbox-description" text="Badges gives you the badges you've earned for the table." textFill="WHITE" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="1458.0" styleClass="checkbox-description" text="%ui.badges_gives_you_the_badges_you_aaa9" textFill="WHITE" wrapText="true" />
                         <GridPane layoutX="10.0" layoutY="1099.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -399,7 +399,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Challenges Skill:" textFill="WHITE">
+                              <Label text="%ui.challenges_skill_cb3b" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -410,7 +410,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label styleClass="preference-subtitle" text="Friends" textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="%ui.friends_3d59" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -418,7 +418,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="776.0" styleClass="preference-description" text="Add your friend(s) (maximum is 9) using their PINemHi Leaderboard name." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="776.0" styleClass="preference-description" text="%ui.add_your_friend_s_maximum_is_dcf5" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
@@ -451,7 +451,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label text="Friend 1:" textFill="WHITE">
+                              <Label text="%ui.friend_1_5ef0" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -476,32 +476,32 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label layoutX="10.0" layoutY="15.0" text="Friend 2:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="15.0" text="%ui.friend_2_abf3" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Friend 3:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="49.0" text="%ui.friend_3_872a" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="83.0" text="Friend 4:" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label layoutX="10.0" layoutY="83.0" text="%ui.friend_4_df83" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="116.0" text="Friend 6:" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label layoutX="10.0" layoutY="116.0" text="%ui.friend_6_418c" textFill="WHITE" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="184.0" text="Friend 5:" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label layoutX="10.0" layoutY="184.0" text="%ui.friend_5_e376" textFill="WHITE" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Friend 1:" textFill="WHITE">
+                              <Label text="%ui.friend_1_5ef0" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -521,17 +521,17 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label layoutX="10.0" layoutY="184.0" text="Friend 7:" textFill="WHITE" GridPane.rowIndex="6">
+                              <Label layoutX="10.0" layoutY="184.0" text="%ui.friend_7_798d" textFill="WHITE" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="217.0" text="Friend 8:" textFill="WHITE" GridPane.rowIndex="7">
+                              <Label layoutX="10.0" layoutY="217.0" text="%ui.friend_8_0341" textFill="WHITE" GridPane.rowIndex="7">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="251.0" text="Friend 9:" textFill="WHITE" GridPane.rowIndex="8">
+                              <Label layoutX="10.0" layoutY="251.0" text="%ui.friend_9_3796" textFill="WHITE" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

@@ -23,7 +23,7 @@
                            <children>
                               <VBox fx:id="maniaGroup">
                                  <children>
-                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="CABINET">
+                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="%ui.cabinet_03ce">
                                        <font>
                                           <Font size="13.0" />
                                        </font>
@@ -31,12 +31,12 @@
                                           <Insets top="24.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Cabinet Settings" />
+                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="%ui.cabinet_settings_dbf1" />
                                  </children>
                               </VBox>
                               <VBox fx:id="menuItemsPanel">
                                  <children>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Data &amp; Privacy Settings" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="%ui.data_privacy_settings_7873" />
                                  </children>
                               </VBox>
                            </children>
@@ -64,13 +64,13 @@
                               <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
                            </graphic>
                         </Hyperlink>
-                        <Hyperlink onAction="#onDiscordLink" text="Join Discord">
+                        <Hyperlink onAction="#onDiscordLink" text="%ui.join_discord_5c7e">
                            <graphic>
                               <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
                            </graphic>
                         </Hyperlink>
-                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />
-                        <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label">
+                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="%ui.hyperlink_79cd" textFill="#b0abab" />
+                        <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="%ui.label_b021">
                            <VBox.margin>
                               <Insets right="5.0" />
                            </VBox.margin>

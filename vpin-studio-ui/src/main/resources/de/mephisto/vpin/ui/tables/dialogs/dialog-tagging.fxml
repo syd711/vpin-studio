@@ -17,12 +17,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="%ui.save_c9cc">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -36,15 +36,15 @@
    <center>
       <VBox minWidth="500.0" BorderPane.alignment="CENTER">
          <children>
-            <Label styleClass="preference-description" text="Selects or create tags using the input field below." />
-            <Label styleClass="preference-description" text="The selected tags will be updated for the selected tables.">
+            <Label styleClass="preference-description" text="%ui.selects_or_create_tags_using_the_d363" />
+            <Label styleClass="preference-description" text="%ui.the_selected_tags_will_be_updated_ceef">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
             <VBox spacing="6.0">
                <children>
-                  <RadioButton fx:id="addRadio" mnemonicParsing="false" selected="true" text="Add Tags" textFill="WHITE">
+                  <RadioButton fx:id="addRadio" mnemonicParsing="false" selected="true" text="%ui.add_tags_f6d9" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -52,7 +52,7 @@
                         <ToggleGroup fx:id="radioGroup" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton lineSpacing="6.0" mnemonicParsing="false" text="Remove Tags" textFill="WHITE" toggleGroup="$radioGroup">
+                  <RadioButton lineSpacing="6.0" mnemonicParsing="false" text="%ui.remove_tags_9250" textFill="WHITE" toggleGroup="$radioGroup">
                      <font>
                         <Font size="14.0" />
                      </font>

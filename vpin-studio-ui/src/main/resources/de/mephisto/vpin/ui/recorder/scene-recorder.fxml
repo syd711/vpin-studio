@@ -44,8 +44,8 @@
                                                             <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
                                                         </graphic>
                                                     </TableColumn>
-                                                    <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                                    <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
+                                                    <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.display_name_b489" />
+                                                    <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%ui.last_update_28b6" />
                                                 </columns>
                                             </TableView>
                                         </children>
@@ -83,7 +83,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Toggle Filter View" />
+                        <Tooltip text="%ui.toggle_filter_view_e9c1" />
                     </tooltip>
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -97,7 +97,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Reload all table data" />
+                        <Tooltip text="%ui.reload_all_table_data_90bc" />
                     </tooltip>
                 </Button>
             <Button fx:id="reloadBtn1" layoutX="52.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAutoSelect" textFill="WHITE">
@@ -108,13 +108,13 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18"/>
                </graphic>
                <tooltip>
-                  <Tooltip text="Auto-select all mandatory and missing video screens" />
+                  <Tooltip text="%ui.auto_select_all_mandatory_and_missing_dc63" />
                </tooltip>
             </Button>
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                 <StackPane alignment="CENTER_RIGHT">
                     <children>
-                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_table_7b9c">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -130,7 +130,7 @@
                     </children>
                 </StackPane>
                 <Separator layoutX="462.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                    <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+                    <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%ui.all_vpx_tables_e7c0" />
                 <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
                     <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
@@ -141,7 +141,7 @@
                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Edit table data" />
+                    <Tooltip text="%ui.edit_table_data_cb57" />
                 </tooltip>
                 </Button>
                 <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
@@ -152,16 +152,16 @@
                     <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Show table in table overview" />
+                    <Tooltip text="%ui.show_table_in_table_overview_df7e" />
                 </tooltip>
                 </Button>
                 <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start" textFill="#ff3333">
+                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="%ui.start_a612" textFill="#ff3333">
                 <font>
                     <Font size="14.0" />
                 </font>
                 <tooltip>
-                    <Tooltip text="Start recording of this screen" />
+                    <Tooltip text="%ui.start_recording_of_this_screen_af46" />
                 </tooltip>
                 <graphic>
                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-record" iconSize="18" />
@@ -176,11 +176,11 @@
                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+                    <Tooltip text="%ui.kill_all_emulator_and_frontend_processes_f0bb" />
                 </tooltip>
                 </Button>
                 <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="Screens" textFill="WHITE">
+                <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%ui.screens_2288" textFill="WHITE">
                 <font>
                     <Font size="14.0" />
                 </font>
@@ -191,9 +191,9 @@
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                 <children>
-                    <Label styleClass="default-text" text="Preview Refresh:" />
+                    <Label styleClass="default-text" text="%ui.preview_refresh_97d4" />
                     <Spinner fx:id="refreshInterval" prefWidth="70.0" />
-                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="seconds" />
+                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.seconds_783e" />
                 </children>
                 </HBox>
             </items>

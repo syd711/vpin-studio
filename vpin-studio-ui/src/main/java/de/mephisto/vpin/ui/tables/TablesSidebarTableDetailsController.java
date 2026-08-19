@@ -41,6 +41,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarTableDetailsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -612,6 +613,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       uploadsButtonController.setCompact(false);

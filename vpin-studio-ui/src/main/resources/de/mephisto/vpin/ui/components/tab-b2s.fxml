@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%ui.open_folder_49f9" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -26,11 +26,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Open B2S server installation folder" />
+                     <Tooltip text="%ui.open_b2s_server_installation_folder_0d27" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="registerBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRegister" styleClass="external-component" text="B2SBackglassServerRegisterApp" textFill="WHITE">
+               <Button fx:id="registerBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRegister" styleClass="external-component" text="%ui.b2sbackglassserverregisterapp_5f8c" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -38,11 +38,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Register B2S Backglass Server" />
+                     <Tooltip text="%ui.register_b2s_backglass_server_c17b" />
                   </tooltip>
                </Button>
                <Separator layoutX="128.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button mnemonicParsing="false" onAction="#onPrefsB2S" text="Backglass Server Preferences" textFill="WHITE">
+               <Button mnemonicParsing="false" onAction="#onPrefsB2S" text="%ui.backglass_server_preferences_947f" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -50,7 +50,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                     <Tooltip prefWidth="300.0" text="%ui.this_will_set_the_latest_available_72fc" wrapText="true" />
                   </tooltip>
                </Button>
             </items>
@@ -67,8 +67,8 @@
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                           <Label styleClass="default-text" text="The installer will extract the latest update into the Backglass server folder." />
-                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="Make sure that the resolved target path matches with your installation." />
+                           <Label styleClass="default-text" text="%ui.the_installer_will_extract_the_latest_bc39" />
+                           <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="%ui.make_sure_that_the_resolved_target_f6fe" />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

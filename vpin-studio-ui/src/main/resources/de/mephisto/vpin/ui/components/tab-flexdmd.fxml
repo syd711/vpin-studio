@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%ui.open_folder_49f9" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -26,11 +26,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Open FlexDMD installation folder" />
+                     <Tooltip text="%ui.open_flexdmd_installation_folder_a6bc" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="flexDMDBtn" mnemonicParsing="false" onAction="#onFlexDMD" styleClass="external-component" text="FlexDMD UI" textFill="WHITE">
+               <Button fx:id="flexDMDBtn" mnemonicParsing="false" onAction="#onFlexDMD" styleClass="external-component" text="%ui.flexdmd_ui_95a8" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -52,8 +52,8 @@
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                           <Label styleClass="default-text" text="The installer will extract the latest FlexDMD files into the &quot;VPinMame&quot; folder." />
-                           <Label styleClass="default-text" text="After updating to the latest version, the installer will open the &quot;FlexDMD UI&quot;." />
+                           <Label styleClass="default-text" text="%ui.the_installer_will_extract_the_latest_2a59" />
+                           <Label styleClass="default-text" text="%ui.after_updating_to_the_latest_version_1ae5" />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

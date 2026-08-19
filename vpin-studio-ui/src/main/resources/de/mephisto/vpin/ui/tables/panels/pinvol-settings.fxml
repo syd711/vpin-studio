@@ -17,7 +17,7 @@
    <children>
       <VBox fx:id="systemVolumeRoot">
          <children>
-            <Label fx:id="systemVolumeLabel" styleClass="default-title" text="System Volume">
+            <Label fx:id="systemVolumeLabel" styleClass="default-title" text="%ui.system_volume_a208">
                <VBox.margin>
                   <Insets bottom="12.0" top="12.0" />
                </VBox.margin></Label>
@@ -39,18 +39,18 @@
                   <Spinner fx:id="systemVolSecondarySpinner" layoutX="110.0" layoutY="12.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Spinner fx:id="systemVolBassSpinner" layoutX="110.0" layoutY="43.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Spinner fx:id="systemVolRearSpinner" layoutX="110.0" layoutY="73.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label styleClass="default-text" text="Primary Volume:" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Secondary Volume:" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Back Glass Gain:" GridPane.rowIndex="2" />
-                  <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Rear Exciters Gain:" GridPane.rowIndex="3" />
-                  <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Front Exciters Gain:" GridPane.rowIndex="4" />
+                  <Label styleClass="default-text" text="%ui.primary_volume_f6ec" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.secondary_volume_a315" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.back_glass_gain_125f" GridPane.rowIndex="2" />
+                  <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.rear_exciters_gain_d6a1" GridPane.rowIndex="3" />
+                  <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="%ui.front_exciters_gain_f103" GridPane.rowIndex="4" />
                   <Spinner fx:id="systemVolFrontSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="Save Settings" textFill="WHITE">
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="%ui.save_settings_9daf" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -62,7 +62,7 @@
       </VBox>
       <VBox fx:id="tableSettingsBox" styleClass="navigation-panel">
          <children>
-            <Label fx:id="tableLabel" prefWidth="500.0" styleClass="default-title" text="Table Volume">
+            <Label fx:id="tableLabel" prefWidth="500.0" styleClass="default-title" text="%ui.table_volume_b8a5">
                <VBox.margin>
                   <Insets bottom="12.0" />
                </VBox.margin></Label>
@@ -85,15 +85,15 @@
                   <Spinner fx:id="tableVolSecondarySpinner" layoutX="110.0" layoutY="12.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Spinner fx:id="tableVolBassSpinner" layoutX="110.0" layoutY="43.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Spinner fx:id="tableVolFrontSpinner" layoutX="110.0" layoutY="73.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label styleClass="default-text" text="Primary Volume:" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Secondary Volume:" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Back Glass Gain:" GridPane.rowIndex="2" />
-                  <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Front Exciters Gain:" GridPane.rowIndex="4" />
-                  <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Rear Exciters Gain:" GridPane.rowIndex="3" />
+                  <Label styleClass="default-text" text="%ui.primary_volume_f6ec" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.secondary_volume_a315" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.back_glass_gain_125f" GridPane.rowIndex="2" />
+                  <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.front_exciters_gain_f103" GridPane.rowIndex="4" />
+                  <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="%ui.rear_exciters_gain_d6a1" GridPane.rowIndex="3" />
                   <Spinner fx:id="tableVolRearSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onDefaults" text="Apply Defaults" textFill="WHITE">
+                        <Button mnemonicParsing="false" onAction="#onDefaults" text="%ui.apply_defaults_8a5d" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -106,7 +106,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Uses the average values of all tables" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.uses_the_average_values_of_all_cbbf" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>

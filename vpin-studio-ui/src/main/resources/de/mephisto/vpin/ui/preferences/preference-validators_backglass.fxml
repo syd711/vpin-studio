@@ -15,35 +15,35 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VALIDATORS" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backglass Validators" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every backglass." textFill="WHITE">
+                  <Label styleClass="preference-title" text="%ui.validators_c883" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.backglass_validators_77f8" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.if_enabled_the_validation_is_executed_feba" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
 
-                  <CheckBox fx:id="pref_1001" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="No Game installed" />
-                  <Label styleClass="checkbox-description" text="Checks if a game is installed for the backglass." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1001" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%ui.no_game_installed_96ea" />
+                  <Label styleClass="checkbox-description" text="%ui.checks_if_a_game_is_installed_040d" textFill="WHITE" />
 
-                  <CheckBox fx:id="pref_1002" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Run as EXE" />
-                  <Label styleClass="checkbox-description" text="Checks if the backglass runs as EXE." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1002" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%ui.run_as_exe_db72" />
+                  <Label styleClass="checkbox-description" text="%ui.checks_if_the_backglass_runs_as_00a1" textFill="WHITE" />
 
-                  <CheckBox fx:id="pref_1010" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="No Full DMD" />
-                  <Label styleClass="checkbox-description" text="Checks if the backglass has a full DMD B2S." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1010" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%ui.no_full_dmd_dbcf" />
+                  <Label styleClass="checkbox-description" text="%ui.checks_if_the_backglass_has_a_d4bd" textFill="WHITE" />
 
-                  <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Full DMD Aspect ratio" />
-                  <Label styleClass="checkbox-description" text="Checks if the full DMD B2S has an appropriate ratio." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%ui.full_dmd_aspect_ratio_aafc" />
+                  <Label styleClass="checkbox-description" text="%ui.checks_if_the_full_dmd_b2s_0d77" textFill="WHITE" />
                   <VBox fx:id="tagPane">
                      <children>
-                        <Label styleClass="preference-subtitle" text="Auto Tagging">
+                        <Label styleClass="preference-subtitle" text="%ui.auto_tagging_dbb2">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="If enabled and the backglass is replaced, the given tags are automatically applied to the table data" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="to keep track of this change (e.g. to track tables for recording)." textFill="WHITE" />
-                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Auto Tagging Enabled" textFill="WHITE">
+                        <Label styleClass="preference-description" text="%ui.if_enabled_and_the_backglass_is_6c9b" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%ui.to_keep_track_of_this_change_b64c" textFill="WHITE" />
+                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.auto_tagging_enabled_4c5c" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

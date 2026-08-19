@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  * Coordinates Fixing:
@@ -118,6 +119,7 @@ public class ServerFX extends Application {
         String resource = resolveDashboard(value);
 
         FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
         Parent widgetRoot = loader.load();
         overlayController = loader.getController();
         root.setCenter(widgetRoot);
@@ -229,6 +231,7 @@ public class ServerFX extends Application {
     try {
       String resource = "scene-maintenance.fxml";
       FXMLLoader loader = new FXMLLoader(MaintenanceController.class.getResource(resource));
+      loader.setResources(Messages.getBundle());
       Parent widgetRoot = loader.load();
       /*MaintenanceController controller =*/
       loader.getController();

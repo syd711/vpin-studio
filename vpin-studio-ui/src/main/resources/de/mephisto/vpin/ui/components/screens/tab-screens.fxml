@@ -20,7 +20,7 @@
                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
               </graphic>
               <tooltip>
-                 <Tooltip text="Reload Screen Settings" />
+                 <Tooltip text="%ui.reload_screen_settings_e1b5" />
               </tooltip>
            </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

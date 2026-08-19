@@ -35,6 +35,11 @@ import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Service
 public class VPXZService implements InitializingBean {
@@ -301,7 +306,7 @@ public class VPXZService implements InitializingBean {
   private void createVpxz(@NonNull Game game, @NonNull VPXZExportDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.VPXZ_EXPORT);
     descriptor.setCancelable(true);
-    descriptor.setTitle("Creating .vpxz for \"" + game.getGameDisplayName() + "\"");
+    descriptor.setTitle(ServerMessages.get("vpxz.create.title", resolveLocale(), game.getGameDisplayName()));
     descriptor.setGameId(game.getId());
 
     Optional<VPXZSource> source = vpxzSourceRepository.findById(exportDescriptor.getSourceId());

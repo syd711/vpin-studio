@@ -65,6 +65,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 
 public class TableDataController extends BasePrevNextController implements AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
@@ -726,6 +727,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private void loadTabs() {
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       tableScreensController = loader.getController();
       screensTab.setContent(builtInRoot);
@@ -741,6 +743,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScoreDataController.class.getResource("dialog-table-data-tab-scoredata.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent scoreDataRoot = loader.load();
       tableDataTabScoreDataController = loader.getController();
       tableDataTabScoreDataController.initBindings(this);
@@ -752,6 +755,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(PropperRenamingController.class.getResource("propper-renaming.fxml"));
+      loader.setResources(Messages.getBundle());
       propertRenamingRoot = loader.load();
       propperRenamingController = loader.getController();
       detailsRoot.getChildren().add(1, propertRenamingRoot);
@@ -765,6 +769,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabCommentsController.class.getResource("dialog-table-data-tab-comments.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent commentsRoot = loader.load();
       tableDataTabCommentsController = loader.getController();
       tableDataTabCommentsController.initBindings(this);
@@ -776,6 +781,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScriptOptionsController.class.getResource("dialog-table-data-tab-script-options.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent optionsRoot = loader.load();
       tableDataTabScriptOptionsController = loader.getController();
       tableDataTabScriptOptionsController.setStage(this.stage);
@@ -788,6 +794,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     try {
       if (Features.PLAYLIST_ENABLED) {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPlaylistsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent playlistsRoot = loader.load();
         tablesSidebarPlaylistsController = loader.getController();
         tablesSidebarPlaylistsController.setTableOverviewController(this.tableOverviewController);
@@ -798,6 +805,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       if (Features.STATISTICS_ENABLED) {
         try {
           FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
+          loader.setResources(Messages.getBundle());
           Parent builtInRoot = loader.load();
           tableStatisticsController = loader.getController();
           statisticsTab.setContent(builtInRoot);
@@ -816,6 +824,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
       customizationRoot.getChildren().add(builtInRoot);

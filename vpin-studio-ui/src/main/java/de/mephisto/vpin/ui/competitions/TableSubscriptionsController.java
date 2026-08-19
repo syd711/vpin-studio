@@ -51,6 +51,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableSubscriptionsController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TableSubscriptionsController.class);
@@ -310,6 +311,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -447,6 +449,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);

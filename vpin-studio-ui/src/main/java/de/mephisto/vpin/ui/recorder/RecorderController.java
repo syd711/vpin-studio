@@ -62,6 +62,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 import static de.mephisto.vpin.ui.tables.TableOverviewController.ALL_VPX_ID;
 import static de.mephisto.vpin.ui.tables.TableOverviewController.createAssetStatus;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class RecorderController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
@@ -446,6 +447,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreenRecorderPanelController.class.getResource("screen-recorder-panel.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent panelRoot = loader.load();
         ScreenRecorderPanelController screenPanelController = loader.getController();
         screenRecorderPanelControllers.add(screenPanelController);
@@ -591,6 +593,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);

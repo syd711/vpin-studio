@@ -15,6 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendRecorderJob.class);
@@ -67,7 +72,7 @@ public class FrontendRecorderJob implements Job {
         NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus("Launching Frontend");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", resolveLocale()));
         if (!jobDescriptor.isCancelled() && !frontend.startFrontendRecording()) {
           jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
           jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
@@ -80,7 +85,7 @@ public class FrontendRecorderJob implements Job {
         updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
         try {
-          jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", resolveLocale(), game.getGameDisplayName()));
           if (!jobDescriptor.isCancelled() && !frontend.startGameRecording(game)) {
             jobDescriptor.setError("Recording cancelled, the game could not be launched.");
             jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
@@ -99,7 +104,7 @@ public class FrontendRecorderJob implements Job {
             secondToWait--;
           }
 
-          jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", resolveLocale(), game.getGameDisplayName()));
 
           //create the game recorder which includes all screens
           gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));

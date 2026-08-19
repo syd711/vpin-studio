@@ -17,12 +17,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Download">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.download_801a">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="applyBtn" cancelButton="true" layoutX="263.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApply" styleClass="submit-button" text="Download &amp;  Assign" />
+            <Button fx:id="applyBtn" cancelButton="true" layoutX="263.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApply" styleClass="submit-button" text="%ui.download_assign_c700" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -40,16 +40,16 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel11" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="Select the screen for which the asset is shown" />
-                  <Label fx:id="titleLabel111" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="when the table is loading.">
+                  <Label fx:id="titleLabel11" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%ui.select_the_screen_for_which_the_36bc" />
+                  <Label fx:id="titleLabel111" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.when_the_table_is_loading_8785">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="titleLabel1111" layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="The ID of the screen is reflected in the filename." />
+                  <Label fx:id="titleLabel1111" layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%ui.the_id_of_the_screen_is_a2bd" />
                   <VBox spacing="6.0">
                      <children>
-                        <RadioButton fx:id="screen0" mnemonicParsing="false" selected="true" text="Topper (0)" textFill="WHITE">
+                        <RadioButton fx:id="screen0" mnemonicParsing="false" selected="true" text="%ui.topper_0_28c6" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -57,22 +57,22 @@
                               <ToggleGroup fx:id="screenToggle" />
                            </toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="screen1" mnemonicParsing="false" text="DMD (1)" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen1" mnemonicParsing="false" text="%ui.dmd_1_b7c1" textFill="WHITE" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="screen2" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Backglass (2)" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen2" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%ui.backglass_2_2800" textFill="WHITE" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="screen3" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Playfield (3)" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen3" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%ui.playfield_3_95b8" textFill="WHITE" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="screen4" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Full DMD (4)" textFill="WHITE" toggleGroup="$screenToggle">
+                        <RadioButton fx:id="screen4" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%ui.full_dmd_4_0958" textFill="WHITE" toggleGroup="$screenToggle">
                            <font>
                               <Font size="14.0" />
                            </font>

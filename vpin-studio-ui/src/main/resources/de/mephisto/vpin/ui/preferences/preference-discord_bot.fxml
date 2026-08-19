@@ -22,24 +22,24 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="DISCORD INTEGRATION" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Bot Settings">
+                  <Label styleClass="preference-title" text="%ui.discord_integration_c54f" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%ui.bot_settings_e647">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="You can create a Discord bot and add it to Discord servers to receive notifications and join online competitions." textFill="WHITE">
+                  <Label styleClass="preference-description" text="%ui.you_can_create_a_discord_bot_223a" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The member names are mapped against the highscore initials and new highscores." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Visit https://discord.com/developers/applications to create a new application. " textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.the_member_names_are_mapped_against_db12" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.visit_https_discord_com_developers_applications_16cb" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="Enter the bot token to connect your VPin with a Discord server." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="%ui.enter_the_bot_token_to_connect_b550" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
@@ -56,7 +56,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Bot Token:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.bot_token_c25c" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -66,7 +66,7 @@
                               <Insets />
                            </GridPane.margin>
                            <children>
-                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onTokenEdit" text="Edit">
+                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onTokenEdit" text="%ui.edit_7dce">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -74,7 +74,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="Reset" textFill="#ff3333">
+                              <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="%ui.reset_526d" textFill="#ff3333">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -89,7 +89,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Bot Name:" textFill="WHITE">
+                        <Label layoutX="9.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%ui.bot_name_dfd0" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -104,17 +104,17 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Channels">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.channels_14cb">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="Once your Discord bot is active, you can specify a default server and text channel where highscore updates will be posted." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="%ui.once_your_discord_bot_is_active_60e3" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="All these fields are OPTIONAL. If you only want to join another players server, setting up the bot token is sufficient." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="%ui.all_these_fields_are_optional_if_f2af" textFill="WHITE" />
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="200.0" />
@@ -129,25 +129,25 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Default Server:" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.default_server_b2ad" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="73.0" prefHeight="20.0" styleClass="preference-label" text="Default Textchannel:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="73.0" prefHeight="20.0" styleClass="preference-label" text="%ui.default_textchannel_2112" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="channelCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <ComboBox fx:id="serverCombo" layoutX="212.0" layoutY="72.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Subscriptions Category:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%ui.subscriptions_category_7d43" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="categoryCombo" layoutX="208.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate Settings" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%ui.validate_settings_0b42" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -155,33 +155,33 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Label styleClass="preference-description" text="Only servers with your bot are shown here." textFill="WHITE" GridPane.columnIndex="2" />
-                        <Label layoutX="468.0" layoutY="14.0" styleClass="preference-description" text="This channel will be used for all highscore updates." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="New subscriptions will be created here." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Table Updates Channel:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label styleClass="preference-description" text="%ui.only_servers_with_your_bot_are_f64b" textFill="WHITE" GridPane.columnIndex="2" />
+                        <Label layoutX="468.0" layoutY="14.0" styleClass="preference-description" text="%ui.this_channel_will_be_used_for_e11b" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="%ui.new_subscriptions_will_be_created_here_e25e" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%ui.table_updates_channel_de15" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="tableUpdatesCombo" layoutX="210.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label layoutX="474.0" layoutY="48.0" styleClass="preference-description" text="This channel will be used for table updates." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label layoutX="474.0" layoutY="48.0" styleClass="preference-description" text="%ui.this_channel_will_be_used_for_1d95" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                      </children>
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="331.0" styleClass="preference-subtitle" text="Subscription">
+                  <Label layoutX="34.0" layoutY="331.0" styleClass="preference-subtitle" text="%ui.subscription_787a">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="With dynamic subscriptions, a new text channel will be created under the &quot;Subscriptions Category&quot;" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="%ui.with_dynamic_subscriptions_a_new_text_011b" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="829.0" styleClass="preference-description" text="when the first new highscore for a table is detected." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="492.0" styleClass="preference-description" text="If you only wish to have subscriptions for specific tables, you can configure these in the &quot;Competitions&quot; section." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="829.0" styleClass="preference-description" text="%ui.when_the_first_new_highscore_for_df2d" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="492.0" styleClass="preference-description" text="%ui.if_you_only_wish_to_have_3764" textFill="WHITE" />
                   <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="201.599951171875" />
@@ -192,7 +192,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Dynamic Subscriptions:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.dynamic_subscriptions_5e5f" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -204,17 +204,17 @@
                         </CheckBox>
                      </children>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="575.0" styleClass="preference-subtitle" text="Bot Commands">
+                  <Label layoutX="34.0" layoutY="575.0" styleClass="preference-subtitle" text="%ui.bot_commands_3c38">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="By default, the bot will respond to commands from all users." textFill="WHITE">
+                  <Label styleClass="preference-description" text="%ui.by_default_the_bot_will_respond_aca4" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="526.0" styleClass="preference-description" text="You can disable them entirely or configure an allow list." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="526.0" styleClass="preference-description" text="%ui.you_can_disable_them_entirely_or_9dde" textFill="WHITE" />
                   <GridPane layoutX="34.0" layoutY="487.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="201.599951171875" />
@@ -225,7 +225,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Bot Commands Enabled:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.bot_commands_enabled_2790" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -248,14 +248,14 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Bot Users Allow List:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.bot_users_allow_list_0037" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Button fx:id="selectUsersBtn" mnemonicParsing="false" onAction="#onUserSelect" text="Select Users" textFill="WHITE">
+                              <Button fx:id="selectUsersBtn" mnemonicParsing="false" onAction="#onUserSelect" text="%ui.select_users_1d6f" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -267,14 +267,14 @@
                         </HBox>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="preference-description" text="Select users that are allowed to write bot commands." textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%ui.select_users_that_are_allowed_to_95d2" textFill="WHITE" />
                            </children>
                         </HBox>
                      </children>
                   </GridPane>
                   <BorderPane prefHeight="300.0" prefWidth="200.0">
                      <left>
-                        <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="Selected Users:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                        <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%ui.selected_users_62cc" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                            <font>
                               <Font size="14.0" />
                            </font>

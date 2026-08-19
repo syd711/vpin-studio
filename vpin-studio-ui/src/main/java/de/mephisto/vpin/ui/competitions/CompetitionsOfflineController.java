@@ -45,6 +45,7 @@ import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionsOfflineController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsOfflineController.class);
@@ -267,6 +268,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -372,6 +374,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);

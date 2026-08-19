@@ -24,12 +24,12 @@
                     <children>
                         <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                        <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Game Settings" />
+                        <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.game_settings_f22e" />
                         <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">
                            <graphic>
                               <HBox alignment="CENTER" spacing="6.0">
                                  <children>
-                                    <Label text="Your Table" />
+                                    <Label text="%ui.your_table_f187" />
                                     <Label fx:id="publicReadAPIHint1" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -38,16 +38,16 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Only the first table match is shown here. Multiple tables might be applicable for the game room game. Check the table overview for details." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%ui.only_the_first_table_match_is_5b5f" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
                            </graphic></TableColumn>
-                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="Game Room" />
-                        <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="Virtual Pinball Spreadsheet Table" />
-                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="Table Version" />
-                        <TableColumn fx:id="creationDateColumn" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Creation Date" />
+                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="%ui.game_room_86ef" />
+                        <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="%ui.virtual_pinball_spreadsheet_table_9088" />
+                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="%ui.table_version_69db" />
+                        <TableColumn fx:id="creationDateColumn" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%ui.creation_date_52fc" />
                             </columns>
                         </TableView>
                     </children>
@@ -64,13 +64,13 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                      <tooltip>
-                        <Tooltip text="Reload and invalidate game room caches." />
+                        <Tooltip text="%ui.reload_and_invalidate_game_room_caches_f5f7" />
                      </tooltip>
                         </Button>
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                              <TextField fx:id="textfieldSearch" prefWidth="160.0" promptText="Subscription Search...">
+                              <TextField fx:id="textfieldSearch" prefWidth="160.0" promptText="%ui.subscription_search_18c4">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -95,7 +95,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Synchronize the iScored game room games with the ones of your cabinet." />
+                        <Tooltip text="%ui.synchronize_the_iscored_game_room_games_0415" />
                      </tooltip>
                   </Button>
                   <Button fx:id="editBtn" layoutX="640.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" textFill="WHITE">
@@ -106,7 +106,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Edit game room settings." />
+                        <Tooltip text="%ui.edit_game_room_settings_0a5e" />
                      </tooltip>
                   </Button>
                   <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" textFill="WHITE">
@@ -117,7 +117,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Open game room preferences." />
+                        <Tooltip text="%ui.open_game_room_preferences_0780" />
                      </tooltip>
                   </Button>
                   <Separator fx:id="playBtnSeparator" layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -129,7 +129,7 @@
                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+                        <Tooltip text="%ui.kill_all_emulator_and_frontend_processes_f0bb" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -141,7 +141,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                      <tooltip>
-                        <Tooltip text="Create a new competition for the selected game room game." />
+                        <Tooltip text="%ui.create_a_new_competition_for_the_4166" />
                      </tooltip>
                         </Button>
                         <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
@@ -152,7 +152,7 @@
                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
                      <tooltip>
-                        <Tooltip text="Delete the selected competition. Note that it might get re-created during the next game room synchronization." />
+                        <Tooltip text="%ui.delete_the_selected_competition_note_that_5d90" />
                      </tooltip>
                         </Button>
                   <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -164,7 +164,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Edit table data" />
+                        <Tooltip text="%ui.edit_table_data_cb57" />
                      </tooltip>
                   </Button>
                   <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
@@ -175,7 +175,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Show table in table overview" />
+                        <Tooltip text="%ui.show_table_in_table_overview_df7e" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="946.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -187,7 +187,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Open Event Log" />
+                        <Tooltip text="%ui.open_event_log_2d6b" />
                      </tooltip>
                   </Button>
                     </items>

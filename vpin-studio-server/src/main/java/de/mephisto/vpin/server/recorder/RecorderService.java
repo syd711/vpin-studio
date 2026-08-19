@@ -44,6 +44,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Service
 public class RecorderService {
@@ -110,7 +115,7 @@ public class RecorderService {
     }
 
     jobDescriptor = new JobDescriptor(JobType.RECORDER);
-    jobDescriptor.setTitle("Screen Recorder (" + recordingData.size() + " games)");
+    jobDescriptor.setTitle(ServerMessages.get("recorder.job.title", resolveLocale(), recordingData.size()));
     jobDescriptor.setUserData(0);
     jobDescriptor.setJob(job);
     jobService.offer(jobDescriptor);
@@ -155,7 +160,7 @@ public class RecorderService {
       NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
       FrontendRecorderJob job = new InGameRecorderJob(this, notificationSettings, settings, recordingData, getRecordingScreens());
       jobDescriptor = new JobDescriptor(JobType.RECORDER);
-      jobDescriptor.setTitle("In-Game Screen Recorder");
+      jobDescriptor.setTitle(ServerMessages.get("recorder.ingame.title", resolveLocale()));
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);
@@ -165,7 +170,7 @@ public class RecorderService {
 
     if (jobDescriptor != null) {
       jobDescriptor.setProgress(1);
-      jobDescriptor.setStatus("Cancelled, no active screens");
+      jobDescriptor.setStatus(ServerMessages.get("recorder.status.cancelled", resolveLocale()));
     }
     return jobDescriptor;
   }

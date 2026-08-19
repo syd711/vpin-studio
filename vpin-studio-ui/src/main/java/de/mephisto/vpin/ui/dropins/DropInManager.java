@@ -49,6 +49,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DropInManager implements LocalSettingsChangeListener, StudioEventListener, FolderChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(DropInManager.class);
@@ -390,6 +391,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       if (root == null) {
         try {
           FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
+          loader.setResources(Messages.getBundle());
           root = loader.load();
           root.getStyleClass().add("dropin-menu-item");
           controller = loader.getController();

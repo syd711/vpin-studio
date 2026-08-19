@@ -52,6 +52,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class LauncherController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(LauncherController.class);
@@ -328,6 +329,7 @@ public class LauncherController implements Initializable {
       main.getTop().setVisible(false);
 
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loader.setResources(Messages.getBundle());
       BorderPane loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Installing Server, waiting for initial connect...");

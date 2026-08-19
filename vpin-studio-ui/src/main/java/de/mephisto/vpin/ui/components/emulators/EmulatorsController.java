@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class EmulatorsController implements Initializable, PreferenceChangeListener, StudioEventListener {
     private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
@@ -448,6 +449,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     private void loadPopperFrontend() {
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             startScriptController = loader.getController();
             startScriptTab.setContent(builtInRoot);
@@ -458,6 +460,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             vrStartScriptController = loader.getController();
             vrStartScriptTab.setContent(builtInRoot);
@@ -468,6 +471,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             exitScriptController = loader.getController();
             exitScriptTab.setContent(builtInRoot);
@@ -487,6 +491,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       startScriptController = loader.getController();
       startScriptTab.setContent(builtInRoot);
@@ -497,6 +502,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       vrStartScriptController = loader.getController();
       vrStartScriptTab.setContent(builtInRoot);
@@ -507,6 +513,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       exitScriptController = loader.getController();
       exitScriptTab.setContent(builtInRoot);
@@ -542,6 +549,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent parent = loader.load();
             tableController = loader.getController();
             tableController.setEmulatorController(this);

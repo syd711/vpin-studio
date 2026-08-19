@@ -32,18 +32,18 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%ui.label_b021" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                        <Hyperlink onAction="#onDismiss" text="%ui.dismiss_c8a5" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%ui.label_b021" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="noInputDataBox" layoutX="22.0" layoutY="76.0">
                <children>
-                  <Label styleClass="preference-description" text="No registry entries found. You can override the defaults to create them." />
+                  <Label styleClass="preference-description" text="%ui.no_registry_entries_found_you_can_7bed" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -54,7 +54,7 @@
             </VBox>
             <VBox fx:id="invalidDataBox" layoutX="22.0" layoutY="81.0">
                <children>
-                  <Label styleClass="preference-description" text="This table type does not use VPin Mame settings." />
+                  <Label styleClass="preference-description" text="%ui.this_table_type_does_not_use_3f3e" />
                </children>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
@@ -62,7 +62,7 @@
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label styleClass="preference-description" text="No table selected." />
+                  <Label styleClass="preference-description" text="%ui.no_table_selected_0981" />
                </children>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
@@ -75,7 +75,7 @@
                <content>
                     <VBox fx:id="dataBox" spacing="6.0">
                         <children>
-                        <Label text="Table Settings" textFill="WHITE">
+                        <Label text="%ui.table_settings_00ae" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -83,7 +83,7 @@
                               <Insets />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" text="Skip Pinball Startup Test" textFill="WHITE">
+                        <CheckBox fx:id="skipPinballStartupTest" mnemonicParsing="false" text="%ui.skip_pinball_startup_test_5bf4" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -91,59 +91,59 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <CheckBox fx:id="useSound" mnemonicParsing="false" text="Use Sound" textFill="WHITE">
+                        <CheckBox fx:id="useSound" mnemonicParsing="false" text="%ui.use_sound_fd79" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="useSamples" mnemonicParsing="false" text="Use Samples" textFill="WHITE">
+                        <CheckBox fx:id="useSamples" mnemonicParsing="false" text="%ui.use_samples_c1ef" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="ignoreRomCrcError" mnemonicParsing="false" text="Ignore ROM CRC Errors" textFill="WHITE">
+                        <CheckBox fx:id="ignoreRomCrcError" mnemonicParsing="false" text="%ui.ignore_rom_crc_errors_6cbe" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="cabinetMode" mnemonicParsing="false" text="Cabinet Mode" textFill="WHITE">
+                        <CheckBox fx:id="cabinetMode" mnemonicParsing="false" text="%ui.cabinet_mode_242d" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="showDmd" mnemonicParsing="false" text="Show DMD / Display Window" textFill="WHITE">
+                        <CheckBox fx:id="showDmd" mnemonicParsing="false" text="%ui.show_dmd_display_window_0e2b" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="useExternalDmd" mnemonicParsing="false" text="Use External DMD (dll)" textFill="WHITE">
+                        <CheckBox fx:id="useExternalDmd" mnemonicParsing="false" text="%ui.use_external_dmd_dll_2231" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="colorizeDmd" mnemonicParsing="false" text="Colorize DMD (4 colors)" textFill="WHITE">
+                        <CheckBox fx:id="colorizeDmd" mnemonicParsing="false" text="%ui.colorize_dmd_4_colors_7cb6" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="compactDisplay" mnemonicParsing="false" text="Compact Display" textFill="WHITE">
+                        <CheckBox fx:id="compactDisplay" mnemonicParsing="false" text="%ui.compact_display_ea4f" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="doubleDisplaySize" mnemonicParsing="false" text="Double Display Size" textFill="WHITE">
+                        <CheckBox fx:id="doubleDisplaySize" mnemonicParsing="false" text="%ui.double_display_size_3a7d" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="319.0" mnemonicParsing="false" text="Force Stereo" textFill="WHITE">
+                        <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="319.0" mnemonicParsing="false" text="%ui.force_stereo_a8ec" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <VBox fx:id="romValueBox" spacing="3.0">
                            <children>
-                              <Label styleClass="default-text" text="Volume:" textFill="WHITE">
+                              <Label styleClass="default-text" text="%ui.volume_6382" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -159,14 +159,14 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The number is a scaled integer representing the ROM’s volume level. Common range (varies by ROM/system): roughly 0 – ~4000 and around 2000–2600 is common default. Note that this value is not supported by all tables!" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%ui.the_number_is_a_scaled_integer_5968" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
-                        <Label styleClass="default-text" text="Sound Mode" textFill="WHITE">
+                        <Label styleClass="default-text" text="%ui.sound_mode_7fdf" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -175,7 +175,7 @@
                            </VBox.margin>
                         </Label>
                         <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
-                        <Label layoutX="10.0" layoutY="10.0" text="Table ROM Settings" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" text="%ui.table_rom_settings_9afa" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -205,7 +205,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy ROM alias" />
+                                          <Tooltip text="%ui.copy_rom_alias_4d32" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -216,17 +216,17 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="In Visual PinMAME (VPinMAME), the VpmAlias mapping feature is used to associate multiple ROM names with a single pinball machine. It is particularly useful when different versions or revisions of a pinball machine exist, and you want to consolidate them under a single entry in Visual Pinball X (VPX)." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%ui.in_visual_pinmame_vpinmame_the_vpmalias_7b90" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="ROM Alias:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label styleClass="default-text" text="%ui.rom_alias_cc16" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="ROM:" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.rom_5172" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -251,7 +251,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy ROM name" />
+                                          <Tooltip text="%ui.copy_rom_name_9f06" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -262,12 +262,12 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The effective ROM calculated for this table." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%ui.the_effective_rom_calculated_for_this_bacb" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.nvoffset_b491" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -287,7 +287,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Edit table script" />
+                                          <Tooltip text="%ui.edit_table_script_b677" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="nvOffsetBtn" mnemonicParsing="false" onAction="#onNvOffset">
@@ -298,7 +298,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Edit NVOffset" />
+                                          <Tooltip text="%ui.edit_nvoffset_1afd" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -309,7 +309,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="You can set an NVOffset inside the table script so that highscores are written into a unique nvram, even if the other tables share the same ROM." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%ui.you_can_set_an_nvoffset_inside_4fd3" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
@@ -321,12 +321,12 @@
                         </GridPane>
                         <VBox fx:id="tablesBox">
                            <children>
-                              <Label text="Related Tables" textFill="WHITE">
+                              <Label text="%ui.related_tables_8d8c" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="preference-description" text="The following tables share the same original ROM.">
+                              <Label styleClass="preference-description" text="%ui.the_following_tables_share_the_same_692b">
                                  <VBox.margin>
                                     <Insets bottom="6.0" top="6.0" />
                                  </VBox.margin>
@@ -357,7 +357,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="applyDefaultsBtn" mnemonicParsing="false" onAction="#onApplyDefaults" text="Apply Defaults" textFill="WHITE">
+            <Button fx:id="applyDefaultsBtn" mnemonicParsing="false" onAction="#onApplyDefaults" text="%ui.apply_defaults_8a5d" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -366,7 +366,7 @@
                </graphic>
             </Button>
             <Separator layoutX="234.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%ui.reload_4d1c">
                <font>
                   <Font size="14.0" />
                </font>
@@ -375,7 +375,7 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="aliasBtn" mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button" text="VPMAlias.txt" textFill="WHITE">
+            <Button fx:id="aliasBtn" mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button" text="%ui.vpmalias_txt_65e9" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -383,10 +383,10 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Open VPMAlias.txt file" />
+                  <Tooltip text="%ui.open_vpmalias_txt_file_5a5a" />
                </tooltip>
             </Button>
-            <Button fx:id="mameBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="VPin MAME" textFill="WHITE">
+            <Button fx:id="mameBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%ui.vpin_mame_0f64" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

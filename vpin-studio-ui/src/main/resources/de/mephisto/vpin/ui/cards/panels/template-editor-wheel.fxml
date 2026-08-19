@@ -18,7 +18,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="Wheel Settings" />
+            <Label text="%ui.wheel_settings_0b48" />
          </left>
          <right>
              <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -31,7 +31,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="Toggle wheel visibility" />
+                             <Tooltip text="%ui.toggle_wheel_visibility_839e" />
                          </tooltip>
                      </Button>
                      <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -42,7 +42,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="Lock these properties for custom templates." />
+                             <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400" />
                          </tooltip>
                      </ToggleButton>
                  </children>
@@ -60,7 +60,7 @@
                   <children>
                       <VBox spacing="3.0">
                         <children>
-                            <Label text="Position X" textFill="WHITE">
+                            <Label text="%ui.position_x_fc88" textFill="WHITE">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -70,7 +70,7 @@
                       </VBox>
                       <VBox spacing="3.0">
                         <children>
-                            <Label text="Position Y" textFill="WHITE">
+                            <Label text="%ui.position_y_49b3" textFill="WHITE">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -83,7 +83,7 @@
 
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                     <children>
-                      <Label text="Wheel Size" textFill="WHITE">
+                      <Label text="%ui.wheel_size_871d" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>

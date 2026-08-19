@@ -22,21 +22,21 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="DMD Device Settings">
+                  <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%ui.dmd_device_settings_a5c5">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the dmddevice.ini file are configured here." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="Select the VPX emulator the DmdDevice.ini file should be configured for." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.settings_for_the_dmddevice_ini_file_87d5" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%ui.select_the_vpx_emulator_the_dmddevice_f9e2" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="VPX Emulator:" textFill="WHITE">
+                        <Label styleClass="default-text" text="%ui.vpx_emulator_34e8" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -51,13 +51,13 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle" text="Network Settings" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle" text="%ui.network_settings_97ba" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="190.0" styleClass="preference-description" text="DMD Extensions allow receiving frames through the network" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="The frames are sent in binary data through a WebSocket and used for screenshots." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="190.0" styleClass="preference-description" text="%ui.dmd_extensions_allow_receiving_frames_through_b748" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%ui.the_frames_are_sent_in_binary_4706" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -75,16 +75,16 @@
                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Network Stream:" />
-                        <Label styleClass="default-text" text="Web Socket:" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.network_stream_5b50" />
+                        <Label styleClass="default-text" text="%ui.web_socket_e2de" GridPane.rowIndex="1" />
 
-                        <CheckBox fx:id="networkStreamCheckbox" mnemonicParsing="false" styleClass="default-text" text="Enable DMD Stream" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="networkStreamCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.enable_dmd_stream_50e8" GridPane.columnIndex="1" />
                         <TextField fx:id="networkUrlText" editable="false" prefHeight="30.0" prefWidth="233.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="networkUrlUpdateBtn" mnemonicParsing="false" text="Update" onAction="#onNetworkUrlUpdate" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="networkUrlUpdateBtn" mnemonicParsing="false" text="%ui.update_0693" onAction="#onNetworkUrlUpdate" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -93,7 +93,7 @@
                            </GridPane.margin>
                         </Button>
 
-                        <Label fx:id="networkStreamErrorLabel" styleClass="error-message" text="Invalid url ! Press Update to set the vpin-studio url." GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="networkStreamErrorLabel" styleClass="error-message" text="%ui.invalid_url_press_update_to_set_e9de" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -107,7 +107,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="220.0" styleClass="preference-subtitle" text="Virtual DMD Settings" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="220.0" styleClass="preference-subtitle" text="%ui.virtual_dmd_settings_952b" textFill="WHITE" />
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="268.2000732421875" minWidth="10.0" prefWidth="137.80001831054688" />
@@ -120,14 +120,14 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Enabled:" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Stay On Top:" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Ignore Aspect Ratio:" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="75.0" styleClass="default-text" text="Use Registry:" GridPane.rowIndex="3" />
-                        <CheckBox fx:id="virtualdmdEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Virtual DMD Enabled" GridPane.columnIndex="1" />
-                        <CheckBox fx:id="virtualdmdStayOnTopCheckbox" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="DMD Always On Top" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <CheckBox fx:id="virtualdmdIgnoreAspectRatioCheckbox" layoutX="148.0" layoutY="45.0" mnemonicParsing="false" styleClass="default-text" text="DMD Ignore Aspect Ratio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <CheckBox fx:id="virtualdmdUseRegistryCheckbox" layoutX="148.0" layoutY="75.0" mnemonicParsing="false" styleClass="default-text" text="Save Into Windows registry (not the DMDevice.ini file)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label styleClass="default-text" text="%ui.enabled_0d1a" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.stay_on_top_f0b3" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.ignore_aspect_ratio_060f" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="75.0" styleClass="default-text" text="%ui.use_registry_95dc" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="virtualdmdEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.virtual_dmd_enabled_5161" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="virtualdmdStayOnTopCheckbox" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="%ui.dmd_always_on_top_dd02" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="virtualdmdIgnoreAspectRatioCheckbox" layoutX="148.0" layoutY="45.0" mnemonicParsing="false" styleClass="default-text" text="%ui.dmd_ignore_aspect_ratio_91cd" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="virtualdmdUseRegistryCheckbox" layoutX="148.0" layoutY="75.0" mnemonicParsing="false" styleClass="default-text" text="%ui.save_into_windows_registry_not_the_5e99" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                </children>

@@ -23,7 +23,7 @@
                <left>
                   <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                      <children>
-                        <Hyperlink onAction="#onReset" text="Reset All">
+                        <Hyperlink onAction="#onReset" text="%ui.reset_all_b69a">
                            <HBox.margin>
                               <Insets left="-5.0" top="-9.0" />
                            </HBox.margin>
@@ -52,22 +52,22 @@
             <VBox fx:id="titlePaneRoot" prefWidth="230.0" spacing="6.0">
                <children>
 
-                  <Label styleClass="default-title" text="Table Validators">
+                  <Label styleClass="default-title" text="%ui.table_validators_daff">
                      <VBox.margin>
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="default-text" text="Missing Table Assets">
+                  <CheckBox fx:id="missingAssetsCheckBox" layoutX="21.0" layoutY="143.0" mnemonicParsing="false" styleClass="default-text" text="%ui.missing_table_assets_ab18">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                      <tooltip>
-                        <Tooltip text="Show tables that are missing one or more required assets, such as media or images." />
+                        <Tooltip text="%ui.show_tables_that_are_missing_one_a936" />
                      </tooltip>
                   </CheckBox>
                   <HBox fx:id="configurationIssuesFilter" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="Validation Issue Type:">
+                        <Label styleClass="default-text" text="%ui.validation_issue_type_6ac1">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -80,7 +80,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Changing this filter requires a full validation of all tables which might take a bit longer depending on the amount of tables." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.changing_this_filter_requires_a_full_7a74" wrapText="true" />
                            </tooltip>
                            <HBox.margin>
                               <Insets />
@@ -94,106 +94,106 @@
                   <ComboBox fx:id="issueTypesCombo" prefWidth="200.0" />
                   <VBox fx:id="tableAssetFilters" spacing="6.0">
                      <children>
-                        <Label styleClass="default-title" text="Table Asset Filters">
+                        <Label styleClass="default-title" text="%ui.table_asset_filters_2a0d">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="default-text" text="Backglass Available">
+                        <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.backglass_available_fab3">
                            <tooltip>
-                              <Tooltip text="Show tables that have a backglass configured." />
+                              <Tooltip text="%ui.show_tables_that_have_a_backglass_ec14" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withPupPackCheckBox" mnemonicParsing="false" styleClass="default-text" text="PUP Pack Available">
+                        <CheckBox fx:id="withPupPackCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.pup_pack_available_e175">
                            <tooltip>
-                              <Tooltip text="Show tables that have a PUP pack installed." />
+                              <Tooltip text="%ui.show_tables_that_have_a_pup_936e" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withIniCheckBox" mnemonicParsing="false" styleClass="default-text" text="INI File Available">
+                        <CheckBox fx:id="withIniCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.ini_file_available_3aee">
                            <tooltip>
-                              <Tooltip text="Show tables that have a VPX INI configuration file." />
+                              <Tooltip text="%ui.show_tables_that_have_a_vpx_ade6" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withResCheckBox" layoutX="10.0" layoutY="176.0" mnemonicParsing="false" styleClass="default-text" text="RES File Available">
+                        <CheckBox fx:id="withResCheckBox" layoutX="10.0" layoutY="176.0" mnemonicParsing="false" styleClass="default-text" text="%ui.res_file_available_6369">
                            <tooltip>
-                              <Tooltip text="Show tables that have a RES (resolution) file." />
+                              <Tooltip text="%ui.show_tables_that_have_a_res_0061" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withPovCheckBox" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="default-text" text="POV File Available">
+                        <CheckBox fx:id="withPovCheckBox" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="default-text" text="%ui.pov_file_available_4547">
                            <tooltip>
-                              <Tooltip text="Show tables that have a POV (point of view) file." />
+                              <Tooltip text="%ui.show_tables_that_have_a_pov_b3ef" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withAltColorCheckBox" mnemonicParsing="false" styleClass="default-text" text="ALT Color Available">
+                        <CheckBox fx:id="withAltColorCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.alt_color_available_6a79">
                            <tooltip>
-                              <Tooltip text="Show tables that have ALT Color (colorized ROM) support." />
+                              <Tooltip text="%ui.show_tables_that_have_alt_color_b2e4" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withAltSoundCheckBox" mnemonicParsing="false" styleClass="default-text" text="ALT Sound Available">
+                        <CheckBox fx:id="withAltSoundCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.alt_sound_available_3d43">
                            <tooltip>
-                              <Tooltip text="Show tables that have ALT Sound support." />
+                              <Tooltip text="%ui.show_tables_that_have_alt_sound_8b26" />
                            </tooltip>
                         </CheckBox>
                      </children>
                   </VBox>
                   <VBox fx:id="configurationFilters" spacing="6.0">
                      <children>
-                        <Label styleClass="default-title" text="Configuration Filters">
+                        <Label styleClass="default-title" text="%ui.configuration_filters_e939">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="default-text" text="Missing Highscore Settings">
+                        <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.missing_highscore_settings_5001">
                            <tooltip>
-                              <Tooltip text="Show tables that have no highscore settings configured." />
+                              <Tooltip text="%ui.show_tables_that_have_no_highscore_aa11" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="noVpsMappingTableCheckBox" mnemonicParsing="false" styleClass="default-text" text="Missing VPS Table Entry">
+                        <CheckBox fx:id="noVpsMappingTableCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.missing_vps_table_entry_f2cc">
                            <tooltip>
-                              <Tooltip text="Show tables that are not mapped to a VPS table entry." />
+                              <Tooltip text="%ui.show_tables_that_are_not_mapped_09b9" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="noVpsMappingVersionCheckBox" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" styleClass="default-text" text="Missing VPS Version Entry">
+                        <CheckBox fx:id="noVpsMappingVersionCheckBox" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" styleClass="default-text" text="%ui.missing_vps_version_entry_16dd">
                            <tooltip>
-                              <Tooltip text="Show tables that are not mapped to a VPS version entry." />
+                              <Tooltip text="%ui.show_tables_that_are_not_mapped_03b2" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="default-text" text="NVOffset Set">
+                        <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.nvoffset_set_3aa1">
                            <tooltip>
-                              <Tooltip text="Show tables that have an NVRAM offset configured." />
+                              <Tooltip text="%ui.show_tables_that_have_an_nvram_c3e0" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="default-text" text="ROM Alias Set">
+                        <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.rom_alias_set_63d7">
                            <tooltip>
-                              <Tooltip text="Show tables that have a ROM alias configured." />
+                              <Tooltip text="%ui.show_tables_that_have_a_rom_af80" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="default-text" text="Highscores Not Supported">
+                        <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.highscores_not_supported_091b">
                            <tooltip>
-                              <Tooltip text="Show tables for which highscore tracking is not supported." />
+                              <Tooltip text="%ui.show_tables_for_which_highscore_tracking_8968" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="iScoredCompetitionCheckBox" mnemonicParsing="false" styleClass="default-text" text="iScored Game">
+                        <CheckBox fx:id="iScoredCompetitionCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.iscored_game_f773">
                            <tooltip>
-                              <Tooltip text="Show tables that are linked to an iScored competition." />
+                              <Tooltip text="%ui.show_tables_that_are_linked_to_c70c" />
                            </tooltip>
                         </CheckBox>
                      </children>
                   </VBox>
-                  <Label layoutX="10.0" layoutY="608.0" styleClass="default-title" text="Tags Filter">
+                  <Label layoutX="10.0" layoutY="608.0" styleClass="default-title" text="%ui.tags_filter_4e3a">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <VBox fx:id="tagsFilter" spacing="6.0" />
-                  <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="Data Filters">
+                  <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="%ui.data_filters_8edc">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <VBox fx:id="statusSettings">
                      <children>
-                        <Label text="Table Status" textFill="WHITE">
+                        <Label text="%ui.table_status_d6d7" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -204,7 +204,7 @@
                         <ComboBox fx:id="statusCombo" prefHeight="30.0" />
                      </children>
                   </VBox>
-                  <Label layoutX="10.0" layoutY="655.0" text="Comments" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="655.0" text="%ui.comments_8413" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -215,9 +215,9 @@
                   <ComboBox fx:id="commentsCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
                   <HBox fx:id="notPlayedSettings" alignment="CENTER_LEFT" spacing="6.0" styleClass="default-text">
                      <children>
-                        <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet">
+                        <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="%ui.not_played_yet_e9bc">
                            <tooltip>
-                              <Tooltip text="Show tables that have never been launched." />
+                              <Tooltip text="%ui.show_tables_that_have_never_been_3435" />
                            </tooltip>
                         </CheckBox>
                         <Label>
@@ -228,26 +228,26 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Based on launches from PinUP Popper" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.based_on_launches_from_pinup_popper_c600" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
                   <VBox fx:id="vpsFilters" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="vpsUpdatesCheckBox" mnemonicParsing="false" styleClass="default-text" text="VPS Updates Available">
+                        <CheckBox fx:id="vpsUpdatesCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.vps_updates_available_dcf4">
                            <tooltip>
-                              <Tooltip text="Show tables for which a VPS table update is available." />
+                              <Tooltip text="%ui.show_tables_for_which_a_vps_ee69" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="versionUpdatesCheckBox" mnemonicParsing="false" styleClass="default-text" text="New Version Available">
+                        <CheckBox fx:id="versionUpdatesCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.new_version_available_1c69">
                            <tooltip>
-                              <Tooltip text="Show tables for which a new table version is available." />
+                              <Tooltip text="%ui.show_tables_for_which_a_new_d7a0" />
                            </tooltip>
                         </CheckBox>
-                        <CheckBox fx:id="notBackedUpCheckbox" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" styleClass="default-text" text="Not Backed Up">
+                        <CheckBox fx:id="notBackedUpCheckbox" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" styleClass="default-text" text="%ui.not_backed_up_28ff">
                            <tooltip>
-                              <Tooltip text="Show tables that have not been backed up yet." />
+                              <Tooltip text="%ui.show_tables_that_have_not_been_34ca" />
                            </tooltip>
                         </CheckBox>
                      </children>

@@ -22,12 +22,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="exportBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onExportClick" styleClass="submit-button" text="Create">
+            <Button fx:id="exportBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onExportClick" styleClass="submit-button" text="%ui.create_686e">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -48,19 +48,19 @@
                <center>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="The .vpxz file will be created for the selected table and target folder." />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select a standalone file if the name matches with the one of your tables. ">
+                        <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="%ui.the_vpxz_file_will_be_created_caea" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.select_a_standalone_file_if_the_d523">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="It ensures that the table will run on mobile devices - but is not required for all tables!" />
-                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="The standalone files are provided by jsm174.">
+                        <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="%ui.it_ensures_that_the_table_will_17f4" />
+                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%ui.the_standalone_files_are_provided_by_2541">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Hyperlink onAction="#onHyperlink" text="https://github.com/jsm174/vpx-standalone-scripts">
+                        <Hyperlink onAction="#onHyperlink" text="%ui.https_github_com_jsm174_vpx_standalone_d97d">
                            <VBox.margin>
                               <Insets left="-6.0" />
                            </VBox.margin>
@@ -83,9 +83,9 @@
                                 </rowConstraints>
                                  <children>
                                     <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
-                                    <Label styleClass="default-text" text="Target:" />
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Overwrite Settings:" GridPane.rowIndex="2" />
-                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="Overwrite Existing .vpxz Files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <Label styleClass="default-text" text="%ui.target_f1a0" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.overwrite_settings_e55a" GridPane.rowIndex="2" />
+                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="%ui.overwrite_existing_vpxz_files_b257" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -93,7 +93,7 @@
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
                                           <ComboBox fx:id="filesCombo" editable="true" prefHeight="30.0" prefWidth="300.0" />
-                                          <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="Synchronize with Github">
+                                          <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="%ui.synchronize_with_github_7012">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -103,7 +103,7 @@
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="VPX Standalone Script:" GridPane.rowIndex="1" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.vpx_standalone_script_f80d" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </children>
@@ -112,7 +112,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" styleClass="default-headline" text="title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="%ui.title_d5d3" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>

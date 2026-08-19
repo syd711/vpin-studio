@@ -31,6 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Service
 public class PupPacksService implements InitializingBean {
@@ -272,7 +277,7 @@ public class PupPacksService implements InitializingBean {
     }
     else {
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL);
-      jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
+      jobDescriptor.setTitle(ServerMessages.get("puppack.install.title", resolveLocale(), uploadDescriptor.getOriginalUploadFileName()));
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);

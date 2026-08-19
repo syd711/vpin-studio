@@ -19,6 +19,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WidgetFinishedCompetitionsController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -43,6 +44,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Finished Competitions...");
@@ -63,6 +65,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
         try {
           for (CompetitionRepresentation c : competitions) {
             FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+            loader.setResources(Messages.getBundle());
             BorderPane row = loader.load();
             WidgetCompetitionSummaryController controller = loader.getController();
             row.setMaxWidth(Double.MAX_VALUE);

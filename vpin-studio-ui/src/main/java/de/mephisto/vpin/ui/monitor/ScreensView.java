@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ScreensView implements IMonitoringView {
   private final static Logger LOG = LoggerFactory.getLogger(ScreensView.class);
@@ -33,6 +34,7 @@ public class ScreensView implements IMonitoringView {
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreenPanelController.class.getResource("screen-monitor-panel.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent panelRoot = loader.load();
         ScreenPanelController screenPanelController = loader.getController();
         controllers.put(recordingScreen.getScreen(), screenPanelController);

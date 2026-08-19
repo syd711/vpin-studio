@@ -51,16 +51,16 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="durationSpinner" editable="true" prefWidth="80.0" />
-                              <Label styleClass="default-text" text="seconds" />
+                              <Label styleClass="default-text" text="%ui.seconds_783e" />
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="Recording Options:" />
-                        <Label styleClass="default-text" text="Recording Duration:" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Recording Delay:" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="%ui.recording_options_1ced" />
+                        <Label styleClass="default-text" text="%ui.recording_duration_544a" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.recording_delay_5fae" GridPane.rowIndex="2" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <Spinner fx:id="delaySpinner" editable="true" prefWidth="80.0" />
-                              <Label styleClass="default-text" text="seconds" />
+                              <Label styleClass="default-text" text="%ui.seconds_783e" />
                               <Label>
                                  <font>
                                     <Font size="14.0" />
@@ -69,15 +69,15 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The amount of seconds to wait after the game has been loaded." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.the_amount_of_seconds_to_wait_6a80" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="150.0" styleClass="default-text" text="In-Game Recording:" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="150.0" styleClass="default-text" text="%ui.in_game_recording_71e8" GridPane.rowIndex="3" />
                         <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <CheckBox fx:id="inGameRecordingCheckbox" mnemonicParsing="false" text="Enabled" textFill="WHITE">
+                              <CheckBox fx:id="inGameRecordingCheckbox" mnemonicParsing="false" text="%ui.enabled_00d2" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -90,15 +90,15 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="If enabled, this screen will be recorded when the recoding button is pressed." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.if_enabled_this_screen_will_be_8fb3" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Expert Settings:" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="%ui.expert_settings_f99b" GridPane.rowIndex="4" />
                         <HBox alignment="CENTER_LEFT" layoutX="144.0" layoutY="111.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
-                              <CheckBox fx:id="expertModeCheckbox" mnemonicParsing="false" text="Enabled" textFill="WHITE">
+                              <CheckBox fx:id="expertModeCheckbox" mnemonicParsing="false" text="%ui.enabled_00d2" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -111,17 +111,17 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="If enabled, a custom ffmpeg command can be configured." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.if_enabled_a_custom_ffmpeg_command_3f19" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Button fx:id="settingsBtn" mnemonicParsing="false" onAction="#onSettings" text="Settings" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Button fx:id="settingsBtn" mnemonicParsing="false" onAction="#onSettings" text="%ui.settings_f4f7" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Edit the ffmpeg.exe command" />
+                              <Tooltip text="%ui.edit_the_ffmpeg_exe_command_9e98" />
                            </tooltip>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
@@ -141,8 +141,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="FPS:" />
-                        <CheckBox fx:id="fps60Checkbox" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label styleClass="default-text" text="%ui.fps_3905" />
+                        <CheckBox fx:id="fps60Checkbox" mnemonicParsing="false" text="%ui.record_with_60fps_bff2" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -158,12 +158,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <CheckBox fx:id="audioCheckbox" mnemonicParsing="false" text="Record Audio" textFill="WHITE" GridPane.columnIndex="1">
+                        <CheckBox fx:id="audioCheckbox" mnemonicParsing="false" text="%ui.record_audio_a095" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="default-text" text="Audio:" />
+                        <Label styleClass="default-text" text="%ui.audio_4015" />
                      </children>
                      <VBox.margin>
                         <Insets top="3.0" />
@@ -178,12 +178,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <CheckBox fx:id="rotationCheckbox" mnemonicParsing="false" text="180° Rotation" textFill="WHITE" GridPane.columnIndex="1">
+                        <CheckBox fx:id="rotationCheckbox" mnemonicParsing="false" text="%ui.180_rotation_4944" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="default-text" text="Orientation:" />
+                        <Label styleClass="default-text" text="%ui.orientation_9975" />
                      </children>
                   </GridPane>
                </children>
@@ -209,7 +209,7 @@
                               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                            </padding>
                            <top>
-                              <Label fx:id="previewTitle" styleClass="default-text" text="Screen Preview" BorderPane.alignment="CENTER" />
+                              <Label fx:id="previewTitle" styleClass="default-text" text="%ui.screen_preview_9e71" BorderPane.alignment="CENTER" />
                            </top>
                         </BorderPane>
                         <Label fx:id="previewLabel" />

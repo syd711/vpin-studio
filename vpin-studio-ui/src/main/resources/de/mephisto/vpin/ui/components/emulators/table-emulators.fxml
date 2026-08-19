@@ -24,10 +24,10 @@
                         <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" prefWidth="850.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                            <columns>
                               <TableColumn fx:id="columnSelection" maxWidth="55.199952602386475" minWidth="40.0" prefWidth="90.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;" />
-                              <TableColumn fx:id="columnName" maxWidth="-1.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                              <TableColumn fx:id="columnDescription" minWidth="100.0" prefWidth="200.0" style="-fx-alignment: BASELINE_LEFT;" text="Description" />
-                              <TableColumn fx:id="columnGamesDir" minWidth="10.4000244140625" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Games Folder" />
-                              <TableColumn fx:id="columnExtension" minWidth="10.4000244140625" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="Extension" />
+                              <TableColumn fx:id="columnName" maxWidth="-1.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
+                              <TableColumn fx:id="columnDescription" minWidth="100.0" prefWidth="200.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.description_b5a7" />
+                              <TableColumn fx:id="columnGamesDir" minWidth="10.4000244140625" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%ui.games_folder_68f4" />
+                              <TableColumn fx:id="columnExtension" minWidth="10.4000244140625" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.extension_63e4" />
                            </columns>
                         </TableView>
                      </children>
@@ -54,7 +54,7 @@
                            <children>
                               <BorderPane>
                                  <left>
-                                    <Label fx:id="validationErrorLabel" text="Loading Emulators..." textFill="WHITE" BorderPane.alignment="CENTER">
+                                    <Label fx:id="validationErrorLabel" text="%ui.loading_emulators_6282" textFill="WHITE" BorderPane.alignment="CENTER">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>

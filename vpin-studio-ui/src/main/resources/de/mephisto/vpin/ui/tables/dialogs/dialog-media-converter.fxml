@@ -18,8 +18,8 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Start Conversion">
+            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47" />
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.start_conversion_937e">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -38,12 +38,12 @@
          <top>
             <VBox BorderPane.alignment="CENTER_LEFT">
                <children>
-                  <Label styleClass="preference-description" text="Select the screen and media conversion operation.">
+                  <Label styleClass="preference-description" text="%ui.select_the_screen_and_media_conversion_d6df">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The operation will be executed for all eligible files of the selected screen." />
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.the_operation_will_be_executed_for_3a30" />
                </children>
             </VBox>
          </top>
@@ -60,8 +60,8 @@
               </rowConstraints>
                <children>
                   <ComboBox fx:id="screensCombo" GridPane.columnIndex="1" />
-                  <Label styleClass="default-text" text="Screen:" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Conversion:" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="%ui.screen_4e6f" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.conversion_0620" GridPane.rowIndex="1" />
                   <ComboBox fx:id="conversionsCombo" layoutX="105.0" layoutY="10.0" prefWidth="350.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <BorderPane.margin>

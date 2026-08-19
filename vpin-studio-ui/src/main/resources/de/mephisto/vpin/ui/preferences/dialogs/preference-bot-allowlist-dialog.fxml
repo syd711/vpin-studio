@@ -22,14 +22,14 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <right>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" BorderPane.alignment="CENTER" />
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" BorderPane.alignment="CENTER" />
          </right>
       </BorderPane>
    </bottom>
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Select users that are allowed for bot command messages." textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%ui.select_users_that_are_allowed_for_53b3" textFill="WHITE" />
             <GridPane vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="127.79999084472655" />
@@ -39,7 +39,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Discord Server:" textFill="WHITE">
+                  <Label text="%ui.discord_server_9606" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="Resolved Users:" textFill="WHITE">
+            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="%ui.resolved_users_f131" textFill="WHITE">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>

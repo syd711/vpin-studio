@@ -23,12 +23,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="okBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Reset">
+                  <Button fx:id="okBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.reset_526d">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -43,12 +43,12 @@
             <VBox BorderPane.alignment="CENTER">
                <children>
                   <Label fx:id="title" styleClass="default-title" text="-" />
-                  <Label fx:id="multiNVRamLabel" styleClass="preference-description" text="ROM based games will be resetted with a resetted nvram file (if available)." />
-                  <Label fx:id="singleNVRamLabel" styleClass="preference-description" text="The nvram file will be replaced with a resetted one." />
-                  <Label fx:id="singleNVRamNoResetLabel" styleClass="preference-description" text="No resetted nvram file found for this table. The existing one will be deleted and re-created with the default scores." />
+                  <Label fx:id="multiNVRamLabel" styleClass="preference-description" text="%ui.rom_based_games_will_be_resetted_4a10" />
+                  <Label fx:id="singleNVRamLabel" styleClass="preference-description" text="%ui.the_nvram_file_will_be_replaced_a2ff" />
+                  <Label fx:id="singleNVRamNoResetLabel" styleClass="preference-description" text="%ui.no_resetted_nvram_file_found_for_1371" />
                   <VBox fx:id="scoreValueBox" minHeight="60.0">
                      <children>
-                        <Label styleClass="preference-description" text="Enter the value the scores should be resetted to." />
+                        <Label styleClass="preference-description" text="%ui.enter_the_value_the_scores_should_ff1a" />
                         <GridPane hgap="3.0" vgap="3.0">
                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.4000244140625" minWidth="10.0" prefWidth="94.4000244140625" />
@@ -60,10 +60,10 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="Reset Value:" />
+                              <Label styleClass="default-text" text="%ui.reset_value_28e1" />
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label text="ROM based games are not affected by this value." />
+                                    <Label text="%ui.rom_based_games_are_not_affected_6d85" />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
@@ -74,7 +74,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The input is limited to maximum value of &quot;10&quot; here. This allows an easier filtering of resetted scores." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%ui.the_input_is_limited_to_maximum_d998" wrapText="true" />
                                        </tooltip>
                                        <font>
                                           <Font size="14.0" />

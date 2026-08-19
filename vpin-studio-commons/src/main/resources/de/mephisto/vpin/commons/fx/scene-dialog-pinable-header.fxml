@@ -11,7 +11,7 @@
 
 <BorderPane fx:id="header" styleClass="dialog-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.DialogHeaderResizeableController">
    <left>
-      <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="titleLabel" text="%ui.vpin_studio_0d99" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
             <Font name="Impact" size="18.0" />
          </font>
@@ -44,7 +44,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pin" iconSize="16" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Toggle modal behaviour of this dialog." />
+                  <Tooltip text="%ui.toggle_modal_behaviour_of_this_dialog_1b82" />
                </tooltip>
             </Button>
             <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">

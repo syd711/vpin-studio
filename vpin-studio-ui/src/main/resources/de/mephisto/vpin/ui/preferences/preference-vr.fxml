@@ -22,10 +22,10 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="%ui.vpin_studio_frontend_preferences_df20" textFill="WHITE" />
                   <HBox prefWidth="200.0" styleClass="info-container">
                      <children>
-                        <Label styleClass="default-headline" text="This feature is still in an experimental state and needs more testing." />
+                        <Label styleClass="default-headline" text="%ui.this_feature_is_still_in_an_ece2" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -34,29 +34,29 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label styleClass="preference-subtitle" text="VR Settings">
+                  <Label styleClass="preference-subtitle" text="%ui.vr_settings_be07">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="This section configures the VR support via VPin Studio." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%ui.this_section_configures_the_vr_support_8d8d" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="VR Support Enabled">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.vr_support_enabled_7652">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VR Mode Files">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.vr_mode_files_9054">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="Choose which files should be replaced when the VR mode is enabled." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="The files are located in the installation folder of the VPin Studio " textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="256.0" styleClass="preference-description" text="and will be copied to the matching target folder on toggle." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%ui.choose_which_files_should_be_replaced_ad80" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="%ui.the_files_are_located_in_the_4d98" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="256.0" styleClass="preference-description" text="%ui.and_will_be_copied_to_the_3217" textFill="WHITE" />
                   <GridPane hgap="3.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.199951171875" minWidth="10.0" prefWidth="161.2000244140625" />
@@ -75,10 +75,10 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                      <children>
-                        <Label styleClass="default-text" text="DMDDevice.ini (VR):" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%ui.dmddevice_ini_vr_d789" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="Upload...">
+                              <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="%ui.upload_8808">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -86,7 +86,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEditDmdDeviceIni" text="Edit" textFill="WHITE">
+                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEditDmdDeviceIni" text="%ui.edit_7dce" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -96,10 +96,10 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="VPinballX.ini (VR):" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.vpinballx_ini_vr_f75f" GridPane.rowIndex="3" />
                         <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="Upload...">
+                              <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="%ui.upload_8808">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -107,7 +107,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="editBtn1" mnemonicParsing="false" onAction="#onEditVPinballXIni" text="Edit" textFill="WHITE">
+                              <Button fx:id="editBtn1" mnemonicParsing="false" onAction="#onEditVPinballXIni" text="%ui.edit_7dce" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -117,9 +117,9 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="DMDDevice.ini (Original):" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="VPinballX.ini (Original):" GridPane.rowIndex="4" />
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Emulator:" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.dmddevice_ini_original_6078" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.vpinballx_ini_original_4933" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.emulator_920c" />
                         <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="284.0" GridPane.columnIndex="1" />
                         <Label fx:id="dmdDeviceIniText" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label fx:id="dmdDeviceIniTextVr" layoutX="175.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -127,9 +127,9 @@
                         <Label fx:id="vPinballXIniText" layoutX="175.0" layoutY="116.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="195.0" styleClass="preference-subtitle" text="VR Mode Switch" />
-                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="The VR mode can also be toggled via key binding." textFill="WHITE" />
-                  <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="Configure Controller Inputs" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="195.0" styleClass="preference-subtitle" text="%ui.vr_mode_switch_5333" />
+                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="%ui.the_vr_mode_can_also_be_b87c" textFill="WHITE" />
+                  <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%ui.configure_controller_inputs_d5a1" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

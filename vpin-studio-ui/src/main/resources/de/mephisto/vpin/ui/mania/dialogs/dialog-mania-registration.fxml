@@ -25,14 +25,14 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
-            <Label styleClass="default-title" text="VPin Mania Registration" />
-            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="This registers your cabinet for the online service &quot;VPin Mania&quot;.">
+            <Label styleClass="default-title" text="%ui.vpin_mania_registration_0e85" />
+            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.this_registers_your_cabinet_for_the_c726">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="10.0" layoutY="40.0" styleClass="preference-description" text="You need to be registered and have the API key available to register your cabinet." />
-            <CheckBox fx:id="registrationCheckbox" mnemonicParsing="false" styleClass="default-text" text="I understand, register my cabinet.">
+            <Label layoutX="10.0" layoutY="40.0" styleClass="preference-description" text="%ui.you_need_to_be_registered_and_c635" />
+            <CheckBox fx:id="registrationCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.i_understand_register_my_cabinet_512a">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
@@ -41,13 +41,13 @@
                <children>
                   <VBox fx:id="cabinetsBox">
                      <children>
-                        <Label styleClass="default-title" text="Linked Cabinets">
+                        <Label styleClass="default-title" text="%ui.linked_cabinets_a779">
                            <VBox.margin>
                               <Insets bottom="6.0" top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="If you already had registered a cabinet and reinstalled the Studio," />
-                        <Label styleClass="preference-description" text="you can select and link it here again." />
+                        <Label styleClass="preference-description" text="%ui.if_you_already_had_registered_a_9fee" />
+                        <Label styleClass="preference-description" text="%ui.you_can_select_and_link_it_6d46" />
                         <GridPane>
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0000732421875" minWidth="10.0" prefWidth="146.2000244140625" />
@@ -58,7 +58,7 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label styleClass="preference-description" text="Existing Cabinets:" />
+                              <Label styleClass="preference-description" text="%ui.existing_cabinets_65a5" />
                               <ComboBox fx:id="cabinets" prefWidth="400.0" GridPane.columnIndex="1" />
                            </children>
                            <VBox.margin>
@@ -67,16 +67,16 @@
                         </GridPane>
                      </children>
                   </VBox>
-                  <Label styleClass="default-title" text="Privacy Settings">
+                  <Label styleClass="default-title" text="%ui.privacy_settings_a625">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="You can contribute to the global table ratings on VPin Mania by allowing " />
-                  <Label styleClass="preference-description" text="to submit the following data anonymously." />
+                  <Label styleClass="preference-description" text="%ui.you_can_contribute_to_the_global_1b1c" />
+                  <Label styleClass="preference-description" text="%ui.to_submit_the_following_data_anonymously_abf4" />
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
-                        <CheckBox fx:id="synchronizeRatingsCheckbox" mnemonicParsing="false" styleClass="default-text" text="Submit Table Ratings" />
+                        <CheckBox fx:id="synchronizeRatingsCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.submit_table_ratings_c6b9" />
                         <Label textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -85,14 +85,14 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="This will synchronize your table ratings with the existing ones on VPin Mania." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.this_will_synchronize_your_table_ratings_77b1" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
-                        <CheckBox fx:id="synchronizePlayCountCheckbox" mnemonicParsing="false" styleClass="default-text" text="Submit Play Count" />
+                        <CheckBox fx:id="synchronizePlayCountCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.submit_play_count_ea3c" />
                         <Label textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -101,14 +101,14 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="This will synchronize the play count of your tables with the existing ones on VPin Mania." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.this_will_synchronize_the_play_count_2ed6" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="synchronizeTablesCheckbox" mnemonicParsing="false" text="Submit Installed Tables">
+                        <CheckBox fx:id="synchronizeTablesCheckbox" mnemonicParsing="false" text="%ui.submit_installed_tables_5044">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -121,19 +121,19 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="This will synchronize the list of installed tables with VPin Mania." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.this_will_synchronize_the_list_of_f24f" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
                   <VBox fx:id="playersRoot">
                      <children>
-                        <Label styleClass="default-title" text="Player Registration">
+                        <Label styleClass="default-title" text="%ui.player_registration_9073">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="You can add your players to the VPin Mania and synchronize their highscores." />
+                        <Label styleClass="preference-description" text="%ui.you_can_add_your_players_to_00f1" />
                         <VBox fx:id="playerList" spacing="6.0">
                            <VBox.margin>
                               <Insets top="12.0" />
@@ -152,8 +152,8 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-          <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
-            <Button fx:id="okButton" defaultButton="true" disable="true" layoutX="430.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="Register Cabinet" />
+          <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47" />
+            <Button fx:id="okButton" defaultButton="true" disable="true" layoutX="430.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%ui.register_cabinet_bc65" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

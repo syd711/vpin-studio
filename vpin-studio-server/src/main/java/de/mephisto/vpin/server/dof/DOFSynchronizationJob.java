@@ -18,6 +18,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class DOFSynchronizationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(DOFSynchronizationJob.class);
@@ -57,7 +62,7 @@ public class DOFSynchronizationJob implements Job {
             return;
           }
           LOG.info("Extracting DOF config folder {}", targetFolder.getAbsolutePath());
-          result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
+          result.setStatus(ServerMessages.get("dof.sync.status", resolveLocale(), settings.getInstallationPath()));
           RarUtil.unrar(zipFile, targetFolder);
         }
       }

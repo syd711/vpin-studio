@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesAssetViewSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -36,6 +37,7 @@ public class TablesAssetViewSidebarController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(TableAssetManagerDialogController.class.getResource("dialog-table-asset-manager-embedded.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent root = loader.load();
       dialogController = loader.getController();
       assetSidebarVBox.getChildren().add(root);

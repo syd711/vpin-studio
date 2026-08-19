@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 abstract public class AbstractComponentTab implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(AbstractComponentTab.class);
@@ -102,6 +103,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       componentUpdateController = loader.getController();
       componentInstallerPane.setCenter(builtInRoot);
@@ -112,6 +114,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentSummaryController.class.getResource("component-summary-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       componentSummaryController = loader.getController();
       componentSummaryPane.getChildren().add(builtInRoot);
@@ -138,6 +141,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected ComponentSummaryEntryController addCustomValue(ComponentSummaryEntry entry) {
     try {
       FXMLLoader loader = new FXMLLoader(ComponentSummaryEntryController.class.getResource("component-summary-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       ComponentSummaryEntryController controller = loader.getController();
 

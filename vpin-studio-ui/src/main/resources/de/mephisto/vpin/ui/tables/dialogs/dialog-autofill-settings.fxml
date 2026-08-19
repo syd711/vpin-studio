@@ -15,8 +15,8 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
-            <Button fx:id="autoFillBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAutoFill" styleClass="submit-button" text="Auto-Fill">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47" />
+            <Button fx:id="autoFillBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAutoFill" styleClass="submit-button" text="%ui.auto_fill_35a9">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -38,7 +38,7 @@
                   <Insets bottom="24.0" />
                </BorderPane.margin>
                <children>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select the fields that should be written on auto-fill.">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.select_the_fields_that_should_be_30c4">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin></Label>
@@ -46,28 +46,28 @@
                      <children>
                         <VBox spacing="6.0">
                            <children>
-                              <CheckBox fx:id="author" mnemonicParsing="false" styleClass="default-text" text="Author" />
-                              <CheckBox fx:id="category" mnemonicParsing="false" styleClass="default-text" text="Category" />
-                              <CheckBox fx:id="designBy" mnemonicParsing="false" styleClass="default-text" text="Design By" />
-                              <CheckBox fx:id="details" mnemonicParsing="false" styleClass="default-text" text="Details" />
-                              <CheckBox fx:id="gameTheme" mnemonicParsing="false" styleClass="default-text" text="Game Theme" />
+                              <CheckBox fx:id="author" mnemonicParsing="false" styleClass="default-text" text="%ui.author_a517" />
+                              <CheckBox fx:id="category" mnemonicParsing="false" styleClass="default-text" text="%ui.category_3adb" />
+                              <CheckBox fx:id="designBy" mnemonicParsing="false" styleClass="default-text" text="%ui.design_by_4561" />
+                              <CheckBox fx:id="details" mnemonicParsing="false" styleClass="default-text" text="%ui.details_3ec3" />
+                              <CheckBox fx:id="gameTheme" mnemonicParsing="false" styleClass="default-text" text="%ui.game_theme_809a" />
                            </children>
                         </VBox>
                         <VBox spacing="6.0">
                            <children>
-                              <CheckBox fx:id="gameType" mnemonicParsing="false" styleClass="default-text" text="Game Type" />
-                              <CheckBox fx:id="gameVersion" mnemonicParsing="false" styleClass="default-text" text="Game Version" />
-                              <CheckBox fx:id="gameYear" mnemonicParsing="false" styleClass="default-text" text="Game Year" />
-                              <CheckBox fx:id="ipdbNumber" mnemonicParsing="false" styleClass="default-text" text="IPDB Number" />
-                              <CheckBox fx:id="manufacturer" mnemonicParsing="false" styleClass="default-text" text="Manufacturer" />
+                              <CheckBox fx:id="gameType" mnemonicParsing="false" styleClass="default-text" text="%ui.game_type_4ee3" />
+                              <CheckBox fx:id="gameVersion" mnemonicParsing="false" styleClass="default-text" text="%ui.game_version_70e2" />
+                              <CheckBox fx:id="gameYear" mnemonicParsing="false" styleClass="default-text" text="%ui.game_year_59a1" />
+                              <CheckBox fx:id="ipdbNumber" mnemonicParsing="false" styleClass="default-text" text="%ui.ipdb_number_f73d" />
+                              <CheckBox fx:id="manufacturer" mnemonicParsing="false" styleClass="default-text" text="%ui.manufacturer_c0bd" />
                            </children>
                         </VBox>
                         <VBox layoutX="168.0" layoutY="10.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="notes" mnemonicParsing="false" styleClass="default-text" text="Notes" />
-                              <CheckBox fx:id="numberOfPlayers" mnemonicParsing="false" styleClass="default-text" text="Number Of Players" />
-                              <CheckBox fx:id="tags" mnemonicParsing="false" styleClass="default-text" text="Tags" />
-                              <CheckBox fx:id="url" mnemonicParsing="false" styleClass="default-text" text="URL" />
+                              <CheckBox fx:id="notes" mnemonicParsing="false" styleClass="default-text" text="%ui.notes_f4c6" />
+                              <CheckBox fx:id="numberOfPlayers" mnemonicParsing="false" styleClass="default-text" text="%ui.number_of_players_4863" />
+                              <CheckBox fx:id="tags" mnemonicParsing="false" styleClass="default-text" text="%ui.tags_189f" />
+                              <CheckBox fx:id="url" mnemonicParsing="false" styleClass="default-text" text="%ui.url_e6b3" />
                            </children>
                         </VBox>
                      </children>
@@ -76,7 +76,7 @@
             </VBox>
          </center>
          <bottom>
-            <CheckBox fx:id="overwrite" mnemonicParsing="false" styleClass="default-text" text="Overwrite existing values" BorderPane.alignment="CENTER_LEFT" />
+            <CheckBox fx:id="overwrite" mnemonicParsing="false" styleClass="default-text" text="%ui.overwrite_existing_values_d00d" BorderPane.alignment="CENTER_LEFT" />
          </bottom>
       </BorderPane>
    </center>

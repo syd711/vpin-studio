@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ManiaPrivacySettingsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaPrivacySettingsController.class);
@@ -222,6 +223,7 @@ public class ManiaPrivacySettingsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(CabinetRowPanelController.class.getResource("cabinet-row-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Pane node = loader.load();
       CabinetRowPanelController friendController = loader.getController();
       friendController.setData(this, maniaClient.getCabinetClient().getDefaultCabinetCached());

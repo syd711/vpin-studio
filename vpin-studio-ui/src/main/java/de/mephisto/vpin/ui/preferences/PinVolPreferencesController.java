@@ -40,6 +40,7 @@ import java.util.function.UnaryOperator;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PinVolPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PinVolPreferencesController.class);
@@ -102,6 +103,7 @@ public class PinVolPreferencesController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
       pinVolController.setData(stage, Collections.emptyList(), true);

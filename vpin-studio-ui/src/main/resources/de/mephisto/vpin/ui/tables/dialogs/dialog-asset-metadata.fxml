@@ -14,7 +14,7 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="closeBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
+            <Button fx:id="closeBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="%ui.close_d3d2">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

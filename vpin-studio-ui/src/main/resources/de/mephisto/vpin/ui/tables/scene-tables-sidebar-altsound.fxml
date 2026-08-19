@@ -25,18 +25,18 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%ui.label_b021" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                        <Hyperlink onAction="#onDismiss" text="%ui.dismiss_c8a5" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%ui.label_b021" wrapText="true" />
                </children>
             </VBox>
               <VBox fx:id="dataBox">
                   <children>
-                  <Label text="ALT Sound Data" textFill="WHITE">
+                  <Label text="%ui.alt_sound_data_2deb" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -63,17 +63,17 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="CSV Entries:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%ui.csv_entries_1c67" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Audio Files:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" text="%ui.audio_files_7cc0" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Bundle Size (unpacked):" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="45.0" text="%ui.bundle_size_unpacked_2c81" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -93,12 +93,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="45.0" text="%ui.last_modified_3845" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Format:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="45.0" text="%ui.format_fb2e" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -108,7 +108,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Name:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" text="%ui.name_4e14" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -130,16 +130,16 @@
               </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="No ALT sounds found." textFill="WHITE">
+                  <Label text="%ui.no_alt_sounds_found_4f87" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                  <Label styleClass="preference-description" text="%ui.open_the_visual_pinball_spreadsheet_section_a20e">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin></Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
+                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%ui.upload_downloaded_resources_here_3da5" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
@@ -151,7 +151,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%ui.upload_9141" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -160,7 +160,7 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%ui.reload_4d1c">
                <font>
                   <Font size="14.0" />
                </font>
@@ -168,7 +168,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%ui.delete_f2a6" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>
@@ -177,7 +177,7 @@
                </graphic>
             </Button>
             <Separator layoutX="204.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-          <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="Edit" textFill="WHITE">
+          <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="%ui.edit_7dce" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -185,7 +185,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
+            <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="%ui.restore_2bd3" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

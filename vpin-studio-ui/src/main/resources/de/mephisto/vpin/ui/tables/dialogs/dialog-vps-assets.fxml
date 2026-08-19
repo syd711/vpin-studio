@@ -21,14 +21,14 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
-            <Label text="Table Name" textFill="WHITE">
+            <Label text="%ui.table_name_8fa7" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
             <HBox>
                <children>
-                  <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="533.0" promptText="Enter Table Name...">
+                  <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="533.0" promptText="%ui.enter_table_name_58e4">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -46,7 +46,7 @@
                   </Button>
                </children>
             </HBox>
-            <Label text="Additional Assets" textFill="WHITE">
+            <Label text="%ui.additional_assets_c66a" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -65,7 +65,7 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="Close" />
+          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%ui.close_d3d2" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

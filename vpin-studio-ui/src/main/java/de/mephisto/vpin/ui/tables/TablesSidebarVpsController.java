@@ -56,6 +56,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarVpsController implements Initializable, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion>, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -573,6 +574,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private static VBox addSectionHeader(VBox dataRoot, String title) {
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarVpsController.class.getResource("section-vps.fxml"));
+      loader.setResources(Messages.getBundle());
       Pane section = loader.load();
       Label label = (Label) section.getChildren().getFirst();
       label.setText(title);

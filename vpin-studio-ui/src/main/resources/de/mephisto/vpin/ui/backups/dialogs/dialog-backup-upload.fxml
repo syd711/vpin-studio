@@ -20,12 +20,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_9141">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -41,11 +41,11 @@
          <center>
             <VBox>
                <children>
-                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="The tables will be added to the backup and can be installed from there.">
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="%ui.the_tables_will_be_added_to_ba3b">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin></Label>
-                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="To install an archive directly, drop it on the tables overview or into the drop-in folder." />
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="%ui.to_install_an_archive_directly_drop_eb9d" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.5999755859375" minWidth="10.0" prefWidth="148.8" />
@@ -58,7 +58,7 @@
                      <children>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="Select .vpa files to upload.">
+                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="%ui.select_vpa_files_to_upload_f988">
                                  <HBox.margin>
                                     <Insets right="12.0" />
                                  </HBox.margin>
@@ -66,7 +66,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select Files...">
+                              <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_files_79e6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -74,12 +74,12 @@
                            </children>
                         </HBox>
                         <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
-                        <Label text="Archive Folder:" textFill="WHITE">
+                        <Label text="%ui.archive_folder_0556" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="Archive Files:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%ui.archive_files_8a00" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

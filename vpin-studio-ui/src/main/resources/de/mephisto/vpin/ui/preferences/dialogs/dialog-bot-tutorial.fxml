@@ -19,15 +19,15 @@
          <content>
             <VBox>
                <children>
-                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="1. Login to the Discord Developer Portal" />
-                  <Label styleClass="preference-description" text="Login or register at the Discord developer portal:" />
-                  <Hyperlink text="https://discord.com/developers/applications" textFill="WHITE">
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.1_login_to_the_discord_developer_65e4" />
+                  <Label styleClass="preference-description" text="%ui.login_or_register_at_the_discord_e791" />
+                  <Hyperlink text="%ui.https_discord_com_developers_applications_b67b" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Hyperlink>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Create a New Application" />
-                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="Once logged in, click on &quot;New Application&quot; in the &quot;Applications&quot; section.">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.2_create_a_new_application_ca3c" />
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%ui.once_logged_in_click_on_new_d889">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,12 +40,12 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="Enter the name of the application. Note that the application will not match the name that is later displayed in the channel. ">
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%ui.enter_the_name_of_the_application_18fe">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="555.0" styleClass="preference-description" text="We come back to that later.">
+                  <Label layoutX="34.0" layoutY="555.0" styleClass="preference-description" text="%ui.we_come_back_to_that_later_2a39">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -58,13 +58,13 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Create a New Bot" />
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="You are starting at the &quot;General Information&quot; overview for your new application.">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.2_create_a_new_bot_246b" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%ui.you_are_starting_at_the_general_f770">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="1115.0" styleClass="preference-description" text="You can upload an icon for your app, but it's not necessary since it is only shown in Discord's developer portal.">
+                  <Label layoutX="34.0" layoutY="1115.0" styleClass="preference-description" text="%ui.you_can_upload_an_icon_for_c17c">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -77,7 +77,7 @@
                         <Image url="@../../screenshots/bot/general-information.png" />
                      </image>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="1135.0" styleClass="preference-description" text="Instead, select &quot;Bot&quot; in the navigation panel.">
+                  <Label layoutX="34.0" layoutY="1135.0" styleClass="preference-description" text="%ui.instead_select_bot_in_the_navigation_a828">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -90,23 +90,23 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="Choose an icon and name here. ">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%ui.choose_an_icon_and_name_here_84e2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-description" text="These values are the ones which are later shown for the bot after it has been added to a server.">
+                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-description" text="%ui.these_values_are_the_ones_which_2b88">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="1077.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="3. Set Bot Permissions" />
-                  <Label layoutX="34.0" layoutY="2409.0" styleClass="preference-description" text="Our bot should read the member names and send messages. ">
+                  <Label layoutX="34.0" layoutY="1077.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.3_set_bot_permissions_9b76" />
+                  <Label layoutX="34.0" layoutY="2409.0" styleClass="preference-description" text="%ui.our_bot_should_read_the_member_93f6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2800.0" styleClass="preference-description" text="Scroll down a little bit and enable the settings for &quot;SERVER MEMBERS INTENT&quot; and &quot;MESSAGE CONTENT INTENT&quot;.">
+                  <Label layoutX="34.0" layoutY="2800.0" styleClass="preference-description" text="%ui.scroll_down_a_little_bit_and_1865">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -119,18 +119,18 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="4. Publish Bot Your Server" />
-                  <Label layoutX="34.0" layoutY="2916.0" styleClass="preference-description" text="In the next step, we generate a link that will add the bot to your server.">
+                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.4_publish_bot_your_server_ae2f" />
+                  <Label layoutX="34.0" layoutY="2916.0" styleClass="preference-description" text="%ui.in_the_next_step_we_generate_6d59">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2487.0" styleClass="preference-description" text="Select &quot;OAuth2&quot; and scroll to the &quot;URL Generator&quot; section.">
+                  <Label layoutX="34.0" layoutY="2487.0" styleClass="preference-description" text="%ui.select_oauth2_and_scroll_to_the_a849">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2936.0" styleClass="preference-description" text="Set &quot;SCOPES&quot; to &quot;bot&quot;.">
+                  <Label layoutX="34.0" layoutY="2936.0" styleClass="preference-description" text="%ui.set_scopes_to_bot_d980">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -143,7 +143,7 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="2379.0" styleClass="preference-description" text="Scroll further down to &quot;Bot Permissions&quot; and set the following flags:">
+                  <Label layoutX="34.0" layoutY="2379.0" styleClass="preference-description" text="%ui.scroll_further_down_to_bot_permissions_ff3f">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -156,7 +156,7 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="2960.0" styleClass="preference-description" text="Scroll down a bit and copy the link and open it in a new browser tab.">
+                  <Label layoutX="34.0" layoutY="2960.0" styleClass="preference-description" text="%ui.scroll_down_a_bit_and_copy_270e">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -169,22 +169,22 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="3464.0" styleClass="preference-description" text="Select the server where the bot should be deployed to and finish the authorization steps.">
+                  <Label layoutX="34.0" layoutY="3464.0" styleClass="preference-description" text="%ui.select_the_server_where_the_bot_6f3e">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="3891.0" styleClass="preference-description" text="Congratulations! You have created and added a new bot to your Discord server. ">
+                  <Label layoutX="34.0" layoutY="3891.0" styleClass="preference-description" text="%ui.congratulations_you_have_created_and_added_6acb">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="3911.0" styleClass="preference-description" text="You should get a notification that the bot joined your server.">
+                  <Label layoutX="34.0" layoutY="3911.0" styleClass="preference-description" text="%ui.you_should_get_a_notification_that_da67">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="3928.0" styleClass="preference-description" text="In the next step, we have to configure the VPin Studio, so that it can communicate with the bot.">
+                  <Label layoutX="34.0" layoutY="3928.0" styleClass="preference-description" text="%ui.in_the_next_step_we_have_92e3">
                      <font>
                         <Font size="14.0" />
                      </font>

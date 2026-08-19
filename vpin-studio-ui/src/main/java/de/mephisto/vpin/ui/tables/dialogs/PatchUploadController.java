@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PatchUploadController extends BaseUploadController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -199,6 +200,7 @@ public class PatchUploadController extends BaseUploadController {
 
     try {
       FXMLLoader loader = new FXMLLoader(AssetFilterPanelController.class.getResource("asset-filter-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       assetsFilterPanel = loader.load();
       assetsFilterPanel.managedProperty().bindBidirectional(assetsFilterPanel.visibleProperty());
       assetFilterPanelController = loader.getController();

@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WaitOverlay {
   private final static Logger LOG = LoggerFactory.getLogger(WaitOverlay.class);
@@ -25,6 +26,7 @@ public class WaitOverlay {
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       this.overlay = loader.load();
       this.controller = loader.getController();
       controller.setLoadingMessage(message);

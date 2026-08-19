@@ -40,7 +40,7 @@
                         <Insets />
                      </VBox.margin>
                      <tabs>
-                        <Tab closable="false" text="Details">
+                        <Tab closable="false" text="%ui.details_3ec3">
                            <content>
                               <ScrollPane fx:id="detailsScroller" hbarPolicy="NEVER">
                                  <content>
@@ -50,7 +50,7 @@
                                              <children>
                                                 <BorderPane>
                                                    <left>
-                                                      <Label styleClass="default-title" text="Table Details" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <Label styleClass="default-title" text="%ui.table_details_3ecf" textFill="WHITE" BorderPane.alignment="CENTER">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
@@ -78,7 +78,7 @@
                                                   </rowConstraints>
                                                    <children>
                                                       <!-- row 0: Display Name -->
-                                                      <Label styleClass="default-text" text="Display Name:" textFill="WHITE">
+                                                      <Label styleClass="default-text" text="%ui.display_name_3322" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -92,7 +92,7 @@
                                                          <children>
                                                             <Label>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="If enabled, the display name will be updated on table version selection." wrapText="true" />
+                                                                  <Tooltip prefWidth="300.0" text="%ui.if_enabled_the_display_name_will_d7ba" wrapText="true" />
                                                                </tooltip>
                                                                <font>
                                                                   <Font size="14.0" />
@@ -104,7 +104,7 @@
                                                          </children>
                                                       </HBox>
                                                       <!-- row 1: File Name -->
-                                                      <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="File Name:" GridPane.rowIndex="1">
+                                                      <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="%ui.file_name_708e" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -119,7 +119,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="Changing the game file name will also rename the depending files (.directb2s, .ini). Renaming of VPX files located in subfolders is not supported." wrapText="true" />
+                                                            <Tooltip prefWidth="300.0" text="%ui.changing_the_game_file_name_will_e306" wrapText="true" />
                                                          </tooltip>
                                                          <font>
                                                             <Font size="14.0" />
@@ -134,10 +134,10 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <tooltip>
-                                                            <Tooltip text="Every table will be added to the first playlist that is found." />
+                                                            <Tooltip text="%ui.every_table_will_be_added_to_a441" />
                                                          </tooltip>
                                                       </Label>
-                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Asset Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.asset_name_4bf9" textFill="WHITE" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -159,14 +159,14 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="Changing the game name will also rename all media assets linked to this table." wrapText="true" />
+                                                            <Tooltip prefWidth="300.0" text="%ui.changing_the_game_name_will_also_d0cc" wrapText="true" />
                                                          </tooltip>
                                                          <GridPane.margin>
                                                             <Insets left="3.0" />
                                                          </GridPane.margin>
                                                       </Label>
                                                       <!-- row 3: Version -->
-                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Version:*" GridPane.rowIndex="3">
+                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.version_143b" GridPane.rowIndex="3">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -178,7 +178,7 @@
                                                       </TextField>
                                                       <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                          <children>
-                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
+                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%ui.fix_version_2599" textFill="WHITE">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -194,7 +194,7 @@
                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the database." wrapText="true" />
+                                                                  <Tooltip prefWidth="300.0" text="%ui.enabled_if_the_spreadsheet_version_differs_6772" wrapText="true" />
                                                                </tooltip>
                                                             </Label>
                                                          </children>
@@ -218,7 +218,7 @@
                                                     <RowConstraints />
                                                   </rowConstraints>
                                                    <children>
-                                                      <Label styleClass="default-text" text="Patch Version:">
+                                                      <Label styleClass="default-text" text="%ui.patch_version_e3c1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -236,7 +236,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="If the table has been patched, you can add the patch info here." wrapText="true" />
+                                                            <Tooltip prefWidth="300.0" text="%ui.if_the_table_has_been_patched_6f37" wrapText="true" />
                                                          </tooltip>
                                                          <GridPane.margin>
                                                             <Insets left="3.0" />
@@ -254,16 +254,16 @@
                                           </VBox>
                                           <VBox fx:id="vpsPanel" minHeight="260.0" prefHeight="260.0" styleClass="navigation-panel">
                                              <children>
-                                                <Label styleClass="default-title" text="Virtual Pinball Spreadsheet Entry" textFill="WHITE">
+                                                <Label styleClass="default-title" text="%ui.virtual_pinball_spreadsheet_entry_366b" textFill="WHITE">
                                                    <font>
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                                                    <children>
-                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
+                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="%ui.auto_match_3142" textFill="WHITE">
                                                          <items>
-                                                            <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="Auto-Match All">
+                                                            <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%ui.auto_match_all_7bce">
                                                                <graphic>
                                                                   <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
                                                                      <font>
@@ -280,10 +280,10 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
+                                                            <Tooltip text="%ui.tries_to_resolve_the_matching_vps_a1be" />
                                                          </tooltip>
                                                       </SplitMenuButton>
-                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset" textFill="WHITE">
+                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="%ui.reset_526d" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -291,10 +291,10 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="Resets the assigned VPS table mapping." />
+                                                            <Tooltip text="%ui.resets_the_assigned_vps_table_mapping_8555" />
                                                          </tooltip>
                                                       </Button>
-                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Data" textFill="WHITE">
+                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="%ui.auto_apply_data_c544" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -310,7 +310,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="If enabled applying the the new table or table version will immdiately write the changes to the server. Otherwise, only the VPS mapping will change, not the table's meta data." wrapText="true" />
+                                                            <Tooltip prefWidth="300.0" text="%ui.if_enabled_applying_the_the_new_e919" wrapText="true" />
                                                          </tooltip>
                                                       </Label>
                                                    </children>
@@ -329,21 +329,21 @@
                                                       <RowConstraints minHeight="10.0" prefHeight="128.0" valignment="TOP" vgrow="SOMETIMES" />
                                                    </rowConstraints>
                                                    <children>
-                                                      <Label text="Name:" textFill="WHITE">
+                                                      <Label text="%ui.name_4e14" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <HBox spacing="6.0" GridPane.columnIndex="1">
                                                          <children>
-                                                            <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="Enter Table Name...">
+                                                            <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="%ui.enter_table_name_58e4">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
                                                          </children>
                                                       </HBox>
-                                                      <Label layoutX="10.0" layoutY="168.0" text="Table Version:" textFill="WHITE" GridPane.rowIndex="1">
+                                                      <Label layoutX="10.0" layoutY="168.0" text="%ui.table_version_c14a" textFill="WHITE" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -377,7 +377,7 @@
                                                                   <Insets />
                                                                </HBox.margin>
                                                                <tooltip>
-                                                                  <Tooltip text="Open Virtual Pinball Spreadsheet entry" />
+                                                                  <Tooltip text="%ui.open_virtual_pinball_spreadsheet_entry_97ec" />
                                                                </tooltip>
                                                             </Button>
                                                          </children>
@@ -397,7 +397,7 @@
                                                                         <Font size="14.0" />
                                                                      </font>
                                                                      <tooltip>
-                                                                        <Tooltip text="Copy VPS Table Version URL" />
+                                                                        <Tooltip text="%ui.copy_vps_table_version_url_430b" />
                                                                      </tooltip>
                                                                   </Button>
                                                                   <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
@@ -408,7 +408,7 @@
                                                                         <Font size="14.0" />
                                                                      </font>
                                                                      <tooltip>
-                                                                        <Tooltip text="Download Table" />
+                                                                        <Tooltip text="%ui.download_table_016d" />
                                                                      </tooltip>
                                                                   </Button>
                                                                </children>
@@ -437,15 +437,15 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="scoreDataTab" closable="false" text="Score Data">
+                        <Tab fx:id="scoreDataTab" closable="false" text="%ui.score_data_4821">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" />
                           </content>
                         </Tab>
-                         <Tab fx:id="optionsTab" text="Options" closable="false" />
-                        <Tab fx:id="commentsTab" closable="false" text="Tags &amp; Comments" />
-                        <Tab fx:id="playlistsTab" closable="false" text="Playlists" />
-                        <Tab fx:id="metaDataTab" closable="false" text="Meta Data">
+                         <Tab fx:id="optionsTab" text="%ui.options_dae8" closable="false" />
+                        <Tab fx:id="commentsTab" closable="false" text="%ui.tags_comments_8784" />
+                        <Tab fx:id="playlistsTab" closable="false" text="%ui.playlists_008e" />
+                        <Tab fx:id="metaDataTab" closable="false" text="%ui.meta_data_505c">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
@@ -455,7 +455,7 @@
                                              <children>
                                                 <BorderPane>
                                                    <left>
-                                                      <Label styleClass="default-title" text="Meta Data Information" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <Label styleClass="default-title" text="%ui.meta_data_information_b7ae" textFill="WHITE" BorderPane.alignment="CENTER">
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
                                                          </font>
@@ -464,9 +464,9 @@
                                                    <right>
                                                       <HBox BorderPane.alignment="CENTER_RIGHT">
                                                          <children>
-                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
+                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%ui.auto_fill_35a9" textFill="WHITE">
                                                                <items>
-                                                                  <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                                  <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%ui.auto_fill_all_1fc4">
                                                                      <graphic>
                                                                         <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
                                                                            <font>
@@ -483,7 +483,7 @@
                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
+                                                                  <Tooltip prefWidth="350.0" text="%ui.fill_the_table_data_with_values_29ab" wrapText="true" />
                                                                </tooltip>
                                                             </SplitMenuButton>
                                                          </children>
@@ -518,14 +518,14 @@
                                                    </rowConstraints>
                                                    <children>
                                                       <!-- row 0: Status -->
-                                                      <Label text="Status:" textFill="WHITE">
+                                                      <Label text="%ui.status_24a2" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                                       <!-- row 1: Media Search -->
-                                                      <Label layoutX="10.0" layoutY="15.0" text="Media Search:" textFill="WHITE" GridPane.rowIndex="1">
+                                                      <Label layoutX="10.0" layoutY="15.0" text="%ui.media_search_aa5b" textFill="WHITE" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -543,7 +543,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="350.0" text="This value is used for the media search. If you want to use the filename, leave this value blank. Otherwise make sure the value ends with a '*' symbol, e.g. &quot;MyTable*&quot;" wrapText="true" />
+                                                            <Tooltip prefWidth="350.0" text="%ui.this_value_is_used_for_the_d443" wrapText="true" />
                                                          </tooltip>
                                                       </Label>
                                                       <!-- row 2: Game Type -->
@@ -552,7 +552,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <graphic>
-                                                            <Label styleClass="default-text" text="Game Type:*">
+                                                            <Label styleClass="default-text" text="%ui.game_type_4dfd">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -561,14 +561,14 @@
                                                       </Label>
                                                       <ComboBox fx:id="gameTypeCombo" editable="true" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                       <!-- row 3: Game Theme -->
-                                                      <Label styleClass="default-text" text="Game Theme:*" GridPane.rowIndex="3">
+                                                      <Label styleClass="default-text" text="%ui.game_theme_acb1" GridPane.rowIndex="3">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <ComboBox fx:id="gameTheme" editable="true" layoutX="213.0" layoutY="44.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                       <!-- row 4: Game Year -->
-                                                      <Label styleClass="default-text" text="Game Year:*" GridPane.rowIndex="4">
+                                                      <Label styleClass="default-text" text="%ui.game_year_259c" GridPane.rowIndex="4">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -583,14 +583,14 @@
                                                          </children>
                                                       </HBox>
                                                       <!-- row 5: Manufacturer -->
-                                                      <Label styleClass="default-text" text="Manufacturer:*" GridPane.rowIndex="5">
+                                                      <Label styleClass="default-text" text="%ui.manufacturer_a920" GridPane.rowIndex="5">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <ComboBox fx:id="manufacturer" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                                       <!-- row 6: Author -->
-                                                      <Label styleClass="default-text" text="Author:*" GridPane.rowIndex="6">
+                                                      <Label styleClass="default-text" text="%ui.author_db0c" GridPane.rowIndex="6">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -601,28 +601,28 @@
                                                          </font>
                                                       </TextField>
                                                       <!-- row 7: Category -->
-                                                      <Label styleClass="default-text" text="Category:*" GridPane.rowIndex="7">
+                                                      <Label styleClass="default-text" text="%ui.category_b439" GridPane.rowIndex="7">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <ComboBox fx:id="category" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                                       <!-- row 8: Number of Players -->
-                                                      <Label styleClass="default-text" text="Number of Players:*" GridPane.rowIndex="8">
+                                                      <Label styleClass="default-text" text="%ui.number_of_players_c878" GridPane.rowIndex="8">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <Spinner fx:id="numberOfPlayers" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                                                       <!-- row 9: Game Rating -->
-                                                      <Label styleClass="default-text" text="Game Rating:" GridPane.rowIndex="9">
+                                                      <Label styleClass="default-text" text="%ui.game_rating_64e0" GridPane.rowIndex="9">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
                                                       <Spinner fx:id="gameRating" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                                       <!-- row 10: IPDB Number -->
-                                                      <Label styleClass="default-text" text="IPDB Number:*" GridPane.rowIndex="10">
+                                                      <Label styleClass="default-text" text="%ui.ipdb_number_37bf" GridPane.rowIndex="10">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -640,11 +640,11 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                            <Tooltip text="%ui.https_virtual_pinball_spreadsheet_web_app_e4f3" />
                                                          </tooltip>
                                                       </Button>
                                                       <!-- row 11: URL -->
-                                                      <Label styleClass="default-text" text="URL:*" GridPane.rowIndex="11">
+                                                      <Label styleClass="default-text" text="%ui.url_7990" GridPane.rowIndex="11">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -662,14 +662,14 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                            <Tooltip text="%ui.https_virtual_pinball_spreadsheet_web_app_e4f3" />
                                                          </tooltip>
                                                          <GridPane.margin>
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
                                                       <!-- row 12: Designed By -->
-                                                      <Label styleClass="default-text" text="Designed By:*" GridPane.rowIndex="12">
+                                                      <Label styleClass="default-text" text="%ui.designed_by_7eae" GridPane.rowIndex="12">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -680,7 +680,7 @@
                                                          </font>
                                                       </TextField>
                                                       <!-- row 13: Web DB Id -->
-                                                      <Label styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="13">
+                                                      <Label styleClass="default-text" text="%ui.web_db_id_3d56" GridPane.rowIndex="13">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -698,11 +698,11 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                            <Tooltip prefWidth="350.0" text="%ui.this_field_is_reserved_by_the_c1a2" wrapText="true" />
                                                          </tooltip>
                                                       </Label>
                                                       <!-- row 14: Web Link -->
-                                                      <Label styleClass="default-text" text="Web Link:" GridPane.rowIndex="14">
+                                                      <Label styleClass="default-text" text="%ui.web_link_fb76" GridPane.rowIndex="14">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -720,14 +720,14 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                            <Tooltip text="%ui.https_virtual_pinball_spreadsheet_web_app_e4f3" />
                                                          </tooltip>
                                                          <GridPane.margin>
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
                                                       <!-- row 15: Is Mod -->
-                                                      <Label styleClass="default-text" text="Is Mod:" GridPane.rowIndex="15">
+                                                      <Label styleClass="default-text" text="%ui.is_mod_dc1e" GridPane.rowIndex="15">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -738,7 +738,7 @@
                                                          </font>
                                                       </CheckBox>
                                                       <!-- row 16: Tournament Id -->
-                                                      <Label styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="16">
+                                                      <Label styleClass="default-text" text="%ui.tournament_id_f3ee" GridPane.rowIndex="16">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -749,7 +749,7 @@
                                                          </font>
                                                       </TextField>
                                                       <!-- row 17: Notes -->
-                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="17">
+                                                      <Label styleClass="default-text" text="%ui.notes_c98d" GridPane.rowIndex="17">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -774,13 +774,13 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="customizationTab" closable="false" text="Settings">
+                        <Tab fx:id="customizationTab" closable="false" text="%ui.settings_f4f7">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
                                     <VBox fx:id="customizationRoot">
                                        <children>
-                                          <Label styleClass="default-title" text="Launch and Runtime Settings" textFill="WHITE">
+                                          <Label styleClass="default-title" text="%ui.launch_and_runtime_settings_1f40" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -798,7 +798,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                               <Label text="Alternative Launcher:" textFill="WHITE">
+                                               <Label text="%ui.alternative_launcher_70e4" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -814,7 +814,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="If no value is set, the frontend default will be used." />
+                                                            <Tooltip text="%ui.if_no_value_is_set_the_9e07" />
                                                          </tooltip>
                                                       </Label>
                                                    </children>
@@ -842,7 +842,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label styleClass="default-text" text="Alternative Run Mode:" GridPane.rowIndex="1">
+                                                <Label styleClass="default-text" text="%ui.alternative_run_mode_dc91" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -853,14 +853,14 @@
                                                    </font>
                                                 </TextField>
 
-                                                <Label styleClass="default-text" text="Custom Launch Parameters:" GridPane.rowIndex="3">
+                                                <Label styleClass="default-text" text="%ui.custom_launch_parameters_f45e" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <ComboBox fx:id="launchCustomVar" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                                                <Label styleClass="default-text" text="Custom 2:" GridPane.rowIndex="4">
+                                                <Label styleClass="default-text" text="%ui.custom_2_8bf0" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -874,11 +874,11 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                      <Tooltip prefWidth="350.0" text="%ui.this_field_is_reserved_by_the_c1a2" wrapText="true" />
                                                    </tooltip>
                                                 </Label>
 
-                                                <Label styleClass="default-text" text="Custom 3:" GridPane.rowIndex="5">
+                                                <Label styleClass="default-text" text="%ui.custom_3_321b" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -892,11 +892,11 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                      <Tooltip prefWidth="350.0" text="%ui.this_field_is_reserved_by_the_c1a2" wrapText="true" />
                                                    </tooltip>
                                                 </Label>
 
-                                                <Label styleClass="default-text" text="Custom 4:" textFill="WHITE" GridPane.rowIndex="6">
+                                                <Label styleClass="default-text" text="%ui.custom_4_7952" textFill="WHITE" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -914,11 +914,11 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                      <Tooltip prefWidth="350.0" text="%ui.this_field_is_reserved_by_the_c1a2" wrapText="true" />
                                                    </tooltip>
                                                 </Label>
 
-                                                <Label styleClass="default-text" text="Custom 5:" textFill="WHITE" GridPane.rowIndex="7">
+                                                <Label styleClass="default-text" text="%ui.custom_5_f3ad" textFill="WHITE" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -936,11 +936,11 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                      <Tooltip prefWidth="350.0" text="%ui.this_field_is_reserved_by_the_c1a2" wrapText="true" />
                                                    </tooltip>
                                                 </Label>
 
-                                                <Label styleClass="default-text" text="DOF Parameters:" GridPane.rowIndex="8">
+                                                <Label styleClass="default-text" text="%ui.dof_parameters_db6b" GridPane.rowIndex="8">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -953,7 +953,7 @@
 
                                                 <HBox GridPane.rowIndex="10">
                                                    <children>
-                                                      <Label text="Table Volume:  " textFill="WHITE">
+                                                      <Label text="%ui.table_volume_a412" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -966,7 +966,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="Launches the game at the given volume level (%based on current PC Volume)" />
+                                                            <Tooltip text="%ui.launches_the_game_at_the_given_4c19" />
                                                          </tooltip>
                                                       </Label>
                                                    </children>
@@ -976,7 +976,7 @@
                                              </children>
                                           </GridPane>
 
-                                          <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="PinVol Settings" textFill="WHITE">
+                                          <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="%ui.pinvol_settings_6e03" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -993,13 +993,13 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="extrasTab" closable="false" text="Extras">
+                        <Tab fx:id="extrasTab" closable="false" text="%ui.extras_0a3f">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
                                     <VBox>
                                        <children>
-                                          <Label styleClass="default-title" text="Table Extras" textFill="WHITE">
+                                          <Label styleClass="default-title" text="%ui.table_extras_297c" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -1030,25 +1030,25 @@
                                                       <Insets />
                                                    </GridPane.margin>
                                                 </TextArea>
-                                                <Label styleClass="default-text" text="Details:*">
+                                                <Label styleClass="default-text" text="%ui.details_0c57">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <TextArea fx:id="gNotes" prefHeight="170.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="1">
+                                                <Label styleClass="default-text" text="%ui.notes_c98d" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <TextArea fx:id="gLog" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label styleClass="default-text" text="Log:" GridPane.rowIndex="2">
+                                                <Label styleClass="default-text" text="%ui.log_c62d" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <TextArea fx:id="gPlayLog" editable="false" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <Label styleClass="default-text" text="Play Log:" GridPane.rowIndex="3">
+                                                <Label styleClass="default-text" text="%ui.play_log_a286" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -1067,8 +1067,8 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="screensTab" closable="false" text="Screens" />
-                        <Tab fx:id="statisticsTab" closable="false" text="Statistics">
+                        <Tab fx:id="screensTab" closable="false" text="%ui.screens_2288" />
+                        <Tab fx:id="statisticsTab" closable="false" text="%ui.statistics_c33e">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                           </content>
@@ -1086,7 +1086,7 @@
                <right>
                   <HBox alignment="CENTER" spacing="3.0" styleClass="subpanel" BorderPane.alignment="CENTER">
                      <children>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%ui.auto_save_106c" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -1102,7 +1102,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.jump_to_the_previous_entry_in_96e7" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
@@ -1113,7 +1113,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.jump_to_the_next_entry_in_a465" wrapText="true" />
                            </tooltip>
                         </Button>
                      </children>
@@ -1123,7 +1123,7 @@
                   </HBox>
                </right>
                <left>
-                  <Label fx:id="titleLabel" prefWidth="590.0" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label fx:id="titleLabel" prefWidth="590.0" styleClass="default-title" text="%ui.title_d5d3" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -1145,23 +1145,23 @@
                <center>
                   <HBox fx:id="buttonsBar" alignment="BASELINE_RIGHT" spacing="6.0">
                      <children>
-                      <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+                      <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2">
                            <HBox.margin>
                               <Insets right="6.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="openAssetMgrBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
-                        <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
+                        <Button fx:id="openAssetMgrBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="%ui.open_asset_manager_40a0" />
+                        <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="%ui.save_c9cc">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="saveBtn1" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save &amp; Close" />
+                        <Button fx:id="saveBtn1" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_close_e9f4" />
                      </children>
                   </HBox>
                </center>
                <left>
-                  <Label text="* starred fields may be overwritten on auto-fill" BorderPane.alignment="CENTER" />
+                  <Label text="%ui.starred_fields_may_be_overwritten_on_c173" BorderPane.alignment="CENTER" />
                </left>
             </BorderPane>
          </bottom>

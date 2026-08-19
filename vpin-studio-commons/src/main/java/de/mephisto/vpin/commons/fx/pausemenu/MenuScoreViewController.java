@@ -22,6 +22,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MenuScoreViewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -76,6 +77,7 @@ public class MenuScoreViewController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       Pane competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);

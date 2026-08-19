@@ -23,21 +23,21 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Virtual Pinball Spreadsheet">
+            <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="%ui.virtual_pinball_spreadsheet_c21d">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the Virtual Pinball Spreadsheet integration." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.settings_for_the_virtual_pinball_spreadsheet_3c28" textFill="WHITE" />
             <VBox>
                <children>
-                  <Button mnemonicParsing="false" onAction="#onReload" text="Update VPS Database" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onReload" text="%ui.update_vps_database_b8cb" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <CheckBox fx:id="uiShowVPSUpdates" mnemonicParsing="false" text="Show VPS table status in table overview." textFill="WHITE">
+                  <CheckBox fx:id="uiShowVPSUpdates" mnemonicParsing="false" text="%ui.show_vps_table_status_in_table_9a80" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -45,8 +45,8 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
-                   <Label styleClass="default-headline" text="Show Updates for Assets" textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%ui.toggles_the_visibility_of_the_vps_e184" textFill="WHITE" />
+                   <Label styleClass="default-headline" text="%ui.show_updates_for_assets_656b" textFill="WHITE">
                        <VBox.margin>
                            <Insets top="24.0" />
                        </VBox.margin>
@@ -55,22 +55,22 @@
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="%ui.alt_color_af82" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ui.alt_sound_f59a" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="%ui.backglass_cd90" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsPOV" mnemonicParsing="false" text="POV" textFill="WHITE">
+                              <CheckBox fx:id="vpsPOV" mnemonicParsing="false" text="%ui.pov_3e50" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -82,22 +82,22 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="%ui.pup_pack_d548" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="%ui.rom_2ab3" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsSound" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                              <CheckBox fx:id="vpsSound" mnemonicParsing="false" text="%ui.sound_music_87fa" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsToppper" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                              <CheckBox fx:id="vpsToppper" mnemonicParsing="false" text="%ui.topper_7974" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -106,12 +106,12 @@
                         </VBox>
                         <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="%ui.tutorial_368f" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsWheel" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                              <CheckBox fx:id="vpsWheel" mnemonicParsing="false" text="%ui.wheel_a5df" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -124,7 +124,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </HBox>
-                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="%ui.visible_table_columns_1cf5" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
@@ -133,22 +133,22 @@
                            <children>
                               <VBox prefWidth="180.0" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="vpsAltColorColumn" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                    <CheckBox fx:id="vpsAltColorColumn" mnemonicParsing="false" text="%ui.alt_color_af82" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsAltSoundColumn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                    <CheckBox fx:id="vpsAltSoundColumn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ui.alt_sound_f59a" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsBackglassColumn" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                    <CheckBox fx:id="vpsBackglassColumn" mnemonicParsing="false" text="%ui.backglass_cd90" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsPOVColumn" mnemonicParsing="false" text="POV" textFill="WHITE">
+                                    <CheckBox fx:id="vpsPOVColumn" mnemonicParsing="false" text="%ui.pov_3e50" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -160,22 +160,22 @@
                               </VBox>
                               <VBox prefWidth="180.0" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="vpsPUPPackColumn" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                    <CheckBox fx:id="vpsPUPPackColumn" mnemonicParsing="false" text="%ui.pup_pack_d548" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsRomColumn" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                    <CheckBox fx:id="vpsRomColumn" mnemonicParsing="false" text="%ui.rom_2ab3" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsSoundColumn" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                                    <CheckBox fx:id="vpsSoundColumn" mnemonicParsing="false" text="%ui.sound_music_87fa" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsToppperColumn" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                                    <CheckBox fx:id="vpsToppperColumn" mnemonicParsing="false" text="%ui.topper_7974" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -184,12 +184,12 @@
                               </VBox>
                               <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="vpsTutorialColumn" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                                    <CheckBox fx:id="vpsTutorialColumn" mnemonicParsing="false" text="%ui.tutorial_368f" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsWheelColumn" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                                    <CheckBox fx:id="vpsWheelColumn" mnemonicParsing="false" text="%ui.wheel_a5df" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -220,10 +220,10 @@
                   <Insets top="24.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="default-text" text="Author Deny List:" />
+                  <Label styleClass="default-text" text="%ui.author_deny_list_c1d5" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
-                        <TextField fx:id="authorDenyList" prefWidth="500.0" promptText="Enter the names of authors you do not wish to receive updates from.">
+                        <TextField fx:id="authorDenyList" prefWidth="500.0" promptText="%ui.enter_the_names_of_authors_you_eed5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -233,7 +233,7 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="You can add multiple values in comma separated format. The value is evaluated case insensitive." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.you_can_add_multiple_values_in_bdad" wrapText="true" />
                            </tooltip>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -241,7 +241,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label styleClass="preference-description" text="The filter is only applied for new updates. Existing ones are not filtered by this." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label styleClass="preference-description" text="%ui.the_filter_is_only_applied_for_c93e" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </children>

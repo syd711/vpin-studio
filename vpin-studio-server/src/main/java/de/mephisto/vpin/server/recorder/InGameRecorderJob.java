@@ -15,6 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(InGameRecorderJob.class);
@@ -49,10 +54,10 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         }
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus("Launching Frontend");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", resolveLocale()));
 
         try {
-          jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", resolveLocale(), game.getGameDisplayName()));
 
           //create the game recorder which includes all screens
           gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));

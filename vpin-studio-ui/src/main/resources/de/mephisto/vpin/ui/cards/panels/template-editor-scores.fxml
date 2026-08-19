@@ -20,7 +20,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="Score Settings" />
+            <Label text="%ui.score_settings_f6bd" />
          </left>
          <right>
              <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -33,7 +33,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="Toggle scores visibility" />
+                             <Tooltip text="%ui.toggle_scores_visibility_21ad" />
                          </tooltip>
                      </Button>
                      <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -44,7 +44,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="Lock these properties for custom templates." />
+                             <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400" />
                          </tooltip>
                      </ToggleButton>
                  </children>
@@ -57,7 +57,7 @@
          <content>
             <VBox styleClass="accordion-container">
               <children>
-                <Label text="Score Font" textFill="WHITE">
+                <Label text="%ui.score_font_dfd7" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -89,7 +89,7 @@
                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
                                 </graphic>
                                 <tooltip>
-                                  <Tooltip text="Apply selected font settings to all templates" />
+                                  <Tooltip text="%ui.apply_selected_font_settings_to_all_b7d1" />
                                 </tooltip>
                             </Button>
                           </children>
@@ -97,7 +97,7 @@
                     </right>
                 </BorderPane>
 
-                <Label text="Font Color" textFill="WHITE">
+                <Label text="%ui.font_color_2203" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -111,7 +111,7 @@
                     </VBox.margin>
                 </ColorPicker>
 
-                <Label text="Font Color for Friends" textFill="WHITE">
+                <Label text="%ui.font_color_for_friends_fb58" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -129,7 +129,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <Label text="Row Separator:" textFill="WHITE">
+                      <Label text="%ui.row_separator_1a8d" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -139,7 +139,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="The vertical space between the lines of the highscore text." />
+                            <Tooltip text="%ui.the_vertical_space_between_the_lines_0ba4" />
                           </tooltip>
                       </Label>
                     </children>
@@ -155,7 +155,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data" textFill="WHITE">
+                      <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="%ui.render_raw_highscore_data_cc82" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -165,7 +165,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="The font size of the highscore text will be adapted according to the number of lines." />
+                            <Tooltip text="%ui.the_font_size_of_the_highscore_6473" />
                           </tooltip>
                       </Label>
                     </children>
@@ -175,7 +175,7 @@
                 </HBox>
                   <HBox alignment="BASELINE_LEFT" layoutX="22.0" layoutY="417.0" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="renderNamesHighscore" mnemonicParsing="false" text="Render Names" textFill="WHITE">
+                        <CheckBox fx:id="renderNamesHighscore" mnemonicParsing="false" text="%ui.render_names_2ac8" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -185,7 +185,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="When selected, the display names of the player is rendered (if created in the players section)." />
+                              <Tooltip text="%ui.when_selected_the_display_names_of_53ef" />
                            </tooltip>
                         </Label>
                      </children>
@@ -196,7 +196,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="Render Friends Highscore Data" textFill="WHITE">
+                      <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="%ui.render_friends_highscore_data_f942" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -206,7 +206,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="The scores of your friends will be merged with yours." />
+                            <Tooltip text="%ui.the_scores_of_your_friends_will_b477" />
                           </tooltip>
                       </Label>
                     </children>
@@ -217,7 +217,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <Label text="Max. Scores" textFill="WHITE">
+                      <Label text="%ui.max_scores_0a58" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -227,7 +227,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="&quot;0&quot; will render all available scores." />
+                            <Tooltip text="%ui.0_will_render_all_available_scores_805d" />
                           </tooltip>
                       </Label>
                     </children>
@@ -241,7 +241,7 @@
                     </VBox.margin>
                 </Spinner>
 
-                <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="Render Positions" textFill="WHITE">
+                <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="%ui.render_positions_a9fb" textFill="WHITE">
                     <font>
                       <Font size="14.0" />
                     </font>
@@ -250,7 +250,7 @@
                     </VBox.margin>
                 </CheckBox>
 
-                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="Render Creation Dates" textFill="WHITE">
+                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="%ui.render_creation_dates_6dff" textFill="WHITE">
                     <font>
                       <Font size="14.0" />
                     </font>

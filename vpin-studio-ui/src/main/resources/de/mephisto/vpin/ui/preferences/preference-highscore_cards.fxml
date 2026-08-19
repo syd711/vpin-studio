@@ -26,19 +26,19 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="HIGHSCORE PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Highscore Card Settings">
+                  <Label styleClass="preference-title" text="%ui.highscore_preferences_3f4c" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%ui.highscore_card_settings_8827">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="If a screen is selected, a new highscore card will be generated when exiting a game." textFill="WHITE">
+                  <Label styleClass="preference-description" text="%ui.if_a_screen_is_selected_a_4741" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="Select the screen the highscore cards will be generated for. " textFill="WHITE" />
-                  <Label styleClass="preference-description" text="Ensure that the screen is enabled (and bound to a key in your frontend if supported)." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="%ui.select_the_screen_the_highscore_cards_c43c" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%ui.ensure_that_the_screen_is_enabled_40c7" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
@@ -53,19 +53,19 @@
                         <RowConstraints minHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="Generate Highscore Cards for Screen:" textFill="WHITE">
+                        <Label styleClass="preference-label" text="%ui.generate_highscore_cards_for_screen_6d69" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="cardTargetScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
 
-                        <Label styleClass="preference-label" text="Action when an asset exists:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label styleClass="preference-label" text="%ui.action_when_an_asset_exists_9ad1" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="cardBackupAssetCheckbox" mnemonicParsing="false" text="Backup existing asset. " textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <CheckBox fx:id="cardBackupAssetCheckbox" mnemonicParsing="false" text="%ui.backup_existing_asset_2dad" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -95,9 +95,9 @@
                            <children>
                               <VBox>
                                  <children>
-                                    <Label styleClass="default-text" text="The transparency for this screen is not enabled." />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="If you want to use transparent highscore cards, enable screen transparency." />
-                                    <Hyperlink onAction="#onScreenHelp" text="VPin Studio Documentation: Enable Screen Transparency">
+                                    <Label styleClass="default-text" text="%ui.the_transparency_for_this_screen_is_dc2a" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%ui.if_you_want_to_use_transparent_c422" />
+                                    <Hyperlink onAction="#onScreenHelp" text="%ui.vpin_studio_documentation_enable_screen_transparency_4c07">
                                        <VBox.margin>
                                           <Insets left="-4.0" />
                                        </VBox.margin>
@@ -117,20 +117,20 @@
                         <Insets left="280.0" top="6.0" />
                      </VBox.margin>
                   </VBox>
-                  <Label layoutX="34.0" layoutY="370.0" styleClass="preference-subtitle" text="Highscore Card Resolution">
+                  <Label layoutX="34.0" layoutY="370.0" styleClass="preference-subtitle" text="%ui.highscore_card_resolution_7edb">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="The resolution here not only determines the output size of highscore cards, but also of the background images" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%ui.the_resolution_here_not_only_determines_0957" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="420.0" styleClass="preference-description" text="extracted from backglass files and other media." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="442.0" styleClass="default-text" text="WARNING! " textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="464.0" styleClass="preference-description" text="Changing the card resolution will re-generate the default background of all tables" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="484.0" styleClass="preference-description" text="and may break your existing highscore card layouts." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="420.0" styleClass="preference-description" text="%ui.extracted_from_backglass_files_and_other_aa8a" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="442.0" styleClass="default-text" text="%ui.warning_eebf" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="464.0" styleClass="preference-description" text="%ui.changing_the_card_resolution_will_re_0419" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="484.0" styleClass="preference-description" text="%ui.and_may_break_your_existing_highscore_548d" textFill="WHITE" />
                   <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="10.0" prefWidth="280.0" />
@@ -140,7 +140,7 @@
                         <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="Highscore Card Resolution:" textFill="WHITE">
+                        <Label styleClass="preference-label" text="%ui.highscore_card_resolution_ace4" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -164,19 +164,19 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="preference-label" text="Custom Resolution" textFill="WHITE">
+                        <Label styleClass="preference-label" text="%ui.custom_resolution_07e2" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <CheckBox fx:id="customCardResCheckbox" mnemonicParsing="false" text="Use Custom Resolution" textFill="WHITE" GridPane.columnIndex="1">
+                        <CheckBox fx:id="customCardResCheckbox" mnemonicParsing="false" text="%ui.use_custom_resolution_bae0" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="cardWidth" prefWidth="70.0" promptText="Width">
+                              <TextField fx:id="cardWidth" prefWidth="70.0" promptText="%ui.width_3295">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -186,12 +186,12 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="cardHeight" layoutX="10.0" layoutY="10.0" prefWidth="70.0" promptText="Height">
+                              <TextField fx:id="cardHeight" layoutX="10.0" layoutY="10.0" prefWidth="70.0" promptText="%ui.height_eec6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label layoutX="80.0" layoutY="15.0" styleClass="preference-label" text="Pixel" textFill="WHITE">
+                              <Label layoutX="80.0" layoutY="15.0" styleClass="preference-label" text="%ui.pixel_0882" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -203,17 +203,17 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Highscore Card Pop-Up">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.highscore_card_pop_up_369e">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="If you select values larger &quot;0&quot; here, the highscore card of the selected table" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%ui.if_you_select_values_larger_0_e9f0" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="310.0" styleClass="preference-description" text="will pop-up for the selected time when a table is started." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="310.0" styleClass="preference-description" text="%ui.will_pop_up_for_the_selected_f6ff" textFill="WHITE" />
                   <GridPane alignment="BASELINE_RIGHT" prefWidth="750.0" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.199951171875" minWidth="10.0" prefWidth="200.0" />
@@ -228,7 +228,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Show Card on Table Start:" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.show_card_on_table_start_af08" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -247,10 +247,10 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
                               <Spinner fx:id="highscoreCardDuration" />
-                              <Label styleClass="default-text" text="seconds" />
+                              <Label styleClass="default-text" text="%ui.seconds_783e" />
                            </children>
                         </HBox>
-                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="Card Position:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%ui.card_position_e789" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -258,12 +258,12 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
                               <ComboBox fx:id="rotationCombo" prefWidth="150.0" />
-                              <Label styleClass="default-text" text="degree rotation" />
+                              <Label styleClass="default-text" text="%ui.degree_rotation_31ec" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <RadioButton fx:id="cardPosPopperRadio" mnemonicParsing="false" text="Use Frontend Screen Location, Size and Rotation" textFill="WHITE">
+                              <RadioButton fx:id="cardPosPopperRadio" mnemonicParsing="false" text="%ui.use_frontend_screen_location_size_and_d1ae" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -273,7 +273,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Note that the custom screen values for size and positioning are ignored here." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.note_that_the_custom_screen_values_ac9f" wrapText="true" />
                                  </tooltip>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -283,12 +283,12 @@
                         </HBox>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="preference-description" text="The highscore card pop-up is determined through the generator's target screen." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Make sure that the target screen has a 16x9 format set." textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%ui.the_highscore_card_pop_up_is_5801" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.make_sure_that_the_target_screen_9f06" textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="295.0" layoutY="76.0" styleClass="preference-description" text="Position and size is calculated for the playfield, using the given rotation value." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <RadioButton fx:id="cardPosPlayfieldRadio" mnemonicParsing="false" text="Centered on Playfield" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label layoutX="295.0" layoutY="76.0" styleClass="preference-description" text="%ui.position_and_size_is_calculated_for_d186" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <RadioButton fx:id="cardPosPlayfieldRadio" mnemonicParsing="false" text="%ui.centered_on_playfield_2abc" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>

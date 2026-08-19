@@ -22,21 +22,21 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="iScored Game Rooms" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="iScored game rooms used for competitions can be preconfigured here." textFill="WHITE">
+            <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.iscored_game_rooms_2916" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%ui.iscored_game_rooms_used_for_competitions_b2b3" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="24.0" top="12.0" />
                </VBox.margin>
             </Label>
             <VBox>
                <children>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="iScored Integration Enabled">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.iscored_integration_enabled_aee6">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Enable the iScored integration to subscribe to game room games." textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%ui.enable_the_iscored_integration_to_subscribe_34cd" textFill="WHITE" />
                </children>
             </VBox>
             <VBox fx:id="enabledBox">
@@ -51,11 +51,11 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Reload all webhook sets" />
+                                <Tooltip text="%ui.reload_all_webhook_sets_f7cc" />
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="Add" textFill="WHITE">
+                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="%ui.add_ec21" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -63,7 +63,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%ui.edit_7dce" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -72,7 +72,7 @@
                            </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%ui.delete_f2a6" textFill="#ff3333">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -84,10 +84,10 @@
                   </ToolBar>
                   <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
-                        <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="Sync. Enabled" />
-                      <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="Game Room URL" />
-                        <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Read API" />
-                        <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Scoring API" />
+                        <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="%ui.sync_enabled_fb97" />
+                      <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.game_room_url_9b16" />
+                        <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.read_api_c3f2" />
+                        <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.scoring_api_457f" />
                     </columns>
                   </TableView>
                </children>

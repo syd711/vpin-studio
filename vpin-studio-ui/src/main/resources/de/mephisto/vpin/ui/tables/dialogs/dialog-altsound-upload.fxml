@@ -27,8 +27,8 @@
                         <Insets bottom="6.0" />
                      </BorderPane.margin>
                      <children>
-                        <Label styleClass="preference-description" text="Download an ALT sound pack and upload it here." />
-                        <Label styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder." />
+                        <Label styleClass="preference-description" text="%ui.download_an_alt_sound_pack_and_0caa" />
+                        <Label styleClass="preference-description" text="%ui.the_file_will_be_analyzed_and_a314" />
                      </children>
                   </VBox>
                </top>
@@ -62,20 +62,20 @@
                               </TextField>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="ALT Sound Bundle:" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
+                        <Label styleClass="default-text" text="%ui.alt_sound_bundle_96a4" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.emulator_920c" />
                         <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
-                        <Label fx:id="titleLabel11" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label fx:id="titleLabel11" text="%ui.rom_name_b9d2" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="titleLabel1" text="Selected Table:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label fx:id="titleLabel1" text="%ui.selected_table_b928" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -93,12 +93,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_9141">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

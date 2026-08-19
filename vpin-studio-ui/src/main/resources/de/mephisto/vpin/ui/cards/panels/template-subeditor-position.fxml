@@ -16,7 +16,7 @@
          <children>
             <VBox>
                <children>
-                  <Label text="Position X" textFill="WHITE">
+                  <Label text="%ui.position_x_fc88" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -26,7 +26,7 @@
             </VBox>
             <VBox>
                <children>
-                  <Label text="Position Y" textFill="WHITE">
+                  <Label text="%ui.position_y_49b3" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,7 +40,7 @@
          <children>
             <VBox>
                <children>
-                  <Label text="Width" textFill="WHITE">
+                  <Label text="%ui.width_3295" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
             </VBox>
             <VBox layoutX="10.0" layoutY="10.0">
                <children>
-                  <Label text="Height" textFill="WHITE">
+                  <Label text="%ui.height_eec6" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -70,7 +70,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Align content on left" />
+                  <Tooltip text="%ui.align_content_on_left_5c17" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-left" iconSize="18" />
@@ -81,7 +81,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Center content horizontally" />
+                  <Tooltip text="%ui.center_content_horizontally_9968" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-center" iconSize="18" />
@@ -92,7 +92,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Align content on right" />
+                  <Tooltip text="%ui.align_content_on_right_7d7e" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-right" iconSize="18" />
@@ -104,7 +104,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Align content on top" />
+                  <Tooltip text="%ui.align_content_on_top_fb9b" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-top" iconSize="18" />
@@ -118,7 +118,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Center content vertically" />
+                  <Tooltip text="%ui.center_content_vertically_c485" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-center" iconSize="18" />
@@ -129,7 +129,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Align content on bottom" />
+                  <Tooltip text="%ui.align_content_on_bottom_371e" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-bottom" iconSize="18" />

@@ -14,23 +14,23 @@
          <content>
             <VBox>
                <children>
-                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="This tutorial assumes that you have successfully created a new Discord bot for your server.">
+                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="%ui.this_tutorial_assumes_that_you_have_a623">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="It will show you how to get the ID of your server that is required to communicate with the bot.">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="%ui.it_will_show_you_how_to_8243">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="1. Enable &quot;Developer Mode&quot; in Discord" />
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="Select &quot;Edit Server Profile&quot; via context menu click on your server. You have to be an administrator for the server in order to do that.">
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.1_enable_developer_mode_in_discord_f378" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%ui.select_edit_server_profile_via_context_b99e">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="Switch to the &quot;Advanced&quot; section and enable the &quot;Developer Mode&quot;.">
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%ui.switch_to_the_advanced_section_and_136c">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -55,13 +55,13 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="The developer mode enables some additional features in the Discord UI.">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%ui.the_developer_mode_enables_some_additional_1bd7">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Apply Server ID" />
-                  <Label layoutX="34.0" layoutY="54.0" styleClass="preference-description" text="You can now execute a context click on your server in the server list and select &quot;Copy ID&quot;.">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.2_apply_server_id_197b" />
+                  <Label layoutX="34.0" layoutY="54.0" styleClass="preference-description" text="%ui.you_can_now_execute_a_context_496f">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -74,7 +74,7 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="Paste the ID into the &quot;Server ID&quot; field of the VPin Studio preferences.">
+                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="%ui.paste_the_id_into_the_server_24fd">
                      <font>
                         <Font size="14.0" />
                      </font>

@@ -29,9 +29,9 @@
                                     <children>
                                         <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                             <columns>
-                                                <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                    <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="DOF Mapped" />
-                                    <TableColumn fx:id="columnROM" minWidth="100.0" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                                <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.display_name_b489" />
+                                    <TableColumn fx:id="columnDOFMapping" minWidth="100.0" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.dof_mapped_8c8a" />
+                                    <TableColumn fx:id="columnROM" minWidth="100.0" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.rom_2ab3" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -49,7 +49,7 @@
                                                 <Font size="14.0" />
                                             </font>
                                             <tooltip>
-                                                <Tooltip text="Toggle Filter View" />
+                                                <Tooltip text="%ui.toggle_filter_view_e9c1" />
                                             </tooltip>
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -63,13 +63,13 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Reload all table data" />
+                                                <Tooltip text="%ui.reload_all_table_data_90bc" />
                                             </tooltip>
                                         </Button>
                                         <Separator orientation="VERTICAL" prefWidth="12.0" />
                                         <StackPane alignment="CENTER_RIGHT">
                                             <children>
-                                                <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                                                <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_table_7b9c">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -95,7 +95,7 @@
                                                 <Font size="14.0" />
                                             </font>
                                             <tooltip>
-                                                <Tooltip text="Open Table in Table Overview" />
+                                                <Tooltip text="%ui.open_table_in_table_overview_05d1" />
                                             </tooltip>
                                         </Button>
                               <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScriptEdit" textFill="WHITE">
@@ -106,7 +106,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Edit script with the linked .vbs file system editor" />
+                                    <Tooltip text="%ui.edit_script_with_the_linked_vbs_d3a3" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="tableOpenBtn" mnemonicParsing="false" onAction="#onTableData" textFill="WHITE">
@@ -117,14 +117,14 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Edit Table Data (Ctrl+O)" />
+                                    <Tooltip text="%ui.edit_table_data_ctrl_o_4425" />
                                  </tooltip>
                               </Button>
                                     </items>
                                 </ToolBar>
                                 <ToolBar prefHeight="40.0" prefWidth="200.0">
                                     <items>
-                                        <Label text="Emulator:" textFill="WHITE">
+                                        <Label text="%ui.emulator_920c" textFill="WHITE">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>

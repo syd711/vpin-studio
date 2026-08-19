@@ -27,7 +27,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Toggle Filter View" />
+                        <Tooltip text="%ui.toggle_filter_view_e9c1" />
                     </tooltip>
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -41,13 +41,13 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Reload all table data" />
+                        <Tooltip text="%ui.reload_all_table_data_90bc" />
                     </tooltip>
                 </Button>
                 <Separator layoutX="281.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
                 <StackPane alignment="CENTER_RIGHT">
                     <children>
-                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Backglass...">
+                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_backglass_9395">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -72,7 +72,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Open Emulator Manager" />
+                  <Tooltip text="%ui.open_emulator_manager_6ad6" />
                </tooltip>
             </Button>
             <Separator layoutX="868.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -89,7 +89,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Upload a new backglass" />
+                        <Tooltip text="%ui.upload_a_new_backglass_1e9c" />
                     </tooltip>
                 </Button>
             <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
@@ -100,11 +100,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Rename the backglass (including versions)" />
+                  <Tooltip text="%ui.rename_the_backglass_including_versions_4ae6" />
                </tooltip>
             </Button>
                 <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text=".res Editor" textFill="WHITE">
+                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%ui.res_editor_f313" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -112,10 +112,10 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Open .res editor" />
+                        <Tooltip text="%ui.open_res_editor_1c22" />
                     </tooltip>
                 </Button>
-                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Position" textFill="WHITE">
+                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="%ui.dmd_position_11d0" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -123,7 +123,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Adjust DMD position" />
+                        <Tooltip text="%ui.adjust_dmd_position_7889" />
                     </tooltip>
                 </Button>
                 <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -135,7 +135,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Open table information on VPS." />
+                        <Tooltip text="%ui.open_table_information_on_vps_189a" />
                     </tooltip>
                 </Button>
                 <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
@@ -143,7 +143,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Open .ini File" />
+                        <Tooltip text="%ui.open_ini_file_c439" />
                     </tooltip>
                     <font>
                         <Font size="14.0" />
@@ -163,16 +163,16 @@
                                   <children>
                                       <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
                                           <columns>
-                                              <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Backglass" />
-                                              <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="# directB2S" />
-                                              <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Table Match" />
-                                              <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="FullDMD" />
-                                              <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Grill" />
-                                              <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Score" />
-                                              <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="RES" />
-                                              <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Frame" />
-                                              <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                                              <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="%ui.status_ec53" />
+                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.backglass_cd90" />
+                                              <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.directb2s_ccd1" />
+                                              <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.table_match_9e50" />
+                                              <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="%ui.fulldmd_2d4b" />
+                                              <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%ui.grill_475d" />
+                                              <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%ui.score_5dd1" />
+                                              <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%ui.res_f8af" />
+                                              <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%ui.frame_3bb3" />
+                                              <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.emulator_4fdf" />
                                           </columns>
                                       </TableView>
                                   </children>
@@ -197,7 +197,7 @@
                                                 <children>
                                                     <BorderPane>
                                                     <left>
-                                                        <Label fx:id="validationErrorLabel" text="Loading Backglasses..." textFill="WHITE" BorderPane.alignment="CENTER">
+                                                        <Label fx:id="validationErrorLabel" text="%ui.loading_backglasses_ce8f" textFill="WHITE" BorderPane.alignment="CENTER">
                                                             <font>
                                                             <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -206,7 +206,7 @@
                                                     <right>
                                                         <HBox BorderPane.alignment="CENTER">
                                                             <children>
-                                                                <!--Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="Dismiss" textFill="WHITE">
+                                                                <!--Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="%ui.dismiss_c8a5" textFill="WHITE">
                                                                 <font>
                                                                                       <Font size="10.0" />
                                                                                   </font>
@@ -214,7 +214,7 @@
                                                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
                                                                                   </graphic>
                                                                                   </Hyperlink-->
-                                                                <!--Hyperlink onAction="#onDismissAll" text="Dismiss All ..." textFill="WHITE">
+                                                                <!--Hyperlink onAction="#onDismissAll" text="%ui.dismiss_all_0ff0" textFill="WHITE">
                                                                 <font>
                                                                                       <Font size="10.0" />
                                                                                   </font>
@@ -230,7 +230,7 @@
                                                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                                                 </graphic>
                                                                 <tooltip>
-                                                                    <Tooltip text="Open Validators Settings" />
+                                                                    <Tooltip text="%ui.open_validators_settings_e441" />
                                                                 </tooltip>
                                                                 </Button>
                                                             </children>

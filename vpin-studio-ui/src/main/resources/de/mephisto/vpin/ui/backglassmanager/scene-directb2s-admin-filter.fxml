@@ -21,7 +21,7 @@
                <left>
                   <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                      <children>
-                        <Hyperlink onAction="#onReset" text="Reset All">
+                        <Hyperlink onAction="#onReset" text="%ui.reset_all_b69a">
                            <HBox.margin>
                               <Insets left="-5.0" top="-9.0" />
                            </HBox.margin>
@@ -50,7 +50,7 @@
             <VBox fx:id="titlePaneRoot" prefWidth="230.0">
                <children>
 
-                  <Label styleClass="default-title" text="Emulator Filters">
+                  <Label styleClass="default-title" text="%ui.emulator_filters_c7b7">
                      <VBox.margin>
                         <Insets top="3.0" />
                      </VBox.margin>
@@ -60,7 +60,7 @@
                      </children>
                   </VBox>
                   
-                 <Label styleClass="default-title" text="Backglass Filters">
+                 <Label styleClass="default-title" text="%ui.backglass_filters_93f5">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
@@ -68,14 +68,14 @@
 
                   <VBox fx:id="backglassFilters" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="missingDMDImageCheckBox" mnemonicParsing="false" styleClass="default-text" text="Missing DMD Image" />
-                        <CheckBox fx:id="notFullDMDRatioCheckBox" mnemonicParsing="false" styleClass="default-text" text="DMD Aspect Ratio not full DMD" />
-                        <CheckBox fx:id="scoresAvailableCheckBox" mnemonicParsing="false" styleClass="default-text" text="Presence of Score Element" />
-                        <CheckBox fx:id="missingTableCheckBox" mnemonicParsing="false" styleClass="default-text" text="Backglass without Table" />
+                        <CheckBox fx:id="missingDMDImageCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.missing_dmd_image_9d86" />
+                        <CheckBox fx:id="notFullDMDRatioCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.dmd_aspect_ratio_not_full_dmd_8c5b" />
+                        <CheckBox fx:id="scoresAvailableCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.presence_of_score_element_861f" />
+                        <CheckBox fx:id="missingTableCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.backglass_without_table_ff99" />
                      </children>
                   </VBox>
 
-                  <Label styleClass="default-title" text="Settings Filters">
+                  <Label styleClass="default-title" text="%ui.settings_filters_bc42">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
@@ -84,13 +84,13 @@
                   <VBox fx:id="settingFilters" spacing="6.0">
                      <children>
 
-                        <Label styleClass="default-text" text="Grill Visibility" />
+                        <Label styleClass="default-text" text="%ui.grill_visibility_5a42" />
                         <ComboBox fx:id="grillVisibilityComboBox" prefWidth="150.0" />
-                        <CheckBox fx:id="backglassVisibilityCheckBox" layoutX="10.0" layoutY="78.0" mnemonicParsing="false" styleClass="default-text" text="Backglass Hidden" />
+                        <CheckBox fx:id="backglassVisibilityCheckBox" layoutX="10.0" layoutY="78.0" mnemonicParsing="false" styleClass="default-text" text="%ui.backglass_hidden_44e8" />
 
-                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" mnemonicParsing="false" styleClass="default-text" text="B2S DMD Hidden" />
+                        <CheckBox fx:id="b2sdmdVisibilityCheckBox" mnemonicParsing="false" styleClass="default-text" text="%ui.b2s_dmd_hidden_bf9c" />
 
-                        <Label styleClass="default-text" text="DMD Visibility" />
+                        <Label styleClass="default-text" text="%ui.dmd_visibility_2f7b" />
                         <ComboBox fx:id="dmdVisibilityComboBox" prefWidth="150.0" />
 
                      </children>

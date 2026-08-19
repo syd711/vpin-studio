@@ -25,18 +25,18 @@
       
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Overlay">
+                  <Label styleClass="preference-title" text="%ui.vpin_studio_frontend_preferences_df20" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%ui.overlay_6b55">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="This section lets you configure the UI components that can be shown while the emulator is running." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%ui.this_section_lets_you_configure_the_1f51" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="showOverlayOnStartupCheckbox" mnemonicParsing="false" text="Show Overlay on Startup" textFill="WHITE">
+                  <CheckBox fx:id="showOverlayOnStartupCheckbox" mnemonicParsing="false" text="%ui.show_overlay_on_startup_ef29" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -44,7 +44,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="The dashboard overlay can be shown on startup. It will hide once any button is pressed." textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%ui.the_dashboard_overlay_can_be_shown_45ae" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
@@ -59,7 +59,7 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="204.0" styleClass="preference-description" text="Choose from one of the available overlay designs." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="204.0" styleClass="preference-description" text="%ui.choose_from_one_of_the_available_f6cc" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -80,32 +80,32 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Overlay Design:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.overlay_design_e8cc" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions / Online Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="%ui.recent_highscores_player_ranking_offline_competitions_bcbc" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="%ui.recent_highscores_player_ranking_offline_competitions_4140" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%ui.recent_highscores_88b2" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / External Page" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%ui.recent_highscores_player_ranking_external_page_7d9d" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="External Page URL:" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%ui.external_page_url_d92b" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -115,7 +115,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label text="You can use this field to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+                        <Label text="%ui.you_can_use_this_field_to_5223" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" />
                         <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="5">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
@@ -124,13 +124,13 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Download Table" />
+                              <Tooltip text="%ui.download_table_016d" />
                            </tooltip>
                            <GridPane.margin>
                               <Insets left="3.0" />
                            </GridPane.margin>
                         </Button>
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Overlay Screen:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%ui.overlay_screen_ee79" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -146,7 +146,7 @@
                                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change. You can restart the server in the &quot;Server Settings&quot; section." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="%ui.the_server_needs_to_be_restarted_8654" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

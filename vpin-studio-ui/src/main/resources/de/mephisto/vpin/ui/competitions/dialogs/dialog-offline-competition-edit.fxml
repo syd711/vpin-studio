@@ -26,12 +26,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -50,7 +50,7 @@
          <center>
             <VBox>
                <children>
-                  <Label text="Competition Settings" textFill="WHITE">
+                  <Label text="%ui.competition_settings_54f1" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -69,7 +69,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="titleLabel" text="Competition Name:" textFill="WHITE">
+                        <Label fx:id="titleLabel" text="%ui.competition_name_5b87" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -79,7 +79,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label fx:id="titleLabel1" layoutX="10.0" layoutY="33.0" text="Table:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label fx:id="titleLabel1" layoutX="10.0" layoutY="33.0" text="%ui.table_4e77" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -92,7 +92,7 @@
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip text="Because of the highscore extraction, only VPX tables are allowed for competitions." />
+                                    <Tooltip text="%ui.because_of_the_highscore_extraction_only_a8ef" />
                                  </tooltip>
                                  <HBox.margin>
                                     <Insets left="6.0" />
@@ -100,17 +100,17 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="titleLabel11" text="Start Date:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label fx:id="titleLabel11" text="%ui.start_date_a9e9" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="titleLabel111" text="End Date:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label fx:id="titleLabel111" text="%ui.end_date_24b1" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label text="%ui.duration_6831" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -137,7 +137,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label text="Notification Settings" textFill="WHITE">
+                  <Label text="%ui.notification_settings_76d8" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -152,7 +152,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="titleLabel12" text="Discord Channel:" textFill="WHITE">
+                        <Label fx:id="titleLabel12" text="%ui.discord_channel_fbc1" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -165,7 +165,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Select a channel where updates about the competiiton will be posted." />
+                                    <Tooltip prefWidth="300.0" text="%ui.select_a_channel_where_updates_about_a153" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -175,7 +175,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="329.0" text="Your VPin Settings" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="329.0" text="%ui.your_vpin_settings_0dd8" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -192,7 +192,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Competition Icon:" textFill="WHITE">
+                        <Label text="%ui.competition_icon_ebc3" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -205,17 +205,17 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                                    <Tooltip prefWidth="300.0" text="%ui.the_competition_badge_will_be_added_d23b" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label text="%ui.wheel_icon_preview_149a" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Reset Highscores:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="%ui.reset_highscores_792f" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -235,12 +235,12 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. A backup will be automatically created when the competition starts." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%ui.the_reset_is_required_in_case_63cc" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label text="Highscore Reset Available:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%ui.highscore_reset_available_09b8" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -281,10 +281,10 @@
          <bottom>
             <BorderPane fx:id="validationContainer" BorderPane.alignment="TOP_LEFT">
                <top>
-                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="%ui.label_b021" BorderPane.alignment="TOP_LEFT" />
                </top>
                <bottom>
-                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="validationDescription" text="%ui.label_b021" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -301,10 +301,10 @@
          <top>
             <VBox styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="Rules" />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="• Offline Competition are only played on your VPin." />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="• Current Highscores can be seen on the dashboard overlay or by using highscore cards." />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores can be submitted to your default Discord channel (optional)." />
+                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="%ui.rules_1f4d" />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%ui.offline_competition_are_only_played_on_682a" />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%ui.current_highscores_can_be_seen_on_e779" />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%ui.new_highscores_can_be_submitted_to_712a" />
                </children>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

@@ -15,7 +15,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentSummaryController">
    <children>
-      <Label styleClass="preference-subtitle" text="Summary" textFill="WHITE">
+      <Label styleClass="preference-subtitle" text="%ui.summary_2906" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -36,7 +36,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label styleClass="default-text" text="Installed Version:" />
+            <Label styleClass="default-text" text="%ui.installed_version_d21a" />
             <Label fx:id="installedVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
                <font>
                   <Font size="14.0" />
@@ -44,7 +44,7 @@
             </Label>
             <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="3">
                <children>
-                  <Button fx:id="resetVersionBtn" mnemonicParsing="false" onAction="#onVersionReset" text="Reset Version" textFill="WHITE">
+                  <Button fx:id="resetVersionBtn" mnemonicParsing="false" onAction="#onVersionReset" text="%ui.reset_version_c7bb" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -52,7 +52,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo-variant" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%ui.this_will_set_the_latest_available_72fc" wrapText="true" />
                      </tooltip>
                   </Button>
                </children>
@@ -61,10 +61,10 @@
                </GridPane.margin>
             </HBox>
 
-            <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Released Version:" GridPane.rowIndex="1" />
+            <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.latest_released_version_c6f1" GridPane.rowIndex="1" />
             <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <children>
-                  <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="Set As Installed Version" textFill="WHITE">
+                  <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="%ui.set_as_installed_version_4c09" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -72,10 +72,10 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%ui.this_will_set_the_latest_available_72fc" wrapText="true" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="ignoreBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVersionIgnore" text="Ignore Version" textFill="WHITE">
+                  <Button fx:id="ignoreBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVersionIgnore" text="%ui.ignore_version_e9b1" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -83,7 +83,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-remove" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%ui.this_will_set_the_latest_available_72fc" wrapText="true" />
                      </tooltip>
                   </Button>
                </children>
@@ -115,7 +115,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="default-text" text="Folder:" />
+            <Label styleClass="default-text" text="%ui.folder_5416" />
 
             <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1">
             <children>
@@ -124,7 +124,7 @@
                      <Font size="14.0" />
                   </font>
                </Label>
-               <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderSelect" text="Select Target Folder...">
+               <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderSelect" text="%ui.select_target_folder_af35">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -132,21 +132,21 @@
             </children>
             </HBox>
 
-            <Label styleClass="default-text" text="Last Modified:" GridPane.rowIndex="1" />
+            <Label styleClass="default-text" text="%ui.last_modified_3845" GridPane.rowIndex="1" />
             <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
 
-            <Label styleClass="default-text" text="Last Check:" GridPane.rowIndex="2" />
+            <Label styleClass="default-text" text="%ui.last_check_b927" GridPane.rowIndex="2" />
             <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
 
-            <Label styleClass="default-text" text="Github URL:" GridPane.rowIndex="3" />
+            <Label styleClass="default-text" text="%ui.github_url_24d9" GridPane.rowIndex="3" />
             <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="-5.0" />

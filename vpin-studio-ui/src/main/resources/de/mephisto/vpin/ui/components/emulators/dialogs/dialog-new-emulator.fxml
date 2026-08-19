@@ -22,12 +22,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="installBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="Create Emulator">
+                  <Button fx:id="installBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="%ui.create_emulator_2c0f">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -54,8 +54,8 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Emulator Type:" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Name:" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%ui.emulator_type_22c3" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.name_4e14" GridPane.rowIndex="1" />
                         <ComboBox fx:id="emulatorTypeComboBox" prefWidth="350.0" GridPane.columnIndex="1" />
                         <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
@@ -74,8 +74,8 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </VBox.margin>
                            <children>
-                              <Label fx:id="validationTitle" styleClass="default-headline" text="Information" />
-                              <Label fx:id="validationText" prefWidth="450.0" styleClass="default-text" text="A validation is triggered after an emulator type has been selected. The validation will try to lookup the existing emulator for this type and pre-fill the settings for you." wrapText="true" />
+                              <Label fx:id="validationTitle" styleClass="default-headline" text="%ui.information_a82b" />
+                              <Label fx:id="validationText" prefWidth="450.0" styleClass="default-text" text="%ui.a_validation_is_triggered_after_an_aac6" wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
@@ -83,7 +83,7 @@
                         </VBox>
                         <VBox fx:id="errorContainer" layoutX="10.0" layoutY="10.0" styleClass="error-container">
                            <children>
-                              <Label fx:id="errorTitle" styleClass="error-title" text="Emulator Validation Failed" />
+                              <Label fx:id="errorTitle" styleClass="error-title" text="%ui.emulator_validation_failed_b314" />
                               <Label fx:id="errorText" layoutX="22.0" layoutY="16.0" prefWidth="450.0" styleClass="error-message" text="-" wrapText="true" />
                            </children>
                         </VBox>

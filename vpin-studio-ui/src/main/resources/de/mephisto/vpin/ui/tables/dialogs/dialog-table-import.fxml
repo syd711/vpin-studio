@@ -17,12 +17,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Import">
+            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.import_72d6">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -41,7 +41,7 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The list shows the tables for the selected emulator that have not been " textFill="WHITE">
+                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.the_list_shows_the_tables_for_cfaa" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -49,7 +49,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="imported to [Frontend] yet." textFill="WHITE">
+                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%ui.imported_to_frontend_yet_b9e8" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -59,7 +59,7 @@
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="Emulator:" textFill="WHITE">
+                        <Label styleClass="default-text" text="%ui.emulator_920c" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

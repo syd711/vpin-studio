@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class FrontendScreensManager {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -53,6 +54,7 @@ public class FrontendScreensManager {
       try {
         String resource = "scene-frontend-screen.fxml";
         FXMLLoader loader = new FXMLLoader(FrontendScreenController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
         Parent widgetRoot = loader.load();
         FrontendScreenController screenController = loader.getController();
         screenController.setMediaAsset(asset);

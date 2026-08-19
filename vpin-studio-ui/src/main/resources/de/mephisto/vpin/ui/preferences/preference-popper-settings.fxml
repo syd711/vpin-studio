@@ -22,55 +22,55 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="FRONTEND PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%ui.frontend_preferences_9671" textFill="WHITE" />
             <ScrollPane hbarPolicy="NEVER">
                <content>
                   <VBox fx:id="popperPreferencesFields" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPin Studio Popper Settings" />
-                              <CheckBox fx:id="autoStart" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Autostart PinUP Menu with VPin Studio Server" />
-                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="If enabled, the VPin Studio Server will start the Popper Menu on system boot. " textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="This means you do not need the auto-start for PinUP Popper anymore." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="Popper Settings" />
-                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="These are settings that you can tweak behind the scenes of PinUP Popper." textFill="WHITE">
+                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.vpin_studio_popper_settings_9b99" />
+                              <CheckBox fx:id="autoStart" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.autostart_pinup_menu_with_vpin_studio_eb10" />
+                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="%ui.if_enabled_the_vpin_studio_server_ef3f" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="%ui.this_means_you_do_not_need_545e" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%ui.popper_settings_59f1" />
+                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.these_are_settings_that_you_can_cc3d" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="The settings are all added to the &quot;Custom Options&quot; box of &quot;GlobalConfig -&gt; Script&quot;." textFill="WHITE" />
-                        <CheckBox fx:id="returnNext" mnemonicParsing="false" styleClass="preference-checkbox" text="Return To Next" />
-                        <Label styleClass="checkbox-description" text="Advance to next game on return to PinUP game selection." textFill="WHITE" />
-                        <CheckBox fx:id="noSysFavs" mnemonicParsing="false" styleClass="preference-checkbox" text="No System Favourites Playlist" />
-                        <Label styleClass="checkbox-description" text="Check to hide system favourites auto-playlist. You would need to make your own!" textFill="WHITE" />
-                        <CheckBox fx:id="noSysLists" mnemonicParsing="false" styleClass="preference-checkbox" text="No System Playlists" />
-                        <Label styleClass="checkbox-description" text="Check to hide system lists like most played/mostplayed auto-playlist. You would need to make your own!" textFill="WHITE" />
-                        <CheckBox fx:id="playOnlyMode" mnemonicParsing="false" styleClass="preference-checkbox" text="&quot;Play Only&quot; Mode" />
-                        <Label styleClass="checkbox-description" text="If enabled, the child lock mode is enabled once PinUP Popper is running." textFill="WHITE" />
-                        <CheckBox fx:id="showInfoInGame" mnemonicParsing="false" styleClass="preference-checkbox" text="Show Info In Game" />
-                        <Label styleClass="checkbox-description" text="If enabled this will allow the info/help/other keys to be active during gameplay." textFill="WHITE" />
-                        <CheckBox fx:id="popUPHideAnykey" mnemonicParsing="false" styleClass="preference-checkbox" text="Pop Up Hide On Any Key" />
-                        <Label styleClass="checkbox-description" text="Normally you have to press info key and then info key again to close. " textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="You can have it use any button press to close the info key." textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="510.0" styleClass="checkbox-description" text="Note if this is on, then all info/help/other screens will close with any key." textFill="WHITE" />
-                        <CheckBox fx:id="pauseOnLoad" mnemonicParsing="false" styleClass="preference-checkbox" text="Pause Displays On Load" />
-                        <Label styleClass="checkbox-description" text="If you have lower end PC and use a higher end loading video or just want to load games faster," textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="592.0" styleClass="checkbox-description" text="you can pause all the PinUP Popper displays during loading." textFill="WHITE" />
-                        <CheckBox fx:id="pauseOnLoadPF" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Pause Playfield On Load" />
-                        <Label styleClass="checkbox-description" text="During loading video the playfield is paused for speed. If you have a decent PC and want to use seamless loading videos" textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="673.0" styleClass="checkbox-description" text="that look better with the playfield still playing during loading." textFill="WHITE" />
-                        <CheckBox fx:id="attractOnStart" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Attract Mode On Start" />
-                        <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="This will startup Popper on a Random/Attract mode game." textFill="WHITE" />
-                        <CheckBox fx:id="muteLaunchAudio" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Mute Launch Audio" />
-                        <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="If enabled the table audio is muted during table." textFill="WHITE" />
-                        <CheckBox fx:id="joyAxisMove" layoutX="34.0" layoutY="776.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Joystick Axis Move" />
-                        <Label layoutX="34.0" layoutY="815.0" styleClass="checkbox-description" text="Enable to support joystick axis moving mapped to buttons to allow joystick analogue movement in wheelbar." textFill="WHITE" />
-                        <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Volume Change" />
-                        <Label layoutX="34.0" layoutY="875.0" styleClass="checkbox-description" text="This will change volume back to original when returning from games. You can disable it with this." textFill="WHITE" />
-                        <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use Alt Wheels" />
-                        <Label layoutX="34.0" layoutY="929.0" styleClass="checkbox-description" text="Use your own wheels for an altmode." textFill="WHITE" />
-                        <CheckBox fx:id="watchDog" layoutX="10.0" layoutY="910.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Watchdog" />
-                        <Label layoutX="10.0" layoutY="948.0" styleClass="checkbox-description" text="If you run cab 24/7 and notice that your media crashes and you no longer see playfield videos. " textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="1008.0" styleClass="checkbox-description" text="This will monitor the VLC playfield media and if there's a crash it will auto-restart popper. (experimental)" textFill="WHITE" />
+                        <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%ui.the_settings_are_all_added_to_4bbb" textFill="WHITE" />
+                        <CheckBox fx:id="returnNext" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.return_to_next_5d89" />
+                        <Label styleClass="checkbox-description" text="%ui.advance_to_next_game_on_return_568d" textFill="WHITE" />
+                        <CheckBox fx:id="noSysFavs" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.no_system_favourites_playlist_9e05" />
+                        <Label styleClass="checkbox-description" text="%ui.check_to_hide_system_favourites_auto_d4e5" textFill="WHITE" />
+                        <CheckBox fx:id="noSysLists" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.no_system_playlists_8785" />
+                        <Label styleClass="checkbox-description" text="%ui.check_to_hide_system_lists_like_8566" textFill="WHITE" />
+                        <CheckBox fx:id="playOnlyMode" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.play_only_mode_8854" />
+                        <Label styleClass="checkbox-description" text="%ui.if_enabled_the_child_lock_mode_56b8" textFill="WHITE" />
+                        <CheckBox fx:id="showInfoInGame" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.show_info_in_game_c736" />
+                        <Label styleClass="checkbox-description" text="%ui.if_enabled_this_will_allow_the_d5fc" textFill="WHITE" />
+                        <CheckBox fx:id="popUPHideAnykey" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.pop_up_hide_on_any_key_165c" />
+                        <Label styleClass="checkbox-description" text="%ui.normally_you_have_to_press_info_feca" textFill="WHITE" />
+                        <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="%ui.you_can_have_it_use_any_a25c" textFill="WHITE" />
+                        <Label layoutX="34.0" layoutY="510.0" styleClass="checkbox-description" text="%ui.note_if_this_is_on_then_e6d6" textFill="WHITE" />
+                        <CheckBox fx:id="pauseOnLoad" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.pause_displays_on_load_9314" />
+                        <Label styleClass="checkbox-description" text="%ui.if_you_have_lower_end_pc_e1fd" textFill="WHITE" />
+                        <Label layoutX="34.0" layoutY="592.0" styleClass="checkbox-description" text="%ui.you_can_pause_all_the_pinup_f4ea" textFill="WHITE" />
+                        <CheckBox fx:id="pauseOnLoadPF" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.pause_playfield_on_load_adb1" />
+                        <Label styleClass="checkbox-description" text="%ui.during_loading_video_the_playfield_is_db8c" textFill="WHITE" />
+                        <Label layoutX="34.0" layoutY="673.0" styleClass="checkbox-description" text="%ui.that_look_better_with_the_playfield_f85f" textFill="WHITE" />
+                        <CheckBox fx:id="attractOnStart" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.attract_mode_on_start_9d0c" />
+                        <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="%ui.this_will_startup_popper_on_a_d865" textFill="WHITE" />
+                        <CheckBox fx:id="muteLaunchAudio" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.mute_launch_audio_1ef2" />
+                        <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="%ui.if_enabled_the_table_audio_is_1e2f" textFill="WHITE" />
+                        <CheckBox fx:id="joyAxisMove" layoutX="34.0" layoutY="776.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.joystick_axis_move_d938" />
+                        <Label layoutX="34.0" layoutY="815.0" styleClass="checkbox-description" text="%ui.enable_to_support_joystick_axis_moving_4af5" textFill="WHITE" />
+                        <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.volume_change_5a39" />
+                        <Label layoutX="34.0" layoutY="875.0" styleClass="checkbox-description" text="%ui.this_will_change_volume_back_to_3647" textFill="WHITE" />
+                        <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.use_alt_wheels_ba88" />
+                        <Label layoutX="34.0" layoutY="929.0" styleClass="checkbox-description" text="%ui.use_your_own_wheels_for_an_afd1" textFill="WHITE" />
+                        <CheckBox fx:id="watchDog" layoutX="10.0" layoutY="910.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.watchdog_55eb" />
+                        <Label layoutX="10.0" layoutY="948.0" styleClass="checkbox-description" text="%ui.if_you_run_cab_24_7_6754" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="1008.0" styleClass="checkbox-description" text="%ui.this_will_monitor_the_vlc_playfield_3ef5" textFill="WHITE" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
@@ -83,17 +83,17 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Emulator Exit Count:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label text="%ui.emulator_exit_count_3848" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <children>
-                                    <Label styleClass="preference-description" text="Normally you press the exit emulator key once and it will close emulator/game." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.normally_you_press_the_exit_emulator_e7dc" textFill="WHITE" />
                                     <VBox>
                                        <children>
-                                          <Label styleClass="preference-description" text="You can set this to 2/3 and it will require you to press the exit emulator X times to exit emulator." textFill="WHITE" />
+                                          <Label styleClass="preference-description" text="%ui.you_can_set_this_to_2_e2fa" textFill="WHITE" />
                                        </children>
                                     </VBox>
                                  </children>
@@ -101,19 +101,19 @@
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
                                     <Spinner fx:id="emuExitCount" />
-                                    <Label text="times" textFill="WHITE">
+                                    <Label text="%ui.times_f2b7" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="49.0" text="Default Media Directory:" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="49.0" text="%ui.default_media_directory_6bfb" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="preference-description" text="The directory the default media for the screens are stored in." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label styleClass="preference-description" text="%ui.the_directory_the_default_media_for_7666" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                                  <children>
                                     <TextField fx:id="defaultMediaDirectory" prefWidth="500.0">
@@ -138,18 +138,18 @@
                             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Return Delay:" textFill="WHITE">
+                              <Label text="%ui.return_delay_25eb" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="Set to delay startup of menu after game in milliseconds." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.set_to_delay_startup_of_menu_53d5" textFill="WHITE" />
                                     <VBox>
                                        <children>
-                                          <Label styleClass="preference-description" text="Some hardware dmd, DOF and slower systems need to 'wait' after vpx/emu closes" textFill="WHITE" />
-                                          <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="to re-init all those devices." textFill="WHITE" />
+                                          <Label styleClass="preference-description" text="%ui.some_hardware_dmd_dof_and_slower_49a9" textFill="WHITE" />
+                                          <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.to_re_init_all_those_devices_209c" textFill="WHITE" />
                                        </children>
                                     </VBox>
                                  </children>
@@ -157,7 +157,7 @@
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="delayReturn" />
-                                    <Label text=" ms" textFill="WHITE">
+                                    <Label text="%ui.ms_ef82" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -179,21 +179,21 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Wheel Animation Time:" textFill="WHITE">
+                              <Label text="%ui.wheel_animation_time_452f" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="This is the time between wheel selection animation." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.this_is_the_time_between_wheel_3c54" textFill="WHITE" />
                                     <VBox />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="wheelAniTimeMS" />
-                                    <Label text=" ms" textFill="WHITE">
+                                    <Label text="%ui.ms_ef82" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -215,21 +215,21 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Wheel Update Speed:" textFill="WHITE">
+                              <Label text="%ui.wheel_update_speed_33ca" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="Speed of moving wheel images on bar." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.speed_of_moving_wheel_images_on_3762" textFill="WHITE" />
                                     <VBox />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="wheelUpdateMS" />
-                                    <Label text=" ms" textFill="WHITE">
+                                    <Label text="%ui.ms_ef82" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -248,22 +248,22 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Rapid Fire Count:" textFill="WHITE">
+                              <Label text="%ui.rapid_fire_count_9967" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="This is the 'mute' next/prior key count… so that it doesn't sound a 'strange'" textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.this_is_the_mute_next_prior_26e5" textFill="WHITE" />
                                     <VBox />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="when repeating a lot of keys in a row." textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.when_repeating_a_lot_of_keys_6c77" textFill="WHITE" />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="rapidFireCount" />
-                                    <Label text="times" textFill="WHITE">
+                                    <Label text="%ui.times_f2b7" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -282,21 +282,21 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Auto Exit Emulator:" textFill="WHITE">
+                              <Label text="%ui.auto_exit_emulator_a9de" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text=" When in an emulator and there's no user keypresses it will auto-return to popper after X seconds." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.when_in_an_emulator_and_there_2def" textFill="WHITE" />
                                     <VBox />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="autoExitEmuSeconds" />
-                                    <Label text="seconds" textFill="WHITE">
+                                    <Label text="%ui.seconds_783e" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -315,21 +315,21 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Intro Skip:" textFill="WHITE">
+                              <Label text="%ui.intro_skip_322b" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text=" If using intro-startup playing videos, you can auto-stop the intro after X seconds and goto main menu." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.if_using_intro_startup_playing_videos_cc91" textFill="WHITE" />
                                     <VBox />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="introSkipSeconds" />
-                                    <Label text="seconds" textFill="WHITE">
+                                    <Label text="%ui.seconds_783e" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -348,23 +348,23 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Launch Timeout:" textFill="WHITE">
+                              <Label text="%ui.launch_timeout_a5ea" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="This is a timeout where Popper will auto-hide after so many seconds." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.this_is_a_timeout_where_popper_1d9f" textFill="WHITE" />
                                     <VBox />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="For Future Pinball some tables may take longer to load" textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="and you may want to increase to something like 150." textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.for_future_pinball_some_tables_may_bf49" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%ui.and_you_may_want_to_increase_6f41" textFill="WHITE" />
                                  </children>
                               </VBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                                  <children>
                                     <Spinner fx:id="launchTimeoutSecs" />
-                                    <Label text="seconds" textFill="WHITE">
+                                    <Label text="%ui.seconds_783e" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -383,14 +383,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Loading Fade Out Mode:" textFill="WHITE">
+                              <Label text="%ui.loading_fade_out_mode_70d8" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="Custom option that allows different modes for transparent loading videos." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%ui.custom_option_that_allows_different_modes_8ac4" textFill="WHITE" />
                                     <VBox />
                                  </children>
                               </VBox>

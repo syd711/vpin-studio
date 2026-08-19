@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WovpMenuItemController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -203,6 +204,7 @@ public class WovpMenuItemController implements Initializable {
   @NonNull
   private static BorderPane createScoreItem(CompetitionScore score) throws IOException {
     FXMLLoader loader = new FXMLLoader(WidgetWeeklyCompetitionScoreItemController.class.getResource("widget-weekly-competition-score-item.fxml"));
+    loader.setResources(Messages.getBundle());
     BorderPane row = loader.load();
     WidgetWeeklyCompetitionScoreItemController controller = loader.getController();
     row.setMaxWidth(Double.MAX_VALUE);

@@ -34,7 +34,7 @@
                   <Insets />
                </BorderPane.margin>
                <items>
-                  <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Search..." visible="false">
+                  <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="%ui.search_2a37" visible="false">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -63,17 +63,17 @@
          <right>
             <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" textFill="WHITE">
+                  <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="Save" textFill="WHITE">
+                  <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="%ui.save_c9cc" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" styleClass="submit-button" text="Save &amp; Close" textFill="WHITE">
+                <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" styleClass="submit-button" text="%ui.save_close_e9f4" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -93,8 +93,8 @@
               </rowConstraints>
                <children>
                   <Label fx:id="lastModified" text="-" GridPane.columnIndex="1" />
-                  <Label text="Last Modified:" textFill="WHITE" />
-                  <Label text="Size:" textFill="WHITE" GridPane.rowIndex="1" />
+                  <Label text="%ui.last_modified_3845" textFill="WHITE" />
+                  <Label text="%ui.size_af64" textFill="WHITE" GridPane.rowIndex="1" />
                   <Label fx:id="size" layoutX="91.0" layoutY="10.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <BorderPane.margin>

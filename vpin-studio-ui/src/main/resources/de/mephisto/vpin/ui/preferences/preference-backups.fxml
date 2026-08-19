@@ -25,15 +25,15 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Authentication Provider" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="To avoid that personal backups are being shared to the public, the creation and extraction is only possible through" textFill="WHITE">
+            <Label styleClass="preference-title" text="%ui.vpin_studio_preferences_f3e1" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.authentication_provider_08ce" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%ui.to_avoid_that_personal_backups_are_bd1a" textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="an authentication provider." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="127.0" styleClass="preference-description" text="Please select and configure the login for one the existing authentication providers from the list below." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%ui.an_authentication_provider_21b4" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="127.0" styleClass="preference-description" text="%ui.please_select_and_configure_the_login_3739" textFill="WHITE" />
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="374.2000732421875" minWidth="10.0" prefWidth="175.2000732421875" />
@@ -44,11 +44,11 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label styleClass="default-text" text="Authentication Provider:" textFill="WHITE" />
+                  <Label styleClass="default-text" text="%ui.authentication_provider_2c46" textFill="WHITE" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <ComboBox fx:id="providerCombo" prefHeight="30.0" prefWidth="294.0" />
-                        <Button fx:id="providerBtn" mnemonicParsing="false" onAction="#onProvider" text="Configure" textFill="WHITE">
+                        <Button fx:id="providerBtn" mnemonicParsing="false" onAction="#onProvider" text="%ui.configure_f120" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,15 +60,15 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backup Folders" />
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="You can configure additional folder here to read backups from, e.g. USB devices." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The devices will be refreshed on reload in the backups view." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.backup_folders_aaf0" />
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%ui.you_can_configure_additional_folder_here_8820" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.the_devices_will_be_refreshed_on_6ad0" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="Add" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="%ui.add_ec21" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -76,7 +76,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%ui.edit_7dce" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -85,7 +85,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%ui.delete_f2a6" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -97,9 +97,9 @@
             </ToolBar>
             <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
-                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Enabled" />
-                <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Location" />
+                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%ui.enabled_00d2" />
+                <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
+                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.location_ce5b" />
               </columns>
             </TableView>
          </children>

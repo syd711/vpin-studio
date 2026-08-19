@@ -37,7 +37,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label styleClass="default-text" text="Template:" />
+                  <Label styleClass="default-text" text="%ui.template_18fd" />
                   <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <Spinner />
@@ -49,12 +49,12 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Set value to &quot;0&quot; to add all matching tables." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%ui.set_value_to_0_to_add_a75b" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Max Tables:" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.max_tables_36f4" GridPane.rowIndex="1" />
                   <ComboBox fx:id="templateComboBox" prefWidth="300.0" GridPane.columnIndex="1" />
                   <Label GridPane.columnIndex="2">
                      <font>
@@ -64,7 +64,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="These templates are only working for tables that have a VPS table mapping." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%ui.these_templates_are_only_working_for_d730" wrapText="true" />
                      </tooltip>
                      <GridPane.margin>
                         <Insets left="3.0" />
@@ -78,8 +78,8 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-          <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
-            <Button fx:id="okButton" defaultButton="true" layoutX="356.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="Add Tables" />
+          <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" />
+            <Button fx:id="okButton" defaultButton="true" layoutX="356.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%ui.add_tables_147a" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

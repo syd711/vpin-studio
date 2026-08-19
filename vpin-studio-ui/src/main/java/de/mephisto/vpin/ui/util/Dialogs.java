@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -58,6 +59,7 @@ public class Dialogs {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     if (force || !uiSettings.isHideUpdateInfo()) {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
+      fxmlLoader.setResources(Messages.getBundle());
       Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
       stage.showAndWait();
 
@@ -72,6 +74,7 @@ public class Dialogs {
 
   public static void openNextUpdateDialog(String version) {
     FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
+    fxmlLoader.setResources(Messages.getBundle());
     Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
     UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
     controller.setData(stage, version);
@@ -97,6 +100,7 @@ public class Dialogs {
   public static boolean openTextEditor(String stateId, Stage s, TextEditorFile file, String title) {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
+      fxmlLoader.setResources(Messages.getBundle());
       Stage stage = WidgetFactory.createDialogStage(stateId, fxmlLoader, s, title, TextEditorController.class.getSimpleName());
       stage.setMinWidth(800);
       stage.setMinHeight(600);
@@ -122,6 +126,7 @@ public class Dialogs {
     }
 
     FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
+    fxmlLoader.setResources(Messages.getBundle());
     Stage stage = WidgetFactory.createDialogStage("player-edit", fxmlLoader, Studio.stage, title);
     PlayerDialogController controller = (PlayerDialogController) stage.getUserData();
     controller.setPlayer(selection, players);
@@ -164,12 +169,14 @@ public class Dialogs {
 
   public static Stage createStudioDialogStage(String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title);
   }
 
   public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String modalStateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, stage, title, modalStateId);
   }
@@ -177,18 +184,21 @@ public class Dialogs {
 
   public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title, null);
   }
 
   public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title, String modalStateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title, modalStateId);
   }
 
   public static Stage createStudioDialogStage(String stateId, Stage stage, Class<?> clazz, String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, stage, title);
   }
 

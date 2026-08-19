@@ -24,6 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class VPXZCreationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZCreationJob.class);
@@ -64,7 +69,7 @@ public class VPXZCreationJob implements Job {
     descriptor.setTableDetails(tableDetails);
     descriptor.setPackageInfo(packageInfo);
 
-    jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
+    jobDescriptor.setStatus(ServerMessages.get("vpxz.create.calculating", resolveLocale(), game.getGameDisplayName()));
     long totalSizeExpected = vpxzFileService.calculateTotalSize(game);
     LOG.info("Calculated total approx. size of {} for the .vpxz file of {}", FileUtils.readableFileSize(totalSizeExpected), game.getGameDisplayName());
 
@@ -94,7 +99,7 @@ public class VPXZCreationJob implements Job {
           return;
         }
 
-        jobDescriptor.setStatus("Packing " + fileToZip.getAbsolutePath());
+        jobDescriptor.setStatus(ServerMessages.get("vpxz.create.packing", resolveLocale(), fileToZip.getAbsolutePath()));
         if (jobDescriptor.getProgress() < 1 && tempFile.exists()) {
           if (totalSizeExpected > 0) {
             long l = tempFile.length() * 100 / totalSizeExpected / 100;
@@ -123,7 +128,7 @@ public class VPXZCreationJob implements Job {
         File manifestFile = File.createTempFile("package-info", "json");
         manifestFile.deleteOnExit();
         Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
-        jobDescriptor.setStatus("Packing " + manifestFile.getAbsolutePath());
+        jobDescriptor.setStatus(ServerMessages.get("vpxz.create.packing", resolveLocale(), manifestFile.getAbsolutePath()));
         ZipUtil.zipFileUnencrypted(manifestFile, VPXZPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
         manifestFile.delete();
       }
@@ -135,7 +140,7 @@ public class VPXZCreationJob implements Job {
       File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
       try {
         LOG.info("Copying vpxz file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
-        jobDescriptor.setStatus("Copying vpxz file to " + temporaryTarget.getParentFile().getAbsolutePath());
+        jobDescriptor.setStatus(ServerMessages.get("vpxz.create.copying", resolveLocale(), temporaryTarget.getParentFile().getAbsolutePath()));
         org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
       }
       catch (IOException e) {

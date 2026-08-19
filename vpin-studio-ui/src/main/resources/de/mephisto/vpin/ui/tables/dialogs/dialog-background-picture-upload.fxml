@@ -27,7 +27,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                        <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -38,7 +38,7 @@
                   </HBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" text="Default Picture:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" text="%ui.default_picture_bc8c" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -55,12 +55,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_9141">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

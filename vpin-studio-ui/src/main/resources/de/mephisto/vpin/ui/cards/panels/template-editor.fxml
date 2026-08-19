@@ -25,9 +25,9 @@
 
         <TabPane fx:id="tabPane">
             <tabs>
-                <Tab fx:id="highscoreCardsTab" closable="false" text="Highscore Cards" />
-                <!--Tab fx:id="instructionCardsTab" closable="false" text="Instruction Cards" /-->
-                <Tab fx:id="wheelsTab" closable="false" text="Wheels" />
+                <Tab fx:id="highscoreCardsTab" closable="false" text="%ui.highscore_cards_823a" />
+                <!--Tab fx:id="instructionCardsTab" closable="false" text="%ui.instruction_cards_315c" /-->
+                <Tab fx:id="wheelsTab" closable="false" text="%ui.wheels_6c10" />
             </tabs>
         </TabPane>
 
@@ -84,7 +84,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Display the image of the card as it would be saved upon generation." />
+                                          <Tooltip text="%ui.display_the_image_of_the_card_14fd" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" prefHeight="29.0" prefWidth="0.0" textFill="WHITE">
@@ -95,7 +95,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Asset Manager" />
+                                          <Tooltip text="%ui.asset_manager_d6a1" />
                                        </tooltip>
                                     </Button>
                                     <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -116,7 +116,7 @@
                            <bottom>
                               <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                                  <children>
-                                    <Label text="Default Asset Preview">
+                                    <Label text="%ui.default_asset_preview_5883">
                                        <padding>
                                           <Insets left="6.0" />
                                        </padding>
@@ -138,7 +138,7 @@
             <items>
                 <StackPane alignment="CENTER_LEFT" prefWidth="229.0">
                     <children>
-                        <ToggleButton fx:id="templateModeBtn" mnemonicParsing="false" styleClass="custom-toggle-button" text="Template Mode">
+                        <ToggleButton fx:id="templateModeBtn" mnemonicParsing="false" styleClass="custom-toggle-button" text="%ui.template_mode_573d">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -146,7 +146,7 @@
                         <ToggleGroup fx:id="mode" />
                      </toggleGroup>
                         </ToggleButton>
-                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button2" text="Custom Mode" toggleGroup="$mode">
+                        <ToggleButton fx:id="cardModeBtn" mnemonicParsing="false" selected="true" styleClass="custom-toggle-button2" text="%ui.custom_mode_38e7" toggleGroup="$mode">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -157,7 +157,7 @@
                     </children>
                 </StackPane>
                 <Separator layoutX="313.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Label text="Template:" textFill="WHITE">
+                <Label text="%ui.template_18fd" textFill="WHITE">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
@@ -171,7 +171,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Create New Template" />
+                        <Tooltip text="%ui.create_new_template_993f" />
                     </tooltip>
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
@@ -184,7 +184,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Export current Template" />
+                        <Tooltip text="%ui.export_current_template_e9c4" />
                     </tooltip>
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
@@ -195,7 +195,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Import Template" />
+                        <Tooltip text="%ui.import_template_a041" />
                     </tooltip>
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
@@ -210,7 +210,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Rename the selected template" />
+                        <Tooltip text="%ui.rename_the_selected_template_0041" />
                     </tooltip>
                 </Button>
                 <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
@@ -230,11 +230,11 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Display the image of the card as it would be saved upon generation." />
+                        <Tooltip text="%ui.display_the_image_of_the_card_14fd" />
                     </tooltip>
                 </Button>
                 <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="generateWheelBtn" layoutX="856.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerateWithConfirmationClick" styleClass="submit-button" text="Generate Wheel" textFill="WHITE">
+                  <Button fx:id="generateWheelBtn" layoutX="856.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerateWithConfirmationClick" styleClass="submit-button" text="%ui.generate_wheel_a6a8" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -242,7 +242,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Writes the given image for the selected screen and table" />
+                        <Tooltip text="%ui.writes_the_given_image_for_the_9d2f" />
                      </tooltip>
                   </Button>
                 <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" textFill="WHITE">
@@ -253,10 +253,10 @@
                         <FontIcon iconColor="WHITE" iconLiteral="bi-image" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Writes the given image for the selected screen and table" />
+                        <Tooltip text="%ui.writes_the_given_image_for_the_9d2f" />
                     </tooltip>
                 </Button>
-                <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
+                <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text="%ui.generate_all_bbdf" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -273,7 +273,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Open [Frontend] system folder for the target folder." />
+                        <Tooltip text="%ui.open_frontend_system_folder_for_the_a06c" />
                     </tooltip>
                 </Button>
                 <HBox fx:id="mediaPlayerControl" spacing="6.0">
@@ -287,7 +287,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Run the overlay animation (if it is a video)." />
+                                <Tooltip text="%ui.run_the_overlay_animation_if_it_08bb" />
                             </tooltip>
                         </Button>
                         <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
@@ -298,7 +298,7 @@
                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Stop the overlay animation." />
+                                <Tooltip text="%ui.stop_the_overlay_animation_cb55" />
                             </tooltip>
                         </Button>
                     </children>
@@ -323,19 +323,19 @@
             <top>
                 <BorderPane fx:id="nagBar" styleClass="nagbar-container">
                     <center>
-                        <Label fx:id="nagBarLabel" text="Editing highscore card for XY using template XY" BorderPane.alignment="CENTER_LEFT" />
+                        <Label fx:id="nagBarLabel" text="%ui.editing_highscore_card_for_xy_using_bc6d" BorderPane.alignment="CENTER_LEFT" />
                     </center>
                 </BorderPane>
             </top>
             <bottom>
                 <HBox alignment="CENTER_RIGHT" styleClass="media-container" BorderPane.alignment="CENTER">
                     <children>
-                        <Label layoutX="10.0" layoutY="15.0" text="Card Resolution: ">
+                        <Label layoutX="10.0" layoutY="15.0" text="%ui.card_resolution_a6f4">
                             <padding>
                                 <Insets left="6.0" />
                             </padding>
                         </Label>
-                        <Label fx:id="resolutionLabel" text="Resolution">
+                        <Label fx:id="resolutionLabel" text="%ui.resolution_b5a4">
                             <padding>
                                 <Insets left="6.0" />
                             </padding>
