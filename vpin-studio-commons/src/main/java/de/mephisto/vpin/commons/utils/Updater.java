@@ -244,6 +244,42 @@ public class Updater {
     executor.executeCommandAsync();
   }
 
+  /**
+   * Relaunches the Studio client and exits the current process, giving the
+   * new instance time to start before this one releases its single-instance lock.
+   */
+  public static void restartClient() {
+    if (OSUtil.isWindows()) {
+      List<String> commands = List.of("VPin-Studio.exe");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(getWriteableBaseFolder());
+      executor.executeCommandAsync();
+    }
+    else if (OSUtil.isMac()) {
+      try {
+        new ProcessBuilder("open", System.getProperty("MAC_APP_PATH")).start();
+      }
+      catch (Exception e) {
+        LOG.error("Failed to restart client on macOS: {}", e.getMessage(), e);
+        return;
+      }
+    }
+    else {
+      LOG.warn("Automatic client restart is not supported on this OS, please restart manually.");
+      return;
+    }
+
+    new Thread(() -> {
+      try {
+        Thread.sleep(2000);
+        System.exit(0);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+    }).start();
+  }
+
   public static String checkForUpdate() {
     try {
       URL obj = URI.create(LATEST_RELEASE_URL).toURL();

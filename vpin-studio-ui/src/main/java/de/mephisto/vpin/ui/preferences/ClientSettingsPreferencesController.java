@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
@@ -755,12 +756,15 @@ public class ClientSettingsPreferencesController implements Initializable {
       languageRestartHint.setManaged(true);
       languageRestartHint.setVisible(true);
 
-      // Show info dialog
-      WidgetFactory.showInformation(
+      // Ask the user whether to restart now to apply the new language
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(
           de.mephisto.vpin.ui.Studio.stage,
-          Messages.get("pref.client.language.title"),
+          Messages.get("pref.client.language.restart_confirm"),
           Messages.get("pref.client.language.restart_message")
       );
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Updater.restartClient();
+      }
     });
   }
 
