@@ -26,12 +26,12 @@
                   <Insets top="12.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="default-headline" text="%ui.custom_ffmpeg_exe_command_d834" />
+                  <Label styleClass="default-headline" text="%recorder.ffmpeg_options.custom_ffmpeg_exe_command" />
                </children>
             </HBox>
             <BorderPane>
                <center>
-                  <TextField fx:id="commandTextField" promptText="%ui.enter_the_full_ffmpeg_exe_command_6e69" BorderPane.alignment="CENTER">
+                  <TextField fx:id="commandTextField" promptText="%recorder.ffmpeg_options.enter_the_full_ffmpeg_exe_command_here" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -48,7 +48,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2b-backup-restore" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.restore_default_command_8197" />
+                              <Tooltip text="%recorder.ffmpeg_options.restore_default_command" />
                            </tooltip>
                         </Button>
                      </children>
@@ -63,17 +63,17 @@
                   <Insets top="12.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="default-headline" text="%ui.the_command_supports_the_following_placeholders_2f81" />
-                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="%ui.x_the_x_position_of_the_272a">
+                  <Label styleClass="default-headline" text="%recorder.ffmpeg_options.the_command_supports_the_following_placeholders" />
+                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="%recorder.ffmpeg_options.x_the_x_position_of_the_recording">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="%ui.y_the_y_position_of_the_85c5" />
-                  <Label layoutX="23.0" layoutY="63.0" styleClass="default-text" text="%ui.width_the_width_of_the_recording_d108" />
-                  <Label layoutX="23.0" layoutY="83.0" styleClass="default-text" text="%ui.height_the_height_of_the_recording_f78d" />
-                  <Label layoutX="23.0" layoutY="109.0" styleClass="default-text" text="%ui.duration_the_duration_of_the_recording_42e2" />
-                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-headline" text="%ui.the_target_filename_will_be_appended_0265">
+                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="%recorder.ffmpeg_options.y_the_y_position_of_the_recording" />
+                  <Label layoutX="23.0" layoutY="63.0" styleClass="default-text" text="%recorder.ffmpeg_options.width_the_width_of_the_recording" />
+                  <Label layoutX="23.0" layoutY="83.0" styleClass="default-text" text="%recorder.ffmpeg_options.height_the_height_of_the_recording" />
+                  <Label layoutX="23.0" layoutY="109.0" styleClass="default-text" text="%recorder.ffmpeg_options.duration_the_duration_of_the_recording_in_seconds" />
+                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-headline" text="%recorder.ffmpeg_options.the_target_filename_will_be_appended_at_the">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
@@ -94,8 +94,8 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47" />
-            <Button fx:id="okButton" defaultButton="true" layoutX="328.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%ui.save_c9cc" />
+          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
+            <Button fx:id="okButton" defaultButton="true" layoutX="328.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%backups.backup_source_folder.save" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

@@ -53,11 +53,11 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-camera-plus-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.take_and_download_screenshots_ed8f" />
+                        <Tooltip text="%monitor.cab_monitor.take_and_download_screenshots" />
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%ui.screens_2288" textFill="WHITE">
+                  <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -73,15 +73,15 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.reload_screen_positioning_6a0c" />
+                        <Tooltip text="%monitor.cab_monitor.reload_screen_positioning" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="93.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label styleClass="default-text" text="%ui.preview_refresh_97d4" />
+                        <Label styleClass="default-text" text="%monitor.cab_monitor.preview_refresh" />
                         <Spinner fx:id="refreshInterval" prefWidth="70.0" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.seconds_783e" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%monitor.cab_monitor.seconds" />
                      </children>
                   </HBox>
               </items>

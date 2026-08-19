@@ -30,28 +30,28 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%ui.label_b021" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%competitions.discord_competition_edit.label" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="%ui.dismiss_c8a5" BorderPane.alignment="CENTER" />
+                        <Hyperlink onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%ui.label_b021" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%competitions.discord_competition_edit.label" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="%ui.no_pup_pack_found_d64b" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_pup_pack.no_pup_pack_found" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="%ui.open_the_visual_pinball_spreadsheet_section_a20e">
+                  <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%ui.upload_downloaded_resources_here_3da5" />
+                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
@@ -64,7 +64,7 @@
                <content>
                   <VBox fx:id="dataBox">
                      <children>
-                        <Label text="%ui.pup_pack_data_232a" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_pup_pack.pup_pack_data" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -85,12 +85,12 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="%ui.last_modified_3845" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="%ui.bundle_size_unpacked_2c81" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="49.0" text="%tables.tables_sidebar_altsound.bundle_size_unpacked" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -110,7 +110,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" prefWidth="87.0" text="%ui.options_ebcc" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label layoutX="10.0" layoutY="49.0" prefWidth="87.0" text="%tables.tables_sidebar_pup_pack.options" textFill="WHITE" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -118,7 +118,7 @@
                               <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <ComboBox fx:id="optionsCombo" prefHeight="30.0" prefWidth="200.0" />
-                                    <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="%ui.apply_9639" textFill="WHITE">
+                                    <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="%tables.table_data_tab_scoredata.apply" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -126,7 +126,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-check-outline" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="optionEditBtn" mnemonicParsing="false" onAction="#onOptionEdit" styleClass="text-button" text="%ui.edit_7dce" textFill="WHITE">
+                                    <Button fx:id="optionEditBtn" mnemonicParsing="false" onAction="#onOptionEdit" styleClass="text-button" text="%competitions.competitions_discord.edit" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -134,7 +134,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="%ui.open_puppack_options_file_0a9b" />
+                                          <Tooltip text="%tables.tables_sidebar_pup_pack.open_puppack_options_file" />
                                        </tooltip>
                                     </Button>
                                     <Label textFill="WHITE">
@@ -145,7 +145,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.the_selected_option_is_only_shown_1b38" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.the_selected_option_is_only_shown_if_the" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="6.0" top="5.0" />
@@ -153,7 +153,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="83.0" prefHeight="20.0" prefWidth="149.0" text="%ui.additional_files_d13e" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label layoutX="10.0" layoutY="83.0" prefHeight="20.0" prefWidth="149.0" text="%tables.tables_sidebar_pup_pack.additional_files" textFill="WHITE" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -161,7 +161,7 @@
                               <HBox layoutX="174.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
                                     <ComboBox fx:id="txtsCombo" prefHeight="30.0" prefWidth="200.0" />
-                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" prefWidth="80.0" styleClass="text-button" text="%ui.edit_7dce" textFill="WHITE">
+                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" prefWidth="80.0" styleClass="text-button" text="%competitions.competitions_discord.edit" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -177,7 +177,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.here_are_text_files_listed_that_0cc8" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.here_are_text_files_listed_that_may_contain" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="6.0" top="5.0" />
@@ -185,7 +185,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="49.0" text="%ui.script_only_96de" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label layoutX="10.0" layoutY="49.0" text="%tables.tables_sidebar_pup_pack.script_only" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -205,12 +205,12 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.if_checked_there_is_a_scriptonly_bb64" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.if_checked_there_is_a_scriptonly_txt_in" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="49.0" text="%ui.name_4e14" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -229,7 +229,7 @@
                            <children>
                               <HBox spacing="6.0">
                                  <children>
-                                    <Label text="%ui.screens_2288" textFill="WHITE">
+                                    <Label text="%components.components.screens" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -242,7 +242,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.this_section_shows_only_a_selection_743e" wrapText="true">
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.this_section_shows_only_a_selection_of_the" wrapText="true">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -266,22 +266,22 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                                  <children>
-                                    <Label text="%ui.backglass_377c" textFill="WHITE">
+                                    <Label text="%tables.tables_sidebar_pup_pack.backglass" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="%ui.dmd_03cb" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.dmd" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="%ui.full_dmd_62b4" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.full_dmd" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="83.0" text="%ui.topper_b6fa" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="83.0" text="%tables.tables_sidebar_pup_pack.topper" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -369,7 +369,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%ui.upload_9141" textFill="WHITE">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -378,7 +378,7 @@
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%ui.reload_4d1c">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
                <font>
                   <Font size="14.0" />
                </font>
@@ -386,7 +386,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%ui.delete_f2a6" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>
@@ -394,9 +394,9 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                </graphic>
             </Button>
-            <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="%ui.pup_pack_editor_bf05" textFill="WHITE">
+            <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_editor" textFill="WHITE">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="%ui.pup_pack_screen_tweaker_c3a2">
+                <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_screen_tweaker">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                      </graphic>
@@ -410,7 +410,7 @@
                </graphic>
             </SplitMenuButton>
             <Separator layoutX="196.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="%ui.enabled_00d2" textFill="WHITE">
+            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="%pref.webhook_set.enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -423,7 +423,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip prefWidth="300.0" text="%ui.a_pup_pack_can_only_be_7ec3" wrapText="true" />
+                  <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.a_pup_pack_can_only_be_disabled_here" wrapText="true" />
                </tooltip>
                <padding>
                   <Insets left="3.0" />

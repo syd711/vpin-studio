@@ -27,12 +27,12 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <right>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" BorderPane.alignment="CENTER" />
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close" BorderPane.alignment="CENTER" />
          </right>
          <left>
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%ui.re_start_pinemhi_monitor_bffe" textFill="WHITE">
+                  <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinemhi_ui.re_start_pinemhi_monitor" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,7 +40,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" />
                      </graphic>
                   </Button>
-                  <Button fx:id="stopBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onStop" text="%ui.stop_pinemhi_monitor_9036" textFill="WHITE">
+                  <Button fx:id="stopBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onStop" text="%pref.pinemhi_ui.stop_pinemhi_monitor" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -70,20 +70,20 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.font_color_f44b" textFill="WHITE">
+                        <Label text="%pref.pinemhi_ui.font_color" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ColorPicker fx:id="fontColorSelector" GridPane.columnIndex="1" />
-                        <Label styleClass="preference-description" text="%ui.select_the_overlay_font_color_here_65a2" textFill="WHITE" GridPane.columnIndex="2" />
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.background_color_f18d" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label styleClass="preference-description" text="%pref.pinemhi_ui.select_the_overlay_font_color_here" textFill="WHITE" GridPane.columnIndex="2" />
+                        <Label layoutX="10.0" layoutY="15.0" text="%pref.pinemhi_ui.background_color" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ColorPicker fx:id="backgroundColorSelector" layoutX="157.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label layoutX="306.0" layoutY="14.0" styleClass="preference-description" text="%ui.select_the_overlay_background_color_here_1f1f" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label layoutX="306.0" layoutY="14.0" styleClass="preference-description" text="%pref.pinemhi_ui.select_the_overlay_background_color_here" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <Button mnemonicParsing="false" onAction="#onFontSelect" prefHeight="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
@@ -92,7 +92,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
                            </graphic>
                         </Button>
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.font_7b33" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="%pref.pinemhi_ui.font" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -107,41 +107,41 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="60.0" styleClass="preference-description" text="%ui.if_you_change_the_font_be_49a0" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="60.0" styleClass="preference-description" text="%pref.pinemhi_ui.if_you_change_the_font_be_sure_to" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="12.0" top="6.0" />
                      </VBox.margin></Label>
-                  <CheckBox fx:id="noBackground" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.no_background_3845" textFill="WHITE">
+                  <CheckBox fx:id="noBackground" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.no_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%ui.if_checked_there_will_be_no_6310" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="noBadgesBackground" layoutX="22.0" layoutY="125.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.no_badges_background_bdad" textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%pref.pinemhi_ui.if_checked_there_will_be_no_background_for" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="noBadgesBackground" layoutX="22.0" layoutY="125.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.no_badges_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="22.0" layoutY="164.0" styleClass="checkbox-description" text="%ui.if_checked_there_will_be_no_e5ae" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="cabinetView" layoutX="22.0" layoutY="185.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.cabinet_view_aae3" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="164.0" styleClass="checkbox-description" text="%pref.pinemhi_ui.if_checked_there_will_be_no_background_for_2" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="cabinetView" layoutX="22.0" layoutY="185.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.cabinet_view" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="22.0" layoutY="224.0" styleClass="checkbox-description" text="%ui.if_checked_the_overlay_rotates_the_86ee" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="onAtStart" layoutX="22.0" layoutY="245.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.on_at_start_1703" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="224.0" styleClass="checkbox-description" text="%pref.pinemhi_ui.if_checked_the_overlay_rotates_the_output_270" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="onAtStart" layoutX="22.0" layoutY="245.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.on_at_start" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="22.0" layoutY="284.0" styleClass="checkbox-description" text="%ui.check_if_you_want_the_popup_8754" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="autoRotate" layoutX="22.0" layoutY="267.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.auto_rotate_5566" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="284.0" styleClass="checkbox-description" text="%pref.pinemhi_ui.check_if_you_want_the_popup_to_be" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="autoRotate" layoutX="22.0" layoutY="267.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.auto_rotate" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="22.0" layoutY="365.0" styleClass="checkbox-description" text="%ui.if_enabled_this_will_rotate_between_0edb" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="22.0" layoutY="305.0" styleClass="checkbox-description" text="%ui.when_using_this_feature_the_popups_af12" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="365.0" styleClass="checkbox-description" text="%pref.pinemhi_ui.if_enabled_this_will_rotate_between_popups_handy" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="305.0" styleClass="checkbox-description" text="%pref.pinemhi_ui.when_using_this_feature_the_popups_will_not" textFill="WHITE" wrapText="true" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -151,7 +151,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.autorotate_seconds_1ff5" textFill="WHITE">
+                        <Label text="%pref.pinemhi_ui.autorotate_seconds" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -162,7 +162,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="590.0" styleClass="preference-description" text="%ui.sets_the_number_of_seconds_after_31cb" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="590.0" styleClass="preference-description" text="%pref.pinemhi_ui.sets_the_number_of_seconds_after_a_popup" textFill="WHITE" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -172,7 +172,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.screen_4e6f" textFill="WHITE">
+                        <Label text="%cards.template_editor_overlay.screen" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -183,7 +183,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="104.0" styleClass="preference-description" text="%ui.choose_on_which_screen_you_want_3267" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinemhi_ui.choose_on_which_screen_you_want_to_display" textFill="WHITE" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="190.0" />
@@ -198,17 +198,17 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.manual_offset_3802" textFill="WHITE">
+                        <Label text="%pref.pinemhi_ui.manual_offset" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.x_c60e" textFill="WHITE" GridPane.columnIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="%pref.pinemhi_ui.x" textFill="WHITE" GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="311.0" layoutY="15.0" text="%ui.y_b2bc" textFill="WHITE" GridPane.columnIndex="5">
+                        <Label layoutX="311.0" layoutY="15.0" text="%pref.pinemhi_ui.y" textFill="WHITE" GridPane.columnIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -225,9 +225,9 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="360.0" styleClass="preference-description" text="%ui.enable_manual_offset_to_turn_on_4d46" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="436.0" styleClass="preference-description" text="%ui.use_the_x_and_y_values_0119" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="457.0" styleClass="preference-description" text="%ui.this_will_overrule_the_screen_option_af20" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="360.0" styleClass="preference-description" text="%pref.pinemhi_ui.enable_manual_offset_to_turn_on_for_manual" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="436.0" styleClass="preference-description" text="%pref.pinemhi_ui.use_the_x_and_y_values_to_determine" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="457.0" styleClass="preference-description" text="%pref.pinemhi_ui.this_will_overrule_the_screen_option" textFill="WHITE" />
                   <GridPane prefHeight="30.0" prefWidth="841.0" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="190.0" />
@@ -245,17 +245,17 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.manual_offset_x_centered_7f8e" textFill="WHITE">
+                        <Label text="%pref.pinemhi_ui.manual_offset_x_centered" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.x_start_31dc" textFill="WHITE" GridPane.columnIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="%pref.pinemhi_ui.x_start" textFill="WHITE" GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="311.0" layoutY="15.0" text="%ui.x_end_8e45" textFill="WHITE" GridPane.columnIndex="5">
+                        <Label layoutX="311.0" layoutY="15.0" text="%pref.pinemhi_ui.x_end" textFill="WHITE" GridPane.columnIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -267,7 +267,7 @@
                         </CheckBox>
                         <Spinner GridPane.columnIndex="3" fx:id="xStart" />
                         <Spinner layoutX="362.0" layoutY="12.0" GridPane.columnIndex="6" fx:id="xEnd" />
-                        <Label layoutX="492.0" layoutY="15.0" text="%ui.y_value_0423" textFill="WHITE" GridPane.columnIndex="8">
+                        <Label layoutX="492.0" layoutY="15.0" text="%pref.pinemhi_ui.y_value" textFill="WHITE" GridPane.columnIndex="8">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -278,9 +278,9 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="436.0" styleClass="preference-description" text="%ui.enable_manual_offset_x_centered_to_2b8e" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="576.0" styleClass="preference-description" text="%ui.use_the_y_and_x_values_c3f9" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="598.0" styleClass="preference-description" text="%ui.need_to_position_this_will_overrule_a991" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="436.0" styleClass="preference-description" text="%pref.pinemhi_ui.enable_manual_offset_x_centered_to_turn_on" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="576.0" styleClass="preference-description" text="%pref.pinemhi_ui.use_the_y_and_x_values_will_be_2" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="598.0" styleClass="preference-description" text="%pref.pinemhi_ui.need_to_position_this_will_overrule_the_screen" textFill="WHITE" />
                   <GridPane layoutX="22.0" layoutY="776.0" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="190.0" />
@@ -298,17 +298,17 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.manual_offset_y_centered_a80d" textFill="WHITE">
+                        <Label text="%pref.pinemhi_ui.manual_offset_y_centered" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.y_start_5ad5" textFill="WHITE" GridPane.columnIndex="2">
+                        <Label layoutX="10.0" layoutY="15.0" text="%pref.pinemhi_ui.y_start" textFill="WHITE" GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="311.0" layoutY="15.0" text="%ui.y_end_988f" textFill="WHITE" GridPane.columnIndex="5">
+                        <Label layoutX="311.0" layoutY="15.0" text="%pref.pinemhi_ui.y_end" textFill="WHITE" GridPane.columnIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -320,7 +320,7 @@
                         </CheckBox>
                         <Spinner fx:id="yStart" GridPane.columnIndex="3" />
                         <Spinner fx:id="yEnd" layoutX="362.0" layoutY="12.0" GridPane.columnIndex="6" />
-                        <Label text="%ui.x_value_ae32" textFill="WHITE" GridPane.columnIndex="8">
+                        <Label text="%pref.pinemhi_ui.x_value" textFill="WHITE" GridPane.columnIndex="8">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -331,21 +331,21 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="807.0" styleClass="preference-description" text="%ui.enable_manual_offset_y_centered_to_797a" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="828.0" styleClass="preference-description" text="%ui.use_the_y_and_x_values_7f09" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="850.0" styleClass="preference-description" text="%ui.need_to_position_this_will_overrule_d9c1" textFill="WHITE" />
-                  <CheckBox fx:id="onBetweenRotation" layoutX="22.0" layoutY="765.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.on_between_rotation_4e7d" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="807.0" styleClass="preference-description" text="%pref.pinemhi_ui.enable_manual_offset_y_centered_to_turn_on" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="828.0" styleClass="preference-description" text="%pref.pinemhi_ui.use_the_y_and_x_values_will_be" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="850.0" styleClass="preference-description" text="%pref.pinemhi_ui.need_to_position_this_will_overrule_the_screen_2" textFill="WHITE" />
+                  <CheckBox fx:id="onBetweenRotation" layoutX="22.0" layoutY="765.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.on_between_rotation" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="22.0" layoutY="804.0" styleClass="checkbox-description" text="%ui.if_enabled_the_overlay_will_stay_d276" textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="extraBackground" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.extra_background_d89f" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="804.0" styleClass="checkbox-description" text="%pref.pinemhi_ui.if_enabled_the_overlay_will_stay_on_between" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="extraBackground" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.pinemhi_ui.extra_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%ui.this_can_be_used_to_hide_baf4" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="checkbox-description" text="%pref.pinemhi_ui.this_can_be_used_to_hide_frontend_images" textFill="WHITE" wrapText="true" />
                   <GridPane layoutX="22.0" layoutY="670.0" prefHeight="30.0" prefWidth="807.0" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="10.0" prefWidth="60.0" />
@@ -364,22 +364,22 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%ui.x_pos_8218" textFill="WHITE">
+                        <Label text="%pref.pinemhi_ui.x_pos" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.y_pos_a629" textFill="WHITE" GridPane.columnIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" text="%pref.pinemhi_ui.y_pos" textFill="WHITE" GridPane.columnIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="311.0" layoutY="15.0" text="%ui.x_size_4420" textFill="WHITE" GridPane.columnIndex="6">
+                        <Label layoutX="311.0" layoutY="15.0" text="%pref.pinemhi_ui.x_size" textFill="WHITE" GridPane.columnIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="393.0" layoutY="15.0" text="%ui.y_size_4529" textFill="WHITE" GridPane.columnIndex="9">
+                        <Label layoutX="393.0" layoutY="15.0" text="%pref.pinemhi_ui.y_size" textFill="WHITE" GridPane.columnIndex="9">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -393,8 +393,8 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%ui.use_the_x_and_y_pos_2bbd" textFill="WHITE" />
-                  <Label layoutX="22.0" layoutY="940.0" styleClass="preference-description" text="%ui.use_the_x_and_y_size_d85d" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.pinemhi_ui.use_the_x_and_y_pos_values_to" textFill="WHITE" />
+                  <Label layoutX="22.0" layoutY="940.0" styleClass="preference-description" text="%pref.pinemhi_ui.use_the_x_and_y_size_values_for" textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

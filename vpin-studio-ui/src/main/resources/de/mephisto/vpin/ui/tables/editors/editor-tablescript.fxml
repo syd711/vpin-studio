@@ -24,7 +24,7 @@
             <Insets />
          </BorderPane.margin>
          <items>
-            <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="%ui.search_2a37" visible="false">
+            <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="%tables.editors.editor_tablescript.search" visible="false">
                <font>
                   <Font size="14.0" />
                </font>
@@ -35,12 +35,12 @@
    <bottom>
       <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="1233.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClose" text="%ui.close_d3d2" textFill="WHITE">
+            <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClose" text="%update_info.close" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="115.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSave" text="%ui.save_c9cc" textFill="WHITE" visible="false">
+            <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="115.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSave" text="%backups.backup_source_folder.save" textFill="WHITE" visible="false">
                <font>
                   <Font size="14.0" />
                </font>
@@ -48,7 +48,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" />
                </graphic>
             </Button>
-          <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" text="%ui.save_close_e9f4" textFill="WHITE" visible="false">
+          <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" text="%tables.table_data.save_close" textFill="WHITE" visible="false">
                <font>
                   <Font size="14.0" />
                </font>

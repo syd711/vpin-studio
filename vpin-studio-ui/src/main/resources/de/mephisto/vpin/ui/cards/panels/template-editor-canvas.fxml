@@ -24,7 +24,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="%ui.canvas_settings_33ee" />
+            <Label text="%cards.template_editor_canvas.canvas_settings" />
          </left>
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -37,7 +37,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.toggle_canvas_visibility_9fd3" />
+                        <Tooltip text="%cards.template_editor_canvas.toggle_canvas_visibility" />
                      </tooltip>
                   </Button>
                   <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -48,7 +48,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400" />
+                        <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                      </tooltip>
                   </ToggleButton>
                </children>
@@ -61,7 +61,7 @@
          <content>
             <VBox styleClass="accordion-container" >
                <children>
-                  <Label text="%ui.adds_an_additional_background_layer_so_4393" prefWidth="200" wrapText="true">
+                  <Label text="%cards.template_editor_canvas.adds_an_additional_background_layer_so_that_it" prefWidth="200" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
                      </graphic>
@@ -69,7 +69,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label text="%ui.color_cb5f" textFill="WHITE">
+                  <Label text="%cards.template_editor_canvas.color" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -83,7 +83,7 @@
                      </VBox.margin>
                   </ColorPicker>
 
-                  <Label text="%ui.alpha_percentage_2036" textFill="WHITE">
+                  <Label text="%cards.template_editor_background.alpha_percentage" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -99,7 +99,7 @@
 
                   <fx:include fx:id="position" source="template-subeditor-position.fxml" />
 
-                  <Label text="%ui.border_radius_b805" textFill="WHITE">
+                  <Label text="%cards.template_editor_canvas.border_radius" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

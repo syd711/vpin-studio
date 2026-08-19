@@ -23,13 +23,13 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%ui.vpin_studio_preferences_f3e1" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%ui.server_settings_d641">
+                  <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%competitions.discord_competition_edit.server_settings">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%ui.miscellaneous_information_about_the_vpin_studio_b55a" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.settings_server.miscellaneous_information_about_the_vpin_studio_service" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
@@ -46,7 +46,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.startup_time_fe95" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.startup_time" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -56,7 +56,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%ui.version_9d29" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.version" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -66,12 +66,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="preference-label" text="%ui.vpin_studio_server_restart_77f1" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label styleClass="preference-label" text="%pref.settings_server.vpin_studio_server_restart" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="%ui.restart_server_ac2b" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="%pref.settings_server.restart_server" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -81,14 +81,14 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="426.0" styleClass="preference-subtitle" text="%ui.media_assets_703f">
+                  <Label layoutX="34.0" layoutY="426.0" styleClass="preference-subtitle" text="%pref.settings_server.media_assets">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="288.0" styleClass="preference-description" text="%ui.for_generating_highscore_cards_backglass_previews_e538" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="452.0" styleClass="preference-description" text="%ui.that_are_cached_you_can_rebuild_c2af" textFill="WHITE" />
-                  <Button layoutX="34.0" layoutY="596.0" mnemonicParsing="false" onAction="#onMediaIndex" text="%ui.regenerate_media_cache_07e3">
+                  <Label layoutX="34.0" layoutY="288.0" styleClass="preference-description" text="%pref.settings_server.for_generating_highscore_cards_backglass_previews_and_compet" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="452.0" styleClass="preference-description" text="%pref.settings_server.that_are_cached_you_can_rebuild_this_cache" textFill="WHITE" />
+                  <Button layoutX="34.0" layoutY="596.0" mnemonicParsing="false" onAction="#onMediaIndex" text="%pref.settings_server.regenerate_media_cache">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -96,18 +96,18 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Button>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.backup_3500">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%backups.tables_backup.backup">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="%ui.create_restore_a_backup_file_in_f318" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="275.0" styleClass="preference-description" text="%pref.settings_server.create_restore_a_backup_file_in_json_format" textFill="WHITE" />
                   <HBox spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onBackup" text="%ui.create_backup_c14c">
+                        <Button mnemonicParsing="false" onAction="#onBackup" text="%pref.settings_server.create_backup">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -115,7 +115,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save-cog-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onRestore" text="%ui.restore_backup_6b57">
+                        <Button mnemonicParsing="false" onAction="#onRestore" text="%pref.restore_backup.restore_backup">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -127,12 +127,12 @@
                   </HBox>
                   <VBox fx:id="popperDataMappingFields">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.table_data_mapping_d934">
+                        <Label styleClass="preference-subtitle" text="%pref.settings_server.table_data_mapping">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%ui.this_section_lets_you_select_the_1480" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.settings_server.this_section_lets_you_select_the_pinup_popper" textFill="WHITE" />
                         <GridPane hgap="3.0" vgap="3.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="300.7999267578125" />
@@ -150,61 +150,61 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label prefHeight="20.0" styleClass="preference-label" text="%ui.highscore_txt_file_name_3012" textFill="WHITE">
+                              <Label prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.highscore_txt_file_name" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="preference-description" text="%ui.is_stored_into_field_e52f" textFill="WHITE" GridPane.columnIndex="1" />
+                              <Label styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" />
                               <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </ComboBox>
-                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%ui.vp_spreadsheet_table_id_e581" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_id" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="%ui.is_stored_into_field_e52f" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%ui.vp_spreadsheet_table_version_id_a89b" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_version_id" textFill="WHITE" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="%ui.is_stored_into_field_e52f" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                               <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="%ui.used_by_some_tables_to_write_fdf7" textFill="WHITE" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="%ui.the_id_for_the_overall_table_9418" textFill="WHITE" GridPane.rowIndex="3" />
-                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="%ui.the_id_of_the_version_mod_a854" textFill="WHITE" GridPane.rowIndex="5" />
-                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="%ui.patch_version_e3c1" textFill="WHITE" GridPane.rowIndex="6">
+                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.used_by_some_tables_to_write_scores_into" textFill="WHITE" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="%pref.settings_server.the_id_for_the_overall_table_type_on" textFill="WHITE" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="%pref.settings_server.the_id_of_the_version_mod_of_the" textFill="WHITE" GridPane.rowIndex="5" />
+                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="%pref.settings_server.patch_version" textFill="WHITE" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="%ui.the_version_number_or_name_of_fc08" textFill="WHITE" GridPane.rowIndex="7" />
-                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="%ui.is_stored_into_field_e52f" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="%pref.settings_server.the_version_number_or_name_of_the_patch" textFill="WHITE" GridPane.rowIndex="7" />
+                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <ComboBox fx:id="patchVersionCombo" layoutX="440.0" layoutY="144.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                            </children>
                         </GridPane>
                      </children>
                   </VBox>
-                  <Label styleClass="preference-subtitle" text="%ui.options_dae8">
+                  <Label styleClass="preference-subtitle" text="%pref.pinemhi.options">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="%ui.miscellaneous_options_for_the_vpin_server_3c41" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="%pref.settings_server.miscellaneous_options_for_the_vpin_server_can_be" textFill="WHITE" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%ui.startup_delay_7c09" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.startup_delay" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Spinner fx:id="startupDelaySpinner" prefWidth="80.0" />
-                        <Label layoutX="10.0" layoutY="13.0" prefHeight="20.0" styleClass="preference-label" text="%ui.seconds_783e" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="13.0" prefHeight="20.0" styleClass="preference-label" text="%monitor.cab_monitor.seconds" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -214,20 +214,20 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="884.0" styleClass="preference-description" text="%ui.you_can_delay_the_start_of_b52b" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="884.0" styleClass="preference-description" text="%pref.settings_server.you_can_delay_the_start_of_the_server" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="947.0" styleClass="preference-description" text="%ui.this_might_result_in_a_faster_1952" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="947.0" styleClass="preference-description" text="%pref.settings_server.this_might_result_in_a_faster_launch_of" textFill="WHITE" />
                   <VBox fx:id="launchOnExitOption">
                      <children>
-                        <CheckBox fx:id="launchFrontendCheckbox" mnemonicParsing="false" text="%ui.launch_vpin_frontend_on_maintenance_exit_dc8c" textFill="WHITE">
+                        <CheckBox fx:id="launchFrontendCheckbox" mnemonicParsing="false" text="%pref.settings_server.launch_vpin_frontend_on_maintenance_exit" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%ui.when_working_remote_the_frontend_can_37a9" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%pref.settings_server.when_working_remote_the_frontend_can_be_launched" textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -235,18 +235,18 @@
                   </VBox>
                   <VBox fx:id="tableBackupOption" layoutX="34.0" layoutY="910.0">
                      <children>
-                        <CheckBox fx:id="uploadTableBackups" mnemonicParsing="false" text="%ui.backup_vpx_files_on_upload_ceef" textFill="WHITE">
+                        <CheckBox fx:id="uploadTableBackups" mnemonicParsing="false" text="%pref.settings_server.backup_vpx_files_on_upload" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="%ui.when_selected_existing_vpx_files_will_3ad6" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%pref.settings_server.when_selected_existing_vpx_files_will_be_moved" textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
-                  <CheckBox fx:id="useOriginalVbsFilesCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="%ui.keep_vbs_files_when_editing_table_2264" textFill="WHITE">
+                  <CheckBox fx:id="useOriginalVbsFilesCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="%pref.settings_server.keep_vbs_files_when_editing_table_scripts" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -254,9 +254,9 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="%ui.if_checked_the_exported_vbs_files_f6d8" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="1035.0" styleClass="checkbox-description" text="%ui.otherwise_the_vbs_files_will_be_b00b" textFill="WHITE" />
-                  <CheckBox fx:id="keepModificationDateCheckbox" layoutX="34.0" layoutY="1147.0" mnemonicParsing="false" text="%ui.keep_vpx_modification_dates_e460" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="%pref.settings_server.if_checked_the_exported_vbs_files_will_be" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="1035.0" styleClass="checkbox-description" text="%pref.settings_server.otherwise_the_vbs_files_will_be_removed_after" textFill="WHITE" />
+                  <CheckBox fx:id="keepModificationDateCheckbox" layoutX="34.0" layoutY="1147.0" mnemonicParsing="false" text="%pref.settings_server.keep_vpx_modification_dates" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -264,7 +264,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="1167.0" styleClass="checkbox-description" text="%ui.if_checked_the_modification_date_of_ddb4" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="1167.0" styleClass="checkbox-description" text="%pref.settings_server.if_checked_the_modification_date_of_replaced_vpx" textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

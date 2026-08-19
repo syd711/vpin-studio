@@ -21,7 +21,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" text="%ui.download_801a" textFill="WHITE">
+                  <Label fx:id="titleLabel" text="%backups.backup_download.download" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -33,7 +33,7 @@
                      <center>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER_LEFT">
                            <children>
-                              <TextField fx:id="fileNameField" editable="false" prefWidth="350.0" promptText="%ui.select_a_download_folder_78fa">
+                              <TextField fx:id="fileNameField" editable="false" prefWidth="350.0" promptText="%backups.backup_download.select_a_download_folder">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -41,7 +41,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="120.0" text="%ui.select_folder_e918">
+                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="120.0" text="%backups.backup_download.select_folder">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -62,12 +62,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" styleClass="submit-button" text="%ui.download_801a">
+                  <Button fx:id="downloadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" styleClass="submit-button" text="%backups.backup_download.download">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

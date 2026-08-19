@@ -20,7 +20,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="%ui.score_settings_f6bd" />
+            <Label text="%cards.template_editor_scores.score_settings" />
          </left>
          <right>
              <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -33,7 +33,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="%ui.toggle_scores_visibility_21ad" />
+                             <Tooltip text="%cards.template_editor_scores.toggle_scores_visibility" />
                          </tooltip>
                      </Button>
                      <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -44,7 +44,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400" />
+                             <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                          </tooltip>
                      </ToggleButton>
                  </children>
@@ -57,7 +57,7 @@
          <content>
             <VBox styleClass="accordion-container">
               <children>
-                <Label text="%ui.score_font_dfd7" textFill="WHITE">
+                <Label text="%cards.template_editor_scores.score_font" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -89,7 +89,7 @@
                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
                                 </graphic>
                                 <tooltip>
-                                  <Tooltip text="%ui.apply_selected_font_settings_to_all_b7d1" />
+                                  <Tooltip text="%cards.template_editor_scores.apply_selected_font_settings_to_all_templates" />
                                 </tooltip>
                             </Button>
                           </children>
@@ -97,7 +97,7 @@
                     </right>
                 </BorderPane>
 
-                <Label text="%ui.font_color_2203" textFill="WHITE">
+                <Label text="%cards.template_editor_scores.font_color" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -111,7 +111,7 @@
                     </VBox.margin>
                 </ColorPicker>
 
-                <Label text="%ui.font_color_for_friends_fb58" textFill="WHITE">
+                <Label text="%cards.template_editor_scores.font_color_for_friends" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -129,7 +129,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <Label text="%ui.row_separator_1a8d" textFill="WHITE">
+                      <Label text="%cards.template_editor_scores.row_separator" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -139,7 +139,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="%ui.the_vertical_space_between_the_lines_0ba4" />
+                            <Tooltip text="%cards.template_editor_scores.the_vertical_space_between_the_lines_of_the" />
                           </tooltip>
                       </Label>
                     </children>
@@ -155,7 +155,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="%ui.render_raw_highscore_data_cc82" textFill="WHITE">
+                      <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="%cards.template_editor_scores.render_raw_highscore_data" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -165,7 +165,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="%ui.the_font_size_of_the_highscore_6473" />
+                            <Tooltip text="%cards.template_editor_scores.the_font_size_of_the_highscore_text_will" />
                           </tooltip>
                       </Label>
                     </children>
@@ -175,7 +175,7 @@
                 </HBox>
                   <HBox alignment="BASELINE_LEFT" layoutX="22.0" layoutY="417.0" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="renderNamesHighscore" mnemonicParsing="false" text="%ui.render_names_2ac8" textFill="WHITE">
+                        <CheckBox fx:id="renderNamesHighscore" mnemonicParsing="false" text="%cards.template_editor_scores.render_names" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -185,7 +185,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.when_selected_the_display_names_of_53ef" />
+                              <Tooltip text="%cards.template_editor_scores.when_selected_the_display_names_of_the_player" />
                            </tooltip>
                         </Label>
                      </children>
@@ -196,7 +196,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="%ui.render_friends_highscore_data_f942" textFill="WHITE">
+                      <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="%cards.template_editor_scores.render_friends_highscore_data" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -206,7 +206,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="%ui.the_scores_of_your_friends_will_b477" />
+                            <Tooltip text="%cards.template_editor_scores.the_scores_of_your_friends_will_be_merged" />
                           </tooltip>
                       </Label>
                     </children>
@@ -217,7 +217,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <Label text="%ui.max_scores_0a58" textFill="WHITE">
+                      <Label text="%cards.template_editor_scores.max_scores" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -227,7 +227,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="%ui.0_will_render_all_available_scores_805d" />
+                            <Tooltip text="%cards.template_editor_scores.0_will_render_all_available_scores" />
                           </tooltip>
                       </Label>
                     </children>
@@ -241,7 +241,7 @@
                     </VBox.margin>
                 </Spinner>
 
-                <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="%ui.render_positions_a9fb" textFill="WHITE">
+                <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="%cards.template_editor_scores.render_positions" textFill="WHITE">
                     <font>
                       <Font size="14.0" />
                     </font>
@@ -250,7 +250,7 @@
                     </VBox.margin>
                 </CheckBox>
 
-                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="%ui.render_creation_dates_6dff" textFill="WHITE">
+                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="%cards.template_editor_scores.render_creation_dates" textFill="WHITE">
                     <font>
                       <Font size="14.0" />
                     </font>

@@ -22,23 +22,23 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%ui.world_of_virtual_pinball_bdfa">
+                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.wovp.world_of_virtual_pinball">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.settings_for_the_weekly_challenges_from_a288" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%ui.for_more_information_visit_3364" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.wovp.settings_for_the_weekly_challenges_from_the_world" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Hyperlink onAction="#onLink" text="%ui.https_worldofvirtualpinball_com_3536">
+                  <Hyperlink onAction="#onLink" text="%pref.wovp.https_worldofvirtualpinball_com">
                      <VBox.margin>
                         <Insets left="-5.0" />
                      </VBox.margin></Hyperlink>
-                  <CheckBox fx:id="subscriptionCheckbox" mnemonicParsing="false" text="%ui.enable_world_of_virtual_pinball_competitions_ad7c" textFill="WHITE">
+                  <CheckBox fx:id="subscriptionCheckbox" mnemonicParsing="false" text="%pref.wovp.enable_world_of_virtual_pinball_competitions" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -46,21 +46,21 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%ui.this_will_automatically_update_the_weekly_6f0c" textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%pref.wovp.this_will_automatically_update_the_weekly_competitions_to" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.account_settings_ff73" textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="%pref.dof.account_settings" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%ui.you_find_the_api_key_in_4253" textFill="WHITE" />
-                        <Hyperlink onAction="#onLink" text="%ui.https_worldofvirtualpinball_com_en_challenge_settings_d4ff" />
-                        <Label layoutX="10.0" layoutY="61.0" styleClass="preference-description" text="%ui.multiple_accounts_are_supported_and_you_de01" textFill="WHITE">
+                        <Label styleClass="preference-description" text="%pref.wovp.you_find_the_api_key_in_the_account" textFill="WHITE" />
+                        <Hyperlink onAction="#onLink" text="%pref.wovp.https_worldofvirtualpinball_com_en_challenge_settings_tab_ge" />
+                        <Label layoutX="10.0" layoutY="61.0" styleClass="preference-description" text="%pref.wovp.multiple_accounts_are_supported_and_you_can_select" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
@@ -81,87 +81,87 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TextField fx:id="apiKeyText1" prefHeight="30.0" prefWidth="233.0" promptText="%ui.enter_the_api_key_here_c4e4" GridPane.columnIndex="1">
+                              <TextField fx:id="apiKeyText1" prefHeight="30.0" prefWidth="233.0" promptText="%pref.wovp.enter_the_api_key_here" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label styleClass="default-text" text="%ui.api_key_player_1_3a69" />
+                              <Label styleClass="default-text" text="%pref.wovp.api_key_player_1" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
                                  <children>
-                                    <Button fx:id="testBtn1" mnemonicParsing="false" onAction="#onApiKeyTest" text="%ui.test_api_key_c335" textFill="WHITE">
+                                    <Button fx:id="testBtn1" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <CheckBox fx:id="enabledCheckbox1" mnemonicParsing="false" styleClass="default-text" text="%ui.enabled_00d2" />
+                                    <CheckBox fx:id="enabledCheckbox1" mnemonicParsing="false" styleClass="default-text" text="%pref.webhook_set.enabled" />
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="%ui.api_key_player_2_6b1a" GridPane.rowIndex="1" />
-                              <Label styleClass="default-text" text="%ui.api_key_player_3_cadb" GridPane.rowIndex="2" />
-                              <Label styleClass="default-text" text="%ui.api_key_player_4_a75c" GridPane.rowIndex="3" />
-                              <Label styleClass="default-text" text="%ui.api_key_player_5_b22c" GridPane.rowIndex="4" />
-                              <TextField fx:id="apiKeyText2" prefHeight="30.0" prefWidth="233.0" promptText="%ui.enter_the_api_key_here_c4e4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label styleClass="default-text" text="%pref.wovp.api_key_player_2" GridPane.rowIndex="1" />
+                              <Label styleClass="default-text" text="%pref.wovp.api_key_player_3" GridPane.rowIndex="2" />
+                              <Label styleClass="default-text" text="%pref.wovp.api_key_player_4" GridPane.rowIndex="3" />
+                              <Label styleClass="default-text" text="%pref.wovp.api_key_player_5" GridPane.rowIndex="4" />
+                              <TextField fx:id="apiKeyText2" prefHeight="30.0" prefWidth="233.0" promptText="%pref.wovp.enter_the_api_key_here" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <TextField fx:id="apiKeyText4" prefHeight="30.0" prefWidth="233.0" promptText="%ui.enter_the_api_key_here_c4e4" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <TextField fx:id="apiKeyText4" prefHeight="30.0" prefWidth="233.0" promptText="%pref.wovp.enter_the_api_key_here" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <TextField fx:id="apiKeyText3" prefHeight="30.0" prefWidth="233.0" promptText="%ui.enter_the_api_key_here_c4e4" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              <TextField fx:id="apiKeyText3" prefHeight="30.0" prefWidth="233.0" promptText="%pref.wovp.enter_the_api_key_here" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <TextField fx:id="apiKeyText5" prefHeight="30.0" prefWidth="233.0" promptText="%ui.enter_the_api_key_here_c4e4" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <TextField fx:id="apiKeyText5" prefHeight="30.0" prefWidth="233.0" promptText="%pref.wovp.enter_the_api_key_here" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
-                                    <Button fx:id="testBtn2" mnemonicParsing="false" onAction="#onApiKeyTest" text="%ui.test_api_key_c335" textFill="WHITE">
+                                    <Button fx:id="testBtn2" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <CheckBox fx:id="enabledCheckbox2" mnemonicParsing="false" styleClass="default-text" text="%ui.enabled_00d2" />
+                                    <CheckBox fx:id="enabledCheckbox2" mnemonicParsing="false" styleClass="default-text" text="%pref.webhook_set.enabled" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="testBtn3" mnemonicParsing="false" onAction="#onApiKeyTest" text="%ui.test_api_key_c335" textFill="WHITE">
+                                    <Button fx:id="testBtn3" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <CheckBox fx:id="enabledCheckbox3" mnemonicParsing="false" styleClass="default-text" text="%ui.enabled_00d2" />
+                                    <CheckBox fx:id="enabledCheckbox3" mnemonicParsing="false" styleClass="default-text" text="%pref.webhook_set.enabled" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="testBtn4" mnemonicParsing="false" onAction="#onApiKeyTest" text="%ui.test_api_key_c335" textFill="WHITE">
+                                    <Button fx:id="testBtn4" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <CheckBox fx:id="enabledCheckbox4" mnemonicParsing="false" styleClass="default-text" text="%ui.enabled_00d2" />
+                                    <CheckBox fx:id="enabledCheckbox4" mnemonicParsing="false" styleClass="default-text" text="%pref.webhook_set.enabled" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                  <children>
-                                    <Button fx:id="testBtn5" mnemonicParsing="false" onAction="#onApiKeyTest" text="%ui.test_api_key_c335" textFill="WHITE">
+                                    <Button fx:id="testBtn5" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <CheckBox fx:id="enabledCheckbox5" mnemonicParsing="false" styleClass="default-text" text="%ui.enabled_00d2" />
+                                    <CheckBox fx:id="enabledCheckbox5" mnemonicParsing="false" styleClass="default-text" text="%pref.webhook_set.enabled" />
                                  </children>
                               </HBox>
-                              <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%ui.clear_cache_06f4" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -175,13 +175,13 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.subscription_settings_fb53" textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="%competitions.subscription_add.subscription_settings" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%ui.let_the_vpin_server_subscribe_automatically_c640" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%ui.if_a_matching_table_is_found_b232" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.wovp.let_the_vpin_server_subscribe_automatically_to_the" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.wovp.if_a_matching_table_is_found_it_will" textFill="WHITE" />
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.2000732421875" minWidth="10.0" prefWidth="82.4" />
@@ -192,19 +192,19 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="%ui.settings_042c">
+                              <Label styleClass="default-text" text="%pref.wovp.settings">
                                  <GridPane.margin>
                                     <Insets top="6.0" />
                                  </GridPane.margin></Label>
                               <VBox GridPane.columnIndex="1">
                                  <children>
-                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="%ui.apply_wovp_competition_badges_to_the_a482" textFill="WHITE">
+                                    <CheckBox fx:id="badgeCheckbox" mnemonicParsing="false" text="%pref.wovp.apply_wovp_competition_badges_to_the_active_table" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%ui.if_a_matching_table_is_found_e943" textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%ui.logo_of_the_competition_type_for_a8f6" textFill="WHITE" />
+                                    <Label styleClass="checkbox-description" text="%pref.wovp.if_a_matching_table_is_found_the_wheel" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%pref.wovp.logo_of_the_competition_type_for_the_duration" textFill="WHITE" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="6.0" />
@@ -212,7 +212,7 @@
                               </VBox>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" text="%ui.backup_and_reset_existing_table_highscores_c002" textFill="WHITE">
+                                    <CheckBox fx:id="resetCheckbox" mnemonicParsing="false" text="%pref.wovp.backup_and_reset_existing_table_highscores_on_subscription" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -220,8 +220,8 @@
                                           <Insets />
                                        </VBox.margin>
                                     </CheckBox>
-                                    <Label styleClass="checkbox-description" text="%ui.when_a_table_is_selected_for_15bf" textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%ui.and_resetted_so_that_all_new_c0a3" textFill="WHITE" />
+                                    <Label styleClass="checkbox-description" text="%pref.wovp.when_a_table_is_selected_for_the_competition" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%pref.wovp.and_resetted_so_that_all_new_highscores_can" textFill="WHITE" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets top="6.0" />
@@ -236,13 +236,13 @@
                   </VBox>
                   <VBox fx:id="tagPane">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.score_submission_584c">
+                        <Label styleClass="preference-subtitle" text="%pref.wovp.score_submission">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%ui.scores_are_submitted_via_the_pause_39cc" textFill="WHITE" />
-                        <Hyperlink onAction="#onPauseMenuLink" text="%ui.open_pause_menu_preferences_dca7">
+                        <Label styleClass="preference-description" text="%pref.wovp.scores_are_submitted_via_the_pause_menu_check" textFill="WHITE" />
+                        <Hyperlink onAction="#onPauseMenuLink" text="%pref.wovp.open_pause_menu_preferences">
                            <VBox.margin>
                               <Insets bottom="12.0" />
                            </VBox.margin>
@@ -251,14 +251,14 @@
                   </VBox>
                   <VBox fx:id="tagPane">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.auto_tagging_dbb2">
+                        <Label styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%ui.if_enabled_and_the_competed_table_be1b" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%ui.you_can_create_an_sql_playlist_2192" textFill="WHITE" />
-                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.auto_tagging_enabled_4c5c" textFill="WHITE">
+                        <Label styleClass="preference-description" text="%pref.wovp.if_enabled_and_the_competed_table_is_updated" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.wovp.you_can_create_an_sql_playlist_for_competed" textFill="WHITE" />
+                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

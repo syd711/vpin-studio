@@ -23,7 +23,7 @@
                            <children>
                               <VBox fx:id="maniaGroup">
                                  <children>
-                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="%ui.cabinet_03ce">
+                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="%mania.mania_preferences.cabinet">
                                        <font>
                                           <Font size="13.0" />
                                        </font>
@@ -31,12 +31,12 @@
                                           <Insets top="24.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="%ui.cabinet_settings_dbf1" />
+                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="%mania.mania_preferences.cabinet_settings" />
                                  </children>
                               </VBox>
                               <VBox fx:id="menuItemsPanel">
                                  <children>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="%ui.data_privacy_settings_7873" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="%mania.mania_preferences.data_privacy_settings" />
                                  </children>
                               </VBox>
                            </children>
@@ -64,13 +64,13 @@
                               <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
                            </graphic>
                         </Hyperlink>
-                        <Hyperlink onAction="#onDiscordLink" text="%ui.join_discord_5c7e">
+                        <Hyperlink onAction="#onDiscordLink" text="%mania.mania_preferences.join_discord">
                            <graphic>
                               <FontIcon iconColor="#c7c3c3" iconLiteral="mdi-discord" iconSize="24" />
                            </graphic>
                         </Hyperlink>
-                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="%ui.hyperlink_79cd" textFill="#b0abab" />
-                        <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="%ui.label_b021">
+                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="%competitions.discord_competition_edit.hyperlink" textFill="#b0abab" />
+                        <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="%competitions.discord_competition_edit.label">
                            <VBox.margin>
                               <Insets right="5.0" />
                            </VBox.margin>

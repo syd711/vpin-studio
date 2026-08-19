@@ -23,25 +23,25 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="%ui.doflinx_a41b">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="%components.components.doflinx">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.settings_for_the_doflinx_service_3bed" textFill="WHITE" />
-            <Label styleClass="preference-description" text="%ui.for_more_information_visit_3364" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.doflinx.settings_for_the_doflinx_service" textFill="WHITE" />
+            <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Hyperlink onAction="#onLink" text="%ui.https_www_vpforums_org_index_php_6f79" />
-            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="%ui.documentation_8faa" textFill="WHITE" />
-            <Hyperlink layoutX="34.0" layoutY="148.0" onAction="#onLink" text="%ui.https_doflinx_github_io_docs_ac62" />
+            <Hyperlink onAction="#onLink" text="%pref.doflinx.https_www_vpforums_org_index_php_showforum_104" />
+            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="%pref.doflinx.documentation" textFill="WHITE" />
+            <Hyperlink layoutX="34.0" layoutY="148.0" onAction="#onLink" text="%pref.doflinx.https_doflinx_github_io_docs" />
             <VBox>
                <children>
-                  <Label styleClass="preference-subtitle" text="%ui.installation_7cd8" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%ui.select_the_folder_of_your_doflinx_4cf0" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.doflinx.installation" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.doflinx.select_the_folder_of_your_doflinx_installation" textFill="WHITE" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
@@ -60,15 +60,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="%ui.select_folder_e918">
+                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="%backups.backup_download.select_folder">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Button>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="%ui.folder_5416" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%ui.invalid_doflinx_installation_folder_no_doflinx_7439" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%backups.backup_source_folder.folder" />
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.doflinx.invalid_doflinx_installation_folder_no_doflinx_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -81,12 +81,12 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="%ui.auto_start_doflinx_with_vpin_studio_7d9f" textFill="WHITE">
+                  <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.doflinx.auto_start_doflinx_with_vpin_studio_server" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%ui.the_doflinx_exe_is_launched_together_0ae7" textFill="WHITE" wrapText="true">
+                  <Label styleClass="checkbox-description" text="%pref.doflinx.the_doflinx_exe_is_launched_together_with_the" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
@@ -96,7 +96,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                      <children>
-                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%ui.re_start_doflinx_7866">
+                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%components.doflinx.re_start_doflinx">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -104,7 +104,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%ui.stop_doflinx_c1b0" textFill="WHITE">
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%components.doflinx.stop_doflinx" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

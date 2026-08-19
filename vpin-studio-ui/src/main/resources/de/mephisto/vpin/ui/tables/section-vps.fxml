@@ -8,7 +8,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="576.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="sectionName" text="%ui.section_3d0d" textFill="WHITE">
+      <Label fx:id="sectionName" text="%tables.section_vps.section" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -18,7 +18,7 @@
       </Label>
       <HBox style="-fx-border-color: transparent transparent #C7C3C3 transparent;">
          <children>
-            <Label prefWidth="102.0" text="%ui.version_34b6" textFill="#b0abab">
+            <Label prefWidth="102.0" text="%backglass.directb2s_sidebar.version" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -26,7 +26,7 @@
                   <Insets left="3.0" />
                </padding>
             </Label>
-            <Label layoutX="10.0" layoutY="10.0" prefWidth="316.0" text="%ui.authors_0268" textFill="#b0abab">
+            <Label layoutX="10.0" layoutY="10.0" prefWidth="316.0" text="%tables.section_vps.authors" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -34,12 +34,12 @@
                   <Insets bottom="6.0" />
                </padding>
             </Label>
-            <Label layoutX="56.0" layoutY="10.0" prefWidth="50.0" text="%ui.url_e6b3" textFill="#b0abab">
+            <Label layoutX="56.0" layoutY="10.0" prefWidth="50.0" text="%tables.autofill_settings.url" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label alignment="BASELINE_RIGHT" contentDisplay="RIGHT" layoutX="103.0" layoutY="10.0" prefWidth="100.0" text="%ui.last_update_28b6" textAlignment="RIGHT" textFill="#b0abab">
+            <Label alignment="BASELINE_RIGHT" contentDisplay="RIGHT" layoutX="103.0" layoutY="10.0" prefWidth="100.0" text="%playlistmanager.playlist_table.last_update" textAlignment="RIGHT" textFill="#b0abab">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -54,7 +54,7 @@
       </HBox>
       <VBox>
          <children>
-            <Label text="%ui.loading_8524" textFill="WHITE" />
+            <Label text="%players.widget_highscore.loading" textFill="WHITE" />
          </children>
       </VBox>
    </children>

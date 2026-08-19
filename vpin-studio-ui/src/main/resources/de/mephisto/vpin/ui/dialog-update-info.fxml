@@ -27,8 +27,8 @@
                <right>
                   <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" />
-                        <Button fx:id="updateBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpdate" styleClass="submit-button" text="%ui.update_0693" />
+                        <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close" />
+                        <Button fx:id="updateBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpdate" styleClass="submit-button" text="%update_info.update" />
                      </children>
                   </HBox>
                </right>

@@ -27,7 +27,7 @@
             </Label>
          </children>
       </GridPane>
-      <Label fx:id="description" text="%ui.label_b021" textFill="WHITE">
+      <Label fx:id="description" text="%competitions.discord_competition_edit.label" textFill="WHITE">
          <font>
             <Font name="System Italic" size="14.0" />
          </font>

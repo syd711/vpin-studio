@@ -26,8 +26,8 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label styleClass="default-text" text="%ui.installed_version_d21a" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.latest_released_version_757c" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%components.component_short_summary_panel.latest_released_version" GridPane.rowIndex="1" />
                   <Label fx:id="latestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
@@ -38,7 +38,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.github_url_24d9" GridPane.rowIndex="2" />
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%components.component_short_summary_panel.github_url" GridPane.rowIndex="2" />
                   <Hyperlink fx:id="link" onAction="#onLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets left="-2.0" />

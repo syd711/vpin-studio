@@ -14,13 +14,13 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label styleClass="default-title" text="%ui.comments_8413" textFill="WHITE">
+            <Label styleClass="default-title" text="%tables.table_data_tab_comments.comments" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label styleClass="preference-description" text="%ui.enter_personal_comments_for_this_table_947f" />
-            <Label layoutX="22.0" layoutY="49.0" styleClass="preference-description" text="%ui.they_will_be_shown_as_colored_ce06" />
+            <Label styleClass="preference-description" text="%tables.table_data_tab_comments.enter_personal_comments_for_this_table" />
+            <Label layoutX="22.0" layoutY="49.0" styleClass="preference-description" text="%tables.table_data_tab_comments.they_will_be_shown_as_colored_markers_in" />
             <TextArea fx:id="textArea" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" top="6.0" />
@@ -28,7 +28,7 @@
             </TextArea>
             <HBox alignment="BASELINE_RIGHT">
                <children>
-                  <Button defaultButton="true" layoutX="422.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" styleClass="default-button" text="%ui.delete_comment_5617">
+                  <Button defaultButton="true" layoutX="422.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" styleClass="default-button" text="%tables.table_data_tab_comments.delete_comment">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -38,27 +38,27 @@
                   </Button>
                </children>
             </HBox>
-            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.tipp_f4b9" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%tables.table_data_tab_comments.tipp" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="useTodoLabel" layoutX="10.0" layoutY="243.0" styleClass="preference-description" text="%ui.use_todo_to_mark_a_note_0d53" textFill="WHITE">
+            <Label fx:id="useTodoLabel" layoutX="10.0" layoutY="243.0" styleClass="preference-description" text="%tables.table_data_tab_comments.use_todo_to_mark_a_note_as_a" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="useErrorLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="%ui.use_error_to_mark_a_note_8256" textFill="WHITE">
+            <Label fx:id="useErrorLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="%tables.table_data_tab_comments.use_error_to_mark_a_note_as_an" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="useOutdatedLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="%ui.use_outdated_to_mark_table_as_e674" textFill="WHITE">
+            <Label fx:id="useOutdatedLabel" layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="%tables.table_data_tab_comments.use_outdated_to_mark_table_as_outdated" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="%ui.tags_189f" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="%tables.autofill_settings.tags" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -68,7 +68,7 @@
             </Label>
             <VBox>
                <children>
-                  <Label styleClass="preference-description" text="%ui.add_tags_to_the_table_to_9a5e" />
+                  <Label styleClass="preference-description" text="%tables.table_data_tab_comments.add_tags_to_the_table_to_allow_better" />
                   <VBox fx:id="tags" spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
@@ -76,7 +76,7 @@
                   </VBox>
                   <HBox alignment="BASELINE_RIGHT">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onReload" styleClass="default-button" text="%ui.reload_4d1c">
+                        <Button mnemonicParsing="false" onAction="#onReload" styleClass="default-button" text="%competitions.competitions.reload">
                            <HBox.margin>
                               <Insets top="6.0" />
                            </HBox.margin>

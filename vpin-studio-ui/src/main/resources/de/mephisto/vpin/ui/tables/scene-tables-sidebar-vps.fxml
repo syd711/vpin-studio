@@ -35,7 +35,7 @@
                      <children>
                         <VBox fx:id="detailsBox">
                            <children>
-                              <Label text="%ui.sheet_data_6a8a" textFill="WHITE">
+                              <Label text="%tables.tables_sidebar_vps.sheet_data" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -50,12 +50,12 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="%ui.last_updated_89ea" textFill="WHITE">
+                                    <Label text="%tables.tables_sidebar_vps.last_updated" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="%ui.entries_a977" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.entries" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -75,7 +75,7 @@
                                     <Insets bottom="12.0" />
                                  </VBox.margin>
                               </GridPane>
-                              <Label layoutX="10.0" layoutY="10.0" text="%ui.table_data_b3d1" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="10.0" text="%pref.restore_backup.table_data" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -101,32 +101,32 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                                  <children>
-                                    <Label text="%ui.name_4e14" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="%ui.ipdb_url_8677" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_vps.ipdb_url" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="%ui.manufacturer_f4a2" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backups.backups_sidebar.manufacturer" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="%ui.players_9964" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.players" textFill="WHITE" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="150.0" text="%ui.updated_bb89" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="150.0" text="%tables.tables_sidebar_vps.updated" textFill="WHITE" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="%ui.year_06f8" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="116.0" text="%tables.tables_sidebar_vps.year" textFill="WHITE" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -154,7 +154,7 @@
                                     <Hyperlink fx:id="ipdbLink" onAction="#onIpdbLink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="%ui.enter_table_name_58e4">
+                                          <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="392.0" promptText="%cards.instructions_card.enter_table_name">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -172,7 +172,7 @@
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="168.0" text="%ui.table_version_c14a" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label layoutX="10.0" layoutY="168.0" text="%tables.table_data.table_version" textFill="WHITE" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -196,7 +196,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <tooltip>
-                                                      <Tooltip text="%ui.download_table_016d" />
+                                                      <Tooltip text="%pref.overlay.download_table" />
                                                    </tooltip>
                                                 </Button>
                                                 <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
@@ -207,7 +207,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                    <tooltip>
-                                                      <Tooltip text="%ui.copy_vps_table_version_url_430b" />
+                                                      <Tooltip text="%mania.mania_account_settings.copy_vps_table_version_url" />
                                                    </tooltip>
                                                 </Button>
                                              </children>
@@ -222,7 +222,7 @@
                                           <Insets right="60.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" text="%ui.authors_fd39" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label layoutX="10.0" layoutY="168.0" text="%tables.tables_sidebar_vps.authors" textFill="WHITE" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -236,14 +236,14 @@
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="45.0" text="%ui.updates_2f99" textFill="WHITE">
+                                    <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_vps.updates" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                                        <children>
-                                          <CheckBox fx:id="updatesCheckbox" mnemonicParsing="false" text="%ui.ignore_vps_updates_52c3" textFill="WHITE">
+                                          <CheckBox fx:id="updatesCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.ignore_vps_updates" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -256,7 +256,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="%ui.if_checked_no_updates_indicators_will_791d" wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_vps.if_checked_no_updates_indicators_will_be_shown" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -275,8 +275,8 @@
                         </VBox>
                         <VBox fx:id="multiSelectionPane">
                            <children>
-                              <Label styleClass="default-headline" text="%ui.multiple_tables_are_selected_f3bc" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%ui.only_supported_actions_are_enabled_for_3f0d" />
+                              <Label styleClass="default-headline" text="%tables.tables_sidebar_highscores.multiple_tables_are_selected" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%tables.tables_sidebar_highscores.only_supported_actions_are_enabled_for_bulk_operations" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -292,13 +292,13 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%ui.label_b021" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%competitions.discord_competition_edit.label" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="%ui.dismiss_c8a5" BorderPane.alignment="CENTER" />
+                        <Hyperlink onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%ui.label_b021" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%competitions.discord_competition_edit.label" wrapText="true" />
                </children>
             </VBox>
          </top>
@@ -318,7 +318,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.download_the_latest_vps_database_the_bca1" />
+                  <Tooltip text="%tables.tables_sidebar_vps.download_the_latest_vps_database_the_database_is" />
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" />
@@ -330,7 +330,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.resets_the_assigned_vps_table_mapping_8555" />
+                  <Tooltip text="%tables.table_data.resets_the_assigned_vps_table_mapping" />
                </tooltip>
             </Button>
             <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" textFill="WHITE">
@@ -338,12 +338,12 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.reset_vps_updates_indicators_in_the_3b8f" />
+                  <Tooltip text="%tables.tables_sidebar_vps.reset_vps_updates_indicators_in_the_overview_for" />
                </tooltip>
             </Button>
-            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%ui.auto_match_3142" textFill="WHITE">
+            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" textFill="WHITE">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%ui.auto_match_all_7bce">
+                  <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
                      <graphic>
                         <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
                            <font>
@@ -359,16 +359,16 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.tries_to_resolve_the_matching_vps_a1be" />
+                  <Tooltip text="%tables.table_data.tries_to_resolve_the_matching_vps_table_and" />
                </tooltip>
             </SplitMenuButton>
             <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" prefWidth="6.0" />
-            <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%ui.filter_existing_assets_360d" textFill="WHITE">
+            <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.filter_existing_assets" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="autoApplyCheckbox" layoutX="278.0" layoutY="15.0" mnemonicParsing="false" text="%ui.auto_apply_data_c544" textFill="WHITE">
+            <CheckBox fx:id="autoApplyCheckbox" layoutX="278.0" layoutY="15.0" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

@@ -24,23 +24,23 @@
                       <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;">
                           <columns>
                               <TableColumn fx:id="iconColumn" minWidth="0.0" prefWidth="90.39989471435547" sortable="false" style="-fx-alignment: CENTER;" />
-                              <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
-                              <TableColumn fx:id="directB2SColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.directb2s_3a9c" />
-                              <TableColumn fx:id="iniColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.ini_19cf" />
-                              <TableColumn fx:id="vbsColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.vbs_59fd" />
-                              <TableColumn fx:id="resColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.res_f8af" />
-                              <TableColumn fx:id="povColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.pov_3e50" />
-                              <TableColumn fx:id="pupPackColumn" sortable="false" style="-fx-alignment: CENTER;" text="%ui.pup_pack_d548" />
-                              <TableColumn fx:id="popperColumn" prefWidth="120.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.frontend_media_0b02" />
-                              <TableColumn fx:id="romColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.rom_2ab3" />
-                              <TableColumn fx:id="altSoundColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.alt_sound_f59a" />
-                              <TableColumn fx:id="altColorColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.alt_color_af82" />
-                              <TableColumn fx:id="musicColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.music_47dc" />
-                              <TableColumn fx:id="dmdColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.dmd_c335" />
-                              <TableColumn fx:id="registryColumn" prefWidth="105.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.registry_data_e69f" />
-                              <TableColumn fx:id="highscoreColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.highscores_8711" />
-                              <TableColumn fx:id="sizeColumn" prefWidth="100.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.size_6f6c" />
-                              <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.created_at_6e9a" />
+                              <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                              <TableColumn fx:id="directB2SColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.directb2s" />
+                              <TableColumn fx:id="iniColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.ini" />
+                              <TableColumn fx:id="vbsColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.vbs" />
+                              <TableColumn fx:id="resColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
+                              <TableColumn fx:id="povColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.pov" />
+                              <TableColumn fx:id="pupPackColumn" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.pup_pack" />
+                              <TableColumn fx:id="popperColumn" prefWidth="120.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.frontend_media" />
+                              <TableColumn fx:id="romColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.rom" />
+                              <TableColumn fx:id="altSoundColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.alt_sound" />
+                              <TableColumn fx:id="altColorColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.alt_color" />
+                              <TableColumn fx:id="musicColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.music" />
+                              <TableColumn fx:id="dmdColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.dmd" />
+                              <TableColumn fx:id="registryColumn" prefWidth="105.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.registry_data" />
+                              <TableColumn fx:id="highscoreColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.highscores" />
+                              <TableColumn fx:id="sizeColumn" prefWidth="100.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.size" />
+                              <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.created_at" />
                           </columns>
                       </TableView>
                </children>
@@ -62,7 +62,7 @@
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <StackPane alignment="CENTER_RIGHT">
                       <children>
-                          <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_backup_d414">
+                          <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%backups.backups.search_backup">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -80,7 +80,7 @@
                   <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="%ui.restore_2bd3" textFill="WHITE">
+                  <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -88,11 +88,11 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-restore-outline" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.restores_the_tables_from_the_selected_2074" />
+                          <Tooltip text="%backups.backups.restores_the_tables_from_the_selected_archives" />
                       </tooltip>
                   </Button>
                   <Separator layoutX="637.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="%ui.upload_9141" textFill="WHITE">
+                  <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="%backups.backup_upload.upload" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -100,10 +100,10 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.uploads_an_archive_bundle_so_it_3df9" />
+                          <Tooltip text="%backups.backups.uploads_an_archive_bundle_so_it_can_be" />
                       </tooltip>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%ui.download_801a" textFill="WHITE">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -111,11 +111,11 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.creates_a_zip_bundle_from_the_9351" />
+                          <Tooltip text="%backups.backups.creates_a_zip_bundle_from_the_selected_archives" />
                       </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackupDelete" text="%ui.delete_f2a6" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackupDelete" text="%backups.backups.delete" textFill="#ff3333">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -124,7 +124,7 @@
                       </graphic>
                   </Button>
                   <Separator fx:id="endSeparator" layoutX="806.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%ui.open_c3bf" textFill="WHITE">
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%backups.backups.open" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -132,7 +132,7 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.open_backups_folder_2119" />
+                          <Tooltip text="%backups.backups.open_backups_folder" />
                       </tooltip>
                   </Button>
               </items>

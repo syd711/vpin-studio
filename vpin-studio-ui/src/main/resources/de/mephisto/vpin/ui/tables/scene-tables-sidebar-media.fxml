@@ -24,7 +24,7 @@
                     <children>
                         <BorderPane fx:id="playfieldRoot" layoutX="158.0" layoutY="566.0" prefHeight="500.0" prefWidth="250.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.playfield_e6dd" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_PlayField" BorderPane.alignment="TOP_RIGHT">
@@ -68,7 +68,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenGameHelp" layoutX="3.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.help_6a26" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%launcher.launcher.help" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_GameHelp" BorderPane.alignment="TOP_RIGHT">
@@ -113,7 +113,7 @@
                         <BorderPane fx:id="screenPlayField" layoutX="158.0" layoutY="594.0" prefHeight="445.0" prefWidth="250.0" />
                         <BorderPane fx:id="screenGameInfo" layoutX="3.0" layoutY="444.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.info_flyer_1939" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.info_flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_GameInfo" BorderPane.alignment="TOP_RIGHT">
@@ -157,7 +157,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.dmd_c335" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%backups.backups.dmd" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_DMD" BorderPane.alignment="TOP_RIGHT">
@@ -198,7 +198,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="%ui.adjust_dmd_position_7889" />
+                                          <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -209,7 +209,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenTopper" layoutX="157.0" layoutY="4.0" maxHeight="208.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.topper_a78e" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.topper" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_Topper" BorderPane.alignment="TOP_RIGHT">
@@ -253,7 +253,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenBackGlass" layoutX="157.0" layoutY="220.0" prefHeight="208.0" prefWidth="250.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.backglass_cd90" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%backglass.directb2s_admin.backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_BackGlass" BorderPane.alignment="TOP_RIGHT">
@@ -294,7 +294,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="%ui.adjust_dmd_position_7889" />
+                                          <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -305,7 +305,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenLoading" layoutX="411.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.loading_16bf" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.loading" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_Loading" BorderPane.alignment="TOP_RIGHT">
@@ -349,7 +349,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenMenu" layoutX="3.0" layoutY="234.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.apron_full_dmd_756c" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%tables.tables_sidebar_media.apron_full_dmd" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_Menu" BorderPane.alignment="TOP_RIGHT">
@@ -390,7 +390,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="%ui.adjust_dmd_position_7889" />
+                                          <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -401,7 +401,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenOther2" layoutX="411.0" layoutY="444.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.other2_7389" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.other2" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_Other2" BorderPane.alignment="TOP_RIGHT">
@@ -445,7 +445,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenWheel" layoutX="412.0" layoutY="650.0" prefHeight="180.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.wheel_image_ac67" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.wheel_image" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_Wheel" BorderPane.alignment="TOP_RIGHT">
@@ -489,7 +489,7 @@
                         </BorderPane>
                         <BorderPane fx:id="screenLogo" layoutX="412.0" layoutY="750.0" prefHeight="60.0" prefWidth="150.0" styleClass="media-container">
                             <bottom>
-                                <Label text="%ui.logo_8c28" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%tables.tables_overview.logo" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                             <top>
                                 <BorderPane fx:id="top_Logo" BorderPane.alignment="TOP_RIGHT">
@@ -577,7 +577,7 @@
                                 </Label>
                             </center>
                             <bottom>
-                                <Label text="%ui.audio_launch_5395" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.audio_launch" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                         </BorderPane>
                         <BorderPane fx:id="screenAudio" layoutX="411.0" layoutY="32.0" prefHeight="135.0" prefWidth="150.0" styleClass="media-container">
@@ -626,7 +626,7 @@
                                 </Label>
                             </center>
                             <bottom>
-                                <Label text="%ui.audio_b22f" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                <Label text="%pref.validators_screens.audio" textFill="WHITE" BorderPane.alignment="CENTER" />
                             </bottom>
                         </BorderPane>
                     </children>

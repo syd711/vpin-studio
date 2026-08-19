@@ -17,20 +17,20 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%ui.help_support_ae72" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%ui.shortcuts_29e9">
+                  <Label styleClass="preference-title" text="%pref.shortcuts.help_support" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.shortcuts.shortcuts">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%ui.this_page_gives_an_overview_about_be7c" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.shortcuts.this_page_gives_an_overview_about_the_available" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
                   <VBox styleClass="accordion-container">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.tables_shortcuts_41b6" />
+                        <Label styleClass="preference-subtitle" text="%pref.shortcuts.tables_shortcuts" />
                         <GridPane hgap="3.0" vgap="3.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
@@ -62,50 +62,50 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-headline" text="%ui.shortcut_7562" GridPane.rowIndex="1" />
-                              <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="%ui.description_b5a7" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="18.0" styleClass="default-text" text="%ui.ctrl_o_3bdc" GridPane.rowIndex="15" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="%ui.open_the_table_details_dialog_05f5" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="%ui.ctrl_i_7fab" GridPane.rowIndex="11" />
-                              <Label layoutX="317.0" layoutY="52.0" styleClass="default-text" text="%ui.open_the_table_assets_dialog_ce23" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%ui.ctrl_m_a106" GridPane.rowIndex="14" />
-                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="%ui.toggles_between_the_asset_and_table_6389" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                              <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="%ui.ctrl_d_471e" GridPane.rowIndex="9" />
-                              <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="%ui.open_the_virtual_pinball_spreadsheet_website_1ffd" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <Label layoutX="10.0" layoutY="152.0" styleClass="default-text" text="%ui.ctrl_t_436a" GridPane.rowIndex="17" />
-                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="%ui.perform_table_scan_435b" GridPane.columnIndex="1" GridPane.rowIndex="17" />
-                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%ui.ctrl_u_2263" GridPane.rowIndex="18" />
-                              <Label layoutX="10.0" layoutY="220.0" styleClass="default-text" text="%ui.ctrl_r_6eba" GridPane.rowIndex="16" />
-                              <Label layoutX="247.0" layoutY="186.0" styleClass="default-text" text="%ui.upload_and_import_table_4249" GridPane.columnIndex="1" GridPane.rowIndex="18" />
-                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="%ui.force_reload_of_selected_tables_f115" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="%ui.ctrl_l_f196" GridPane.rowIndex="13" />
-                              <Label layoutX="247.0" layoutY="253.0" styleClass="default-text" text="%ui.launches_the_table_b124" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                              <Label layoutX="10.0" layoutY="288.0" styleClass="default-text" text="%ui.delete_f2a6" GridPane.rowIndex="20" />
-                              <Label layoutX="247.0" layoutY="288.0" styleClass="default-text" text="%ui.delete_the_table_5720" GridPane.columnIndex="1" GridPane.rowIndex="20" />
-                              <Label layoutX="10.0" layoutY="321.0" styleClass="default-text" text="%ui.ctrl_shit_d_55f9" GridPane.rowIndex="22" />
-                              <Label layoutX="247.0" layoutY="321.0" styleClass="default-text" text="%ui.de_activates_the_selected_tables_c102" GridPane.columnIndex="1" GridPane.rowIndex="22" />
-                              <Label layoutX="10.0" layoutY="355.0" styleClass="default-text" text="%ui.ctrl_shit_a_9272" GridPane.rowIndex="21" />
-                              <Label layoutX="247.0" layoutY="355.0" styleClass="default-text" text="%ui.activates_the_selected_tables_b844" GridPane.columnIndex="1" GridPane.rowIndex="21" />
-                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%ui.f2_fe5c" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="%ui.f3_4b6b" GridPane.rowIndex="3" />
-                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%ui.f4_e7e0" GridPane.rowIndex="4" />
-                              <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="%ui.f6_1faf" GridPane.rowIndex="6" />
-                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%ui.f5_37f4" GridPane.rowIndex="5" />
-                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="%ui.select_all_tables_tab_1f0d" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label layoutX="247.0" layoutY="52.0" styleClass="default-text" text="%ui.select_backglasses_tab_7c1c" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="%ui.select_vps_tables_tab_433d" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="%ui.select_table_statistics_tab_84b3" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="%ui.select_table_backups_tab_9a58" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="%ui.ctrl_f_9338" GridPane.rowIndex="10" />
-                              <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="%ui.search_table_focus_the_search_text_6c69" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <Label layoutX="10.0" layoutY="388.0" styleClass="default-text" text="%ui.ctrl_k_82be" GridPane.rowIndex="12" />
-                              <Label layoutX="133.0" layoutY="388.0" styleClass="default-text" text="%ui.kills_all_cabinet_frontend_and_vpx_f600" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%ui.f7_4748" GridPane.rowIndex="7" />
-                              <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="%ui.select_media_recorder_tab_c102" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <Label layoutX="10.0" layoutY="556.0" styleClass="default-text" text="%ui.ctrl_w_0364" GridPane.rowIndex="19" />
-                              <Label styleClass="default-text" text="%ui.reset_vps_update_indicator_9306" GridPane.columnIndex="1" GridPane.rowIndex="19" />
-                              <Label layoutX="10.0" layoutY="282.0" styleClass="default-text" text="%ui.ctrl_b_f70d" GridPane.rowIndex="8" />
-                              <Label layoutX="133.0" layoutY="315.0" styleClass="default-text" text="%ui.create_backup_s_from_the_selected_20a6" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <Label styleClass="default-headline" text="%pref.shortcuts.shortcut" GridPane.rowIndex="1" />
+                              <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="%components.emulators.emulators.description_2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="18.0" styleClass="default-text" text="%pref.shortcuts.ctrl_o" GridPane.rowIndex="15" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="%pref.shortcuts.open_the_table_details_dialog" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="%pref.shortcuts.ctrl_i" GridPane.rowIndex="11" />
+                              <Label layoutX="317.0" layoutY="52.0" styleClass="default-text" text="%pref.shortcuts.open_the_table_assets_dialog" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.ctrl_m" GridPane.rowIndex="14" />
+                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.toggles_between_the_asset_and_table_management_view" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                              <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="%pref.shortcuts.ctrl_d" GridPane.rowIndex="9" />
+                              <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="%pref.shortcuts.open_the_virtual_pinball_spreadsheet_website_for_the" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <Label layoutX="10.0" layoutY="152.0" styleClass="default-text" text="%pref.shortcuts.ctrl_t" GridPane.rowIndex="17" />
+                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="%pref.shortcuts.perform_table_scan" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.ctrl_u" GridPane.rowIndex="18" />
+                              <Label layoutX="10.0" layoutY="220.0" styleClass="default-text" text="%pref.shortcuts.ctrl_r" GridPane.rowIndex="16" />
+                              <Label layoutX="247.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.upload_and_import_table" GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="%pref.shortcuts.force_reload_of_selected_tables" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="%pref.shortcuts.ctrl_l" GridPane.rowIndex="13" />
+                              <Label layoutX="247.0" layoutY="253.0" styleClass="default-text" text="%pref.shortcuts.launches_the_table" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                              <Label layoutX="10.0" layoutY="288.0" styleClass="default-text" text="%backups.backups.delete" GridPane.rowIndex="20" />
+                              <Label layoutX="247.0" layoutY="288.0" styleClass="default-text" text="%pref.shortcuts.delete_the_table" GridPane.columnIndex="1" GridPane.rowIndex="20" />
+                              <Label layoutX="10.0" layoutY="321.0" styleClass="default-text" text="%pref.shortcuts.ctrl_shit_d" GridPane.rowIndex="22" />
+                              <Label layoutX="247.0" layoutY="321.0" styleClass="default-text" text="%pref.shortcuts.de_activates_the_selected_tables" GridPane.columnIndex="1" GridPane.rowIndex="22" />
+                              <Label layoutX="10.0" layoutY="355.0" styleClass="default-text" text="%pref.shortcuts.ctrl_shit_a" GridPane.rowIndex="21" />
+                              <Label layoutX="247.0" layoutY="355.0" styleClass="default-text" text="%pref.shortcuts.activates_the_selected_tables" GridPane.columnIndex="1" GridPane.rowIndex="21" />
+                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.f2" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="%pref.shortcuts.f3" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.f4" GridPane.rowIndex="4" />
+                              <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="%pref.shortcuts.f6" GridPane.rowIndex="6" />
+                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.f5" GridPane.rowIndex="5" />
+                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="%pref.shortcuts.select_all_tables_tab" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label layoutX="247.0" layoutY="52.0" styleClass="default-text" text="%pref.shortcuts.select_backglasses_tab" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.select_vps_tables_tab" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="%pref.shortcuts.select_table_statistics_tab" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="%pref.shortcuts.select_table_backups_tab" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="%pref.shortcuts.ctrl_f" GridPane.rowIndex="10" />
+                              <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.search_table_focus_the_search_text_field" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label layoutX="10.0" layoutY="388.0" styleClass="default-text" text="%pref.shortcuts.ctrl_k" GridPane.rowIndex="12" />
+                              <Label layoutX="133.0" layoutY="388.0" styleClass="default-text" text="%pref.shortcuts.kills_all_cabinet_frontend_and_vpx_processes_stop" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.f7" GridPane.rowIndex="7" />
+                              <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.select_media_recorder_tab" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label layoutX="10.0" layoutY="556.0" styleClass="default-text" text="%pref.shortcuts.ctrl_w" GridPane.rowIndex="19" />
+                              <Label styleClass="default-text" text="%pref.shortcuts.reset_vps_update_indicator" GridPane.columnIndex="1" GridPane.rowIndex="19" />
+                              <Label layoutX="10.0" layoutY="282.0" styleClass="default-text" text="%pref.shortcuts.ctrl_b" GridPane.rowIndex="8" />
+                              <Label layoutX="133.0" layoutY="315.0" styleClass="default-text" text="%pref.shortcuts.create_backup_s_from_the_selected_table_s" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                            </children>
                         </GridPane>
                      </children>
@@ -120,7 +120,7 @@
                   </HBox>
                   <VBox styleClass="accordion-container">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.miscellaneous_shortcuts_db1d" />
+                        <Label styleClass="preference-subtitle" text="%pref.shortcuts.miscellaneous_shortcuts" />
                         <GridPane hgap="3.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
@@ -135,16 +135,16 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label styleClass="default-headline" text="%ui.shortcut_7562" GridPane.rowIndex="1" />
-                              <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="%ui.description_b5a7" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%ui.ctrl_alt_u_0c53" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%ui.ctrl_alt_h_565a" GridPane.rowIndex="3" />
-                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="%ui.open_latest_releases_notes_dialog_again_56b6" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="%ui.resize_studio_client_window_to_fullhd_2640" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%ui.ctrl_alt_w_c62b" GridPane.rowIndex="4" />
-                              <Label layoutX="10.0" layoutY="120.0" prefWidth="68.0" styleClass="default-text" text="%ui.ctrl_alt_s_fb14" GridPane.rowIndex="5" />
-                              <Label layoutX="170.0" layoutY="86.0" styleClass="default-text" text="%ui.resize_studio_client_window_to_wqhd_a15e" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Label layoutX="170.0" layoutY="120.0" styleClass="default-text" text="%ui.resize_studio_client_window_to_hd_b380" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Label styleClass="default-headline" text="%pref.shortcuts.shortcut" GridPane.rowIndex="1" />
+                              <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="%components.emulators.emulators.description_2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="%pref.shortcuts.ctrl_alt_u" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.ctrl_alt_h" GridPane.rowIndex="3" />
+                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="%pref.shortcuts.open_latest_releases_notes_dialog_again" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.resize_studio_client_window_to_fullhd_1920x1080" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.ctrl_alt_w" GridPane.rowIndex="4" />
+                              <Label layoutX="10.0" layoutY="120.0" prefWidth="68.0" styleClass="default-text" text="%pref.shortcuts.ctrl_alt_s" GridPane.rowIndex="5" />
+                              <Label layoutX="170.0" layoutY="86.0" styleClass="default-text" text="%pref.shortcuts.resize_studio_client_window_to_wqhd_2560x1440" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label layoutX="170.0" layoutY="120.0" styleClass="default-text" text="%pref.shortcuts.resize_studio_client_window_to_hd_ready_1280x720" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                            </children>
                         </GridPane>
                      </children>

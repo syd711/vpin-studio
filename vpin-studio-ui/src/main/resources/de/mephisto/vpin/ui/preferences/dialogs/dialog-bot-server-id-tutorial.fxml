@@ -14,23 +14,23 @@
          <content>
             <VBox>
                <children>
-                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="%ui.this_tutorial_assumes_that_you_have_a623">
+                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.this_tutorial_assumes_that_you_have_successfully_created">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="%ui.it_will_show_you_how_to_8243">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.it_will_show_you_how_to_get_the">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.1_enable_developer_mode_in_discord_f378" />
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%ui.select_edit_server_profile_via_context_b99e">
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_server_id_tutorial.1_enable_developer_mode_in_discord" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.select_edit_server_profile_via_context_menu_click">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%ui.switch_to_the_advanced_section_and_136c">
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.switch_to_the_advanced_section_and_enable_the">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -55,13 +55,13 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%ui.the_developer_mode_enables_some_additional_1bd7">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.the_developer_mode_enables_some_additional_features_in">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.2_apply_server_id_197b" />
-                  <Label layoutX="34.0" layoutY="54.0" styleClass="preference-description" text="%ui.you_can_now_execute_a_context_496f">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_server_id_tutorial.2_apply_server_id" />
+                  <Label layoutX="34.0" layoutY="54.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.you_can_now_execute_a_context_click_on">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -74,7 +74,7 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="%ui.paste_the_id_into_the_server_24fd">
+                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.paste_the_id_into_the_server_id_field">
                      <font>
                         <Font size="14.0" />
                      </font>

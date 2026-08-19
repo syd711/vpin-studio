@@ -21,12 +21,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -56,7 +56,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%ui.name_4e14" textFill="WHITE">
+                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -65,7 +65,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%ui.http_s_server_url_4b85" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_http.http_s_server_url" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -80,12 +80,12 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%ui.login_0516" textFill="WHITE" GridPane.rowIndex="5">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_http.login" textFill="WHITE" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="82.0" text="%ui.password_b341" textFill="WHITE" GridPane.rowIndex="6">
+                  <Label layoutX="10.0" layoutY="82.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -95,7 +95,7 @@
                         <Font size="14.0" />
                      </font>
                   </PasswordField>
-                  <Label layoutX="10.0" layoutY="148.0" text="%ui.basic_authentication_1de5" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label layoutX="10.0" layoutY="148.0" text="%backups.backup_source_http.basic_authentication" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -105,7 +105,7 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="148.0" text="%ui.enabled_0d1a" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="148.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

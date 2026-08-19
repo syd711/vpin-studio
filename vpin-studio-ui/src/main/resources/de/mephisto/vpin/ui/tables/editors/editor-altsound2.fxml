@@ -33,7 +33,7 @@
          <left>
             <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                <children>
-                  <CheckBox fx:id="romVolCtrlCheckbox" mnemonicParsing="false" text="%ui.rom_volume_control_6a5b" textFill="WHITE">
+                  <CheckBox fx:id="romVolCtrlCheckbox" mnemonicParsing="false" text="%tables.editors.editor_altsound2.rom_volume_control" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -43,13 +43,13 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="400.0" text="%ui.the_altsound_processor_attempts_to_recreate_99ac" wrapText="true" />
+                        <Tooltip prefWidth="400.0" text="%tables.editors.editor_altsound2.the_altsound_processor_attempts_to_recreate_original_playbac" wrapText="true" />
                      </tooltip>
                      <HBox.margin>
                         <Insets left="12.0" />
                      </HBox.margin>
                   </Label>
-                  <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="%ui.record_sound_commands_ee12" textFill="WHITE">
+                  <CheckBox fx:id="recordSoundCmdsCheckbox" layoutX="10.0" layoutY="16.0" mnemonicParsing="false" text="%tables.editors.editor_altsound2.record_sound_commands" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -62,7 +62,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="400.0" text="%ui.records_all_received_sound_commands_and_e1a4" wrapText="true" />
+                        <Tooltip prefWidth="400.0" text="%tables.editors.editor_altsound2.records_all_received_sound_commands_and_relative_playback" wrapText="true" />
                      </tooltip>
                      <HBox.margin>
                         <Insets left="12.0" />
@@ -73,7 +73,7 @@
                         <Insets left="36.0" />
                      </HBox.margin>
                   </Spinner>
-                  <Label styleClass="default-text" text="%ui.command_skip_count_a9ee">
+                  <Label styleClass="default-text" text="%tables.editors.editor_altsound2.command_skip_count">
                      <HBox.margin>
                         <Insets left="6.0" />
                      </HBox.margin>
@@ -83,7 +83,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="400.0" text="%ui.allows_authors_to_specify_n_initial_2e2e" wrapText="true" />
+                        <Tooltip prefWidth="400.0" text="%tables.editors.editor_altsound2.allows_authors_to_specify_n_initial_sound_commands" wrapText="true" />
                      </tooltip>
                      <HBox.margin>
                         <Insets left="12.0" />
@@ -95,12 +95,12 @@
          <right>
             <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2">
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc" />
+                  <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save" />
                </children>
             </HBox>
          </right>
@@ -116,13 +116,13 @@
                <children>
                   <TableView fx:id="tableView" prefWidth="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
-                      <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.id_b718" />
-                      <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%ui.type_a1fa" />
-                        <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="%ui.ducking_profile_7a42" />
-                        <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="%ui.gain_35d7" />
-                        <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.filename_1351" />
-                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="%ui.play_de3c" visible="false" />
-                        <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="%ui.filesize_b18c" />
+                      <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.id" />
+                      <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.type" />
+                        <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.ducking_profile" />
+                        <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.gain" />
+                        <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.filename" />
+                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.play" visible="false" />
+                        <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.filesize" />
                     </columns>
                   </TableView>
                </children>
@@ -150,7 +150,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="%ui.selected_entries_18f2" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="%tables.editors.editor_altsound.selected_entries" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -158,7 +158,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="%ui.sample_type_42d4" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.altsound2_sample_type.sample_type" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -175,7 +175,7 @@
                            </padding>
                         </Label>
                         <ComboBox fx:id="channelCombo" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="49.0" text="%ui.ducking_profile_7c5d" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.editor_altsound2.ducking_profile_2" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -203,7 +203,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <Label text="%ui.gain_35d7" textFill="WHITE">
+                              <Label text="%tables.editors.editor_altsound.gain" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -216,7 +216,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%ui.the_gain_value_determines_the_absolute_0fb8" wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.the_gain_value_determines_the_absolute_volume_of" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -248,13 +248,13 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <TextField fx:id="searchText" prefWidth="180.0" promptText="%ui.entry_search_8d24">
+            <TextField fx:id="searchText" prefWidth="180.0" promptText="%tables.editors.editor_altsound.entry_search">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
             <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="244.0" layoutY="16.0" text="%ui.filename_6492" textFill="WHITE">
+            <Label layoutX="244.0" layoutY="16.0" text="%backups.backups_sidebar.filename" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -271,11 +271,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.change_filename_0b28" />
+                  <Tooltip text="%tables.editors.editor_altsound2.change_filename" />
                </tooltip>
             </Button>
             <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="10.0" layoutY="16.0" text="%ui.sample_type_42d4" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="16.0" text="%tables.editors.altsound2_sample_type.sample_type" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -292,11 +292,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.edit_sample_type_8d68" />
+                  <Tooltip text="%tables.editors.editor_altsound2.edit_sample_type" />
                </tooltip>
             </Button>
             <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="466.0" layoutY="16.0" text="%ui.ducking_profile_7c5d" textFill="WHITE">
+            <Label layoutX="466.0" layoutY="16.0" text="%tables.editors.editor_altsound2.ducking_profile_2" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -313,7 +313,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.add_new_ducking_profile_bb63" />
+                  <Tooltip text="%tables.editors.editor_altsound2.add_new_ducking_profile" />
                </tooltip>
             </Button>
             <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" textFill="WHITE">
@@ -324,7 +324,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.edit_ducking_profile_2b89" />
+                  <Tooltip text="%tables.editors.editor_altsound2.edit_ducking_profile" />
                </tooltip>
             </Button>
             <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" textFill="#ff3333">
@@ -335,7 +335,7 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.delete_ducking_profile_0a96" />
+                  <Tooltip text="%tables.editors.editor_altsound2.delete_ducking_profile" />
                </tooltip>
             </Button>
          </items>

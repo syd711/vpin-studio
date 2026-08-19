@@ -17,12 +17,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="%ui.delete_f2a6">
+            <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="%backups.backups.delete">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -45,24 +45,24 @@
                      <children>
                         <HBox fx:id="emulatorWrapper" alignment="CENTER_LEFT" spacing="6.0">
                            <children>
-                              <Label styleClass="default-text" text="%ui.emulator_920c" />
-                              <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%ui.all_tables_a562" />
+                              <Label styleClass="default-text" text="%cards.highscore_cards.emulator" />
+                              <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%tables.alx.alx_delete.all_tables" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="12.0" />
                            </VBox.margin>
                         </HBox>
-                        <CheckBox fx:id="numberPlaysCheckbox" mnemonicParsing="false" text="%ui.delete_number_of_plays_05b4">
+                        <CheckBox fx:id="numberPlaysCheckbox" mnemonicParsing="false" text="%tables.alx.alx_delete.delete_number_of_plays">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="timePlayedCheckbox" mnemonicParsing="false" text="%ui.delete_time_played_3341">
+                        <CheckBox fx:id="timePlayedCheckbox" mnemonicParsing="false" text="%tables.alx.alx_delete.delete_time_played">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="recordScoresCheckbox" layoutX="10.0" layoutY="96.0" mnemonicParsing="false" text="%ui.delete_record_highscores_7ebf" visible="false">
+                        <CheckBox fx:id="recordScoresCheckbox" layoutX="10.0" layoutY="96.0" mnemonicParsing="false" text="%tables.alx.alx_delete.delete_record_highscores" visible="false">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -77,7 +77,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
                <bottom>
-                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="%ui.yes_i_know_what_i_m_2e9e" BorderPane.alignment="TOP_LEFT">
+                  <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="%tables.alx.alx_delete.yes_i_know_what_i_m_doing" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

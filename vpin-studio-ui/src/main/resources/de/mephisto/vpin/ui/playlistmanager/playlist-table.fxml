@@ -21,10 +21,10 @@
          <children>
             <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                <columns>
-                  <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
-                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%ui.emulator_4fdf" />
-                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%ui.date_added_93a5" />
-                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%ui.last_update_28b6" />
+                  <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />
+                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%playlistmanager.playlist_table.date_added" />
+                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%playlistmanager.playlist_table.last_update" />
                </columns>
             </TableView>
          </children>
@@ -35,7 +35,7 @@
          <items>
             <StackPane alignment="CENTER_RIGHT">
                <children>
-                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_table_7b9c">
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%cards.highscore_cards.search_table">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -51,14 +51,14 @@
                </children>
             </StackPane>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <ComboBox fx:id="allEmulatorsCombo" prefWidth="150.0" promptText="%ui.all_emulators_db6f" />
+            <ComboBox fx:id="allEmulatorsCombo" prefWidth="150.0" promptText="%playlistmanager.playlist_table.all_emulators" />
             <Separator fx:id="emulatorsSeparator" layoutX="214.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="addBtn" layoutX="400.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.rebuild_the_playlist_from_a_template_92fd" />
+                  <Tooltip text="%playlistmanager.playlist_table.rebuild_the_playlist_from_a_template" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
@@ -69,7 +69,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.remove_from_playlist_47e7" />
+                  <Tooltip text="%playlistmanager.playlist_table.remove_from_playlist" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-minus" iconSize="18" />
@@ -81,7 +81,7 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
-            <Label fx:id="labelCount" text="%ui.label_b021" BorderPane.alignment="CENTER">
+            <Label fx:id="labelCount" text="%competitions.discord_competition_edit.label" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets top="3.0" />
                </BorderPane.margin></Label>

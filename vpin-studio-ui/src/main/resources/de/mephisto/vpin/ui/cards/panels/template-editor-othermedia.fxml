@@ -24,7 +24,7 @@
   <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="%ui.other_media_settings_84a1" />
+            <Label text="%cards.template_editor_othermedia.other_media_settings" />
          </left>
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -37,7 +37,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.toggle_other_media_visibility_d233" />
+                        <Tooltip text="%cards.template_editor_othermedia.toggle_other_media_visibility" />
                      </tooltip>
                   </Button>
                   <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -48,7 +48,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400" />
+                        <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                      </tooltip>
                   </ToggleButton>
                </children>
@@ -62,7 +62,7 @@
             <VBox styleClass="accordion-container" >
                <children>
 
-                  <Label text="%ui.add_an_additional_image_layer_containing_117b" prefWidth="200" wrapText="true">
+                  <Label text="%cards.template_editor_othermedia.add_an_additional_image_layer_containing_a_media" prefWidth="200" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.4" />
                      </graphic>
@@ -73,7 +73,7 @@
 
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Label text="%ui.media_asset_305b" textFill="WHITE">
+                        <Label text="%cards.template_editor_othermedia.media_asset" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -86,7 +86,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.select_the_displayed_media_asset_1a60" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%cards.template_editor_othermedia.select_the_displayed_media_asset" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
@@ -104,7 +104,7 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="otherMediaKeepARCheckBox" mnemonicParsing="false" text="%ui.keep_aspect_ratio_bfc8" textFill="WHITE">
+                        <CheckBox fx:id="otherMediaKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -114,7 +114,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.when_checked_the_aspect_ratio_of_2234" />
+                              <Tooltip text="%cards.template_editor_manufacturer.when_checked_the_aspect_ratio_of_the_image" />
                            </tooltip>
                         </Label>
                      </children>

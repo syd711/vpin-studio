@@ -10,78 +10,78 @@
 
 <VBox fx:id="assetsView" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController">
    <children>
-      <Label styleClass="default-headline" text="%ui.additional_assets_c66a" textFill="WHITE" wrapText="true" />
-      <Label styleClass="preference-description" text="%ui.the_following_assets_have_been_found_a37a" textFill="WHITE" wrapText="true" />
+      <Label styleClass="default-headline" text="%tables.table_upload.additional_assets" textFill="WHITE" wrapText="true" />
+      <Label styleClass="preference-description" text="%tables.asset_filter_panel.the_following_assets_have_been_found" textFill="WHITE" wrapText="true" />
       <ScrollPane hbarPolicy="NEVER" maxHeight="130.0">
          <content>
             <VBox fx:id="assetsBox" prefWidth="240.0" spacing="6.0">
                <children>
-                  <Label fx:id="assetAltSoundLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ui.alt_sound_8f8c" textFill="WHITE">
+                  <Label fx:id="assetAltSoundLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.table_upload.alt_sound" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetAltColorLabel" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="%ui.alt_color_a95c" textFill="WHITE">
+                  <Label fx:id="assetAltColorLabel" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="%tables.table_upload.alt_color" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetBackglassLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ui.backglass_d0e3" textFill="WHITE">
+                  <Label fx:id="assetBackglassLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.table_upload.backglass" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetCfgLabel" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text="%ui.cfg_file_aecd" textFill="WHITE">
+                  <Label fx:id="assetCfgLabel" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text="%tables.table_upload.cfg_file" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetDmdLabel" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="%ui.dmd_df77" textFill="WHITE">
+                  <Label fx:id="assetDmdLabel" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="%tables.table_upload.dmd" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetPatchFileLabel" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%ui.dif_file_bcdc" textFill="WHITE">
+                  <Label fx:id="assetPatchFileLabel" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%tables.asset_filter_panel.dif_file" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetIniLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%ui.ini_file_99c8" textFill="WHITE">
+                  <Label fx:id="assetIniLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%tables.table_upload.ini_file" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetMusicLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%ui.music_pack_0899" textFill="WHITE">
+                  <Label fx:id="assetMusicLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="%tables.table_upload.music_pack" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetMediaLabel" mnemonicParsing="false" text="%ui.media_pack_for_popper_screens_f019" textFill="WHITE">
+                  <Label fx:id="assetMediaLabel" mnemonicParsing="false" text="%tables.table_upload.media_pack_for_popper_screens" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetNvRamLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%ui.nv_file_5e18" textFill="WHITE">
+                  <Label fx:id="assetNvRamLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%tables.table_upload.nv_file" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetPupPackLabel" mnemonicParsing="false" text="%ui.pup_pack_4e52" textFill="WHITE">
+                  <Label fx:id="assetPupPackLabel" mnemonicParsing="false" text="%tables.table_upload.pup_pack" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetPovLabel" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%ui.pov_file_9129" textFill="WHITE">
+                  <Label fx:id="assetPovLabel" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%tables.table_upload.pov_file" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetResLabel" layoutX="10.0" layoutY="302.0" mnemonicParsing="false" text="%ui.res_file_73e6" textFill="WHITE">
+                  <Label fx:id="assetResLabel" layoutX="10.0" layoutY="302.0" mnemonicParsing="false" text="%tables.table_upload.res_file" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="assetRomLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%ui.rom_6700" textFill="WHITE">
+                  <Label fx:id="assetRomLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="%tables.table_upload.rom" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -93,7 +93,7 @@
             <Insets top="12.0" />
          </VBox.margin>
       </ScrollPane>
-      <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%ui.filter_selection_d777" textFill="WHITE">
+      <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font>

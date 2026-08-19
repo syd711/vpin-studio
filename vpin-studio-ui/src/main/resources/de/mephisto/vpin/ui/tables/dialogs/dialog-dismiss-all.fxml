@@ -14,8 +14,8 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47" />
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.dismiss_selected_errors_cf3f">
+            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%tables.dismiss_all.dismiss_selected_errors">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -34,7 +34,7 @@
          <top>
             <VBox spacing="6.0" BorderPane.alignment="CENTER_LEFT">
                <children>
-                  <Label styleClass="preference-description" text="%ui.the_selected_validation_errors_will_be_aefa">
+                  <Label styleClass="preference-description" text="%tables.dismiss_all.the_selected_validation_errors_will_be_dismissed">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>

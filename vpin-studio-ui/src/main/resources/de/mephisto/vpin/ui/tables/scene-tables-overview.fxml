@@ -31,36 +31,36 @@
                         <children>
                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                               <columns>
-                                 <TableColumn fx:id="columnStatus" minWidth="60" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.status_ec53" />
-                                 <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.display_name_b489" />
-                                 <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.version_34b6" />
-                                 <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="105.0" style="-fx-alignment: CENTER;" text="%ui.vps_status_f0a0" />
-                                 <TableColumn fx:id="columnPatchVersion" minWidth="80.0" prefWidth="105.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.patch_version_f3e9" />
-                                 <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.playlists_008e" />
-                                 <TableColumn fx:id="columnRating" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.rating_dda9" />
-                                 <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%ui.pup_pack_d548" />
-                                 <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.backglass_cd90" />
-                                 <TableColumn fx:id="columnINI" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%ui.ini_19cf" />
-                                 <TableColumn fx:id="columnRES" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%ui.res_f8af" />
-                                 <TableColumn fx:id="columnVBS" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%ui.vbs_59fd" />
-                                 <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%ui.pov_3e50" />
-                                 <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%ui.alt_sound_f59a" />
-                                 <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%ui.alt_color_af82" />
-                                 <TableColumn fx:id="columnMusic" minWidth="10.4000244140625" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.music_47dc" />
-                                 <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="170.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.rom_2ab3" />
-                                 <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.highscore_type_50b3" />
-                                 <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.emulator_4fdf" />
-                                 <TableColumn fx:id="columnPinVol" minWidth="130" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.pinvol_eda2" />
-                                 <TableColumn fx:id="columnLauncher" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.launcher_14f5" />
-                                 <TableColumn fx:id="columnTutorials" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.tutorials_130d" />
-                                 <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%ui.date_added_93a5" />
+                                 <TableColumn fx:id="columnStatus" minWidth="60" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
+                                 <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
+                                 <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_sidebar.version" />
+                                 <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="105.0" style="-fx-alignment: CENTER;" text="%tables.tables_overview.vps_status" />
+                                 <TableColumn fx:id="columnPatchVersion" minWidth="80.0" prefWidth="105.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.patch_version" />
+                                 <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%tables.table_asset_manager.playlists" />
+                                 <TableColumn fx:id="columnRating" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%tables.tables_overview.rating" />
+                                 <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.pup_pack" />
+                                 <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.backglass" />
+                                 <TableColumn fx:id="columnINI" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backups.backups.ini" />
+                                 <TableColumn fx:id="columnRES" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
+                                 <TableColumn fx:id="columnVBS" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backups.backups.vbs" />
+                                 <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backups.backups.pov" />
+                                 <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.alt_sound" />
+                                 <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.alt_color" />
+                                 <TableColumn fx:id="columnMusic" minWidth="10.4000244140625" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.music" />
+                                 <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="170.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backup_restore.rom" />
+                                 <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.highscore_type" />
+                                 <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />
+                                 <TableColumn fx:id="columnPinVol" minWidth="130" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%tables.tables_overview.pinvol" />
+                                 <TableColumn fx:id="columnLauncher" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.launcher" />
+                                 <TableColumn fx:id="columnTutorials" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.tutorials" />
+                                 <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="%playlistmanager.playlist_table.date_added" />
                                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;">
                            <graphic>
                               <HBox alignment="CENTER">
                                  <children>
-                                    <Label contentDisplay="RIGHT" text="%ui.date_updated_9c34">
+                                    <Label contentDisplay="RIGHT" text="%tables.tables_overview.date_updated">
                                        <tooltip>
-                                          <Tooltip text="%ui.the_modification_date_for_this_game_a3d2" />
+                                          <Tooltip text="%tables.tables_overview.the_modification_date_for_this_game_s_entry" />
                                        </tooltip>
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -69,74 +69,74 @@
                                  </children>
                               </HBox>
                            </graphic></TableColumn>
-                                 <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="%ui.wheel_a5df">
+                                 <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="%cards.highscore_cards.wheel">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="%ui.playfield_e6dd">
+                                 <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="%pref.validators_screens.playfield">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="%ui.backglass_cd90">
+                                 <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.backglass">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="%ui.loading_16bf">
+                                 <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="%pref.validators_screens.loading">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" style="-fx-alignment: CENTER;" text="%ui.dmd_c335">
+                                 <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" style="-fx-alignment: CENTER;" text="%backups.backups.dmd">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" style="-fx-alignment: CENTER;" text="%ui.topper_a78e">
+                                 <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" style="-fx-alignment: CENTER;" text="%pref.validators_screens.topper">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" style="-fx-alignment: CENTER;" text="%ui.full_dmd_903a">
+                                 <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" style="-fx-alignment: CENTER;" text="%tables.tables_overview.full_dmd">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" style="-fx-alignment: CENTER;" text="%ui.info_4059">
+                                 <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" style="-fx-alignment: CENTER;" text="%tables.tables_overview.info">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnHelp" minWidth="10.4000244140625" prefWidth="71.999755859375" style="-fx-alignment: CENTER;" text="%ui.help_6a26">
+                                 <TableColumn fx:id="columnHelp" minWidth="10.4000244140625" prefWidth="71.999755859375" style="-fx-alignment: CENTER;" text="%launcher.launcher.help">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" style="-fx-alignment: CENTER;" text="%ui.other2_7389">
+                                 <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" style="-fx-alignment: CENTER;" text="%pref.validators_screens.other2">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" style="-fx-alignment: CENTER;" text="%ui.audio_b22f">
+                                 <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" style="-fx-alignment: CENTER;" text="%pref.validators_screens.audio">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" style="-fx-alignment: CENTER;" text="%ui.audio_l_ee60">
+                                 <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" style="-fx-alignment: CENTER;" text="%tables.tables_overview.audio_l">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnLogo" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="%ui.logo_8c28">
+                                 <TableColumn fx:id="columnLogo" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="%tables.tables_overview.logo">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnComment" minWidth="100.0" prefWidth="400" style="-fx-alignment: BASELINE_LEFT;" text="%ui.comment_0be8">
+                                 <TableColumn fx:id="columnComment" minWidth="100.0" prefWidth="400" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.comment">
                                  </TableColumn>
-                                 <TableColumn fx:id="columnBackupDate" minWidth="70.0" prefWidth="140" style="-fx-alignment: BASELINE_LEFT;" text="%ui.backup_date_b4c8">
+                                 <TableColumn fx:id="columnBackupDate" minWidth="70.0" prefWidth="140" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.backup_date">
                                  </TableColumn>
                               </columns>
                            </TableView>
@@ -160,7 +160,7 @@
                      <children>
                         <BorderPane>
                            <left>
-                              <Label fx:id="validationErrorLabel" text="%ui.loading_tables_a46b" textFill="WHITE" BorderPane.alignment="CENTER">
+                              <Label fx:id="validationErrorLabel" text="%tables.tables_overview.loading_tables" textFill="WHITE" BorderPane.alignment="CENTER">
                                     <font>
                                        <Font name="System Bold" size="14.0" />
                                     </font>
@@ -169,7 +169,7 @@
                            <right>
                               <HBox BorderPane.alignment="CENTER">
                                  <children>
-                                    <Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="%ui.dismiss_c8a5" textFill="WHITE">
+                                    <Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" textFill="WHITE">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -177,7 +177,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
                                        </graphic>
                                     </Hyperlink>
-                                    <Hyperlink onAction="#onDismissAll" text="%ui.dismiss_all_0ff0" textFill="WHITE">
+                                    <Hyperlink onAction="#onDismissAll" text="%backglass.directb2s_admin.dismiss_all" textFill="WHITE">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -193,7 +193,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="%ui.open_validators_settings_e441" />
+                                          <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -232,7 +232,7 @@
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip text="%ui.toggle_filter_view_e9c1" />
+                        <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                      </tooltip>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -246,13 +246,13 @@
                            <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.execute_a_full_reload_of_all_2a17" />
+                        <Tooltip text="%tables.tables_overview.execute_a_full_reload_of_all_tables_from" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="180.0" promptText="%ui.search_table_7b9c">
+                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="180.0" promptText="%cards.highscore_cards.search_table">
                            <font>
                                  <Font size="14.0" />
                            </font>
@@ -268,7 +268,7 @@
                      </children>
                   </StackPane>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="%ui.all_vpx_tables_e7c0" />
+                  <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="%recorder.recorder.all_vpx_tables" />
                   <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-controller" iconSize="18" />
@@ -277,7 +277,7 @@
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip text="%ui.open_emulator_manager_6ad6" />
+                        <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
                      </tooltip>
                   </Button>
                   <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorReload" textFill="WHITE">
@@ -288,12 +288,12 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.reload_selected_emulator_a2ca" />
+                        <Tooltip text="%tables.tables_overview.reload_selected_emulator" />
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
       
-                  <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="%ui.select_playlist_1eb1" />
+                  <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="%tables.tables_overview.select_playlist" />
                   <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
@@ -302,7 +302,7 @@
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip text="%ui.open_playlist_manager_d22e" />
+                        <Tooltip text="%tables.table_asset_manager.open_playlist_manager" />
                      </tooltip>
                   </Button>
       
@@ -315,7 +315,7 @@
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip text="%ui.asset_manager_view_ctrl_m_5675" />
+                        <Tooltip text="%tables.tables_overview.asset_manager_view_ctrl_m" />
                      </tooltip>
                   </Button>
                   <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
@@ -326,7 +326,7 @@
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip text="%ui.asset_manager_ctrl_i_9960" />
+                        <Tooltip text="%tables.tables_overview.asset_manager_ctrl_i" />
                      </tooltip>
                   </Button>
                   <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
@@ -337,7 +337,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.edit_table_data_ctrl_o_4425" />
+                        <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
                      </tooltip>
                   </Button>
                   <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" textFill="WHITE">
@@ -348,7 +348,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.edit_table_data_ctrl_o_4425" />
+                        <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
                      </tooltip>
                   </Button>
                   <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
@@ -360,7 +360,7 @@
                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                      </graphic>
                      <tooltip>
-                           <Tooltip text="%ui.kill_all_emulator_and_frontend_processes_f0bb" />
+                           <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
                      </tooltip>
                   </Button>
                   <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
@@ -374,7 +374,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.backup_the_selected_tables_8cbe" />
+                              <Tooltip text="%tables.tables_overview.backup_the_selected_tables" />
                            </tooltip>
                         </Button>
                         <Button fx:id="vpxzBtn" mnemonicParsing="false" onAction="#onVpxz" textFill="#FFFFFF">
@@ -385,7 +385,7 @@
                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cellphone" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.package_the_table_into_vpxz_file_08c3" />
+                              <Tooltip text="%tables.tables_overview.package_the_table_into_vpxz_file" />
                            </tooltip>
                         </Button>
                         <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
@@ -396,7 +396,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.import_existing_game_files_into_frontend_7ad4" />
+                              <Tooltip text="%tables.tables_overview.import_existing_game_files_into_frontend" />
                            </tooltip>
                         </Button>
                         <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
@@ -407,7 +407,7 @@
                                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.delete_table_and_assets_delete_b234" />
+                              <Tooltip text="%tables.tables_overview.delete_table_and_assets_delete" />
                            </tooltip>
                         </Button>
                      </children>
@@ -417,7 +417,7 @@
                         <Separator fx:id="mappingSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
                         <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
                            <items>
-                              <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="%ui.scan_all_52d0">
+                              <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="%tables.tables_overview.scan_all">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
                                  </graphic>
@@ -427,7 +427,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.scans_the_selected_tables_to_extract_90e7" />
+                              <Tooltip text="%tables.tables_overview.scans_the_selected_tables_to_extract_metadata" />
                            </tooltip>
                            <font>
                               <Font size="14.0" />
@@ -435,7 +435,7 @@
                         </SplitMenuButton>
                         <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
                            <items>
-                              <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="%ui.validate_all_7b4d">
+                              <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="%tables.tables_overview.validate_all">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                                  </graphic>
@@ -448,7 +448,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.resets_the_dismissed_validations_and_revalidates_a9c9" />
+                              <Tooltip text="%tables.tables_overview.resets_the_dismissed_validations_and_revalidates_the_table" />
                            </tooltip>
                         </SplitMenuButton>
                      </children>

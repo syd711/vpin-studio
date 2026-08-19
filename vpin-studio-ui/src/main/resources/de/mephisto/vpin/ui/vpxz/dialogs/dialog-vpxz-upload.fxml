@@ -20,12 +20,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_9141">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%backups.backup_upload.upload">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -41,7 +41,7 @@
          <center>
             <VBox>
                <children>
-                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="%ui.the_tables_will_be_added_to_fdc4">
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="%vpxz.vpxz_upload.the_tables_will_be_added_to_the_selected">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin></Label>
@@ -57,7 +57,7 @@
                      <children>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="%ui.select_vpxz_files_to_upload_e77d">
+                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="%vpxz.vpxz_upload.select_vpxz_files_to_upload">
                                  <HBox.margin>
                                     <Insets right="12.0" />
                                  </HBox.margin>
@@ -65,7 +65,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_files_79e6">
+                              <Button mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backups.backup_upload.select_files">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -73,12 +73,12 @@
                            </children>
                         </HBox>
                         <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
-                        <Label text="%ui.folder_5416" textFill="WHITE">
+                        <Label text="%backups.backup_source_folder.folder" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%ui.vpxz_files_e4e7" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%vpxz.vpxz_upload.vpxz_files" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

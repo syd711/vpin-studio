@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
                 <items>
-                    <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onVersionRefresh" text="%ui.refresh_version_information_9a51" textFill="WHITE">
+                    <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onVersionRefresh" text="%components.overview.refresh_version_information" textFill="WHITE">
                         <font>
                             <Font size="14.0" />
                         </font>

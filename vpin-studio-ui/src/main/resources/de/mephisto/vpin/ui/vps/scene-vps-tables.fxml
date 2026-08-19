@@ -28,21 +28,21 @@
 
                   <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                      <columns>
-                        <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="%ui.installed_98dd" />
-                        <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.comment_0be8" />
-                        <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
-                        <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: BASELINE_CENTER;" text="%ui.status_ec53" />
-                        <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="%ui.updated_ff0a" />
-                        <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="%ui.versions_9e69" />
-                        <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.directb2s_3a9c" />
-                        <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="%ui.pup_pack_d548" />
-                        <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.rom_2ab3" />
-                        <TableColumn fx:id="topperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%ui.topper_media_6d44" />
-                        <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="%ui.pov_3e50" />
-                        <TableColumn fx:id="soundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.sound_music_87fa" />
-                        <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.alt_sound_f59a" />
-                        <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%ui.alt_color_af82" />
-                        <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.tutorials_130d" />
+                        <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="%vps.vps_tables.installed" />
+                        <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.comment" />
+                        <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                        <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: BASELINE_CENTER;" text="%backglass.directb2s_admin.status" />
+                        <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="%vps.vps_tables.updated" />
+                        <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="%vps.vps_tables.versions" />
+                        <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backups.backups.directb2s" />
+                        <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="%backups.backup_restore.pup_pack" />
+                        <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.rom" />
+                        <TableColumn fx:id="topperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%vps.vps_tables.topper_media" />
+                        <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="%backups.backups.pov" />
+                        <TableColumn fx:id="soundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%pref.vps.sound_music" />
+                        <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.alt_sound" />
+                        <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.alt_color" />
+                        <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.tables_overview.tutorials" />
                      </columns>
                   </TableView>
 
@@ -59,7 +59,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.toggle_filter_view_e9c1" />
+                  <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -73,13 +73,13 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.reload_all_vps_data_6399" />
+                  <Tooltip text="%vps.vps_tables.reload_all_vps_data" />
                </tooltip>
             </Button>
             <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <StackPane alignment="CENTER_RIGHT">
                <children>
-                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_table_7b9c">
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%cards.highscore_cards.search_table">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -105,7 +105,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.edit_table_data_cb57" />
+                  <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                </tooltip>
             </Button>
             <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
@@ -116,11 +116,11 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.open_table_in_table_overview_05d1" />
+                  <Tooltip text="%cards.highscore_cards.open_table_in_table_overview" />
                </tooltip>
             </Button>
             <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" text="%ui.open_table_7684" textFill="WHITE">
+            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" text="%vps.vps_tables.open_table" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
                </graphic>
@@ -128,7 +128,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.open_table_information_on_vps_189a" />
+                  <Tooltip text="%backglass.directb2s_admin.open_table_information_on_vps" />
                </tooltip>
             </Button>
          </items>

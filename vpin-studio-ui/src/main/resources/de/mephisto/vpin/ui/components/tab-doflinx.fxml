@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%ui.open_folder_49f9" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -26,10 +26,10 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="%ui.open_serum_installation_folder_d35c" />
+                     <Tooltip text="%components.dof.open_serum_installation_folder" />
                   </tooltip>
                </Button>
-               <Button fx:id="configBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onConfigTool" styleClass="external-component" text="%ui.doflinxconfig_929e" textFill="WHITE">
+               <Button fx:id="configBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onConfigTool" styleClass="external-component" text="%components.doflinx.doflinxconfig" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -37,11 +37,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="%ui.open_serum_installation_folder_d35c" />
+                     <Tooltip text="%components.dof.open_serum_installation_folder" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%ui.reload_4d1c">
+               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -49,7 +49,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                   </graphic>
                </Button>
-               <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%ui.re_start_doflinx_7866">
+               <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%components.doflinx.re_start_doflinx">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -57,7 +57,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
                   </graphic>
                </Button>
-               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%ui.stop_doflinx_c1b0" textFill="WHITE">
+               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%components.doflinx.stop_doflinx" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -66,7 +66,7 @@
                   </graphic>
                </Button>
                <Separator layoutX="270.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="%ui.doflinx_ini_e6a5" textFill="WHITE">
+               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="%components.doflinx.doflinx_ini" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -74,7 +74,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="%ui.open_vpmalias_txt_file_5a5a" />
+                     <Tooltip text="%components.doflinx.open_vpmalias_txt_file" />
                   </tooltip>
                </Button>
             </items>
@@ -91,7 +91,7 @@
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                           <Label styleClass="default-text" text="%ui.the_installer_will_extract_the_latest_ac72" />
+                           <Label styleClass="default-text" text="%components.dof.the_installer_will_extract_the_latest_update_into" />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

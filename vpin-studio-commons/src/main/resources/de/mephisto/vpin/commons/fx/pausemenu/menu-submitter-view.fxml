@@ -31,24 +31,24 @@
                   <Insets left="24.0" right="24.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="nameLabel" text="%ui.label_b021" textFill="WHITE" wrapText="true">
+                  <Label fx:id="nameLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <Label fx:id="versionLabel" layoutX="10.0" layoutY="104.0" text="%ui.label_b021" textFill="WHITE" wrapText="true">
+                  <Label fx:id="versionLabel" layoutX="10.0" layoutY="104.0" text="%competitions.discord_competition_edit.label" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="authorsLabel" layoutX="10.0" layoutY="10.0" text="%ui.label_b021" textFill="WHITE" wrapText="true">
+                  <Label fx:id="authorsLabel" layoutX="10.0" layoutY="10.0" text="%competitions.discord_competition_edit.label" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>
                   </Label>
                   <VBox alignment="CENTER" minHeight="50.0" styleClass="info-container">
                      <children>
-                        <Label fx:id="infoLabel" maxWidth="620.0" text="%ui.your_highscore_will_be_extracted_from_a616" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                        <Label fx:id="infoLabel" maxWidth="620.0" text="%pausemenu.menu_submitter_view.your_highscore_will_be_extracted_from_the_screenshot" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -79,7 +79,7 @@
                               <VBox fx:id="scoresLoader" alignment="CENTER">
                                  <children>
                                     <ProgressIndicator />
-                                    <Label text="%ui.loading_top_scores_8569" textFill="WHITE" wrapText="true">
+                                    <Label text="%pausemenu.menu_submitter_view.loading_top_scores" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -96,7 +96,7 @@
                               <VBox fx:id="loadingIndicator" alignment="CENTER" spacing="6.0">
                                  <children>
                                     <ProgressIndicator />
-                                    <Label text="%ui.loading_screenshot_7a86" textFill="WHITE" wrapText="true">
+                                    <Label text="%pausemenu.menu_submitter_view.loading_screenshot" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -144,7 +144,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold-circle-outline" iconSize="30" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="playerBtn" maxWidth="600.0" minWidth="600.0" mnemonicParsing="false" styleClass="default-button" stylesheets="@stylesheet.css" text="%ui.player_86ea">
+                                    <Button fx:id="playerBtn" maxWidth="600.0" minWidth="600.0" mnemonicParsing="false" styleClass="default-button" stylesheets="@stylesheet.css" text="%pausemenu.menu_submitter_view.player">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -159,7 +159,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Button fx:id="submitBtn" layoutX="362.0" layoutY="10.0" minWidth="400.0" mnemonicParsing="false" styleClass="submit-button" text="%ui.submit_highscore_f471">
+                              <Button fx:id="submitBtn" layoutX="362.0" layoutY="10.0" minWidth="400.0" mnemonicParsing="false" styleClass="submit-button" text="%pausemenu.menu_submitter_view.submit_highscore">
                                  <font>
                                     <Font size="16.0" />
                                  </font>

@@ -24,23 +24,23 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%ui.frontend_preferences_9671" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" />
             <ScrollPane hbarPolicy="NEVER">
                <content>
                   <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.pinballx_settings_200c" />
-                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.global_settings_for_the_pinballx_frontend_8cd5" textFill="WHITE">
+                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.pinballx_settings" />
+                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%ui.gameex_account_c3ed">
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.gameex_account">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Hyperlink onAction="#onLink" text="%ui.https_online_gameex_com_75ba">
+                        <Hyperlink onAction="#onLink" text="%pref.pinballx_settings.https_online_gameex_com">
                            <VBox.margin>
                               <Insets left="-6.0" />
                            </VBox.margin>
@@ -59,12 +59,12 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="%ui.e_mail_address_28ca" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="%pref.pinballx_settings.e_mail_address" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="%ui.password_b341" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -79,17 +79,17 @@
                                     <Font size="14.0" />
                                  </font>
                               </PasswordField>
-                              <Label layoutX="10.0" layoutY="48.0" text="%ui.activated_3ccc" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox fx:id="gameExEnabledCheckbox" mnemonicParsing="false" text="%ui.gameex_enabled_7113" textFill="WHITE" GridPane.columnIndex="1">
+                              <CheckBox fx:id="gameExEnabledCheckbox" mnemonicParsing="false" text="%pref.pinballx_settings.gameex_enabled" textFill="WHITE" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%ui.test_connection_49ab" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

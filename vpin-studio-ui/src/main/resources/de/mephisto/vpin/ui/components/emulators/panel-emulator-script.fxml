@@ -19,7 +19,7 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <items>
-                  <Button fx:id="insertBtn" mnemonicParsing="false" onAction="#onInsert" text="%ui.insert_a458" textFill="WHITE">
+                  <Button fx:id="insertBtn" mnemonicParsing="false" onAction="#onInsert" text="%components.emulators.emulator_script.insert" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -27,7 +27,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-paste" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="%ui.reload_screen_settings_e1b5" />
+                        <Tooltip text="%components.emulators.emulator_script.reload_screen_settings" />
                      </tooltip>
                   </Button>
                </items>

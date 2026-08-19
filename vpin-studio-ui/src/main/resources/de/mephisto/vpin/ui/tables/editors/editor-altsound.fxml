@@ -27,12 +27,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc" />
+            <Button fx:id="saveBtn" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -49,15 +49,15 @@
                <children>
                   <TableView fx:id="tableView" prefWidth="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
-                      <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.id_b718" />
-                        <TableColumn fx:id="columnName" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
-                      <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.channel_781d" />
-                        <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.duck_f97c" />
-                        <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.gain_35d7" />
-                        <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.loop_89d7" />
-                        <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%ui.stop_11a7" />
-                        <TableColumn fx:id="columnFilename" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.filename_1351" />
-                        <TableColumn fx:id="columnFilesize" prefWidth="100.0" style="-fx-alignment: CENTER;" text="%ui.filesize_b18c" />
+                      <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.id" />
+                        <TableColumn fx:id="columnName" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                      <TableColumn fx:id="columnChannel" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.channel" />
+                        <TableColumn fx:id="columnDuck" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.duck" />
+                        <TableColumn fx:id="columnGain" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.gain" />
+                        <TableColumn fx:id="columnLoop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.loop" />
+                        <TableColumn fx:id="columnStop" prefWidth="75.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.stop" />
+                        <TableColumn fx:id="columnFilename" prefWidth="260.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.filename" />
+                        <TableColumn fx:id="columnFilesize" prefWidth="100.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.filesize" />
                     </columns>
                   </TableView>
                </children>
@@ -87,7 +87,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="%ui.loop_9ce0" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%tables.editors.editor_altsound.loop_2" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -95,7 +95,7 @@
                               <Insets right="6.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="%ui.selected_entries_18f2" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" prefHeight="20.0" prefWidth="122.0" text="%tables.editors.editor_altsound.selected_entries" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -108,7 +108,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="49.0" text="%ui.channel_3b3d" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="49.0" text="%tables.editors.editor_altsound.channel" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -129,7 +129,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.the_channel_that_is_used_for_f09c" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.the_channel_that_is_used_for_playback_usually" wrapText="true" />
                            </tooltip>
                         </Label>
                         <Label layoutX="248.0" layoutY="50.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
@@ -137,10 +137,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.loops_the_selected_audio_file_usually_52ba" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.loops_the_selected_audio_file_usually_this_is" wrapText="true" />
                            </tooltip>
                         </Label>
-                        <Label layoutX="10.0" layoutY="83.0" text="%ui.stop_9fe9" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="83.0" text="%tables.editors.editor_altsound.stop_2" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -158,7 +158,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.stops_the_playback_of_other_sound_4a8c" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.stops_the_playback_of_other_sound_effects_music" wrapText="true" />
                            </tooltip>
                         </Label>
                         <TextField fx:id="channelField" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -186,7 +186,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <Label text="%ui.duck_f97c" textFill="WHITE">
+                              <Label text="%tables.editors.editor_altsound.duck" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -199,7 +199,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%ui.the_duck_value_determines_to_what_f0b3" wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.the_duck_value_determines_to_what_volume_the" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -209,7 +209,7 @@
                               <Insets right="16.0" top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <Label text="%ui.gain_35d7" textFill="WHITE">
+                              <Label text="%tables.editors.editor_altsound.gain" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -222,7 +222,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%ui.the_gain_value_determines_the_absolute_0fb8" wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%tables.editors.editor_altsound.the_gain_value_determines_the_absolute_volume_of" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -265,13 +265,13 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <TextField fx:id="searchText" promptText="%ui.entry_search_8d24">
+            <TextField fx:id="searchText" promptText="%tables.editors.editor_altsound.entry_search">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
             <Separator layoutX="316.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="10.0" layoutY="16.0" text="%ui.name_4e14" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="16.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -281,7 +281,7 @@
             </Label>
             <ComboBox fx:id="nameFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="200.0" />
             <Separator layoutX="228.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="244.0" layoutY="16.0" text="%ui.filename_6492" textFill="WHITE">
+            <Label layoutX="244.0" layoutY="16.0" text="%backups.backups_sidebar.filename" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -291,7 +291,7 @@
             </Label>
             <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="240.0" />
             <Separator layoutX="450.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Label layoutX="466.0" layoutY="16.0" text="%ui.looped_586f" textFill="WHITE">
+            <Label layoutX="466.0" layoutY="16.0" text="%tables.editors.editor_altsound.looped" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

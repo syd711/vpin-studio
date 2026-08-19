@@ -24,7 +24,7 @@
                <center>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.installer_d1be" textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="%components.component_update_panel.installer" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -40,7 +40,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label fx:id="usersLabel1" text="%ui.release_6968" textFill="WHITE">
+                              <Label fx:id="usersLabel1" text="%components.component_update_panel.release" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -48,7 +48,7 @@
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                                  <children>
                                     <ComboBox fx:id="releasesCombo" />
-                                    <Button mnemonicParsing="false" onAction="#onFetch" text="%ui.refresh_63a6" textFill="WHITE">
+                                    <Button mnemonicParsing="false" onAction="#onFetch" text="%components.component_update_panel.refresh" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -56,7 +56,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.checks_the_installation_against_the_selected_a641" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -64,7 +64,7 @@
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <ComboBox fx:id="artifactCombo" />
-                                    <Button fx:id="checkBtn" mnemonicParsing="false" onAction="#onCheck" text="%ui.compare_with_installation_5fcb" textFill="WHITE">
+                                    <Button fx:id="checkBtn" mnemonicParsing="false" onAction="#onCheck" text="%components.component_update_panel.compare_with_installation" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -72,12 +72,12 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-compare-horizontal" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.checks_the_installation_against_the_selected_a641" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
                                        </tooltip>
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label fx:id="usersLabel11" layoutX="10.0" layoutY="15.0" text="%ui.release_artifact_693e" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label fx:id="usersLabel11" layoutX="10.0" layoutY="15.0" text="%components.component_update_panel.release_artifact" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -87,7 +87,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextArea>
-                              <Label styleClass="default-text" text="%ui.release_notes_85b8" textFill="WHITE" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                              <Label styleClass="default-text" text="%components.component_update_panel.release_notes" textFill="WHITE" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -104,7 +104,7 @@
                   <VBox prefWidth="400.0" BorderPane.alignment="CENTER" />
                </right>
             </BorderPane>
-            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%ui.log_ce0b" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%components.component_update_panel.log" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -130,12 +130,12 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="12.0" BorderPane.alignment="CENTER_RIGHT">
          <children>
-            <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="%ui.simulate_installation_c552">
+            <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="%components.component_update_panel.simulate_installation">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="installer-button" text="%ui.start_installation_bfa2">
+            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="installer-button" text="%components.component_update_panel.start_installation">
                <font>
                   <Font size="14.0" />
                </font>

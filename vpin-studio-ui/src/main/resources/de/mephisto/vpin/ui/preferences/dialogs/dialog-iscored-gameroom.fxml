@@ -23,12 +23,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.save_c9cc">
+            <Button fx:id="saveBtn" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -53,7 +53,7 @@
                            <children>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <Label text="%ui.game_room_details_cf24" textFill="WHITE">
+                                    <Label text="%pref.iscored_gameroom.game_room_details" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="18.0" />
                                        </font>
@@ -66,7 +66,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.these_are_read_only_values_and_8950" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.these_are_read_only_values_and_can_only" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
@@ -89,42 +89,42 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.admin_approval_enabled_fd71" textFill="WHITE">
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.iscored_gameroom.admin_approval_enabled" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%ui.public_readability_enabled_6af6" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%pref.iscored_gameroom.public_readability_enabled" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="%ui.public_score_entries_enabled_9bb8" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="%pref.iscored_gameroom.public_score_entries_enabled" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="%ui.long_names_enabled_9b45" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="%pref.iscored_gameroom.long_names_enabled" textFill="WHITE" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="%ui.dates_enabled_3c30" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="%pref.iscored_gameroom.dates_enabled" textFill="WHITE" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="%ui.number_of_tables_5328" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="%pref.iscored_gameroom.number_of_tables" textFill="WHITE" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="198.0" styleClass="default-text" text="%ui.number_of_vps_tagged_tables_b335" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label layoutX="10.0" layoutY="198.0" styleClass="default-text" text="%pref.iscored_gameroom.number_of_vps_tagged_tables" textFill="WHITE" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="228.0" styleClass="default-text" text="%ui.total_scores_6e35" textFill="WHITE" GridPane.rowIndex="9">
+                                    <Label layoutX="10.0" layoutY="228.0" styleClass="default-text" text="%pref.iscored_gameroom.total_scores" textFill="WHITE" GridPane.rowIndex="9">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -164,7 +164,7 @@
                                                 <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="%ui.this_flag_must_be_enabled_for_4a21" />
+                                                <Tooltip text="%pref.iscored_gameroom.this_flag_must_be_enabled_for_your_game" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -184,7 +184,7 @@
                                                 <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="%ui.this_flag_must_be_enabled_for_4a21" />
+                                                <Tooltip text="%pref.iscored_gameroom.this_flag_must_be_enabled_for_your_game" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -199,7 +199,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="%ui.tournament_column_enabled_0234" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="%pref.iscored_gameroom.tournament_column_enabled" textFill="WHITE" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -209,7 +209,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="%ui.public_read_api_enabled_3735" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="%pref.iscored_gameroom.public_read_api_enabled" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -229,7 +229,7 @@
                                                 <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="%ui.this_flag_must_be_enabled_to_5d9e" />
+                                                <Tooltip text="%pref.iscored_gameroom.this_flag_must_be_enabled_to_post_highscores" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -246,7 +246,7 @@
                         </VBox>
                         <VBox fx:id="mainColumn">
                            <children>
-                              <Label layoutX="10.0" layoutY="182.0" text="%ui.your_vpin_settings_0dd8" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="182.0" text="%competitions.discord_competition_edit.your_vpin_settings" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
@@ -267,7 +267,7 @@
                                     <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <Label layoutX="10.0" layoutY="117.0" text="%ui.table_badges_9220" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="117.0" text="%pref.iscored_gameroom.table_badges" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -283,7 +283,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="%ui.the_competition_badge_will_be_added_d23b" />
+                                                <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.the_competition_badge_will_be_added_to_the" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -296,7 +296,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.the_badge_will_be_added_to_8e3e" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.the_badge_will_be_added_to_the_wheel" wrapText="true" />
                                        </tooltip>
                                        <GridPane.margin>
                                           <Insets left="6.0" />
@@ -305,7 +305,7 @@
                                           <Insets top="3.0" />
                                        </padding>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="44.0" text="%ui.highscore_reset_00c5" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="44.0" text="%pref.iscored_gameroom.highscore_reset" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -315,7 +315,7 @@
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <children>
-                                          <CheckBox fx:id="resetCheckbox" disable="true" mnemonicParsing="false" selected="true" text="%ui.auto_reset_highscores_f91b" textFill="WHITE">
+                                          <CheckBox fx:id="resetCheckbox" disable="true" mnemonicParsing="false" selected="true" text="%pref.iscored_gameroom.auto_reset_highscores" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -339,7 +339,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="%ui.resets_the_highscores_of_a_table_847e" wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.resets_the_highscores_of_a_table_when_the" wrapText="true" />
                                              </tooltip>
                                              <HBox.margin>
                                                 <Insets top="2.0" />
@@ -347,7 +347,7 @@
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="48.0" text="%ui.synchronization_7c46" textFill="WHITE">
+                                    <Label layoutX="10.0" layoutY="48.0" text="%pref.iscored_gameroom.synchronization" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -357,7 +357,7 @@
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                                        <children>
-                                          <CheckBox fx:id="synchronizationCheckbox" disable="true" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.synchronization_enabled_9275" />
+                                          <CheckBox fx:id="synchronizationCheckbox" disable="true" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.iscored_gameroom.synchronization_enabled" />
                                           <Label fx:id="publicReadAPIHint11" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
@@ -366,12 +366,12 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="%ui.this_will_automatically_create_and_delete_a9a1" wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.this_will_automatically_create_and_delete_iscored_competitio" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="14.0" text="%ui.ignore_hidden_games_20c9" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="14.0" text="%pref.iscored_gameroom.ignore_hidden_games" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -381,7 +381,7 @@
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" layoutX="154.0" layoutY="10.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <CheckBox fx:id="ignoreHiddenCheckbox" disable="true" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.ignore_hidden_games_37ce" />
+                                          <CheckBox fx:id="ignoreHiddenCheckbox" disable="true" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.iscored_gameroom.ignore_hidden_games_2" />
                                           <Label fx:id="publicReadAPIHint111" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
@@ -390,7 +390,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="%ui.skips_the_synchronization_of_games_that_ddbd" wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.skips_the_synchronization_of_games_that_are_marked" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -426,18 +426,18 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TextField fx:id="urlField" promptText="%ui.enter_game_room_url_https_www_765c" GridPane.columnIndex="1">
+                              <TextField fx:id="urlField" promptText="%pref.iscored_gameroom.enter_game_room_url_https_www_iscored_info" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%ui.validate_ad3d" textFill="WHITE" GridPane.columnIndex="2">
+                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%pref.iscored_gameroom.validate" textFill="WHITE" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Label styleClass="default-text" text="%ui.game_room_url_428e" />
-                              <Label styleClass="default-text" text="%ui.game_room_name_eeef" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label styleClass="default-text" text="%pref.iscored_gameroom.game_room_url" />
+                              <Label styleClass="default-text" text="%pref.iscored_gameroom.game_room_name" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -466,7 +466,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label text="%ui.the_following_tags_can_be_used_f0ce" textFill="WHITE">
+                  <Label text="%pref.iscored_gameroom.the_following_tags_can_be_used_to_configure" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -486,7 +486,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="%ui.vps_disabled_d3a2" textFill="WHITE">
+                        <Label text="%pref.iscored_gameroom.vps_disabled" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -494,7 +494,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="14.0" text="%ui.vps_multiscore_54e2" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="14.0" text="%pref.iscored_gameroom.vps_multiscore" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -502,7 +502,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="44.0" text="%ui.vps_singlescore_2383" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="44.0" text="%pref.iscored_gameroom.vps_singlescore" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -510,7 +510,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="10.0" layoutY="74.0" text="%ui.vps_allversions_6c02" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="74.0" text="%pref.iscored_gameroom.vps_allversions" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -518,7 +518,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label text="%ui.disables_the_table_so_that_no_762d" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label text="%pref.iscored_gameroom.disables_the_table_so_that_no_score_will" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -526,7 +526,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="154.0" layoutY="14.0" text="%ui.all_scores_are_posted_no_matter_5aa1" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label layoutX="154.0" layoutY="14.0" text="%pref.iscored_gameroom.all_scores_are_posted_no_matter_if_the" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -534,7 +534,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="140.0" layoutY="44.0" text="%ui.only_one_score_is_posted_all_7549" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label layoutX="140.0" layoutY="44.0" text="%pref.iscored_gameroom.only_one_score_is_posted_all_sub_sequent" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -542,7 +542,7 @@
                               <Insets top="3.0" />
                            </padding>
                         </Label>
-                        <Label layoutX="140.0" layoutY="74.0" text="%ui.players_can_play_all_versions_of_cb20" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label layoutX="140.0" layoutY="74.0" text="%pref.iscored_gameroom.players_can_play_all_versions_of_the_table" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -22,7 +22,7 @@
          <center>
             <VBox fx:id="dataPanel" prefWidth="350.0">
                <children>
-                  <Label fx:id="nameLabel" text="%ui.file_name_6528" textFill="WHITE">
+                  <Label fx:id="nameLabel" text="%components.doftester.toy_container.file_name" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -30,14 +30,14 @@
                         <Insets bottom="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="infoLabel" layoutX="10.0" layoutY="10.0" text="%ui.info_label_7158" textFill="WHITE">
+                  <Label fx:id="infoLabel" layoutX="10.0" layoutY="10.0" text="%jobs.jobs_container.info_label" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin></Label>
                   <HBox alignment="CENTER_LEFT">
                      <children>
                         <ProgressBar fx:id="progressBar" maxHeight="13.0" prefWidth="360.0" progress="0.0" />
-                        <Label fx:id="statusLabel" styleClass="default-text" text="%ui.size_label_2c3e" textFill="WHITE">
+                        <Label fx:id="statusLabel" styleClass="default-text" text="%components.doftester.toy_container.size_label" textFill="WHITE">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="bi-check-circle" iconSize="18" />
                            </graphic></Label>
@@ -65,7 +65,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.open_folder_a6e7" />
+                  <Tooltip text="%dropins.dropin_container.open_folder" />
                </tooltip>
             </Button>
             <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
@@ -76,7 +76,7 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.stop_job_e9d9" />
+                  <Tooltip text="%jobs.jobs_container.stop_job" />
                </tooltip>
             </Button>
          </items>
@@ -103,7 +103,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close" iconSize="13" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.open_folder_folder_2ead" />
+                  <Tooltip text="%jobs.jobs_container.open_folder_folder" />
                </tooltip>
             </Button>
          </right>

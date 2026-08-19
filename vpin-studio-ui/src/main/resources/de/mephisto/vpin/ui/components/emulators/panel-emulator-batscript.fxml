@@ -24,9 +24,9 @@
                   <Insets bottom="12.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="default-text" text="%ui.for_vpx_emulators_these_values_are_4712" />
-                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="%ui.you_need_to_edit_the_emulator_2898" />
-                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="%ui.manually_to_add_or_remove_statements_f51e" />
+                  <Label styleClass="default-text" text="%components.emulators.emulator_batscript.for_vpx_emulators_these_values_are_generated_on" />
+                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="%components.emulators.emulator_batscript.you_need_to_edit_the_emulator_bat_files" />
+                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="%components.emulators.emulator_batscript.manually_to_add_or_remove_statements" />
                </children>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -48,28 +48,28 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.enabled_0d1a" />
-                        <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.script_execution_enabled_a9ec" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.working_directory_4a2d" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%backups.backup_source_folder.enabled" />
+                        <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%components.emulators.emulator_batscript.script_execution_enabled" GridPane.columnIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%components.emulators.emulator_batscript.working_directory" GridPane.rowIndex="1" />
                         <TextField fx:id="workingDirectoryField" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%ui.executable_6b6b" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%components.emulators.emulator_batscript.executable" GridPane.rowIndex="2" />
                         <TextField fx:id="executableField" layoutX="158.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.parameters_d3d5" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%components.emulators.emulator_batscript.parameters" GridPane.rowIndex="3" />
                         <TextField fx:id="parametersField" layoutX="158.0" layoutY="78.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <CheckBox fx:id="waitForExitCheckbox" layoutX="158.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="%ui.wait_for_exit_1296" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <CheckBox fx:id="hideWindowCheckbox" layoutX="158.0" layoutY="150.0" mnemonicParsing="false" styleClass="default-text" text="%ui.hide_window_bf91" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <CheckBox fx:id="waitForExitCheckbox" layoutX="158.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="%components.emulators.emulator_batscript.wait_for_exit" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="hideWindowCheckbox" layoutX="158.0" layoutY="150.0" mnemonicParsing="false" styleClass="default-text" text="%components.emulators.emulator_batscript.hide_window" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                      </children>
                   </GridPane>
                </children>

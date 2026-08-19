@@ -23,12 +23,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%ui.apply_changes_0ec1">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%tables.editors.altsound2_profile.apply_changes">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -66,7 +66,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%ui.music_d74c" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.music" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -82,7 +82,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="%ui.the_background_music_only_one_can_72ee" />
+                                    <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.the_background_music_only_one_can_play_at" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -122,7 +122,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%ui.callout_46f4" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.callout" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -138,7 +138,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="%ui.voice_interludes_and_callouts_only_one_497f" />
+                                    <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.voice_interludes_and_callouts_only_one_can_play" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -178,7 +178,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%ui.sfx_da10" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.sfx" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -194,7 +194,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="%ui.short_sounds_to_supplement_table_sounds_bf49" />
+                                    <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.short_sounds_to_supplement_table_sounds_multiple_can" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -234,7 +234,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%ui.solo_ca17" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.solo" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -250,7 +250,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="%ui.sound_played_at_end_of_ball_50d7" />
+                                    <Tooltip text="%tables.editors.altsound2_profile.sound_played_at_end_of_ball_game_or" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -290,7 +290,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label text="%ui.overlay_0395" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_profile.overlay" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -306,7 +306,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="%ui.sounds_played_over_music_sfx_only_966d" />
+                                    <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_profile.sounds_played_over_music_sfx_only_one_can" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -346,7 +346,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.profile_s_sample_type_7614" textFill="WHITE" />
+                        <Label styleClass="default-text" text="%tables.editors.altsound2_profile.profile_s_sample_type" textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="sampleCombo" prefWidth="150.0" />
@@ -358,7 +358,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="%ui.solo_and_music_types_cannot_duck_14d0" />
+                                    <Tooltip text="%tables.editors.altsound2_profile.solo_and_music_types_cannot_duck_other_types" />
                                  </tooltip>
                                  <HBox.margin>
                                     <Insets left="6.0" />
@@ -366,7 +366,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.profile_id_f1b3" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%tables.editors.altsound2_profile.profile_id" GridPane.rowIndex="1" />
                         <Label fx:id="profileIdLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -379,14 +379,14 @@
          <bottom>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="default-text" text="%ui.notes_f4c6" />
-                  <Label styleClass="preference-description" text="%ui.a_sample_type_cannot_duck_pause_d651" />
-                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%ui.ducking_values_are_specified_as_a_3648" />
-                  <Label layoutX="10.0" layoutY="52.0" styleClass="preference-description" text="%ui.values_range_from_0_to_100_bbf9" />
-                  <Label layoutX="10.0" layoutY="73.0" styleClass="preference-description" text="%ui.if_multiple_ducking_values_apply_to_8921" />
-                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="%ui.when_the_sample_with_the_lowest_d90c" />
-                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="%ui.ducking_pausing_ends_when_the_last_d4d5" />
-                  <Label layoutX="10.0" layoutY="138.0" styleClass="preference-description" text="%ui.if_ducks_variable_is_set_there_2f5b" />
+                  <Label styleClass="default-text" text="%pref.restore_backup.notes" />
+                  <Label styleClass="preference-description" text="%tables.editors.altsound2_profile.a_sample_type_cannot_duck_pause_another_sample" />
+                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%tables.editors.altsound2_profile.ducking_values_are_specified_as_a_percentage_of" />
+                  <Label layoutX="10.0" layoutY="52.0" styleClass="preference-description" text="%tables.editors.altsound2_profile.values_range_from_0_to_100_where_0" />
+                  <Label layoutX="10.0" layoutY="73.0" styleClass="preference-description" text="%tables.editors.altsound2_profile.if_multiple_ducking_values_apply_to_a_single" />
+                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="%tables.editors.altsound2_profile.when_the_sample_with_the_lowest_duck_value" />
+                  <Label layoutX="10.0" layoutY="95.0" styleClass="preference-description" text="%tables.editors.altsound2_profile.ducking_pausing_ends_when_the_last_affecting_sample" />
+                  <Label layoutX="10.0" layoutY="138.0" styleClass="preference-description" text="%tables.editors.altsound2_profile.if_ducks_variable_is_set_there_must_be" />
                </children>
             </VBox>
          </bottom>

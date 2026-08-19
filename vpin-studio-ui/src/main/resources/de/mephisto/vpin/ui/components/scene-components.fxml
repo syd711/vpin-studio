@@ -25,21 +25,21 @@
                <center>
                   <TabPane fx:id="rootTabPane" BorderPane.alignment="CENTER">
                      <tabs>
-                        <Tab closable="false" text="%ui.updates_9ac4">
+                        <Tab closable="false" text="%components.components.updates">
                            <content>
                               <BorderPane>
                                  <center>
                                         <TabPane fx:id="tabPane" styleClass="sub-tab" tabClosingPolicy="UNAVAILABLE">
                                             <tabs>
-                                                <Tab fx:id="overviewTab" closable="false" styleClass="sub-tab" text="%ui.overview_3b87" />
-                                                <Tab fx:id="vpxTab" closable="false" text="%ui.visual_pinball_8eed" />
-                                                <Tab fx:id="mameTab" closable="false" text="%ui.vpin_mame_0f64" />
-                                                <Tab fx:id="b2sTab" closable="false" text="%ui.b2s_server_e5a9" />
-                                                <Tab fx:id="freezyTab" closable="false" text="%ui.freezy_b3b3" />
-                                                <Tab fx:id="flexDMDTab" closable="false" text="%ui.flexdmd_5db4" />
-                  <!--                        <Tab fx:id="serumTab" closable="false" text="%ui.serum_c1a6" />-->
-                                          <Tab fx:id="doflinxTab" closable="false" text="%ui.doflinx_a41b" />
-                                          <Tab fx:id="dofTab" closable="false" text="%ui.dof_209a" />
+                                                <Tab fx:id="overviewTab" closable="false" styleClass="sub-tab" text="%components.components.overview" />
+                                                <Tab fx:id="vpxTab" closable="false" text="%components.components.visual_pinball" />
+                                                <Tab fx:id="mameTab" closable="false" text="%components.components.vpin_mame" />
+                                                <Tab fx:id="b2sTab" closable="false" text="%components.components.b2s_server" />
+                                                <Tab fx:id="freezyTab" closable="false" text="%components.components.freezy" />
+                                                <Tab fx:id="flexDMDTab" closable="false" text="%components.components.flexdmd" />
+                  <!--                        <Tab fx:id="serumTab" closable="false" text="%components.components.serum" />-->
+                                          <Tab fx:id="doflinxTab" closable="false" text="%components.components.doflinx" />
+                                          <Tab fx:id="dofTab" closable="false" text="%components.components.dof" />
                                             </tabs>
                                         </TabPane>
                                  </center>
@@ -50,7 +50,7 @@
                                        </BorderPane.margin>
                                        <children>
                                           <ProgressIndicator prefHeight="200.0" prefWidth="200.0" />
-                                          <Label fx:id="loaderLabel" text="%ui.loading_component_information_2192" textFill="WHITE">
+                                          <Label fx:id="loaderLabel" text="%components.components.loading_component_information" textFill="WHITE">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -71,7 +71,7 @@
                               </Label>
                            </graphic>
                         </Tab>
-                        <Tab fx:id="emulatorsTab" closable="false" text="%ui.emulators_6261">
+                        <Tab fx:id="emulatorsTab" closable="false" text="%components.components.emulators">
                            <graphic>
                               <Label>
                                  <graphic>
@@ -80,7 +80,7 @@
                               </Label>
                            </graphic>
                         </Tab>
-                        <Tab fx:id="screensTab" closable="false" text="%ui.screens_2288">
+                        <Tab fx:id="screensTab" closable="false" text="%components.components.screens">
                            <graphic>
                               <Label>
                                  <graphic>
@@ -89,7 +89,7 @@
                               </Label>
                            </graphic>
                         </Tab>
-                        <Tab fx:id="dofTesterTab" closable="false" text="%ui.dof_tester_97c2">
+                        <Tab fx:id="dofTesterTab" closable="false" text="%components.components.dof_tester">
                            <graphic>
                               <Label>
                                  <graphic>
@@ -125,7 +125,7 @@
                <center>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <Label styleClass="error-title" text="%ui.use_at_your_own_risk_65e3" textFill="WHITE">
+                        <Label styleClass="error-title" text="%components.components.use_at_your_own_risk" textFill="WHITE">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -133,17 +133,17 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="%ui.read_the_instruction_boxes_carefully_faba" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="%components.components.read_the_instruction_boxes_carefully" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="30.0" styleClass="error-title" text="%ui.use_the_installation_simulator_and_check_4510" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="30.0" styleClass="error-title" text="%components.components.use_the_installation_simulator_and_check_if_the" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="error-title" text="%ui.you_found_a_bug_or_have_7a29" textFill="WHITE">
+                        <Label styleClass="error-title" text="%components.components.you_found_a_bug_or_have_ideas_for" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -153,12 +153,12 @@
                               <Insets left="9.0" />
                            </VBox.margin>
                            <children>
-                              <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="%ui.https_discord_gg_ampwvazhvy_004d" textFill="WHITE">
+                              <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="%components.components.https_discord_gg_ampwvazhvy" textFill="WHITE">
                                  <padding>
                                     <Insets bottom="2.0" />
                                  </padding>
                               </Hyperlink>
-                              <Hyperlink layoutX="10.0" layoutY="10.0" onAction="#onHyperlink" styleClass="error-title" text="%ui.https_github_com_syd711_vpin_studio_e320" textFill="WHITE">
+                              <Hyperlink layoutX="10.0" layoutY="10.0" onAction="#onHyperlink" styleClass="error-title" text="%components.components.https_github_com_syd711_vpin_studio_issues" textFill="WHITE">
                                  <padding>
                                     <Insets bottom="2.0" />
                                  </padding>

@@ -20,14 +20,14 @@
          <content>
             <VBox>
                <children>
-                  <Label styleClass="preference-title" text="%ui.cabinet_settings_494a" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="%mania.mania_account_settings.cabinet_settings" textFill="WHITE" />
                   <VBox fx:id="preferencesPanel">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
                      <children>
-                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="%ui.cabinet_data_516a" />
-                        <Label styleClass="preference-description" text="%ui.meta_information_about_your_registered_cabinet_f00a" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="%mania.mania_account_settings.cabinet_data" />
+                        <Label styleClass="preference-description" text="%mania.mania_account_settings.meta_information_about_your_registered_cabinet" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
@@ -43,7 +43,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="%ui.cabinet_uuid_7f45" />
+                              <Label styleClass="default-text" text="%mania.mania_account_settings.cabinet_uuid" />
                               <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2">
                                  <children>
                                     <Button mnemonicParsing="false" onAction="#onIdCopy">
@@ -54,7 +54,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="%ui.copy_vps_table_version_url_430b" />
+                                          <Tooltip text="%mania.mania_account_settings.copy_vps_table_version_url" />
                                        </tooltip>
                                     </Button>
                                  </children>
@@ -65,14 +65,14 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%ui.cabinet_deletion_5232" />
-                        <Label layoutX="10.0" layoutY="213.0" styleClass="preference-description" text="%ui.this_will_delete_your_all_you_16b2" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%mania.mania_account_settings.cabinet_deletion" />
+                        <Label layoutX="10.0" layoutY="213.0" styleClass="preference-description" text="%mania.mania_account_settings.this_will_delete_your_all_you_cabinet_data" textFill="WHITE">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-description" text="%ui.on_vpin_mania_net_646f" textFill="WHITE" />
-                        <Button mnemonicParsing="false" onAction="#onAccountDelete" styleClass="error-title" text="%ui.delete_cabinet_30f3" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-description" text="%mania.mania_account_settings.on_vpin_mania_net" textFill="WHITE" />
+                        <Button mnemonicParsing="false" onAction="#onAccountDelete" styleClass="error-title" text="%mania.mania_account_settings.delete_cabinet" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

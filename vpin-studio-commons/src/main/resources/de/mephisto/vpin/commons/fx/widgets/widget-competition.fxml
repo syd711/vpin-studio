@@ -15,7 +15,7 @@
             <top>
                 <VBox BorderPane.alignment="CENTER">
                     <children>
-                        <Label fx:id="titleLabel" alignment="BOTTOM_LEFT" styleClass="widget-title" text="%ui.competition_1bde" textFill="WHITE">
+                        <Label fx:id="titleLabel" alignment="BOTTOM_LEFT" styleClass="widget-title" text="%widgets.widget_competition.competition" textFill="WHITE">
                             <VBox.margin>
                                 <Insets />
                             </VBox.margin>

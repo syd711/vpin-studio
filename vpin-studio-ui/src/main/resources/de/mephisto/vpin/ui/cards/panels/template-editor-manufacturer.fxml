@@ -24,7 +24,7 @@
     <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="%ui.manufacturer_logo_settings_7b3d" />
+            <Label text="%cards.template_editor_manufacturer.manufacturer_logo_settings" />
          </left>
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -37,7 +37,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="%ui.toggle_manufacturer_logo_visibility_1948" />
+                        <Tooltip text="%cards.template_editor_manufacturer.toggle_manufacturer_logo_visibility" />
                     </tooltip>
                   </Button>
                    <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -48,7 +48,7 @@
                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                        </graphic>
                        <tooltip>
-                           <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400" />
+                           <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                        </tooltip>
                    </ToggleButton>
                </children>
@@ -64,7 +64,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                   <children>
-                    <CheckBox fx:id="manufacturerLogoUseHistoricalCheckBox" mnemonicParsing="false" text="%ui.use_historical_logo_257e" textFill="WHITE">
+                    <CheckBox fx:id="manufacturerLogoUseHistoricalCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.use_historical_logo" textFill="WHITE">
                         <font>
                           <Font size="14.0" />
                         </font>
@@ -74,7 +74,7 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                         </graphic>
                         <tooltip>
-                          <Tooltip text="%ui.the_manufacturer_logo_evolved_over_years_688f" />
+                          <Tooltip text="%cards.template_editor_manufacturer.the_manufacturer_logo_evolved_over_years_when_this" />
                         </tooltip>
                     </Label>
                   </children>
@@ -87,7 +87,7 @@
 
                 <HBox alignment="BASELINE_LEFT" spacing="6.0">
                   <children>
-                    <CheckBox fx:id="manufacturerLogoKeepARCheckBox" mnemonicParsing="false" text="%ui.keep_aspect_ratio_bfc8" textFill="WHITE">
+                    <CheckBox fx:id="manufacturerLogoKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" textFill="WHITE">
                         <font>
                           <Font size="14.0" />
                         </font>
@@ -97,7 +97,7 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                         </graphic>
                         <tooltip>
-                          <Tooltip text="%ui.when_checked_the_aspect_ratio_of_2234" />
+                          <Tooltip text="%cards.template_editor_manufacturer.when_checked_the_aspect_ratio_of_the_image" />
                         </tooltip>
                     </Label>
                   </children>

@@ -29,21 +29,21 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47" />
-            <Button fx:id="saveGloballyBtn" mnemonicParsing="false" onAction="#onSaveGloballyClick" styleClass="default-button" text="%ui.save_position_globally_afd2">
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
+            <Button fx:id="saveGloballyBtn" mnemonicParsing="false" onAction="#onSaveGloballyClick" styleClass="default-button" text="%tables.dmd_position.save_position_globally">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveLocallyBtn" mnemonicParsing="false" onAction="#onSaveLocallyClick" styleClass="submit-button" text="%ui.save_position_locally_6d35">
+            <Button fx:id="saveLocallyBtn" mnemonicParsing="false" onAction="#onSaveLocallyClick" styleClass="submit-button" text="%tables.dmd_position.save_position_locally">
                <tooltip>
-                  <Tooltip prefWidth="300.0" text="%ui.save_the_current_dmd_position_ctrl_6764" wrapText="true" />
+                  <Tooltip prefWidth="300.0" text="%tables.dmd_position.save_the_current_dmd_position_ctrl_s" wrapText="true" />
                </tooltip>
                <HBox.margin>
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveCloseLocallyBtn" mnemonicParsing="false" onAction="#onSaveCloseLocallyClick" styleClass="submit-button" text="%ui.save_close_position_locally_1f41">
+            <Button fx:id="saveCloseLocallyBtn" mnemonicParsing="false" onAction="#onSaveCloseLocallyClick" styleClass="submit-button" text="%tables.dmd_position.save_close_position_locally">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -62,7 +62,7 @@
          <top>
             <BorderPane BorderPane.alignment="TOP_LEFT">
                <left>
-                  <Label fx:id="titleLabel" styleClass="default-title" text="%ui.title_d5d3" textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label fx:id="titleLabel" styleClass="default-title" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -71,7 +71,7 @@
                <right>
                   <HBox alignment="CENTER" spacing="6.0" styleClass="subpanel" BorderPane.alignment="CENTER">
                      <children>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%ui.auto_save_106c" textFill="WHITE">
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -84,7 +84,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.jump_to_the_previous_entry_in_96e7" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
@@ -95,7 +95,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.jump_to_the_next_entry_in_a465" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_next_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
                      </children>
@@ -113,9 +113,9 @@
                      <children>
                         <TabPane fx:id="tabPane">
                            <tabs>
-                              <Tab fx:id="playfieldTab" closable="false" text="%ui.playfield_e6dd" />
-                              <Tab fx:id="backglassTab" closable="false" text="%ui.backglass_cd90" />
-                              <Tab fx:id="dmdTab" closable="false" text="%ui.dmd_c335" />
+                              <Tab fx:id="playfieldTab" closable="false" text="%pref.validators_screens.playfield" />
+                              <Tab fx:id="backglassTab" closable="false" text="%backglass.directb2s_admin.backglass" />
+                              <Tab fx:id="dmdTab" closable="false" text="%backups.backups.dmd" />
                            </tabs>
                         </TabPane>
                      </children>
@@ -130,9 +130,9 @@
                   <children>
                      <VBox fx:id="uploadFullDMDImagePane" spacing="3">
                         <children>
-                           <Label fx:id="noFullDMDLabel" styleClass="default-text" text="%ui.no_full_dmd_image_present_in_6f00" textFill="WHITE" />
-                           <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="%ui.you_can_upload_or_drop_a_8845" />
-                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb">
+                           <Label fx:id="noFullDMDLabel" styleClass="default-text" text="%tables.dmd_position.no_full_dmd_image_present_in_the_backglass" textFill="WHITE" />
+                           <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="%tables.dmd_position.you_can_upload_or_drop_a_full_dmd" />
+                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -144,9 +144,9 @@
                      </VBox>
                      <VBox fx:id="activateFullDMDImagePane" spacing="3">
                         <children>
-                           <Label fx:id="activateDMDImageLabel" styleClass="default-text" text="%ui.the_full_dmd_image_present_in_25cc" textFill="WHITE" />
-                           <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="%ui.you_can_show_the_backglass_dmd_6027" />
-                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="%ui.show_b2s_dmd_47a8">
+                           <Label fx:id="activateDMDImageLabel" styleClass="default-text" text="%tables.dmd_position.the_full_dmd_image_present_in_the_backglass" textFill="WHITE" />
+                           <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="%tables.dmd_position.you_can_show_the_backglass_dmd_image" />
+                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="%tables.dmd_position.show_b2s_dmd">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -159,15 +159,15 @@
 
                      <VBox fx:id="useFullDMDMediaPane" spacing="3">
                         <children>
-                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" text="%ui.or_use_full_dmd_media_fefe" textFill="WHITE" />
-                           <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description" text="%ui.full_dmd_media_is_present_you_a971" textFill="WHITE" />
-                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="%ui.keep_frontend_full_dmd_on_23d8">
+                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" text="%tables.dmd_position.or_use_full_dmd_media" textFill="WHITE" />
+                           <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description" text="%tables.dmd_position.full_dmd_media_is_present_you_can_keep" textFill="WHITE" />
+                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.keep_frontend_full_dmd_on">
                               <font>
                                  <Font size="14.0" />
                               </font>
                            </Button>
-                           <Label fx:id="grabFullDMDMediaDescr" styleClass="preference-description" text="%ui.or_you_can_grab_the_full_3a24" textFill="WHITE" />
-                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="%ui.grab_frontend_image_ca96">
+                           <Label fx:id="grabFullDMDMediaDescr" styleClass="preference-description" text="%tables.dmd_position.or_you_can_grab_the_full_dmd_apron" textFill="WHITE" />
+                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.grab_frontend_image">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -194,7 +194,7 @@
                   </Label>
                   <HBox fx:id="romPane" spacing="3.0">
                      <children>
-                        <Label styleClass="default-text" text="%ui.rom_or_alias_62d5" />
+                        <Label styleClass="default-text" text="%tables.dmd_position.rom_or_alias" />
                         <Label fx:id="romLabel" text="--">
                            <font>
                               <Font size="14.0" />
@@ -202,7 +202,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label styleClass="default-headline" text="%ui.dmd_type_46a7">
+                  <Label styleClass="default-headline" text="%tables.dmd_position.dmd_type">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -214,12 +214,12 @@
                            <children>
                               <VBox spacing="3.0">
                                  <children>
-                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="%ui.turn_dmd_off_in_vpinmame_9b79" textFill="WHITE">
+                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="%tables.dmd_position.turn_dmd_off_in_vpinmame" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="%ui.disable_dmd_in_dmddevice_ini_f5de" textFill="WHITE">
+                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="%tables.dmd_position.disable_dmd_in_dmddevice_ini" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -234,7 +234,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%ui.deactivate_external_dmd_in_vpinmame_settings_878c" wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%tables.dmd_position.deactivate_external_dmd_in_vpinmame_settings_and_or" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -246,7 +246,7 @@
                            <children>
                               <HBox>
                                  <children>
-                                    <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="%ui.turn_backglass_scores_off_7ee7" textFill="WHITE">
+                                    <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="%tables.dmd_position.turn_backglass_scores_off" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -259,7 +259,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.when_checked_tell_the_backglass_not_f6c0" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.dmd_position.when_checked_tell_the_backglass_not_to_render" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="12.0" />
@@ -270,7 +270,7 @@
                                     <Insets bottom="12.0" top="6.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="%ui.reset_to_backglass_scores_positions_8529" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="%tables.dmd_position.reset_to_backglass_scores_positions" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -283,24 +283,24 @@
                      </VBox.margin>
                   </VBox>
 
-                  <Label styleClass="default-headline" text="%ui.position_52f5">
+                  <Label styleClass="default-headline" text="%tables.dmd_position.position">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <VBox fx:id="radioOnPane" spacing="3.0">
                      <children>
-                        <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="%ui.on_backglass_bc0a" textFill="WHITE">
+                        <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="%tables.dmd_position.on_backglass" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="%ui.on_dmd_9743" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="%tables.dmd_position.on_dmd" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioOnPlayfield" mnemonicParsing="false" text="%ui.on_playfield_c944" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                        <RadioButton fx:id="radioOnPlayfield" mnemonicParsing="false" text="%tables.dmd_position.on_playfield" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -324,19 +324,19 @@
                         <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.x_c60e" GridPane.rowIndex="0" />
+                        <Label styleClass="default-text" text="%pref.pinemhi_ui.x" GridPane.rowIndex="0" />
                         <Spinner GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="xSpinner" />
 
-                        <Label styleClass="default-text" text="%ui.y_b2bc" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%pref.pinemhi_ui.y" GridPane.rowIndex="1" />
                         <Spinner fx:id="ySpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                        <Label styleClass="default-text" text="%ui.width_48cc" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="%tables.dmd_position.width" GridPane.rowIndex="2" />
                         <Spinner fx:id="widthSpinner" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                        <Label styleClass="default-text" text="%ui.height_e933" GridPane.rowIndex="3" />
+                        <Label styleClass="default-text" text="%tables.dmd_position.height" GridPane.rowIndex="3" />
                         <Spinner fx:id="heightSpinner" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                        <Button fx:id="centerXBtn" mnemonicParsing="false" onAction="#onCenterX" text="%ui.center_horizontally_79b6" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                        <Button fx:id="centerXBtn" mnemonicParsing="false" onAction="#onCenterX" text="%tables.dmd_position.center_horizontally" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -350,14 +350,14 @@
                      </VBox.margin>
                   </GridPane>
 
-                  <Label styleClass="default-headline" text="%ui.force_ratio_84dd">
+                  <Label styleClass="default-headline" text="%tables.dmd_position.force_ratio">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <VBox fx:id="ratiosPane" spacing="3.0">
                      <children>
-                        <RadioButton fx:id="ratioOff" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" text="%ui.off_d153" textFill="WHITE">
+                        <RadioButton fx:id="ratioOff" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" text="%tables.dmd_position.off" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -383,7 +383,7 @@
                      </VBox.margin>
                   </VBox>
 
-                  <Label styleClass="default-headline" text="%ui.auto_positioning_3470">
+                  <Label styleClass="default-headline" text="%tables.dmd_position.auto_positioning">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -398,10 +398,10 @@
                         <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.margin_9890" GridPane.rowIndex="0" />
+                        <Label styleClass="default-text" text="%tables.dmd_position.margin" GridPane.rowIndex="0" />
                         <Spinner fx:id="marginSpinner" amountToStepBy="1" initialValue="0" max="20" min="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="%ui.auto_position_5075" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="%tables.dmd_position.auto_position" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

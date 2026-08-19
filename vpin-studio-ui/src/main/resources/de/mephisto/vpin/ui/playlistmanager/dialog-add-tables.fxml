@@ -37,7 +37,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label styleClass="default-text" text="%ui.template_18fd" />
+                  <Label styleClass="default-text" text="%cards.template_editor.template" />
                   <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <Spinner />
@@ -49,12 +49,12 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.set_value_to_0_to_add_a75b" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%playlistmanager.add_tables.set_value_to_0_to_add_all_matching" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.max_tables_36f4" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%playlistmanager.add_tables.max_tables" GridPane.rowIndex="1" />
                   <ComboBox fx:id="templateComboBox" prefWidth="300.0" GridPane.columnIndex="1" />
                   <Label GridPane.columnIndex="2">
                      <font>
@@ -64,7 +64,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="%ui.these_templates_are_only_working_for_d730" wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%playlistmanager.add_tables.these_templates_are_only_working_for_tables_that" wrapText="true" />
                      </tooltip>
                      <GridPane.margin>
                         <Insets left="3.0" />
@@ -78,8 +78,8 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-          <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" />
-            <Button fx:id="okButton" defaultButton="true" layoutX="356.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%ui.add_tables_147a" />
+          <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close" />
+            <Button fx:id="okButton" defaultButton="true" layoutX="356.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" text="%playlistmanager.add_tables.add_tables" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

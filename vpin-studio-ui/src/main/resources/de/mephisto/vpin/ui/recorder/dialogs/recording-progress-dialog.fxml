@@ -30,9 +30,9 @@
          <right>
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.close_d3d2" />
-                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" style="-fx-border-color: #FF2222; -fx-background-color: #FF223344;" styleClass="submit-button" text="%ui.stop_recording_1821" />
-                  <Button fx:id="recordBtn" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRecord" styleClass="submit-button" text="%ui.start_recording_6164" />
+                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close" />
+                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" style="-fx-border-color: #FF2222; -fx-background-color: #FF223344;" styleClass="submit-button" text="%recorder.recording_progress_dialog.stop_recording" />
+                  <Button fx:id="recordBtn" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRecord" styleClass="submit-button" text="%recorder.recording_progress_dialog.start_recording" />
                </children>
             </HBox>
          </right>
@@ -41,7 +41,7 @@
    <center>
       <VBox spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="%ui.tables_selected_for_recording_bef1" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="%recorder.recording_progress_dialog.tables_selected_for_recording" textFill="WHITE" />
             <Label fx:id="tablesLabel" layoutX="22.0" layoutY="121.0" styleClass="default-text" text="-" />
             <HBox spacing="12.0">
                <VBox.margin>
@@ -52,8 +52,8 @@
                      <children>
                         <VBox>
                            <children>
-                              <RadioButton fx:id="emulatorRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="%ui.emulator_recording_0a5f" />
-                              <Label styleClass="checkbox-description" text="%ui.the_tables_will_be_launched_by_a1e7" textFill="WHITE">
+                              <RadioButton fx:id="emulatorRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="%recorder.recording_progress_dialog.emulator_recording" />
+                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.the_tables_will_be_launched_by_their_emulator" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
@@ -74,12 +74,12 @@
                                           <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label layoutX="10.0" layoutY="44.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="%ui.launcher_2120" />
-                                          <CheckBox fx:id="customLauncherCheckbox" mnemonicParsing="false" styleClass="default-text" text="%ui.use_custom_launcher_6d95" GridPane.columnIndex="1" />
-                                          <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="%ui.vpx_exe_c812" GridPane.rowIndex="1" />
+                                          <Label layoutX="10.0" layoutY="44.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="%recorder.recording_progress_dialog.launcher" />
+                                          <CheckBox fx:id="customLauncherCheckbox" mnemonicParsing="false" styleClass="default-text" text="%recorder.recording_progress_dialog.use_custom_launcher" GridPane.columnIndex="1" />
+                                          <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="%recorder.recording_progress_dialog.vpx_exe" GridPane.rowIndex="1" />
                                           <ComboBox fx:id="launcherCombo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <CheckBox fx:id="primaryCheckbox" layoutX="102.0" layoutY="10.0" mnemonicParsing="false" styleClass="default-text" text="%ui.run_with_primary_parameter_1ea2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="%ui.parameters_d3d5" GridPane.rowIndex="2" />
+                                          <CheckBox fx:id="primaryCheckbox" layoutX="102.0" layoutY="10.0" mnemonicParsing="false" styleClass="default-text" text="%recorder.recording_progress_dialog.run_with_primary_parameter" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="%components.emulators.emulator_batscript.parameters" GridPane.rowIndex="2" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -104,7 +104,7 @@
                            <children>
                               <HBox spacing="6.0">
                                  <children>
-                                    <RadioButton fx:id="frontendRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="%ui.frontend_recording_44f2" />
+                                    <RadioButton fx:id="frontendRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="%recorder.recording_progress_dialog.frontend_recording" />
                                     <Label>
                                        <font>
                                           <Font size="14.0" />
@@ -113,12 +113,12 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%ui.for_the_opengl_version_of_visual_4c15" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%recorder.recording_progress_dialog.for_the_opengl_version_of_visual_pinball_x" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="checkbox-description" text="%ui.the_tables_will_be_launched_through_5776" textFill="WHITE">
+                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.the_tables_will_be_launched_through_the" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
@@ -129,7 +129,7 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="425.60002441406255" minWidth="10.0" prefWidth="425.60002441406255" />
                                  </columnConstraints>
                               </GridPane>
-                              <Label styleClass="checkbox-description" text="%ui.frontend_using_the_configured_emulator_d3ab" textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.frontend_using_the_configured_emulator" textFill="WHITE" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -145,7 +145,7 @@
             </HBox>
             <VBox fx:id="recordingProgressPanel" layoutX="22.0" layoutY="88.0" spacing="6.0">
                <children>
-                  <Label styleClass="default-headline" text="%ui.recording_progress_9d02">
+                  <Label styleClass="default-headline" text="%recorder.recording_progress_dialog.recording_progress">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin></Label>
@@ -161,11 +161,11 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.total_recordings_6bcd" GridPane.rowIndex="2" />
-                        <Label styleClass="default-text" text="%ui.active_table_cee6" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%recorder.recording_progress_dialog.total_recordings" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="%recorder.recording_progress_dialog.active_table" GridPane.rowIndex="1" />
                         <Label fx:id="pTableLabel" layoutX="10.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="totalRecordingsLabel" layoutX="156.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="44.0" styleClass="default-text" text="%ui.status_24a2" />
+                        <Label layoutX="10.0" layoutY="44.0" styleClass="default-text" text="%mania.mania_table_sync.status" />
                         <Label fx:id="statusLabel" layoutX="198.0" layoutY="33.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>

@@ -20,12 +20,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%ui.upload_backglass_af1b">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%tables.directb2s_upload.upload_backglass">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -58,7 +58,7 @@
                            <children>
                               <HBox GridPane.columnIndex="1">
                                  <children>
-                                    <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="350.0" promptText="%ui.select_or_drop_a_backglass_or_9b92">
+                                    <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="350.0" promptText="%tables.directb2s_upload.select_or_drop_a_backglass_or_archive_file">
                                        <HBox.margin>
                                           <Insets right="12.0" />
                                        </HBox.margin>
@@ -66,15 +66,15 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%ui.select_file_5bcb">
+                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="%ui.backglass_file_6121" />
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.table_4e77" GridPane.rowIndex="1" />
+                              <Label styleClass="default-text" text="%tables.directb2s_upload.backglass_file" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%competitions.discord_competition_edit.table" GridPane.rowIndex="1" />
                               <Label fx:id="gameLabel" layoutX="10.0" layoutY="49.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
@@ -86,7 +86,7 @@
                <children>
                   <VBox fx:id="uploadReplaceBox" prefWidth="350.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%ui.upload_and_replace_131b" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_replace" textFill="WHITE" wrapText="true">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -94,7 +94,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="%ui.the_new_backglass_will_replace_the_98a0" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="%tables.directb2s_upload.the_new_backglass_will_replace_the_existing_one" textFill="WHITE" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -105,7 +105,7 @@
                   </VBox>
                   <VBox fx:id="uploadAppendBox" prefWidth="350.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="uploadAndAppendRadio" mnemonicParsing="false" text="%ui.upload_and_append_ee1f" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="uploadAndAppendRadio" mnemonicParsing="false" text="%tables.directb2s_upload.upload_and_append" textFill="WHITE" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -113,8 +113,8 @@
                               <Insets />
                            </VBox.margin>
                         </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%ui.the_new_backglass_will_be_appended_8cb3" textFill="WHITE" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="%ui.you_can_select_the_active_version_197f" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%tables.directb2s_upload.the_new_backglass_will_be_appended_to_the" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="%tables.directb2s_upload.you_can_select_the_active_version_in_the" textFill="WHITE" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

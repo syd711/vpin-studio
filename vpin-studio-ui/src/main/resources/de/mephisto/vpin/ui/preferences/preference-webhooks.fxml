@@ -28,20 +28,20 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%ui.vpin_studio_preferences_f3e1" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.integration_settings_d372" />
-            <Label layoutX="34.0" layoutY="156.0" styleClass="preference-description" text="%ui.settings_on_this_page_are_only_49b1" textFill="WHITE">
+            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.webhooks.integration_settings" />
+            <Label layoutX="34.0" layoutY="156.0" styleClass="preference-description" text="%pref.webhooks.settings_on_this_page_are_only_relevant_for" textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.webhooks_221d" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%ui.webhooks_can_be_used_to_integrate_c539" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.webhooks.webhooks" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.webhooks.webhooks_can_be_used_to_integrate_vpin_studio" textFill="WHITE">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.you_can_configure_sets_of_webhooks_7626" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.webhooks.you_can_configure_sets_of_webhooks_below_these" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
@@ -55,11 +55,11 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.reload_all_webhook_sets_f7cc" />
+                          <Tooltip text="%pref.iscored.reload_all_webhook_sets" />
                       </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="%ui.add_ec21" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -67,7 +67,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%ui.edit_7dce" textFill="WHITE">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -76,7 +76,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%ui.delete_f2a6" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -88,16 +88,16 @@
             </ToolBar>
             <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
-                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%ui.enabled_00d2" />
-                <TableColumn fx:id="nameColumn" prefWidth="508.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%ui.webhook_set_name_34ff" />
+                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.webhook_set.enabled" />
+                <TableColumn fx:id="nameColumn" prefWidth="508.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%pref.webhooks.webhook_set_name" />
               </columns>
             </TableView>
                   <VBox>
                      <children>
-                  <Label styleClass="preference-subtitle" text="%ui.public_api_endpoints_707c" />
-                  <Label styleClass="preference-description" text="%ui.the_vpin_studio_server_supports_a_b1f6" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%ui.a_detailed_description_can_be_found_b1b2" textFill="WHITE" />
-                  <Hyperlink onAction="#onLinkClick" text="%ui.https_github_com_syd711_vpin_studio_0695" />
+                  <Label styleClass="preference-subtitle" text="%pref.webhooks.public_api_endpoints" />
+                  <Label styleClass="preference-description" text="%pref.webhooks.the_vpin_studio_server_supports_a_public_api" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.webhooks.a_detailed_description_can_be_found_here" textFill="WHITE" />
+                  <Hyperlink onAction="#onLinkClick" text="%pref.webhooks.https_github_com_syd711_vpin_studio_wiki_webhooks" />
                      </children>
                      <VBox.margin>
                         <Insets top="24.0" />
@@ -105,14 +105,14 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%ui.media_recorder_hooks_a62f">
+                        <Label styleClass="preference-subtitle" text="%pref.webhooks.media_recorder_hooks">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
                         <HBox fx:id="errorMsg" styleClass="error-message">
                            <children>
-                              <Label styleClass="error-title" text="%ui.the_section_needs_to_be_configured_536f" />
+                              <Label styleClass="error-title" text="%pref.webhooks.the_section_needs_to_be_configured_on_the" />
                            </children>
                            <padding>
                               <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
@@ -121,8 +121,8 @@
                               <Insets bottom="6.0" top="3.0" />
                            </VBox.margin>
                         </HBox>
-                        <Label styleClass="preference-description" text="%ui.these_recorder_hooks_allow_you_to_5f2b" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%ui.you_can_use_them_to_disable_24eb" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.webhooks.these_recorder_hooks_allow_you_to_execute_bat" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.webhooks.you_can_use_them_to_disable_your_toys" textFill="WHITE" />
                         <GridPane hgap="3.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="379.199951171875" minWidth="10.0" prefWidth="163.200048828125" />
@@ -135,12 +135,12 @@
                            <children>
                               <HBox spacing="6.0" GridPane.columnIndex="1">
                                  <children>
-                                    <TextField fx:id="startScriptPath" editable="false" prefWidth="400.0" promptText="%ui.select_bat_file_2ebe">
+                                    <TextField fx:id="startScriptPath" editable="false" prefWidth="400.0" promptText="%pref.webhooks.select_bat_file">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="startFileBtn" mnemonicParsing="false" onAction="#onStartScript" text="%ui.select_file_5bcb" textFill="WHITE">
+                                    <Button fx:id="startFileBtn" mnemonicParsing="false" onAction="#onStartScript" text="%backglass.res_generator.select_file" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -149,24 +149,24 @@
                               </HBox>
                               <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <TextField fx:id="stopScriptPath" editable="false" prefWidth="400.0" promptText="%ui.select_bat_file_2ebe">
+                                    <TextField fx:id="stopScriptPath" editable="false" prefWidth="400.0" promptText="%pref.webhooks.select_bat_file">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="stopFileBtn" mnemonicParsing="false" onAction="#onStopScript" text="%ui.select_file_5bcb" textFill="WHITE">
+                                    <Button fx:id="stopFileBtn" mnemonicParsing="false" onAction="#onStopScript" text="%backglass.res_generator.select_file" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label prefHeight="20.0" styleClass="preference-label" text="%ui.recording_start_script_e695" textFill="WHITE">
+                              <Label prefHeight="20.0" styleClass="preference-label" text="%pref.webhooks.recording_start_script" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="%ui.recording_end_script_1f4f" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="%pref.webhooks.recording_end_script" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

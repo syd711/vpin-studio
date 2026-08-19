@@ -15,7 +15,7 @@
 <BorderPane fx:id="mediaRoot" maxHeight="1.7976931348623157E308" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMediaController">
 <BorderPane fx:id="screenDMD" layoutX="157.0" layoutY="437.0" prefHeight="120.0" prefWidth="250.0" styleClass="media-container">
     <bottom>
-        <Label text="%ui.dmd_c335" textFill="WHITE" BorderPane.alignment="CENTER" />
+        <Label text="%backups.backups.dmd" textFill="WHITE" BorderPane.alignment="CENTER" />
     </bottom>
     <top>
         <BorderPane fx:id="top_DMD" BorderPane.alignment="TOP_RIGHT">
@@ -56,7 +56,7 @@
                     <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
                 </graphic>
                 <tooltip>
-                    <Tooltip text="%ui.adjust_dmd_position_7889" />
+                    <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                 </tooltip>
             </Button>
             </children>

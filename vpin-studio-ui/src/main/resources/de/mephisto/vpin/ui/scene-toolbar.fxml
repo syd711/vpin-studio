@@ -38,7 +38,7 @@
                               <FontIcon iconColor="#03a905" iconLiteral="mdi2a-arrow-down-bold" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.update_available_217b" />
+                              <Tooltip text="%toolbar.update_available" />
                            </tooltip>
                            <HBox.margin>
                               <Insets />
@@ -47,7 +47,7 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <ToggleButton fx:id="vrModeButton" mnemonicParsing="false" onAction="#onVrToggle" text="%ui.vr_mode_f865">
+                        <ToggleButton fx:id="vrModeButton" mnemonicParsing="false" onAction="#onVrToggle" text="%toolbar.vr_mode">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -55,7 +55,7 @@
                               <FontIcon iconColor="#898989" iconLiteral="mdi2c-circle-slice-8" iconSize="18" />
                            </graphic>
                         </ToggleButton>
-                        <ToggleButton fx:id="maintenanceBtn" maxWidth="150.0" mnemonicParsing="false" onAction="#onMaintenance" text="%ui.maintenance_mode_295c">
+                        <ToggleButton fx:id="maintenanceBtn" maxWidth="150.0" mnemonicParsing="false" onAction="#onMaintenance" text="%toolbar.maintenance_mode">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -63,9 +63,9 @@
                               <Font size="14.0" />
                            </font>
                         </ToggleButton>
-                        <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="%ui.no_active_jobs_73bd">
+                        <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="%toolbar.no_active_jobs">
                            <tooltip>
-                              <Tooltip text="%ui.job_overview_033c" />
+                              <Tooltip text="%toolbar.job_overview" />
                            </tooltip>
                            <graphic>
                               <ProgressIndicator fx:id="jobProgress" prefHeight="19.0" prefWidth="22.0">
@@ -81,9 +81,9 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
-                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" prefWidth="160.0" text="%ui.drop_in_assets_251f">
+                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" prefWidth="160.0" text="%toolbar.drop_in_assets">
                            <tooltip>
-                              <Tooltip text="%ui.shows_the_available_assets_to_install_5731" />
+                              <Tooltip text="%toolbar.shows_the_available_assets_to_install" />
                            </tooltip>
                            <font>
                               <Font size="14.0" />
@@ -97,7 +97,7 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="%ui.toggle_cabinet_monitor_5573" />
+                              <Tooltip text="%toolbar.toggle_cabinet_monitor" />
                            </tooltip>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-multiple" iconSize="18" />
@@ -108,50 +108,50 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="%ui.open_frontend_configuration_dfbf" />
+                              <Tooltip text="%toolbar.open_frontend_configuration" />
                            </tooltip>
                         </Button>
                         <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
                           <items>
 
-                              <MenuItem fx:id="muteSystemEntry" mnemonicParsing="false" onAction="#onMute" text="%ui.mute_system_4f87">
+                              <MenuItem fx:id="muteSystemEntry" mnemonicParsing="false" onAction="#onMute" text="%toolbar.mute_system">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-mute" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="pinVolStartItem" mnemonicParsing="false" onAction="#onPinvolStart" text="%ui.start_pinvol_9888">
+                              <MenuItem fx:id="pinVolStartItem" mnemonicParsing="false" onAction="#onPinvolStart" text="%toolbar.start_pinvol">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-source" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="pinVolStopItem" mnemonicParsing="false" onAction="#onPinvolStop" text="%ui.stop_pinvol_afb9">
+                              <MenuItem fx:id="pinVolStopItem" mnemonicParsing="false" onAction="#onPinvolStop" text="%toolbar.stop_pinvol">
                                   <graphic>
                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-off" iconSize="18" />
                                   </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="shutdownMenuItem" mnemonicParsing="false" onAction="#onShutdown" text="%ui.shutdown_system_c6d8">
+                              <MenuItem fx:id="shutdownMenuItem" mnemonicParsing="false" onAction="#onShutdown" text="%pref.settings_cabinet.shutdown_system">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop-off" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="dofSyncEntry" mnemonicParsing="false" onAction="#onDOFSyn" text="%ui.synchronize_dof_009f">
+                              <MenuItem fx:id="dofSyncEntry" mnemonicParsing="false" onAction="#onDOFSyn" text="%toolbar.synchronize_dof">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="frontendMenuItem" mnemonicParsing="false" onAction="#onFrontend" text="%ui.restart_frontend_4a58">
+                              <MenuItem fx:id="frontendMenuItem" mnemonicParsing="false" onAction="#onFrontend" text="%toolbar.restart_frontend">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
                                  </graphic>
                               </MenuItem>
                               <SeparatorMenuItem />
-                              <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="%ui.clear_cache_06f4">
+                              <MenuItem mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache">
                                   <graphic>
                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                                   </graphic>
                               </MenuItem>
                               <SeparatorMenuItem />
-                            <MenuItem fx:id="disconnectMenuItem" mnemonicParsing="false" onAction="#onDisconnect" text="%ui.disconnect_42ae">
+                            <MenuItem fx:id="disconnectMenuItem" mnemonicParsing="false" onAction="#onDisconnect" text="%toolbar.disconnect">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-logout" iconSize="18" />
                                  </graphic>
@@ -164,7 +164,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.open_settings_638c" />
+                              <Tooltip text="%components.doftester.dof_toys.open_settings" />
                            </tooltip>
                         </SplitMenuButton>
                      </children>

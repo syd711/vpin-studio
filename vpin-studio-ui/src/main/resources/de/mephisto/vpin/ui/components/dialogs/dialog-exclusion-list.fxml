@@ -24,9 +24,9 @@
                         <Insets top="12.0" />
                      </BorderPane.margin>
                      <children>
-                        <Label styleClass="preference-description" text="%ui.the_selected_files_are_excluded_from_fbaf" />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%ui.you_can_include_them_again_by_e609" />
-                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%ui.a_backup_will_from_the_exsting_0fff" />
+                        <Label styleClass="preference-description" text="%components.exclusion_list.the_selected_files_are_excluded_from_installation_by" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%components.exclusion_list.you_can_include_them_again_by_selecting_them" />
+                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%components.exclusion_list.a_backup_will_from_the_exsting_file_will" />
                      </children>
                   </VBox>
                </top>
@@ -35,12 +35,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="installBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="%ui.install_update_e71c">
+                  <Button fx:id="installBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button" text="%components.exclusion_list.install_update">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -54,7 +54,7 @@
          <center>
             <VBox fx:id="exclusionList" BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="preference-description" text="%ui.files_to_exclude_9861">
+                  <Label styleClass="preference-description" text="%components.exclusion_list.files_to_exclude">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin>

@@ -16,7 +16,7 @@
          <children>
             <VBox>
                <children>
-                  <Label text="%ui.position_x_fc88" textFill="WHITE">
+                  <Label text="%cards.template_editor_wheel.position_x" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -26,7 +26,7 @@
             </VBox>
             <VBox>
                <children>
-                  <Label text="%ui.position_y_49b3" textFill="WHITE">
+                  <Label text="%cards.template_editor_wheel.position_y" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,7 +40,7 @@
          <children>
             <VBox>
                <children>
-                  <Label text="%ui.width_3295" textFill="WHITE">
+                  <Label text="%cards.template_subeditor_position.width" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
             </VBox>
             <VBox layoutX="10.0" layoutY="10.0">
                <children>
-                  <Label text="%ui.height_eec6" textFill="WHITE">
+                  <Label text="%cards.template_subeditor_position.height" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -70,7 +70,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.align_content_on_left_5c17" />
+                  <Tooltip text="%cards.template_subeditor_position.align_content_on_left" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-left" iconSize="18" />
@@ -81,7 +81,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.center_content_horizontally_9968" />
+                  <Tooltip text="%cards.template_subeditor_position.center_content_horizontally" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-center" iconSize="18" />
@@ -92,7 +92,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.align_content_on_right_7d7e" />
+                  <Tooltip text="%cards.template_subeditor_position.align_content_on_right" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-horizontal-align-right" iconSize="18" />
@@ -104,7 +104,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.align_content_on_top_fb9b" />
+                  <Tooltip text="%cards.template_subeditor_position.align_content_on_top" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-top" iconSize="18" />
@@ -118,7 +118,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.center_content_vertically_c485" />
+                  <Tooltip text="%cards.template_subeditor_position.center_content_vertically" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-center" iconSize="18" />
@@ -129,7 +129,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="%ui.align_content_on_bottom_371e" />
+                  <Tooltip text="%cards.template_subeditor_position.align_content_on_bottom" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi-format-vertical-align-bottom" iconSize="18" />

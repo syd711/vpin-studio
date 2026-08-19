@@ -21,28 +21,28 @@
          <content>
             <VBox>
                <children>
-                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="%ui.this_tutorial_assumes_that_you_have_a623">
+                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="%pref.bot_server_id_tutorial.this_tutorial_assumes_that_you_have_successfully_created">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="%ui.it_will_show_you_how_to_eb77">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="%pref.bot_token_tutorial.it_will_show_you_how_to_get_the">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.1_reset_bot_token_bd11" />
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%ui.login_into_the_discord_developer_portal_a43c">
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_token_tutorial.1_reset_bot_token" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%pref.bot_token_tutorial.login_into_the_discord_developer_portal">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%ui.select_your_bot_from_the_aplication_9646">
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%pref.bot_token_tutorial.select_your_bot_from_the_aplication_list_and">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%ui.press_the_reset_token_button_and_be71">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%pref.bot_token_tutorial.press_the_reset_token_button_and_copy_the">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -59,8 +59,8 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%ui.2_apply_bot_token_bedf" />
-                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="%ui.paste_the_newly_created_bot_token_1280">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_token_tutorial.2_apply_bot_token" />
+                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="%pref.bot_token_tutorial.paste_the_newly_created_bot_token_into_the">
                      <font>
                         <Font size="14.0" />
                      </font>

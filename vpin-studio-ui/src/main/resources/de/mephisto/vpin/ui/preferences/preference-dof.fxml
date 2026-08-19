@@ -24,28 +24,28 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%ui.3rd_party_preferences_47fe" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%ui.direct_output_framework_d509">
+                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.dof.direct_output_framework">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.settings_for_the_direct_output_framework_3745" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%ui.for_more_information_visit_3364" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.dof.settings_for_the_direct_output_framework_dof_and" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Hyperlink onAction="#onLink" text="%ui.http_configtool_vpuniverse_com_46ca">
+                  <Hyperlink onAction="#onLink" text="%pref.dof.http_configtool_vpuniverse_com">
                      <VBox.margin>
                         <Insets left="-5.0" />
                      </VBox.margin></Hyperlink>
-                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-subtitle" text="%ui.dof_installation_16cf" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-subtitle" text="%pref.dof.dof_installation" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="381.0" styleClass="preference-description" text="%ui.select_the_folder_of_your_dof_7d3a" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="381.0" styleClass="preference-description" text="%pref.dof.select_the_folder_of_your_dof_installation" textFill="WHITE" />
                   <GridPane layoutX="34.0" layoutY="339.0" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="130.0" prefWidth="80.0" />
@@ -64,15 +64,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="%ui.select_folder_e918">
+                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="%backups.backup_download.select_folder">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Button>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="%ui.folder_5416" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%ui.invalid_folder_no_directoutput_dll_or_9ced" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%backups.backup_source_folder.folder" />
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.dof.invalid_folder_no_directoutput_dll_or_directoutputcomobject_" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -85,12 +85,12 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle" text="%ui.account_settings_ff73" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="126.0" styleClass="preference-subtitle" text="%pref.dof.account_settings" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%ui.you_find_the_api_key_under_b50c" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.dof.you_find_the_api_key_under_the_my" textFill="WHITE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -111,7 +111,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%ui.synchronize_b18b" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%competitions.competitions_discord.synchronize" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -119,18 +119,18 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Label styleClass="default-text" text="%ui.api_key_251c" />
+                        <Label styleClass="default-text" text="%pref.dof.api_key" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="506.0" styleClass="preference-subtitle" text="%ui.synchronization_settings_f3fb" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="506.0" styleClass="preference-subtitle" text="%pref.dof.synchronization_settings" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="544.0" styleClass="preference-description" text="%ui.let_the_vpin_server_synchronize_the_2bd2" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="544.0" styleClass="preference-description" text="%pref.dof.let_the_vpin_server_synchronize_the_latest_dof" textFill="WHITE" />
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.2000732421875" minWidth="10.0" prefWidth="130.0" />
@@ -142,17 +142,17 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.synchronization_af02" />
-                        <CheckBox fx:id="syncCheckbox" mnemonicParsing="false" text="%ui.enable_dof_synchronization_12e1" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label styleClass="default-text" text="%pref.dof.synchronization" />
+                        <CheckBox fx:id="syncCheckbox" mnemonicParsing="false" text="%pref.dof.enable_dof_synchronization" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.interval_da98" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.dof.interval" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="syncInterval" prefHeight="26.0" prefWidth="82.0" />
-                              <Label styleClass="default-text" text="%ui.days_44fd" />
+                              <Label styleClass="default-text" text="%pref.dof.days" />
                            </children>
                         </HBox>
                      </children>

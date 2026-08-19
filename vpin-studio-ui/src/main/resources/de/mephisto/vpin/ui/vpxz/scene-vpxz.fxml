@@ -27,15 +27,15 @@
                <children>
                       <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;">
                           <columns>
-                              <TableColumn fx:id="installedColumn" style="-fx-alignment: CENTER;" text="%ui.installed_98dd" />
-                              <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
-                              <TableColumn fx:id="iniColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.ini_19cf" />
-                              <TableColumn fx:id="vbsColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.vbs_59fd" />
-                              <TableColumn fx:id="resColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.res_f8af" />
-                              <TableColumn fx:id="povColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.pov_3e50" />
-                              <TableColumn fx:id="romColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.rom_2ab3" />
-                              <TableColumn fx:id="sizeColumn" prefWidth="100.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.size_6f6c" />
-                              <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" sortable="false" style="-fx-alignment: CENTER;" text="%ui.created_at_6e9a" />
+                              <TableColumn fx:id="installedColumn" style="-fx-alignment: CENTER;" text="%vps.vps_tables.installed" />
+                              <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                              <TableColumn fx:id="iniColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.ini" />
+                              <TableColumn fx:id="vbsColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.vbs" />
+                              <TableColumn fx:id="resColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
+                              <TableColumn fx:id="povColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.pov" />
+                              <TableColumn fx:id="romColumn" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backup_restore.rom" />
+                              <TableColumn fx:id="sizeColumn" prefWidth="100.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.size" />
+                              <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" sortable="false" style="-fx-alignment: CENTER;" text="%backups.backups.created_at" />
                           </columns>
                       </TableView>
                </children>
@@ -57,7 +57,7 @@
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <StackPane alignment="CENTER_RIGHT">
                       <children>
-                          <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%ui.search_vpxz_file_09cc">
+                          <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%vpxz.vpxz.search_vpxz_file">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -75,7 +75,7 @@
                   <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-            <Button fx:id="installBtn" layoutX="511.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInstall" text="%ui.install_on_device_1b08" textFill="WHITE">
+            <Button fx:id="installBtn" layoutX="511.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInstall" text="%vpxz.vpxz.install_on_device" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -83,10 +83,10 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload-circle" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="%ui.uploads_an_archive_bundle_so_it_3df9" />
+                  <Tooltip text="%backups.backups.uploads_an_archive_bundle_so_it_can_be" />
                </tooltip>
             </Button>
-            <Button fx:id="deleteDeviceBtn" layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDeviceDelete" text="%ui.delete_from_device_2850" textFill="#ff3333">
+            <Button fx:id="deleteDeviceBtn" layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDeviceDelete" text="%vpxz.vpxz.delete_from_device" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>
@@ -95,7 +95,7 @@
                </graphic>
             </Button>
             <Separator layoutX="500.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="addVpxzButton" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXZUpload" text="%ui.upload_9141" textFill="WHITE">
+                  <Button fx:id="addVpxzButton" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXZUpload" text="%backups.backup_upload.upload" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -103,10 +103,10 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.uploads_an_archive_bundle_so_it_3df9" />
+                          <Tooltip text="%backups.backups.uploads_an_archive_bundle_so_it_can_be" />
                       </tooltip>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%ui.download_801a" textFill="WHITE">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -114,11 +114,11 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.creates_a_zip_bundle_from_the_9351" />
+                          <Tooltip text="%backups.backups.creates_a_zip_bundle_from_the_selected_archives" />
                       </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDelete" text="%ui.delete_f2a6" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDelete" text="%backups.backups.delete" textFill="#ff3333">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -127,7 +127,7 @@
                       </graphic>
                   </Button>
                   <Separator fx:id="endSeparator" layoutX="806.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%ui.open_c3bf" textFill="WHITE">
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%backups.backups.open" textFill="WHITE">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -135,7 +135,7 @@
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                       </graphic>
                       <tooltip>
-                          <Tooltip text="%ui.open_vpxz_folder_9f80" />
+                          <Tooltip text="%vpxz.vpxz.open_vpxz_folder" />
                       </tooltip>
                   </Button>
               </items>
@@ -164,9 +164,9 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-headline" text="%ui.mobile_device_status_c247" />
+                        <Label styleClass="default-headline" text="%vpxz.vpxz.mobile_device_status" />
                         <Label fx:id="connectionStatusLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%ui.vpx_version_6450" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%vpxz.vpxz.vpx_version" GridPane.rowIndex="1" />
                         <Label fx:id="connectionVersionLabel" layoutX="198.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -185,7 +185,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="%ui.open_validators_settings_e441" />
+                              <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
                            </tooltip>
                         </Button>
                      </children>

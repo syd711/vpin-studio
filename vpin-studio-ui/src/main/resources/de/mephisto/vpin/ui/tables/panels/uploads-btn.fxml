@@ -11,82 +11,82 @@
    <children>
       <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
          <items>
-            <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="%ui.upload_alt_color_file_5785">
+            <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="%tables.uploads_btn.upload_alt_color_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="altSoundUploadItem" mnemonicParsing="false" onAction="#onAltSoundUpload" text="%ui.upload_alt_sound_pack_71f7">
+            <MenuItem fx:id="altSoundUploadItem" mnemonicParsing="false" onAction="#onAltSoundUpload" text="%tables.uploads_btn.upload_alt_sound_pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="backglassUploadItem" mnemonicParsing="false" onAction="#onBackglassUpload" text="%ui.upload_backglass_af1b">
+            <MenuItem fx:id="backglassUploadItem" mnemonicParsing="false" onAction="#onBackglassUpload" text="%tables.directb2s_upload.upload_backglass">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="bamCfgUploadItem" mnemonicParsing="false" onAction="#onBamCfgUpload" text="%ui.upload_bam_cfg_file_aeb0">
+            <MenuItem fx:id="bamCfgUploadItem" mnemonicParsing="false" onAction="#onBamCfgUpload" text="%tables.uploads_btn.upload_bam_cfg_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="cfgUploadItem" mnemonicParsing="false" onAction="#onCfgUpload" text="%ui.upload_cfg_file_f81c">
+            <MenuItem fx:id="cfgUploadItem" mnemonicParsing="false" onAction="#onCfgUpload" text="%tables.uploads_btn.upload_cfg_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="patchItem" mnemonicParsing="false" onAction="#onPatchUpload" text="%ui.upload_dif_file_6103">
+            <MenuItem fx:id="patchItem" mnemonicParsing="false" onAction="#onPatchUpload" text="%tables.uploads_btn.upload_dif_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="fplItem" mnemonicParsing="false" onAction="#onFplUpload" text="%ui.upload_fpl_file_5735">
+            <MenuItem fx:id="fplItem" mnemonicParsing="false" onAction="#onFplUpload" text="%tables.uploads_btn.upload_fpl_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="%ui.upload_dmd_pack_cb7d">
+            <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="%tables.uploads_btn.upload_dmd_pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="%ui.upload_ini_file_885f">
+            <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="%tables.uploads_btn.upload_ini_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="%ui.upload_media_pack_47f5">
+            <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="%tables.uploads_btn.upload_media_pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="%ui.upload_music_pack_11c5">
+            <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="%tables.uploads_btn.upload_music_pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="nvUploadMenuItem" mnemonicParsing="false" onAction="#onNvRamUpload" text="%ui.upload_nv_file_4b18">
+            <MenuItem fx:id="nvUploadMenuItem" mnemonicParsing="false" onAction="#onNvRamUpload" text="%tables.uploads_btn.upload_nv_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="%ui.upload_pov_file_8d3c">
+            <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="%tables.uploads_btn.upload_pov_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="resItem" mnemonicParsing="false" onAction="#onResUpload" text="%ui.upload_res_file_6b68">
+            <MenuItem fx:id="resItem" mnemonicParsing="false" onAction="#onResUpload" text="%tables.uploads_btn.upload_res_file">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="%ui.upload_pup_pack_de40">
+            <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="%tables.uploads_btn.upload_pup_pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
-            <MenuItem fx:id="romsUploadItem" mnemonicParsing="false" onAction="#onRomsUpload" text="%ui.upload_roms_f9be">
+            <MenuItem fx:id="romsUploadItem" mnemonicParsing="false" onAction="#onRomsUpload" text="%tables.uploads_btn.upload_roms">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
@@ -96,7 +96,7 @@
             <Font size="14.0" />
          </font>
          <tooltip>
-            <Tooltip text="%ui.upload_game_files_to_frontend_39eb" />
+            <Tooltip text="%tables.uploads_btn.upload_game_files_to_frontend" />
          </tooltip>
          <graphic>
             <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />

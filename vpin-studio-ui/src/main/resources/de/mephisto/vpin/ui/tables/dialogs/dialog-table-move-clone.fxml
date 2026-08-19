@@ -18,12 +18,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%ui.cancel_ea47">
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="okBtn" mnemonicParsing="false" onAction="#onOk" styleClass="submit-button" text="%ui.ok_e0aa" />
+            <Button fx:id="okBtn" mnemonicParsing="false" onAction="#onOk" styleClass="submit-button" text="%tables.table_move_clone.ok" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -35,30 +35,30 @@
          <children>
             <Label fx:id="descriptionLabel1" styleClass="preference-description" wrapText="true" />
             <Label fx:id="descriptionLabel2" layoutX="22.0" layoutY="22.0" styleClass="preference-description" wrapText="true" />
-            <Label styleClass="preference-description" text="%ui.target_vpx_emulator_ec71">
+            <Label styleClass="preference-description" text="%tables.table_move_clone.target_vpx_emulator">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
             <ComboBox fx:id="targetEmulatorCombo" maxWidth="1.7976931348623157E308" />
-            <CheckBox fx:id="subfolderCheckBox" mnemonicParsing="false" onAction="#onSubfolderToggle" styleClass="default-text" text="%ui.move_into_a_subfolder_2655">
+            <CheckBox fx:id="subfolderCheckBox" mnemonicParsing="false" onAction="#onSubfolderToggle" styleClass="default-text" text="%tables.table_move_clone.move_into_a_subfolder">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="90.0" styleClass="checkbox-description" text="%ui.use_the_following_subfolder_naming_pattern_cad2" />
+            <Label layoutX="22.0" layoutY="90.0" styleClass="checkbox-description" text="%tables.table_move_clone.use_the_following_subfolder_naming_pattern" />
             <VBox fx:id="subfolderNamingBox" spacing="6.0">
                <VBox.margin>
                   <Insets left="20.0" top="6.0" />
                </VBox.margin>
                <children>
-                  <RadioButton fx:id="tableNameRadio" mnemonicParsing="false" selected="true" styleClass="default-text" text="%ui.table_name_asset_basename_4059">
+                  <RadioButton fx:id="tableNameRadio" mnemonicParsing="false" selected="true" styleClass="default-text" text="%tables.table_move_clone.table_name_asset_basename">
                      <toggleGroup>
                         <ToggleGroup fx:id="subfolderNamingGroup" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="tableDisplayNameRadio" mnemonicParsing="false" styleClass="default-text" text="%ui.table_display_name_87f8" toggleGroup="$subfolderNamingGroup" />
-                  <RadioButton fx:id="tableFilenameRadio" mnemonicParsing="false" styleClass="default-text" text="%ui.table_filename_7e29" toggleGroup="$subfolderNamingGroup" />
+                  <RadioButton fx:id="tableDisplayNameRadio" mnemonicParsing="false" styleClass="default-text" text="%tables.table_move_clone.table_display_name" toggleGroup="$subfolderNamingGroup" />
+                  <RadioButton fx:id="tableFilenameRadio" mnemonicParsing="false" styleClass="default-text" text="%tables.table_move_clone.table_filename" toggleGroup="$subfolderNamingGroup" />
                </children>
             </VBox>
          </children>

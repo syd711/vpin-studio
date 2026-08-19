@@ -18,10 +18,10 @@
                     <bottom>
                         <VBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                             <children>
-                                <Label fx:id="scoreLabel" text="%ui.score_ca1c" textFill="WHITE" />
+                                <Label fx:id="scoreLabel" text="%widgets.widget_competition_score_item.score" textFill="WHITE" />
                         <HBox alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                                      <Label fx:id="changeDateLabel" text="%ui.label_b021" textFill="WHITE" />
+                                      <Label fx:id="changeDateLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE" />
                               <Label fx:id="statusLabel" layoutX="10.0" layoutY="10.0" textFill="WHITE">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2p-progress-question" iconSize="18" />
@@ -35,7 +35,7 @@
                <center>
                         <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="nameLabel" text="%ui.name_b068" textFill="WHITE">
+                                <Label fx:id="nameLabel" text="%widgets.widget_competition_score_item.name" textFill="WHITE">
                                     <font>
                                         <Font size="22.0" />
                                     </font>

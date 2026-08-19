@@ -22,23 +22,23 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%ui.vpin_system_preferences_73c5" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%ui.system_manager_26ed">
+                  <Label styleClass="preference-title" text="%pref.update_manager.vpin_system_preferences" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.update_manager.system_manager">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%ui.the_system_manager_gives_you_an_b45f" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.update_manager.the_system_manager_gives_you_an_overview_about" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="%ui.vpin_mame_0f64">
+                  <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="%components.components.vpin_mame">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Hyperlink onAction="#onHyperlink" text="%ui.https_github_com_vpinball_pinmame_releases_7468">
+                  <Hyperlink onAction="#onHyperlink" text="%pref.update_manager.https_github_com_vpinball_pinmame_releases">
                      <VBox.margin>
                         <Insets left="-5.0" />
                      </VBox.margin>
@@ -55,8 +55,8 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%ui.installed_version_d21a" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%ui.latest_version_c947" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.update_manager.latest_version" GridPane.rowIndex="2" />
                         <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
@@ -67,7 +67,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%ui.last_modified_3845" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" />
                         <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
@@ -77,7 +77,7 @@
                   </GridPane>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" text="%ui.install_latest_version_361f" textFill="WHITE">
+                        <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" text="%pref.update_manager.install_latest_version" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -85,7 +85,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-up-bold-hexagon-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" text="%ui.set_as_installed_version_4c09" textFill="WHITE">
+                        <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" text="%components.component_summary_panel.set_as_installed_version" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -93,10 +93,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.this_will_set_the_latest_available_72fc" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_set_the_latest_available_version_as" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" text="%ui.check_installation_0831" textFill="WHITE">
+                        <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" text="%pref.update_manager.check_installation" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -104,10 +104,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="%ui.checks_the_installation_files_for_possible_3aa1" wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%pref.update_manager.checks_the_installation_files_for_possible_arrows_and" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%ui.vpin_mame_setup_c7bf" textFill="WHITE">
+                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%components.mame.vpin_mame_setup" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

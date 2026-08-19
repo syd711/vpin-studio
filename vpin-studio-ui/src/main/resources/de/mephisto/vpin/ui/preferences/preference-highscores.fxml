@@ -21,8 +21,8 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%ui.highscore_preferences_3f4c" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.highscore_settings_fc58">
+            <Label styleClass="preference-title" text="%pref.highscore_cards.highscore_preferences" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.highscores.highscore_settings">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
@@ -41,13 +41,13 @@
                      <children>
                         <VBox>
                            <children>
-                              <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%ui.filter_highscores_events_and_dashboard_by_72e9" textFill="WHITE">
+                              <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%pref.highscores.filter_highscores_events_and_dashboard_by_the_list" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="%ui.if_enabled_only_highscores_will_be_8814" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%ui.of_the_players_that_are_setup_2a94" textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="%pref.highscores.if_enabled_only_highscores_will_be_processed_where" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%pref.highscores.of_the_players_that_are_setup_in_the" textFill="WHITE" />
                            </children>
                            <HBox.margin>
                               <Insets />
@@ -55,37 +55,37 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="49.0" prefHeight="20.0" styleClass="preference-label" text="%ui.filter_highscores_569d" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="49.0" prefHeight="20.0" styleClass="preference-label" text="%pref.highscores.filter_highscores" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="%ui.filter_highscores_569d" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="%pref.highscores.filter_highscores" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="%ui.highscore_monitor_d21b" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" styleClass="preference-label" text="%pref.highscores.highscore_monitor" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="%ui.enable_highscore_monitor_that_monitors_all_785d" textFill="WHITE">
+                              <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="%pref.highscores.enable_highscore_monitor_that_monitors_all_highscore_files" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="%ui.if_enabled_the_server_monitor_all_8726" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%ui.this_is_useful_e_g_for_4104" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="checkbox-description" text="%ui.not_manual_highscore_is_required_anymore_0744" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description" text="%ui.you_can_use_this_monitor_in_a760" textFill="WHITE">
+                              <Label styleClass="checkbox-description" text="%pref.highscores.if_enabled_the_server_monitor_all_highscore_related" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%pref.highscores.this_is_useful_e_g_for_vr_players" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="checkbox-description" text="%pref.highscores.not_manual_highscore_is_required_anymore_then_after" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="73.0" styleClass="checkbox-description" text="%pref.highscores.you_can_use_this_monitor_in_addition_to" textFill="WHITE">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label layoutX="10.0" layoutY="101.0" styleClass="checkbox-description" text="%ui.your_frontend_2fdb" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="101.0" styleClass="checkbox-description" text="%pref.highscores.your_frontend" textFill="WHITE" />
                            </children>
                         </VBox>
                </children>
@@ -93,20 +93,20 @@
                   <Insets top="6.0" />
                </VBox.margin>
             </GridPane>
-            <Label layoutX="34.0" layoutY="250.0" styleClass="preference-subtitle" text="%ui.resetted_nvram_files_7ad9">
+            <Label layoutX="34.0" layoutY="250.0" styleClass="preference-subtitle" text="%pref.highscores.resetted_nvram_files">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%ui.new_resetted_nvrams_are_automatically_downloaded_ed30" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.highscores.new_resetted_nvrams_are_automatically_downloaded_by_the" textFill="WHITE">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description" text="%ui.they_are_used_to_lower_the_71f6" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description" text="%ui.you_can_download_all_available_resetted_91de" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="388.0" styleClass="preference-description" text="%ui.e_g_when_an_existing_one_2559" textFill="WHITE" />
-            <Button mnemonicParsing="false" onAction="#onNvRamReset" text="%ui.download_nvrams_ab6c">
+            <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description" text="%pref.highscores.they_are_used_to_lower_the_initial_score" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description" text="%pref.highscores.you_can_download_all_available_resetted_nvrams_again" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="388.0" styleClass="preference-description" text="%pref.highscores.e_g_when_an_existing_one_has_been" textFill="WHITE" />
+            <Button mnemonicParsing="false" onAction="#onNvRamReset" text="%pref.highscores.download_nvrams">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>

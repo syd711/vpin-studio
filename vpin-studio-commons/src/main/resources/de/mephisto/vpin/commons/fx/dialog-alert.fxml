@@ -16,7 +16,7 @@
    <center>
       <VBox alignment="BASELINE_LEFT" maxWidth="600.0" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label fx:id="textLabel" text="%ui.label_b021" textFill="WHITE">
+            <Label fx:id="textLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
@@ -24,11 +24,11 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label fx:id="helpLabel1" maxWidth="800.0" prefWidth="600.0" styleClass="preference-description" text="%ui.label_b021" textFill="WHITE" wrapText="true">
+            <Label fx:id="helpLabel1" maxWidth="800.0" prefWidth="600.0" styleClass="preference-description" text="%competitions.discord_competition_edit.label" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
-            <Label fx:id="helpLabel2" layoutX="10.0" layoutY="43.0" maxWidth="800.0" styleClass="preference-description" text="%ui.label_b021" textFill="WHITE" wrapText="true" />
+            <Label fx:id="helpLabel2" layoutX="10.0" layoutY="43.0" maxWidth="800.0" styleClass="preference-description" text="%competitions.discord_competition_edit.label" textFill="WHITE" wrapText="true" />
          </children>
          <BorderPane.margin>
             <Insets bottom="24.0" left="24.0" right="24.0" top="12.0" />
@@ -38,11 +38,11 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onDialogCancel" styleClass="default-button" stylesheets="@stylesheet.css" text="%ui.cancel_ea47">
+            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onDialogCancel" styleClass="default-button" stylesheets="@stylesheet.css" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin></Button>
-          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" stylesheets="@stylesheet.css" text="%ui.ok_4f99" />
+          <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#onDialogSubmit" styleClass="submit-button" stylesheets="@stylesheet.css" text="%alert_option_with_checkbox.ok" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

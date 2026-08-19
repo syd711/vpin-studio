@@ -20,16 +20,16 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%ui.vpin_studio_preferences_f3e1" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%ui.media_sources_5f22" />
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%ui.you_can_configure_additional_media_sources_c14e" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%ui.they_will_be_automatically_added_to_e213" textFill="WHITE">
+            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.asset_sources.media_sources" />
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.asset_sources.you_can_configure_additional_media_sources_here" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.asset_sources.they_will_be_automatically_added_to_the_asset" textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSourceAdd" text="%ui.add_ec21" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSourceAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -37,7 +37,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%ui.edit_7dce" textFill="WHITE">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -46,7 +46,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%ui.delete_f2a6" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -58,10 +58,10 @@
             </ToolBar>
             <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
-                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%ui.enabled_00d2" />
-                  <TableColumn fx:id="providedColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%ui.provided_900b" />
-                <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%ui.name_49ee" />
-                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="%ui.location_ce5b" />
+                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.webhook_set.enabled" />
+                  <TableColumn fx:id="providedColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.asset_sources.provided" />
+                <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="%pref.asset_sources.location" />
               </columns>
             </TableView>
          </children>

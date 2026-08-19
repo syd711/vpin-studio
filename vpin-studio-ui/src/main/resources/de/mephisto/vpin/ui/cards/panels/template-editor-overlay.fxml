@@ -11,7 +11,7 @@
     <graphic>
         <BorderPane prefWidth="250.0">
             <left>
-                <Label text="%ui.overlay_6b55"/>
+                <Label text="%cards.template_editor_overlay.overlay"/>
             </left>
             <right>
                 <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -24,7 +24,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
                             </graphic>
                             <tooltip>
-                                <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400"/>
+                                <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates"/>
                             </tooltip>
                         </Button>
                         <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
@@ -37,7 +37,7 @@
                                           iconSize="13"/>
                             </graphic>
                             <tooltip>
-                                <Tooltip text="%ui.lock_these_properties_for_custom_templates_b400"/>
+                                <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates"/>
                             </tooltip>
                         </ToggleButton>
                     </children>
@@ -51,7 +51,7 @@
                 <VBox styleClass="accordion-container">
                     <children>
                         <Label prefWidth="200"
-                               text="%ui.this_mode_is_to_simulate_the_c28f"
+                               text="%cards.template_editor_overlay.this_mode_is_to_simulate_the_rendering_of"
                                wrapText="true">
                             <graphic>
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18"/>
@@ -61,7 +61,7 @@
                             </VBox.margin>
                         </Label>
 
-                        <Label text="%ui.screen_4e6f" textFill="WHITE">
+                        <Label text="%cards.template_editor_overlay.screen" textFill="WHITE">
                             <font>
                                 <Font size="14.0"/>
                             </font>
@@ -83,7 +83,7 @@
                                     </graphic>
                                     <tooltip>
                                         <Tooltip prefWidth="300.0"
-                                                 text="%ui.select_the_screen_on_which_the_c33e"
+                                                 text="%cards.template_editor_overlay.select_the_screen_on_which_the_score_card"
                                                  wrapText="true"/>
                                     </tooltip>
                                 </Label>

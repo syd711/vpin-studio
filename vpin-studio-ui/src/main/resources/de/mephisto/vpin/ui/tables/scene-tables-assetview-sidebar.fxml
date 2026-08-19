@@ -11,7 +11,7 @@
          <graphic>
             <BorderPane maxHeight="1.7976931348623157E308">
                <left>
-                  <Label text="%ui.asset_manager_d6a1" BorderPane.alignment="CENTER" />
+                  <Label text="%cards.template_editor.asset_manager" BorderPane.alignment="CENTER" />
                </left>
             </BorderPane>
          </graphic>
