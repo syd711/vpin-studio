@@ -207,7 +207,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     }
 
-    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings, recorded Messages.get("dialog.jobdescriptor_getuserdata") video(s).");
+    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings, recorded " + jobDescriptor.getUserData() + " video(s).");
   }
 
   private void finishRecording(boolean cancelled) {
@@ -260,7 +260,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         if (((int) jobDescriptor.getUserData()) > 1) {
           video = "videos";
         }
-        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.recording_finished"), Messages.get("dialog.finished_recording_of") + recordingDataSummary.size() + " Messages.get("dialog.game"), recorded Messages.get("dialog.jobdescriptor_getuserdata") Messages.get("dialog.video").");
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.recording_finished"), Messages.get("dialog.finished_recording_of") + recordingDataSummary.size() + " " + game + Messages.get("dialog.game_recorded") + jobDescriptor.getUserData() + " " + video + ".");
       }
 
     });
