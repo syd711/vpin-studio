@@ -10,7 +10,9 @@
   - Added bulk action support.
   - Added option to move/copy tables into subfolders of the "tables" folder.
 - **ALT Color**
-  - Fixed issue with aliased cROMc based ALT color files. 
+  - Fixed issue with aliased cROMc based ALT color files.
+- **Table Uploader**
+  - The last VPX emulator selection is remembered now.
 - **Updater**
   - Improved integrity check of downloaded updates, resulting is more graceful errors when failing.
 

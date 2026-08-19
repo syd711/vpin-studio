@@ -41,6 +41,7 @@ public class UISettings extends JsonSettings {
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
   private boolean uploadMediaPreview = true;
+  private int defaultUploadVpxEmulatorId = -1;
 
   // dropins setup
   public static final int DROP_IN_POSTACTION_DONOTHING = 0;
@@ -164,6 +165,14 @@ public class UISettings extends JsonSettings {
 
   public void setDefaultUploadMode(String defaultUploadMode) {
     this.defaultUploadMode = defaultUploadMode;
+  }
+
+  public int getDefaultUploadVpxEmulatorId() {
+    return defaultUploadVpxEmulatorId;
+  }
+
+  public void setDefaultUploadVpxEmulatorId(int defaultUploadVpxEmulatorId) {
+    this.defaultUploadVpxEmulatorId = defaultUploadVpxEmulatorId;
   }
 
   public String getLocalFavsColor() {

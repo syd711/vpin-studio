@@ -436,9 +436,13 @@ public class TableUploadController implements Initializable, DialogController {
         return true;
       }
 
-      Optional<GameEmulatorRepresentation> first = this.emulatorCombo.getItems().stream().filter(GameEmulatorRepresentation::isVpxEmulator).findFirst();
-      if (first.isPresent()) {
-        emulatorCombo.setValue(first.get());
+      List<GameEmulatorRepresentation> vpxEmulators = this.emulatorCombo.getItems().stream().filter(GameEmulatorRepresentation::isVpxEmulator).collect(Collectors.toList());
+      Optional<GameEmulatorRepresentation> saved = vpxEmulators.stream().filter(e -> e.getId() == uiSettings.getDefaultUploadVpxEmulatorId()).findFirst();
+      Optional<GameEmulatorRepresentation> selected = saved.isPresent() ? saved : vpxEmulators.stream().findFirst();
+      if (selected.isPresent()) {
+        emulatorCombo.setValue(selected.get());
+        uiSettings.setDefaultUploadVpxEmulatorId(selected.get().getId());
+        client.getPreferenceService().setJsonPreference(uiSettings);
         return true;
       }
       else {
@@ -583,7 +587,10 @@ public class TableUploadController implements Initializable, DialogController {
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
-    emulatorRepresentation = gameEmulators.getFirst();
+    emulatorRepresentation = gameEmulators.stream()
+        .filter(e -> e.isVpxEmulator() && e.getId() == uiSettings.getDefaultUploadVpxEmulatorId())
+        .findFirst()
+        .orElse(gameEmulators.getFirst());
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulatorRepresentation);
