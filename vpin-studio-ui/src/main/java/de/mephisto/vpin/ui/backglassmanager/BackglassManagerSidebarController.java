@@ -273,7 +273,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       String selectedVersion = getSelectedVersion();
       if (selection != null && selectedVersion != null) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + selectedVersion + "\"?Messages.get("dialog.null")Delete");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + selectedVersion + "\"?", null, Messages.get("common.delete"));
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           client.getBackglassServiceClient().deleteBackglassVersion(getEmulatorId(), selectedVersion);
           BackglassManagerControllerUtils.notifyChange(getEmulatorId(), selectedVersion, game);
@@ -387,7 +387,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private void onDMDDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_dmd_image"),
-        Messages.get("dialog.delete_dmd_image_from_backglass") + tableData.getFilename() + "\"?Messages.get("dialog.null")Delete");
+        Messages.get("dialog.delete_dmd_image_from_backglass") + tableData.getFilename() + "\"?", null, Messages.get("common.delete"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       BackglassManagerControllerUtils.deleteDMDImage(getEmulatorId(), getSelectedVersion(), game);
     }

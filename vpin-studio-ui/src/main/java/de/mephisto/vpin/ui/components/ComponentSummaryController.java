@@ -70,7 +70,7 @@ public class ComponentSummaryController implements Initializable {
 
   @FXML
   public void onVersionSet() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply_version"), Messages.get("dialog.apply") + latestVersionLabel.getText() + Messages.get("dialog.as_the_current_version_of") + component.getType() + "?Messages.get("dialog.null")Apply");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply_version"), Messages.get("dialog.apply") + latestVersionLabel.getText() + Messages.get("dialog.as_the_current_version_of") + component.getType() + "?", null, Messages.get("common.apply"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().setVersion(component.getType(), component.getLatestReleaseVersion());
@@ -83,7 +83,7 @@ public class ComponentSummaryController implements Initializable {
 
   @FXML
   public void onVersionReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.reset_version"), Messages.get("dialog.reset_version_2") + latestVersionLabel.getText() + "\"?Messages.get("dialog.null")Reset");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.reset_version"), Messages.get("dialog.reset_version_2") + latestVersionLabel.getText() + "\"?", null, Messages.get("common.reset"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().setVersion(component.getType(), "-");

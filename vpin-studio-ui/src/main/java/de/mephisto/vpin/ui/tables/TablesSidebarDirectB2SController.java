@@ -283,7 +283,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         if (tableData != null) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + tableData.getFilename() + "\"?Messages.get("dialog.null")Delete");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + tableData.getFilename() + "\"?", null, Messages.get("common.delete"));
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             boolean b = client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
             if (!b) {
