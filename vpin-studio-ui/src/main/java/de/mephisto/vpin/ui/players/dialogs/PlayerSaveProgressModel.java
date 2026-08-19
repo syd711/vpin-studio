@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
@@ -37,7 +38,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   private final Iterator<PlayerRepresentation> playerIterator;
 
   public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean maniaPlayer, String maniaName, AccountVisibility visibility, File avatarFile, Pane avatarStack) {
-    super("Saving Player");
+    super(Messages.get("players.players.saving_player"));
     this.players = Arrays.asList(playerRepresentation);
     this.maniaPlayer = maniaPlayer;
     this.maniaName = maniaName;

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.players;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -68,8 +69,7 @@ public class DiscordPlayersController extends BasePlayersController implements I
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Members"));
-    tableView.setPlaceholder(new Label("                           No one wants to play with you?\n" +
-        "Edit your preferences to connect a Discord server with your VPin."));
+    tableView.setPlaceholder(new Label(Messages.get("players.discord_users.no_players_placeholder")));
 
     nameColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();

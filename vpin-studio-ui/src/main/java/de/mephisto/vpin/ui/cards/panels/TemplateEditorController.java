@@ -199,7 +199,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Preview", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, Messages.get("common.preview"), client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get(), getSelectedTemplateType()), "image/png");
     }
   }
 
@@ -280,7 +280,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       WidgetFactory.showAlert(stage, Messages.get("dialog.no_target_screen_selected"), Messages.get("dialog.select_a_target_screen_in_the_preferences"));
     }
     else {
-      ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", getSelectedTemplateType()));
+      ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, Messages.get("cards.template_editor.generating_media"), getSelectedTemplateType()));
     }
   }
 
@@ -342,7 +342,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
     gameName = gameName.trim();
 
-    Stage stage = Dialogs.createStudioDialogStage(DialogTemplateEditorUploadController.class, "dialog-template-editor-upload.fxml", "Cards Template Upload");
+    Stage stage = Dialogs.createStudioDialogStage(DialogTemplateEditorUploadController.class, "dialog-template-editor-upload.fxml", Messages.get("cards.template_editor.cards_template_upload"));
     DialogTemplateEditorUploadController controller = (DialogTemplateEditorUploadController) stage.getUserData();
     controller.setData(stage, this, gameName);
     stage.showAndWait();
@@ -429,19 +429,19 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getSelectedCardTemplate();
 
-    String title = "Delete Template";
+    String title = Messages.get("cards.template_editor.delete_template");
     String button = Messages.get("common.delete");
-    String msg1 = "Delete template \"" + cardTemplate.getName() + "\"?";
-    String msg2 = "Assigned tables will use the default template again.";
+    String msg1 = Messages.get("cards.template_editor.delete_template_confirm", cardTemplate.getName());
+    String msg2 = Messages.get("cards.template_editor.assigned_tables_will_use_default");
     if (cardTemplate.isDefault()) {
-      title = "Reset Template";
+      title = Messages.get("cards.template_editor.reset_template");
       button = Messages.get("dialog.reset");
-      msg1 = "Reset Default template ?";
-      msg2 = "The Default template will reset to its default values.";
+      msg1 = Messages.get("cards.template_editor.reset_default_template_confirm");
+      msg2 = Messages.get("cards.template_editor.default_template_will_reset");
     }
     else if (!cardTemplate.isTemplate()) {
-      msg1 = "Delete template for table \"" + gameRepresentation.get().getGameDisplayName() + "\"?";
-      msg2 = "The table will use the default template again.";
+      msg1 = Messages.get("cards.template_editor.delete_template_for_table_confirm", gameRepresentation.get().getGameDisplayName());
+      msg2 = Messages.get("cards.template_editor.table_will_use_default");
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, title, msg1, msg2, button);
@@ -474,8 +474,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   private void saveAllTemplates(List<CardTemplate> items) {
-    ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Save Templates", items,
-        item -> "Saving Highscore Card Templates " + item.getName() + "...",
+    ProgressDialog.createProgressDialog(new WaitNProgressModel<>(Messages.get("cards.template_editor.save_templates"), items,
+        item -> Messages.get("cards.template_editor.saving_highscore_card_templates", item.getName()),
         item -> {
           client.getHighscoreCardTemplatesClient().save(item);
         }));
@@ -593,7 +593,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         return null;
       }).thenAcceptLater((defaultMediaItem) -> {
         if (defaultMediaItem == null) {
-          Label label = new Label("No media found");
+          Label label = new Label(Messages.get("dialog.no_media_found"));
           label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
           label.setUserData(null);
           mediaPane.setCenter(label);
@@ -613,7 +613,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     if (gameRepresentation.isPresent()) {
       if (cardTemplate.isTemplate()) {
         nagBar.setStyle("-fx-background-color: #333366;");
-        nagBarLabel.setText("Editing design for \"" + gameRepresentation.get().getGameDisplayName() + "\", using template \"" + cardTemplate.getName() + "\"");
+        nagBarLabel.setText(Messages.get("cards.template_editor.editing_design_for", gameRepresentation.get().getGameDisplayName(), cardTemplate.getName()));
       }
       else {
         nagBar.setStyle("-fx-background-color: #116611;");
@@ -622,10 +622,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
         }
         if (parent.isPresent()) {
-          nagBarLabel.setText("Editing custom design for \"" + gameRepresentation.get().getGameDisplayName() + "\", using base template \"" + parent.get().getName() + "\".");
+          nagBarLabel.setText(Messages.get("cards.template_editor.editing_custom_design_for", gameRepresentation.get().getGameDisplayName(), parent.get().getName()));
         }
         else {
-          nagBarLabel.setText("No default template");
+          nagBarLabel.setText(Messages.get("cards.template_editor.no_default_template"));
         }
       }
     }
@@ -644,7 +644,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         }
       }
 
-      ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", this.gameRepresentation.get(), getSelectedTemplateType()));
+      ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, Messages.get("cards.template_editor.generating_media"), this.gameRepresentation.get(), getSelectedTemplateType()));
       refreshPreview(this.gameRepresentation);
 
       EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -786,7 +786,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       folderBtn.setVisible(SystemUtil.isFolderActionSupported());
-      nagBarLabel.setText("Loading...");
+      nagBarLabel.setText(Messages.get("common.loading"));
 
       Frontend frontend = client.getFrontendService().getFrontendCached();
       FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
@@ -812,7 +812,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       loader.setResources(Messages.getBundle());
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Media...");
+      ctrl.setLoadingMessage(Messages.get("cards.template_editor.loading_media"));
 
       previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
       previewPanel.setBackground(Background.EMPTY);

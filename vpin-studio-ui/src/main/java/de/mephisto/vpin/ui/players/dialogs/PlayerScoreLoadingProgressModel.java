@@ -32,7 +32,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
   private final Iterator<PlayerRepresentation> playerIterator;
 
   public PlayerScoreLoadingProgressModel(PlayerRepresentation playerRepresentation, VBox highscoreList, Label noScoreLabel) {
-    super("Loading Player Highscores");
+    super(Messages.get("players.players.loading_player_highscores"));
     this.players = Arrays.asList(playerRepresentation);
     this.highscoreList = highscoreList;
     this.noScoreLabel = noScoreLabel;
@@ -80,7 +80,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
       highscoreList.getStyleClass().remove("media-container");
       if (playerScores.getScores().isEmpty()) {
         noScoreLabel.setVisible(true);
-        noScoreLabel.setText("No scores found for this player.");
+        noScoreLabel.setText(Messages.get("players.players.no_highscores_found_for_this_player"));
       }
       else {
         highscoreList.getStyleClass().add("media-container");

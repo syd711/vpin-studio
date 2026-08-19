@@ -25,7 +25,8 @@
       </Label>
       <GridPane vgap="3.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="250.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="12.0" minWidth="12.0" prefWidth="12.0" />
             <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -37,12 +38,12 @@
          </rowConstraints>
          <children>
             <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" />
-            <Label fx:id="installedVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+            <Label fx:id="installedVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="3">
+            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="4">
                <children>
                   <Button fx:id="resetVersionBtn" mnemonicParsing="false" onAction="#onVersionReset" text="%components.component_summary_panel.reset_version" textFill="WHITE">
                      <font>
@@ -62,7 +63,7 @@
             </HBox>
 
             <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%components.component_summary_panel.latest_released_version" GridPane.rowIndex="1" />
-            <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
                <children>
                   <Button fx:id="setVersionBtn" mnemonicParsing="false" onAction="#onVersionSet" text="%components.component_summary_panel.set_as_installed_version" textFill="WHITE">
                      <font>
@@ -91,7 +92,7 @@
                   <Insets left="12.0" />
                </GridPane.margin>
             </HBox>
-            <Label fx:id="latestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label fx:id="latestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
@@ -105,7 +106,8 @@
       </GridPane>
       <GridPane vgap="3.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="250.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="12.0" minWidth="12.0" prefWidth="12.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
@@ -117,7 +119,7 @@
          <children>
             <Label styleClass="default-text" text="%backups.backup_source_folder.folder" />
 
-            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2">
             <children>
                <Label fx:id="folderLabel" text="-" textFill="WHITE">
                   <font>
@@ -133,21 +135,21 @@
             </HBox>
 
             <Label styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" />
-            <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
 
             <Label styleClass="default-text" text="%components.component_summary_panel.last_check" GridPane.rowIndex="2" />
-            <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
 
             <Label styleClass="default-text" text="%components.component_short_summary_panel.github_url" GridPane.rowIndex="3" />
-            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="-5.0" />
                </GridPane.margin>

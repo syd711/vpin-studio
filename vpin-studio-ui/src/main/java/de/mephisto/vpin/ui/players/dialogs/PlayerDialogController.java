@@ -154,9 +154,9 @@ public class PlayerDialogController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
+    fileChooser.setTitle(Messages.get("players.player_edit.select_image_title"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter(Messages.get("players.player_edit.image_files"), "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
     refreshAvatar();

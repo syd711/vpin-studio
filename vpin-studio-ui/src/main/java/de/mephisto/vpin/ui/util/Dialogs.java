@@ -60,7 +60,7 @@ public class Dialogs {
     if (force || !uiSettings.isHideUpdateInfo()) {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
       fxmlLoader.setResources(Messages.getBundle());
-      Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
+      Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, Messages.get("dialog.release_notes_for", version));
       stage.showAndWait();
 
       uiSettings.setHideUpdateInfo(true);
@@ -75,7 +75,7 @@ public class Dialogs {
   public static void openNextUpdateDialog(String version) {
     FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
     fxmlLoader.setResources(Messages.getBundle());
-    Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
+    Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, Messages.get("dialog.release_notes_for", version));
     UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
     controller.setData(stage, version);
     stage.showAndWait();
@@ -120,9 +120,9 @@ public class Dialogs {
   }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {
-    String title = "Add New Player";
+    String title = Messages.get("dialog.add_new_player");
     if (selection != null) {
-      title = "Edit Player";
+      title = Messages.get("dialog.edit_player");
     }
 
     FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
@@ -137,7 +137,7 @@ public class Dialogs {
 
 
   public static boolean openInstallerDialog() {
-    Stage stage = createStudioDialogStage(null, Studio.stage, InstallationDialogController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
+    Stage stage = createStudioDialogStage(null, Studio.stage, InstallationDialogController.class, "dialog-installer.fxml", Messages.get("dialog.visual_studio_server_installation"));
     InstallationDialogController controller = (InstallationDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();

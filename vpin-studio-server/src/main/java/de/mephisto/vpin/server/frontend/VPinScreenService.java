@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.StringUtils;
@@ -19,12 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
@@ -55,6 +61,9 @@ public class VPinScreenService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private MessageSource messageSource;
 
   /**
    * Wether to read the VPX playfield data or not
@@ -96,6 +105,25 @@ public class VPinScreenService implements InitializingBean {
     return null;
   }
 
+  /**
+   * Resolves the {@link Locale} from the current HTTP request's
+   * {@code Accept-Language} header, falling back to English.
+   */
+  private Locale resolveRequestLocale() {
+    try {
+      ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        HttpServletRequest request = attrs.getRequest();
+        String acceptLanguage = request.getHeader("Accept-Language");
+        return ServerMessages.parseLocale(acceptLanguage);
+      }
+    }
+    catch (Exception e) {
+      LOG.debug("Could not resolve request locale: {}", e.getMessage());
+    }
+    return Locale.ENGLISH;
+  }
+
   //---------------------------------------------------
 
   public List<String> checkDisplays() {
@@ -117,7 +145,7 @@ public class VPinScreenService implements InitializingBean {
         int i = 0;
         for (MonitorInfo monitor : monitors) {
           if (!monitor.isPrimary() && !primaryFound) {
-            errors.add("Monitor " + (i + 1) + ", named " + monitor.getFormattedName() + " is left to the primary one, this is not supported in Popper");
+            errors.add(ServerMessages.get(messageSource, "screen.monitor_left_of_primary", resolveRequestLocale(), i + 1, monitor.getFormattedName()));
           }
           primaryFound |= monitor.isPrimary();
         }
@@ -127,7 +155,7 @@ public class VPinScreenService implements InitializingBean {
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
         if (monitor.getY() != second.getY()) {
-          errors.add("Monitor " + (i + 1) + ", named " + second.getFormattedName() + " is not aligned on top with first one: " + monitor.getY() + "px vs. " + second.getY() + "px.");
+          errors.add(ServerMessages.get(messageSource, "screen.monitor_not_aligned", resolveRequestLocale(), i + 1, second.getFormattedName(), monitor.getY(), second.getY()));
         }
       }
     }
@@ -162,12 +190,12 @@ public class VPinScreenService implements InitializingBean {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getX() != display2.getX()) {
-        errors.add(Objects.toString(name, screen.name()) + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
-            display1.getX() + " vs " + display2.getX());
+        errors.add(ServerMessages.get(messageSource, "screen.x_position_mismatch", resolveRequestLocale(),
+            Objects.toString(name, screen.name()), name1, name2, display1.getX(), display2.getX()));
       }
       if (display1.getY() != display2.getY()) {
-        errors.add(Objects.toString(name, screen.name()) + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
-            display1.getY() + " vs " + display2.getY());
+        errors.add(ServerMessages.get(messageSource, "screen.y_position_mismatch", resolveRequestLocale(),
+            Objects.toString(name, screen.name()), name1, name2, display1.getY(), display2.getY()));
       }
     }
   }
@@ -180,12 +208,12 @@ public class VPinScreenService implements InitializingBean {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getWidth() != display2.getWidth()) {
-        errors.add(Objects.toString(name, screen.name()) + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
-            display1.getWidth() + " vs " + display2.getWidth());
+        errors.add(ServerMessages.get(messageSource, "screen.width_mismatch", resolveRequestLocale(),
+            Objects.toString(name, screen.name()), name1, name2, display1.getWidth(), display2.getWidth()));
       }
       if (display1.getHeight() != display2.getHeight()) {
-        errors.add(Objects.toString(name, screen.name()) + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
-            display1.getHeight() + " vs " + display2.getHeight());
+        errors.add(ServerMessages.get(messageSource, "screen.height_mismatch", resolveRequestLocale(),
+            Objects.toString(name, screen.name()), name1, name2, display1.getHeight(), display2.getHeight()));
       }
     }
   }

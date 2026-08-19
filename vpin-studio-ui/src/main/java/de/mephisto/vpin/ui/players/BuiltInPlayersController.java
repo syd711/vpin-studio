@@ -211,8 +211,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
-    tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
-        "Add new players or connect a Discord server."));
+    tableView.setPlaceholder(new Label(Messages.get("players.builtin_users.no_players_placeholder")));
 
 
     try {
@@ -220,7 +219,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
       loader.setResources(Messages.getBundle());
       playersLoadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Players...");
+      ctrl.setLoadingMessage(Messages.get("players.builtin_users.loading_players"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

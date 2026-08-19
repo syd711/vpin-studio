@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.Studio;
 import org.jspecify.annotations.Nullable;
 import javafx.fxml.FXML;
@@ -88,7 +89,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       scoreLabel.setText(score.getFormattedScore());
 
       String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(score.getCreatedAt().atZone(ZoneId.systemDefault()));
-      changeDateLabel.setText("Updated: " + date);
+      changeDateLabel.setText(Messages.get("players.widget_highscore.updated") + date);
 
       JFXFuture.supplyAsync(() -> {
         return ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId());
@@ -128,7 +129,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       tableLabel.setText(vpsTable.getName());
     }
     else {
-      tableLabel.setText("- Table not resolved - ");
+      tableLabel.setText(Messages.get("players.widget_highscore.table_not_resolved"));
     }
 
     positionLabel.setText("#" + position);
@@ -138,7 +139,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     scoreLabel.setText(tableScore.getScoreText());
 
     String date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(tableScore.getCreationDate().toInstant().atZone(ZoneId.systemDefault()));
-    changeDateLabel.setText("Updated: " + date);
+    changeDateLabel.setText(Messages.get("players.widget_highscore.updated") + date);
 
     if (game != null) {
       Image backgroundImage = new Image(ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId()));
