@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
+import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -103,6 +105,10 @@ public class Studio extends Application {
     }
 
     Platform.setImplicitExit(false);
+
+    // Initialize i18n locale from local settings BEFORE any UI or FXMLLoader usage
+    Messages.reload();
+    RestClient.setLocale(Messages.getLocale());
 
     runOperatingSystemChecks();
     runExtensionsInstallation();

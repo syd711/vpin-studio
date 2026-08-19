@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -479,6 +480,28 @@
                         </GridPane>
                      </children>
                   </VBox>
+                  <!-- ============ Language ============ -->
+                  <Label styleClass="preference-subtitle" text="%pref.client.language.title">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <ComboBox fx:id="languageComboBox" prefWidth="200.0" />
+                        <Label fx:id="languageRestartHint" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" managed="false" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" bottom="12.0" />
+                     </VBox.margin>
+                  </HBox>
+
+                  <!-- ============ Dialogs ============ -->
                   <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
                      <VBox.margin>
                         <Insets top="24.0" />

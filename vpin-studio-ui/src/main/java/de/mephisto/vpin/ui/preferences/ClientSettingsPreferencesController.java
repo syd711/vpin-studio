@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -17,6 +19,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +37,12 @@ import static de.mephisto.vpin.ui.Studio.*;
 
 public class ClientSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ClientSettingsPreferencesController.class);
+
+  @FXML
+  private ComboBox<String> languageComboBox;
+
+  @FXML
+  private Label languageRestartHint;
 
   @FXML
   private VBox emulatorList;
@@ -228,6 +237,9 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    // ---- Language chooser ----
+    initLanguageChooser();
+
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
     sectionAssets.managedProperty().bindBidirectional(sectionAssets.visibleProperty());
@@ -695,6 +707,61 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
+  }
+
+  // -----------------------------------------------------------------------
+  // Language chooser
+  // -----------------------------------------------------------------------
+
+  /**
+   * Populates the language {@link ComboBox} and wires its change listener.
+   * The selected value is persisted in the local settings and triggers an
+   * informational restart hint label.
+   */
+  private void initLanguageChooser() {
+    // Display names shown in the combo-box
+    String english = Messages.get("pref.client.language.english");
+    String german  = Messages.get("pref.client.language.german");
+
+    languageComboBox.setItems(FXCollections.observableArrayList(english, german));
+
+    // Restore current selection from stored preference
+    String storedLang = LocalUISettings.getString(LocalUISettings.LANGUAGE);
+    if ("de".equalsIgnoreCase(storedLang)) {
+      languageComboBox.getSelectionModel().select(german);
+    }
+    else {
+      languageComboBox.getSelectionModel().select(english);
+    }
+
+    // Keep the hint hidden initially; show it only after the user makes a change
+    languageRestartHint.setManaged(false);
+    languageRestartHint.setVisible(false);
+
+    languageComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+      if (newVal == null || newVal.equals(oldVal)) {
+        return;
+      }
+      boolean isDe = newVal.equals(german);
+      String langTag = isDe ? "de" : "en";
+      LocalUISettings.saveProperty(LocalUISettings.LANGUAGE, langTag);
+
+      // Update the REST-client header immediately so future calls already use
+      // the new locale (full effect requires restart for FX labels)
+      Messages.reload();
+      RestClient.setLocale(Messages.getLocale());
+
+      // Show restart hint
+      languageRestartHint.setManaged(true);
+      languageRestartHint.setVisible(true);
+
+      // Show info dialog
+      WidgetFactory.showInformation(
+          de.mephisto.vpin.ui.Studio.stage,
+          Messages.get("pref.client.language.title"),
+          Messages.get("pref.client.language.restart_message")
+      );
+    });
   }
 
   private void setDropInFieldEnabled(Boolean enabled) {
