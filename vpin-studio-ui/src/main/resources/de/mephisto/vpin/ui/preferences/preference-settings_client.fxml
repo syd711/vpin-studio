@@ -36,6 +36,23 @@
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
+                  <VBox>
+                     <children>
+                        <!-- ============ Language ============ -->
+                        <Label styleClass="preference-subtitle" text="%pref.client.language.title" />
+                        <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                           <children>
+                              <ComboBox fx:id="languageComboBox" prefWidth="200.0" />
+                              <Label fx:id="languageRestartHint" managed="false" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                   <Label styleClass="preference-subtitle" text="Emulators">
                      <VBox.margin>
                         <Insets top="24.0" />
@@ -480,26 +497,6 @@
                         </GridPane>
                      </children>
                   </VBox>
-                  <!-- ============ Language ============ -->
-                  <Label styleClass="preference-subtitle" text="%pref.client.language.title">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE">
-                     <VBox.margin>
-                        <Insets bottom="6.0" top="6.0" />
-                     </VBox.margin>
-                  </Label>
-                  <HBox alignment="CENTER_LEFT" spacing="12.0">
-                     <children>
-                        <ComboBox fx:id="languageComboBox" prefWidth="200.0" />
-                        <Label fx:id="languageRestartHint" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" managed="false" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="6.0" bottom="12.0" />
-                     </VBox.margin>
-                  </HBox>
 
                   <!-- ============ Dialogs ============ -->
                   <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">

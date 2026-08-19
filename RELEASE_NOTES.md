@@ -8,7 +8,7 @@
   - Fixed JDK issue by adding some JVM parameters that should avoid that. This fix can't be applied through an update, only by a reinstallation. If you experience regular crashes of the server or client you can re-install the Studio over the existing installation to rewrite the affected settings.
 - **Move/Copy Tables**
   - Added bulk action support.
-  - Added option to move/copy tables into subfolders.
+  - Added option to move/copy tables into subfolders of the "tables" folder.
 - **ALT Color**
   - Fixed issue with aliased cROMc based ALT color files. 
 - **Updater**
