@@ -237,4 +237,18 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   public boolean isCancelable() {
     return true;
   }
+
+  private Locale resolveRequestLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }

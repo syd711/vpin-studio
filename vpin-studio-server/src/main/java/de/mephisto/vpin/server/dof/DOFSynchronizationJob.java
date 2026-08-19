@@ -114,4 +114,18 @@ public class DOFSynchronizationJob implements Job {
     Job.super.cancel(jobDescriptor);
     LOG.info("Cancelled {}", this);
   }
+
+  private Locale resolveLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }

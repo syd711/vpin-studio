@@ -131,4 +131,18 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
     }
     return false;
   }
+
+  private Locale resolveLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }
