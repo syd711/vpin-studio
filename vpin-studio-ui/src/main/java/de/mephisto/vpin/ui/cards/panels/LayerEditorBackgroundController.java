@@ -29,6 +29,7 @@ import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class LayerEditorBackgroundController extends LayerEditorBaseController {
 
@@ -129,8 +130,8 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   private void onBackgroundReset() {
     if (this.game.isPresent()) {
       GameRepresentation game = this.game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + game.getGameDisplayName() + "\"?",
-          "This will re-generate the existing default background.", null, "Generate Background");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.re_generate_default_background_for") + game.getGameDisplayName() + "\"?",
+          Messages.get("dialog.this_will_re_generate_the_existing_default"), null, Messages.get("dialog.generate_background"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(game.getId());
         EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -158,7 +159,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
         }
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_image_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
       }
     }
   }

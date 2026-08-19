@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -70,7 +71,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File file) {
-    return "Uploading " + file.getName();
+    return Messages.get("dialog.uploading") + file.getName();
   }
 
   @Override
@@ -85,7 +86,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
       JobDescriptor result = client.getGameMediaService().uploadMedia(next, id, playlistMode, screen, append, loadingScreenId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError());
         });
       }
       else if (!iterator.hasNext()) {

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -86,7 +87,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
     catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(stage, "Download Failed", "Table asset download failed: " + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("dialog.download_failed"), Messages.get("dialog.table_asset_download_failed") + e.getMessage());
       });
     }
   }

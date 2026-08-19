@@ -421,7 +421,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.auto_fill_failed") + e.getMessage());
     }
   }
 
@@ -569,7 +569,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       if (game.getGameFilePath() != null && !updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
         String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
         if (duplicate != null) {
-          WidgetFactory.showAlert(stage, "Error", "Another file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.another_file_with_the_name") + duplicate + Messages.get("dialog.already_exist_please_chooser_another_name"));
           return false;
         }
       }
@@ -610,8 +610,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (Exception ex) {
       success = false;
-      LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
+      LOG.error(Messages.get("dialog.error_saving_table_manifest") + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_table_manifest") + ex.getMessage());
     }
     return success;
   }
@@ -1149,7 +1149,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (Exception e) {
       LOG.error("Failed to initialize Table Data Manager: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize Table Data Manager: " + e.getMessage(), "Please report this bug via Discord or github.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_table_data_manager") + e.getMessage(), Messages.get("dialog.please_report_this_bug_via_discord_or"));
     }
   }
 

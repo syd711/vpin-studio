@@ -51,6 +51,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MediaUploadController extends BaseTableController<String, MediaUploadArchiveItem> implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -266,7 +267,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
         .onErrorLater(e -> {
           LOG.error("Media preview generation failed: {}", e.getMessage(), e);
           endReload();
-          WidgetFactory.showAlert(stage, "Error", "Media preview generation failed: " + e.getMessage());
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.media_preview_generation_failed") + e.getMessage());
         });
   }
 

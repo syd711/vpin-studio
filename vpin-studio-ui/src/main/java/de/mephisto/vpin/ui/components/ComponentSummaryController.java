@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentSummaryController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentSummaryController.class);
@@ -69,39 +70,39 @@ public class ComponentSummaryController implements Initializable {
 
   @FXML
   public void onVersionSet() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Apply Version", "Apply \"" + latestVersionLabel.getText() + "\" as the current version of " + component.getType() + "?", null, "Apply");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply_version"), Messages.get("dialog.apply") + latestVersionLabel.getText() + Messages.get("dialog.as_the_current_version_of") + component.getType() + "?Messages.get("dialog.null")Apply");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().setVersion(component.getType(), component.getLatestReleaseVersion());
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to apply version: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_apply_version") + e.getMessage());
       }
     }
   }
 
   @FXML
   public void onVersionReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Reset Version", "Reset version \"" + latestVersionLabel.getText() + "\"?", null, "Reset");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.reset_version"), Messages.get("dialog.reset_version_2") + latestVersionLabel.getText() + "\"?Messages.get("dialog.null")Reset");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().setVersion(component.getType(), "-");
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset version: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_reset_version") + e.getMessage());
       }
     }
   }
 
   @FXML
   public void onVersionIgnore() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Ignore Version", "Ignore version \"" + latestVersionLabel.getText() + "\"?", "The previous version will be used as \"Latest Relase\" instead.", "Ignore Version");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.ignore_version"), Messages.get("dialog.ignore_version_2") + latestVersionLabel.getText() + "\"?", Messages.get("dialog.the_previous_version_will_be_used_as"), Messages.get("dialog.ignore_version"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().ignoreVersion(component.getType(), component.getLatestReleaseVersion());
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to ignore version: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_ignore_version") + e.getMessage());
       }
     }
   }

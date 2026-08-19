@@ -409,9 +409,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         tableView.refresh();
       }
       catch (Exception ex) {
-        LOG.error("Reload of item failed: " + ex.getMessage(), ex);
+        LOG.error(Messages.get("dialog.reload_of_item_failed") + ex.getMessage(), ex);
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Reload of item failed: " + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.reload_of_item_failed") + ex.getMessage());
         });
       }
     }

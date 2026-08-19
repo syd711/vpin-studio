@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentUpdateController implements Initializable, ChangeListener<GithubReleaseRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
@@ -122,15 +123,15 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
       }
       catch (Exception e) {
-        LOG.error("Failed to execute component check: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute component check: " + e.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_execute_component_check") + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_execute_component_check") + e.getMessage());
       }
     });
   }
 
   private void runInstall() {
     String artifact = artifactCombo.getValue();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifact + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.install_update") + artifact + "\"?", Messages.get("dialog.existing_files_will_be_overwritten"), Messages.get("dialog.make_sure_to_follow_the_additional_instructions"), "Continue");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       run(false, Collections.emptyList());
     }

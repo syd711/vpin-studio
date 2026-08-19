@@ -123,7 +123,7 @@ public class CabinetRowPanelController implements Initializable {
           catch (Exception e) {
             LOG.error("Failed to loading account row data: " + e.getMessage(), e);
             Platform.runLater(() -> {
-              WidgetFactory.showAlert(stage, "Error", "Error loading account data: " + e.getMessage());
+              WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_loading_account_data") + e.getMessage());
             });
           }
         }

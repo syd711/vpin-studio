@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CabinetSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CabinetSettingsPreferencesController.class);
@@ -57,10 +58,10 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onShutdown() {
-    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Cancel", "Shutdown System", "Are you sure you want to shutdown the remote system?", null);
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, Messages.get("dialog.remote_system_shutdown"), Messages.get("common.cancel"), Messages.get("dialog.shutdown_system"), Messages.get("dialog.are_you_sure_you_want_to_shutdown"), null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getSystemService().systemShutdown();
-      WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in less than a minute.");
+      WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.remote_system_shutdown"), Messages.get("dialog.the_remote_system_will_shutdown_in_less"));
     }
   }
 
@@ -100,8 +101,8 @@ public class CabinetSettingsPreferencesController implements Initializable {
             maniaClient.getCabinetClient().update(cabinet);
           }
           catch (Exception e) {
-            LOG.error("Failed to update cabinet name for VPin Mania: " + e.getMessage(), e);
-            WidgetFactory.showAlert(stage, "Error", "Failed to update cabinet name for VPin Mania: " + e.getMessage());
+            LOG.error(Messages.get("dialog.failed_to_update_cabinet_name_for_vpin") + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_cabinet_name_for_vpin") + e.getMessage());
           }
         }, 500)); 
       }

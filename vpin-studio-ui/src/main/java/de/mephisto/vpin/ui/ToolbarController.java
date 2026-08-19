@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ToolbarController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
@@ -165,8 +166,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private void onMaintenance() {
     boolean maintenanceMode = EventManager.getInstance().isMaintenanceMode();
     if (!maintenanceMode) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Maintenance Mode", "Switch cabinet to maintenance mode?",
-          "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.maintenance_mode"), Messages.get("dialog.switch_cabinet_to_maintenance_mode"),
+          Messages.get("dialog.the_maintenance_mode_will_be_automatically_turned"), Messages.get("dialog.enable_maintenance_mode"));
       if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
         return;
       }
@@ -193,7 +194,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onShutdown() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Shutdown Remote System?", "Shutdown the remote system and exit Studio?", null, "Shutdown and exit");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.shutdown_remote_system"), Messages.get("dialog.shutdown_the_remote_system_and_exit_studio"), null, Messages.get("dialog.shutdown_and_exit"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getSystemService().systemShutdown();
       System.exit(0);
@@ -230,7 +231,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       Frontend frontend = client.getFrontendService().getFrontendCached();
       File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
       if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
       }
       else {
         Studio.open(file);
@@ -502,7 +503,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       Studio.loadStudio(new Stage(), client);
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Connection failed to " + connection.getName() + "/" + connection.getIp());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.connection_failed_to") + connection.getName() + "/" + connection.getIp());
     }
   }
 

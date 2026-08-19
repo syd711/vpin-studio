@@ -249,11 +249,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       }
 
       String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + selection.competition.getName() + "\"?",
-          help, help2, "Delete iScored Subscription");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete") + selection.competition.getName() + "\"?",
+          help, help2, Messages.get("dialog.delete_iscored_subscription"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
             "Deleting iScored Subscription",
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
@@ -268,8 +268,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     if (selections.size() > 1) {
       String help = "The selected subscriptions will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete selected iScored subscriptions?",
-          help, null, "Delete iScored Subscriptions");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_selected_iscored_subscriptions"),
+          help, null, Messages.get("dialog.delete_iscored_subscriptions"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Delete Subscriptions", selections,

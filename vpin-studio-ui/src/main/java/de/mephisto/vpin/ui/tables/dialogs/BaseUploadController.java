@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public abstract class BaseUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -116,7 +117,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Uploading " + assetType.toString() + " failed", "Please check the log file for details", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading") + assetType.toString() + Messages.get("dialog.failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("dialog.error") + e.getMessage());
       }
     }
   }
@@ -291,7 +292,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       this.uploadBtn.setDisable(false);
     }
     else {
-      WidgetFactory.showAlert(stage, "Invalid " + assetType.toString(), analysis);
+      WidgetFactory.showAlert(stage, Messages.get("dialog.invalid") + assetType.toString(), analysis);
       this.fileNameField.setText("");
     }
     this.fileBtn.setDisable(false);

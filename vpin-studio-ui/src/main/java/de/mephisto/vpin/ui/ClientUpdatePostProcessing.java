@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  * Update hook if something must be updated or migrated from the client.
@@ -22,7 +23,7 @@ public class ClientUpdatePostProcessing {
     }
     catch (Exception e) {
       LOG.error("Client update post processing failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Client update post processing failed: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.client_update_post_processing_failed") + e.getMessage());
     }
   }
 }

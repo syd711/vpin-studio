@@ -17,6 +17,7 @@ import java.util.List;
 
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPSResetProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -82,9 +83,9 @@ public class VPSResetProgressModel extends ProgressModel<GameRepresentation> {
       LOG.info("Resetted VPS update of \"{}\" to: {} ", updated.getGameDisplayName() + "/" + updated.getId(), updated.getVpsUpdates().toJson());
     }
     catch (Exception e) {
-      LOG.error("Failed to reset VPS indicator: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.failed_to_reset_vps_indicator") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to reset VPS indicator: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_reset_vps_indicator") + e.getMessage());
       });
     }
   }

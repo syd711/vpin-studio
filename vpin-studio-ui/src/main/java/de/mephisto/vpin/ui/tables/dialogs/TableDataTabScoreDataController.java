@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableDataTabScoreDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -120,7 +121,7 @@ public class TableDataTabScoreDataController implements Initializable {
     FileInfo hsFileinfo = client.getGameService().getHighscoreFileInfo(this.game.getId());
     File userFolder = hsFileinfo.getFallback();
     if (!userFolder.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file, \"User\" folder not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_em_highscore_file_user"));
       return;
     }
     try {
@@ -128,7 +129,7 @@ public class TableDataTabScoreDataController implements Initializable {
     }
     catch (IOException e) {
       LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_em_highscore_file") + e.getMessage());
     }
   }
 

@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabVpxController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabVpxController.class);
@@ -30,8 +31,8 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
       Dialogs.openTextEditor(new TextEditorFile(TextEditorFileTypes.VPinballXIni), "VPinballX.ini");
     }
     catch (Exception e) {
-      LOG.error("Failed to open file: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open file: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_open_file") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_file") + e.getMessage());
     }
   }
 

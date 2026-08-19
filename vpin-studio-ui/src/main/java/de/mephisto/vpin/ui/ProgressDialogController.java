@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ProgressDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ProgressDialogController.class);
@@ -131,7 +132,7 @@ public class ProgressDialogController implements Initializable, DialogController
                 if (model.isShowSummary()) {
                   Platform.runLater(() -> {
                     String msg = model.getTitle() + " finished.";
-                    WidgetFactory.showInformation(Studio.stage, msg, "Processed " + progressResultModel.getProcessed() + " of " + model.getMax() + " elements.");
+                    WidgetFactory.showInformation(Studio.stage, msg, Messages.get("dialog.processed") + progressResultModel.getProcessed() + " of " + model.getMax() + Messages.get("dialog.elements"));
                   });
                 }
               });
@@ -144,7 +145,7 @@ public class ProgressDialogController implements Initializable, DialogController
                 });
               }
               Platform.runLater(() -> {
-                WidgetFactory.showAlert(Studio.stage, "Error", "Error in progressing: " + e.getMessage());
+                WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_in_progressing") + e.getMessage());
               });
             }
             return null;

@@ -39,6 +39,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarMameController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -169,8 +170,8 @@ public class TablesSidebarMameController implements Initializable {
 
 
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?",
-        "The default settings will be restored on table launch.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_vpin_mame_settings_for_table") + this.game.get().getGameDisplayName() + "'?",
+        Messages.get("dialog.the_default_settings_will_be_restored_on"));
     String rom = game.get().getRom();
     if (StringUtils.isEmpty(rom)) {
       return;
@@ -224,19 +225,19 @@ public class TablesSidebarMameController implements Initializable {
     if (nvOffset == 0) {
       nvOffset = 1;
     }
-    String value = WidgetFactory.showInputDialog(Studio.stage, "NVOffset", "Enter the new NVOffset value for the table.", null, null, String.valueOf(nvOffset));
+    String value = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.nvoffset"), Messages.get("dialog.enter_the_new_nvoffset_value_for_the"), null, null, String.valueOf(nvOffset));
     if (value != null) {
       try {
         nvOffset = Integer.parseInt(value);
       }
       catch (NumberFormatException e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid NVOffset value.", "Please input a numeric value.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.invalid_nvoffset_value"), Messages.get("dialog.please_input_a_numeric_value"));
         onNvOffset(gameId);
         return;
       }
 
       if (nvOffset > 0 && nvOffset == g.getNvOffset()) {
-        WidgetFactory.showInformation(Studio.stage, "NVOffset not updated", "NVOffset not updated, because it already has the value \"" + nvOffset + "\".", null);
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.nvoffset_not_updated"), Messages.get("dialog.nvoffset_not_updated_because_it_already_has") + nvOffset + "\".", null);
         onNvOffset(gameId);
         return;
       }
@@ -244,7 +245,7 @@ public class TablesSidebarMameController implements Initializable {
       try {
         int nvOffset1 = client.getVpxService().setNvOffset(g.getId(), nvOffset);
         if (nvOffset1 == -1) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "The NVOffset value has not been set. The script analysis failed.", "Use the script editor to set the value manually.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_nvoffset_value_has_not_been_set"), Messages.get("dialog.use_the_script_editor_to_set_the"));
         }
         else {
           EventManager.getInstance().notifyTableChange(g.getId(), g.getRom(), null);
@@ -252,7 +253,7 @@ public class TablesSidebarMameController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to set nvoffset value: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Setting NVOffset failed: " + e.getMessage(), "Use the script editor to set the value manually.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.setting_nvoffset_failed") + e.getMessage(), Messages.get("dialog.use_the_script_editor_to_set_the"));
       }
     }
   }
@@ -275,8 +276,8 @@ public class TablesSidebarMameController implements Initializable {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to open alias text file: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open alias text file: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_open_alias_text_file") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_alias_text_file") + e.getMessage());
     }
   }
 
@@ -289,7 +290,7 @@ public class TablesSidebarMameController implements Initializable {
   private void onMameSetup() {
     if (this.game.isPresent()) {
       if (!client.getMameService().runSetup()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The setup.exe file was not found.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_setup_exe"), Messages.get("dialog.the_setup_exe_file_was_not_found"));
       }
     }
   }
@@ -321,8 +322,8 @@ public class TablesSidebarMameController implements Initializable {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage());
     }
     finally {
       Studio.client.getGameService().reload(game.get().getId());
@@ -587,8 +588,8 @@ public class TablesSidebarMameController implements Initializable {
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     }
     catch (Exception e) {
-      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage());
     }
   }
 

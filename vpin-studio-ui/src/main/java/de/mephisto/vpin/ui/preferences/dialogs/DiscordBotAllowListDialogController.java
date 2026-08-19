@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DiscordBotAllowListDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordBotAllowListDialogController.class);
@@ -106,8 +107,8 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
                 client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_ALLOW_LIST, pref);
                 preferencesController.refreshAllowList();
               } catch (Exception e) {
-                LOG.error("Failed to update playlists: " + e.getMessage(), e);
-                WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+                LOG.error(Messages.get("dialog.failed_to_update_playlists") + e.getMessage(), e);
+                WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_playlists") + e.getMessage());
               }
             }
           });

@@ -46,7 +46,7 @@ public class Dialogs {
           Studio.edit(file);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "File Not Found", "The file \"" + file.getAbsolutePath() + "\" does not exist.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.file_not_found"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
         }
       }
       catch (Exception e) {
@@ -114,7 +114,7 @@ public class Dialogs {
     }
     catch (Exception e) {
       LOG.error("Failed to open file: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(s, "Error", "Failed to open file: " + e.getMessage());
+      WidgetFactory.showAlert(s, Messages.get("common.error"), Messages.get("dialog.failed_to_open_file") + e.getMessage());
     }
     return false;
   }
@@ -155,12 +155,12 @@ public class Dialogs {
           Files.write(path, systemData.getData().getBytes());
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "No Data", "The file \"" + file.getAbsolutePath() + "\" does not contain any data or wasn't found.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_data"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.does_not_contain_any_data_or_wasn"));
         }
       }
       catch (IOException e) {
-        LOG.error("Failed to create temporary file for text file: " + e.getMessage());
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create temporary file for text file: " + e.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_create_temporary_file_for_text") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_create_temporary_file_for_text") + e.getMessage());
         return;
       }
     }
@@ -208,10 +208,10 @@ public class Dialogs {
 
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage,
-          FrontendUtil.replaceName("[Frontend] is running.", frontend),
-          "Kill Processes", "Cancel",
-          FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
-          null, "Switch cabinet to maintenance mode");
+          FrontendUtil.replaceName(Messages.get("dialog.frontend_is_running"), frontend),
+          Messages.get("dialog.kill_processes"), Messages.get("common.cancel"),
+          FrontendUtil.replaceName(Messages.get("dialog.frontend_is_running_to_perform_this_operation"), frontend),
+          null, Messages.get("dialog.switch_cabinet_to_maintenance_mode_2"));
       if (confirmationResult.isApplyClicked()) {
         client.getFrontendService().terminateFrontend();
         if (confirmationResult.isChecked()) {
@@ -227,7 +227,7 @@ public class Dialogs {
   public static boolean killFrontend() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+        FrontendUtil.replaceNames(Messages.get("dialog.stop_all_emulators_and_frontend_processes"), frontend, null));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       JFXFuture.supplyAsync(() -> {
         return client.getFrontendService().terminateFrontend();

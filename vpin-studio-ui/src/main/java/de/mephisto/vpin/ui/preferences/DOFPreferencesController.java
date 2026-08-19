@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DOFPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DOFPreferencesController.class);
@@ -74,15 +75,15 @@ public class DOFPreferencesController implements Initializable {
       if (!results.isEmpty()) {
         Object o = results.getFirst();
         if (o instanceof String) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "DOF config download failed: " + o);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.dof_config_download_failed") + o);
         }
         else {
           JobDescriptor result = (JobDescriptor) resultModel.getResults().getFirst();
           if (result.getError() != null) {
-            WidgetFactory.showAlert(Studio.stage, "Error", "DOF configuration download failed: ", result.getError());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.dof_configuration_download_failed"), result.getError());
           }
           else {
-            WidgetFactory.showInformation(Studio.stage, "DOF configuration download finished successfully.", null);
+            WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.dof_configuration_download_finished_successfully"), null);
           }
         }
       }
@@ -114,7 +115,7 @@ public class DOFPreferencesController implements Initializable {
         refresh();
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
       }
     });
     syncInterval.setDisable(!settings.getSyncEnabled());
@@ -128,7 +129,7 @@ public class DOFPreferencesController implements Initializable {
         refresh();
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
       }
     });
 
@@ -143,7 +144,7 @@ public class DOFPreferencesController implements Initializable {
           refresh();
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 300);
     });
@@ -158,7 +159,7 @@ public class DOFPreferencesController implements Initializable {
           refresh();
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 300);
     });

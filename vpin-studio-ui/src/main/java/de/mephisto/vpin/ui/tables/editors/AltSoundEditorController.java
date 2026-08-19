@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AltSoundEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -125,8 +126,8 @@ public class AltSoundEditorController implements Initializable {
       Studio.client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
       EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     } catch (Exception ex) {
-      LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage());
     }
   }
 

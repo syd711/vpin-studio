@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WOVPPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(WOVPPreferencesController.class);
@@ -133,10 +134,10 @@ public class WOVPPreferencesController implements Initializable {
       if (!StringUtils.isEmpty(key)) {
         ApiKeyValidationResponse test = client.getWovpService().test(key);
         if (test != null && test.isSuccess()) {
-          WidgetFactory.showInformation(Studio.stage, "Information", "API key validation successful.", "The user \"" + test.getName() + "\" has been authenticated.");
+          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.api_key_validation_successful"), Messages.get("dialog.the_user") + test.getName() + Messages.get("dialog.has_been_authenticated"));
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Error", "API key validation failed!");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.api_key_validation_failed"));
         }
       }
     }
@@ -160,7 +161,7 @@ public class WOVPPreferencesController implements Initializable {
         PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
       }
     });
 
@@ -172,7 +173,7 @@ public class WOVPPreferencesController implements Initializable {
         PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
       }
     });
 
@@ -184,7 +185,7 @@ public class WOVPPreferencesController implements Initializable {
         PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
       }
     });
 
@@ -197,7 +198,7 @@ public class WOVPPreferencesController implements Initializable {
           PreferencesController.markDirty(PreferenceType.competitionSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 100);
     });
@@ -210,7 +211,7 @@ public class WOVPPreferencesController implements Initializable {
           PreferencesController.markDirty(PreferenceType.competitionSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 100);
     });
@@ -223,7 +224,7 @@ public class WOVPPreferencesController implements Initializable {
           PreferencesController.markDirty(PreferenceType.competitionSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 100);
     });
@@ -236,7 +237,7 @@ public class WOVPPreferencesController implements Initializable {
           PreferencesController.markDirty(PreferenceType.competitionSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 100);
     });
@@ -249,7 +250,7 @@ public class WOVPPreferencesController implements Initializable {
           PreferencesController.markDirty(PreferenceType.competitionSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 100);
     });

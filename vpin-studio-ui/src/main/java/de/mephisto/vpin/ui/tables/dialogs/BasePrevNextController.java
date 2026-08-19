@@ -19,6 +19,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  * A base dialog class that support Next / prev and autosave buttons
@@ -60,7 +61,7 @@ public abstract class BasePrevNextController implements Initializable, DialogCon
       autosave(onSuccess);
     }
     else if (headerController.isDirty()) {
-      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them?");
+      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, Messages.get("dialog.you_have_unsaved_changes"), Messages.get("dialog.do_you_want_to_save_them"));
       if (result.isPresent() && result.get().equals(ButtonType.YES)) {
         autosave(onSuccess);
         return;

@@ -124,12 +124,12 @@ public class LauncherController implements Initializable {
       dotNetInstalled = si.isDotNetInstalled();
     } catch (Exception e) {
       LOG.error("Error checking .net framework: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Error", "Error checking .net framework: " + e.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_checking_net_framework") + e.getMessage());
     }
 
     if (!dotNetInstalled) {
-      WidgetFactory.showAlert(stage, "Error", "No .NET framework > 3.5 found.",
-          "The .NET framework is required for some server operations.");
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.no_net_framework_3_5_found"),
+          Messages.get("dialog.the_net_framework_is_required_for_some"));
       return;
     }
 
@@ -221,8 +221,8 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onNewConnection() {
-    String host = WidgetFactory.showInputDialog(stage, "New VPin Studio Connection", "IP or Hostname",
-        "Enter the IP address or the hostname to connect to.", null, null);
+    String host = WidgetFactory.showInputDialog(stage, Messages.get("dialog.new_vpin_studio_connection"), Messages.get("dialog.ip_or_hostname"),
+        Messages.get("dialog.enter_the_ip_address_or_the_hostname"), null, null);
     if (!StringUtils.isEmpty(host)) {
       boolean found = false;
       for (VPinConnection vpinConnection : data) {
@@ -233,7 +233,7 @@ public class LauncherController implements Initializable {
       }
 
       if (found) {
-        WidgetFactory.showAlert(stage, "A VPin Studio Connection already exists for '" + host + "'.");
+        WidgetFactory.showAlert(stage, Messages.get("dialog.a_vpin_studio_connection_already_exists_for") + host + "'.");
       } else {
         refreshBtn.setDisable(true);
         connectBtn.setDisable(true);
@@ -249,8 +249,8 @@ public class LauncherController implements Initializable {
                   ConnectionEntry.ConnectionType.CREATED);
               data.add(connection);
             } else {
-              WidgetFactory.showAlert(stage, "No service found for '" + host + "'.",
-                  "Please check the IP or hostname and try again.");
+              WidgetFactory.showAlert(stage, Messages.get("dialog.no_service_found_for") + host + "'.",
+                  Messages.get("dialog.please_check_the_ip_or_hostname_and"));
             }
 
             refreshBtn.setDisable(false);
@@ -279,8 +279,8 @@ public class LauncherController implements Initializable {
       }
 
       if (!serverVersion.equals(clientVersion)) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Incompatible Version",
-            "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update your client.",
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.incompatible_version"),
+            Messages.get("dialog.the_vpin_server_you_are_connecting_to") + serverVersion + ".", "Please update your client.",
             "Install Update");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           // Launch update of the remote client
@@ -304,7 +304,7 @@ public class LauncherController implements Initializable {
           WakeOnLan.sendMagicPacket(connectionEntry.getIp(), connectionEntry.getMacAddress(), connectionEntry.getMagicPacketPort());
         } catch (Exception e) {
           LOG.error("WakeOnLan failed: {}", e.getMessage(), e);
-          WidgetFactory.showAlert(stage, "WakeOnLan failed.", "Error: " + e.getMessage());
+          WidgetFactory.showAlert(stage, Messages.get("dialog.wakeonlan_failed"), Messages.get("dialog.error") + e.getMessage());
         }
       }
     }
@@ -362,7 +362,7 @@ public class LauncherController implements Initializable {
       }).start();
     } catch (Exception e) {
       LOG.error("Server installation failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Server installation failed.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("dialog.server_installation_failed"), Messages.get("dialog.error") + e.getMessage());
     }
   }
 
@@ -449,7 +449,7 @@ public class LauncherController implements Initializable {
 
           wolButton.setOnAction(event -> {
             Optional<ButtonType> result = WidgetFactory.showConfirmation(stage,
-                "Send WOL packet to " + connection.getHost() + "?");
+                Messages.get("dialog.send_wol_packet_to") + connection.getHost() + "?");
             if (result.isPresent() && result.get().equals(ButtonType.OK)) {
               onWakeOnLan(connection);
               onConnectionRefresh();
@@ -495,7 +495,7 @@ public class LauncherController implements Initializable {
         deleteButton.setStyle("-fx-border-radius: 6px; -fx-cursor: hand;");
         deleteButton.setOnAction(event -> {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(stage,
-              "Delete connection to '" + connection.getHost() + "'?");
+              Messages.get("dialog.delete_connection_to") + connection.getHost() + "'?");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             connectionProperties.removeConnection(connection.getHost());
             onConnectionRefresh();

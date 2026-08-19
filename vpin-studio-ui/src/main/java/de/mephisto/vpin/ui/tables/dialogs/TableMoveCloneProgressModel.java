@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -77,7 +78,7 @@ public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentatio
       progressResultModel.addError();
       LOG.error("Failed to {} table \"{}\": {}", move ? "move" : "clone", game.getGameDisplayName(), e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to " + (move ? "move" : "clone") + " table \"" + game.getGameDisplayName() + "\": " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to") + (move ? "move" : "clone") + Messages.get("dialog.table_2") + game.getGameDisplayName() + Messages.get("dialog.item") + e.getMessage());
       });
     }
   }

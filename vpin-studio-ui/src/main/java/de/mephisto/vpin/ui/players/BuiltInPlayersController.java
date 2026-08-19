@@ -143,10 +143,10 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   private void onDelete() {
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_player") + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         if (Features.MANIA_ENABLED && selection.getManiaAccountUuid() != null) {
-          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "VPin Mania Player", "The player \"" + selection.getName() + "\" is a registered VPin Mania player.", "This will delete the online account and all related highscores and data.");
+          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.vpin_mania_player"), Messages.get("dialog.the_player") + selection.getName() + Messages.get("dialog.is_a_registered_vpin_mania_player"), Messages.get("dialog.this_will_delete_the_online_account_and"));
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
 

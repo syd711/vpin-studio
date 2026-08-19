@@ -155,11 +155,11 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     btn.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete all drop in files?", "All files will be moved to the trash.");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_all_drop_in_files"), Messages.get("dialog.all_files_will_be_moved_to_the"));
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           for (File f : new ArrayList<>(fileListView.getItems())) {
             if (!TrashBin.moveTo(f)) {
-              WidgetFactory.showAlert(Studio.stage, "Error", "Deletion failed, another process is blocking this file.");
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.deletion_failed_another_process_is_blocking_this"));
             }
           }
         }
@@ -293,7 +293,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
                   moveFile(file, new File(uiSettings.getDropinPostTargetFolder()), gameSelection.getGameDisplayName());
                 }
                 else {
-                  WidgetFactory.showAlert(Studio.stage, "No game selected !", "No game selected so cannot determine target folder !");
+                  WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_game_selected"), Messages.get("dialog.no_game_selected_so_cannot_determine_target"));
                 }
                 break;
               }
@@ -307,19 +307,19 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
               case UISettings.DROP_IN_POSTACTION_MOVETOTRASH: {
                 boolean confirmed1 = true;
                 if (uiSettings.isConfirmDropInMoveToTrash()) {
-                  Optional<ButtonType> result1 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete \"" + file.getAbsolutePath() + "\"?", "The file will be moved to the trash bin.");
+                  Optional<ButtonType> result1 = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_file_2"), Messages.get("dialog.delete") + file.getAbsolutePath() + "\"?", Messages.get("dialog.the_file_will_be_moved_to_the"));
                   confirmed1 = result1.isPresent() && result1.get().equals(ButtonType.OK);
                 }
                 if (confirmed1 && !Desktop.getDesktop().moveToTrash(file)) {
-                  WidgetFactory.showAlert(Studio.stage, "Cannot move file to trash !", "The file \"" + file.getAbsolutePath() + "\" couldn't be moved to trash !");
+                  WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.cannot_move_file_to_trash"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.couldn_t_be_moved_to_trash"));
                 }
                 break;
               }
               case UISettings.DROP_IN_POSTACTION_DELETE: {
-                Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Delete file ?", "Delete file \"" + file.getAbsolutePath() + "\"?", "The file cannot be recovered.");
+                Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_file_2"), Messages.get("dialog.delete_file_3") + file.getAbsolutePath() + "\"?", Messages.get("dialog.the_file_cannot_be_recovered"));
                 boolean confirmed2 = result2.isPresent() && result2.get().equals(ButtonType.OK);
                 if (confirmed2 && !file.delete()) {
-                  WidgetFactory.showAlert(Studio.stage, "Cannot delete file !", "The file \"" + file.getAbsolutePath() + "\" couldn't be deleted !");
+                  WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.cannot_delete_file"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.couldn_t_be_deleted"));
                 }
                 break;
               }
@@ -330,19 +330,19 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   private boolean moveFile(File file, File target, String subfolder) {
     if (!target.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Target folder doesn't exist !", "The target folder \"" + target.getAbsolutePath() + "\" doesn't exist !");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.target_folder_doesn_t_exist"), Messages.get("dialog.the_target_folder") + target.getAbsolutePath() + Messages.get("dialog.doesn_t_exist"));
       return false;
     }
     if (subfolder != null) {
       target = new File(target, subfolder);
       if (!target.exists() && !target.mkdirs()) {
-        WidgetFactory.showAlert(Studio.stage, "Cannot create target table folder !", "The target table folder \"" + target.getAbsolutePath() + "\" couldn't be created !");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.cannot_create_target_table_folder"), Messages.get("dialog.the_target_table_folder") + target.getAbsolutePath() + Messages.get("dialog.couldn_t_be_created"));
         return false;
       }
     }
     File targetFile = new File(target, file.getName());
     if (targetFile.exists()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Overwrite file ?", "A file with same name \"" + file.getName() + "\" already exists in target folder !", "Do you want to overwrite it ?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.overwrite_file"), Messages.get("dialog.a_file_with_same_name") + file.getName() + Messages.get("dialog.already_exists_in_target_folder"), Messages.get("dialog.do_you_want_to_overwrite_it"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         targetFile.delete();
       }
@@ -357,7 +357,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       }
       catch (IOException ioe) {
         LOG.error("Cannot move file " + file.getName(), ioe);
-        WidgetFactory.showAlert(Studio.stage, "File cannot be copied", "The file \"" + file.getName() + "\" couldn't be copied in target folder !");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.file_cannot_be_copied"), Messages.get("dialog.the_file") + file.getName() + Messages.get("dialog.couldn_t_be_copied_in_target_folder"));
       }
     });
     return false;

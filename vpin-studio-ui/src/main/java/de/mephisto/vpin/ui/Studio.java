@@ -122,7 +122,7 @@ public class Studio extends Application {
     }
     catch (IOException e) {
       LOG.error("Application already running!");
-      WidgetFactory.showAlert(stage, "Another VPin Studio client is already running!");
+      WidgetFactory.showAlert(stage, Messages.get("dialog.another_vpin_studio_client_is_already_running"));
       System.exit(-1);
     }
 
@@ -147,7 +147,7 @@ public class Studio extends Application {
         NavigationController.refreshViewCache();
 
         Studio.loadLauncher(createLauncherStage());
-        WidgetFactory.showAlert(stage, "Server Connection Failed", "You have been disconnected from the server.");
+        WidgetFactory.showAlert(stage, Messages.get("dialog.server_connection_failed"), Messages.get("dialog.you_have_been_disconnected_from_the_server"));
       });
     };
 
@@ -520,12 +520,12 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"xdg-open", url});
         }
         catch (IOException e) {
-          LOG.error("Error opening browser: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
         }
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_determine_operating_system_for_name") + osName + "\".");
       }
     }
   }
@@ -598,8 +598,8 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-t", file.getAbsolutePath()});
         }
         catch (IOException e) {
-          LOG.error("Error opening browser: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
         }
       }
       else if (osName.toLowerCase().contains("nux")) {
@@ -607,12 +607,12 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }
         catch (IOException e) {
-          LOG.error("Error opening browser: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
         }
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_determine_operating_system_for_name") + osName + "\".");
       }
     }
     return false;
@@ -626,7 +626,7 @@ public class Studio extends Application {
 
       if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
         Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
+        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.exit_and_launch") + frontend.getName(), Messages.get("dialog.exit_and_launch") + frontend.getName(), Messages.get("dialog.exit"), Messages.get("dialog.select_the_checkbox_below_if_you_do"), null, Messages.get("dialog.do_not_show_again"), false);
         if (confirmationResult.isCancelClicked()) {
           return false;
         }
@@ -663,7 +663,7 @@ public class Studio extends Application {
 
 
     if (polling.get()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, exit VPin Studio");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.jobs_running"), Messages.get("dialog.there_are_still_jobs_running"), Messages.get("dialog.these_jobs_will_continue_after_quitting"), Messages.get("dialog.got_it_exit_vpin_studio"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         System.exit(0);
       }

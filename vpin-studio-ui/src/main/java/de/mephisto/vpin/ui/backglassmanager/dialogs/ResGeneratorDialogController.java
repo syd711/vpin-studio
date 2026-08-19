@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ResGeneratorDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ResGeneratorDialogController.class);
@@ -203,7 +204,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     if (result.isSuccess()) {
       ReturnMessage status = result.getFirstTypedResult();
       if (status != null && !status.isOk()) {
-        WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", status.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_saving_res_file"), status.getMessage());
       }
       else {
         stage.close();
@@ -395,7 +396,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(emulatorId, fileName, false))
         .thenAcceptLater(res -> setScreenRes(res))
-        .onErrorLater(ex -> WidgetFactory.showAlert(stage, "Error", "Cannt load .res file :", ex.getMessage()));
+        .onErrorLater(ex -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannt_load_res_file"), ex.getMessage()));
 
     JFXFuture.supplyAsync(() -> {
           DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(emulatorId, fileName);

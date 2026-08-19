@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ManiaTableSynchronizationDialogController implements DialogController, Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaTableSynchronizationDialogController.class);
@@ -125,7 +126,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     }
     catch (Exception e) {
       LOG.error("Failed to fetch accounts: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to fetch accounts: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_fetch_accounts") + e.getMessage());
     }
 
     tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ManiaTableSyncResultModel>() {

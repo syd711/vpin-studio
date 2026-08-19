@@ -190,7 +190,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onDialogReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset all dialogs?", "All dialog sizes and positions will be resetted.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.reset_all_dialogs"), Messages.get("dialog.all_dialog_sizes_and_positions_will_be"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       LocalUISettings.reset();
     }
@@ -198,7 +198,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onHideReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset \"Do not show again\" flags?", "All previously hidden dialogs or panels will be shown again.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.reset_do_not_show_again_flags"), Messages.get("dialog.all_previously_hidden_dialogs_or_panels_will"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 

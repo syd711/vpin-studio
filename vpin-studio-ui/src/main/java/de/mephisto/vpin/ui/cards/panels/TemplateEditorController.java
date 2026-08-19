@@ -233,7 +233,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       }
 
       if (defaultMediaItem != null) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + defaultMediaItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete") + defaultMediaItem.getName() + "\"?", Messages.get("dialog.the_selected_media_will_be_deleted"), null, Messages.get("common.delete"));
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
           client.getGameMediaService().deleteMedia(game.getId(), false, screen, defaultMediaItem.getName());
@@ -277,7 +277,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
     String targetScreen = cardSettings.getPopperScreen();
     if (StringUtils.isEmpty(targetScreen)) {
-      WidgetFactory.showAlert(stage, "No target screen selected.", "Select a target screen in the preferences.");
+      WidgetFactory.showAlert(stage, Messages.get("dialog.no_target_screen_selected"), Messages.get("dialog.select_a_target_screen_in_the_preferences"));
     }
     else {
       ProgressDialog.createProgressDialog(new DesignerGeneratorProgressModel(client, "Generating Media", getSelectedTemplateType()));
@@ -325,7 +325,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     List<CardTemplate> items = client.getHighscoreCardTemplatesClient().getTemplates();
     Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
     if (duplicate.isPresent()) {
-      WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.a_template_with_the_name") + s + Messages.get("dialog.already_exist"));
       return true;
     }
     return false;
@@ -358,7 +358,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
     catch (Exception ioe) {
       LOG.error("Cannot download template {}", cardTemplate.getName(), ioe);
-      WidgetFactory.showAlert(stage, "Error", "Cannot download template " + cardTemplate.getName() + ": " + ioe.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_download_template") + cardTemplate.getName() + ": " + ioe.getMessage());
     }
   }
 
@@ -377,7 +377,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     gameName = gameName.trim();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that describes the layout.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
+    String s = WidgetFactory.showInputDialog(stage, Messages.get("dialog.new_template"), Messages.get("dialog.enter_template_name"), Messages.get("dialog.enter_a_meaningful_name_that_describes_the"), Messages.get("dialog.the_values_of_the_selected_template") + template.getName() + Messages.get("dialog.will_be_used_as_default"), gameName);
     if (!StringUtils.isEmpty(s) && !checkDuplicate(s)) {
       template.setName(s);
       template.setParentId(null);
@@ -386,7 +386,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           .thenAcceptLater(newTemplate -> doOnCreate(newTemplate))
           .onErrorLater(ex -> {
             LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.creating_template_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + ex.getMessage());
           });
     }
   }
@@ -403,7 +403,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void onRename(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getSelectedCardTemplate();
-    String s = WidgetFactory.showInputDialog(stage, "Rename Template", "Enter Template Name", "Enter the new template name.", null, cardTemplate.getName());
+    String s = WidgetFactory.showInputDialog(stage, Messages.get("dialog.rename_template"), Messages.get("dialog.enter_template_name"), Messages.get("dialog.enter_the_new_template_name"), null, cardTemplate.getName());
     if (!StringUtils.isEmpty(s)) {
       if (checkDuplicate(s)) {
         return;
@@ -419,7 +419,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           })
           .onErrorLater(ex -> {
             LOG.error("Failed to rename template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.renaming_template_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + ex.getMessage());
           });
     }
   }
@@ -430,12 +430,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     CardTemplate cardTemplate = getSelectedCardTemplate();
 
     String title = "Delete Template";
-    String button = "Delete";
+    String button = Messages.get("common.delete");
     String msg1 = "Delete template \"" + cardTemplate.getName() + "\"?";
     String msg2 = "Assigned tables will use the default template again.";
     if (cardTemplate.isDefault()) {
       title = "Reset Template";
-      button = "Reset";
+      button = Messages.get("dialog.reset");
       msg1 = "Reset Default template ?";
       msg2 = "The Default template will reset to its default values.";
     }
@@ -460,7 +460,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           })
           .onErrorLater(ex -> {
             LOG.error("Failed to delete template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Template Deletion Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.template_deletion_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + ex.getMessage());
           });
     }
   }
@@ -479,7 +479,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         item -> {
           client.getHighscoreCardTemplatesClient().save(item);
         }));
-    WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    WidgetFactory.showConfirmation(stage, Messages.get("dialog.update_finished"), Messages.get("dialog.updated") + items.size() + Messages.get("dialog.templates"));
   }
 
   public CardTemplate getSelectedCardTemplate() {
@@ -639,7 +639,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         String targetScreen = cardSettings.getPopperScreen();
         if (StringUtils.isEmpty(targetScreen)) {
-          WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
+          WidgetFactory.showAlert(stage, Messages.get("dialog.not_target_screen_selected"), Messages.get("dialog.select_a_target_screen_in_the_preferences"));
           return;
         }
       }
@@ -659,9 +659,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       return;
     }
 
-    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Generate Wheel Icon", "Generate Wheel Icon", "Cancel",
-        "Generate wheel icon for \"" + this.gameRepresentation.get().getGameDisplayName() + "\"? The existing wheel icon will be overwritten.",
-        "Select the checkbox below if you do not wish to see this question anymore.", "Do not show again", false);
+    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.generate_wheel_icon"), Messages.get("dialog.generate_wheel_icon"), Messages.get("common.cancel"),
+        Messages.get("dialog.generate_wheel_icon_for") + this.gameRepresentation.get().getGameDisplayName() + Messages.get("dialog.the_existing_wheel_icon_will_be_overwritten"),
+        Messages.get("dialog.select_the_checkbox_below_if_you_do"), Messages.get("dialog.do_not_show_again"), false);
     if (confirmationResult.isCancelClicked()) {
       return;
     }
@@ -777,7 +777,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           .thenLater(() -> refreshPreview(this.gameRepresentation))
           .onErrorLater(e -> {
             LOG.error("Failed to save template: {}", e.getMessage(), e);
-            WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_template") + e.getMessage());
           });
     }, 1000);
   }
@@ -966,7 +966,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   private void refreshTemplates(Consumer<List<CardTemplate>> doAfter) {
     JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates(getSelectedTemplateType()))
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading templates failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.loading_templates_failed") + e.getMessage()));
           return Collections.emptyList();
         })
         .thenAcceptLater(templates -> {
@@ -1335,7 +1335,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         if (gameRepresentation.isPresent()) {
           CardTemplate existingTemplate = client.getHighscoreCardTemplatesClient().getCardTemplateForGame(gameRepresentation.get(), getSelectedTemplateType());
           if (existingTemplate != null && !existingTemplate.isTemplate()) {
-            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply the template \"" + newValue.getName() + "\" to the table \"" + gameRepresentation.get().getGameDisplayName() + "\"?", "This will delete the existing custom template.");
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.apply_the_template") + newValue.getName() + Messages.get("dialog.to_the_table") + gameRepresentation.get().getGameDisplayName() + "\"?", Messages.get("dialog.this_will_delete_the_existing_custom_template"));
             if (!result.get().equals(ButtonType.OK)) {
               selectTemplateInCombo(oldValue);
               return;

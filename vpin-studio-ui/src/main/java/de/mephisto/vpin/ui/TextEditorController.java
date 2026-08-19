@@ -28,6 +28,7 @@ import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TextEditorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TextEditorController.class);
@@ -78,7 +79,7 @@ public class TextEditorController implements Initializable, DialogController {
     }
     catch (Exception ex) {
       LOG.error("Failed to save file: {} ", ex.getMessage(), ex);
-      WidgetFactory.showAlert(stage, "Error", "Error saving file: " + ex.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_saving_file") + ex.getMessage());
     }
 
     this.saveBtn.setDisable(false);

@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AltSound2EditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -144,7 +145,7 @@ public class AltSound2EditorController implements Initializable {
   private void onFileEdit() {
     AltSoundEntryModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      String updatedName = WidgetFactory.showInputDialog(Studio.stage, "Rename Entry", "Enter the updated filename.", "The itself won't re renamed, only the entry in the CSV file.", null, selectedItem.filename.get());
+      String updatedName = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.rename_entry"), Messages.get("dialog.enter_the_updated_filename"), Messages.get("dialog.the_itself_won_t_re_renamed_only"), null, selectedItem.filename.get());
       if (!StringUtils.isEmpty(updatedName) && FileUtils.isValidFilename(updatedName)) {
         selectedItem.filename.setValue(updatedName);
         this.refresh();
@@ -156,7 +157,7 @@ public class AltSound2EditorController implements Initializable {
   private void onProfileDelete() {
     AltSound2DuckingProfile value = this.profilesCombo.getValue();
     if (value != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Profile \"" + value.getType().name().toUpperCase() + "\" " + value.getId() + "?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_profile") + value.getType().name().toUpperCase() + "\" " + value.getId() + "?",
           "All related audio files will be resetted to the default profile.",
           "If no other profile exists for this sample type, it will be removed from all ducking lists.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -225,8 +226,8 @@ public class AltSound2EditorController implements Initializable {
       this.altSound = client.getAltSoundService().getAltSound(game.getId());
       this.refresh();
     } catch (Exception ex) {
-      LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save ALT sound: " + ex.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage());
     }
   }
 

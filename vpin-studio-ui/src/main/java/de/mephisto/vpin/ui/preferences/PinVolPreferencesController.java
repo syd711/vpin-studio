@@ -137,7 +137,7 @@ public class PinVolPreferencesController implements Initializable {
       debouncer.debounce("installationFolderText", () -> {
         JFXFuture.runAsync(() -> client.getPreferenceService().setPreference(PreferenceNames.PINVOL_FOLDER, folder))
             .thenLater(() -> refresh(true))
-            .onErrorLater(e -> WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage()));
+            .onErrorLater(e -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage()));
       }, 300);
     });
 
@@ -238,8 +238,8 @@ public class PinVolPreferencesController implements Initializable {
   @FXML
   private void onOpen() {
     if (running.get()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "PinVol Running", "The \"PinVol.exe\" is currently running. To open the UI, the process will be terminated.",
-          "The process has to be restarted afterwards.", "Kill Process");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.pinvol_running"), Messages.get("dialog.the_pinvol_exe_is_currently_running_to"),
+          Messages.get("dialog.the_process_has_to_be_restarted_afterwards"), Messages.get("dialog.kill_process"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.supplyAsync(() -> client.getPinVolService().kill())
           .thenAcceptLater(success -> {
@@ -258,7 +258,7 @@ public class PinVolPreferencesController implements Initializable {
     File file = useDefaultFolderCheckBox.isSelected() ? new File("./resources", "PinVol.exe") : 
           new File(installationFolderText.getText(), "PinVol.exe");
     if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find PinVol.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_pinvol_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
     }
     else {
       try {
@@ -269,8 +269,8 @@ public class PinVolPreferencesController implements Initializable {
         LOG.info("Executed PinVol command: " + String.join(" ", commands));
       }
       catch (Exception e) {
-        LOG.error("Error opening browser: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+        LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
       }
     }
   }

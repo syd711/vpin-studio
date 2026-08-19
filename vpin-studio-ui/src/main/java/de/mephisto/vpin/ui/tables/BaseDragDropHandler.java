@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public abstract class BaseDragDropHandler {
   private final static Logger LOG = LoggerFactory.getLogger(BaseDragDropHandler.class);
@@ -113,7 +114,7 @@ public abstract class BaseDragDropHandler {
         catch (Exception e) {
           LOG.info("Failed to dispatch dropped file: " + e.getMessage(), e);
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to drop file: " + e.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_drop_file") + e.getMessage());
           });
         }
       }

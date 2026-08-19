@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabFlexDMDController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabFlexDMDController.class);
@@ -25,7 +26,7 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
   @FXML
   private void onFlexDMD() {
     if (!client.getMameService().runFlexSetup()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_flexdmd_ui"), Messages.get("dialog.the_exe_file_was_not_found"));
     }
   }
 

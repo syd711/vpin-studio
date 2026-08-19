@@ -287,7 +287,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           }
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT sound folder found for game \"" + game.get().getId() + "\".");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_valid_alt_sound_folder_found_for") + game.get().getId() + "\".");
         }
       }
     }
@@ -316,7 +316,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           }
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_valid_alt_color_folder_found_for") + game.get().getId() + "\".");
         }
       }
     }
@@ -369,7 +369,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         File dmdFolder = dmdPackage != null ? new File(tablesFolder, dmdPackage.getName()) : null;
         if (dmdFolder == null) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "No DMD found.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_dmd_found"));
         }
         else {
           SystemUtil.openFolder(dmdFolder, tablesFolder);
@@ -397,8 +397,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to open VPX: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPX: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_open_vpx") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpx") + e.getMessage());
     }
   }
 

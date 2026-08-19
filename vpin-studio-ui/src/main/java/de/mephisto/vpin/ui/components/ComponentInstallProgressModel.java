@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentInstallProgressModel extends ProgressModel<ComponentInstallation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentInstallProgressModel.class);
@@ -80,10 +81,10 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentInstal
       LOG.error("Failed to run installation: " + e.getMessage(), e);
       Platform.runLater(() -> {
         if (simulate) {
-          WidgetFactory.showAlert(Studio.stage, "Component Installation Simulation Failed", "Failed to simulate installation update for " + next + ": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_installation_simulation_failed"), Messages.get("dialog.failed_to_simulate_installation_update_for") + next + ": " + e.getMessage());
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Component Installation Failed", "Failed install update for " + next + ": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_installation_failed"), Messages.get("dialog.failed_install_update_for") + next + ": " + e.getMessage());
         }
       });
     }

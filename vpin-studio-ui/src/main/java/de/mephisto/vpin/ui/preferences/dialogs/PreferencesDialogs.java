@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PreferencesDialogs {
   public static void openMediaSource(@NonNull TableAssetSource source) {
@@ -31,7 +32,7 @@ public class PreferencesDialogs {
         break;
       }
       default:
-        WidgetFactory.showAlert(Studio.stage, "Error", "Adapter not supported.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.adapter_not_supported"));
     }
   }
 
@@ -85,7 +86,7 @@ public class PreferencesDialogs {
   }
 
   public static void openRestoreBackupDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(StudioRestoreBackupDialogController.class, "dialog-restore-backup.fxml", "Restore Backup");
+    Stage stage = Dialogs.createStudioDialogStage(StudioRestoreBackupDialogController.class, "dialog-restore-backup.fxml", Messages.get("dialog.restore_backup_2"));
     StudioRestoreBackupDialogController controller = (StudioRestoreBackupDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();

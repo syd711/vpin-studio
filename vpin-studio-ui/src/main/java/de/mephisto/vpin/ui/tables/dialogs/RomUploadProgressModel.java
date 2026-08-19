@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class RomUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -44,9 +45,9 @@ public class RomUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("ROM upload failed: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.rom_upload_failed") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "ROM upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.rom_upload_failed") + e.getMessage());
       });
     }
   }

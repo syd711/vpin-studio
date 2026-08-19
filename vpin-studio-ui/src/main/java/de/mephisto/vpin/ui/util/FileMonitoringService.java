@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class FileMonitoringService {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -122,7 +123,7 @@ public class FileMonitoringService {
                   catch (Exception e) {
                     LOG.error("Failed to save monitored file: " + e.getMessage(), e);
                     Platform.runLater(() -> {
-                      WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+                      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
                     });
                   }
                 }, 300);

@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class RecordingProgressDialogController implements Initializable, DialogController, JobUpdatesListener {
   private final static Logger LOG = LoggerFactory.getLogger(RecordingProgressDialogController.class);
@@ -206,7 +207,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     }
 
-    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings, recorded " + jobDescriptor.getUserData() + " video(s).");
+    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings, recorded Messages.get("dialog.jobdescriptor_getuserdata") video(s).");
   }
 
   private void finishRecording(boolean cancelled) {
@@ -244,11 +245,11 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       });
 
       if (jobDescriptor.getError() != null) {
-        WidgetFactory.showAlert(Studio.stage, "Recording Failed", jobDescriptor.getError(), jobDescriptor.getErrorHint());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.recording_failed"), jobDescriptor.getError(), jobDescriptor.getErrorHint());
       }
       else if (cancelled) {
         ProgressDialog.createProgressDialog(new CancelRecordingProgressModel());
-        WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.", jobDescriptor.getErrorHint());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.recording_cancelled"), Messages.get("dialog.the_recording_has_been_cancelled"), jobDescriptor.getErrorHint());
       }
       else {
         String game = "game";
@@ -259,7 +260,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         if (((int) jobDescriptor.getUserData()) > 1) {
           video = "videos";
         }
-        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " " + game + ", recorded " + jobDescriptor.getUserData() + " " + video + ".");
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.recording_finished"), Messages.get("dialog.finished_recording_of") + recordingDataSummary.size() + " Messages.get("dialog.game"), recorded Messages.get("dialog.jobdescriptor_getuserdata") Messages.get("dialog.video").");
       }
 
     });

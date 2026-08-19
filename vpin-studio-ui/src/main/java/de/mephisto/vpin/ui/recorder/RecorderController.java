@@ -198,7 +198,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private void onRecord() {
     JobDescriptor recording = client.getRecorderService().isRecording();
     if (recording != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Recorder Active", "Another recording is still active.", "Please wait or cancel all active recordings.", "Stop Recordings");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.recorder_active"), Messages.get("dialog.another_recording_is_still_active"), Messages.get("dialog.please_wait_or_cancel_all_active_recordings"), Messages.get("dialog.stop_recordings"));
       if (result.isEmpty() || !result.get().equals(ButtonType.OK)) {
         client.getRecorderService().stopRecording(recording);
       }
@@ -259,7 +259,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
               : client.getGameService().getGamesByEmulator(id);
         })
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
           return Collections.emptyList();
         })
         .thenAcceptLater(data -> {

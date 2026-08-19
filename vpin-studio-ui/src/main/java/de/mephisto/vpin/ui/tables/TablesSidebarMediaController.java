@@ -42,6 +42,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarMediaController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -94,7 +95,7 @@ public class TablesSidebarMediaController implements Initializable {
     GameRepresentation gameRepresentation = game.get();
     FrontendMediaItemRepresentation defaultMediaItem = client.getFrontendService().getDefaultFrontendMediaItem(gameRepresentation.getId(), vPinScreen);
     if (defaultMediaItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete \"" + defaultMediaItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("common.delete"), Messages.get("dialog.delete") + defaultMediaItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getGameMediaService().deleteMedia(gameRepresentation.getId(), false, vPinScreen, defaultMediaItem.getName());
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);

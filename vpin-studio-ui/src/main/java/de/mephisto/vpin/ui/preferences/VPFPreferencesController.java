@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPFPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VPFPreferencesController.class);
@@ -51,11 +52,11 @@ public class VPFPreferencesController implements Initializable {
     }
     // report to user
     if (error == null) {
-      WidgetFactory.showInformation(stage, "VPF Account", "Login test successful!");
+      WidgetFactory.showInformation(stage, Messages.get("dialog.vpf_account"), Messages.get("dialog.login_test_successful"));
 
     }
     else {
-      WidgetFactory.showAlert(stage, "VPF Account Error", "Login test not successful!", error);
+      WidgetFactory.showAlert(stage, Messages.get("dialog.vpf_account_error"), Messages.get("dialog.login_test_not_successful"), error);
     }
   }
 

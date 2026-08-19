@@ -488,7 +488,7 @@ public class PreferencesController extends SettingsSceneController implements In
     }
     catch (Exception e) {
       LOG.error("Failed to loading settings view {}: {}", screen, e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
     }
   }
 

@@ -141,7 +141,7 @@ public class PatchUploadController extends BaseUploadController {
       }
       catch (Exception e) {
         LOG.error("Patching table post upload failed: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Patching table post upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.patching_table_post_upload_failed") + e.getMessage());
       }
     }
   }

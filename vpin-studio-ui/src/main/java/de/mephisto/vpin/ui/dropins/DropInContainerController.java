@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DropInContainerController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DropInContainerController.class);
@@ -82,10 +83,10 @@ public class DropInContainerController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete File", "Move \"" + file.getName() + "\" to trash bin?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_file"), Messages.get("dialog.move") + file.getName() + Messages.get("dialog.to_trash_bin"));
     if (result.get().equals(ButtonType.OK)) {
       if (!TrashBin.moveTo(file)) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Deletion failed, another process is blocking this file.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.deletion_failed_another_process_is_blocking_this"));
       }
     }
     DropInManager.getInstance().reload();
@@ -98,7 +99,7 @@ public class DropInContainerController implements Initializable {
       DropInManager.getInstance().install(file);
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "Invalid View", "Drop-ins can only be installed when the table overview is selected.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.invalid_view"), Messages.get("dialog.drop_ins_can_only_be_installed_when"));
     }
   }
 

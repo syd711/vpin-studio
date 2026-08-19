@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PinballXSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXSettingsPreferencesController.class);
@@ -50,10 +51,10 @@ public class PinballXSettingsPreferencesController implements Initializable {
     }
     // report to user
     if (connected) {
-      WidgetFactory.showInformation(stage, "GameEx Account", "Login test successful!");
+      WidgetFactory.showInformation(stage, Messages.get("dialog.gameex_account"), Messages.get("dialog.login_test_successful"));
     }
     else {
-      WidgetFactory.showAlert(stage, "GameEx Account Error", "Login test not successful!", error);
+      WidgetFactory.showAlert(stage, Messages.get("dialog.gameex_account_error"), Messages.get("dialog.login_test_not_successful"), error);
     }
   }
 
@@ -99,8 +100,8 @@ public class PinballXSettingsPreferencesController implements Initializable {
       client.getFrontendService().saveSettings(pinballXSettings);
     }
     catch (Exception e) {
-      LOG.error("Failed to update frontend settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Error", "Failed to update frontend settings: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_update_frontend_settings") + e.getMessage(), e);
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_frontend_settings") + e.getMessage());
     }
   }
 

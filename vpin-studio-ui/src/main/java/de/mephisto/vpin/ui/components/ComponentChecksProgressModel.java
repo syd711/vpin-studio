@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentChecksProgressModel extends ProgressModel<ComponentInstallation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentChecksProgressModel.class);
@@ -99,7 +100,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
     if (!collect.isEmpty()) {
       LOG.error("Failed to retrieve some component information: {}", String.join("\n", collect));
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "The component update check failed for one or more components.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_check_failed"), Messages.get("dialog.the_component_update_check_failed_for_one"));
       });
     }
   }

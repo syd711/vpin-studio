@@ -158,7 +158,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
             }
         )
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         })
         .thenAcceptLater(objs -> {

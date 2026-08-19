@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableDialogs {
   private final static Logger LOG = LoggerFactory.getLogger(TableDialogs.class);
@@ -82,9 +83,9 @@ public class TableDialogs {
         FrontendMediaRepresentation medias = client.getGameMediaService().getMedia(id, playlistMode);
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
-          Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
-              "A media asset already exists.",
-              "Append new asset or overwrite existing asset?", "Overwrite", "Append");
+          Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, Messages.get("dialog.replace_media"),
+              Messages.get("dialog.a_media_asset_already_exists"),
+              Messages.get("dialog.append_new_asset_or_overwrite_existing_asset"), Messages.get("dialog.overwrite"), Messages.get("dialog.append"));
           if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
           }
           else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
@@ -227,7 +228,7 @@ public class TableDialogs {
       if (game.getDirectB2SPath() != null) {
         help2 = "The existing directb2 file of this table will be overwritten.";
       }
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_backglass_for") + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -246,7 +247,7 @@ public class TableDialogs {
       if (game.getDirectB2SPath() != null) {
         help2 = "The existing .res file of this table will be overwritten.";
       }
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .res file for \"" + game.getGameDisplayName() + "\"?", help2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_res_file_for") + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
           ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file);
@@ -268,7 +269,7 @@ public class TableDialogs {
         if (game.getIniPath() != null) {
           help2 = "The existing .ini file of this table will be overwritten.";
         }
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_ini_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -286,7 +287,7 @@ public class TableDialogs {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload BAM .cfg file for \"" + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_bam_cfg_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId());
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -307,7 +308,7 @@ public class TableDialogs {
         if (game.getPovPath() != null) {
           help2 = "The existing .pov file of this table will be overwritten.";
         }
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_pov_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -331,12 +332,12 @@ public class TableDialogs {
       targetFile = FileUtils.uniqueFile(targetFile);
       try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
         IOUtils.copy(in, fileOutputStream);
-        WidgetFactory.showInformation(stage, "Export Finished", "Written \"" + targetFile.getName() + "\".");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.export_finished"), Messages.get("dialog.written") + targetFile.getName() + "\".");
         return true;
       }
       catch (IOException e) {
         LOG.error("Failed to download {} : {}", targetFile.getName(), e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Error", "Failed to download " + targetFile.getName() + ": " + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_download") + targetFile.getName() + ": " + e.getMessage());
       }
     }
     return false;
@@ -479,7 +480,7 @@ public class TableDialogs {
 
   public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (client.getEmulatorService().isVpxGame(game) && StringUtils.isEmpty(game.getRom())) {
-      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom"), Messages.get("dialog.table") + game.getGameDisplayName() + Messages.get("dialog.has_no_rom_name_set"), Messages.get("dialog.the_rom_name_is_required_for_this"));
     }
 
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
@@ -491,7 +492,7 @@ public class TableDialogs {
 
   public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
-      WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom"), Messages.get("dialog.table") + game.getGameDisplayName() + Messages.get("dialog.has_no_rom_name_set"), Messages.get("dialog.the_rom_name_is_required_for_this"));
     }
 
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
@@ -536,7 +537,7 @@ public class TableDialogs {
   private static Optional<UploadDescriptor> openTableUploadDialogUnchecked(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_game_emulator_found"));
       return Optional.empty();
     }
 
@@ -549,7 +550,7 @@ public class TableDialogs {
   }
 
   public static void openTableDeleteDialog(TableOverviewController tableOverviewController, List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    Stage stage = Dialogs.createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
+    Stage stage = Dialogs.createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", Messages.get("common.delete"));
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
     controller.setGames(tableOverviewController, selectedGames, allGames);
     stage.showAndWait();
@@ -578,8 +579,8 @@ public class TableDialogs {
   public static void openAutoMatchAll(List<GameRepresentation> games) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + games.size() + " tables?",
-            "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+        ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, Messages.get("dialog.auto_match_table_and_version_for_all") + games.size() + Messages.get("dialog.tables"),
+            Messages.get("common.cancel"), "Continue", Messages.get("dialog.the_table_and_display_name_is_used"), Messages.get("dialog.you_may_have_to_adept_the_result"), Messages.get("dialog.overwrite_existing_matchings"), false);
         if (!result.isApplyClicked()) {
           ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, result.isChecked(), false));
           EventManager.getInstance().notifyTablesChanged();
@@ -587,8 +588,8 @@ public class TableDialogs {
       }
     }
     else {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + games.size() + " tables?",
-          "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, Messages.get("dialog.auto_match_table_and_version_for_all") + games.size() + Messages.get("dialog.tables"),
+          Messages.get("common.cancel"), "Continue", Messages.get("dialog.the_table_and_display_name_is_used"), Messages.get("dialog.you_may_have_to_adept_the_result"), Messages.get("dialog.overwrite_existing_matchings"), false);
       if (!result.isApplyClicked()) {
         ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, result.isChecked(), false));
         EventManager.getInstance().notifyTablesChanged();
@@ -609,13 +610,13 @@ public class TableDialogs {
   }
 
   private static boolean onOpenAutoMatch(List<GameRepresentation> games) {
-    String title = "Auto-Match table and version for " + games.size() + " tables?";
+    String title = "Auto-Match table and version for " + games.size() + Messages.get("dialog.tables");
     if (games.size() == 1) {
       title = "Auto-Match table and version for \"" + games.getFirst().getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        "This will overwrite the existing mapping.", "This action will overwrite the VPS table and version IDs fields.", "Auto-Match");
+        Messages.get("dialog.this_will_overwrite_the_existing_mapping"), Messages.get("dialog.this_action_will_overwrite_the_vps_table"), Messages.get("dialog.auto_match"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, true, false));
       return true;
@@ -624,9 +625,9 @@ public class TableDialogs {
   }
 
   public static boolean openScanAllDialog(List<GameRepresentation> games) {
-    String title = "Re-scan all " + games.size() + " tables?";
+    String title = "Re-scan all " + games.size() + Messages.get("dialog.tables");
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        "Scanning will try to resolve ROM and highscore file names of the selected tables.", null, "Start Scan");
+        Messages.get("dialog.scanning_will_try_to_resolve_rom_and"), null, Messages.get("dialog.start_scan"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(ClearCacheProgressModel.getFullClearCacheModel());
       ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", games));
@@ -715,13 +716,13 @@ public class TableDialogs {
     if (selectedItems.isEmpty()) {
       return false;
     }
-    String title = "Re-validate " + selectedItems.size() + " tables?";
+    String title = "Re-validate " + selectedItems.size() + Messages.get("dialog.tables");
     if (selectedItems.size() == 1) {
       title = "Re-validate table \"" + selectedItems.getFirst().getGameDisplayName() + "\"?";
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        "This will reset the dismissed validations for this table too.", null);
+        Messages.get("dialog.this_will_reset_the_dismissed_validations_for"), null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       title = "Re-validating " + selectedItems.size() + " tables";
       if (selectedItems.size() == 1) {

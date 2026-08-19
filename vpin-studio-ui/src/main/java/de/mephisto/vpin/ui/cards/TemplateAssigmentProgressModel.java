@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateAssigmentProgressModel.class);
@@ -79,7 +80,7 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
     catch (Exception e) {
       LOG.error("Failed to save template mapping: {}", e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save template mapping: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_template_mapping") + e.getMessage());
       });
     }
   }

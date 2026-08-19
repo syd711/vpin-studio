@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabB2SController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabB2SController.class);
@@ -37,7 +38,7 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
       super.openFile(exe);
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "Error", "The server was unable to determine the backglass server installation directory.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_server_was_unable_to_determine_the_2"));
     }
 
   }

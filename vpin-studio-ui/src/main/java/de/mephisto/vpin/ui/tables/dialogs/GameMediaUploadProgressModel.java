@@ -16,6 +16,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class GameMediaUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -76,9 +77,9 @@ public class GameMediaUploadProgressModel extends ProgressModel<File> {
       percentage++;
     }
     catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.table_upload_failed") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Table upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.table_upload_failed") + e.getMessage());
       });
     }
   }

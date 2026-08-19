@@ -171,7 +171,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       openFolder(new File(folder));
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "Error", "The server was unable to determine the target folder.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_server_was_unable_to_determine_the"));
     }
   }
 
@@ -181,7 +181,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
         SystemUtil.openFolder(file);
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder\"" + file.getAbsolutePath() + "\" does not exist.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("dialog.the_folder") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
       }
     }
     catch (Exception e) {
@@ -192,7 +192,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected void openFile(File file) {
     boolean open = Studio.open(file);
     if (!open) {
-      WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("dialog.the_folder_2") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
     }
   }
 

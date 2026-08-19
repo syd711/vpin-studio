@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CabMonitorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CabMonitorController.class);
@@ -84,7 +85,7 @@ public class CabMonitorController implements Initializable, DialogController {
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScreenshotsDownloadProgressModel("Download Screenshots", targetFolder));
       if (!resultModel.getResults().isEmpty()) {
         File target = (File) resultModel.getResults().getFirst();
-        WidgetFactory.showInformation(stage, "Screenshots Generated", "Downloaded \"" + target.getAbsolutePath() + "\".");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.screenshots_generated"), Messages.get("dialog.downloaded") + target.getAbsolutePath() + "\".");
       }
     }
   }

@@ -28,6 +28,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableHighscoresAdminController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -56,7 +57,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
 
     HighscoreBackup selectedItem = backupList.getSelectionModel().getSelectedItem();
     if(selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Restore selected highscore for table \"" + game.getGameDisplayName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.restore_selected_highscore_for_table") + game.getGameDisplayName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           String rom = this.game.getRom();
@@ -67,7 +68,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
           EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         } catch (Exception ex) {
           LOG.error("Failed to restore highscore: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to restore highscore backup: " + ex.getMessage() );
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_restore_highscore_backup") + ex.getMessage() );
         }
       }
     }
@@ -79,7 +80,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
 
     List<HighscoreBackup> selectedItems = backupList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + " backup(s)?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + Messages.get("dialog.backup_s"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         String rom = this.game.getRom();
         if (StringUtils.isEmpty(rom)) {

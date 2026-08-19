@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class HighscorePreferencesController implements Initializable {
 
@@ -30,7 +31,7 @@ public class HighscorePreferencesController implements Initializable {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new NvRamDownloadProgressModel("NVRam Synchronization"));
     if (!progressDialog.getResults().isEmpty()) {
       NVRamsInfo nvRamsInfo = (NVRamsInfo) progressDialog.getResults().getFirst();
-      WidgetFactory.showInformation(Studio.stage, "NVRam Reset", "Resetted " + nvRamsInfo.getCount() + " nvram files.");
+      WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.nvram_reset"), Messages.get("dialog.resetted") + nvRamsInfo.getCount() + Messages.get("dialog.nvram_files"));
     }
   }
 

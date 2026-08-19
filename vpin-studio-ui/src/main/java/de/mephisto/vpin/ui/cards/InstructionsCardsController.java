@@ -75,6 +75,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class InstructionsCardsController  implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(InstructionsCardsController.class);
@@ -483,7 +484,7 @@ public class InstructionsCardsController  implements Initializable {
         }
       }
       else if (dirty.get()) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Data has been changed, do you want to save it ?");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.data_has_been_changed_do_you_want"));
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           if (!save(table)) {
             return;
