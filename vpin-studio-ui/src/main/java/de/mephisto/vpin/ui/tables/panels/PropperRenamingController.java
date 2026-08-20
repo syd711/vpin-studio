@@ -107,7 +107,7 @@ public class PropperRenamingController implements Initializable {
    * Do this once after initialize method is called
    */
   public void initBindings(int width, UISettings uiSettings, TextField screenNameField, TextField fileNameField, TextField gameNameField) {
-    root.setMinWidth(width);
+//    root.setMinWidth(width);
     this.uiSettings = uiSettings;
 
     this.screenNameField = screenNameField;

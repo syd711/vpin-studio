@@ -42,11 +42,11 @@
                      <tabs>
                         <Tab closable="false" text="%tables.autofill_settings.details">
                            <content>
-                              <ScrollPane fx:id="detailsScroller" hbarPolicy="NEVER">
+                              <ScrollPane fx:id="detailsScroller" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308">
                                  <content>
-                                    <VBox fx:id="detailsRoot">
+                                    <VBox fx:id="detailsRoot" maxWidth="1.7976931348623157E308">
                                        <children>
-                                          <VBox minHeight="180.0">
+                                          <VBox maxWidth="1.7976931348623157E308" minHeight="180.0">
                                              <children>
                                                 <BorderPane>
                                                    <left>
@@ -66,9 +66,9 @@
                                                 </BorderPane>
                                                 <GridPane hgap="3.0" vgap="3.0">
                                                   <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -209,8 +209,8 @@
                                                 </GridPane>
                                                 <GridPane fx:id="patchVersionPanel" hgap="3.0" vgap="3.0">
                                                   <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
@@ -228,20 +228,24 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Label GridPane.columnIndex="2">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip prefWidth="300.0" text="%tables.table_data.if_the_table_has_been_patched_you_can" wrapText="true" />
-                                                         </tooltip>
+                                                      <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
                                                          <GridPane.margin>
                                                             <Insets left="3.0" />
                                                          </GridPane.margin>
-                                                      </Label>
+                                                         <children>
+                                                            <Label>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="%tables.table_data.if_the_table_has_been_patched_you_can" wrapText="true" />
+                                                               </tooltip>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="3.0" />
@@ -320,8 +324,8 @@
                                                 </HBox>
                                                 <GridPane hgap="3.0" vgap="3.0">
                                                    <columnConstraints>
-                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="188.0" minWidth="188.0" prefWidth="188.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="208.0" minWidth="208.0" prefWidth="208.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="487.0" minWidth="487.0" prefWidth="487.0" />
                                                       <ColumnConstraints hgrow="SOMETIMES" />
                                                    </columnConstraints>
                                                    <rowConstraints>
@@ -336,7 +340,7 @@
                                                       </Label>
                                                       <HBox spacing="6.0" GridPane.columnIndex="1">
                                                          <children>
-                                                            <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="%cards.instructions_card.enter_table_name">
+                                                            <TextField fx:id="nameField" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="487.0" promptText="%cards.instructions_card.enter_table_name">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -442,16 +446,16 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" />
                           </content>
                         </Tab>
-                         <Tab fx:id="optionsTab" text="%pref.pinemhi.options" closable="false" />
+                         <Tab fx:id="optionsTab" closable="false" text="%pref.pinemhi.options" />
                         <Tab fx:id="commentsTab" closable="false" text="%tables.table_data.tags_comments" />
                         <Tab fx:id="playlistsTab" closable="false" text="%tables.table_asset_manager.playlists" />
                         <Tab fx:id="metaDataTab" closable="false" text="%tables.table_data.meta_data">
                            <content>
-                              <ScrollPane hbarPolicy="NEVER">
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
                                  <content>
-                                    <VBox>
+                                    <VBox fx:id="metaRoot" maxWidth="1.7976931348623157E308">
                                        <children>
-                                          <VBox>
+                                          <VBox maxWidth="1.7976931348623157E308">
                                              <children>
                                                 <BorderPane>
                                                    <left>
@@ -492,9 +496,9 @@
                                                 </BorderPane>
                                                 <GridPane hgap="3.0" vgap="3.0">
                                                    <columnConstraints>
-                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                                                    </columnConstraints>
                                                    <rowConstraints>
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -776,7 +780,7 @@
                         </Tab>
                         <Tab fx:id="customizationTab" closable="false" text="%backups.backup_restore.settings">
                            <content>
-                              <ScrollPane hbarPolicy="NEVER">
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
                                  <content>
                                     <VBox fx:id="customizationRoot">
                                        <children>
@@ -790,8 +794,8 @@
                                           </Label>
                                           <GridPane hgap="3.0" vgap="3.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="304" minWidth="10.0" prefWidth="200.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                                              </columnConstraints>
                                              <rowConstraints>
@@ -824,8 +828,8 @@
 
                                           <GridPane fx:id="customizationPane" hgap="3.0" vgap="3.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="304" minWidth="10.0" prefWidth="200.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                                              </columnConstraints>
                                              <rowConstraints>
@@ -995,9 +999,9 @@
                         </Tab>
                         <Tab fx:id="extrasTab" closable="false" text="%tables.table_data.extras">
                            <content>
-                              <ScrollPane hbarPolicy="NEVER">
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
                                  <content>
-                                    <VBox>
+                                    <VBox maxWidth="1.7976931348623157E308">
                                        <children>
                                           <Label styleClass="default-title" text="%tables.table_data.table_extras" textFill="WHITE">
                                              <font>
@@ -1009,8 +1013,8 @@
                                           </Label>
                                           <GridPane hgap="3.0" vgap="3.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="550.0" prefWidth="550.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
                                              </columnConstraints>
                                              <rowConstraints>
@@ -1143,26 +1147,31 @@
                   <Insets left="12.0" top="12.0" />
                </BorderPane.margin>
                <center>
-                  <HBox fx:id="buttonsBar" alignment="BASELINE_RIGHT" spacing="6.0">
+                  <VBox>
                      <children>
-                      <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close">
-                           <HBox.margin>
-                              <Insets right="6.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button fx:id="openAssetMgrBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="%tables.table_data.open_asset_manager" />
-                        <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Button>
-                        <Button fx:id="saveBtn1" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%tables.table_data.save_close" />
+                        <Label text="%tables.table_data.starred_fields_may_be_overwritten_on_auto_fill">
+                           <VBox.margin>
+                              <Insets bottom="3.0" />
+                           </VBox.margin></Label>
+                        <HBox fx:id="buttonsBar" alignment="BASELINE_RIGHT" spacing="6.0">
+                           <children>
+                            <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close">
+                                 <HBox.margin>
+                                    <Insets right="6.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button fx:id="openAssetMgrBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="%tables.table_data.open_asset_manager" />
+                              <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Button>
+                              <Button fx:id="saveBtn1" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%tables.table_data.save_close" />
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
+                  </VBox>
                </center>
-               <left>
-                  <Label text="%tables.table_data.starred_fields_may_be_overwritten_on_auto_fill" BorderPane.alignment="CENTER" />
-               </left>
             </BorderPane>
          </bottom>
       </BorderPane>

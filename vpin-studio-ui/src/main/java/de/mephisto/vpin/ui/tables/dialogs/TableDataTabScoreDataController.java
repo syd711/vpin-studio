@@ -224,7 +224,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
     scannedHighscoreFileName.setText(game.getScannedHsFileName());
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
-    hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
+    hsMappingLabel.setText(Messages.get("tables.table_data_tab_scoredata.the_value_is_mapped_to_popper_field", serverSettings.getMappingHsFileName()));
 
     highscoreFileName.setValue(game.getHsFileName());
 
