@@ -23,391 +23,422 @@
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" />
-            <ScrollPane hbarPolicy="NEVER">
-               <content>
-                  <VBox fx:id="popperPreferencesFields" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox fx:id="popperPreferencesFields" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+               <children>
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.popper_settings.vpin_studio_popper_settings" />
+                        <CheckBox fx:id="autoStart" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.autostart_pinup_menu_with_vpin_studio_server" />
+                        <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_the_vpin_studio_server_will_start" textFill="WHITE" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="%pref.popper_settings.this_means_you_do_not_need_the_auto" textFill="WHITE" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%pref.popper_settings.popper_settings" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.popper_settings.these_are_settings_that_you_can_tweak_behind" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.popper_settings.the_settings_are_all_added_to_the_custom" textFill="WHITE" />
+                  <CheckBox fx:id="returnNext" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.return_to_next" />
+                  <Label styleClass="checkbox-description" text="%pref.popper_settings.advance_to_next_game_on_return_to_pinup" textFill="WHITE" />
+                  <CheckBox fx:id="noSysFavs" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.no_system_favourites_playlist" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.check_to_hide_system_favourites_auto_playlist_you" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="noSysLists" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.no_system_playlists" />
+                        <VBox prefWidth="800.0">
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.check_to_hide_system_lists_like_most_played" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="playOnlyMode" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.play_only_mode" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_the_child_lock_mode_is_enabled" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="showInfoInGame" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.show_info_in_game" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_this_will_allow_the_info_help" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="popUPHideAnykey" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.pop_up_hide_on_any_key" />
+                  <Label styleClass="checkbox-description" text="%pref.popper_settings.normally_you_have_to_press_info_key_and" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="%pref.popper_settings.you_can_have_it_use_any_button_press" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="510.0" styleClass="checkbox-description" text="%pref.popper_settings.note_if_this_is_on_then_all_info" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pauseOnLoad" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.pause_displays_on_load" />
+                  <Label styleClass="checkbox-description" text="%pref.popper_settings.if_you_have_lower_end_pc_and_use" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="592.0" styleClass="checkbox-description" text="%pref.popper_settings.you_can_pause_all_the_pinup_popper_displays" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pauseOnLoadPF" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.pause_playfield_on_load" />
+                  <Label styleClass="checkbox-description" text="%pref.popper_settings.during_loading_video_the_playfield_is_paused_for" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="673.0" styleClass="checkbox-description" text="%pref.popper_settings.that_look_better_with_the_playfield_still_playing" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="attractOnStart" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.attract_mode_on_start" />
+                  <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="%pref.popper_settings.this_will_startup_popper_on_a_random_attract" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="muteLaunchAudio" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.mute_launch_audio" />
+                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_the_table_audio_is_muted_during" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="joyAxisMove" layoutX="34.0" layoutY="776.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.joystick_axis_move" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.enable_to_support_joystick_axis_moving_mapped_to" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.volume_change" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.this_will_change_volume_back_to_original_when" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.use_alt_wheels" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.use_your_own_wheels_for_an_altmode" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <CheckBox fx:id="watchDog" layoutX="10.0" layoutY="910.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.watchdog" />
+                        <VBox>
+                           <children>
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.if_you_run_cab_24_7_and_notice" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="checkbox-description" text="%pref.popper_settings.this_will_monitor_the_vlc_playfield_media_and" textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="755.999951171875" minWidth="10.0" prefWidth="754.3999755859375" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.popper_settings.vpin_studio_popper_settings" />
-                              <CheckBox fx:id="autoStart" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.autostart_pinup_menu_with_vpin_studio_server" />
-                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_the_vpin_studio_server_will_start" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="143.0" styleClass="checkbox-description" text="%pref.popper_settings.this_means_you_do_not_need_the_auto" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%pref.popper_settings.popper_settings" />
-                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.popper_settings.these_are_settings_that_you_can_tweak_behind" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
+                        <Label text="%pref.popper_settings.emulator_exit_count" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                         </Label>
-                        <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.popper_settings.the_settings_are_all_added_to_the_custom" textFill="WHITE" />
-                        <CheckBox fx:id="returnNext" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.return_to_next" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.advance_to_next_game_on_return_to_pinup" textFill="WHITE" />
-                        <CheckBox fx:id="noSysFavs" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.no_system_favourites_playlist" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.check_to_hide_system_favourites_auto_playlist_you" textFill="WHITE" />
-                        <CheckBox fx:id="noSysLists" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.no_system_playlists" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.check_to_hide_system_lists_like_most_played" textFill="WHITE" />
-                        <CheckBox fx:id="playOnlyMode" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.play_only_mode" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_the_child_lock_mode_is_enabled" textFill="WHITE" />
-                        <CheckBox fx:id="showInfoInGame" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.show_info_in_game" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_this_will_allow_the_info_help" textFill="WHITE" />
-                        <CheckBox fx:id="popUPHideAnykey" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.pop_up_hide_on_any_key" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.normally_you_have_to_press_info_key_and" textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="%pref.popper_settings.you_can_have_it_use_any_button_press" textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="510.0" styleClass="checkbox-description" text="%pref.popper_settings.note_if_this_is_on_then_all_info" textFill="WHITE" />
-                        <CheckBox fx:id="pauseOnLoad" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.pause_displays_on_load" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.if_you_have_lower_end_pc_and_use" textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="592.0" styleClass="checkbox-description" text="%pref.popper_settings.you_can_pause_all_the_pinup_popper_displays" textFill="WHITE" />
-                        <CheckBox fx:id="pauseOnLoadPF" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.pause_playfield_on_load" />
-                        <Label styleClass="checkbox-description" text="%pref.popper_settings.during_loading_video_the_playfield_is_paused_for" textFill="WHITE" />
-                        <Label layoutX="34.0" layoutY="673.0" styleClass="checkbox-description" text="%pref.popper_settings.that_look_better_with_the_playfield_still_playing" textFill="WHITE" />
-                        <CheckBox fx:id="attractOnStart" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.attract_mode_on_start" />
-                        <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="%pref.popper_settings.this_will_startup_popper_on_a_random_attract" textFill="WHITE" />
-                        <CheckBox fx:id="muteLaunchAudio" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.mute_launch_audio" />
-                        <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="%pref.popper_settings.if_enabled_the_table_audio_is_muted_during" textFill="WHITE" />
-                        <CheckBox fx:id="joyAxisMove" layoutX="34.0" layoutY="776.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.joystick_axis_move" />
-                        <Label layoutX="34.0" layoutY="815.0" styleClass="checkbox-description" text="%pref.popper_settings.enable_to_support_joystick_axis_moving_mapped_to" textFill="WHITE" />
-                        <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.volume_change" />
-                        <Label layoutX="34.0" layoutY="875.0" styleClass="checkbox-description" text="%pref.popper_settings.this_will_change_volume_back_to_original_when" textFill="WHITE" />
-                        <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.use_alt_wheels" />
-                        <Label layoutX="34.0" layoutY="929.0" styleClass="checkbox-description" text="%pref.popper_settings.use_your_own_wheels_for_an_altmode" textFill="WHITE" />
-                        <CheckBox fx:id="watchDog" layoutX="10.0" layoutY="910.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.popper_settings.watchdog" />
-                        <Label layoutX="10.0" layoutY="948.0" styleClass="checkbox-description" text="%pref.popper_settings.if_you_run_cab_24_7_and_notice" textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="1008.0" styleClass="checkbox-description" text="%pref.popper_settings.this_will_monitor_the_vlc_playfield_media_and" textFill="WHITE" />
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="755.999951171875" minWidth="10.0" prefWidth="754.3999755859375" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <Label text="%pref.popper_settings.emulator_exit_count" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <Label styleClass="preference-description" text="%pref.popper_settings.normally_you_press_the_exit_emulator_key_once" textFill="WHITE" />
+                              <VBox>
                                  <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.normally_you_press_the_exit_emulator_key_once" textFill="WHITE" />
-                                    <VBox>
-                                       <children>
-                                          <Label styleClass="preference-description" text="%pref.popper_settings.you_can_set_this_to_2_3_and" textFill="WHITE" />
-                                       </children>
-                                    </VBox>
+                                    <Label styleClass="preference-description" text="%pref.popper_settings.you_can_set_this_to_2_3_and" textFill="WHITE" />
                                  </children>
                               </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <children>
-                                    <Spinner fx:id="emuExitCount" />
-                                    <Label text="%pref.popper_settings.times" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <Label layoutX="10.0" layoutY="49.0" text="%pref.popper_settings.default_media_directory" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label styleClass="preference-description" text="%pref.popper_settings.the_directory_the_default_media_for_the_screens" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
-                                 <children>
-                                    <TextField fx:id="defaultMediaDirectory" prefWidth="500.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                 </children>
-                              </HBox>
                            </children>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label text="%pref.popper_settings.return_delay" textFill="WHITE">
+                              <Spinner fx:id="emuExitCount" />
+                              <Label text="%pref.popper_settings.times" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.set_to_delay_startup_of_menu_after_game" textFill="WHITE" />
-                                    <VBox>
-                                       <children>
-                                          <Label styleClass="preference-description" text="%pref.popper_settings.some_hardware_dmd_dof_and_slower_systems_need" textFill="WHITE" />
-                                          <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.popper_settings.to_re_init_all_those_devices" textFill="WHITE" />
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="delayReturn" />
-                                    <Label text="%pref.popper_settings.ms" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
                            </children>
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="49.0" text="%pref.popper_settings.default_media_directory" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="preference-description" text="%pref.popper_settings.the_directory_the_default_media_for_the_screens" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
-                              <Label text="%pref.popper_settings.wheel_animation_time" textFill="WHITE">
+                              <TextField fx:id="defaultMediaDirectory" prefWidth="500.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.this_is_the_time_between_wheel_selection_animation" textFill="WHITE" />
-                                    <VBox />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="wheelAniTimeMS" />
-                                    <Label text="%pref.popper_settings.ms" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
+                              </TextField>
                            </children>
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.popper_settings.wheel_update_speed" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.speed_of_moving_wheel_images_on_bar" textFill="WHITE" />
-                                    <VBox />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="wheelUpdateMS" />
-                                    <Label text="%pref.popper_settings.ms" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.popper_settings.rapid_fire_count" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.this_is_the_mute_next_prior_key_count" textFill="WHITE" />
-                                    <VBox />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.popper_settings.when_repeating_a_lot_of_keys_in_a" textFill="WHITE" />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="rapidFireCount" />
-                                    <Label text="%pref.popper_settings.times" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.popper_settings.auto_exit_emulator" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.when_in_an_emulator_and_there_s_no" textFill="WHITE" />
-                                    <VBox />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="autoExitEmuSeconds" />
-                                    <Label text="%monitor.cab_monitor.seconds" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.popper_settings.intro_skip" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.if_using_intro_startup_playing_videos_you_can" textFill="WHITE" />
-                                    <VBox />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="introSkipSeconds" />
-                                    <Label text="%monitor.cab_monitor.seconds" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="751.9999755859375" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.popper_settings.launch_timeout" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.this_is_a_timeout_where_popper_will_auto" textFill="WHITE" />
-                                    <VBox />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.popper_settings.for_future_pinball_some_tables_may_take_longer" textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%pref.popper_settings.and_you_may_want_to_increase_to_something" textFill="WHITE" />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <Spinner fx:id="launchTimeoutSecs" />
-                                    <Label text="%monitor.cab_monitor.seconds" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.popper_settings.loading_fade_out_mode" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <Label styleClass="preference-description" text="%pref.popper_settings.custom_option_that_allows_different_modes_for_transparent" textFill="WHITE" />
-                                    <VBox />
-                                 </children>
-                              </VBox>
-                              <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1">
-                                 <children>
-                                    <ComboBox fx:id="fadeoutLoading" prefWidth="430.0" />
-                                 </children>
-                              </HBox>
-                           </children>
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </GridPane>
+                        </HBox>
                      </children>
-                  </VBox>
-               </content>
-            </ScrollPane>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.return_delay" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.set_to_delay_startup_of_menu_after_game" textFill="WHITE" />
+                              <VBox>
+                                 <children>
+                                    <Label styleClass="preference-description" text="%pref.popper_settings.some_hardware_dmd_dof_and_slower_systems_need" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.popper_settings.to_re_init_all_those_devices" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="delayReturn" />
+                              <Label text="%pref.popper_settings.ms" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.wheel_animation_time" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.this_is_the_time_between_wheel_selection_animation" textFill="WHITE" />
+                              <VBox />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="wheelAniTimeMS" />
+                              <Label text="%pref.popper_settings.ms" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.wheel_update_speed" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.speed_of_moving_wheel_images_on_bar" textFill="WHITE" />
+                              <VBox />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="wheelUpdateMS" />
+                              <Label text="%pref.popper_settings.ms" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.rapid_fire_count" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.this_is_the_mute_next_prior_key_count" textFill="WHITE" />
+                              <VBox />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.popper_settings.when_repeating_a_lot_of_keys_in_a" textFill="WHITE" />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="rapidFireCount" />
+                              <Label text="%pref.popper_settings.times" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.auto_exit_emulator" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.when_in_an_emulator_and_there_s_no" textFill="WHITE" />
+                              <VBox />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="autoExitEmuSeconds" />
+                              <Label text="%monitor.cab_monitor.seconds" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.intro_skip" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.if_using_intro_startup_playing_videos_you_can" textFill="WHITE" />
+                              <VBox />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="introSkipSeconds" />
+                              <Label text="%monitor.cab_monitor.seconds" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="751.9999755859375" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.launch_timeout" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.this_is_a_timeout_where_popper_will_auto" textFill="WHITE" />
+                              <VBox />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.popper_settings.for_future_pinball_some_tables_may_take_longer" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%pref.popper_settings.and_you_may_want_to_increase_to_something" textFill="WHITE" />
+                           </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="launchTimeoutSecs" />
+                              <Label text="%monitor.cab_monitor.seconds" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+                  <GridPane vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="752.8" minWidth="10.0" prefWidth="752.8" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%pref.popper_settings.loading_fade_out_mode" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="preference-description" text="%pref.popper_settings.custom_option_that_allows_different_modes_for_transparent" textFill="WHITE" />
+                              <VBox />
+                           </children>
+                        </VBox>
+                        <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1">
+                           <children>
+                              <ComboBox fx:id="fadeoutLoading" prefWidth="430.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+               </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+            </VBox>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

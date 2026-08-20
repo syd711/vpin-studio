@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util.tags;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
@@ -39,7 +40,7 @@ public class TagField extends VBox implements AutoCompleteTextFieldChangeListene
     autoCompleteTextField = new AutoCompleteTextField(inputField, this, suggestions);
     inputField.setPrefWidth(400);
     inputField.setStyle("-fx-font-size: 14px");
-    inputField.setPromptText("Hit Enter to apply new tags...");
+    inputField.setPromptText(Messages.get("tagfield.hit_enter_to_apply"));
 
     // When Enter is pressed, create a new tag
     inputField.setOnAction(e -> {

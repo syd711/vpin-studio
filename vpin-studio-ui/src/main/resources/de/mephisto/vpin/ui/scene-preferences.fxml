@@ -187,9 +187,6 @@
                      <center>
                        <fx:include fx:id="preferenceTableValidation" source="preferences/preference-settings-cabinet.fxml" BorderPane.alignment="TOP_LEFT" />
                      </center>
-                     <padding>
-                        <Insets right="24.0" />
-                     </padding>
                   </BorderPane>
                </left>
                <right>
