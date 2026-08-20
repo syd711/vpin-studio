@@ -919,6 +919,9 @@ public class BackglassService implements InitializingBean {
       if (file.exists()) {
         res.setBackgroundFilePath(lines.get(16));
       }
+      else {
+        LOG.warn("Frame file referenced in .res does not exist, ignoring: {}", lines.get(16));
+      }
 
       if (lines.size() > 17) {
         res.setB2SWindowPunch(lines.get(17));
