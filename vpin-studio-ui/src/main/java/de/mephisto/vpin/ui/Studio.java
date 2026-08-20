@@ -154,13 +154,13 @@ public class Studio extends Application {
     // offload connection logic so the splash screen can actually render
     new Thread(() -> {
       if (splashController != null) {
-        splashController.setStatus("Connecting to last server...");
+        splashController.setStatus(Messages.get("studio.splash.connecting_to_last_server"));
       }
 
       //replace the OverlayFX client with the Studio one
       Studio.client = new VPinStudioClient("localhost");
       if (splashController != null) {
-        splashController.setStatus("Checking localhost...");
+        splashController.setStatus(Messages.get("studio.splash.checking_localhost"));
       }
       Studio.Features = client.getSystemService().getFeatures();
       ServerFX.client = Studio.client;
@@ -171,7 +171,7 @@ public class Studio extends Application {
       }
       else {
         if (splashController != null) {
-          splashController.setStatus("Checking connections...");
+          splashController.setStatus(Messages.get("studio.splash.checking_connections"));
         }
 
         ConnectionProperties connectionProperties = new ConnectionProperties();
@@ -179,7 +179,7 @@ public class Studio extends Application {
         if (!connections.isEmpty()) {
           for (ConnectionEntry connection : connections) {
             if (splashController != null) {
-              splashController.setStatus("Checking " + connection.getName() + "...");
+              splashController.setStatus(Messages.get("studio.splash.checking_connection", connection.getName()));
             }
             Studio.client = new VPinStudioClient(connection.getIp());
             version = client.getSystemService().getVersion();
@@ -245,7 +245,7 @@ public class Studio extends Application {
 
       Scene scene = new Scene(root);
       scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-      stage.setTitle("VPin Studio Launcher");
+      stage.setTitle(Messages.get("studio.launcher.title"));
       if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
       }
@@ -267,12 +267,12 @@ public class Studio extends Application {
     LOG.info("Launching Studio...");
     try {
       if (splashController != null) {
-        splashController.setStatus("Initializing application...");
+        splashController.setStatus(Messages.get("studio.splash.initializing_application"));
       }
 
       try {
         if (splashController != null) {
-          splashController.setStatus("Checking SevenZip binaries...");
+          splashController.setStatus(Messages.get("studio.splash.checking_sevenzip_binaries"));
         }
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
         if (!sevenZipTempFolder.exists()) {
@@ -308,7 +308,7 @@ public class Studio extends Application {
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
             if (splashController != null) {
-              splashController.setStatus("Fetching data from server...");
+              splashController.setStatus(Messages.get("studio.splash.fetching_data_from_server"));
             }
             //force pre-caching, this way, the table overview does not need to execute single GET requests
             new Thread(() -> {
@@ -327,7 +327,7 @@ public class Studio extends Application {
             List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
             if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
               if (splashController != null) {
-                splashController.setStatus("Scanning for table changes...");
+                splashController.setStatus(Messages.get("studio.splash.scanning_for_table_changes"));
               }
               LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
               ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
@@ -335,7 +335,7 @@ public class Studio extends Application {
             }
 
             if (splashController != null) {
-              splashController.setStatus("Loading preferences...");
+              splashController.setStatus(Messages.get("studio.splash.loading_preferences"));
             }
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
             client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
@@ -350,7 +350,7 @@ public class Studio extends Application {
             }
 
             if (splashController != null) {
-              splashController.setStatus("Building user interface...");
+              splashController.setStatus(Messages.get("studio.splash.building_user_interface"));
             }
             FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
             loader.setResources(Messages.getBundle());
@@ -406,7 +406,7 @@ public class Studio extends Application {
 
             //launch VPSMonitor
             if (splashController != null) {
-              splashController.setStatus("Finalizing startup...");
+              splashController.setStatus(Messages.get("studio.splash.finalizing_startup"));
             }
             VBSManager.getInstance();
           })
