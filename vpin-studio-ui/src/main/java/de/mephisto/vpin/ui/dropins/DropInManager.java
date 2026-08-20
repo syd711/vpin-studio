@@ -181,7 +181,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     fileListView = new ListView<>();
     fileListView.setPlaceholder(placeholder);
     fileListView.setPrefHeight(50);
-    fileListView.setPrefWidth(500);
+    fileListView.setPrefWidth(550);
     fileListView.setMinWidth(400);
     fileListView.setFocusTraversable(false);
     fileListView.setCellFactory(lv -> new DropInListCell(dropInsBtn));

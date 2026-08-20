@@ -72,7 +72,7 @@ public class TableDialogs {
 
   public static void directAssetUpload(Stage stage, int id, boolean playlistMode, VPinScreen screen) {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Media");
+    fileChooser.setTitle(Messages.get("dialog.select_media"));
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter("Files", MediaTypesSelector.getFileSelection(screen)));
 
@@ -104,14 +104,14 @@ public class TableDialogs {
         }
 
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(id, playlistMode,
-            "Media Upload", files, screen, append, loadingScreenId);
+            Messages.get("dialog.media_upload"), files, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
       });
     }
   }
 
   public static VPinScreen openAssetScreenAssignmentDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(LoadingAsset2ScreenAssignmentController.class, "dialog-loading-asset-assignment.fxml", "Loading Screen Assignment");
+    Stage stage = Dialogs.createStudioDialogStage(LoadingAsset2ScreenAssignmentController.class, "dialog-loading-asset-assignment.fxml", Messages.get("dialog.loading_screen_assignment"));
     LoadingAsset2ScreenAssignmentController controller = (LoadingAsset2ScreenAssignmentController) stage.getUserData();
     stage.showAndWait();
 
@@ -119,14 +119,14 @@ public class TableDialogs {
   }
 
   public static void openCfgUploads(File file, Runnable finalizer) {
-    Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
+    Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", Messages.get("dialog.config_file_upload"));
     CfgUploadController controller = (CfgUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
 
   public static void openBamCfgUploads(File file, GameRepresentation game, Runnable finalizer) {
-    Stage stage = Dialogs.createStudioDialogStage(BAMCfgUploadController.class, "dialog-bam-cfg-upload.fxml", "BAM .cfg File Upload");
+    Stage stage = Dialogs.createStudioDialogStage(BAMCfgUploadController.class, "dialog-bam-cfg-upload.fxml", Messages.get("dialog.bam_cfg_file_upload"));
     BAMCfgUploadController controller = (BAMCfgUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     controller.setGame(game);
@@ -134,7 +134,7 @@ public class TableDialogs {
   }
 
   public static void openDirectb2sUploads(GameRepresentation game, File file, Runnable finalizer) {
-    Stage stage = Dialogs.createStudioDialogStage(Directb2sUploadController.class, "dialog-directb2s-upload.fxml", "Backglass Upload");
+    Stage stage = Dialogs.createStudioDialogStage(Directb2sUploadController.class, "dialog-directb2s-upload.fxml", Messages.get("dialog.backglass_upload"));
     Directb2sUploadController controller = (Directb2sUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     controller.setData(game);
@@ -142,28 +142,28 @@ public class TableDialogs {
   }
 
   public static void openPinVolSettings(List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", "PinVol Settings");
+    Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", Messages.get("dialog.pinvol_settings"));
     PinVolSettingsDialogController controller = (PinVolSettingsDialogController) stage.getUserData();
     controller.setData(stage, games);
     stage.showAndWait();
   }
 
   public static void openMetadataDialog(AssetMetaData metadata, String filename) {
-    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for \"" + filename + "\"");
+    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", Messages.get("dialog.metadata_for") + filename + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
     controller.setData(metadata);
     stage.showAndWait();
   }
 
   public static void openNvRamUploads(File file, Runnable finalizer) {
-    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
+    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", Messages.get("dialog.nvram_upload"));
     NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
 
   public static void openFplUploads(File file, Runnable finalizer) {
-    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-fpl-upload.fxml", ".fpl File Upload");
+    Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-fpl-upload.fxml", Messages.get("dialog.fpl_file_upload"));
     FplUploadController controller = (FplUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
@@ -192,7 +192,7 @@ public class TableDialogs {
 
   public static boolean directUpload(Stage stage, AssetType assetType, GameRepresentation game, Runnable finalizer) {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select " + assetType.toString());
+    fileChooser.setTitle(Messages.get("dialog.select") + assetType.toString());
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter(assetType.toString(), assetType.installableExtension()));
 
@@ -230,7 +230,7 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_backglass_for") + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false);
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), Messages.get("dialog.directb2s_upload"), file, false);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
         if (/*resultModel.isSuccess() &&*/ finalizer != null) {
           finalizer.run();
@@ -250,7 +250,7 @@ public class TableDialogs {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_res_file_for") + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
-          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file);
+          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), Messages.get("dialog.res_file_upload"), file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
           if (/*resultModel.isSuccess() &&*/ finalizer != null) {
             finalizer.run();
@@ -271,7 +271,7 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_ini_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), Messages.get("dialog.ini_upload"), file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
           if (/*resultModel.isSuccess() &&*/ finalizer != null) {
             finalizer.run();
@@ -289,7 +289,7 @@ public class TableDialogs {
         String help2 = null;
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_bam_cfg_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId());
+          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel(Messages.get("dialog.bam_cfg_upload"), Arrays.asList(file), game.getId());
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
           if (/*resultModel.isSuccess() &&*/ finalizer != null) {
             finalizer.run();
@@ -541,7 +541,7 @@ public class TableDialogs {
       return Optional.empty();
     }
 
-    Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
+    Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
     controller.setGame(stage, game, uploadType, analysis, finalizer);
     stage.showAndWait();
