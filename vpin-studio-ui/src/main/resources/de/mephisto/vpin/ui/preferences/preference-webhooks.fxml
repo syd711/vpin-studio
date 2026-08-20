@@ -28,20 +28,20 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.webhooks.integration_settings" />
-            <Label layoutX="34.0" layoutY="156.0" styleClass="preference-description" text="%pref.webhooks.settings_on_this_page_are_only_relevant_for" textFill="WHITE">
+            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.webhooks.integration_settings" wrapText="true" />
+            <Label layoutX="34.0" layoutY="156.0" styleClass="preference-description" text="%pref.webhooks.settings_on_this_page_are_only_relevant_for" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.webhooks.webhooks" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.webhooks.webhooks_can_be_used_to_integrate_vpin_studio" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.webhooks.webhooks" wrapText="true" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.webhooks.webhooks_can_be_used_to_integrate_vpin_studio" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.webhooks.you_can_configure_sets_of_webhooks_below_these" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.webhooks.you_can_configure_sets_of_webhooks_below_these" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
@@ -94,9 +94,9 @@
             </TableView>
                   <VBox>
                      <children>
-                  <Label styleClass="preference-subtitle" text="%pref.webhooks.public_api_endpoints" />
-                  <Label styleClass="preference-description" text="%pref.webhooks.the_vpin_studio_server_supports_a_public_api" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%pref.webhooks.a_detailed_description_can_be_found_here" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.webhooks.public_api_endpoints" wrapText="true" />
+                  <Label styleClass="preference-description" text="%pref.webhooks.the_vpin_studio_server_supports_a_public_api" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-description" text="%pref.webhooks.a_detailed_description_can_be_found_here" textFill="WHITE" wrapText="true" />
                   <Hyperlink onAction="#onLinkClick" text="%pref.webhooks.https_github_com_syd711_vpin_studio_wiki_webhooks" />
                      </children>
                      <VBox.margin>
@@ -105,14 +105,14 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%pref.webhooks.media_recorder_hooks">
+                        <Label styleClass="preference-subtitle" text="%pref.webhooks.media_recorder_hooks" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
                         <HBox fx:id="errorMsg" styleClass="error-message">
                            <children>
-                              <Label styleClass="error-title" text="%pref.webhooks.the_section_needs_to_be_configured_on_the" />
+                              <Label styleClass="error-title" text="%pref.webhooks.the_section_needs_to_be_configured_on_the" wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
@@ -121,8 +121,8 @@
                               <Insets bottom="6.0" top="3.0" />
                            </VBox.margin>
                         </HBox>
-                        <Label styleClass="preference-description" text="%pref.webhooks.these_recorder_hooks_allow_you_to_execute_bat" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%pref.webhooks.you_can_use_them_to_disable_your_toys" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.webhooks.these_recorder_hooks_allow_you_to_execute_bat" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.webhooks.you_can_use_them_to_disable_your_toys" textFill="WHITE" wrapText="true" />
                         <GridPane hgap="3.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="379.199951171875" minWidth="10.0" prefWidth="163.200048828125" />
@@ -161,12 +161,12 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label prefHeight="20.0" styleClass="preference-label" text="%pref.webhooks.recording_start_script" textFill="WHITE">
+                              <Label prefHeight="20.0" styleClass="preference-label" text="%pref.webhooks.recording_start_script" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="%pref.webhooks.recording_end_script" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="15.0" prefHeight="20.0" styleClass="preference-label" text="%pref.webhooks.recording_end_script" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

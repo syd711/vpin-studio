@@ -29,7 +29,7 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.bot_allowlist_dialog.select_users_that_are_allowed_for_bot_command" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.bot_allowlist_dialog.select_users_that_are_allowed_for_bot_command" textFill="WHITE" wrapText="true" />
             <GridPane vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="127.79999084472655" />
@@ -39,7 +39,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="%competitions.discord_competition_edit.discord_server" textFill="WHITE">
+                  <Label text="%competitions.discord_competition_edit.discord_server" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="%pref.bot_allowlist_dialog.resolved_users" textFill="WHITE">
+            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="%pref.bot_allowlist_dialog.resolved_users" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>

@@ -25,13 +25,13 @@
       
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%cards.template_editor_overlay.overlay">
+                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%cards.template_editor_overlay.overlay" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%pref.overlay.this_section_lets_you_configure_the_ui_components" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%pref.overlay.this_section_lets_you_configure_the_ui_components" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -44,7 +44,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%pref.overlay.the_dashboard_overlay_can_be_shown_on_startup" textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%pref.overlay.the_dashboard_overlay_can_be_shown_on_startup" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
@@ -59,7 +59,7 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="204.0" styleClass="preference-description" text="%pref.overlay.choose_from_one_of_the_available_overlay_designs" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="204.0" styleClass="preference-description" text="%pref.overlay.choose_from_one_of_the_available_overlay_designs" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -80,7 +80,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.overlay_design" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.overlay_design" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -105,7 +105,7 @@
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.external_page_url" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.external_page_url" textFill="WHITE" GridPane.rowIndex="5" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -115,7 +115,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label text="%pref.overlay.you_can_use_this_field_to_add_urls" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+                        <Label text="%pref.overlay.you_can_use_this_field_to_add_urls" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" wrapText="true" />
                         <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="5">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
@@ -130,7 +130,7 @@
                               <Insets left="3.0" />
                            </GridPane.margin>
                         </Button>
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.overlay_screen" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.overlay_screen" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -138,7 +138,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" />
-                              <Label>
+                              <Label wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

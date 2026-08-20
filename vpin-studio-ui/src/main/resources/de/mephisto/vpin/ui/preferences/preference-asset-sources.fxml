@@ -20,10 +20,10 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.asset_sources.media_sources" />
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.asset_sources.you_can_configure_additional_media_sources_here" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.asset_sources.they_will_be_automatically_added_to_the_asset" textFill="WHITE">
+            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.asset_sources.media_sources" wrapText="true" />
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.asset_sources.you_can_configure_additional_media_sources_here" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.asset_sources.they_will_be_automatically_added_to_the_asset" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>

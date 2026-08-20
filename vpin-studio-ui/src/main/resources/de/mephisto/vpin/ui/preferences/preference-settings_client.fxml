@@ -20,18 +20,18 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="preference-title" text="%pref.title" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%pref.client.title">
+                  <Label styleClass="preference-title" text="%pref.title" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.client.title" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.client.description" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.client.description" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
@@ -39,8 +39,8 @@
                   <VBox>
                      <children>
                         <!-- ============ Language ============ -->
-                        <Label styleClass="preference-subtitle" text="%pref.client.language.title" />
-                        <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="%pref.client.language.title" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE" wrapText="true">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -48,23 +48,23 @@
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                            <children>
                               <ComboBox fx:id="languageComboBox" prefWidth="200.0" />
-                              <Label fx:id="languageRestartHint" managed="false" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" />
+                              <Label fx:id="languageRestartHint" managed="false" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" wrapText="true" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <Label styleClass="preference-subtitle" text="%pref.client.emulators.title">
+                  <Label styleClass="preference-subtitle" text="%pref.client.emulators.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.client.emulators.description1" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description" text="%pref.client.emulators.description2" textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.client.emulators.description1" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description" text="%pref.client.emulators.description2" textFill="WHITE" wrapText="true" />
                   <VBox fx:id="emulatorList" spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin></VBox>
-                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="%pref.client.dropin.title">
+                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="%pref.client.dropin.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin></Label>
@@ -77,7 +77,7 @@
                         </CheckBox>
                         <VBox spacing="6.0">
                            <children>
-                              <Label styleClass="preference-description" text="%pref.client.dropin.description" textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%pref.client.dropin.description" textFill="WHITE" wrapText="true" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
                                     <TextField fx:id="dropInTextField" editable="false" prefWidth="400.0" promptText="%pref.client.dropin.select_dropin_folder">
@@ -92,7 +92,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label styleClass="preference-description" text="%pref.client.dropin.action" textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%pref.client.dropin.action" textFill="WHITE" wrapText="true" />
                               <RadioButton fx:id="radioDoNothing" mnemonicParsing="false" text="%pref.client.dropin.action.nothing" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -163,12 +163,12 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </VBox>
-                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="%pref.client.overview.title">
+                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="%pref.client.overview.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="%pref.client.overview.description" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="%pref.client.overview.description" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -181,8 +181,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint1" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint2" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint1" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint2" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="%pref.client.overview.auto_edit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -191,7 +191,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="%pref.client.overview.auto_edit_hint" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="%pref.client.overview.auto_edit_hint" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" styleClass="default-text" text="%pref.client.overview.material_icons" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -200,7 +200,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description" text="%pref.client.overview.material_icons_hint" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description" text="%pref.client.overview.material_icons_hint" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="uiHideGreenMarker" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" styleClass="default-text" text="%pref.client.overview.green_marker" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -209,8 +209,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="%pref.client.overview.green_marker_hint" textFill="WHITE" />
-                  <Label styleClass="default-headline" text="%pref.client.columns.title" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="%pref.client.overview.green_marker_hint" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="default-headline" text="%pref.client.columns.title" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -354,7 +354,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="%pref.client.sections.title" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="%pref.client.sections.title" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -445,14 +445,14 @@
                   </HBox>
                   <VBox fx:id="networkSettings">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%pref.client.network.title">
+                        <Label styleClass="preference-subtitle" text="%pref.client.network.title" wrapText="true">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.client.network.description1" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%pref.client.network.description2" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%pref.client.network.restart_hint" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.client.network.description1" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.client.network.description2" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.client.network.restart_hint" textFill="WHITE" wrapText="true" />
                         <GridPane alignment="BASELINE_RIGHT">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.0" minWidth="10.0" prefWidth="188.3999267578125" />
@@ -464,12 +464,12 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%pref.client.network.label" textFill="WHITE">
+                              <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%pref.client.network.label" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                              <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" wrapText="true" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -493,7 +493,7 @@
                                     <Insets left="6.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Label fx:id="winNetworkShareStatusLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="winNetworkShareStatusLabel" text="-" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                            <opaqueInsets>
                               <Insets />
@@ -506,7 +506,7 @@
                   </VBox>
 
                   <!-- ============ Dialogs ============ -->
-                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="%pref.client.dialogs.title">
+                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="%pref.client.dialogs.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>

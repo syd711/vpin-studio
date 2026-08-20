@@ -19,13 +19,13 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.player_rankings.player_preferences" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="%pref.player_rankings.ranking">
+            <Label styleClass="preference-title" text="%pref.player_rankings.player_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.player_rankings.ranking" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="%pref.player_rankings.the_player_ranking_is_based_on_points_which" textFill="WHITE">
+            <Label styleClass="preference-description" text="%pref.player_rankings.the_player_ranking_is_based_on_points_which" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" top="12.0" />
                </VBox.margin>
@@ -42,7 +42,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.player_rankings.1_place" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.player_rankings.1_place" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
                   <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                      <children>
                         <Spinner fx:id="spinner1" />
-                        <Label text="%pref.player_rankings.points" textFill="WHITE">
+                        <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,17 +60,17 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.player_rankings.2_place" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.player_rankings.2_place" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="%pref.player_rankings.3_place" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="%pref.player_rankings.3_place" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="73.0" styleClass="preference-label" text="%pref.player_rankings.competitions_won" textFill="WHITE" GridPane.rowIndex="3">
+                  <Label layoutX="10.0" layoutY="73.0" styleClass="preference-label" text="%pref.player_rankings.competitions_won" textFill="WHITE" GridPane.rowIndex="3" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -78,7 +78,7 @@
                   <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <Spinner fx:id="spinner2" />
-                        <Label text="%pref.player_rankings.points" textFill="WHITE">
+                        <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -91,7 +91,7 @@
                   <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="40.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
                         <Spinner fx:id="spinner3" />
-                        <Label text="%pref.player_rankings.points" textFill="WHITE">
+                        <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -104,7 +104,7 @@
                   <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="71.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <children>
                         <Spinner fx:id="spinnerCompetitions" />
-                        <Label text="%pref.player_rankings.points" textFill="WHITE">
+                        <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>

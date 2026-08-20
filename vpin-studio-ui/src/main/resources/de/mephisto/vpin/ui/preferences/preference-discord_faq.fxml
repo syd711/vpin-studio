@@ -22,18 +22,18 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%pref.discord_faq.bot_faq">
+                  <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.discord_faq.bot_faq" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="%pref.discord_faq.the_faq_should_help_you_setting_up_a" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="%pref.discord_faq.the_faq_should_help_you_setting_up_a" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="322.0" styleClass="preference-subtitle" text="%pref.discord_faq.how_to_create_this_discord_bot">
+                  <Label layoutX="34.0" layoutY="322.0" styleClass="preference-subtitle" text="%pref.discord_faq.how_to_create_this_discord_bot" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
@@ -41,8 +41,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="397.0" styleClass="preference-description" text="%pref.discord_faq.creating_a_discord_bot_requires_a_few_more" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="360.0" styleClass="preference-description" text="%pref.discord_faq.follow_the_step_by_step_instructions_that_will" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="397.0" styleClass="preference-description" text="%pref.discord_faq.creating_a_discord_bot_requires_a_few_more" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="360.0" styleClass="preference-description" text="%pref.discord_faq.follow_the_step_by_step_instructions_that_will" textFill="WHITE" wrapText="true" />
                   <HBox spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
@@ -64,12 +64,12 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label text="%pref.discord_faq.explains_how_to_setup_a_new_bot_for" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="%pref.discord_faq.explains_how_to_setup_a_new_bot_for" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="%pref.discord_faq.explains_how_to_get_the_token_for_the" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label text="%pref.discord_faq.explains_how_to_get_the_token_for_the" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -81,7 +81,7 @@
                         </Button>
                      </children>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.discord_faq.how_are_discord_server_members_mapped_to_highscores">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.discord_faq.how_are_discord_server_members_mapped_to_highscores" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
@@ -89,9 +89,9 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_faq.since_the_highscore_initials_are_only_three_characters" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="%pref.discord_faq.so_it_can_be_matched_against_a_highscore" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="371.0" styleClass="preference-description" text="%pref.discord_faq.separated_by_the_pipe_symbol_and_within_square" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_faq.since_the_highscore_initials_are_only_three_characters" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="%pref.discord_faq.so_it_can_be_matched_against_a_highscore" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="371.0" styleClass="preference-description" text="%pref.discord_faq.separated_by_the_pipe_symbol_and_within_square" textFill="WHITE" wrapText="true" />
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../screenshots/nickname-example.png" />
@@ -100,8 +100,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="%pref.discord_faq.nickname_example" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="531.0" styleClass="preference-subtitle" text="%pref.discord_faq.how_to_compete_online_against_other_vpin_owners">
+                  <Label layoutX="34.0" layoutY="400.0" styleClass="preference-description" text="%pref.discord_faq.nickname_example" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="531.0" styleClass="preference-subtitle" text="%pref.discord_faq.how_to_compete_online_against_other_vpin_owners" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
@@ -109,11 +109,11 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="361.0" styleClass="preference-description" text="%pref.discord_faq.once_your_discord_bot_is_configured_correctly_you" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="569.0" styleClass="preference-description" text="%pref.discord_faq.if_you_want_your_other_vpin_owners_to" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="591.0" styleClass="preference-description" text="%pref.discord_faq.from_the_discord_application_interface_with_them_see" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="634.0" styleClass="preference-description" text="%pref.discord_faq.the_administrator_of_the_discord_server_can_execute" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="612.0" styleClass="preference-description" text="%pref.discord_faq.so_that_they_or_you_can_join_a" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="361.0" styleClass="preference-description" text="%pref.discord_faq.once_your_discord_bot_is_configured_correctly_you" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="569.0" styleClass="preference-description" text="%pref.discord_faq.if_you_want_your_other_vpin_owners_to" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="591.0" styleClass="preference-description" text="%pref.discord_faq.from_the_discord_application_interface_with_them_see" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="634.0" styleClass="preference-description" text="%pref.discord_faq.the_administrator_of_the_discord_server_can_execute" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="612.0" styleClass="preference-description" text="%pref.discord_faq.so_that_they_or_you_can_join_a" textFill="WHITE" wrapText="true" />
                   <ImageView fitHeight="380.0" fitWidth="704.0" layoutX="34.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../screenshots/bot/bot-deployment-1.png" />
@@ -122,7 +122,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="612.0" styleClass="preference-subtitle" text="%pref.discord_faq.but_what_if_two_players_have_the_same">
+                  <Label layoutX="34.0" layoutY="612.0" styleClass="preference-subtitle" text="%pref.discord_faq.but_what_if_two_players_have_the_same" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
@@ -130,9 +130,9 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="688.0" styleClass="preference-description" text="%pref.discord_faq.when_you_open_the_players_section_you_should" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="638.0" styleClass="preference-description" text="%pref.discord_faq.ask_them_to_change_their_nickname_or_use" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="%pref.discord_faq.but_i_don_t_want_to_change_my">
+                  <Label layoutX="34.0" layoutY="688.0" styleClass="preference-description" text="%pref.discord_faq.when_you_open_the_players_section_you_should" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="638.0" styleClass="preference-description" text="%pref.discord_faq.ask_them_to_change_their_nickname_or_use" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="290.0" styleClass="preference-subtitle" text="%pref.discord_faq.but_i_don_t_want_to_change_my" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
@@ -140,13 +140,13 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="%pref.discord_faq.no_worries_discord_allows_to_assign_you_a" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="%pref.discord_faq.no_worries_discord_allows_to_assign_you_a" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="%pref.discord_faq.invoke_the_context_menu_on_your_username_in" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="%pref.discord_faq.update_the_nickname_and_save_the_changes_the" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="%pref.discord_faq.invoke_the_context_menu_on_your_username_in" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="%pref.discord_faq.update_the_nickname_and_save_the_changes_the" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>

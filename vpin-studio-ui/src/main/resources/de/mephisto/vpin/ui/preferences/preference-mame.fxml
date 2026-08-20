@@ -16,18 +16,18 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%components.components.vpin_mame">
+                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%components.components.vpin_mame" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="%pref.mame.this_section_configures_the_default_options_set_for" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="%pref.mame.this_section_configures_the_default_options_set_for" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.mame.these_settings_can_be_customized_for_every_table" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.mame.these_settings_can_be_customized_for_every_table" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -108,7 +108,7 @@
                            </font>
                         </CheckBox>
                         <Label layoutX="10.0" layoutY="741.0" styleClass="checkbox-description" text="%pref.mame.relevant_for_7_1_systems_if_checked_it" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="default-text" text="%pref.mame.sound_mode" textFill="WHITE">
+                        <Label styleClass="default-text" text="%pref.mame.sound_mode" textFill="WHITE" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

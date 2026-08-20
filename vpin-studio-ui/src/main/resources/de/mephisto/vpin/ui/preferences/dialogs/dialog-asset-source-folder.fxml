@@ -42,7 +42,7 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="10.0" layoutY="135.0" styleClass="default-headline" text="%pref.asset_source_folder.media_source_configuration" textFill="WHITE">
+            <Label layoutX="10.0" layoutY="135.0" styleClass="default-headline" text="%pref.asset_source_folder.media_source_configuration" textFill="WHITE" wrapText="true">
                <font>
                   <Font size="14.0" />
                </font>
@@ -62,7 +62,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
+                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -71,7 +71,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -81,7 +81,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -98,7 +98,7 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label>
+                        <Label wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -116,7 +116,7 @@
                   <Insets bottom="3.0" />
                </VBox.margin>
             </GridPane>
-            <Label styleClass="default-headline" text="%pref.asset_source_folder.search_strategy" textFill="WHITE">
+            <Label styleClass="default-headline" text="%pref.asset_source_folder.search_strategy" textFill="WHITE" wrapText="true">
                <font>
                   <Font size="14.0" />
                </font>

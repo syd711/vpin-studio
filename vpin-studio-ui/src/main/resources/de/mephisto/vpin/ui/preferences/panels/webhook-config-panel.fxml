@@ -19,7 +19,7 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </padding>
          <children>
-            <Label fx:id="titleLabel" styleClass="default-title" text="%pref.webhook_config_panel.type" />
+            <Label fx:id="titleLabel" styleClass="default-title" text="%pref.webhook_config_panel.type" wrapText="true" />
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="150.0" />
@@ -31,7 +31,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="%pref.webhook_config_panel.endpoint_url" textFill="WHITE">
+                  <Label text="%pref.webhook_config_panel.endpoint_url" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -48,12 +48,12 @@
                         <CheckBox fx:id="deleteCheckbox" layoutX="100.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%backups.backups.delete" />
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.event_types" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.event_types" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.custom_parameters" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.custom_parameters" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

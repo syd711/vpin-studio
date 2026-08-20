@@ -15,34 +15,34 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.validators_backglass.validators" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_backglass.backglass_validators" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.validators_backglass.if_enabled_the_validation_is_executed_for_every" textFill="WHITE">
+                  <Label styleClass="preference-title" text="%pref.validators_backglass.validators" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_backglass.backglass_validators" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.validators_backglass.if_enabled_the_validation_is_executed_for_every" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
 
                   <CheckBox fx:id="pref_1001" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.no_game_installed" />
-                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_a_game_is_installed_for_the" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_a_game_is_installed_for_the" textFill="WHITE" wrapText="true" />
 
                   <CheckBox fx:id="pref_1002" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.run_as_exe" />
-                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_backglass_runs_as_exe" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_backglass_runs_as_exe" textFill="WHITE" wrapText="true" />
 
                   <CheckBox fx:id="pref_1010" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.no_full_dmd" />
-                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_backglass_has_a_full_dmd" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_backglass_has_a_full_dmd" textFill="WHITE" wrapText="true" />
 
                   <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.full_dmd_aspect_ratio" />
-                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_full_dmd_b2s_has_an" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_full_dmd_b2s_has_an" textFill="WHITE" wrapText="true" />
                   <VBox fx:id="tagPane">
                      <children>
-                        <Label styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging">
+                        <Label styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="%pref.validators_backglass.if_enabled_and_the_backglass_is_replaced_the" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%pref.validators_backglass.to_keep_track_of_this_change_e_g" textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.validators_backglass.if_enabled_and_the_backglass_is_replaced_the" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.validators_backglass.to_keep_track_of_this_change_e_g" textFill="WHITE" wrapText="true" />
                         <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

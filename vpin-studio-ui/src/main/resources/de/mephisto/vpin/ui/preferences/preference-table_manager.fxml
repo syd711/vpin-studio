@@ -19,18 +19,18 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.table_manager.table_management" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="%pref.table_manager.table_manager">
+            <Label styleClass="preference-title" text="%pref.table_manager.table_management" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.table_manager.table_manager" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="%pref.table_manager.the_table_manager_is_an_optional_ui_that" textFill="WHITE">
+            <Label styleClass="preference-description" text="%pref.table_manager.the_table_manager_is_an_optional_ui_that" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.table_manager.it_can_be_used_to_install_archived_table" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.table_manager.it_can_be_used_to_install_archived_table" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -45,12 +45,12 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label styleClass="preference-label" text="%pref.table_manager.add_table_manager_to_playlist" textFill="WHITE">
+                  <Label styleClass="preference-label" text="%pref.table_manager.add_table_manager_to_playlist" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="startupTimeLabel" textFill="WHITE" GridPane.columnIndex="1">
+                  <Label fx:id="startupTimeLabel" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

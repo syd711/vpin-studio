@@ -38,9 +38,9 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.table_pause_btn_recorder_dialog.click_the_bind_key_button_and_then_press" textFill="WHITE" />
-            <Label layoutX="22.0" layoutY="44.0" styleClass="preference-description" text="%pref.table_pause_btn_recorder_dialog.note_that_only_single_key_inputs_are_supported" textFill="WHITE" />
-            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="%pref.table_pause_btn_recorder_dialog.avoid_using_emulator_key_bindings_e_g_p" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.table_pause_btn_recorder_dialog.click_the_bind_key_button_and_then_press" textFill="WHITE" wrapText="true" />
+            <Label layoutX="22.0" layoutY="44.0" styleClass="preference-description" text="%pref.table_pause_btn_recorder_dialog.note_that_only_single_key_inputs_are_supported" textFill="WHITE" wrapText="true" />
+            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="%pref.table_pause_btn_recorder_dialog.avoid_using_emulator_key_bindings_e_g_p" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
@@ -67,12 +67,12 @@
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="4">
                      <children>
-                        <Label text="%pref.table_pause_btn_recorder_dialog.pause_button_key" textFill="WHITE">
+                        <Label text="%pref.table_pause_btn_recorder_dialog.pause_button_key" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label>
+                        <Label wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -85,24 +85,24 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="usersLabel" text="%pref.table_pause_btn_recorder_dialog.start_key" textFill="WHITE" GridPane.rowIndex="7">
+                  <Label fx:id="usersLabel" text="%pref.table_pause_btn_recorder_dialog.start_key" textFill="WHITE" GridPane.rowIndex="7" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="%pref.table_pause_btn_recorder_dialog.navigate_left_key" textFill="WHITE" GridPane.rowIndex="8">
+                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="%pref.table_pause_btn_recorder_dialog.navigate_left_key" textFill="WHITE" GridPane.rowIndex="8" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="%pref.table_pause_btn_recorder_dialog.navigate_right_key" textFill="WHITE" GridPane.rowIndex="9">
+                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="%pref.table_pause_btn_recorder_dialog.navigate_right_key" textFill="WHITE" GridPane.rowIndex="9" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <children>
-                        <Label fx:id="keyCodePause" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodePause" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -116,7 +116,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="7">
                      <children>
-                        <Label fx:id="keyCodeStart" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeStart" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -130,7 +130,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="8">
                      <children>
-                        <Label fx:id="keyCodeLeft" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeLeft" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -144,7 +144,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="9">
                      <children>
-                        <Label fx:id="keyCodeRight" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeRight" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -176,24 +176,24 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-headline" text="%pref.table_pause_btn_recorder_dialog.input" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-headline" text="%pref.table_pause_btn_recorder_dialog.input" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.table_pause_btn_recorder_dialog.key_code" textFill="WHITE" GridPane.columnIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.table_pause_btn_recorder_dialog.key_code" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="usersLabel111" text="%pref.table_pause_btn_recorder_dialog.overlay_key" textFill="WHITE">
+                        <Label fx:id="usersLabel111" text="%pref.table_pause_btn_recorder_dialog.overlay_key" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label>
+                        <Label wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -208,7 +208,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="keyCodeOverlay" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeOverlay" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -227,12 +227,12 @@
                   </Button>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="usersLabel1111" text="%pref.table_pause_btn_recorder_dialog.reset_key" textFill="WHITE">
+                        <Label fx:id="usersLabel1111" text="%pref.table_pause_btn_recorder_dialog.reset_key" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label>
+                        <Label wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -247,7 +247,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Label fx:id="keyCodeReset" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeReset" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -296,12 +296,12 @@
                   </Button>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="5">
                      <children>
-                        <Label text="%pref.table_pause_btn_recorder_dialog.start_recording_key" textFill="WHITE">
+                        <Label text="%pref.table_pause_btn_recorder_dialog.start_recording_key" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label>
+                        <Label wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -316,7 +316,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <children>
-                        <Label fx:id="keyCodeRecording" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeRecording" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -340,12 +340,12 @@
                   </Button>
                   <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="77.0" spacing="6.0" GridPane.rowIndex="3">
                      <children>
-                        <Label fx:id="usersLabel1112" text="%pref.table_pause_btn_recorder_dialog.screenshot_key" textFill="WHITE">
+                        <Label fx:id="usersLabel1112" text="%pref.table_pause_btn_recorder_dialog.screenshot_key" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label>
+                        <Label wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -360,7 +360,7 @@
                   </HBox>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <children>
-                        <Label fx:id="keyCodeScreenshot" text="-" textFill="WHITE">
+                        <Label fx:id="keyCodeScreenshot" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -382,14 +382,14 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label layoutX="10.0" layoutY="184.0" text="%pref.table_pause_btn_recorder_dialog.toggle_vr_mode_key" textFill="WHITE" GridPane.rowIndex="6">
+                  <Label layoutX="10.0" layoutY="184.0" text="%pref.table_pause_btn_recorder_dialog.toggle_vr_mode_key" textFill="WHITE" GridPane.rowIndex="6" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <children>
-                        <Label fx:id="keyToggleVr" text="-" textFill="WHITE">
+                        <Label fx:id="keyToggleVr" text="-" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -419,7 +419,7 @@
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
                   <CheckBox fx:id="expertModeCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.table_pause_btn_recorder_dialog.expert_mode" />
-                  <Label>
+                  <Label wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

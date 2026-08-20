@@ -22,18 +22,18 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.update_manager.vpin_system_preferences" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%pref.update_manager.system_manager">
+                  <Label styleClass="preference-title" text="%pref.update_manager.vpin_system_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.update_manager.system_manager" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.update_manager.the_system_manager_gives_you_an_overview_about" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.update_manager.the_system_manager_gives_you_an_overview_about" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="%components.components.vpin_mame">
+                  <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="%components.components.vpin_mame" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -55,20 +55,20 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.update_manager.latest_version" GridPane.rowIndex="2" />
-                        <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.update_manager.latest_version" GridPane.rowIndex="2" wrapText="true" />
+                        <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" />
-                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" wrapText="true" />
+                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>

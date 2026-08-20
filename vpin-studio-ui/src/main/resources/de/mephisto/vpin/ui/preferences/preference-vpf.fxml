@@ -21,15 +21,15 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.vpf.vp_forums_settings">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.vpf.vp_forums_settings" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.vpf.enter_the_account_settings_from_vp_forums" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.vpf.enter_the_account_settings_from_vp_forums" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -47,12 +47,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="%backups.backup_source_http.login" textFill="WHITE">
+                        <Label text="%backups.backup_source_http.login" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>

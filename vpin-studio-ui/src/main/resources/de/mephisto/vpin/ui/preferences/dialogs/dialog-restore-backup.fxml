@@ -57,7 +57,7 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <Label styleClass="default-text" text="%pref.restore_backup.backup_file" />
+                  <Label styleClass="default-text" text="%pref.restore_backup.backup_file" wrapText="true" />
                   <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2">
                      <font>
                         <Font size="14.0" />
@@ -68,56 +68,56 @@
                   <Insets bottom="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.restore_backup.select_data_you_want_to_restore" textFill="WHITE">
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.restore_backup.select_data_you_want_to_restore" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="12.0" top="12.0" />
                </VBox.margin></Label>
             <CheckBox fx:id="preferencesCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.preferences" />
-            <Label layoutX="22.0" layoutY="22.0" styleClass="checkbox-description" text="%pref.restore_backup.contains_all_preferences_like_enabled_columns_highscore_card" textFill="WHITE" />
-            <Label layoutX="22.0" layoutY="129.0" styleClass="checkbox-description" text="%pref.restore_backup.these_settings_also_contain_sensitive_data_like_the" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="22.0" styleClass="checkbox-description" text="%pref.restore_backup.contains_all_preferences_like_enabled_columns_highscore_card" textFill="WHITE" wrapText="true" />
+            <Label layoutX="22.0" layoutY="129.0" styleClass="checkbox-description" text="%pref.restore_backup.these_settings_also_contain_sensitive_data_like_the" textFill="WHITE" wrapText="true" />
             <CheckBox fx:id="playersCheckbox" layoutX="22.0" layoutY="55.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%mania.cabinet_row_panel.players">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="75.0" styleClass="checkbox-description" text="%pref.restore_backup.include_all_of_your_local_players" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="75.0" styleClass="checkbox-description" text="%pref.restore_backup.include_all_of_your_local_players" textFill="WHITE" wrapText="true" />
             <CheckBox fx:id="vpsNotesCheckbox" layoutX="22.0" layoutY="102.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.virtual_pinball_spreadsheet_comments">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="%pref.restore_backup.include_all_comments_you_have_written_for_virtual" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="%pref.restore_backup.include_all_comments_you_have_written_for_virtual" textFill="WHITE" wrapText="true" />
             <CheckBox fx:id="gamesCheckbox" layoutX="22.0" layoutY="102.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.table_data">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="%pref.restore_backup.this_data_will_be_restored_for_the_filename" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="122.0" styleClass="checkbox-description" text="%pref.restore_backup.this_data_will_be_restored_for_the_filename" textFill="WHITE" wrapText="true" />
             <VBox>
                <VBox.margin>
                   <Insets left="26.0" top="6.0" />
                </VBox.margin>
                <children>
                   <CheckBox fx:id="gameNotesCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.notes" />
-                  <Label styleClass="checkbox-description" text="%pref.restore_backup.includes_the_notes_you_have_taken_for_tables" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.restore_backup.includes_the_notes_you_have_taken_for_tables" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="gamesVpsMappingCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.virtual_pinball_spreadsheet_mappings">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description" text="%pref.restore_backup.includes_the_vps_table_and_version_id" textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="36.0" styleClass="checkbox-description" text="%pref.restore_backup.includes_the_vps_table_and_version_id" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="gamesCardSettingsCheckbox" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.highscore_card_settings">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="77.0" styleClass="checkbox-description" text="%pref.restore_backup.whether_to_create_a_highscore_card_for_the" textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="77.0" styleClass="checkbox-description" text="%pref.restore_backup.whether_to_create_a_highscore_card_for_the" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="gamesVersionCheckbox" layoutX="10.0" layoutY="104.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%competitions.competitions_iscored.table_version">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="124.0" styleClass="checkbox-description" text="%pref.restore_backup.includes_the_table_versions" textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="124.0" styleClass="checkbox-description" text="%pref.restore_backup.includes_the_table_versions" textFill="WHITE" wrapText="true" />
                </children>
             </VBox>
             <CheckBox fx:id="pinVolCheckbox" layoutX="22.0" layoutY="228.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.pinvol_ini_files">
@@ -125,13 +125,13 @@
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="248.0" styleClass="checkbox-description" text="%pref.restore_backup.all_ini_files_for_the_pinvol_studio_installation" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="248.0" styleClass="checkbox-description" text="%pref.restore_backup.all_ini_files_for_the_pinvol_studio_installation" textFill="WHITE" wrapText="true" />
             <CheckBox fx:id="pinemHiCheckbox" layoutX="22.0" layoutY="509.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.restore_backup.pinemhi_ini_file">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
-            <Label layoutX="22.0" layoutY="529.0" styleClass="checkbox-description" text="%pref.restore_backup.your_customized_pinemhi_ini_file_from_the_pinemhi" textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="529.0" styleClass="checkbox-description" text="%pref.restore_backup.your_customized_pinemhi_ini_file_from_the_pinemhi" textFill="WHITE" wrapText="true" />
          </children>
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

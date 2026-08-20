@@ -22,9 +22,9 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.iscored.iscored_game_rooms" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.iscored.iscored_game_rooms_used_for_competitions_can_be" textFill="WHITE">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.iscored.iscored_game_rooms" wrapText="true" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.iscored.iscored_game_rooms_used_for_competitions_can_be" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="24.0" top="12.0" />
                </VBox.margin>
@@ -36,7 +36,7 @@
                         <Insets />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%pref.iscored.enable_the_iscored_integration_to_subscribe_to_game" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.iscored.enable_the_iscored_integration_to_subscribe_to_game" textFill="WHITE" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="enabledBox">

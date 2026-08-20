@@ -19,15 +19,15 @@
          <content>
             <VBox>
                <children>
-                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.1_login_to_the_discord_developer_portal" />
-                  <Label styleClass="preference-description" text="%pref.bot_tutorial.login_or_register_at_the_discord_developer_portal" />
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.1_login_to_the_discord_developer_portal" wrapText="true" />
+                  <Label styleClass="preference-description" text="%pref.bot_tutorial.login_or_register_at_the_discord_developer_portal" wrapText="true" />
                   <Hyperlink text="%pref.bot_tutorial.https_discord_com_developers_applications" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Hyperlink>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.2_create_a_new_application" />
-                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%pref.bot_tutorial.once_logged_in_click_on_new_application_in">
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.2_create_a_new_application" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="%pref.bot_tutorial.once_logged_in_click_on_new_application_in" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,12 +40,12 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%pref.bot_tutorial.enter_the_name_of_the_application_note_that">
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%pref.bot_tutorial.enter_the_name_of_the_application_note_that" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="555.0" styleClass="preference-description" text="%pref.bot_tutorial.we_come_back_to_that_later">
+                  <Label layoutX="34.0" layoutY="555.0" styleClass="preference-description" text="%pref.bot_tutorial.we_come_back_to_that_later" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -58,13 +58,13 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.2_create_a_new_bot" />
-                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%pref.bot_tutorial.you_are_starting_at_the_general_information_overview">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.2_create_a_new_bot" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="%pref.bot_tutorial.you_are_starting_at_the_general_information_overview" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="1115.0" styleClass="preference-description" text="%pref.bot_tutorial.you_can_upload_an_icon_for_your_app">
+                  <Label layoutX="34.0" layoutY="1115.0" styleClass="preference-description" text="%pref.bot_tutorial.you_can_upload_an_icon_for_your_app" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -77,7 +77,7 @@
                         <Image url="@../../screenshots/bot/general-information.png" />
                      </image>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="1135.0" styleClass="preference-description" text="%pref.bot_tutorial.instead_select_bot_in_the_navigation_panel">
+                  <Label layoutX="34.0" layoutY="1135.0" styleClass="preference-description" text="%pref.bot_tutorial.instead_select_bot_in_the_navigation_panel" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -90,23 +90,23 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%pref.bot_tutorial.choose_an_icon_and_name_here">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="%pref.bot_tutorial.choose_an_icon_and_name_here" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-description" text="%pref.bot_tutorial.these_values_are_the_ones_which_are_later">
+                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-description" text="%pref.bot_tutorial.these_values_are_the_ones_which_are_later" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="1077.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.3_set_bot_permissions" />
-                  <Label layoutX="34.0" layoutY="2409.0" styleClass="preference-description" text="%pref.bot_tutorial.our_bot_should_read_the_member_names_and">
+                  <Label layoutX="34.0" layoutY="1077.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.3_set_bot_permissions" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="2409.0" styleClass="preference-description" text="%pref.bot_tutorial.our_bot_should_read_the_member_names_and" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2800.0" styleClass="preference-description" text="%pref.bot_tutorial.scroll_down_a_little_bit_and_enable_the">
+                  <Label layoutX="34.0" layoutY="2800.0" styleClass="preference-description" text="%pref.bot_tutorial.scroll_down_a_little_bit_and_enable_the" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -119,18 +119,18 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.4_publish_bot_your_server" />
-                  <Label layoutX="34.0" layoutY="2916.0" styleClass="preference-description" text="%pref.bot_tutorial.in_the_next_step_we_generate_a_link">
+                  <Label layoutX="34.0" layoutY="2389.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="%pref.bot_tutorial.4_publish_bot_your_server" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="2916.0" styleClass="preference-description" text="%pref.bot_tutorial.in_the_next_step_we_generate_a_link" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2487.0" styleClass="preference-description" text="%pref.bot_tutorial.select_oauth2_and_scroll_to_the_url_generator">
+                  <Label layoutX="34.0" layoutY="2487.0" styleClass="preference-description" text="%pref.bot_tutorial.select_oauth2_and_scroll_to_the_url_generator" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2936.0" styleClass="preference-description" text="%pref.bot_tutorial.set_scopes_to_bot">
+                  <Label layoutX="34.0" layoutY="2936.0" styleClass="preference-description" text="%pref.bot_tutorial.set_scopes_to_bot" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -143,7 +143,7 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="2379.0" styleClass="preference-description" text="%pref.bot_tutorial.scroll_further_down_to_bot_permissions_and_set">
+                  <Label layoutX="34.0" layoutY="2379.0" styleClass="preference-description" text="%pref.bot_tutorial.scroll_further_down_to_bot_permissions_and_set" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -156,7 +156,7 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="2960.0" styleClass="preference-description" text="%pref.bot_tutorial.scroll_down_a_bit_and_copy_the_link">
+                  <Label layoutX="34.0" layoutY="2960.0" styleClass="preference-description" text="%pref.bot_tutorial.scroll_down_a_bit_and_copy_the_link" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -169,22 +169,22 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="3464.0" styleClass="preference-description" text="%pref.bot_tutorial.select_the_server_where_the_bot_should_be">
+                  <Label layoutX="34.0" layoutY="3464.0" styleClass="preference-description" text="%pref.bot_tutorial.select_the_server_where_the_bot_should_be" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="3891.0" styleClass="preference-description" text="%pref.bot_tutorial.congratulations_you_have_created_and_added_a_new">
+                  <Label layoutX="34.0" layoutY="3891.0" styleClass="preference-description" text="%pref.bot_tutorial.congratulations_you_have_created_and_added_a_new" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="3911.0" styleClass="preference-description" text="%pref.bot_tutorial.you_should_get_a_notification_that_the_bot">
+                  <Label layoutX="34.0" layoutY="3911.0" styleClass="preference-description" text="%pref.bot_tutorial.you_should_get_a_notification_that_the_bot" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="3928.0" styleClass="preference-description" text="%pref.bot_tutorial.in_the_next_step_we_have_to_configure">
+                  <Label layoutX="34.0" layoutY="3928.0" styleClass="preference-description" text="%pref.bot_tutorial.in_the_next_step_we_have_to_configure" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

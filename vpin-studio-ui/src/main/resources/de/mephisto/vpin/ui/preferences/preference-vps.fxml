@@ -23,13 +23,13 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="%pref.vps.virtual_pinball_spreadsheet">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.vps.virtual_pinball_spreadsheet" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.vps.settings_for_the_virtual_pinball_spreadsheet_integration" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.vps.settings_for_the_virtual_pinball_spreadsheet_integration" textFill="WHITE" wrapText="true" />
             <VBox>
                <children>
                   <Button mnemonicParsing="false" onAction="#onReload" text="%pref.vps.update_vps_database" textFill="WHITE">
@@ -45,8 +45,8 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="%pref.vps.toggles_the_visibility_of_the_vps_status_indicators" textFill="WHITE" />
-                   <Label styleClass="default-headline" text="%pref.vps.show_updates_for_assets" textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%pref.vps.toggles_the_visibility_of_the_vps_status_indicators" textFill="WHITE" wrapText="true" />
+                   <Label styleClass="default-headline" text="%pref.vps.show_updates_for_assets" textFill="WHITE" wrapText="true">
                        <VBox.margin>
                            <Insets top="24.0" />
                        </VBox.margin>
@@ -124,7 +124,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </HBox>
-                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="%pref.vps.visible_table_columns" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="%pref.vps.visible_table_columns" textFill="WHITE" wrapText="true">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
@@ -220,7 +220,7 @@
                   <Insets top="24.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="default-text" text="%pref.vps.author_deny_list" />
+                  <Label styleClass="default-text" text="%pref.vps.author_deny_list" wrapText="true" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
                         <TextField fx:id="authorDenyList" prefWidth="500.0" promptText="%pref.vps.enter_the_names_of_authors_you_do_not">
@@ -228,7 +228,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label fx:id="popperScreenInfo" prefHeight="40.0" prefWidth="18.0">
+                        <Label fx:id="popperScreenInfo" prefHeight="40.0" prefWidth="18.0" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -241,7 +241,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label styleClass="preference-description" text="%pref.vps.the_filter_is_only_applied_for_new_updates" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label styleClass="preference-description" text="%pref.vps.the_filter_is_only_applied_for_new_updates" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true" />
                </children>
             </GridPane>
          </children>

@@ -21,11 +21,10 @@
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="750.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%mania.mania_preferences.cabinet_settings" />
+                  <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%mania.mania_preferences.cabinet_settings" wrapText="true" />
                   <Label styleClass="preference-description" text="%pref.settings_cabinet.set_the_name_that_should_be_shown_for" textFill="WHITE" wrapText="true" />
                   <GridPane alignment="BASELINE_RIGHT" hgap="3.0" vgap="3.0">
                      <columnConstraints>
@@ -37,12 +36,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="26.0" styleClass="preference-label" text="%pref.settings_cabinet.cabinet_name" textFill="WHITE">
+                        <Label prefHeight="26.0" styleClass="preference-label" text="%pref.settings_cabinet.cabinet_name" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="vpinNameLabel" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="vpinNameLabel" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,7 +59,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label styleClass="preference-description" text="%pref.settings_cabinet.you_can_upload_an_avatar_for_the_active" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.settings_cabinet.you_can_upload_an_avatar_for_the_active" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
@@ -69,7 +68,7 @@
                      <top>
                         <HBox BorderPane.alignment="TOP_LEFT">
                            <children>
-                              <Label prefHeight="18.0" styleClass="preference-label" text="%players.player_edit.avatar" textFill="WHITE">
+                              <Label prefHeight="18.0" styleClass="preference-label" text="%players.player_edit.avatar" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -99,12 +98,12 @@
                         </BorderPane>
                      </left>
                   </BorderPane>
-                  <Label styleClass="preference-subtitle" text="%pref.settings_cabinet.system_settings">
+                  <Label styleClass="preference-subtitle" text="%pref.settings_cabinet.system_settings" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.settings_cabinet.various_operating_system_related_settings_can_be_configured" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.settings_cabinet.various_operating_system_related_settings_can_be_configured" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -120,7 +119,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.settings_cabinet.auto_shutdown_windows_after_being_idle_for" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.settings_cabinet.auto_shutdown_windows_after_being_idle_for" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -128,7 +127,7 @@
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <Spinner fx:id="idleSpinner" />
-                              <Label text="%pref.settings_cabinet.minutes" textFill="WHITE">
+                              <Label text="%pref.settings_cabinet.minutes" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -140,10 +139,10 @@
                         </HBox>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Label text="%pref.settings_cabinet.set_to_0_to_disable" />
+                              <Label text="%pref.settings_cabinet.set_to_0_to_disable" wrapText="true" />
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="%pref.settings_cabinet.system_shutdown" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="%pref.settings_cabinet.system_shutdown" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -158,7 +157,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Label prefHeight="40.0" prefWidth="18.0">
+                              <Label prefHeight="40.0" prefWidth="18.0" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

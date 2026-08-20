@@ -19,25 +19,25 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="%pref.backglass.backglass_server">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.backglass.backglass_server" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="%pref.backglass.this_section_configures_the_backglass_server" textFill="WHITE">
+            <Label styleClass="preference-description" text="%pref.backglass.this_section_configures_the_backglass_server" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE" />
+            <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE" wrapText="true" />
 
-            <Label fx:id="b2STableSettingsDescr" styleClass="preference-description" text="%pref.backglass.b2stablesettings_xml" textFill="WHITE">
+            <Label fx:id="b2STableSettingsDescr" styleClass="preference-description" text="%pref.backglass.b2stablesettings_xml" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="8.0" />
                </VBox.margin>
             </Label>
-            <Label fx:id="b2STableSettingsFile" styleClass="preference-description" text="..." textFill="WHITE" />
+            <Label fx:id="b2STableSettingsFile" styleClass="preference-description" text="..." textFill="WHITE" wrapText="true" />
 
             <VBox>
                <children>
@@ -126,7 +126,7 @@
                     </rowConstraints>
                      <children>
                         <ComboBox fx:id="usedLEDType" prefWidth="150.0" GridPane.columnIndex="1" />
-                        <Label text="%backglass.directb2s_sidebar.used_led_type" textFill="WHITE">
+                        <Label text="%backglass.directb2s_sidebar.used_led_type" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -137,7 +137,7 @@
                      </VBox.margin>
                   </GridPane>
 
-                  <Label styleClass="default-text" text="%pref.backglass.bring_forms" textFill="WHITE">
+                  <Label styleClass="default-text" text="%pref.backglass.bring_forms" textFill="WHITE" wrapText="true">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

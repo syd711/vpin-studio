@@ -60,7 +60,7 @@
                      </font>
                   </TextField>
                   <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.webhook_set.enabled" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label styleClass="default-text" text="%pref.webhook_set.webhook_set_name" />
+                  <Label styleClass="default-text" text="%pref.webhook_set.webhook_set_name" wrapText="true" />
                </children>
             </GridPane>
             <ScrollPane hbarPolicy="NEVER" maxHeight="500.0">

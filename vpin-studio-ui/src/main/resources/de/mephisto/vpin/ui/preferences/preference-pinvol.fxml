@@ -25,14 +25,14 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%pref.pinvol.pinvol">
+                  <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.pinvol.pinvol" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinvol.settings_for_the_pinvol_service" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinvol.settings_for_the_pinvol_service" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -41,8 +41,8 @@
 
                   <VBox>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%pref.doflinx.installation" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="%pref.pinvol.select_the_folder_of_your_pinvol_installation" textFill="WHITE" />
+                        <Label styleClass="preference-subtitle" text="%pref.doflinx.installation" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.pinvol.select_the_folder_of_your_pinvol_installation" textFill="WHITE" wrapText="true" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
                               <CheckBox fx:id="useDefaultFolderCheckBox" mnemonicParsing="false" text="%pref.pinvol.use_pinvol_exe_provided_with_vpin_studio" textFill="WHITE">
@@ -50,7 +50,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label>
+                              <Label wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -76,7 +76,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="%backups.backup_source_folder.folder" />
+                              <Label styleClass="default-text" text="%backups.backup_source_folder.folder" wrapText="true" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                                  <children>
                                     <TextField fx:id="installationFolderText" editable="false" prefHeight="30.0" prefWidth="430.0">
@@ -91,7 +91,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label fx:id="pinvolFolderErrorLabel" styleClass="error-message" text="%pref.pinvol.invalid_pinvol_installation_folder_no_pinvol_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <Label fx:id="pinvolFolderErrorLabel" styleClass="error-message" text="%pref.pinvol.invalid_pinvol_installation_folder_no_pinvol_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -127,10 +127,10 @@
                         </Label>
                         <VBox fx:id="errorContainer" styleClass="error-container">
                            <children>
-                              <Label styleClass="error-title" text="%pref.pinvol.frontend_volume_control_enabled" />
-                              <Label layoutX="22.0" layoutY="16.0" styleClass="error-message" text="%pref.pinvol.the_system_volume_control_is_enabled_in_the" />
-                              <Label layoutX="22.0" layoutY="36.0" styleClass="error-message" text="%pref.pinvol.this_will_conflict_with_the_pinvol_settings" />
-                              <Label layoutX="22.0" layoutY="56.0" styleClass="error-message" text="%pref.pinvol.disable_the_auto_start_or_the_frontend_setting" />
+                              <Label styleClass="error-title" text="%pref.pinvol.frontend_volume_control_enabled" wrapText="true" />
+                              <Label layoutX="22.0" layoutY="16.0" styleClass="error-message" text="%pref.pinvol.the_system_volume_control_is_enabled_in_the" wrapText="true" />
+                              <Label layoutX="22.0" layoutY="36.0" styleClass="error-message" text="%pref.pinvol.this_will_conflict_with_the_pinvol_settings" wrapText="true" />
+                              <Label layoutX="22.0" layoutY="56.0" styleClass="error-message" text="%pref.pinvol.disable_the_auto_start_or_the_frontend_setting" wrapText="true" />
                            </children>
                            <VBox.margin>
                               <Insets left="28.0" />
@@ -172,12 +172,12 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinvol.system_volume_settings">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinvol.system_volume_settings" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinvol.adjust_system_volume_settings" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinvol.adjust_system_volume_settings" textFill="WHITE" wrapText="true" />
                   <GridPane fx:id="adjustSystemVolumePane" hgap="3.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="243.2000732421875" minWidth="10.0" prefWidth="166.39999389648438" />
@@ -191,12 +191,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%pref.pinvol.initial_system_volume" textFill="WHITE" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%pref.pinvol.initial_system_volume" textFill="WHITE" GridPane.rowIndex="1" wrapText="true" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="volumeSpinner" prefWidth="80.0" />
-                              <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" />
-                              <Label>
+                              <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" wrapText="true" />
+                              <Label wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -217,7 +217,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-high" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%pref.pinvol.initial_mute" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%pref.pinvol.initial_mute" textFill="WHITE" wrapText="true" />
                         <VBox GridPane.columnIndex="1">
                            <children>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
@@ -227,7 +227,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <Label>
+                                    <Label wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -240,7 +240,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="checkbox-description" text="%pref.pinvol.attract_mode_of_your_frontend_must_be_disabled" textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="%pref.pinvol.attract_mode_of_your_frontend_must_be_disabled" textFill="WHITE" wrapText="true" />
                            </children>
                         </VBox>
                      </children>
@@ -248,7 +248,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="390.0" styleClass="preference-subtitle" text="%pref.pinvol.pinvol_system_volume_settings">
+                  <Label layoutX="34.0" layoutY="390.0" styleClass="preference-subtitle" text="%pref.pinvol.pinvol_system_volume_settings" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>

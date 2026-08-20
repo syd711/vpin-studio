@@ -23,25 +23,25 @@
 
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="%components.components.doflinx">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%components.components.doflinx" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.doflinx.settings_for_the_doflinx_service" textFill="WHITE" />
-            <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.doflinx.settings_for_the_doflinx_service" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
             <Hyperlink onAction="#onLink" text="%pref.doflinx.https_www_vpforums_org_index_php_showforum_104" />
-            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="%pref.doflinx.documentation" textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="%pref.doflinx.documentation" textFill="WHITE" wrapText="true" />
             <Hyperlink layoutX="34.0" layoutY="148.0" onAction="#onLink" text="%pref.doflinx.https_doflinx_github_io_docs" />
             <VBox>
                <children>
-                  <Label styleClass="preference-subtitle" text="%pref.doflinx.installation" textFill="WHITE" />
-                  <Label styleClass="preference-description" text="%pref.doflinx.select_the_folder_of_your_doflinx_installation" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%pref.doflinx.installation" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-description" text="%pref.doflinx.select_the_folder_of_your_doflinx_installation" textFill="WHITE" wrapText="true" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
@@ -67,8 +67,8 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="%backups.backup_source_folder.folder" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.doflinx.invalid_doflinx_installation_folder_no_doflinx_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%backups.backup_source_folder.folder" wrapText="true" />
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.doflinx.invalid_doflinx_installation_folder_no_doflinx_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>

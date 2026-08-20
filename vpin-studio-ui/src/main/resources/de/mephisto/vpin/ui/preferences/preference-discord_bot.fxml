@@ -22,24 +22,24 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%pref.discord_bot.bot_settings">
+                  <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.discord_bot.bot_settings" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.discord_bot.you_can_create_a_discord_bot_and_add" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.discord_bot.you_can_create_a_discord_bot_and_add" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_bot.the_member_names_are_mapped_against_the_highscore" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_bot.visit_https_discord_com_developers_applications_to_create" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_bot.the_member_names_are_mapped_against_the_highscore" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_bot.visit_https_discord_com_developers_applications_to_create" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="%pref.discord_bot.enter_the_bot_token_to_connect_your_vpin" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="124.0" styleClass="preference-description" text="%pref.discord_bot.enter_the_bot_token_to_connect_your_vpin" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
@@ -56,7 +56,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_token" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_token" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -84,17 +84,17 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label fx:id="botTokenLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="botTokenLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_name" textFill="WHITE">
+                        <Label layoutX="9.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_name" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="botNameLabel" layoutX="208.0" layoutY="49.0" text="-" GridPane.columnIndex="1">
+                        <Label fx:id="botNameLabel" layoutX="208.0" layoutY="49.0" text="-" GridPane.columnIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -104,17 +104,17 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.discord_bot.channels">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.discord_bot.channels" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="%pref.discord_bot.once_your_discord_bot_is_active_you_can" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="%pref.discord_bot.once_your_discord_bot_is_active_you_can" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="%pref.discord_bot.all_these_fields_are_optional_if_you_only" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="%pref.discord_bot.all_these_fields_are_optional_if_you_only" textFill="WHITE" wrapText="true" />
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="200.0" />
@@ -129,19 +129,19 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.default_server" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.default_server" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="73.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.default_textchannel" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="73.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.default_textchannel" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="channelCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <ComboBox fx:id="serverCombo" layoutX="212.0" layoutY="72.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.subscriptions_category" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.subscriptions_category" textFill="WHITE" GridPane.rowIndex="3" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -155,33 +155,33 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Label styleClass="preference-description" text="%pref.discord_bot.only_servers_with_your_bot_are_shown_here" textFill="WHITE" GridPane.columnIndex="2" />
-                        <Label layoutX="468.0" layoutY="14.0" styleClass="preference-description" text="%pref.discord_bot.this_channel_will_be_used_for_all_highscore" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="%pref.discord_bot.new_subscriptions_will_be_created_here" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.table_updates_channel" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label styleClass="preference-description" text="%pref.discord_bot.only_servers_with_your_bot_are_shown_here" textFill="WHITE" GridPane.columnIndex="2" wrapText="true" />
+                        <Label layoutX="468.0" layoutY="14.0" styleClass="preference-description" text="%pref.discord_bot.this_channel_will_be_used_for_all_highscore" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" wrapText="true" />
+                        <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="%pref.discord_bot.new_subscriptions_will_be_created_here" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.table_updates_channel" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="tableUpdatesCombo" layoutX="210.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label layoutX="474.0" layoutY="48.0" styleClass="preference-description" text="%pref.discord_bot.this_channel_will_be_used_for_table_updates" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label layoutX="474.0" layoutY="48.0" styleClass="preference-description" text="%pref.discord_bot.this_channel_will_be_used_for_table_updates" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" wrapText="true" />
                      </children>
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="331.0" styleClass="preference-subtitle" text="%pref.discord_bot.subscription">
+                  <Label layoutX="34.0" layoutY="331.0" styleClass="preference-subtitle" text="%pref.discord_bot.subscription" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="%pref.discord_bot.with_dynamic_subscriptions_a_new_text_channel_will" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="%pref.discord_bot.with_dynamic_subscriptions_a_new_text_channel_will" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="829.0" styleClass="preference-description" text="%pref.discord_bot.when_the_first_new_highscore_for_a_table" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="492.0" styleClass="preference-description" text="%pref.discord_bot.if_you_only_wish_to_have_subscriptions_for" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="829.0" styleClass="preference-description" text="%pref.discord_bot.when_the_first_new_highscore_for_a_table" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="492.0" styleClass="preference-description" text="%pref.discord_bot.if_you_only_wish_to_have_subscriptions_for" textFill="WHITE" wrapText="true" />
                   <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="201.599951171875" />
@@ -192,7 +192,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.dynamic_subscriptions" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.dynamic_subscriptions" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -204,17 +204,17 @@
                         </CheckBox>
                      </children>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="575.0" styleClass="preference-subtitle" text="%pref.discord_bot.bot_commands">
+                  <Label layoutX="34.0" layoutY="575.0" styleClass="preference-subtitle" text="%pref.discord_bot.bot_commands" wrapText="true">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.discord_bot.by_default_the_bot_will_respond_to_commands" textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.discord_bot.by_default_the_bot_will_respond_to_commands" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="526.0" styleClass="preference-description" text="%pref.discord_bot.you_can_disable_them_entirely_or_configure_an" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="526.0" styleClass="preference-description" text="%pref.discord_bot.you_can_disable_them_entirely_or_configure_an" textFill="WHITE" wrapText="true" />
                   <GridPane layoutX="34.0" layoutY="487.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="201.599951171875" />
@@ -225,7 +225,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_commands_enabled" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_commands_enabled" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -248,7 +248,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_users_allow_list" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_bot.bot_users_allow_list" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -267,14 +267,14 @@
                         </HBox>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="preference-description" text="%pref.discord_bot.select_users_that_are_allowed_to_write_bot" textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%pref.discord_bot.select_users_that_are_allowed_to_write_bot" textFill="WHITE" wrapText="true" />
                            </children>
                         </HBox>
                      </children>
                   </GridPane>
                   <BorderPane prefHeight="300.0" prefWidth="200.0">
                      <left>
-                        <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%pref.discord_bot.selected_users" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                        <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%pref.discord_bot.selected_users" textFill="WHITE" BorderPane.alignment="TOP_LEFT" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>

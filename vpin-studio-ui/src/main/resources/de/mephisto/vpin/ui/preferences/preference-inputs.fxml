@@ -22,18 +22,18 @@
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="%pref.inputs.controller_setup">
+                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.inputs.controller_setup" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%pref.inputs.this_section_configures_the_input_methods_for_the" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%pref.inputs.this_section_configures_the_input_methods_for_the" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.inputs.and_other_options_supported_by_the_vpin_studio" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.inputs.and_other_options_supported_by_the_vpin_studio" textFill="WHITE" wrapText="true" />
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="371.2000732421875" minWidth="10.0" prefWidth="208.7999267578125" />
@@ -52,7 +52,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                      <children>
-                        <Label styleClass="preference-label" text="%pref.inputs.key_input_debounce" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label styleClass="preference-label" text="%pref.inputs.key_input_debounce" textFill="WHITE" GridPane.rowIndex="5" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,18 +60,18 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <children>
                               <Spinner fx:id="inputDebounceSpinner" prefHeight="26.0" prefWidth="118.0" />
-                              <Label styleClass="default-text" text="%pref.inputs.milliseconds" textFill="WHITE">
+                              <Label styleClass="default-text" text="%pref.inputs.milliseconds" textFill="WHITE" wrapText="true">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
                               </Label>
                            </children>
                         </HBox>
-                        <Label prefHeight="22.0" prefWidth="549.0" styleClass="preference-description" text="%pref.inputs.this_will_avoid_repetitive_input_events_for_the" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <Label prefHeight="22.0" prefWidth="549.0" styleClass="preference-description" text="%pref.inputs.this_will_avoid_repetitive_input_events_for_the" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" wrapText="true">
                            <GridPane.margin>
                               <Insets bottom="6.0" top="3.0" />
                            </GridPane.margin></Label>
-                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.inputs.controller_bindings" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.inputs.controller_bindings" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -85,7 +85,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label styleClass="preference-description" text="%pref.inputs.the_bindings_can_only_be_configured_on_the" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label styleClass="preference-description" text="%pref.inputs.the_bindings_can_only_be_configured_on_the" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -96,7 +96,7 @@
                               <Insets bottom="6.0" top="3.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="103.0" styleClass="preference-label" text="%pref.inputs.controller_event_ignore_list" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="103.0" styleClass="preference-label" text="%pref.inputs.controller_event_ignore_list" textFill="WHITE" GridPane.rowIndex="3" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -106,7 +106,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="218.0" layoutY="136.0" styleClass="preference-description" text="%pref.inputs.comma_separated_value_list_for_inputs_to_ignore" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Label layoutX="218.0" layoutY="136.0" styleClass="preference-description" text="%pref.inputs.comma_separated_value_list_for_inputs_to_ignore" GridPane.columnIndex="1" GridPane.rowIndex="4" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -127,9 +127,9 @@
                      <children>
                         <VBox>
                            <children>
-                              <Label styleClass="error-title" text="%pref.inputs.true_fullscreen_enabled" />
-                              <Label styleClass="error-message" text="%pref.inputs.one_of_the_emulator_configurations_contains_the_entry" />
-                              <Label layoutX="10.0" layoutY="30.0" styleClass="error-message" text="%pref.inputs.this_will_avoid_any_vpin_studio_overlay_from" />
+                              <Label styleClass="error-title" text="%pref.inputs.true_fullscreen_enabled" wrapText="true" />
+                              <Label styleClass="error-message" text="%pref.inputs.one_of_the_emulator_configurations_contains_the_entry" wrapText="true" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="error-message" text="%pref.inputs.this_will_avoid_any_vpin_studio_overlay_from" wrapText="true" />
                            </children>
                         </VBox>
                      </children>

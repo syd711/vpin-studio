@@ -24,18 +24,18 @@
 
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" wrapText="true" />
             <ScrollPane hbarPolicy="NEVER">
                <content>
                   <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.pinballx_settings" />
-                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" textFill="WHITE">
+                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.pinballx_settings" wrapText="true" />
+                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" textFill="WHITE" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.gameex_account">
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.gameex_account" wrapText="true">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
@@ -59,12 +59,12 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="%pref.pinballx_settings.e_mail_address" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="%pref.pinballx_settings.e_mail_address" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -79,7 +79,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </PasswordField>
-                              <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
