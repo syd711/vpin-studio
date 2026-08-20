@@ -992,6 +992,7 @@ public class BackglassService implements InitializingBean {
       }
     }
 
+    LOG.debug("Reading screen res file: {}", target.getAbsolutePath());
     try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
       String version = null;
 
@@ -1345,6 +1346,7 @@ public class BackglassService implements InitializingBean {
             if (screenres != null && screenres.hasFrame()) {
               File frameFile = new File(screenres.getBackgroundFilePath());
               if (frameFile.exists()) {
+                LOG.debug("Rendering frame for {}: {}", tableData.getFilename(), frameFile.getAbsolutePath());
                 BufferedImage combined = new BufferedImage(screenres.getBackgroundWidth(), screenres.getBackgroundHeight(), BufferedImage.TYPE_INT_ARGB);
                 Graphics g = combined.getGraphics();
 
@@ -1362,6 +1364,9 @@ public class BackglassService implements InitializingBean {
                     null);
                 g.dispose();
                 preview = combined;
+              }
+              else {
+                LOG.warn("Frame file does not exist during rendering, skipping for {}: {}", tableData.getFilename(), frameFile.getAbsolutePath());
               }
             }
           }
