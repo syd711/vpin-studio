@@ -54,9 +54,9 @@
       </BorderPane>
    </bottom>
    <center>
-      <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <content>
-            <VBox>
+            <VBox prefWidth="850.0">
                <children>
                   <GridPane vgap="3.0">
                      <columnConstraints>

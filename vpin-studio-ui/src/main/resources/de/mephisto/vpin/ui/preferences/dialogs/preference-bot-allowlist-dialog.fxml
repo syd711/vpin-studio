@@ -58,7 +58,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <ScrollPane hbarPolicy="NEVER">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
                <content>
                   <VBox fx:id="userList" prefHeight="360.0" prefWidth="640.0" />
                </content>

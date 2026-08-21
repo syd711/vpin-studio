@@ -52,8 +52,8 @@
             </Label>
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="368.6000244140625" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="SOMETIMES" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="134.19997558593747" />
               </columnConstraints>
               <rowConstraints>
@@ -71,7 +71,7 @@
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -81,7 +81,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -153,7 +153,6 @@
                            </VBox.margin>
                         </RadioButton>
                         <Label styleClass="checkbox-description" text="%pref.asset_source_folder.the_media_source_will_only_be_used_when" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="%pref.asset_source_folder.if_no_asset_is_selected_media_source_will" textFill="WHITE" wrapText="true" />
                         <VBox fx:id="screensPanel" minHeight="50.0" spacing="6.0">
                            <VBox.margin>
                               <Insets left="26.0" top="12.0" />

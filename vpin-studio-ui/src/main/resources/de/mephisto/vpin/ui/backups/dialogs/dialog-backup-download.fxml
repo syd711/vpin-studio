@@ -41,7 +41,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="120.0" text="%backups.backup_download.select_folder">
+                              <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

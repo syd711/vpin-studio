@@ -23,7 +23,7 @@
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
       
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%cards.template_editor_overlay.overlay" wrapText="true">

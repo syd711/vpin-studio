@@ -4,11 +4,11 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -20,10 +20,10 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.BackupRepositoriesPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.backups.authentication_provider" wrapText="true" />
@@ -32,11 +32,9 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.backups.an_authentication_provider" textFill="WHITE" wrapText="true" />
-            <Label layoutX="34.0" layoutY="127.0" styleClass="preference-description" text="%pref.backups.please_select_and_configure_the_login_for_one" textFill="WHITE" wrapText="true" />
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="374.2000732421875" minWidth="10.0" prefWidth="175.2000732421875" />
+                <ColumnConstraints hgrow="SOMETIMES" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="607.7999420166016" minWidth="10.0" prefWidth="583.1999267578124" />
               </columnConstraints>
               <rowConstraints>

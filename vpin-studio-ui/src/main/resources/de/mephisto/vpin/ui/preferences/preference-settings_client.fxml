@@ -23,7 +23,7 @@
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
                <children>
                   <Label styleClass="preference-title" text="%pref.title" textFill="WHITE" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.client.title" wrapText="true">

@@ -18,7 +18,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ServerSettingsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
 
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
@@ -87,7 +87,6 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="288.0" styleClass="preference-description" text="%pref.settings_server.for_generating_highscore_cards_backglass_previews_and_compet" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="452.0" styleClass="preference-description" text="%pref.settings_server.that_are_cached_you_can_rebuild_this_cache" textFill="WHITE" wrapText="true" />
                   <Button layoutX="34.0" layoutY="596.0" mnemonicParsing="false" onAction="#onMediaIndex" text="%pref.settings_server.regenerate_media_cache">
                      <font>
                         <Font size="14.0" />
@@ -135,19 +134,23 @@
                         <Label styleClass="preference-description" text="%pref.settings_server.this_section_lets_you_select_the_pinup_popper" textFill="WHITE" wrapText="true" />
                         <GridPane hgap="3.0" vgap="3.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="300.7999267578125" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="121.60007324218753" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="337.60004882812507" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
+                              <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="12.0" valignment="TOP" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="12.0" valignment="TOP" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="12.0" valignment="TOP" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="12.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.highscore_txt_file_name" textFill="WHITE" wrapText="true">
@@ -161,32 +164,35 @@
                                     <Insets />
                                  </GridPane.margin>
                               </ComboBox>
-                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_id" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_id" textFill="WHITE" wrapText="true" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_version_id" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
+                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_version_id" textFill="WHITE" wrapText="true" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                              <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.used_by_some_tables_to_write_scores_into" textFill="WHITE" wrapText="true" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="%pref.settings_server.the_id_for_the_overall_table_type_on" textFill="WHITE" wrapText="true" GridPane.rowIndex="3" />
-                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="%pref.settings_server.the_id_of_the_version_mod_of_the" textFill="WHITE" wrapText="true" GridPane.rowIndex="5" />
-                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="%pref.settings_server.patch_version" textFill="WHITE" wrapText="true" GridPane.rowIndex="6">
+                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.used_by_some_tables_to_write_scores_into" textFill="WHITE" wrapText="true" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="%pref.settings_server.the_id_for_the_overall_table_type_on" textFill="WHITE" wrapText="true" GridPane.columnSpan="3" GridPane.rowIndex="4" />
+                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="%pref.settings_server.the_id_of_the_version_mod_of_the" textFill="WHITE" wrapText="true" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="%pref.settings_server.patch_version" textFill="WHITE" wrapText="true" GridPane.rowIndex="9">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="%pref.settings_server.the_version_number_or_name_of_the_patch" textFill="WHITE" wrapText="true" GridPane.rowIndex="7" />
-                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <ComboBox fx:id="patchVersionCombo" layoutX="440.0" layoutY="144.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="%pref.settings_server.the_version_number_or_name_of_the_patch" textFill="WHITE" wrapText="true" GridPane.columnSpan="3" GridPane.rowIndex="10" />
+                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <ComboBox fx:id="patchVersionCombo" layoutX="440.0" layoutY="144.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
                            </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
                         </GridPane>
                      </children>
                   </VBox>
@@ -255,7 +261,6 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="%pref.settings_server.if_checked_the_exported_vbs_files_will_be" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="1035.0" styleClass="checkbox-description" text="%pref.settings_server.otherwise_the_vbs_files_will_be_removed_after" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="keepModificationDateCheckbox" layoutX="34.0" layoutY="1147.0" mnemonicParsing="false" text="%pref.settings_server.keep_vpx_modification_dates" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
