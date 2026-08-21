@@ -50,7 +50,7 @@
                         <Label styleClass="preference-description" text="%mania.mania_registration.you_can_select_and_link_it_here_again" />
                         <GridPane>
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0000732421875" minWidth="10.0" prefWidth="146.2000244140625" />
+                              <ColumnConstraints hgrow="SOMETIMES" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="428.0" minWidth="10.0" prefWidth="355.7999755859375" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="116.19995117187494" minWidth="10.0" prefWidth="68.99999999999994" />
                            </columnConstraints>

@@ -116,7 +116,7 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
           root.getChildren().add(checkBox);
           userList.getChildren().add(root);
         }
-        usersLabel.setText("Resolved Users (" + count + "):");
+        usersLabel.setText(Messages.get("pref.bot_allowlist_dialog.resolved_users_count", count));
       }
     });
 

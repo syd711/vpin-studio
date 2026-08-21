@@ -44,9 +44,9 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="257.199951171875" minWidth="10.0" prefWidth="90.79989852905274" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.6000061035156" minWidth="10.0" prefWidth="334.00010147094724" />
                     </columnConstraints>
                     <rowConstraints>

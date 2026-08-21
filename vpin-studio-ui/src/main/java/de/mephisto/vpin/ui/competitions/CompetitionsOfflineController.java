@@ -183,11 +183,11 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       String help = null;
       String help2 = null;
       if (!StringUtils.isEmpty(selection.getWinnerInitials())) {
-        help = "The player '" + selection.getWinnerInitials() + "' will have one less won competition.";
+        help = Messages.get("dialog.delete_competition_hint_winner", selection.getWinnerInitials());
       }
       else if (selection.isActive()) {
-        help = "The competition is still active for another " + selection.remainingDays() + " days.";
-        help2 = "This will cancel the competition, no winner will be announced.";
+        help = Messages.get("dialog.delete_competition_hint_active", selection.remainingDays());
+        help2 = Messages.get("dialog.delete_competition_hint_cancel");
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_competition") + selection.getName() + "'?",

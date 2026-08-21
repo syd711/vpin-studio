@@ -29,10 +29,10 @@
             <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%playlistmanager.playlist_templates.the_lists_created_from_this_dialog_are_generated" />
             <Label layoutX="10.0" layoutY="145.0" styleClass="preference-description" text="%playlistmanager.playlist_templates.they_do_not_update_dynamically" />
             <Label styleClass="preference-description" text="%playlistmanager.playlist_templates.all_existing_entries_will_be_overwritten" />
-            <GridPane hgap="3.0" vgap="3.0">
+            <GridPane hgap="6.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.2000732421875" minWidth="10.0" prefWidth="111.19999237060546" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
