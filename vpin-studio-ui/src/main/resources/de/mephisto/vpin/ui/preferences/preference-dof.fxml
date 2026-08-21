@@ -46,11 +46,10 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="381.0" styleClass="preference-description" text="%pref.dof.select_the_folder_of_your_dof_installation" textFill="WHITE" wrapText="true" />
-                  <GridPane layoutX="34.0" layoutY="339.0" vgap="3.0">
+                  <GridPane hgap="6.0" layoutX="34.0" layoutY="339.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="130.0" prefWidth="80.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="550.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="99.19989624023435" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -72,7 +71,7 @@
                            </children>
                         </HBox>
                         <Label styleClass="default-text" text="%backups.backup_source_folder.folder" wrapText="true" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.dof.invalid_folder_no_directoutput_dll_or_directoutputcomobject_" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.dof.invalid_folder_no_directoutput_dll_or_directoutputcomobject_" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -95,11 +94,10 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <GridPane vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="130.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="183.399951171875" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="183.399951171875" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -131,9 +129,9 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="544.0" styleClass="preference-description" text="%pref.dof.let_the_vpin_server_synchronize_the_latest_dof" textFill="WHITE" wrapText="true" />
-                  <GridPane>
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="402.2000732421875" minWidth="10.0" prefWidth="130.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="708.0000732421875" minWidth="10.0" prefWidth="691.999951171875" />
                     </columnConstraints>
                     <rowConstraints>
@@ -148,7 +146,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.dof.interval" GridPane.rowIndex="1" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.dof.interval" wrapText="true" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="syncInterval" prefHeight="26.0" prefWidth="82.0" />

@@ -31,7 +31,7 @@
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.dmd.settings_for_the_dmddevice_ini_file_are_configured" textFill="WHITE" wrapText="true" />
                   <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.dmd.select_the_vpx_emulator_the_dmddevice_ini_file" textFill="WHITE" wrapText="true">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets />
                      </VBox.margin>
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
@@ -62,11 +62,11 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <GridPane vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="130.0" />
-                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="381.2001037597656" />
-                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="99" />
+                       <ColumnConstraints hgrow="SOMETIMES" />
+                       <ColumnConstraints hgrow="ALWAYS" />
+                       <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -76,7 +76,7 @@
                     </rowConstraints>
                      <children>
                         <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%pref.dmd.network_stream" wrapText="true" />
-                        <Label styleClass="default-text" text="%pref.dmd.web_socket" GridPane.rowIndex="1" wrapText="true" />
+                        <Label styleClass="default-text" text="%pref.dmd.web_socket" wrapText="true" GridPane.rowIndex="1" />
 
                         <CheckBox fx:id="networkStreamCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.dmd.enable_dmd_stream" GridPane.columnIndex="1" />
                         <TextField fx:id="networkUrlText" editable="false" prefHeight="30.0" prefWidth="233.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -84,16 +84,16 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="networkUrlUpdateBtn" mnemonicParsing="false" text="%update_info.update" onAction="#onNetworkUrlUpdate" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="networkUrlUpdateBtn" mnemonicParsing="false" onAction="#onNetworkUrlUpdate" text="%update_info.update" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <GridPane.margin>
-                              <Insets left="6.0"/>
+                              <Insets left="6.0" />
                            </GridPane.margin>
                         </Button>
 
-                        <Label fx:id="networkStreamErrorLabel" styleClass="error-message" text="%pref.dmd.invalid_url_press_update_to_set_the_vpin" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
+                        <Label fx:id="networkStreamErrorLabel" styleClass="error-message" text="%pref.dmd.invalid_url_press_update_to_set_the_vpin" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -108,10 +108,10 @@
                      </VBox.margin>
                   </GridPane>
                   <Label layoutX="34.0" layoutY="220.0" styleClass="preference-subtitle" text="%pref.dmd.virtual_dmd_settings" textFill="WHITE" wrapText="true" />
-                  <GridPane>
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="268.2000732421875" minWidth="10.0" prefWidth="137.80001831054688" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="426.6000061035156" minWidth="10.0" prefWidth="408.1999816894531" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints hgrow="ALWAYS" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -121,14 +121,17 @@
                     </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="%backups.backup_source_folder.enabled" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.dmd.stay_on_top" GridPane.rowIndex="1" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%pref.dmd.ignore_aspect_ratio" GridPane.rowIndex="2" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="75.0" styleClass="default-text" text="%pref.dmd.use_registry" GridPane.rowIndex="3" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.dmd.stay_on_top" wrapText="true" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%pref.dmd.ignore_aspect_ratio" wrapText="true" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="75.0" styleClass="default-text" text="%pref.dmd.use_registry" wrapText="true" GridPane.rowIndex="3" />
                         <CheckBox fx:id="virtualdmdEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.dmd.virtual_dmd_enabled" GridPane.columnIndex="1" />
                         <CheckBox fx:id="virtualdmdStayOnTopCheckbox" layoutX="148.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="%pref.dmd.dmd_always_on_top" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <CheckBox fx:id="virtualdmdIgnoreAspectRatioCheckbox" layoutX="148.0" layoutY="45.0" mnemonicParsing="false" styleClass="default-text" text="%pref.dmd.dmd_ignore_aspect_ratio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <CheckBox fx:id="virtualdmdUseRegistryCheckbox" layoutX="148.0" layoutY="75.0" mnemonicParsing="false" styleClass="default-text" text="%pref.dmd.save_into_windows_registry_not_the_dmdevice_ini" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
                </children>
                <padding>

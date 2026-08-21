@@ -5,8 +5,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -32,21 +32,29 @@
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.doflinx.settings_for_the_doflinx_service" textFill="WHITE" wrapText="true" />
             <Label styleClass="preference-description" text="%pref.dof.for_more_information_visit" textFill="WHITE" wrapText="true">
                <VBox.margin>
-                  <Insets />
+                  <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Hyperlink onAction="#onLink" text="%pref.doflinx.https_www_vpforums_org_index_php_showforum_104" />
-            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="%pref.doflinx.documentation" textFill="WHITE" wrapText="true" />
-            <Hyperlink layoutX="34.0" layoutY="148.0" onAction="#onLink" text="%pref.doflinx.https_doflinx_github_io_docs" />
+            <Hyperlink onAction="#onLink" text="%pref.doflinx.https_www_vpforums_org_index_php_showforum_104">
+                     <VBox.margin>
+                        <Insets left="-5.0" />
+                     </VBox.margin></Hyperlink>
+            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="%pref.doflinx.documentation" textFill="WHITE" wrapText="true">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin></Label>
+            <Hyperlink layoutX="34.0" layoutY="148.0" onAction="#onLink" text="%pref.doflinx.https_doflinx_github_io_docs">
+                     <VBox.margin>
+                        <Insets left="-5.0" />
+                     </VBox.margin></Hyperlink>
             <VBox>
                <children>
                   <Label styleClass="preference-subtitle" text="%pref.doflinx.installation" textFill="WHITE" wrapText="true" />
                   <Label styleClass="preference-description" text="%pref.doflinx.select_the_folder_of_your_doflinx_installation" textFill="WHITE" wrapText="true" />
-                  <GridPane vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="550.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="99.19989624023435" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -68,7 +76,7 @@
                            </children>
                         </HBox>
                         <Label styleClass="default-text" text="%backups.backup_source_folder.folder" wrapText="true" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.doflinx.invalid_doflinx_installation_folder_no_doflinx_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.doflinx.invalid_doflinx_installation_folder_no_doflinx_exe_file" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
