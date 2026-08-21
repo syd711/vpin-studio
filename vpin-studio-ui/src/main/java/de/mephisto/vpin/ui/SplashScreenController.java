@@ -7,18 +7,17 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SplashScreenController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(SplashScreenController.class);
+
+  public final static int FACT_COUNT = 62;
 
   @FXML
   private ImageView splashImage;
@@ -37,9 +36,8 @@ public class SplashScreenController implements Initializable {
     versionLabel.setText("Version " + Studio.getVersion());
     factLabel.setText("");
     try {
-      List<String> facts = IOUtils.readLines(SplashScreenController.class.getResourceAsStream("facts.txt"), Charset.defaultCharset());
-      int i = ThreadLocalRandom.current().nextInt(0, facts.size() - 1);
-      String fact = facts.get(i);
+      int i = ThreadLocalRandom.current().nextInt(1, FACT_COUNT + 1);
+      String fact = resources.getString("studio.splash.fact." + i);
       factLabel.setText("\"" + fact + "\"");
     }
     catch (Exception e) {

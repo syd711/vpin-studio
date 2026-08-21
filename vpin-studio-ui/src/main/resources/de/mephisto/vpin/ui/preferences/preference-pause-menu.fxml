@@ -52,10 +52,10 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <GridPane alignment="BASELINE_RIGHT" hgap="3.0" vgap="3.0">
+                  <GridPane alignment="BASELINE_RIGHT" hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" prefWidth="546.6000732421875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="600.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.199951171875" minWidth="1.6000244140625455" prefWidth="3.2000732421875" />
                      </columnConstraints>
                      <rowConstraints>
@@ -82,7 +82,7 @@
                               <Label styleClass="checkbox-description" text="%pref.pause_menu.the_pause_menu_will_be_shown_instead_this" textFill="WHITE" wrapText="true" />
                            </children>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.pause_menu.pause_menu_visibility" textFill="WHITE" GridPane.rowIndex="4" wrapText="true">
+                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.pause_menu.pause_menu_visibility" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -102,12 +102,12 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.system_volume" textFill="WHITE" GridPane.rowIndex="3" wrapText="true">
+                        <Label layoutX="9.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.system_volume" textFill="WHITE" wrapText="true" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="%pref.pause_menu.resume_delay" textFill="WHITE" GridPane.rowIndex="6" wrapText="true">
+                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="%pref.pause_menu.resume_delay" textFill="WHITE" wrapText="true" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -157,7 +157,7 @@
                               </HBox>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label" text="%pref.pause_menu.pause_trigger" textFill="WHITE" GridPane.rowIndex="5" wrapText="true">
+                        <Label layoutX="10.0" layoutY="220.0" styleClass="preference-label" text="%pref.pause_menu.pause_trigger" textFill="WHITE" wrapText="true" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -182,12 +182,12 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label styleClass="preference-label" text="%pref.pause_menu.apron_mode" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                        <Label styleClass="preference-label" text="%pref.pause_menu.apron_mode" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="default-text" text="%pref.pause_menu.rotation" textFill="WHITE" GridPane.rowIndex="1" wrapText="true" />
+                        <Label styleClass="default-text" text="%pref.pause_menu.rotation" textFill="WHITE" wrapText="true" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <ComboBox fx:id="menuRotationComboBox" prefWidth="90.0" />
@@ -219,10 +219,10 @@
                            </VBox.margin>
                         </Label>
                         <Label styleClass="preference-description" text="%pref.pause_menu.for_default_16_9_monitors_backglass_or_playfields" textFill="WHITE" wrapText="true" />
-                        <GridPane hgap="3.0" vgap="3.0">
+                        <GridPane hgap="6.0" vgap="3.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="130.0" prefWidth="160.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="574.0" minWidth="10.0" prefWidth="574.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="130.0" prefWidth="180.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -236,8 +236,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="default-text" text="%pref.pause_menu.margin_top" textFill="WHITE" GridPane.rowIndex="2" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="%pref.pause_menu.margin_left" textFill="WHITE" GridPane.rowIndex="3" wrapText="true" />
+                              <Label styleClass="default-text" text="%pref.pause_menu.margin_top" textFill="WHITE" wrapText="true" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="48.0" styleClass="default-text" text="%pref.pause_menu.margin_left" textFill="WHITE" wrapText="true" GridPane.rowIndex="3" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
                                     <Spinner fx:id="stageMarginTopSpinner" editable="true" prefWidth="90.0">
@@ -258,7 +258,7 @@
                                     <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.pause_menu.pixel" textFill="WHITE" wrapText="true" />
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.ui_scaling" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.ui_scaling" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -284,7 +284,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%pref.pause_menu.visible_item_count" textFill="WHITE" GridPane.rowIndex="4" wrapText="true" />
+                              <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%pref.pause_menu.visible_item_count" textFill="WHITE" wrapText="true" GridPane.rowIndex="4" />
                               <HBox alignment="CENTER_LEFT" layoutX="173.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <Spinner fx:id="visibleItemsSpinner" editable="true" prefWidth="90.0">
@@ -306,9 +306,9 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="%pref.pause_menu.test_table" textFill="WHITE" GridPane.rowIndex="6" wrapText="true" />
+                              <Label styleClass="default-text" text="%pref.pause_menu.test_table" textFill="WHITE" wrapText="true" GridPane.rowIndex="6" />
                               <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="380.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Label styleClass="default-text" text="%pref.pause_menu.display_for" textFill="WHITE" GridPane.rowIndex="7" wrapText="true" />
+                              <Label styleClass="default-text" text="%pref.pause_menu.display_for" textFill="WHITE" wrapText="true" GridPane.rowIndex="7" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <children>
                                     <Spinner fx:id="timeSpinner" prefWidth="80.0" />
@@ -319,7 +319,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-headline" text="%pref.pause_menu.testing" GridPane.rowIndex="5" wrapText="true" />
+                              <Label styleClass="default-headline" text="%pref.pause_menu.testing" wrapText="true" GridPane.rowIndex="5" />
                               <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" text="%pref.pause_menu.test_pause_menu" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
@@ -364,10 +364,10 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <GridPane hgap="3.0" vgap="3.0">
+                        <GridPane hgap="6.0" vgap="3.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="556.4000549316406" minWidth="10.0" prefWidth="556.4000549316406" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
@@ -375,7 +375,7 @@
                             <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label styleClass="preference-label" text="%pref.pause_menu.screenshot_screens" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                              <Label styleClass="preference-label" text="%pref.pause_menu.screenshot_screens" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -425,7 +425,7 @@
                                     <Insets top="3.0" />
                                  </GridPane.margin>
                               </VBox>
-                              <Label styleClass="preference-label" text="%pref.pause_menu.miscellaneous" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                              <Label styleClass="preference-label" text="%pref.pause_menu.miscellaneous" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -479,10 +479,10 @@
                      </VBox.margin>
                   </Label>
                   <Label styleClass="preference-description" text="%pref.pause_menu.select_the_menu_items_you_want_to_see" textFill="WHITE" wrapText="true" />
-                  <GridPane fx:id="iScoredScoresBox" hgap="3.0" vgap="3.0">
+                  <GridPane fx:id="iScoredScoresBox" hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="540.2000732421875" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -518,10 +518,10 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <GridPane fx:id="maniaScoresBox" hgap="3.0" vgap="3.0">
+                  <GridPane fx:id="maniaScoresBox" hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="594.1999816894531" minWidth="10.0" prefWidth="577.5999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -554,7 +554,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.info_cards" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.info_cards" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -564,7 +564,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="%pref.pause_menu.rule_cards" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="%pref.pause_menu.rule_cards" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -576,10 +576,10 @@
                         </CheckBox>
                      </children>
                   </GridPane>
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -700,7 +700,7 @@
                               <Insets top="3.0" />
                            </GridPane.margin>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.todo_list" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="%pref.pause_menu.todo_list" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
