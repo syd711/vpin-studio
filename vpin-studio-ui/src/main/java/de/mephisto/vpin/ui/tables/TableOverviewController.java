@@ -1798,11 +1798,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         validationErrorLabel.setText(validationMessage.getLabel());
         validationErrorText.setText(validationMessage.getText());
       }
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.tables"), game.getGameDisplayName()));
     }
     else {
       setValidationVisible(false);
-      NavigationController.setBreadCrumb(List.of("Tables"));
+      NavigationController.setBreadCrumb(List.of(Messages.get("navigation.tables")));
     }
 
     if (getSelections().size() > 1) {
@@ -1834,7 +1834,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(List.of("Tables"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.tables")));
 
     refreshEmulators();
     if (this.models == null) {
@@ -1843,7 +1843,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     GameRepresentation game = getSelection();
     if (game != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.tables"), game.getGameDisplayName()));
     }
   }
 

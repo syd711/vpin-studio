@@ -1289,11 +1289,11 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     List<String> breadcrumb = new ArrayList<>();
     switch (selectedIndex) {
       case 0: {
-        breadcrumb = new ArrayList<>(Arrays.asList("Designer", "Highscore Cards"));
+        breadcrumb = new ArrayList<>(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
         break;
       }
       case 1: {
-        breadcrumb = new ArrayList<>(Arrays.asList("Designer", "Wheel Designer"));
+        breadcrumb = new ArrayList<>(Arrays.asList(Messages.get("navigation.designer"), Messages.get("navigation.wheel_designer")));
         break;
       }
     }

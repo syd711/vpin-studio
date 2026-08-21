@@ -210,7 +210,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
     tableView.setPlaceholder(new Label(Messages.get("players.builtin_users.no_players_placeholder")));
 
 

@@ -222,7 +222,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     tableOpenBtn.setDisable(game ==null);
     scriptBtn.setDisable(game ==null);
 
-    List<String> breadcrumb = new ArrayList<>(Arrays.asList("System Manager", "DOF Tester"));
+    List<String> breadcrumb = new ArrayList<>(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof_tester")));
     if (game != null) {
       breadcrumb.add(game.getGameDisplayName());
     }
@@ -235,7 +235,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF Tester"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof_tester")));
 
     if (options != null && options.getGameId() > 0) {
       GameRepresentationModel selectedItem = tableView.getItems().stream().filter(g -> g.getGameId() == options.getGameId()).findFirst().orElse(null);
@@ -257,7 +257,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     tableEditBtn.setDisable(true);
     scriptBtn.setDisable(true);
 
-    NavigationController.setBreadCrumb(Arrays.asList("Designer", "Highscore Cards"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
 
     try {
       FXMLLoader loader = new FXMLLoader(DOFToysController.class.getResource("dof-toys.fxml"));

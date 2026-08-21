@@ -68,7 +68,7 @@ public class DiscordPlayersController extends BasePlayersController implements I
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Members"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.discord_members")));
     tableView.setPlaceholder(new Label(Messages.get("players.discord_users.no_players_placeholder")));
 
     nameColumn.setCellValueFactory(cellData -> {

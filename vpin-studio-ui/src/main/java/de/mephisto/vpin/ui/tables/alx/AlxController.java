@@ -136,7 +136,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> refreshAlxData());
 
     client.getPreferenceService().addListener(this);
-    NavigationController.setBreadCrumb(List.of("Analytics"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.analytics")));
 
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
@@ -247,7 +247,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(List.of("Table Statistics"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.table_statistics")));
     refreshEmulators();
     // OLE don't call as refreshEmulators() selects the first emulator item, that triggers a refresh of alx data 
     //refreshAlxData();

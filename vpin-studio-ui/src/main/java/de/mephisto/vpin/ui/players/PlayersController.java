@@ -123,20 +123,20 @@ public class PlayersController implements Initializable, StudioFXController {
     int index = tabPane.getSelectionModel().selectedIndexProperty().get();
     if (index == 0) {
       if (player.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players", player.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players"), player.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
       }
 
       playerCountLabel.setText(builtInPlayersController.getCount() + " players");
     }
     else {
       if (player.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players", player.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players"), player.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
       }
 
       playerCountLabel.setText(discordPlayersController.getCount() + " players");
@@ -146,7 +146,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
     validationError.setVisible(false);
     noScoreLabel.managedProperty().bindBidirectional(noScoreLabel.visibleProperty());
 
@@ -190,12 +190,12 @@ public class PlayersController implements Initializable, StudioFXController {
 
   private void refreshTabSelection(Number t1) {
     if (t1.intValue() == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
       Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
       updateSelection(selection);
     }
     else {
-      NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
       Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
       updateSelection(selection);
     }
