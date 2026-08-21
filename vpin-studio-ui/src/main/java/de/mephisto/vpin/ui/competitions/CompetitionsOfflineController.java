@@ -194,8 +194,8 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_competition_2"), 
-          "Deleting Competition " + selection.getName(), 
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_competition_2"),
+          Messages.get("dialog.deleting_competition", selection.getName()),
           () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
         onReload();

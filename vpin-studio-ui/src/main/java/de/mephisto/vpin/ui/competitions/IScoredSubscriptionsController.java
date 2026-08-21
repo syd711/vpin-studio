@@ -254,7 +254,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
-            "Deleting iScored Subscription",
+            Messages.get("dialog.deleting_iscored_subscription"),
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         this.iScoredSubscriptions = null;
@@ -272,8 +272,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
           help, null, Messages.get("dialog.delete_iscored_subscriptions"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Delete Subscriptions", selections,
-            selection -> "Deleting iScored Subscription",
+        ProgressDialog.createProgressDialog(new WaitNProgressModel<>(Messages.get("dialog.delete_subscriptions"), selections,
+            selection -> Messages.get("dialog.deleting_iscored_subscription"),
             selection -> {
               client.getCompetitionService().deleteCompetition(selection.competition);
             }));

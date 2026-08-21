@@ -225,7 +225,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
-            "Deleting Subscription " + selection.getName(),
+            Messages.get("dialog.deleting_subscription", selection.getName()),
             () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         onReload();

@@ -614,7 +614,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onTablesScan() {
     List<GameRepresentation> selectedItems = getSelections();
-    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
+    ProgressDialog.createProgressDialog(new TableScanProgressModel(Messages.get("dialog.scanning_tables"), selectedItems));
     for (GameRepresentation selectedItem : selectedItems) {
       EventManager.getInstance().notifyTableChange(selectedItem.getId(), selectedItem.getRom());
     }

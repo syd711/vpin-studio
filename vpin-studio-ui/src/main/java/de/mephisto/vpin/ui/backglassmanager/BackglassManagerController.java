@@ -267,8 +267,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private void onReload() {
-    ProgressDialog.createProgressDialog(new WaitProgressModel<>("Invalidate Cache",
-        "Invalidating Backglasses Cache...", () -> {
+    ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.invalidate_cache"),
+        Messages.get("dialog.invalidating_backglasses_cache"), () -> {
       client.getBackglassServiceClient().clearCache();
     }));
     doReload();

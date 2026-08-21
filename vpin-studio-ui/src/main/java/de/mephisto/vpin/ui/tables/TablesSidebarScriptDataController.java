@@ -234,7 +234,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   public void onScan() {
     if (this.game.isPresent()) {
-      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", List.of(this.game.get())));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel(Messages.get("dialog.scanning_table", this.game.get().getGameDisplayName()), List.of(this.game.get())));
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }

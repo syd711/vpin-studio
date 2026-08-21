@@ -177,8 +177,6 @@
                            </VBox.margin>
                         </Label>
                         <Label layoutX="10.0" layoutY="306.0" styleClass="preference-description" text="%pref.pinemhi.you_can_also_use_joystickbuttons_here_joy1_joy2" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="328.0" styleClass="preference-description" text="%pref.pinemhi.to_change_the_key_to_display_the_popup" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="349.0" styleClass="preference-description" text="%pref.pinemhi.press_this_key_multiple_times_to_cycle_through" textFill="WHITE" wrapText="true" />
                         <Label layoutX="10.0" layoutY="371.0" styleClass="preference-description" text="%pref.pinemhi.this_key_can_only_be_used_ingame" textFill="WHITE" wrapText="true" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
@@ -206,9 +204,6 @@
                            </VBox.margin>
                         </Label>
                         <Label layoutX="10.0" layoutY="451.0" styleClass="preference-description" text="%pref.pinemhi.this_key_can_only_be_used_when_not" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="472.0" styleClass="preference-description" text="%pref.pinemhi.i_would_suggest_using_the_backtick_accent_grave" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="494.0" styleClass="preference-description" text="%pref.pinemhi.because_if_the_pinemhi_rom_monitor_runs_this" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="528.0" styleClass="preference-description" text="%pref.pinemhi.this_is_especially_true_when_you_start_pinemhi" textFill="WHITE" wrapText="true" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />
@@ -260,7 +255,6 @@
                            </VBox.margin>
                         </Label>
                         <Label layoutX="10.0" layoutY="678.0" styleClass="preference-description" text="%pref.pinemhi.5_minute_mode_can_only_be_activated_and" textFill="WHITE" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="700.0" styleClass="preference-description" text="%pref.pinemhi.if_using_pinup_system_as_frontend_set_the" textFill="WHITE" wrapText="true" />
                         <GridPane layoutX="10.0" layoutY="678.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="150.0" />

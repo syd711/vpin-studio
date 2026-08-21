@@ -126,8 +126,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   @FXML
   private void onGenerateClick(ActionEvent event) {
-    ProgressResultModel result =  ProgressDialog.createProgressDialog(new WaitProgressModel<>("Generate .res File...", 
-      "Generating and saving .res file", 
+    ProgressResultModel result =  ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.generate_res_file"),
+      Messages.get("dialog.generating_and_saving_res_file"),
       () -> {
           DirectB2sScreenRes screenres = client.getBackglassServiceClient().getGlobalScreenRes();
           // Mind that the case where globalRes has a frame background is not fully tested...
@@ -365,8 +365,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       return; 
     }
 
-    ProgressResultModel img =  ProgressDialog.createProgressDialog(new WaitProgressModel<>("Generate Frame...", 
-          "Generating a '" + frameType + "' frame", 
+    ProgressResultModel img =  ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.generate_frame"),
+          Messages.get("dialog.generating_a_frame", frameType),
           () -> {
             try {
               InputStream in = client.getBackglassServiceClient().generateFrame(emulatorId, b2sFileName, frameType);

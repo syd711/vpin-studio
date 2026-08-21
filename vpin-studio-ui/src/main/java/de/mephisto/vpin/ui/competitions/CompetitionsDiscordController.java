@@ -297,7 +297,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_competition_2"),
-            "Deleting Competition " + selection.getName(),
+            Messages.get("dialog.deleting_competition", selection.getName()),
             () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();

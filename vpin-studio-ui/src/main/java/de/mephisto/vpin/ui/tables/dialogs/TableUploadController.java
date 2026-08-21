@@ -271,7 +271,7 @@ public class TableUploadController implements Initializable, DialogController {
     if (uploadType.equals(UploadType.uploadAndImport)) {
       try {
         ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s,
-            new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
+            new WaitProgressModel<>(Messages.get("dialog.pre_checks"), Messages.get("dialog.running_pre_checks_before_upload"), () -> {
               return client.getGameService().findMatch(fileName);
             }));
         if (checkResult.isCancelled()) {
