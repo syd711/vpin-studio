@@ -53,9 +53,9 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="175.0" styleClass="preference-description" text="%pref.vpxz.you_need_to_input_the_values_from_the" textFill="WHITE" wrapText="true" />
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.2000732421875" minWidth="10.0" prefWidth="218.3999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="582.0000152587891" minWidth="10.0" prefWidth="530.4000244140625" />
                     </columnConstraints>
                     <rowConstraints>
@@ -83,7 +83,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vpxz.mobile_device_webserver_port" GridPane.rowIndex="1" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vpxz.mobile_device_webserver_port" wrapText="true" GridPane.rowIndex="1" />
                         <TextField fx:id="serverHost" promptText="%pref.vpxz.enter_the_ip_address_of_your_mobile_device" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />

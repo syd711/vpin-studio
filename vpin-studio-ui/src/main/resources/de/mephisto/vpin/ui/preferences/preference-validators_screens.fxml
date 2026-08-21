@@ -4,8 +4,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -36,7 +36,7 @@
             <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.validators_screens.use_the_asset_management_view_to_check_the" textFill="WHITE" wrapText="true" />
             <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="172.79990234374998" />
@@ -76,7 +76,7 @@
                   <CheckBox fx:id="Wheel_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.wheel_image" GridPane.rowIndex="11" />
                   <CheckBox fx:id="Logo_42" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.logo_image" GridPane.rowIndex="12" />
                   <Label styleClass="default-headline" text="%pref.validators_screens.screen" wrapText="true" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.validators_screens.preference" GridPane.columnIndex="1" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.validators_screens.preference" wrapText="true" GridPane.columnIndex="1" />
                   <ComboBox fx:id="Audio_30_Options" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <ComboBox fx:id="AudioLaunch_31_Options" layoutX="194.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <ComboBox fx:id="Menu_32_Options" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -90,7 +90,7 @@
                   <ComboBox fx:id="Other2_40_Options" layoutX="194.0" layoutY="347.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                   <ComboBox fx:id="Wheel_41_Options" layoutX="194.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                   <ComboBox fx:id="Logo_42_Options" layoutX="194.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                  <Label layoutX="194.0" layoutY="15.0" styleClass="default-headline" text="%pref.validators_screens.preferred_media" GridPane.columnIndex="2" wrapText="true" />
+                  <Label layoutX="194.0" layoutY="15.0" styleClass="default-headline" text="%pref.validators_screens.preferred_media" wrapText="true" GridPane.columnIndex="2" />
                   <ComboBox fx:id="Audio_30_Media" layoutX="194.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <ComboBox fx:id="AudioLaunch_31_Media" layoutX="383.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <ComboBox fx:id="Menu_32_Media" layoutX="383.0" layoutY="78.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />

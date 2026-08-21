@@ -647,7 +647,7 @@ public class TableDialogs {
       controller.setGame(stage, overviewController, game, tab);
 
       FXResizeHelper.install(stage, 30, 6);
-      stage.setMinWidth(950);
+      stage.setMinWidth(970);
       stage.setMaxHeight(1060);
       stage.setMinHeight(TableDataController.MIN_HEIGHT);
 

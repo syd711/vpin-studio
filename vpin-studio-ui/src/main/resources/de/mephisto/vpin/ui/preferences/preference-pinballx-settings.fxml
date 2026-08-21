@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -9,7 +8,6 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -25,84 +23,76 @@
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" wrapText="true" />
-            <ScrollPane hbarPolicy="NEVER">
-               <content>
-                  <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
-                     <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.pinballx_settings" wrapText="true" />
-                        <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" textFill="WHITE" wrapText="true">
-                           <VBox.margin>
-                              <Insets top="12.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%pref.pinballx_settings.gameex_account" wrapText="true">
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Hyperlink onAction="#onLink" text="%pref.pinballx_settings.https_online_gameex_com">
-                           <VBox.margin>
-                              <Insets left="-6.0" />
-                           </VBox.margin>
-                        </Hyperlink>
-                        <GridPane vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="142.4000244140625" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="770.3999755859375" minWidth="10.0" prefWidth="400.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label text="%pref.pinballx_settings.e_mail_address" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <TextField fx:id="gameExMailText" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <PasswordField fx:id="gameExPasswordText" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </PasswordField>
-                              <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" textFill="WHITE" wrapText="true">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="gameExEnabledCheckbox" mnemonicParsing="false" text="%pref.pinballx_settings.gameex_enabled" textFill="WHITE" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </GridPane>
-                     </children>
-                  </VBox>
-               </content>
-            </ScrollPane>
+            <Label styleClass="preference-subtitle" text="%pref.pinballx_settings.pinballx_settings" wrapText="true" />
+            <Label styleClass="preference-description" text="%pref.pinballx_settings.global_settings_for_the_pinballx_frontend" textFill="WHITE" wrapText="true">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <Label styleClass="preference-subtitle" text="%pref.pinballx_settings.gameex_account" wrapText="true">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Hyperlink onAction="#onLink" text="%pref.pinballx_settings.https_online_gameex_com">
+               <VBox.margin>
+                  <Insets left="-6.0" />
+               </VBox.margin>
+            </Hyperlink>
+            <GridPane hgap="6.0" vgap="3.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="%pref.pinballx_settings.e_mail_address" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="15.0" text="%backups.backup_source_http.password" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="gameExMailText" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <PasswordField fx:id="gameExPasswordText" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </PasswordField>
+                  <Label layoutX="10.0" layoutY="48.0" text="%pref.pinballx_settings.activated" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="gameExEnabledCheckbox" mnemonicParsing="false" text="%pref.pinballx_settings.gameex_enabled" textFill="WHITE" GridPane.columnIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </GridPane>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
