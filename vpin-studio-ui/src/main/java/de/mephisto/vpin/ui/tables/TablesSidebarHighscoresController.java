@@ -355,14 +355,17 @@ public class TablesSidebarHighscoresController implements Initializable {
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
 
       //TODO swith to new Image(URL) to avoid non closed InputStrem + async loading ?
-      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, CardTemplateType.HIGSCORE_CARD);
-      if (highscoreCard != null) {
-        cardImage.setImage(new Image(highscoreCard));
-      }
-      else {
-        InputStream resourceAsStream = Studio.class.getResourceAsStream("empty-preview.png");
-        cardImage.setImage(new Image(resourceAsStream));
-      }
+      JFXFuture.supplyAsync(() -> {
+        return client.getHighscoreCardsService().getHighscoreCardPreview(game, CardTemplateType.HIGSCORE_CARD);
+      }).thenAcceptLater((highscoreCard) -> {
+        if (highscoreCard != null) {
+          cardImage.setImage(new Image(highscoreCard));
+        }
+        else {
+          InputStream resourceAsStream = Studio.class.getResourceAsStream("empty-preview.png");
+          cardImage.setImage(new Image(resourceAsStream));
+        }
+      });
 
       JFXFuture.supplyAsync(() -> {
         return Studio.client.getHigscoreBackupService().get(game.getId());

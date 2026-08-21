@@ -21,7 +21,7 @@
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%competitions.discord_competition_edit.server_settings" wrapText="true">
@@ -51,22 +51,22 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="startupTimeLabel" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
+                        <Label fx:id="startupTimeLabel" textFill="WHITE" wrapText="true" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.version" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.version" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="versionLabel" layoutX="129.0" layoutY="15.0" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
+                        <Label fx:id="versionLabel" layoutX="129.0" layoutY="15.0" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="preference-label" text="%pref.settings_server.vpin_studio_server_restart" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                        <Label styleClass="preference-label" text="%pref.settings_server.vpin_studio_server_restart" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -155,36 +155,36 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" wrapText="true" />
+                              <Label styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" />
                               <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
                                  <GridPane.margin>
                                     <Insets />
                                  </GridPane.margin>
                               </ComboBox>
-                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_id" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_id" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_version_id" textFill="WHITE" GridPane.rowIndex="4" wrapText="true">
+                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="%pref.settings_server.vp_spreadsheet_table_version_id" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" wrapText="true" />
+                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                               <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.used_by_some_tables_to_write_scores_into" textFill="WHITE" GridPane.rowIndex="1" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="%pref.settings_server.the_id_for_the_overall_table_type_on" textFill="WHITE" GridPane.rowIndex="3" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="%pref.settings_server.the_id_of_the_version_mod_of_the" textFill="WHITE" GridPane.rowIndex="5" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="%pref.settings_server.patch_version" textFill="WHITE" GridPane.rowIndex="6" wrapText="true">
+                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="%pref.settings_server.used_by_some_tables_to_write_scores_into" textFill="WHITE" wrapText="true" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="%pref.settings_server.the_id_for_the_overall_table_type_on" textFill="WHITE" wrapText="true" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="%pref.settings_server.the_id_of_the_version_mod_of_the" textFill="WHITE" wrapText="true" GridPane.rowIndex="5" />
+                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="%pref.settings_server.patch_version" textFill="WHITE" wrapText="true" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="%pref.settings_server.the_version_number_or_name_of_the_patch" textFill="WHITE" GridPane.rowIndex="7" wrapText="true" />
-                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" wrapText="true" />
+                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="%pref.settings_server.the_version_number_or_name_of_the_patch" textFill="WHITE" wrapText="true" GridPane.rowIndex="7" />
+                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="%pref.settings_server.is_stored_into_field" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <ComboBox fx:id="patchVersionCombo" layoutX="440.0" layoutY="144.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                            </children>
                         </GridPane>

@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -49,6 +50,8 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 @Service
 public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
+
+  private final static int CARD_GENERATION_TIMEOUT_SECONDS = 15;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -247,8 +250,14 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         latch.countDown();
       }
     });
-    // wait for termination of FX thread
-    latch.await();
+    // wait for termination of FX thread, but never block forever:
+    // this thread may be holding the sole Hikari/JPA connection (open-in-view), so an
+    // unbounded wait here can wedge the entire database if the FX thread is stuck.
+    if (!latch.await(CARD_GENERATION_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+      LOG.error("Timed out after {}s waiting for JavaFX card generation of \"{}\"", CARD_GENERATION_TIMEOUT_SECONDS, game.getGameDisplayName());
+      SLOG.error("Timed out waiting for card generation of \"" + game.getGameDisplayName() + "\"");
+      return null;
+    }
 
     return generatedImage[0];
   }
