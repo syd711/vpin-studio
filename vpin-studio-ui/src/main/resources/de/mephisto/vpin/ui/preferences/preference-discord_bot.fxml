@@ -28,12 +28,11 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.discord_bot.you_can_create_a_discord_bot_and_add" textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-description" text="%pref.discord_bot.you_can_create_a_discord_bot_and_add_the_member_names" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_bot.the_member_names_are_mapped_against_the_highscore" textFill="WHITE" wrapText="true" />
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_bot.visit_https_discord_com_developers_applications_to_create" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -109,12 +108,11 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="%pref.discord_bot.once_your_discord_bot_is_active_you_can" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="398.0" styleClass="preference-description" text="%pref.discord_bot.once_your_discord_bot_is_active_you_can_all_these_fields" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="355.0" styleClass="preference-description" text="%pref.discord_bot.all_these_fields_are_optional_if_you_only" textFill="WHITE" wrapText="true" />
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="200.0" />
@@ -175,13 +173,11 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="%pref.discord_bot.with_dynamic_subscriptions_a_new_text_channel_will" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="471.0" styleClass="preference-description" text="%pref.discord_bot.with_dynamic_subscriptions_a_new_text_channel_will_when_the_first" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="829.0" styleClass="preference-description" text="%pref.discord_bot.when_the_first_new_highscore_for_a_table" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="492.0" styleClass="preference-description" text="%pref.discord_bot.if_you_only_wish_to_have_subscriptions_for" textFill="WHITE" wrapText="true" />
                   <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="446.2000732421875" minWidth="10.0" prefWidth="201.599951171875" />

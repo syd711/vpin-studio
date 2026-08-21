@@ -32,21 +32,15 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="%pref.highscore_cards.if_a_screen_is_selected_a_new_highscore" textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-description" text="%pref.highscore_cards.highscore_card_generation_description" textFill="WHITE" wrapText="true">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="148.0" styleClass="preference-description" text="%pref.highscore_cards.select_the_screen_the_highscore_cards_will_be" textFill="WHITE" wrapText="true" />
-                  <Label styleClass="preference-description" text="%pref.highscore_cards.ensure_that_the_screen_is_enabled_and_bound" textFill="WHITE" wrapText="true">
-                     <VBox.margin>
-                        <Insets bottom="6.0" />
-                     </VBox.margin>
-                  </Label>
-                  <GridPane alignment="BASELINE_RIGHT" layoutX="34.0" layoutY="136.0" vgap="3.0">
+                  <GridPane alignment="BASELINE_RIGHT" hgap="6.0" layoutX="34.0" layoutY="136.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="10.0" prefWidth="280.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="ALWAYS" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -60,7 +54,7 @@
                         </Label>
                         <ComboBox fx:id="cardTargetScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
 
-                        <Label styleClass="preference-label" text="%pref.highscore_cards.action_when_an_asset_exists" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                        <Label styleClass="preference-label" text="%pref.highscore_cards.action_when_an_asset_exists" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -114,7 +108,7 @@
                         </VBox>
                      </children>
                      <VBox.margin>
-                        <Insets left="280.0" top="6.0" />
+                        <Insets top="6.0" />
                      </VBox.margin>
                   </VBox>
                   <Label layoutX="34.0" layoutY="370.0" styleClass="preference-subtitle" text="%pref.highscore_cards.highscore_card_resolution" wrapText="true">
@@ -128,9 +122,11 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="420.0" styleClass="preference-description" text="%pref.highscore_cards.extracted_from_backglass_files_and_other_media" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="442.0" styleClass="default-text" text="%pref.highscore_cards.warning" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="464.0" styleClass="preference-description" text="%pref.highscore_cards.changing_the_card_resolution_will_re_generate_the" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="484.0" styleClass="preference-description" text="%pref.highscore_cards.and_may_break_your_existing_highscore_card_layouts" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="442.0" styleClass="default-text" text="%pref.highscore_cards.warning" textFill="WHITE" wrapText="true">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin></Label>
+                  <Label layoutX="34.0" layoutY="464.0" styleClass="preference-description" text="%pref.highscore_cards.changing_the_card_resolution_will_re_generate_the_and_may_break" textFill="WHITE" wrapText="true" />
                   <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="10.0" prefWidth="280.0" />
@@ -208,16 +204,15 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.highscore_cards.if_you_select_values_larger_0_here_the" textFill="WHITE" wrapText="true">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.highscore_cards.if_you_select_values_larger_0_here_the_will_pop_up" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="310.0" styleClass="preference-description" text="%pref.highscore_cards.will_pop_up_for_the_selected_time_when" textFill="WHITE" wrapText="true" />
-                  <GridPane alignment="BASELINE_RIGHT" prefWidth="750.0" vgap="3.0">
+                  <GridPane alignment="BASELINE_RIGHT" hgap="6.0" prefWidth="750.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.199951171875" minWidth="10.0" prefWidth="200.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="565.0" minWidth="10.0" prefWidth="550.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="ALWAYS" maxWidth="565.0" minWidth="10.0" prefWidth="550.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -225,7 +220,7 @@
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label prefHeight="20.0" styleClass="preference-label" text="%pref.highscore_cards.show_card_on_table_start" textFill="WHITE" wrapText="true">
@@ -233,7 +228,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="validationError1" text=" " textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" wrapText="true">
+                        <Label fx:id="validationError1" text=" " textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -250,7 +245,7 @@
                               <Label styleClass="default-text" text="%monitor.cab_monitor.seconds" wrapText="true" />
                            </children>
                         </HBox>
-                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.highscore_cards.card_position" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                        <Label layoutX="9.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.highscore_cards.card_position" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -287,7 +282,7 @@
                               <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.highscore_cards.make_sure_that_the_target_screen_has_a" textFill="WHITE" wrapText="true" />
                            </children>
                         </VBox>
-                        <Label layoutX="295.0" layoutY="76.0" styleClass="preference-description" text="%pref.highscore_cards.position_and_size_is_calculated_for_the_playfield" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" wrapText="true" />
+                        <Label layoutX="295.0" layoutY="76.0" styleClass="preference-description" text="%pref.highscore_cards.position_and_size_is_calculated_for_the_playfield" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <RadioButton fx:id="cardPosPlayfieldRadio" mnemonicParsing="false" text="%pref.highscore_cards.centered_on_playfield" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />

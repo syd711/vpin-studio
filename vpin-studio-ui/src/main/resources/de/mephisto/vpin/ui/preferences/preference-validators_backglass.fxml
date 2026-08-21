@@ -42,7 +42,6 @@
                            </VBox.margin>
                         </Label>
                         <Label styleClass="preference-description" text="%pref.validators_backglass.if_enabled_and_the_backglass_is_replaced_the" textFill="WHITE" wrapText="true" />
-                        <Label styleClass="preference-description" text="%pref.validators_backglass.to_keep_track_of_this_change_e_g" textFill="WHITE" wrapText="true" />
                         <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

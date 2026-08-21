@@ -47,7 +47,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                  <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
                      <children>
                         <Spinner fx:id="spinner1" />
                         <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
@@ -75,7 +75,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="10.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <Spinner fx:id="spinner2" />
                         <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
@@ -88,7 +88,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="40.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="40.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
                         <Spinner fx:id="spinner3" />
                         <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
@@ -101,7 +101,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="71.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <HBox alignment="CENTER_LEFT" layoutX="169.0" layoutY="71.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <children>
                         <Spinner fx:id="spinnerCompetitions" />
                         <Label text="%pref.player_rankings.points" textFill="WHITE" wrapText="true">
