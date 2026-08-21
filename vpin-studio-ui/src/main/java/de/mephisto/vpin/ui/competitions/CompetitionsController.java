@@ -56,12 +56,6 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 public class CompetitionsController implements Initializable, StudioFXController, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
 
-  private static final String TAB_OFFLINE = "Offline Competitions";
-  private static final String TAB_ONLINE = "Online Competitions";
-  private static final String TAB_TABLE_SUBS = "Table Subscriptions";
-  private static final String TAB_ISCORED = "iScored Competitions";
-  private static final String TAB_WEEKLY = "WOVP Competitions";
-
   @FXML
   private BorderPane root;
 
@@ -223,31 +217,20 @@ public class CompetitionsController implements Initializable, StudioFXController
   @FXML
   private void onCompetitionSettings() {
     Tab selectedTab = getSelectedTab();
-    String title = selectedTab.getText();
-    switch (title) {
-      case TAB_OFFLINE: {
-        PreferencesController.open("player_rankings");
-        break;
-      }
-      case TAB_ONLINE: {
-        PreferencesController.open("discord_bot");
-        break;
-      }
-      case TAB_TABLE_SUBS: {
-        PreferencesController.open("discord_bot");
-        break;
-      }
-      case TAB_ISCORED: {
-        PreferencesController.open("iscored");
-        break;
-      }
-      case TAB_WEEKLY: {
-        PreferencesController.open("wovp");
-        break;
-      }
-      default: {
-        PreferencesController.open("settings_client");
-      }
+    if (selectedTab == offlineTab) {
+      PreferencesController.open("player_rankings");
+    }
+    else if (selectedTab == onlineTab || selectedTab == tableSubscriptionsTab) {
+      PreferencesController.open("discord_bot");
+    }
+    else if (selectedTab == iScoredSubscriptionsTab) {
+      PreferencesController.open("iscored");
+    }
+    else if (selectedTab == weeklySubscriptionsTab) {
+      PreferencesController.open("wovp");
+    }
+    else {
+      PreferencesController.open("settings_client");
     }
   }
 
@@ -321,15 +304,14 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void refreshView(Tab tab) {
-    String title = tab.getText();
-    if (title.equals(TAB_OFFLINE)) {
+    if (tab == offlineTab) {
       NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       Optional<CompetitionRepresentation> selection = offlineController.getSelection();
       updateSelection(selection);
       checkTitledPanes(CompetitionType.OFFLINE);
       offlineController.onReload();
     }
-    else if (title.equals(TAB_ONLINE)) {
+    else if (tab == onlineTab) {
       if (discordController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         Optional<CompetitionRepresentation> selection = discordController.getSelection();
@@ -338,7 +320,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         discordController.onReload();
       }
     }
-    else if (title.equals(TAB_TABLE_SUBS)) {
+    else if (tab == tableSubscriptionsTab) {
       if (tableSubscriptionsController != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
@@ -347,25 +329,21 @@ public class CompetitionsController implements Initializable, StudioFXController
         tableSubscriptionsController.onReload();
       }
     }
-    else if (title.equals(TAB_ISCORED)) {
-      if (iScoredSubscriptionsTab != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-        updateSelection(Optional.empty());
-        checkTitledPanes(CompetitionType.ISCORED);
-      }
+    else if (tab == iScoredSubscriptionsTab) {
+      NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+      updateSelection(Optional.empty());
+      checkTitledPanes(CompetitionType.ISCORED);
     }
-    else if (title.equals(TAB_WEEKLY)) {
-      if (weeklySubscriptionsTab != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
-        Optional<WeeklySubscriptionsController.WeeklyCompetitionModel> selection = weeklySubscriptionsController.getSelection();
-        if (selection.isPresent()) {
-          updateSelection(Optional.of(selection.get().getCompetition()));
-        }
-        else {
-          updateSelection(Optional.empty());
-        }
-        checkTitledPanes(CompetitionType.WEEKLY);
+    else if (tab == weeklySubscriptionsTab) {
+      NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
+      Optional<WeeklySubscriptionsController.WeeklyCompetitionModel> selection = weeklySubscriptionsController.getSelection();
+      if (selection.isPresent()) {
+        updateSelection(Optional.of(selection.get().getCompetition()));
       }
+      else {
+        updateSelection(Optional.empty());
+      }
+      checkTitledPanes(CompetitionType.WEEKLY);
     }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
@@ -373,23 +351,22 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private StudioFXController getControllerForTab(Tab tab) {
-    String title = tab.getText();
-    if (title.equals(TAB_OFFLINE)) {
+    if (tab == offlineTab) {
       return offlineController;
     }
-    if (title.equals(TAB_ONLINE)) {
+    if (tab == onlineTab) {
       return discordController;
     }
-    if (title.equals(TAB_TABLE_SUBS)) {
+    if (tab == tableSubscriptionsTab) {
       return tableSubscriptionsController;
     }
-    if (title.equals(TAB_ISCORED)) {
+    if (tab == iScoredSubscriptionsTab) {
       return iScoredSubscriptionsController;
     }
-    if (title.equals(TAB_WEEKLY)) {
+    if (tab == weeklySubscriptionsTab) {
       return weeklySubscriptionsController;
     }
-    throw new UnsupportedOperationException("Failed to find controller for tab " + title);
+    throw new UnsupportedOperationException("Failed to find controller for tab " + tab.getText());
   }
 
   public void setCompetition(CompetitionRepresentation competition) {
@@ -436,7 +413,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         String dashboardUrl = competitionRepresentation.get().getUrl();
         dashboardBtn.setDisable(dashboardUrl == null);
         dashboardWebView.setVisible(dashboardUrl != null);
-        dashboardStatusLabel.setText("This competition has no dashboard URL.");
+        dashboardStatusLabel.setText(Messages.get("competitions.competitions.this_competition_has_no_dashboard_url"));
         dashboardStatusLabel.setVisible(dashboardUrl == null);
 
         if (dashboardUrl != null) {
@@ -453,7 +430,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         scoreBox.getChildren().removeAll(scoreBox.getChildren());
         scoreBox.setVisible(false);
 
-        dashboardStatusLabel.setText("Loading Highscores...");
+        dashboardStatusLabel.setText(Messages.get("competitions.competitions.loading_highscores"));
         dashboardStatusLabel.setVisible(true);
 
         JFXFuture.supplyAsync(() -> {
@@ -553,7 +530,7 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
 
           if (competition.getScoreLimit() == 0) {
-            scoreLimitLabel.setText("Table Defaults");
+            scoreLimitLabel.setText(Messages.get("competitions.competitions.table_defaults"));
           }
           else {
             scoreLimitLabel.setText(String.valueOf(competition.getScoreLimit()));
@@ -682,8 +659,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void updateForTabSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
     Tab tab = tabPane.getSelectionModel().getSelectedItem();
-    String title = tab.getText();
-    if (title.equals(TAB_OFFLINE)) {
+    if (tab == offlineTab) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
       }
@@ -691,7 +667,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
       }
     }
-    else if (title.equals(TAB_ONLINE)) {
+    else if (tab == onlineTab) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
       }
@@ -699,7 +675,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
       }
     }
-    else if (title.equals(TAB_TABLE_SUBS)) {
+    else if (tab == tableSubscriptionsTab) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
       }
@@ -707,7 +683,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
       }
     }
-    else if (title.equals(TAB_ISCORED)) {
+    else if (tab == iScoredSubscriptionsTab) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
       }
@@ -715,7 +691,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
       }
     }
-    else if (title.equals(TAB_WEEKLY)) {
+    else if (tab == weeklySubscriptionsTab) {
       if (competitionRepresentation.isPresent()) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges", competitionRepresentation.get().getName()));
       }
@@ -734,12 +710,12 @@ public class CompetitionsController implements Initializable, StudioFXController
       CompetitionRepresentation competition = cp.get();
       if (competitionMembersPane.isVisible() && !competitionMembersPane.isDisabled()) {
         if (!competition.isActive()) {
-          membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The competition is not active."));
+          membersBox.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("competitions.competitions.competition_not_active")));
         }
         else {
           List<PlayerRepresentation> memberList = client.getCompetitionService().getDiscordCompetitionPlayers(competition.getId());
           if (memberList.isEmpty()) {
-            membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No discord members have joined this competition yet."));
+            membersBox.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("competitions.competitions.no_discord_members")));
           }
           else {
             for (PlayerRepresentation player : memberList) {
@@ -769,7 +745,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       offlineController = loader.getController();
       offlineController.setCompetitionsController(this);
       offlineTab.setContent(parent);
-      offlineTab.setText(TAB_OFFLINE);
     }
     catch (IOException e) {
       LOG.error("failed to load offline: " + e.getMessage(), e);
@@ -782,7 +757,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       discordController = loader.getController();
       discordController.setCompetitionsController(this);
       onlineTab.setContent(parent);
-      onlineTab.setText(TAB_ONLINE);
     }
     catch (IOException e) {
       LOG.error("failed to load online: " + e.getMessage(), e);
@@ -795,7 +769,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       tableSubscriptionsController = loader.getController();
       tableSubscriptionsController.setCompetitionsController(this);
       tableSubscriptionsTab.setContent(parent);
-      tableSubscriptionsTab.setText(TAB_TABLE_SUBS);
     }
     catch (IOException e) {
       LOG.error("failed to load subscriptions: " + e.getMessage(), e);
@@ -809,7 +782,6 @@ public class CompetitionsController implements Initializable, StudioFXController
         iScoredSubscriptionsController = loader.getController();
         iScoredSubscriptionsController.setCompetitionsController(this);
         iScoredSubscriptionsTab.setContent(parent);
-        iScoredSubscriptionsTab.setText(TAB_ISCORED);
       }
       catch (IOException e) {
         LOG.error("failed to load subscriptions: " + e.getMessage(), e);
@@ -831,7 +803,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       weeklySubscriptionsController = loader.getController();
       weeklySubscriptionsController.setCompetitionsController(this);
       weeklySubscriptionsTab.setContent(parent);
-      weeklySubscriptionsTab.setText(TAB_WEEKLY);
 
       Image image = new Image(Studio.class.getResourceAsStream("wovp.png"));
       ImageView view = new ImageView(image);
@@ -851,15 +822,22 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private StudioFXController getActiveController() {
     Tab selectedTab = getSelectedTab();
-    String title = selectedTab.getText();
-      return switch (title) {
-          case TAB_OFFLINE -> offlineController;
-          case TAB_ONLINE -> discordController;
-          case TAB_TABLE_SUBS -> tableSubscriptionsController;
-          case TAB_ISCORED -> iScoredSubscriptionsController;
-          case TAB_WEEKLY -> weeklySubscriptionsController;
-          default -> null;
-      };
+    if (selectedTab == offlineTab) {
+      return offlineController;
+    }
+    if (selectedTab == onlineTab) {
+      return discordController;
+    }
+    if (selectedTab == tableSubscriptionsTab) {
+      return tableSubscriptionsController;
+    }
+    if (selectedTab == iScoredSubscriptionsTab) {
+      return iScoredSubscriptionsController;
+    }
+    if (selectedTab == weeklySubscriptionsTab) {
+      return weeklySubscriptionsController;
+    }
+    return null;
   }
 
   @Override

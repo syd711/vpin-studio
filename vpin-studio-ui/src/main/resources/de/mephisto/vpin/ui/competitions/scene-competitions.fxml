@@ -137,10 +137,10 @@
                                     <children>
                                         <BorderPane>
                                             <center>
-                                                <GridPane vgap="3.0" BorderPane.alignment="CENTER">
+                                                <GridPane hgap="6.0" vgap="3.0" BorderPane.alignment="CENTER">
                                                     <columnConstraints>
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="144.0000244140625" />
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="477.3999847412109" minWidth="10.0" prefWidth="435.9999755859375" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" />
+                                                        <ColumnConstraints hgrow="ALWAYS" />
                                                     </columnConstraints>
                                                     <rowConstraints>
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />

@@ -116,8 +116,14 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="531.0" styleClass="preference-description" text="%pref.mame.this_can_enable_the_use_of_alternative_external" textFill="WHITE" wrapText="true" />
-                        <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
+                        <Label layoutX="10.0" layoutY="531.0" styleClass="preference-description" text="%pref.mame.this_can_enable_the_use_of_alternative_external" textFill="WHITE" wrapText="true">
+                           <VBox.margin>
+                              <Insets top="3.0" />
+                           </VBox.margin></Label>
+                        <ComboBox fx:id="soundModeCombo" prefWidth="320.0">
+                           <VBox.margin>
+                              <Insets top="3.0" />
+                           </VBox.margin></ComboBox>
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />

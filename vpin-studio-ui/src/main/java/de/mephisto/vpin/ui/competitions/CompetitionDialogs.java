@@ -14,7 +14,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 public class CompetitionDialogs {
 
   public static CompetitionRepresentation openDiscordJoinCompetitionDialog() {
-    String title = "Join Competition";
+    String title = Messages.get("dialog.join_competition");
     Stage stage = WidgetFactory.createDialogStage(CompetitionOfflineDialogController.class, Studio.stage, title, "dialog-discord-competition-join.fxml");
     CompetitionDiscordJoinDialogController controller = (CompetitionDiscordJoinDialogController) stage.getUserData();
     stage.showAndWait();
@@ -23,12 +23,12 @@ public class CompetitionDialogs {
   }
 
   public static CompetitionRepresentation openDiscordCompetitionDialog(List<CompetitionRepresentation> all, @Nullable CompetitionRepresentation selection) {
-    String title = "Edit Competition";
+    String title = Messages.get("dialog.edit_competition");
     if (selection == null) {
-      title = "Add Competition";
+      title = Messages.get("dialog.add_competition");
     }
     else if (selection.getId() == null) {
-      title = "Duplicate Competition";
+      title = Messages.get("dialog.duplicate_competition");
     }
 
     FXMLLoader fxmlLoader = new FXMLLoader(CompetitionDiscordDialogController.class.getResource("dialog-discord-competition-edit.fxml"));
@@ -42,7 +42,7 @@ public class CompetitionDialogs {
   }
 
   public static CompetitionRepresentation openSubscriptionDialog(List<CompetitionRepresentation> all, @Nullable CompetitionRepresentation selection) {
-    String title = "Add Subscription";
+    String title = Messages.get("dialog.add_subscription");
     Stage stage = WidgetFactory.createDialogStage(SubscriptionDialogController.class, Studio.stage, title, "dialog-subscription-add.fxml");
     SubscriptionDialogController controller = (SubscriptionDialogController) stage.getUserData();
     controller.setCompetition(all, selection);
@@ -52,7 +52,7 @@ public class CompetitionDialogs {
   }
 
   public static CompetitionRepresentation openJoinSubscriptionDialog(List<CompetitionRepresentation> all) {
-    String title = "Join Subscription";
+    String title = Messages.get("dialog.join_subscription");
     Stage stage = WidgetFactory.createDialogStage(JoinSubscriptionDialogController.class, Studio.stage, title, "dialog-subscription-join.fxml");
     JoinSubscriptionDialogController controller = (JoinSubscriptionDialogController) stage.getUserData();
     controller.setCompetition(all);
@@ -62,12 +62,12 @@ public class CompetitionDialogs {
   }
 
   public static CompetitionRepresentation openOfflineCompetitionDialog(List<CompetitionRepresentation> all, CompetitionRepresentation selection) {
-    String title = "Edit Competition";
+    String title = Messages.get("dialog.edit_competition");
     if (selection == null) {
-      title = "Add Competition";
+      title = Messages.get("dialog.add_competition");
     }
     else if (selection.getId() == null) {
-      title = "Duplicate Competition";
+      title = Messages.get("dialog.duplicate_competition");
     }
 
     Stage stage = WidgetFactory.createDialogStage(CompetitionOfflineDialogController.class, Studio.stage, title, "dialog-offline-competition-edit.fxml");

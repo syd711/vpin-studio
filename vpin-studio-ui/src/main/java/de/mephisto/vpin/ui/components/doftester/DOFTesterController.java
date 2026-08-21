@@ -124,10 +124,10 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
       Platform.runLater(() -> {
         VBox msg = new VBox(3);
         msg.setPadding(new Insets(12));
-        Label defaultLabel = WidgetFactory.createDefaultLabel("Invalid DOF Settings");
+        Label defaultLabel = WidgetFactory.createDefaultLabel(Messages.get("components.doftester.dof_tester.invalid_dof_settings"));
         defaultLabel.getStyleClass().add("default-title");
 
-        Button button = new Button("DOF Settings", WidgetFactory.createIcon("mdi2c-cog"));
+        Button button = new Button(Messages.get("components.doftester.dof_tester.dof_settings"), WidgetFactory.createIcon("mdi2c-cog"));
         button.getStyleClass().add("default-text");
         button.setOnAction(new EventHandler<ActionEvent>() {
           @Override
@@ -137,7 +137,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
         });
 
         msg.getChildren().add(defaultLabel);
-        msg.getChildren().add(WidgetFactory.createDefaultLabel("Open the DOF settings and configure the path to your DOF configuration."));
+        msg.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("components.doftester.dof_tester.open_the_dof_settings_and_configure")));
         msg.getChildren().add(button);
         toysEditorPane.setCenter(msg);
       });

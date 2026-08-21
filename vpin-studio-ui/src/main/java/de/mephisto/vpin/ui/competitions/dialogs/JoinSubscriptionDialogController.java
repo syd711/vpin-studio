@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -134,8 +135,8 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
           validationContainer.setVisible(true);
           this.saveBtn.setDisable(true);
 
-          validationTitle.setText("Not a subscription channel");
-          validationDescription.setText("No subscription data was found in the pinned messages of this channel.");
+          validationTitle.setText(Messages.get("competitions.subscription_join.not_a_subscription_channel"));
+          validationDescription.setText(Messages.get("competitions.subscription_join.no_subscription_data_was_found_in_the_pinned_messages"));
           return;
         }
 
@@ -177,27 +178,27 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
     this.saveBtn.setDisable(true);
 
     if (this.competition.getDiscordServerId() == 0) {
-      validationTitle.setText("No Discord server selected.");
-      validationDescription.setText("Select a Discord server.");
+      validationTitle.setText(Messages.get("competitions.subscription_join.no_discord_server_selected"));
+      validationDescription.setText(Messages.get("competitions.subscription_join.select_a_discord_server"));
       return;
     }
 
     if (this.channelCombo.getItems().isEmpty()) {
-      validationTitle.setText("No subscriptions found.");
-      validationDescription.setText("No table subscriptions have been found for the selected server.");
+      validationTitle.setText(Messages.get("competitions.subscription_join.no_subscriptions_found"));
+      validationDescription.setText(Messages.get("competitions.subscription_join.no_table_subscriptions_have_been_found_for_the_selected_server"));
       return;
     }
 
     if (this.competition.getDiscordChannelId() == 0) {
-      validationTitle.setText("No Discord channel selected.");
-      validationDescription.setText("Select a Discord text channel with an active subscription.");
+      validationTitle.setText(Messages.get("competitions.subscription_join.no_discord_channel_selected"));
+      validationDescription.setText(Messages.get("competitions.subscription_join.select_a_discord_text_channel_with_an_active_subscription"));
       return;
     }
 
     //check table selection
     if (this.tableCombo.getValue() == null) {
-      validationTitle.setText("No table selected.");
-      validationDescription.setText("Select a table for the subscription.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.no_table_selected"));
+      validationDescription.setText(Messages.get("competitions.subscription_join.select_a_table_for_the_subscription"));
       return;
     }
 
@@ -210,8 +211,8 @@ public class JoinSubscriptionDialogController implements Initializable, DialogCo
 
     //check Discord permissions
     if (!client.getCompetitionService().hasChannelManagePermissions(competition.getDiscordServerId())) {
-      validationTitle.setText("Insufficient Permissions");
-      validationDescription.setText("Your Discord bot has insufficient permissions to create posts for that subscription. Please check the documentation for details.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.insufficient_permissions"));
+      validationDescription.setText(Messages.get("competitions.subscription_join.your_discord_bot_has_insufficient_permissions_to_create_posts"));
       return;
     }
 

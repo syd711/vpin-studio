@@ -43,7 +43,7 @@ public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepre
 
   @Override
   public String nextToString(CompetitionRepresentation c) {
-    return "Synchronizing \"" + c.toString() + "\"";
+    return Messages.get("dialog.synchronizing", c.toString());
   }
 
   @Override

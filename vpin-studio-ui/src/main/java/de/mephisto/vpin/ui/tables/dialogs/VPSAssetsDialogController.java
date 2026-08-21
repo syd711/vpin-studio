@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -111,7 +112,7 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     autoCompleteNameField.setText(vpsTable.getDisplayName());
 
     if (dataRoot.getChildren().isEmpty()) {
-      Label emptyLabel = WidgetFactory.createDefaultLabel("No additional assets found.");
+      Label emptyLabel = WidgetFactory.createDefaultLabel(Messages.get("tables.vps_assets.no_additional_assets_found"));
       dataRoot.getChildren().add(emptyLabel);
     }
   }

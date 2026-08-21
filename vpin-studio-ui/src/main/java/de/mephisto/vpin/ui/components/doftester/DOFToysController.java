@@ -68,7 +68,7 @@ public class DOFToysController implements Initializable {
         msg.setPadding(new Insets(12));
         info.getChildren().add(msg);
         info.getStyleClass().add("info-container");
-        Label defaultLabel = WidgetFactory.createDefaultLabel("The following events have been extracted from the table script.");
+        Label defaultLabel = WidgetFactory.createDefaultLabel(Messages.get("components.doftester.dof_toys.the_following_events_have_been_extracted"));
         defaultLabel.getStyleClass().add("infoLabel");
         msg.getChildren().add(defaultLabel);
         toyListPane.getChildren().add(info);

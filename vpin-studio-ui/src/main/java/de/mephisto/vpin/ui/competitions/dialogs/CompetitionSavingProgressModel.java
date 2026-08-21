@@ -46,7 +46,7 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
 
   @Override
   public String nextToString(CompetitionRepresentation c) {
-    return "Saving \"" + c.getName() + "\"";
+    return Messages.get("dialog.saving", c.getName());
   }
 
   @Override
