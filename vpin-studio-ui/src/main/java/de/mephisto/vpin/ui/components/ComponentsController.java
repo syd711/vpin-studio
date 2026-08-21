@@ -138,52 +138,52 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   private void updateForTabSelection(int index) {
     if (index == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.updates")));
     }
     else if (index == 1) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Visual Pinball"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.visual_pinball")));
     }
     else if (index == 2) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "VPin MAME"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.vpin_mame")));
     }
     else if (index == 3) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "B2S Server"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.b2s_server")));
     }
     else if (index == 4) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Freezy"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.freezy")));
     }
     else if (index == 5) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "FlexDMD"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.flexdmd")));
     }
     else if (index == 6) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOFLinx"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.doflinx")));
     }
     else if (index == 7) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof")));
     }
   }
 
   private void refreshView(Number t1) {
     if (t1.intValue() == TAB_UPDATES) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.updates")));
       if (emulatorsController != null) {
         emulatorsController.onViewDeactivated();
       }
     }
     else if (t1.intValue() == TAB_EMULATORS) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Emulators"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.emulators")));
       if (emulatorsController != null) {
         emulatorsController.onViewActivated();
       }
     }
     else if (t1.intValue() == TAB_SCREENS) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.screens")));
       if (emulatorsController != null) {
         emulatorsController.onViewDeactivated();
       }
     }
     else if (t1.intValue() == TAB_DOF_TESTER) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF Tester"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof_tester")));
       if (emulatorsController != null) {
         emulatorsController.onViewDeactivated();
       }
@@ -210,7 +210,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.updates")));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));
       loader.setResources(Messages.getBundle());

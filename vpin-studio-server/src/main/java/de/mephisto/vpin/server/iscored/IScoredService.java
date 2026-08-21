@@ -19,6 +19,7 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -90,7 +91,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
         Game game = gameService.getGame(newScore.getGameId());
         File wheelImage = gameService.getWheelImage(game);
         Notification notification = NotificationFactory.createNotification(wheelImage,
-            game.getGameDisplayName(), "An iScored highscore has been posted!",
+            game.getGameDisplayName(), ServerMessages.get("notification.iscored.posted", ServerMessages.resolveLocalLocale()),
             newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
         notificationService.showNotification(notification);
       }

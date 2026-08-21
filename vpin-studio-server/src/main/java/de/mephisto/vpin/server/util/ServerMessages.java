@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.util;
 
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,24 @@ public class ServerMessages {
       catch (NoSuchMessageException ex) {
         return key;
       }
+    }
+  }
+
+  /**
+   * Resolves the locale for messages that are not tied to an HTTP request, e.g. local
+   * desktop notifications shown by the overlay running on the cabinet itself. Uses the
+   * same local UI language preference as the client-side {@code Messages} helper.
+   */
+  public static Locale resolveLocalLocale() {
+    String lang = LocalUISettings.getString(LocalUISettings.LANGUAGE);
+    if (StringUtils.isBlank(lang)) {
+      return Locale.ENGLISH;
+    }
+    switch (lang.toLowerCase()) {
+      case "de":
+        return Locale.GERMAN;
+      default:
+        return Locale.ENGLISH;
     }
   }
 

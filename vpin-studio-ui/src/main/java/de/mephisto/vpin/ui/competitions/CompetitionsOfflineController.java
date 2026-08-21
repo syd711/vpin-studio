@@ -197,7 +197,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
         ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_competition_2"),
           Messages.get("dialog.deleting_competition", selection.getName()),
           () -> client.getCompetitionService().deleteCompetition(selection)));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.offline_competitions")));
         onReload();
       }
     }
@@ -263,7 +263,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
     try {

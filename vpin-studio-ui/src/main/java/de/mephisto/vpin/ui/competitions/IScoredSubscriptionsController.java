@@ -256,7 +256,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
             Messages.get("dialog.deleting_iscored_subscription"),
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
         this.iScoredSubscriptions = null;
         doReload(true);
 
@@ -277,7 +277,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
             selection -> {
               client.getCompetitionService().deleteCompetition(selection.competition);
             }));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
         doReload(true);
 
         for (Integer gameId : gameIds) {
@@ -381,7 +381,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
     tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
 
     this.editBtn.setDisable(true);

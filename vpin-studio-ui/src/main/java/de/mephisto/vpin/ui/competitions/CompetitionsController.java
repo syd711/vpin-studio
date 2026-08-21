@@ -305,7 +305,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void refreshView(Tab tab) {
     if (tab == offlineTab) {
-      NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.offline_competitions")));
       Optional<CompetitionRepresentation> selection = offlineController.getSelection();
       updateSelection(selection);
       checkTitledPanes(CompetitionType.OFFLINE);
@@ -313,7 +313,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (tab == onlineTab) {
       if (discordController != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.discord_competitions")));
         Optional<CompetitionRepresentation> selection = discordController.getSelection();
         updateSelection(selection);
         checkTitledPanes(CompetitionType.DISCORD);
@@ -322,7 +322,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (tab == tableSubscriptionsTab) {
       if (tableSubscriptionsController != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions")));
         Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
         updateSelection(selection);
         checkTitledPanes(CompetitionType.SUBSCRIPTION);
@@ -330,12 +330,12 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
     }
     else if (tab == iScoredSubscriptionsTab) {
-      NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
       updateSelection(Optional.empty());
       checkTitledPanes(CompetitionType.ISCORED);
     }
     else if (tab == weeklySubscriptionsTab) {
-      NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.wovp_challenges")));
       Optional<WeeklySubscriptionsController.WeeklyCompetitionModel> selection = weeklySubscriptionsController.getSelection();
       if (selection.isPresent()) {
         updateSelection(Optional.of(selection.get().getCompetition()));
@@ -661,42 +661,42 @@ public class CompetitionsController implements Initializable, StudioFXController
     Tab tab = tabPane.getSelectionModel().getSelectedItem();
     if (tab == offlineTab) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.offline_competitions"), competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.offline_competitions")));
       }
     }
     else if (tab == onlineTab) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.discord_competitions"), competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.discord_competitions")));
       }
     }
     else if (tab == tableSubscriptionsTab) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions"), competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions")));
       }
     }
     else if (tab == iScoredSubscriptionsTab) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions"), competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
       }
     }
     else if (tab == weeklySubscriptionsTab) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.wovp_challenges"), competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "WOVP Challenges"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.wovp_challenges")));
       }
     }
     else {

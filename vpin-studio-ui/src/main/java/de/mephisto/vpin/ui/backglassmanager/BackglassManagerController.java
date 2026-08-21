@@ -379,7 +379,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(List.of("Backglasses"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.backglasses")));
 
     // first time activation
     if (models == null || models.isEmpty()) {
@@ -537,10 +537,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @Override
   protected void refreshView(@Nullable DirectB2SModel model) {
     if (model != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Backglasses", model.getName()));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("tables.tables.backglasses"), model.getName()));
     }
     else {
-      NavigationController.setBreadCrumb(List.of("Backglasses"));
+      NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.backglasses")));
     }
 
     setValidationVisible(false);

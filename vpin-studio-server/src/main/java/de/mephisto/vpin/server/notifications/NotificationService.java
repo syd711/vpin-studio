@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
@@ -112,7 +115,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     Game game = event.getGame();
     if (notificationSettings.isHighscoreUpdatedNotification()) {
       Notification notification = NotificationFactory.createNotification(frontendService.getWheelImage(game),
-          game.getGameDisplayName(), "A new highscore has been created!",
+          game.getGameDisplayName(), ServerMessages.get("notification.highscore.new_title", ServerMessages.resolveLocalLocale()),
           event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
       showNotification(notification);
     }
@@ -121,7 +124,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
       if (!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
-        Notification notification = NotificationFactory.createNotification(frontendService.getWheelImage(game), game.getGameDisplayName(), "Scores have been published on Discord!");
+        Notification notification = NotificationFactory.createNotification(frontendService.getWheelImage(game), game.getGameDisplayName(), ServerMessages.get("notification.discord.published", ServerMessages.resolveLocalLocale()));
         showNotification(notification);
       }
     }
@@ -150,17 +153,19 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   @Override
   public void fxInitialized() {
     if (notificationSettings.isStartupNotification() && notificationSettings.getDurationSec() > 0) {
+      Locale locale = ServerMessages.resolveLocalLocale();
       Notification notification = NotificationFactory.createNotification(null,
-          "VPin Studio Server", "The server has been started.",
-          "Version " + systemService.getVersion());
+          ServerMessages.get("notification.server.name", locale), ServerMessages.get("notification.server.started", locale),
+          ServerMessages.get("notification.server.version", locale, systemService.getVersion()));
       showNotification(notification);
     }
   }
 
   public boolean testNotification() {
+    Locale locale = ServerMessages.resolveLocalLocale();
     Notification notification = NotificationFactory.createNotification(null,
-        "VPin Studio Server", "This is a test notification.",
-        "VPin Studio Version " + systemService.getVersion());
+        ServerMessages.get("notification.server.name", locale), ServerMessages.get("notification.test.message", locale),
+        ServerMessages.get("notification.test.version", locale, systemService.getVersion()));
     showNotificationNow(notification);
     return true;
   }

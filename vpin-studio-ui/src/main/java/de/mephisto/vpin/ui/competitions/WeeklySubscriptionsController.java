@@ -205,7 +205,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
     tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
 
     try {

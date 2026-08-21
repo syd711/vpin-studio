@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.vps;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -380,10 +381,10 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   @Override
   protected void refreshView(@Nullable VpsTableModel newSelection) {
     if (newSelection != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("tables.tables.vps_tables"), newSelection.getName()));
     }
     else {
-      NavigationController.setBreadCrumb(List.of("VPS Tables"));
+      NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.vps_tables")));
     }
 
     vpsOpenBtn.setDisable(newSelection == null);

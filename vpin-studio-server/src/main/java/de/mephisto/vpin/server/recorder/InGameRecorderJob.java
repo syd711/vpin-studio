@@ -94,7 +94,8 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
 
   private void showEndNotification(JobDescriptor jobDescriptor, RecordingData data) {
     if (showNotifications && notificationSettings.isRecordingEndNotification()) {
-      Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder End", "The recording has been finished.");
+      Locale locale = ServerMessages.resolveLocalLocale();
+      Notification notification = NotificationFactory.createNotification(null, ServerMessages.get("notification.recording.title", locale), ServerMessages.get("notification.recording.end", locale), ServerMessages.get("notification.recording.end_message", locale));
       recorderService.showNotificationNow(notification);
     }
   }
@@ -112,7 +113,8 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
       }
 
       seconds = seconds + wait;
-      Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder Start", "The recorder will start in " + seconds + " seconds.");
+      Locale startLocale = ServerMessages.resolveLocalLocale();
+      Notification notification = NotificationFactory.createNotification(null, ServerMessages.get("notification.recording.title", startLocale), ServerMessages.get("notification.recording.start", startLocale), ServerMessages.get("notification.recording.start_message", startLocale, seconds));
       if (seconds > 0) {
         notification.setDurationSec(seconds - 1);
       }

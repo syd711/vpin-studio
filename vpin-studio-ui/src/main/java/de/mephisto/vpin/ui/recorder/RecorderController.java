@@ -368,7 +368,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   @Override
   public void onViewActivated(NavigationOptions options) {
     MonitoringManager.getInstance().setRecordingRefreshIntervalSec(refreshInterval.getValue());
-    NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.media_recorder")));
     refreshEmulators();
 
     if (models.isEmpty()) {
@@ -431,7 +431,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
 
     client.getPreferenceService().addListener(this);
-    NavigationController.setBreadCrumb(List.of("Media Recorder"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.media_recorder")));
 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
     super.loadPlaylistCombo();

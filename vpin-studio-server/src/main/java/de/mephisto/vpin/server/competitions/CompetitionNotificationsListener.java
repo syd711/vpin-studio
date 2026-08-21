@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -42,7 +43,7 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
         File wheelfile = gameService.getWheelImage(game);
-        Notification notification = NotificationFactory.createNotification(wheelfile, game.getGameDisplayName(), "Competition \"" + competition.getName() + "\" started.");
+        Notification notification = NotificationFactory.createNotification(wheelfile, game.getGameDisplayName(), ServerMessages.get("notification.competition.started", ServerMessages.resolveLocalLocale(), competition.getName()));
         notificationService.showNotification(notification);
       }
     }
@@ -54,7 +55,7 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
         File wheelfile = gameService.getWheelImage(game);
-        Notification notification = NotificationFactory.createNotification(wheelfile, game.getGameDisplayName(), "Competition \"" + competition.getName() + "\" finished.");
+        Notification notification = NotificationFactory.createNotification(wheelfile, game.getGameDisplayName(), ServerMessages.get("notification.competition.finished", ServerMessages.resolveLocalLocale(), competition.getName()));
         notificationService.showNotification(notification);
       }
     }

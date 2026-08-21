@@ -227,7 +227,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
         ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
             Messages.get("dialog.deleting_subscription", selection.getName()),
             () -> client.getCompetitionService().deleteCompetition(selection)));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions")));
         onReload();
       }
     }
@@ -306,7 +306,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
     try {

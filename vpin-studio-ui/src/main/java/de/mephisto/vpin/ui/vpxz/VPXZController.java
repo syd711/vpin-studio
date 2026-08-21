@@ -56,7 +56,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPXZController extends BaseTableController<VPXZDescriptorRepresentation, VPXZModel> implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZController.class);
-  public static final String TAB_NAME = "VPXZ Files";
+  public static final String TAB_NAME = Messages.get("navigation.vpxz_files");
 
   @FXML
   private Button deleteBtn;

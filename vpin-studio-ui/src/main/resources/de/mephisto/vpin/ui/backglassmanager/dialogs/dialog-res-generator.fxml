@@ -53,9 +53,9 @@
                <bottom>
                   <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="125" minWidth="10.0" prefWidth="125" />
-                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="395.199951171875" minWidth="10.0" prefWidth="374.400048828125" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -175,7 +175,7 @@
             </BorderPane>
          </center>
          <top>
-            <GridPane hgap="10" vgap="3.0" BorderPane.alignment="CENTER">
+            <GridPane hgap="6.0" vgap="3.0" BorderPane.alignment="CENTER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" />
                 <ColumnConstraints hgrow="ALWAYS" />

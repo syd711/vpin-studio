@@ -194,13 +194,13 @@ public class JobPoller implements StudioEventListener {
 
 
       if (activeJobList.size() == 1) {
-        jobMenu.setText(activeJobList.size() + " active job");
+        jobMenu.setText(Messages.get("toolbar.active_job", activeJobList.size()));
       }
       else if (activeJobList.isEmpty()) {
-        jobMenu.setText("No active jobs");
+        jobMenu.setText(Messages.get("toolbar.no_active_jobs"));
       }
       else {
-        jobMenu.setText(activeJobList.size() + " active jobs");
+        jobMenu.setText(Messages.get("toolbar.active_jobs", activeJobList.size()));
       }
 
       //remove dismissed jobs

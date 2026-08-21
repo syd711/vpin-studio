@@ -51,7 +51,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BackupsController extends BaseTableController<BackupDescriptorRepresentation, BackupModel> implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(BackupsController.class);
-  public static final String TAB_NAME = "Table Backups";
+  public static final String TAB_NAME = Messages.get("navigation.backups");
 
   @FXML
   private Button deleteBtn;

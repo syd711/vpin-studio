@@ -49,7 +49,7 @@ public class DashboardController implements Initializable, StudioFXController, C
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(List.of("Dashboard"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.dashboard")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-latest-scores.fxml"));
@@ -120,7 +120,7 @@ public class DashboardController implements Initializable, StudioFXController, C
 //        c = client.getActiveCompetition(CompetitionType.DISCORD);
 //        discordCompetitionWidgetController.refresh(c);
 //      }
-      NavigationController.setBreadCrumb(List.of("Dashboard"));
+      NavigationController.setBreadCrumb(List.of(Messages.get("navigation.dashboard")));
     });
   }
 
