@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.BtnRecorderDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.BtnRecorderDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -44,11 +44,11 @@
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
-            <GridPane hgap="3.0" vgap="3.0">
+            <GridPane hgap="6.0" vgap="3.0">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" />
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="145.0" minWidth="145.0" prefWidth="145.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                </columnConstraints>
                <rowConstraints>
@@ -85,17 +85,17 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="usersLabel" text="%pref.table_pause_btn_recorder_dialog.start_key" textFill="WHITE" GridPane.rowIndex="7" wrapText="true">
+                  <Label fx:id="usersLabel" text="%pref.table_pause_btn_recorder_dialog.start_key" textFill="WHITE" wrapText="true" GridPane.rowIndex="7">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="%pref.table_pause_btn_recorder_dialog.navigate_left_key" textFill="WHITE" GridPane.rowIndex="8" wrapText="true">
+                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="%pref.table_pause_btn_recorder_dialog.navigate_left_key" textFill="WHITE" wrapText="true" GridPane.rowIndex="8">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="%pref.table_pause_btn_recorder_dialog.navigate_right_key" textFill="WHITE" GridPane.rowIndex="9" wrapText="true">
+                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="%pref.table_pause_btn_recorder_dialog.navigate_right_key" textFill="WHITE" wrapText="true" GridPane.rowIndex="9">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -181,7 +181,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.table_pause_btn_recorder_dialog.key_code" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.table_pause_btn_recorder_dialog.key_code" textFill="WHITE" wrapText="true" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -382,7 +382,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label layoutX="10.0" layoutY="184.0" text="%pref.table_pause_btn_recorder_dialog.toggle_vr_mode_key" textFill="WHITE" GridPane.rowIndex="6" wrapText="true">
+                  <Label layoutX="10.0" layoutY="184.0" text="%pref.table_pause_btn_recorder_dialog.toggle_vr_mode_key" textFill="WHITE" wrapText="true" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>

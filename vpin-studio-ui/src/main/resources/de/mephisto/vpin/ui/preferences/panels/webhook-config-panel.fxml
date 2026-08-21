@@ -22,8 +22,9 @@
             <Label fx:id="titleLabel" styleClass="default-title" text="%pref.webhook_config_panel.type" wrapText="true" />
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="150.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="482.9999923706055" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="500.0" prefWidth="500.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -36,29 +37,29 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="endpointText" promptText="%pref.webhook_config_panel.enter_the_endpoint_url_here" GridPane.columnIndex="1">
+                  <TextField fx:id="endpointText" promptText="%pref.webhook_config_panel.enter_the_endpoint_url_here" GridPane.columnIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="24.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="24.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
                         <CheckBox fx:id="createCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%playlistmanager.new_playlist.create" />
                         <CheckBox fx:id="updateCheckbox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%update_info.update" />
                         <CheckBox fx:id="deleteCheckbox" layoutX="100.0" layoutY="15.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="%backups.backups.delete" />
                      </children>
                   </HBox>
-                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.event_types" textFill="WHITE" GridPane.rowIndex="1" wrapText="true">
+                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.event_types" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.custom_parameters" textFill="WHITE" GridPane.rowIndex="2" wrapText="true">
+                  <Label layoutX="10.0" layoutY="15.0" text="%pref.webhook_config_panel.custom_parameters" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="parametersText" layoutX="164.0" layoutY="10.0" promptText="%pref.webhook_config_panel.additional_parameters_key_value_separated_by_a_semicolon" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <TextField fx:id="parametersText" layoutX="164.0" layoutY="10.0" promptText="%pref.webhook_config_panel.additional_parameters_key_value_separated_by_a_semicolon" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>

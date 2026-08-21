@@ -49,6 +49,7 @@
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
                         <ColumnConstraints hgrow="SOMETIMES" />
                      </columnConstraints>
                      <rowConstraints>
@@ -56,7 +57,7 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <HBox GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <children>
                               <TextField fx:id="fileNameField" prefWidth="400.0" promptText="%backups.backup_upload.select_vpa_files_to_upload">
                                  <HBox.margin>
@@ -73,7 +74,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="2" />
                         <Label text="%backups.backup_upload.archive_folder" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

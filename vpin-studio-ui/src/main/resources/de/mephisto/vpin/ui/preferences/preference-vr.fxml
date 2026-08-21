@@ -55,13 +55,13 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.vr.choose_which_files_should_be_replaced_when_the" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="%pref.vr.the_files_are_located_in_the_installation_folder" textFill="WHITE" wrapText="true" />
-                  <Label layoutX="34.0" layoutY="256.0" styleClass="preference-description" text="%pref.vr.and_will_be_copied_to_the_matching_target" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="%pref.vr.the_files_are_located_in_the_installation_folder_and_will_be_copied" textFill="WHITE" wrapText="true" />
                   <GridPane hgap="3.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.199951171875" minWidth="10.0" prefWidth="161.2000244140625" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="634.8000793457031" minWidth="10.0" prefWidth="399.79997558593755" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="634.8000793457031" minWidth="10.0" prefWidth="184.80005493164072" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -75,8 +75,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                      <children>
-                        <Label styleClass="default-text" text="%pref.vr.dmddevice_ini_vr" GridPane.rowIndex="1" wrapText="true" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%pref.vr.dmddevice_ini_vr" wrapText="true" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <children>
                               <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="%pref.vr.upload">
                                  <font>
@@ -96,8 +96,8 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_vr" GridPane.rowIndex="3" wrapText="true" />
-                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_vr" wrapText="true" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                            <children>
                               <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="%pref.vr.upload">
                                  <font>
@@ -117,14 +117,14 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.dmddevice_ini_original" GridPane.rowIndex="2" wrapText="true" />
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_original" GridPane.rowIndex="4" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.dmddevice_ini_original" wrapText="true" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_original" wrapText="true" GridPane.rowIndex="4" />
                         <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%cards.highscore_cards.emulator" wrapText="true" />
-                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="284.0" GridPane.columnIndex="1" />
-                        <Label fx:id="dmdDeviceIniText" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true" />
-                        <Label fx:id="dmdDeviceIniTextVr" layoutX="175.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true" />
-                        <Label fx:id="vPinballXIniTextVr" layoutX="175.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" wrapText="true" />
-                        <Label fx:id="vPinballXIniText" layoutX="175.0" layoutY="116.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" wrapText="true" />
+                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="284.0" GridPane.columnIndex="2" />
+                        <Label fx:id="dmdDeviceIniText" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label fx:id="dmdDeviceIniTextVr" layoutX="175.0" layoutY="83.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="vPinballXIniTextVr" layoutX="175.0" layoutY="49.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label fx:id="vPinballXIniText" layoutX="175.0" layoutY="116.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
                   <Label layoutX="34.0" layoutY="195.0" styleClass="preference-subtitle" text="%pref.vr.vr_mode_switch" wrapText="true" />
