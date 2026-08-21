@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -45,7 +46,7 @@ public class Dialogs {
           Studio.edit(file);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "File Not Found", "The file \"" + file.getAbsolutePath() + "\" does not exist.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.file_not_found"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
         }
       }
       catch (Exception e) {
@@ -58,7 +59,8 @@ public class Dialogs {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     if (force || !uiSettings.isHideUpdateInfo()) {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
-      Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
+      fxmlLoader.setResources(Messages.getBundle());
+      Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, Messages.get("dialog.release_notes_for", version));
       stage.showAndWait();
 
       uiSettings.setHideUpdateInfo(true);
@@ -72,7 +74,8 @@ public class Dialogs {
 
   public static void openNextUpdateDialog(String version) {
     FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
-    Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
+    fxmlLoader.setResources(Messages.getBundle());
+    Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, Messages.get("dialog.release_notes_for", version));
     UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
     controller.setData(stage, version);
     stage.showAndWait();
@@ -97,6 +100,7 @@ public class Dialogs {
   public static boolean openTextEditor(String stateId, Stage s, TextEditorFile file, String title) {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
+      fxmlLoader.setResources(Messages.getBundle());
       Stage stage = WidgetFactory.createDialogStage(stateId, fxmlLoader, s, title, TextEditorController.class.getSimpleName());
       stage.setMinWidth(800);
       stage.setMinHeight(600);
@@ -110,18 +114,19 @@ public class Dialogs {
     }
     catch (Exception e) {
       LOG.error("Failed to open file: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(s, "Error", "Failed to open file: " + e.getMessage());
+      WidgetFactory.showAlert(s, Messages.get("common.error"), Messages.get("dialog.failed_to_open_file") + e.getMessage());
     }
     return false;
   }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {
-    String title = "Add New Player";
+    String title = Messages.get("dialog.add_new_player");
     if (selection != null) {
-      title = "Edit Player";
+      title = Messages.get("dialog.edit_player");
     }
 
     FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
+    fxmlLoader.setResources(Messages.getBundle());
     Stage stage = WidgetFactory.createDialogStage("player-edit", fxmlLoader, Studio.stage, title);
     PlayerDialogController controller = (PlayerDialogController) stage.getUserData();
     controller.setPlayer(selection, players);
@@ -132,7 +137,7 @@ public class Dialogs {
 
 
   public static boolean openInstallerDialog() {
-    Stage stage = createStudioDialogStage(null, Studio.stage, InstallationDialogController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
+    Stage stage = createStudioDialogStage(null, Studio.stage, InstallationDialogController.class, "dialog-installer.fxml", Messages.get("dialog.visual_studio_server_installation"));
     InstallationDialogController controller = (InstallationDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();
@@ -150,12 +155,12 @@ public class Dialogs {
           Files.write(path, systemData.getData().getBytes());
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "No Data", "The file \"" + file.getAbsolutePath() + "\" does not contain any data or wasn't found.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_data"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.does_not_contain_any_data_or_wasn"));
         }
       }
       catch (IOException e) {
-        LOG.error("Failed to create temporary file for text file: " + e.getMessage());
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create temporary file for text file: " + e.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_create_temporary_file_for_text") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_create_temporary_file_for_text") + e.getMessage());
         return;
       }
     }
@@ -164,12 +169,14 @@ public class Dialogs {
 
   public static Stage createStudioDialogStage(String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title);
   }
 
   public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String modalStateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, stage, title, modalStateId);
   }
@@ -177,18 +184,21 @@ public class Dialogs {
 
   public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title, null);
   }
 
   public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title, String modalStateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title, modalStateId);
   }
 
   public static Stage createStudioDialogStage(String stateId, Stage stage, Class<?> clazz, String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     return WidgetFactory.createDialogStage(stateId, fxmlLoader, stage, title);
   }
 
@@ -198,10 +208,10 @@ public class Dialogs {
 
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage,
-          FrontendUtil.replaceName("[Frontend] is running.", frontend),
-          "Kill Processes", "Cancel",
-          FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
-          null, "Switch cabinet to maintenance mode");
+          FrontendUtil.replaceName(Messages.get("dialog.frontend_is_running"), frontend),
+          Messages.get("dialog.kill_processes"), Messages.get("common.cancel"),
+          FrontendUtil.replaceName(Messages.get("dialog.frontend_is_running_to_perform_this_operation"), frontend),
+          null, Messages.get("dialog.switch_cabinet_to_maintenance_mode_2"));
       if (confirmationResult.isApplyClicked()) {
         client.getFrontendService().terminateFrontend();
         if (confirmationResult.isChecked()) {
@@ -217,7 +227,7 @@ public class Dialogs {
   public static boolean killFrontend() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+        FrontendUtil.replaceNames(Messages.get("dialog.stop_all_emulators_and_frontend_processes"), frontend, null));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       JFXFuture.supplyAsync(() -> {
         return client.getFrontendService().terminateFrontend();

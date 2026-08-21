@@ -22,7 +22,7 @@
                <children>
                   <HBox spacing="6.0">
                      <children>
-                        <Label fx:id="titleLabel" text="VPin Studio Server Update Progress" textFill="WHITE">
+                        <Label fx:id="titleLabel" text="%updater.vpin_studio_server_update_progress" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -32,7 +32,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="400.0" text="Consider to define an exception for the Windows Defender if the Server update fails or is causing high CPU usage on startup." wrapText="true" />
+                              <Tooltip prefWidth="400.0" text="%updater.consider_to_define_an_exception_for_the_windows" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>
@@ -47,7 +47,7 @@
             </VBox>
             <VBox fx:id="remoteClientUpdate" spacing="3.0">
                <children>
-                  <Label fx:id="titleLabel111" text="VPin Studio Remote Client Update Progress" textFill="WHITE">
+                  <Label fx:id="titleLabel111" text="%updater.vpin_studio_remote_client_update_progress" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -62,7 +62,7 @@
             </VBox>
             <VBox spacing="3.0">
                <children>
-                  <Label fx:id="titleLabel11" text="VPin Studio Client Update Progress" textFill="WHITE">
+                  <Label fx:id="titleLabel11" text="%updater.vpin_studio_client_update_progress" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -77,7 +77,7 @@
             </VBox>
             <HBox fx:id="footer" alignment="CENTER_RIGHT">
                <children>
-                  <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#onClose" styleClass="submit-button" text="Cancel" />
+                  <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#onClose" styleClass="submit-button" text="%backglass.res_generator.cancel" />
                </children>
                <VBox.margin>
                   <Insets top="24.0" />

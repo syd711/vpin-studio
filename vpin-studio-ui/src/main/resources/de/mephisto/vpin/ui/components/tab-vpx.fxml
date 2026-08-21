@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -26,11 +26,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Open Visual Pinball Installation Folder" />
+                     <Tooltip text="%components.vpx.open_visual_pinball_installation_folder" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="text-button" text="VPinballX.ini" textFill="WHITE">
+               <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="text-button" text="%components.vpx.vpinballx_ini" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -51,7 +51,7 @@
                           <BorderPane fx:id="componentInstallerPane" />
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                                  <Label styleClass="default-text" text="The 32 and 64-bit installations may only differ in the .exe file of Visual Pinball X, therefore both versions will be identified as current version (if all other files match)." />
+                                  <Label styleClass="default-text" text="%components.vpx.the_32_and_64_bit_installations_may_only" />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

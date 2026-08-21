@@ -23,7 +23,7 @@
          <center>
             <VBox fx:id="dataPanel" prefWidth="250.0">
                <children>
-                  <Label fx:id="filenameLabel" text="file name" textFill="WHITE">
+                  <Label fx:id="filenameLabel" text="%components.doftester.toy_container.file_name" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -31,7 +31,7 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="size label" textFill="WHITE">
+                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="%components.doftester.toy_container.size_label" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="3.0" />
                      </VBox.margin></Label>
@@ -53,9 +53,9 @@
    <right>
       <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="Install">
+            <Button fx:id="installBtn" minWidth="100.0" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install">
                <tooltip>
-                  <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />
+                  <Tooltip prefWidth="300.0" text="%components.doftester.toy_container.updates_can_only_be_installed_when_vpin_studio" wrapText="true" />
                </tooltip>
                <font>
                   <Font size="14.0" />
@@ -70,7 +70,7 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Delete table and assets" />
+                  <Tooltip text="%dropins.dropin_container.delete_table_and_assets" />
                </tooltip>
             </Button>
             <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
@@ -81,7 +81,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Open folder" />
+                  <Tooltip text="%dropins.dropin_container.open_folder" />
                </tooltip>
             </Button>
          </items>

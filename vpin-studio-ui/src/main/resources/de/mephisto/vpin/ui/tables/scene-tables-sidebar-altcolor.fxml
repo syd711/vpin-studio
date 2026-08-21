@@ -25,13 +25,13 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%competitions.discord_competition_edit.label" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                        <Hyperlink onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%competitions.discord_competition_edit.label" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -39,7 +39,7 @@
             </VBox>
               <VBox fx:id="dataBox">
                   <children>
-                  <Label text="ALT Color Data" textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_altcolor.alt_color_data" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
@@ -67,12 +67,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="45.0" text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Type:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altcolor.type" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -82,7 +82,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="File(s):" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="45.0" text="%tables.tables_sidebar_altcolor.file_s" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -92,7 +92,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="76.0" text="Backups:" textFill="WHITE" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="76.0" text="%tables.tables_sidebar_altcolor.backups" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -102,7 +102,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="45.0" text="Name:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -112,7 +112,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="137.0" text="Folder:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="137.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -134,16 +134,16 @@
               </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="No ALT color files found." textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_altcolor.no_alt_color_files_found" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                  <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin></Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
+                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
                </children>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -155,7 +155,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -164,7 +164,7 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
                <font>
                   <Font size="14.0" />
                </font>
@@ -173,12 +173,12 @@
                </graphic>
             </Button>
             <Separator layoutX="100.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
+            <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>

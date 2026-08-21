@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class HeaderResizeableController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(HeaderResizeableController.class);
@@ -79,7 +80,7 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMania() {
     if (ToolbarController.newVersion != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.update") + ToolbarController.newVersion, Messages.get("dialog.you_need_the_latest_vpin_studio_version"), null, Messages.get("dialog.update_2"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Dialogs.openUpdateDialog();
       }
@@ -87,7 +88,7 @@ public class HeaderResizeableController implements Initializable {
     }
 
     if (!ManiaHelper.isRegistered()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services.", null, "Register Cabinet");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.registration_required"), Messages.get("dialog.you_need_to_register_your_cabinet_for"), null, Messages.get("dialog.register_cabinet"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         boolean register = ManiaHelper.register();
         if (register) {

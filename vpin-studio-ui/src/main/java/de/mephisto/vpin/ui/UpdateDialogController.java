@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 //import static de.mephisto.vpin.ui.Studio.client;
 
@@ -180,7 +181,7 @@ public class UpdateDialogController implements Initializable, DialogController {
             boolean b = client.getSystemService().installServerUpdate();
             if (!b) {
               Platform.runLater(() -> {
-                WidgetFactory.showAlert(Studio.stage, "Error", "Server update failed, restart the server and client and try again.", "In case this fails too, check the github Wiki how to update manually.");
+                WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.server_update_failed_restart_the_server_and"), Messages.get("dialog.in_case_this_fails_too_check_the"));
               });
               return null;
             }

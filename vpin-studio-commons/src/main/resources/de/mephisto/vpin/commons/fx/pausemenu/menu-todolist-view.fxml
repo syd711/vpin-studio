@@ -24,12 +24,12 @@
          <top>
             <VBox alignment="CENTER" minHeight="50.0" styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="infoLabel" maxWidth="620.0" text="The list of selectable todos can be configured in the Pause Menu preferences. " textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Label fx:id="infoLabel" maxWidth="620.0" text="%pausemenu.menu_todolist_view.the_list_of_selectable_todos_can_be_configured" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="infoLabel1" layoutX="300.0" layoutY="25.0" maxWidth="796.0" prefWidth="796.0" text="The applied tags can be found in the &quot;Tags &amp; Comments&quot; tab of the table details dialog and you can filter by them." textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                  <Label fx:id="infoLabel1" layoutX="300.0" layoutY="25.0" maxWidth="796.0" prefWidth="796.0" text="%pausemenu.menu_todolist_view.the_applied_tags_can_be_found_in_the" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>

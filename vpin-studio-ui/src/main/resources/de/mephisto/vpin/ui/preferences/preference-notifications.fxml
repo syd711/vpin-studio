@@ -17,30 +17,29 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.mephisto.vpin.ui.preferences.NotificationsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.NotificationsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
-      
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Notifications">
+                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.notifications.notifications" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can configure the options for on-screen notifications here." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.notifications.you_can_configure_the_options_for_on_screen" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Every notification is only shown when no emulator is running." textFill="WHITE" />
-                  <GridPane vgap="3.0">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.notifications.every_notification_is_only_shown_when_no_emulator" textFill="WHITE" wrapText="true" />
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="301.199951171875" minWidth="10.0" prefWidth="174.3999267578125" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="469.60002441406243" minWidth="10.0" prefWidth="440.00007324218745" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints hgrow="ALWAYS" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -53,15 +52,15 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="durationSpinner" editable="true" prefWidth="80.0" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="seconds." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.notifications.seconds" textFill="WHITE" wrapText="true" />
                            </children>
                         </HBox>
-                        <Label styleClass="preference-label" text="Notifications Screen:" textFill="WHITE">
+                        <Label styleClass="preference-label" text="%pref.notifications.notifications_screen" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Show notifications for " textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="%pref.notifications.show_notifications_for" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -69,7 +68,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" />
-                              <Label>
+                              <Label wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -77,12 +76,12 @@
                                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change. You can restart the server in the &quot;Server Settings&quot; section." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="%pref.notifications.the_server_needs_to_be_restarted_to_apply" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="Notification Margin:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="%pref.notifications.notification_margin" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -90,13 +89,13 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <Spinner fx:id="offsetSpinner" editable="true" prefWidth="80.0" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="pixels." textFill="WHITE" />
-                              <Label prefHeight="40.0" prefWidth="18.0">
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.notifications.pixels" textFill="WHITE" wrapText="true" />
+                              <Label prefHeight="40.0" prefWidth="18.0" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Adds or removes extra pixels to the horizontal position of notifications." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%pref.notifications.adds_or_removes_extra_pixels_to_the_horizontal" wrapText="true" />
                                  </tooltip>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -104,12 +103,12 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button fx:id="testButton" mnemonicParsing="false" onAction="#onNotificationTest" text="Test Notification" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Button fx:id="testButton" mnemonicParsing="false" onAction="#onNotificationTest" text="%pref.notifications.test_notification" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="preference-label" text="Notification Text Padding:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="preference-label" text="%pref.notifications.notification_text_padding" textFill="WHITE" wrapText="true" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -117,13 +116,13 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <Spinner fx:id="offsetTextSpinner" editable="true" prefWidth="80.0" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="pixels." textFill="WHITE" />
-                              <Label prefHeight="40.0" prefWidth="18.0">
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.notifications.pixels" textFill="WHITE" wrapText="true" />
+                              <Label prefHeight="40.0" prefWidth="18.0" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Adds or removes extra pixels to the horizontal position of notification texts." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%pref.notifications.adds_or_removes_extra_pixels_to_the_horizontal_2" wrapText="true" />
                                  </tooltip>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -141,7 +140,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
-                  <CheckBox fx:id="desktopCheckbox" layoutX="34.0" layoutY="197.0" mnemonicParsing="false" text="Desktop Mode" textFill="WHITE">
+                  <CheckBox fx:id="desktopCheckbox" layoutX="34.0" layoutY="197.0" mnemonicParsing="false" text="%pref.notifications.desktop_mode" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -149,54 +148,54 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="Enable this mode when you play in desktop mode." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="229.0" styleClass="checkbox-description" text="Note that for screens with scaling the position will be off and you need to adjust it." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="System Notifications">
+                  <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="%pref.notifications.enable_this_mode_when_you_play_in_desktop" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="229.0" styleClass="checkbox-description" text="%pref.notifications.note_that_for_screens_with_scaling_the_position" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.notifications.system_notifications" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="startUpCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Startup Notification" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="Shows a notification once the VPin Studio Server has been started." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="284.0" styleClass="preference-subtitle" text="Highscore Notifications">
+                  <CheckBox fx:id="startUpCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.startup_notification" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_once_the_vpin_studio_server" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="284.0" styleClass="preference-subtitle" text="%pref.notifications.highscore_notifications" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Change" />
-                  <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="Shows a notification for every highscore change that is detected." textFill="WHITE" />
-                  <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Scan Completed" />
-                  <Label layoutX="34.0" layoutY="262.0" styleClass="checkbox-description" text="Shows a notification everytime the VPin Studio completes a highscore scan on table exit." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="No matter if a new score was found or not, the notification will show the result." textFill="WHITE" />
+                  <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.highscore_change" />
+                  <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_for_every_highscore_change_that" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.highscore_scan_completed" />
+                  <Label layoutX="34.0" layoutY="262.0" styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_everytime_the_vpin_studio_completes" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="%pref.notifications.no_matter_if_a_new_score_was_found" textFill="WHITE" wrapText="true" />
                   <VBox fx:id="discordSettings" layoutX="34.0" layoutY="399.0">
                      <children>
-                        <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Competition Status Change" />
-                        <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows a notification every time a competition starts, ends or is cancelled." textFill="WHITE" />
-                        <Label styleClass="preference-subtitle" text="Online Notifications">
+                        <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.competition_status_change" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_every_time_a_competition_starts" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-subtitle" text="%pref.notifications.online_notifications" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Post" />
-                        <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to a Discord server." textFill="WHITE" />
+                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.discord_post" />
+                        <Label styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_every_time_a_highscore_is" textFill="WHITE" wrapText="true" />
                      </children>
                   </VBox>
                   <VBox fx:id="iScoredSettings">
                      <children>
-                        <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Post" />
-                        <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to iScored." textFill="WHITE" />
+                        <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.iscored_post" />
+                        <Label styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_every_time_a_highscore_is_2" textFill="WHITE" wrapText="true" />
                      </children>
                   </VBox>
-                  <Label styleClass="preference-subtitle" text="In-Game Recorder Notifications">
+                  <Label styleClass="preference-subtitle" text="%pref.notifications.in_game_recorder_notifications" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="recordingStartCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Recording Start" />
-                  <Label styleClass="checkbox-description" text="Shows a notification when the in-game recording is about to start." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="The actual start of the recording will be delayed until the notification is hiding again." textFill="WHITE" />
-                  <CheckBox fx:id="recordingEndCheckbox" layoutX="34.0" layoutY="856.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Recording End" />
-                  <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="Shows a notification when the in-game recording has been finished." textFill="WHITE" />
+                  <CheckBox fx:id="recordingStartCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.recording_start" />
+                  <Label styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_when_the_in_game_recording" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="%pref.notifications.the_actual_start_of_the_recording_will_be" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="recordingEndCheckbox" layoutX="34.0" layoutY="856.0" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.recording_end" />
+                  <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_when_the_in_game_recording_2" textFill="WHITE" wrapText="true" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

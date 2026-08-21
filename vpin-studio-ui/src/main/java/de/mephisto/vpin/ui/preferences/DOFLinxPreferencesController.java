@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DOFLinxPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DOFLinxPreferencesController.class);
@@ -121,7 +122,7 @@ public class DOFLinxPreferencesController implements Initializable {
           refresh();
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 300);
     });

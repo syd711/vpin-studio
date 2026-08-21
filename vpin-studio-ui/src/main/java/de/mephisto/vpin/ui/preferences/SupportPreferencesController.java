@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class SupportPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(SupportPreferencesController.class);
@@ -32,7 +33,7 @@ public class SupportPreferencesController implements Initializable {
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new LogsDownloadProgressModel("Download Logs", targetFolder));
       if (!resultModel.getResults().isEmpty()) {
         File target = (File) resultModel.getResults().getFirst();
-        WidgetFactory.showInformation(stage, "Logs Generated", "Downloaded \"" + target.getAbsolutePath() + "\".", "Please attach this file with a description to a github issue.");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.logs_generated"), Messages.get("dialog.downloaded") + target.getAbsolutePath() + "\".", Messages.get("dialog.please_attach_this_file_with_a_description"));
       }
     }
   }

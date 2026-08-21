@@ -13,33 +13,33 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PropperRenamingController">
+<VBox stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PropperRenamingController">
    <children>
-      <VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" spacing="12.0">
+      <VBox fx:id="root" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="12.0">
          <padding>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </padding>
          <children>
-            <Label styleClass="default-title" text="Auto-Naming" />
-            <Label styleClass="preference-description" text="Select fields to be included for the given game name fields." />
+            <Label styleClass="default-title" text="%tables.propper_renaming.auto_naming" />
+            <Label styleClass="preference-description" text="%tables.propper_renaming.select_fields_to_be_included_for_the_given" />
             <HBox spacing="3.0">
                <children>
-                  <ToggleButton fx:id="authorBtn" mnemonicParsing="false" styleClass="custom-toggle-button" text="Author">
+                  <ToggleButton fx:id="authorBtn" mnemonicParsing="false" styleClass="custom-toggle-button" text="%tables.autofill_settings.author">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </ToggleButton>
-                  <ToggleButton fx:id="versionBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="custom-toggle-button" text="Version">
+                  <ToggleButton fx:id="versionBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="custom-toggle-button" text="%backglass.directb2s_sidebar.version">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </ToggleButton>
-                  <ToggleButton fx:id="modBtn" layoutX="72.0" layoutY="10.0" mnemonicParsing="false" styleClass="custom-toggle-button" text="MOD">
+                  <ToggleButton fx:id="modBtn" layoutX="72.0" layoutY="10.0" mnemonicParsing="false" styleClass="custom-toggle-button" text="%tables.propper_renaming.mod">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </ToggleButton>
-                  <ToggleButton fx:id="vrBtn" layoutX="135.0" layoutY="10.0" mnemonicParsing="false" styleClass="custom-toggle-button" text="VR">
+                  <ToggleButton fx:id="vrBtn" layoutX="135.0" layoutY="10.0" mnemonicParsing="false" styleClass="custom-toggle-button" text="%tables.propper_renaming.vr">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -61,17 +61,17 @@
                   <Insets right="12.0" top="12.0" />
                </VBox.margin>
                <children>
-                  <CheckBox fx:id="displayNameCheckBox" mnemonicParsing="false" text="Display Name:" textFill="WHITE">
+                  <CheckBox fx:id="displayNameCheckBox" mnemonicParsing="false" text="%backglass.directb2s_sidebar.display_name" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="fileNameCheckBox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" text="File Name:" textFill="WHITE" GridPane.rowIndex="1">
+                  <CheckBox fx:id="fileNameCheckBox" layoutX="10.0" layoutY="15.0" mnemonicParsing="false" text="%backglass.directb2s_sidebar.file_name" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="gameNameCheckBox" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" text="Asset Name:" textFill="WHITE" GridPane.rowIndex="2">
+                  <CheckBox fx:id="gameNameCheckBox" layoutX="10.0" layoutY="49.0" mnemonicParsing="false" text="%tables.table_data.asset_name" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -79,10 +79,10 @@
                   <Label fx:id="displayName" maxWidth="480.0" styleClass="default-headline" text="-" textFill="WHITE" GridPane.columnIndex="1" />
                   <Label fx:id="fileName" layoutX="158.0" layoutY="15.0" maxWidth="480.0" styleClass="default-headline" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label fx:id="gameName" layoutX="158.0" layoutY="49.0" styleClass="default-headline" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label text="Determines the base name of all media assets." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="%tables.propper_renaming.determines_the_base_name_of_all_media_assets" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onApply" text="Apply" textFill="WHITE">
+            <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onApply" text="%tables.table_data_tab_scoredata.apply" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DiscordBotPreferencesController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
@@ -73,9 +74,9 @@ public class DiscordBotPreferencesController implements Initializable {
 
   @FXML
   private void onReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Token", "Delete this Discord bot token?",
-        "If you haven't stored it elsewhere, you have to re-generate a new one using the Discord developer portal.",
-        "Delete Token");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_token"), Messages.get("dialog.delete_this_discord_bot_token"),
+        Messages.get("dialog.if_you_haven_t_stored_it_elsewhere"),
+        Messages.get("dialog.delete_token"));
     if (result.get().equals(ButtonType.OK)) {
       resetToken();
     }
@@ -89,15 +90,15 @@ public class DiscordBotPreferencesController implements Initializable {
       DiscordBotStatus status = client.getDiscordService().validateSettings();
       if (status.getError() != null) {
         validateDefaultSettings();
-        WidgetFactory.showAlert(Studio.stage, "Issues Detected", "There have been issues detected with you Discord settings.", status.getError());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.issues_detected"), Messages.get("dialog.there_have_been_issues_detected_with_you"), status.getError());
       }
       else {
         if (!status.isCanManageCategories()) {
-          WidgetFactory.showInformation(Studio.stage, "Information", "The bot configuration is valid, but your bot has no permission to manage channels.", "Discord allows a maximum of 50 channels for a category. " +
-              "With the channel permission, the bot can automatically create new categories for additional table subscriptions.");
+          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.the_bot_configuration_is_valid_but_your"), Messages.get("dialog.discord_allows_a_maximum_of_50_channels") +
+              Messages.get("dialog.with_the_channel_permission_the_bot_can"));
         }
         else {
-          WidgetFactory.showInformation(Studio.stage, "Information", "No issues found.");
+          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.no_issues_found"));
         }
 
       }
@@ -117,8 +118,8 @@ public class DiscordBotPreferencesController implements Initializable {
       existingToken = "";
     }
 
-    String token = WidgetFactory.showInputDialog(Studio.stage, "Discord Bot Token", "Discord Bot Token",
-        "Paste the bot token copied from the Discord developer portal here.", null, existingToken);
+    String token = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.discord_bot_token"), Messages.get("dialog.discord_bot_token"),
+        Messages.get("dialog.paste_the_bot_token_copied_from_the"), null, existingToken);
     if (StringUtils.isEmpty(token) || existingToken.equals(token.trim())) {
       return;
     }
@@ -129,7 +130,7 @@ public class DiscordBotPreferencesController implements Initializable {
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
       DiscordBotStatus status = client.getDiscordService().validateSettings();
       if (status.getError() != null) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid bot configuration found, check your token and retry.", "Error: " + status.getError());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.invalid_bot_configuration_found_check_your_token"), Messages.get("dialog.error") + status.getError());
       }
       else {
         botTokenLabel.setText(token.trim());

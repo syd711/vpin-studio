@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class JobPoller implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
@@ -74,6 +75,7 @@ public class JobPoller implements StudioEventListener {
 
     try {
       FXMLLoader loader = new FXMLLoader(JobsMenuHeaderController.class.getResource("jobs-header.fxml"));
+      loader.setResources(Messages.getBundle());
       BorderPane root = loader.load();
       root.getStyleClass().add("dropin-menu-item");
       headerController = loader.getController();
@@ -232,6 +234,7 @@ public class JobPoller implements StudioEventListener {
 
         try {
           FXMLLoader loader = new FXMLLoader(JobsContainerController.class.getResource("jobs-container.fxml"));
+          loader.setResources(Messages.getBundle());
           BorderPane root = loader.load();
           root.getStyleClass().add("dropin-menu-item");
           JobsContainerController containerController = loader.getController();

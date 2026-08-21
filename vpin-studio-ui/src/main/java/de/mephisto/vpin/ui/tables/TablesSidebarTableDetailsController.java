@@ -41,6 +41,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarTableDetailsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -264,7 +265,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
       }
     }
   }
@@ -279,7 +280,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open .res file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .res file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_res_file") + e.getMessage());
       }
     }
   }
@@ -294,14 +295,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open .pov file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .pov file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_pov_file") + e.getMessage());
       }
     }
   }
 
   @FXML
   private void onIniDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete .ini for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_ini_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getIniService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
@@ -310,7 +311,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onResDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete .res for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_res_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getResService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
@@ -319,7 +320,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onPovDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_pov_file_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getVpxService().deletePOV(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
@@ -332,19 +333,19 @@ public class TablesSidebarTableDetailsController implements Initializable {
       Frontend frontend = client.getFrontendService().getFrontendCached();
 
       GameRepresentation gameRepresentation = game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?",
-          FrontendUtil.replaceName("This overwrites the existing [Frontend] table version \""
-              + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.auto_fix_table_version"),
+          FrontendUtil.replaceName(Messages.get("dialog.this_overwrites_the_existing_frontend_table_version")
+              + gameRepresentation.getVersion() + Messages.get("dialog.with_the_vps_table_version") +
               gameRepresentation.getExtVersion() + "\".", frontend),
-          "The table update indicator won't be shown afterwards.");
+          Messages.get("dialog.the_table_update_indicator_won_t_be"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getFrontendService().fixVersion(gameRepresentation.getId(), gameRepresentation.getExtVersion());
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
         }
         catch (Exception ex) {
-          LOG.error("Error fixing version: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error fixing version: " + ex.getMessage());
+          LOG.error(Messages.get("dialog.error_fixing_version") + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_fixing_version") + ex.getMessage());
         }
       }
     }
@@ -612,6 +613,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       uploadsButtonController.setCompact(false);

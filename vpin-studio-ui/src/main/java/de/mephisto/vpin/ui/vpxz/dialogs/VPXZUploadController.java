@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPXZUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZUploadController.class);
@@ -75,7 +76,7 @@ public class VPXZUploadController implements Initializable, DialogController {
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading .vpxz failed", "Please check the log file for details", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("dialog.uploading_vpxz_failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("dialog.error") + e.getMessage());
       }
     }
   }

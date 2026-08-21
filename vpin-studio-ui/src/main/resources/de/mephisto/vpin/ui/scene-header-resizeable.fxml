@@ -39,7 +39,7 @@
                                 <HBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                                     <children>
                                         <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onMania"
-                                                styleClass="bar-button-left" text="VPin Mania">
+                                                styleClass="bar-button-left" text="%header_resizeable.vpin_mania">
                                             <graphic>
                                                 <Label fx:id="maniaIconLabel">
                                                     <graphic>
@@ -58,7 +58,7 @@
                                                                   iconSize="18"/>
                                                     </graphic>
                                                     <tooltip>
-                                                        <Tooltip text="Open vpin-mania app in web browser" wrapText="true" />
+                                                        <Tooltip text="%header_resizeable.open_vpin_mania_app_in_web_browser" wrapText="true" />
                                                     </tooltip>
                                                 </Label>
                                             </graphic>
@@ -100,7 +100,7 @@
         </BorderPane>
     </right>
     <left>
-        <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+        <Label fx:id="titleLabel" text="%launcher.installer.vpin_studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
             <font>
                 <Font name="Impact" size="18.0"/>
             </font>

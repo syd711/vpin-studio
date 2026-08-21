@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionsController.class);
@@ -248,12 +249,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       }
 
       String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + selection.competition.getName() + "\"?",
-          help, help2, "Delete iScored Subscription");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete") + selection.competition.getName() + "\"?",
+          help, help2, Messages.get("dialog.delete_iscored_subscription"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
-            "Deleting iScored Subscription",
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
+            Messages.get("dialog.deleting_iscored_subscription"),
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         this.iScoredSubscriptions = null;
@@ -267,12 +268,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     if (selections.size() > 1) {
       String help = "The selected subscriptions will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete selected iScored subscriptions?",
-          help, null, "Delete iScored Subscriptions");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_selected_iscored_subscriptions"),
+          help, null, Messages.get("dialog.delete_iscored_subscriptions"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Delete Subscriptions", selections,
-            selection -> "Deleting iScored Subscription",
+        ProgressDialog.createProgressDialog(new WaitNProgressModel<>(Messages.get("dialog.delete_subscriptions"), selections,
+            selection -> Messages.get("dialog.deleting_iscored_subscription"),
             selection -> {
               client.getCompetitionService().deleteCompetition(selection.competition);
             }));
@@ -390,6 +391,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -567,6 +569,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
@@ -632,6 +635,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);

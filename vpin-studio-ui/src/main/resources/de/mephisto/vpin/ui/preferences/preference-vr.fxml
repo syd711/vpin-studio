@@ -17,15 +17,15 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VRPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="%pref.inputs.vpin_studio_frontend_preferences" textFill="WHITE" wrapText="true" />
                   <HBox prefWidth="200.0" styleClass="info-container">
                      <children>
-                        <Label styleClass="default-headline" text="This feature is still in an experimental state and needs more testing." />
+                        <Label styleClass="default-headline" text="%pref.vpxz.this_feature_is_still_in_an_experimental_state" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -34,34 +34,34 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label styleClass="preference-subtitle" text="VR Settings">
+                  <Label styleClass="preference-subtitle" text="%pref.vr.vr_settings" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="This section configures the VR support via VPin Studio." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="%pref.vr.this_section_configures_the_vr_support_via_vpin" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="VR Support Enabled">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.vr.vr_support_enabled">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VR Mode Files">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.vr.vr_mode_files" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="Choose which files should be replaced when the VR mode is enabled." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="The files are located in the installation folder of the VPin Studio " textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="256.0" styleClass="preference-description" text="and will be copied to the matching target folder on toggle." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.vr.choose_which_files_should_be_replaced_when_the" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="%pref.vr.the_files_are_located_in_the_installation_folder_and_will_be_copied" textFill="WHITE" wrapText="true" />
                   <GridPane hgap="3.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.199951171875" minWidth="10.0" prefWidth="161.2000244140625" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="634.8000793457031" minWidth="10.0" prefWidth="399.79997558593755" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="634.8000793457031" minWidth="10.0" prefWidth="184.80005493164072" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -75,10 +75,10 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                      <children>
-                        <Label styleClass="default-text" text="DMDDevice.ini (VR):" GridPane.rowIndex="1" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%pref.vr.dmddevice_ini_vr" wrapText="true" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="Upload...">
+                              <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="%pref.vr.upload">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -86,7 +86,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEditDmdDeviceIni" text="Edit" textFill="WHITE">
+                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEditDmdDeviceIni" text="%competitions.competitions_discord.edit" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -96,10 +96,10 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="VPinballX.ini (VR):" GridPane.rowIndex="3" />
-                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_vr" wrapText="true" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="Upload...">
+                              <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="%pref.vr.upload">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -107,7 +107,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="editBtn1" mnemonicParsing="false" onAction="#onEditVPinballXIni" text="Edit" textFill="WHITE">
+                              <Button fx:id="editBtn1" mnemonicParsing="false" onAction="#onEditVPinballXIni" text="%competitions.competitions_discord.edit" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -117,19 +117,19 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="DMDDevice.ini (Original):" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="VPinballX.ini (Original):" GridPane.rowIndex="4" />
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Emulator:" />
-                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="284.0" GridPane.columnIndex="1" />
-                        <Label fx:id="dmdDeviceIniText" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="dmdDeviceIniTextVr" layoutX="175.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="vPinballXIniTextVr" layoutX="175.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label fx:id="vPinballXIniText" layoutX="175.0" layoutY="116.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.dmddevice_ini_original" wrapText="true" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_original" wrapText="true" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%cards.highscore_cards.emulator" wrapText="true" />
+                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="284.0" GridPane.columnIndex="2" />
+                        <Label fx:id="dmdDeviceIniText" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label fx:id="dmdDeviceIniTextVr" layoutX="175.0" layoutY="83.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="vPinballXIniTextVr" layoutX="175.0" layoutY="49.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label fx:id="vPinballXIniText" layoutX="175.0" layoutY="116.0" styleClass="default-text" text="-" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="195.0" styleClass="preference-subtitle" text="VR Mode Switch" />
-                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="The VR mode can also be toggled via key binding." textFill="WHITE" />
-                  <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="Configure Controller Inputs" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="195.0" styleClass="preference-subtitle" text="%pref.vr.vr_mode_switch" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description" text="%pref.vr.the_vr_mode_can_also_be_toggled_via" textFill="WHITE" wrapText="true" />
+                  <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%pref.inputs.configure_controller_inputs" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

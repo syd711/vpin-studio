@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
@@ -87,27 +88,27 @@ public class PlayersController implements Initializable, StudioFXController {
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
-    playerScoreLabel.setText("Player Highscores");
+    playerScoreLabel.setText(Messages.get("players.players.player_highscores"));
     if (player.isPresent()) {
       PlayerRepresentation p = player.get();
       if (StringUtils.isEmpty(p.getInitials())) {
         noScoreLabel.setVisible(true);
-        noScoreLabel.setText("Player has no initials, no highscores could be resolved.");
+        noScoreLabel.setText(Messages.get("players.players.no_initials"));
         return;
       }
 
       if(!uiSettings.isShowPlayerScores()) {
         noScoreLabel.setVisible(true);
-        noScoreLabel.setText("The score list has been disabled.");
+        noScoreLabel.setText(Messages.get("players.players.score_list_disabled"));
         return;
       }
 
       if (!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
         validationError.setVisible(true);
-        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials for one of them.");
+        errorTextLabel.setText(Messages.get("players.players.duplicate_initials_message", p.getName(), p.getDuplicatePlayerName()));
       }
 
-      playerScoreLabel.setText("Player Highscores \"" + player.get().getName() + "\"");
+      playerScoreLabel.setText(Messages.get("players.players.player_highscores_for", player.get().getName()));
 
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel));
@@ -151,6 +152,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(BuiltInPlayersController.class.getResource("tab-builtin-users.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       builtInPlayersController = loader.getController();
       builtInPlayersController.setPlayersController(this);
@@ -161,6 +163,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(DiscordPlayersController.class.getResource("tab-discord-users.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       discordPlayersController = loader.getController();
       discordPlayersController.setPlayersController(this);

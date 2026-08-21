@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DirectB2SUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -34,7 +35,7 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
         progressResultModel.addError();
 
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError());
         });
       }
       else {

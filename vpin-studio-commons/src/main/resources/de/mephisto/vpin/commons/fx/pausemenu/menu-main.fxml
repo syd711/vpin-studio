@@ -69,7 +69,7 @@
                                                 <Insets top="-90.0"/>
                                             </StackPane.margin>
                                             <center>
-                                                <Label fx:id="nameLabel" text="Loading Tables..." textFill="WHITE">
+                                                <Label fx:id="nameLabel" text="%tables.tables_overview.loading_tables" textFill="WHITE">
                                                     <font>
                                                         <Font size="36.0"/>
                                                     </font>
@@ -133,7 +133,7 @@
                                         <Image url="@blue.png"/>
                                     </image>
                                 </ImageView>
-                                <Label fx:id="blueLabel" text="Archive Table" textAlignment="CENTER" wrapText="true">
+                                <Label fx:id="blueLabel" text="%pausemenu.menu_main.archive_table" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Impact" size="88.0"/>
                                     </font>
@@ -147,7 +147,7 @@
                     <center>
                         <StackPane BorderPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="loadLabel" text="Loading..." textAlignment="CENTER" wrapText="true">
+                                <Label fx:id="loadLabel" text="%players.widget_highscore.loading" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Impact" size="88.0"/>
                                     </font>

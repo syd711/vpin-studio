@@ -16,8 +16,8 @@
                     <bottom>
                         <VBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                             <children>
-                                <Label fx:id="scoreLabel" text="score" textFill="WHITE" />
-                                <Label fx:id="changeDateLabel" text="Label" textFill="WHITE">
+                                <Label fx:id="scoreLabel" text="%widgets.widget_competition_score_item.score" textFill="WHITE" />
+                                <Label fx:id="changeDateLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE">
                                     <font>
                                         <Font size="10.0" />
                                     </font>
@@ -26,7 +26,7 @@
                         </VBox>
                     </bottom>
                     <top>
-                        <Label fx:id="tableLabel" text="table" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                        <Label fx:id="tableLabel" text="%widgets.widget_latest_score_item.table" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                             <font>
                                 <Font name="System Bold" size="24.0" />
                             </font>
@@ -43,7 +43,7 @@
                                         <Font size="18.0" />
                                     </font>
                                 </Label>
-                                <Label fx:id="nameLabel" text="name" textFill="WHITE">
+                                <Label fx:id="nameLabel" text="%widgets.widget_competition_score_item.name" textFill="WHITE">
                                     <font>
                                         <Font size="18.0" />
                                     </font>

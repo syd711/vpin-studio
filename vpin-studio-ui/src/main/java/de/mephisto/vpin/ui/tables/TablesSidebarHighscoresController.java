@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarHighscoresController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -186,8 +187,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       builder.start();
     }
     catch (IOException e) {
-      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage());
     }
   }
 
@@ -208,7 +209,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScanAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan for highscores updates of all " + client.getGameService().getVpxGamesCached().size() + " tables?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.scan_for_highscores_updates_of_all") + client.getGameService().getVpxGamesCached().size() + Messages.get("dialog.tables"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getVpxGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
@@ -219,7 +220,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onBackAll() {
     List<GameRepresentationModel> items = new ArrayList<>(tablesSidebarController.getTableOverviewController().getTableView().getItems());
     List<GameRepresentation> allGames = items.stream().map(g -> g.getGame()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for all currently selected " + allGames.size() + " tables?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.create_highscore_backup_for_all_currently_selected") + allGames.size() + Messages.get("dialog.tables"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(allGames));
     }
@@ -234,20 +235,20 @@ public class TablesSidebarHighscoresController implements Initializable {
         last = "The last backup was created at " + this.highscoreBackups.getFirst();
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for table \"" + g.getGameDisplayName() + "\"?", last);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.create_highscore_backup_for_table") + g.getGameDisplayName() + "\"?", last);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           Studio.client.getHigscoreBackupService().backup(g.getId());
         }
         catch (Exception e) {
           LOG.error("Failed to back highscore: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed create highscore backup: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_create_highscore_backup") + e.getMessage());
         }
         EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
     else if (this.games.size() > 1) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for " + games.size() + " tables?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.create_highscore_backup_for") + games.size() + Messages.get("dialog.tables"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(this.games));
       }
@@ -260,9 +261,9 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
       if (emulator.isVpxEmulator() && StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
-        WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
-            "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
-            "You can enter the values for this manually in the \"Script Details\" section.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.rom_name_is_missing"),
+            Messages.get("dialog.to_backup_the_the_highscore_of_a"),
+            Messages.get("dialog.you_can_enter_the_values_for_this"));
       }
       else {
         TableDialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
@@ -354,14 +355,17 @@ public class TablesSidebarHighscoresController implements Initializable {
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
 
       //TODO swith to new Image(URL) to avoid non closed InputStrem + async loading ?
-      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, CardTemplateType.HIGSCORE_CARD);
-      if (highscoreCard != null) {
-        cardImage.setImage(new Image(highscoreCard));
-      }
-      else {
-        InputStream resourceAsStream = Studio.class.getResourceAsStream("empty-preview.png");
-        cardImage.setImage(new Image(resourceAsStream));
-      }
+      JFXFuture.supplyAsync(() -> {
+        return client.getHighscoreCardsService().getHighscoreCardPreview(game, CardTemplateType.HIGSCORE_CARD);
+      }).thenAcceptLater((highscoreCard) -> {
+        if (highscoreCard != null) {
+          cardImage.setImage(new Image(highscoreCard));
+        }
+        else {
+          InputStream resourceAsStream = Studio.class.getResourceAsStream("empty-preview.png");
+          cardImage.setImage(new Image(resourceAsStream));
+        }
+      });
 
       JFXFuture.supplyAsync(() -> {
         return Studio.client.getHigscoreBackupService().get(game.getId());

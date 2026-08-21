@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class EmulatorsController implements Initializable, PreferenceChangeListener, StudioEventListener {
     private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
@@ -219,7 +220,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     private void onSave() {
         saveBtn.setDisable(true);
         if (!FileUtils.isValidFilename(safeNameField.getText())) {
-            WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
+            WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_name"), Messages.get("dialog.the_specified_name_contains_invalid_characters"));
             return;
         }
 
@@ -268,10 +269,10 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     @FXML
     private void onDuplicate() {
         GameEmulatorRepresentation template = emulator.get();
-        String s = WidgetFactory.showInputDialog(Studio.stage, "Clone Emulator", "Enter the folder save name for the copy of \"" + emulator.get().getName() + "\".", "You can edit the additional emulator parameters afterwards.", null, "Copy of " + template);
+        String s = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.clone_emulator"), Messages.get("dialog.enter_the_folder_save_name_for_the") + emulator.get().getName() + "\".", Messages.get("dialog.you_can_edit_the_additional_emulator_parameters"), null, Messages.get("dialog.copy_of") + template);
         if (!StringUtils.isEmpty(s)) {
             if (!FileUtils.isValidFilename(s)) {
-                WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
+                WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_name"), Messages.get("dialog.the_specified_name_contains_invalid_characters"));
                 return;
             }
 
@@ -301,7 +302,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     private void onDelete() {
         if (emulator.isPresent()) {
             GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
-            Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_game_emulator"), Messages.get("dialog.delete_game_emulator_2") + gameEmulatorRepresentation.getName() + "\"?");
             if (result.isPresent() && result.get().equals(ButtonType.OK)) {
                 ProgressDialog.createProgressDialog(new EmulatorDeletionProgressModel(gameEmulatorRepresentation, this));
             }
@@ -448,6 +449,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
     private void loadPopperFrontend() {
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             startScriptController = loader.getController();
             startScriptTab.setContent(builtInRoot);
@@ -458,6 +460,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             vrStartScriptController = loader.getController();
             vrStartScriptTab.setContent(builtInRoot);
@@ -468,6 +471,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent builtInRoot = loader.load();
             exitScriptController = loader.getController();
             exitScriptTab.setContent(builtInRoot);
@@ -487,6 +491,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       startScriptController = loader.getController();
       startScriptTab.setContent(builtInRoot);
@@ -497,6 +502,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       vrStartScriptController = loader.getController();
       vrStartScriptTab.setContent(builtInRoot);
@@ -507,6 +513,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       exitScriptController = loader.getController();
       exitScriptTab.setContent(builtInRoot);
@@ -542,6 +549,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
 
         try {
             FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent parent = loader.load();
             tableController = loader.getController();
             tableController.setEmulatorController(this);

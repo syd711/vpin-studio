@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerScoreLoadingProgressModel.class);
@@ -31,7 +32,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
   private final Iterator<PlayerRepresentation> playerIterator;
 
   public PlayerScoreLoadingProgressModel(PlayerRepresentation playerRepresentation, VBox highscoreList, Label noScoreLabel) {
-    super("Loading Player Highscores");
+    super(Messages.get("players.players.loading_player_highscores"));
     this.players = Arrays.asList(playerRepresentation);
     this.highscoreList = highscoreList;
     this.noScoreLabel = noScoreLabel;
@@ -79,7 +80,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
       highscoreList.getStyleClass().remove("media-container");
       if (playerScores.getScores().isEmpty()) {
         noScoreLabel.setVisible(true);
-        noScoreLabel.setText("No scores found for this player.");
+        noScoreLabel.setText(Messages.get("players.players.no_highscores_found_for_this_player"));
       }
       else {
         highscoreList.getStyleClass().add("media-container");
@@ -92,6 +93,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
 
           try {
             FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
+            loader.setResources(Messages.getBundle());
             Pane row = loader.load();
             row.setPrefWidth(600);
             WidgetPlayerScoreController controller = loader.getController();

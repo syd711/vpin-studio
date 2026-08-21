@@ -37,6 +37,7 @@ import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BuiltInPlayersController extends BasePlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
@@ -142,10 +143,10 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   private void onDelete() {
     PlayerRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_player") + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         if (Features.MANIA_ENABLED && selection.getManiaAccountUuid() != null) {
-          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "VPin Mania Player", "The player \"" + selection.getName() + "\" is a registered VPin Mania player.", "This will delete the online account and all related highscores and data.");
+          Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.vpin_mania_player"), Messages.get("dialog.the_player") + selection.getName() + Messages.get("dialog.is_a_registered_vpin_mania_player"), Messages.get("dialog.this_will_delete_the_online_account_and"));
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
 
@@ -210,15 +211,15 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
-    tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
-        "Add new players or connect a Discord server."));
+    tableView.setPlaceholder(new Label(Messages.get("players.builtin_users.no_players_placeholder")));
 
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       playersLoadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Players...");
+      ctrl.setLoadingMessage(Messages.get("players.builtin_users.loading_players"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

@@ -15,7 +15,7 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
@@ -40,9 +40,9 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" styleClass="default-headline" text="Label" />
-                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The given log shows the complete highscore processing, " />
-                  <Label fx:id="titleLabel11" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="triggered through the frontend's table exit event." />
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="%competitions.discord_competition_edit.label" />
+                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%tables.event_log.the_given_log_shows_the_complete_highscore_processing" />
+                  <Label fx:id="titleLabel11" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="%tables.event_log.triggered_through_the_frontend_s_table_exit_event" />
                </children>
             </VBox>
          </top>

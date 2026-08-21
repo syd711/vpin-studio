@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.recorder;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
@@ -13,7 +14,7 @@ import javafx.stage.Stage;
 public class RecorderDialogs {
 
   public static void openRecordingDialog(RecorderController recorderController, GameEmulatorRepresentation emulator, RecordingDataSummary recordingDataSummary) {
-    Stage stage = Dialogs.createStudioDialogStage(RecordingProgressDialogController.class, "recording-progress-dialog.fxml", "Recorder");
+    Stage stage = Dialogs.createStudioDialogStage(RecordingProgressDialogController.class, "recording-progress-dialog.fxml", Messages.get("recorder.recording_progress_dialog.title"));
     RecordingProgressDialogController controller = (RecordingProgressDialogController) stage.getUserData();
     controller.setData(stage, emulator, recorderController, recordingDataSummary);
 
@@ -21,7 +22,7 @@ public class RecorderDialogs {
   }
 
   public static void openRecordingSettings(@NonNull VPinScreen vPinScreen) {
-    Stage stage = Dialogs.createStudioDialogStage(FFMpegOptionsDialogController.class, "dialog-ffmpeg-options.fxml", "Recorder Settings", "recorderSettings");
+    Stage stage = Dialogs.createStudioDialogStage(FFMpegOptionsDialogController.class, "dialog-ffmpeg-options.fxml", Messages.get("recorder.ffmpeg_options.title"), "recorderSettings");
     FFMpegOptionsDialogController controller = (FFMpegOptionsDialogController) stage.getUserData();
     controller.setData(vPinScreen);
 

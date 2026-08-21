@@ -29,12 +29,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="generateBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGenerateClick" styleClass="submit-button" text="Generate .res File">
+                  <Button fx:id="generateBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGenerateClick" styleClass="submit-button" text="%backglass.res_generator.generate_res_file">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -66,15 +66,15 @@
                     </rowConstraints>
                      <children>
 
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Display Options:" GridPane.rowIndex="0" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backglass.res_generator.display_options" GridPane.rowIndex="0" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                            <children>
-                              <RadioButton fx:id="radioStretchBackglass" mnemonicParsing="false" prefWidth="170.0" text="Stretch backglass" textFill="WHITE">
+                              <RadioButton fx:id="radioStretchBackglass" mnemonicParsing="false" prefWidth="170.0" text="%backglass.res_generator.stretch_backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
-                              <RadioButton fx:id="radioCenterBackglass" mnemonicParsing="false" prefWidth="170.0" text="Center backglass" textFill="WHITE">
+                              <RadioButton fx:id="radioCenterBackglass" mnemonicParsing="false" prefWidth="170.0" text="%backglass.res_generator.center_backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -82,7 +82,7 @@
                            </children>
                         </HBox>
 
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Frame Type:" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backglass.res_generator.frame_type" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <ComboBox fx:id="frameTypeCombo" />
@@ -94,16 +94,16 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip fx:id="frameTypeTooltip" prefWidth="600.0" text="Choose and previsualize a frame template, the frame will be generated on save:" wrapText="true" />
+                                    <Tooltip fx:id="frameTypeTooltip" prefWidth="600.0" text="%backglass.res_generator.choose_and_previsualize_a_frame_template_the_frame" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
 
-                        <Label styleClass="default-text" text="Frame Picture:" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="%backglass.res_generator.frame_picture" GridPane.rowIndex="2" />
                         <StackPane fx:id="fileNamePane" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="Select or drop a frame image here">
+                              <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="%backglass.res_generator.select_or_drop_a_frame_image_here">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -118,14 +118,14 @@
                               </Button>
                            </children>
                         </StackPane>                
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
 
 
-                        <CheckBox fx:id="turnOnRunAsExe" mnemonicParsing="false" text="Turn on 'Run Backglass as exe' to display frames" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="3">
+                        <CheckBox fx:id="turnOnRunAsExe" mnemonicParsing="false" text="%backglass.res_generator.turn_on_run_backglass_as_exe_to_display" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -134,7 +134,7 @@
                            </GridPane.margin>
                         </CheckBox>
 
-                        <CheckBox fx:id="turnOnBackground" mnemonicParsing="false" text="Turn on Backglass 'background' visibility" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="4">
+                        <CheckBox fx:id="turnOnBackground" mnemonicParsing="false" text="%backglass.res_generator.turn_on_backglass_background_visibility" textFill="WHITE" GridPane.columnSpan="3" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -166,7 +166,7 @@
                   </HBox>
                </left>
                <top>
-                  <Label styleClass="default-text" text="Preview" BorderPane.alignment="TOP_LEFT">
+                  <Label styleClass="default-text" text="%backglass.res_generator.preview" BorderPane.alignment="TOP_LEFT">
                      <BorderPane.margin>
                         <Insets bottom="3.0" />
                      </BorderPane.margin>
@@ -191,15 +191,15 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="default-text" text="Screenres.txt:" />
+                  <Label styleClass="default-text" text="%backglass.res_generator.screenres_txt" />
                   <Label fx:id="screenResLabel" layoutX="10.0" layoutY="15.0" maxWidth="500.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" />
 
-                  <Label styleClass="default-text" text="Backglass Screen:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="%backglass.res_generator.backglass_screen" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                   <Label fx:id="backglassScreenLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                  <Label styleClass="default-text" text="Backglass Dimension:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <Label styleClass="default-text" text="%backglass.res_generator.backglass_dimension" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                   <Label fx:id="backglassDimensionLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label styleClass="default-text" text="Backglass Position:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label styleClass="default-text" text="%backglass.res_generator.backglass_position" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <Label fx:id="backglassPositionLabel" styleClass="default-text" text="-" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                </children>
             </GridPane>

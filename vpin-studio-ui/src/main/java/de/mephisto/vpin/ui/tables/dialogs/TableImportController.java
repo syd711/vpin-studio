@@ -41,6 +41,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableImportController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -83,7 +84,7 @@ public class TableImportController implements Initializable, DialogController {
         JobDescriptor jobResult = (JobDescriptor) result;
         if (jobResult.getError() != null) {
           LOG.error("Table import failed: " + jobResult.getError());
-          WidgetFactory.showAlert(Studio.stage, "Table Import Failed", "One ore more imports failed", jobResult.getError());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.table_import_failed"), Messages.get("dialog.one_ore_more_imports_failed"), jobResult.getError());
           break;
         }
       }
@@ -128,7 +129,7 @@ public class TableImportController implements Initializable, DialogController {
     }
     catch (Exception e) {
       LOG.error("Failed to init import dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_read_import_list") + e.getMessage());
     }
   }
 
@@ -153,7 +154,7 @@ public class TableImportController implements Initializable, DialogController {
         })
         .onErrorSupply(e -> {
           LOG.error("Failed to init import dialog: " + e.getMessage(), e);
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_read_import_list") + e.getMessage()));
           return new GameList();
         })
         .thenAcceptLater(importableTables -> {
@@ -193,7 +194,7 @@ public class TableImportController implements Initializable, DialogController {
                 deleteBtn.setOnAction(new EventHandler<ActionEvent>() {
                   @Override
                   public void handle(ActionEvent event) {
-                    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete file \"" + item.getName() + "\"?");
+                    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_file_3") + item.getName() + "\"?");
                     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
                       client.getGameService().deleteGameFile(item.getEmuId(), item.getName());
                       refreshEmulator(emulator);

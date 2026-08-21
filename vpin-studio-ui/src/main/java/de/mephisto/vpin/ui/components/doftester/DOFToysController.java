@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DOFToysController implements Initializable {
 
@@ -76,6 +77,7 @@ public class DOFToysController implements Initializable {
       for (String toy : toys.getToys()) {
         try {
           FXMLLoader loader = new FXMLLoader(ToyContainerController.class.getResource("toy-container.fxml"));
+          loader.setResources(Messages.getBundle());
           Pane root = loader.load();
           root.getStyleClass().add("dropin-menu-item");
           ToyContainerController controller = loader.getController();

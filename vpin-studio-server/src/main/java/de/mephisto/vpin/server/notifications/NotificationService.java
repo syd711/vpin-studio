@@ -161,7 +161,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     Notification notification = NotificationFactory.createNotification(null,
         "VPin Studio Server", "This is a test notification.",
         "VPin Studio Version " + systemService.getVersion());
-    showNotification(notification);
+    showNotificationNow(notification);
     return true;
   }
 

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableValidateProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -66,8 +67,8 @@ public class TableValidateProgressModel extends ProgressModel<GameRepresentation
           EventManager.getInstance().notifyTableChange(game.getId(), null);
         }
       } catch (Exception e) {
-        LOG.error("Table validation failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Table validation failed: " + e.getMessage());
+        LOG.error(Messages.get("dialog.table_validation_failed") + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.table_validation_failed") + e.getMessage());
       }
     } catch (Exception e) {
       LOG.error("Error validating table: " + e.getMessage(), e);

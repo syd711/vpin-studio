@@ -31,6 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 @Service
 public class PupPacksService implements InitializingBean {
@@ -272,7 +277,7 @@ public class PupPacksService implements InitializingBean {
     }
     else {
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL);
-      jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
+      jobDescriptor.setTitle(ServerMessages.get("puppack.install.title", resolveLocale(), uploadDescriptor.getOriginalUploadFileName()));
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);
@@ -356,4 +361,18 @@ public class PupPacksService implements InitializingBean {
     }).start();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
+
+  private Locale resolveLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }

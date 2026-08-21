@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
@@ -111,7 +112,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         if (!StringUtils.isEmpty(player.getManiaAccountUuid())) {
           Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getManiaAccountUuid());
           if (accountByUuid != null && !this.vpinManiaPlayerCheckbox.isSelected()) {
-            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, "VPin Mania Player", "The player \"" + this.player.getName() + "\" is a registered VPin Mania player and the \"VPin Mania\" checkbox is unchecked.", "This will delete the online account and all related highscores and data.");
+            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, Messages.get("dialog.vpin_mania_player"), Messages.get("dialog.the_player") + this.player.getName() + Messages.get("dialog.is_a_registered_vpin_mania_player_and"), Messages.get("dialog.this_will_delete_the_online_account_and"));
             if (result2.isEmpty() || !result2.get().equals(ButtonType.OK)) {
               return;
             }
@@ -153,9 +154,9 @@ public class PlayerDialogController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
+    fileChooser.setTitle(Messages.get("players.player_edit.select_image_title"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter(Messages.get("players.player_edit.image_files"), "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
     refreshAvatar();

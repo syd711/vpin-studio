@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Iterator;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class GameMediaUploadPostProcessingProgressModel extends ProgressModel<UploadDescriptor> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -57,9 +58,9 @@ public class GameMediaUploadPostProcessingProgressModel extends ProgressModel<Up
       progressResultModel.getResults().add(result);
     }
     catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.table_upload_failed") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Post processing failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.post_processing_failed") + e.getMessage());
       });
     }
   }

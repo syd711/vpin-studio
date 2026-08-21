@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class HighscoreBackupDeleteProgressModel extends ProgressModel<HighscoreBackup> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -66,8 +67,8 @@ public class HighscoreBackupDeleteProgressModel extends ProgressModel<HighscoreB
       client.getHigscoreBackupService().delete(gameId, backup.getFilename());
     }
     catch (Exception e) {
-      LOG.error("Failed to delete backup: " + e.getMessage(), e);
-      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backup: " + e.getMessage()));
+      LOG.error(Messages.get("dialog.failed_to_delete_backup") + e.getMessage(), e);
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_delete_backup") + e.getMessage()));
     }
   }
 }

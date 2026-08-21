@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MamePreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MamePreferencesController.class);
@@ -78,8 +79,8 @@ public class MamePreferencesController implements Initializable {
     try {
       client.getMameService().saveOptions(options);
     } catch (Exception e) {
-      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage());
     }
 
     PreferencesController.markDirty(PreferenceType.serverSettings);

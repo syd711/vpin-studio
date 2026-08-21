@@ -62,6 +62,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 import static de.mephisto.vpin.ui.tables.TableOverviewController.ALL_VPX_ID;
 import static de.mephisto.vpin.ui.tables.TableOverviewController.createAssetStatus;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class RecorderController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
@@ -197,7 +198,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private void onRecord() {
     JobDescriptor recording = client.getRecorderService().isRecording();
     if (recording != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Recorder Active", "Another recording is still active.", "Please wait or cancel all active recordings.", "Stop Recordings");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.recorder_active"), Messages.get("dialog.another_recording_is_still_active"), Messages.get("dialog.please_wait_or_cancel_all_active_recordings"), Messages.get("dialog.stop_recordings"));
       if (result.isEmpty() || !result.get().equals(ButtonType.OK)) {
         client.getRecorderService().stopRecording(recording);
       }
@@ -258,7 +259,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
               : client.getGameService().getGamesByEmulator(id);
         })
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
           return Collections.emptyList();
         })
         .thenAcceptLater(data -> {
@@ -446,6 +447,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreenRecorderPanelController.class.getResource("screen-recorder-panel.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent panelRoot = loader.load();
         ScreenRecorderPanelController screenPanelController = loader.getController();
         screenRecorderPanelControllers.add(screenPanelController);
@@ -591,6 +593,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);

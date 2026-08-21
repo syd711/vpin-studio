@@ -27,14 +27,19 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpauthenticators.VPAuthenticationService;
 import org.apache.commons.lang3.StringUtils;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -72,6 +77,9 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
   @Autowired
   private VPAuthenticationService vpAuthenticationService;
+
+  @Autowired
+  private MessageSource messageSource;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -210,7 +218,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
       GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.BACKUP_INSTALL);
-      jobDescriptor.setTitle("Restoring \"" + backupDescriptor.getFilename() + "\"");
+      jobDescriptor.setTitle(ServerMessages.get(messageSource, "backup.restore.title", resolveRequestLocale()) + ": \"" + backupDescriptor.getFilename() + "\"");
       BackupInstallerJob job = new BackupInstallerJob(backupDescriptor, universalUploadService, gameService, emulator, cardService);
       jobDescriptor.setJob(job);
 
@@ -245,7 +253,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   private boolean backupTable(@NonNull Game game, @NonNull BackupExportDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP);
     descriptor.setCancelable(true);
-    descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
+    descriptor.setTitle(ServerMessages.get(messageSource, "backup.job.title", resolveRequestLocale()) + ": \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 
     Optional<BackupSource> byId = backupSourceRepository.findById(exportDescriptor.getBackupSourceId());
@@ -314,5 +322,24 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     }).start();
 
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  /**
+   * Resolves the {@link Locale} from the current HTTP request's
+   * {@code Accept-Language} header, falling back to English.
+   */
+  private Locale resolveRequestLocale() {
+    try {
+      ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        HttpServletRequest request = attrs.getRequest();
+        String acceptLanguage = request.getHeader("Accept-Language");
+        return ServerMessages.parseLocale(acceptLanguage);
+      }
+    }
+    catch (Exception e) {
+      LOG.debug("Could not resolve request locale: {}", e.getMessage());
+    }
+    return Locale.ENGLISH;
   }
 }

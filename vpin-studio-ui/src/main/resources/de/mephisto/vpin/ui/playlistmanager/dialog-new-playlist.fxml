@@ -20,12 +20,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Create">
+            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%playlistmanager.new_playlist.create">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -54,18 +54,18 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Emulator:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%cards.highscore_cards.emulator" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="emulatorCombo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Name:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="nameField" promptText="Enter new playlist name...." GridPane.columnIndex="1">
+                        <TextField fx:id="nameField" promptText="%playlistmanager.new_playlist.enter_new_playlist_name" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

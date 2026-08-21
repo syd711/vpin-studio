@@ -65,6 +65,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 
 public class TableDataController extends BasePrevNextController implements AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
@@ -420,7 +421,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.auto_fill_failed") + e.getMessage());
     }
   }
 
@@ -568,7 +569,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       if (game.getGameFilePath() != null && !updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
         String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
         if (duplicate != null) {
-          WidgetFactory.showAlert(stage, "Error", "Another file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.another_file_with_the_name") + duplicate + Messages.get("dialog.already_exist_please_chooser_another_name"));
           return false;
         }
       }
@@ -609,8 +610,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (Exception ex) {
       success = false;
-      LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
+      LOG.error(Messages.get("dialog.error_saving_table_manifest") + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_table_manifest") + ex.getMessage());
     }
     return success;
   }
@@ -726,6 +727,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
   private void loadTabs() {
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       tableScreensController = loader.getController();
       screensTab.setContent(builtInRoot);
@@ -741,6 +743,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScoreDataController.class.getResource("dialog-table-data-tab-scoredata.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent scoreDataRoot = loader.load();
       tableDataTabScoreDataController = loader.getController();
       tableDataTabScoreDataController.initBindings(this);
@@ -752,6 +755,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(PropperRenamingController.class.getResource("propper-renaming.fxml"));
+      loader.setResources(Messages.getBundle());
       propertRenamingRoot = loader.load();
       propperRenamingController = loader.getController();
       detailsRoot.getChildren().add(1, propertRenamingRoot);
@@ -765,6 +769,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabCommentsController.class.getResource("dialog-table-data-tab-comments.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent commentsRoot = loader.load();
       tableDataTabCommentsController = loader.getController();
       tableDataTabCommentsController.initBindings(this);
@@ -776,6 +781,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScriptOptionsController.class.getResource("dialog-table-data-tab-script-options.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent optionsRoot = loader.load();
       tableDataTabScriptOptionsController = loader.getController();
       tableDataTabScriptOptionsController.setStage(this.stage);
@@ -788,6 +794,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     try {
       if (Features.PLAYLIST_ENABLED) {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPlaylistsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent playlistsRoot = loader.load();
         tablesSidebarPlaylistsController = loader.getController();
         tablesSidebarPlaylistsController.setTableOverviewController(this.tableOverviewController);
@@ -798,6 +805,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       if (Features.STATISTICS_ENABLED) {
         try {
           FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
+          loader.setResources(Messages.getBundle());
           Parent builtInRoot = loader.load();
           tableStatisticsController = loader.getController();
           statisticsTab.setContent(builtInRoot);
@@ -816,6 +824,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
 
     try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
       customizationRoot.getChildren().add(builtInRoot);
@@ -1140,7 +1149,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (Exception e) {
       LOG.error("Failed to initialize Table Data Manager: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize Table Data Manager: " + e.getMessage(), "Please report this bug via Discord or github.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_table_data_manager") + e.getMessage(), Messages.get("dialog.please_report_this_bug_via_discord_or"));
     }
   }
 

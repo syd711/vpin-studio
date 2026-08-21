@@ -18,13 +18,18 @@ import org.jspecify.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter {
@@ -60,7 +65,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
         backupDescriptor.setTableDetails(tableDetails);
         backupDescriptor.setPackageInfo(packageInfo);
 
-        jobDescriptor.setStatus("Calculating export size of " + game.getGameDisplayName());
+        jobDescriptor.setStatus(ServerMessages.get("backup.job.running", resolveRequestLocale(), game.getGameDisplayName()));
         long totalSizeExpected = vpaService.calculateTotalSize(game);
         LOG.info("Calculated total approx. size of {} for the archive of {}", FileUtils.readableFileSize(totalSizeExpected), game.getGameDisplayName());
 
@@ -99,7 +104,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
                     return;
                 }
 
-                jobDescriptor.setStatus("Packing " + fileToZip.getAbsolutePath());
+                jobDescriptor.setStatus(ServerMessages.get("upload.job.processing", resolveRequestLocale(), fileToZip.getAbsolutePath()));
                 if (jobDescriptor.getProgress() < 1 && tempFile.exists()) {
                     if (totalSizeExpected > 0) {
                         long l = tempFile.length() * 100 / totalSizeExpected / 100;
@@ -128,7 +133,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
                 File manifestFile = File.createTempFile("package-info", "json");
                 manifestFile.deleteOnExit();
                 Files.write(manifestFile.toPath(), packageInfoJson.getBytes());
-                jobDescriptor.setStatus("Packing " + manifestFile.getAbsolutePath());
+                jobDescriptor.setStatus(ServerMessages.get("upload.job.processing", resolveRequestLocale(), manifestFile.getAbsolutePath()));
                 ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.PACKAGE_INFO_JSON_FILENAME, zipOut);
                 manifestFile.delete();
             }
@@ -138,7 +143,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
             File temporaryTarget = new File(target.getParentFile(), target.getName() + ".bak");
             try {
                 LOG.info("Copying backup file {} to {}", tempFile.getAbsolutePath(), temporaryTarget.getAbsolutePath());
-                jobDescriptor.setStatus("Copying backup file to " + temporaryTarget.getParentFile().getAbsolutePath());
+                jobDescriptor.setStatus(ServerMessages.get("upload.job.processing", resolveRequestLocale(), temporaryTarget.getParentFile().getAbsolutePath()));
                 org.apache.commons.io.FileUtils.copyFile(tempFile, temporaryTarget);
             }
             catch (IOException e) {
@@ -232,4 +237,18 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   public boolean isCancelable() {
     return true;
   }
+
+  private Locale resolveRequestLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }

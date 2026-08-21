@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BackglassPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassPreferencesController.class);
@@ -192,8 +193,8 @@ public class BackglassPreferencesController implements Initializable {
       }
     }
     catch (Exception e) {
-      LOG.info("Failed to initialize backglass setting preferences: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize backglass setting preferences: " + e.getMessage());
+      LOG.info(Messages.get("dialog.failed_to_initialize_backglass_setting_preferences") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_backglass_setting_preferences") + e.getMessage());
     }
   }
 
@@ -204,8 +205,8 @@ public class BackglassPreferencesController implements Initializable {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to save backglass server settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save backglass server settings: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_backglass_server_settings") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_backglass_server_settings") + e.getMessage());
     }
   }
 }

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DialogTemplateEditorUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(DialogTemplateEditorUploadProgressModel.class);
@@ -35,7 +36,7 @@ public class DialogTemplateEditorUploadProgressModel extends UploadProgressModel
     catch (Exception e) {
       LOG.error("template upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Cards Template upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.cards_template_upload_failed") + e.getMessage());
       });
     }
   }

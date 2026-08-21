@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -205,6 +206,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   protected void loadFilterPanel(Class<?> clazz, String resource) {
     try {
       FXMLLoader loader = new FXMLLoader(clazz.getResource(resource));
+      loader.setResources(Messages.getBundle());
       loader.load();
       filterController = loader.getController();
       filterController.setTableController(this);
@@ -407,9 +409,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         tableView.refresh();
       }
       catch (Exception ex) {
-        LOG.error("Reload of item failed: " + ex.getMessage(), ex);
+        LOG.error(Messages.get("dialog.reload_of_item_failed") + ex.getMessage(), ex);
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Reload of item failed: " + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.reload_of_item_failed") + ex.getMessage());
         });
       }
     }

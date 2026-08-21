@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionsDiscordController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsDiscordController.class);
@@ -156,7 +157,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   private void onCompetitionValidate() {
     CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Competition", "This will re-check your local highscores against the Discord server data.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize_competition"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
       if (result.get().equals(ButtonType.OK)) {
         client.getDiscordService().clearCache();
         client.getDiscordService().checkCompetition(selectedItem);
@@ -168,7 +169,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize") + competitionRepresentations.size() + Messages.get("dialog.competitions"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
     if (result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
       this.onReload();
@@ -291,12 +292,12 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
         help2 = remainingDayMsg;
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_competition") + selection.getName() + "'?",
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition",
-            "Deleting Competition " + selection.getName(),
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_competition_2"),
+            Messages.get("dialog.deleting_competition", selection.getName()),
             () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
@@ -311,7 +312,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
       String helpText2 = "Finishing the competition will set the current leader as winner.";
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Competition '" + selection.getName() + "'?", helpText1, helpText2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.finish_competition") + selection.getName() + "'?", helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getCompetitionService().finishCompetition(selection);
         onReload();
@@ -407,6 +408,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -572,6 +574,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PINemHiPreferencesController implements Initializable, IniSettingsChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(PINemHiPreferencesController.class);
@@ -332,8 +333,8 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
       Studio.client.getPINemHiService().save(settings);
     }
     catch (Exception e) {
-      LOG.error("Failed to save PINemHi settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PINemHi settings: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_save_pinemhi_settings") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinemhi_settings") + e.getMessage());
     }
   }
 

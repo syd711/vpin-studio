@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BackupRestoreDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(BackupRestoreDialogController.class);
@@ -132,7 +133,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
         }
         catch (Exception ex) {
           LOG.error("Failed to restore: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Restore Failed", "Failed to trigger import: " + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.restore_failed"), Messages.get("dialog.failed_to_trigger_import") + ex.getMessage());
         }
 
       });

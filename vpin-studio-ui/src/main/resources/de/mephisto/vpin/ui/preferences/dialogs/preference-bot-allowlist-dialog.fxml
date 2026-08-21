@@ -22,14 +22,14 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <right>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" BorderPane.alignment="CENTER" />
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close" BorderPane.alignment="CENTER" />
          </right>
       </BorderPane>
    </bottom>
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Select users that are allowed for bot command messages." textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="%pref.bot_allowlist_dialog.select_users_that_are_allowed_for_bot_command" textFill="WHITE" wrapText="true" />
             <GridPane vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="127.79999084472655" />
@@ -39,7 +39,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Discord Server:" textFill="WHITE">
+                  <Label text="%competitions.discord_competition_edit.discord_server" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -50,7 +50,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="Resolved Users:" textFill="WHITE">
+            <Label fx:id="usersLabel" layoutX="22.0" layoutY="940.0" text="%pref.bot_allowlist_dialog.resolved_users" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
@@ -58,7 +58,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <ScrollPane hbarPolicy="NEVER">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
                <content>
                   <VBox fx:id="userList" prefHeight="360.0" prefWidth="640.0" />
                </content>

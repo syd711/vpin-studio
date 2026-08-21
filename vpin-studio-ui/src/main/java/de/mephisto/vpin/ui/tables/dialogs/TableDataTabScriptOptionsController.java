@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  * Controller for the "Script Options" tab on the TableData screen.
@@ -114,8 +115,8 @@ public class TableDataTabScriptOptionsController implements Initializable {
   private void onResetClicked() {
     if (currentGameId < 0 || currentOptions.isEmpty()) return;
 
-    Optional<ButtonType> confirm = WidgetFactory.showConfirmation(stage, "Reset Script Options",
-        "Reset all options for this table to their script-declared defaults?"
+    Optional<ButtonType> confirm = WidgetFactory.showConfirmation(stage, Messages.get("dialog.reset_script_options"),
+        Messages.get("dialog.reset_all_options_for_this_table_to")
     );
 
     if (confirm.isEmpty() || confirm.get() != ButtonType.OK) {
@@ -137,7 +138,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
     }).thenAcceptLater(b -> {
       resetButton.setDisable(false);
       if (!b) {
-        WidgetFactory.showAlert(stage, "Error", "Reset failed. Check the server log for details.");
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.reset_failed_check_the_server_log_for"));
       }
     });
   }

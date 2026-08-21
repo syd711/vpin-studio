@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressModel<IScoredGame> {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredGameRoomGamesSynchronizationProgressModel.class);
@@ -62,9 +63,9 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
       client.getCompetitionService().synchronizeIScoredGameRoomGame(gameRoom, next, this.games.indexOf(next) == 0, manualSubscription);
     }
     catch (Exception e) {
-      LOG.error("Failed to sync competitions data: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.failed_to_sync_competitions_data") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "iScored Synchronization Failed", "Result: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.iscored_synchronization_failed"), Messages.get("dialog.result") + e.getMessage());
       });
     }
   }

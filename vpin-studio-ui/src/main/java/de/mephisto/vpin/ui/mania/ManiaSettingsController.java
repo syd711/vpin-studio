@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ManiaSettingsController extends SettingsSceneController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaSettingsController.class);
@@ -99,6 +100,7 @@ public class ManiaSettingsController extends SettingsSceneController implements 
       if (instance == null) {
         try {
           FXMLLoader loader = new FXMLLoader(ManiaSettingsController.class.getResource("scene-mania-preferences.fxml"));
+          loader.setResources(Messages.getBundle());
           Node preferencesRoot = loader.load();
           ManiaSettingsController controller = loader.getController();
           preferencesRoot.setUserData(controller);
@@ -205,12 +207,13 @@ public class ManiaSettingsController extends SettingsSceneController implements 
 
     try {
       FXMLLoader loader = new FXMLLoader(ManiaSettingsController.class.getResource(screen));
+      loader.setResources(Messages.getBundle());
       Node node = loader.load();
       preferencesMain.setCenter(node);
     }
     catch (Exception e) {
       LOG.error("Failed to loading friends view: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
     }
   }
 

@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayButtonController implements Initializable, ChangeListener<LaunchConfiguration> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -170,9 +171,9 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
       Frontend frontend = client.getFrontendService().getFrontendCached();
 
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
-          "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
-          FrontendUtil.replaceNames("All existing emulator and [Frontend] processes will be terminated.", frontend, "VPX"),
-          null, "Do not show again", false);
+          Messages.get("dialog.start_playing_table") + game.getGameDisplayName() + "\"?", Messages.get("dialog.start_table"),
+          FrontendUtil.replaceNames(Messages.get("dialog.all_existing_emulator_and_frontend_processes_will"), frontend, Messages.get("dialog.vpx")),
+          null, Messages.get("dialog.do_not_show_again"), false);
 
       if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {

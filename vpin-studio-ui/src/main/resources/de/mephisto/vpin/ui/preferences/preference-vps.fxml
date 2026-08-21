@@ -18,26 +18,26 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VpsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Virtual Pinball Spreadsheet">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.vps.virtual_pinball_spreadsheet" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the Virtual Pinball Spreadsheet integration." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.vps.settings_for_the_virtual_pinball_spreadsheet_integration" textFill="WHITE" wrapText="true" />
             <VBox>
                <children>
-                  <Button mnemonicParsing="false" onAction="#onReload" text="Update VPS Database" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onReload" text="%pref.vps.update_vps_database" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <CheckBox fx:id="uiShowVPSUpdates" mnemonicParsing="false" text="Show VPS table status in table overview." textFill="WHITE">
+                  <CheckBox fx:id="uiShowVPSUpdates" mnemonicParsing="false" text="%pref.vps.show_vps_table_status_in_table_overview" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -45,8 +45,8 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
-                   <Label styleClass="default-headline" text="Show Updates for Assets" textFill="WHITE">
+                  <Label styleClass="checkbox-description" text="%pref.vps.toggles_the_visibility_of_the_vps_status_indicators" textFill="WHITE" wrapText="true" />
+                   <Label styleClass="default-headline" text="%pref.vps.show_updates_for_assets" textFill="WHITE" wrapText="true">
                        <VBox.margin>
                            <Insets top="24.0" />
                        </VBox.margin>
@@ -55,22 +55,22 @@
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="%backups.backup_restore.alt_color" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%backups.backup_restore.alt_sound" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="%backglass.directb2s_admin.backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsPOV" mnemonicParsing="false" text="POV" textFill="WHITE">
+                              <CheckBox fx:id="vpsPOV" mnemonicParsing="false" text="%backups.backups.pov" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -82,22 +82,22 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="%backups.backup_restore.pup_pack" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="%backups.backup_restore.rom" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsSound" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                              <CheckBox fx:id="vpsSound" mnemonicParsing="false" text="%pref.vps.sound_music" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsToppper" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                              <CheckBox fx:id="vpsToppper" mnemonicParsing="false" text="%pref.vps.topper" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -106,12 +106,12 @@
                         </VBox>
                         <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="%pref.vps.tutorial" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="vpsWheel" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                              <CheckBox fx:id="vpsWheel" mnemonicParsing="false" text="%cards.highscore_cards.wheel" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -124,7 +124,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </HBox>
-                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="129.0" styleClass="default-headline" text="%pref.vps.visible_table_columns" textFill="WHITE" wrapText="true">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
@@ -133,22 +133,22 @@
                            <children>
                               <VBox prefWidth="180.0" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="vpsAltColorColumn" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                    <CheckBox fx:id="vpsAltColorColumn" mnemonicParsing="false" text="%backups.backup_restore.alt_color" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsAltSoundColumn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                    <CheckBox fx:id="vpsAltSoundColumn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%backups.backup_restore.alt_sound" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsBackglassColumn" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                    <CheckBox fx:id="vpsBackglassColumn" mnemonicParsing="false" text="%backglass.directb2s_admin.backglass" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsPOVColumn" mnemonicParsing="false" text="POV" textFill="WHITE">
+                                    <CheckBox fx:id="vpsPOVColumn" mnemonicParsing="false" text="%backups.backups.pov" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -160,22 +160,22 @@
                               </VBox>
                               <VBox prefWidth="180.0" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="vpsPUPPackColumn" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                    <CheckBox fx:id="vpsPUPPackColumn" mnemonicParsing="false" text="%backups.backup_restore.pup_pack" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsRomColumn" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                    <CheckBox fx:id="vpsRomColumn" mnemonicParsing="false" text="%backups.backup_restore.rom" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsSoundColumn" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                                    <CheckBox fx:id="vpsSoundColumn" mnemonicParsing="false" text="%pref.vps.sound_music" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsToppperColumn" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                                    <CheckBox fx:id="vpsToppperColumn" mnemonicParsing="false" text="%pref.vps.topper" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -184,12 +184,12 @@
                               </VBox>
                               <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="vpsTutorialColumn" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                                    <CheckBox fx:id="vpsTutorialColumn" mnemonicParsing="false" text="%pref.vps.tutorial" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="vpsWheelColumn" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                                    <CheckBox fx:id="vpsWheelColumn" mnemonicParsing="false" text="%cards.highscore_cards.wheel" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -209,7 +209,7 @@
             </VBox>
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="361.0" minWidth="10.0" prefWidth="147.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="584.0" minWidth="10.0" prefWidth="584.0" />
               </columnConstraints>
               <rowConstraints>
@@ -220,20 +220,20 @@
                   <Insets top="24.0" />
                </VBox.margin>
                <children>
-                  <Label styleClass="default-text" text="Author Deny List:" />
+                  <Label styleClass="default-text" text="%pref.vps.author_deny_list" wrapText="true" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
-                        <TextField fx:id="authorDenyList" prefWidth="500.0" promptText="Enter the names of authors you do not wish to receive updates from.">
+                        <TextField fx:id="authorDenyList" prefWidth="500.0" promptText="%pref.vps.enter_the_names_of_authors_you_do_not">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label fx:id="popperScreenInfo" prefHeight="40.0" prefWidth="18.0">
+                        <Label fx:id="popperScreenInfo" prefHeight="40.0" prefWidth="18.0" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="You can add multiple values in comma separated format. The value is evaluated case insensitive." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%pref.vps.you_can_add_multiple_values_in_comma_separated" wrapText="true" />
                            </tooltip>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -241,7 +241,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label styleClass="preference-description" text="The filter is only applied for new updates. Existing ones are not filtered by this." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label styleClass="preference-description" text="%pref.vps.the_filter_is_only_applied_for_new_updates" textFill="WHITE" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </children>

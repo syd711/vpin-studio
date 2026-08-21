@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 
 public class WidgetFactory {
@@ -586,12 +587,14 @@ public class WidgetFactory {
 
   public static Stage createDialogStage(Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     String stateId = FilenameUtils.getBaseName(fxml);
     return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 
   public static Stage createDialogStage(String stateId, Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    fxmlLoader.setResources(Messages.getBundle());
     return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 
@@ -773,7 +776,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmationWithOption(Stage owner, String text, String help1, String help2, String btnText, String optionText) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithOptionController.class, owner, "Confirmation", "dialog-confirmation-with-option.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithOptionController.class, owner, Messages.get("common.confirmation"), "dialog-confirmation-with-option.fxml");
     ConfirmationDialogWithOptionController controller = (ConfirmationDialogWithOptionController) stage.getUserData();
     controller.initDialog(stage, optionText, btnText, text, help1, help2);
     stage.showAndWait();
@@ -781,7 +784,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2, String btnText) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, Messages.get("common.confirmation"), "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.initDialog(stage, null, btnText, text, help1, help2);
     stage.showAndWait();
@@ -793,7 +796,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showYesNoConfirmation(Stage owner, String text, String help1, String help2) {
-    Optional<ButtonType> result = showConfirmationWithOption(owner, text, help1, help2, "Yes", "No");
+    Optional<ButtonType> result = showConfirmationWithOption(owner, text, help1, help2, Messages.get("common.yes"), Messages.get("common.no"));
     if (result.isPresent()) {
       if (ButtonType.APPLY.equals(result.get())) {
         return Optional.of(ButtonType.NO);
@@ -810,7 +813,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showInformation(Stage owner, String text, String help1, String help2) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Information", "dialog-confirmation.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, Messages.get("common.information"), "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, text, help1, help2);
@@ -827,7 +830,7 @@ public class WidgetFactory {
   }
 
   public static void showAlert(Stage owner, String msg, String help1, String help2) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Information", "dialog-alert.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, Messages.get("common.information"), "dialog-alert.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, msg, help1, help2);
@@ -835,7 +838,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showAlertOption(Stage owner, String msg, String altOptionText, String okText, String help1, String help2) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Information", "dialog-alert-option.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, Messages.get("common.information"), "dialog-alert-option.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2);
@@ -848,7 +851,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showAlertOptionWithCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText, boolean checked) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, Messages.get("common.information"), "dialog-alert-option-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2, checkBoxText);
@@ -858,7 +861,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showConfirmationWithCheckbox(Stage owner, String msg, String okText, String help1, String help2, String checkBoxText, boolean checked) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, Messages.get("common.information"), "dialog-confirmation-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, null, okText, msg, help1, help2, checkBoxText);
@@ -868,7 +871,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showConfirmationWithCheckbox(Stage owner, String msg, String okText, String altText, String help1, String help2, String checkBoxText, boolean checked) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, Messages.get("common.information"), "dialog-confirmation-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altText, okText, msg, help1, help2, checkBoxText);
@@ -878,7 +881,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showAlertOptionWithMandatoryCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, Messages.get("common.information"), "dialog-alert-option-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2, checkBoxText);
@@ -929,9 +932,9 @@ public class WidgetFactory {
     }
 
     if (!previewEnabled) {
-      Label label = new Label("Preview disabled");
+      Label label = new Label(Messages.get("dialog.preview_disabled"));
       if (mediaItem == null) {
-        label.setText("No media found");
+        label.setText(Messages.get("dialog.no_media_found"));
       }
       label.setStyle(MEDIA_CONTAINER_LABEL);
 
@@ -949,7 +952,7 @@ public class WidgetFactory {
   }
 
   public static void createNoMediaLabel(BorderPane parent) {
-    Label label = new Label("No media found");
+    Label label = new Label(Messages.get("dialog.no_media_found"));
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
     parent.setCenter(label);
   }
@@ -1003,10 +1006,10 @@ public class WidgetFactory {
   public static Tooltip createMediaItemTooltip(FrontendMediaItemRepresentation item) {
     StringBuilder builder = new StringBuilder(item.getName());
     builder.append("\n");
-    builder.append("Size: ");
+    builder.append(Messages.get("dialog.size"));
     builder.append(FileUtils.readableFileSize(item.getSize()));
     builder.append("\n");
-    builder.append("Last Modified: ");
+    builder.append(Messages.get("dialog.last_modified"));
     builder.append(DateUtil.formatDateTime(item.getModificationDate()));
     return new Tooltip(builder.toString());
   }

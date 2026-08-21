@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabDOFLinxController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabDOFLinxController.class);
@@ -62,8 +63,8 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
   private void onIni() {
     boolean running = client.getDofLinxService().isRunning();
     if (running) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "DOFLink Running", "DOFLinx is currently running.",
-          "Shutdown DOFLink and edit DOFLinx.INI file?", "Shutdown and edit");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.doflink_running"), Messages.get("dialog.doflinx_is_currently_running"),
+          Messages.get("dialog.shutdown_doflink_and_edit_doflinx_ini_file"), Messages.get("dialog.shutdown_and_edit"));
       if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
         client.getDofLinxService().kill();
       }
@@ -83,14 +84,14 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
           }
         }
         catch (Exception e) {
-          LOG.error("Failed to open DOFLinx.INI file: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DOFLinx.INI file: " + e.getMessage());
+          LOG.error(Messages.get("dialog.failed_to_open_doflinx_ini_file") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_doflinx_ini_file") + e.getMessage());
         }
         return;
       }
     }
 
-    WidgetFactory.showAlert(Studio.stage, "Error", "Invalid or no DOFLinx installation folder set.");
+    WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.invalid_or_no_doflinx_installation_folder_set"));
   }
 
   @FXML
@@ -104,7 +105,7 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
       }
     }
 
-    WidgetFactory.showAlert(Studio.stage, "Error", "Invalid or no DOFLinx installation folder set.");
+    WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.invalid_or_no_doflinx_installation_folder_set"));
   }
 
   @Override

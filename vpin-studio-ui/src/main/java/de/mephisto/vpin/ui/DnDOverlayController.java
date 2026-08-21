@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DnDOverlayController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DnDOverlayController.class);
@@ -118,6 +119,7 @@ public class DnDOverlayController implements Initializable {
   public static DnDOverlayController load(Pane loaderStack, Node node, boolean singleSelectionOnly) {
     try {
       FXMLLoader loader = new FXMLLoader(DnDOverlayController.class.getResource("overlay-dnd.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent dndLoadingOverlay = loader.load();
       DnDOverlayController controller = loader.getController();
       controller.dndLoadingOverlay = dndLoadingOverlay;

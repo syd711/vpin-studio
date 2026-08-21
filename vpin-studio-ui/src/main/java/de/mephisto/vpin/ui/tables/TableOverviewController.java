@@ -93,6 +93,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel> implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
 
@@ -488,7 +489,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       catch (Exception e) {
         LOG.error("Cannot " + (isDisable ? "enable" : "disable") + " the game " + game.getGameFileName(), e);
-        WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName() + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.the_table") + game.getGameDisplayName() + Messages.get("dialog.couldn_t_be") + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
       }
     }
   }
@@ -503,7 +504,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         BackupDialogs.openTablesBackupDialog(selectedItems);
       }
       else {
-        WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.authentication_required"), Messages.get("dialog.go_to_the_backup_settings_for_more"));
       }
     });
   }
@@ -581,7 +582,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (GameRepresentation game : selectedGames) {
         List<CompetitionRepresentation> gameCompetitions = client.getCompetitionService().getGameCompetitions(game.getId());
         for (CompetitionRepresentation gameCompetition : gameCompetitions) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "The table \"" + game.getGameDisplayName() + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").", "Delete this competition?", "You need to delete all competition references before deleting a table.", "Delete Competition");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.the_table") + game.getGameDisplayName() + Messages.get("dialog.is_used_by_for_competition") + gameCompetition.toString() + Messages.get("dialog.type") + gameCompetition.getType() + ").", Messages.get("dialog.delete_this_competition"), Messages.get("dialog.you_need_to_delete_all_competition_references"), Messages.get("dialog.delete_competition_2"));
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             client.getCompetitionService().deleteCompetition(gameCompetition);
             EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -613,7 +614,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onTablesScan() {
     List<GameRepresentation> selectedItems = getSelections();
-    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
+    ProgressDialog.createProgressDialog(new TableScanProgressModel(Messages.get("dialog.scanning_tables"), selectedItems));
     for (GameRepresentation selectedItem : selectedItems) {
       EventManager.getInstance().notifyTableChange(selectedItem.getId(), selectedItem.getRom());
     }
@@ -685,7 +686,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       TableDialogs.openDismissAllDialog(selectedItems.getFirst());
     }
     else if (selectedItems.size() > 1) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Dismiss All", "Dismiss all validation errors of the selected tables?", "You can re-enable them anytime by validating them again.", "Dismiss Selection");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.dismiss_all"), Messages.get("dialog.dismiss_all_validation_errors_of_the_selected"), Messages.get("dialog.you_can_re_enable_them_anytime_by"), Messages.get("dialog.dismiss_selection"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         ProgressDialog.createProgressDialog(new TableDismissAllProgressModel(selectedItems));
       }
@@ -697,6 +698,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (!StringUtils.isEmpty(tableSource)) {
       try {
         FXMLLoader loader = new FXMLLoader(AltSoundEditorController.class.getResource("editor-altsound.fxml"));
+        loader.setResources(Messages.getBundle());
         BorderPane root = loader.load();
         root.setMaxWidth(Double.MAX_VALUE);
         root.setMaxHeight(Double.MAX_VALUE);
@@ -723,6 +725,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (!StringUtils.isEmpty(tableSource)) {
       try {
         FXMLLoader loader = new FXMLLoader(AltSound2EditorController.class.getResource("editor-altsound2.fxml"));
+        loader.setResources(Messages.getBundle());
         BorderPane root = loader.load();
         root.setMaxWidth(Double.MAX_VALUE);
         root.setMaxHeight(Double.MAX_VALUE);
@@ -819,7 +822,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return isAllVpxSelected ? client.getGameService().getVpxGamesCached() : client.getGameService().getGamesByEmulator(value.getId());
       }).onErrorSupply(e -> {
         LOG.error("Loading tables failed", e);
-        Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+        Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
         return Collections.emptyList();
       }).thenAcceptLater(data -> {
         this.emulatorCombo.setDisable(false);
@@ -1122,7 +1125,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             }
             catch (Exception e) {
               LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .ini file: " + e.getMessage());
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
             }
           }
         });
@@ -1149,7 +1152,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             }
             catch (Exception e) {
               LOG.error("Failed to open .res file: {}", e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .res file: " + e.getMessage());
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_res_file") + e.getMessage());
             }
           }
         });
@@ -1172,8 +1175,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             try {
               ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
               if (!serverSettings.isKeepVbsFiles()) {
-                WidgetFactory.showAlert(stage, ".vbs File Deletion Enabled", "The given .vbs file is deleted after being edited and imported into the .vpx file again.",
-                    "Enable \"Keep .vbs files\" flag in the preferences \"Server Settings\" -> \"Options\".");
+                WidgetFactory.showAlert(stage, Messages.get("dialog.vbs_file_deletion_enabled"), Messages.get("dialog.the_given_vbs_file_is_deleted_after"),
+                    Messages.get("dialog.enable_keep_vbs_files_flag_in_the"));
                 return;
               }
 
@@ -1182,7 +1185,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             }
             catch (Exception e) {
               LOG.error("Failed to open .vbs file: {}", e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open .vbs file: " + e.getMessage());
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vbs_file") + e.getMessage());
             }
           }
         });
@@ -1656,7 +1659,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     catch (Exception e) {
       LOG.error("Rating update failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Error", "Rating update failed: " + e.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.rating_update_failed") + e.getMessage());
     }
   }
 
@@ -2084,6 +2087,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       playBtn = loader.load();
       playButtonController = loader.getController();
       int i = toolbar.getItems().indexOf(stopBtn);
@@ -2095,6 +2099,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       importUploadButtonGroup.getChildren().add(1, uploadsButton);

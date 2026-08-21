@@ -51,6 +51,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionsController implements Initializable, StudioFXController, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
@@ -461,6 +462,7 @@ public class CompetitionsController implements Initializable, StudioFXController
             List<CompetitionScore> weeklyCompetitionScores = client.getCompetitionService().getWeeklyCompetitionScores(competition.getUuid());
             for (CompetitionScore score : weeklyCompetitionScores) {
               FXMLLoader loader = new FXMLLoader(WidgetWeeklyCompetitionScoreItemController.class.getResource("widget-weekly-competition-score-item.fxml"));
+              loader.setResources(Messages.getBundle());
               BorderPane row = loader.load();
               WidgetWeeklyCompetitionScoreItemController controller = loader.getController();
               row.setMaxWidth(Double.MAX_VALUE);
@@ -743,6 +745,7 @@ public class CompetitionsController implements Initializable, StudioFXController
             for (PlayerRepresentation player : memberList) {
               try {
                 FXMLLoader loader = new FXMLLoader(DiscordUserEntryController.class.getResource("discord-user.fxml"));
+                loader.setResources(Messages.getBundle());
                 Parent playerPanel = loader.load();
                 DiscordUserEntryController controller = loader.getController();
                 controller.setData(player);
@@ -761,6 +764,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void loadTabs() {
     try {
       FXMLLoader loader = new FXMLLoader(CompetitionsOfflineController.class.getResource("tab-competitions-offline.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent parent = loader.load();
       offlineController = loader.getController();
       offlineController.setCompetitionsController(this);
@@ -773,6 +777,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     try {
       FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent parent = loader.load();
       discordController = loader.getController();
       discordController.setCompetitionsController(this);
@@ -785,6 +790,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     try {
       FXMLLoader loader = new FXMLLoader(TableSubscriptionsController.class.getResource("tab-competitions-subscriptions.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent parent = loader.load();
       tableSubscriptionsController = loader.getController();
       tableSubscriptionsController.setCompetitionsController(this);
@@ -798,6 +804,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (Features.ISCORED_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(IScoredSubscriptionsController.class.getResource("tab-competitions-iscored.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent parent = loader.load();
         iScoredSubscriptionsController = loader.getController();
         iScoredSubscriptionsController.setCompetitionsController(this);
@@ -819,6 +826,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     try {
       FXMLLoader loader = new FXMLLoader(WeeklySubscriptionsController.class.getResource("tab-competitions-weekly.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent parent = loader.load();
       weeklySubscriptionsController = loader.getController();
       weeklySubscriptionsController.setCompetitionsController(this);

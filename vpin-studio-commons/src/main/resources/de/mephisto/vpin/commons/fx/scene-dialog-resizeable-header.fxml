@@ -11,7 +11,7 @@
 
 <BorderPane fx:id="header" onMouseClicked="#onMouseClick" styleClass="window-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.DialogHeaderResizeableController">
    <left>
-      <Label fx:id="titleLabel" text="VPin Studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="titleLabel" text="%launcher.installer.vpin_studio" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
             <Font name="Impact" size="18.0" />
          </font>

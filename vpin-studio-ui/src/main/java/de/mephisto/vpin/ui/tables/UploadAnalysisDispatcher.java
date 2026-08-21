@@ -27,6 +27,7 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -42,7 +43,7 @@ public class UploadAnalysisDispatcher {
     if (assetType == null) {
       LOG.error("Unsupported upload type: " + assetType);
       Platform.runLater(() -> {
-        WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.the_given_file_type_is_not_supported"), null);
       });
       return;
     }
@@ -101,7 +102,7 @@ public class UploadAnalysisDispatcher {
     }
 
     if (game == null) {
-      WidgetFactory.showInformation(Studio.stage, "The given file can not be uploaded without a table selection.", null);
+      WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.the_given_file_can_not_be_uploaded"), null);
       return;
     }
 
@@ -164,10 +165,10 @@ public class UploadAnalysisDispatcher {
   private static void showDefault(@NonNull File file) {
     Platform.runLater(() -> {
       if (isArchive(file)) {
-        WidgetFactory.showInformation(Studio.stage, "No matching files found in this archive.", "Extract the archive and upload the files separately.");
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.no_matching_files_found_in_this_archive"), Messages.get("dialog.extract_the_archive_and_upload_the_files"));
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.the_given_file_type_is_not_supported"), null);
       }
     });
   }
@@ -190,12 +191,12 @@ public class UploadAnalysisDispatcher {
         return (UploaderAnalysis) results.getFirst();
       }
       else {
-        WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
+        WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_archive_upload_likely_cancelled"));
       }
     }
     catch (Exception e) {
       LOG.error("Error opening archive: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: " + e.getMessage());
+      WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_archive") + e.getMessage());
     }
     return null;
   }
@@ -216,7 +217,7 @@ public class UploadAnalysisDispatcher {
         }
         else if (analysis.isPatch()) {
           if (game == null || !client.getEmulatorService().isVpxGame(game)) {
-            WidgetFactory.showInformation(Studio.stage, "Can not apply a patch without a VPX table selected.", "Select the matching table for the patch file and try again.");
+            WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.can_not_apply_a_patch_without_a"), Messages.get("dialog.select_the_matching_table_for_the_patch"));
             return null;
           }
           TableDialogs.openPatchUpload(game, file, analysis, finalizer);
@@ -229,7 +230,7 @@ public class UploadAnalysisDispatcher {
         }
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, "A matching asset type could not be determined for this file.", null);
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.a_matching_asset_type_could_not_be"), null);
       }
     }
     return null;

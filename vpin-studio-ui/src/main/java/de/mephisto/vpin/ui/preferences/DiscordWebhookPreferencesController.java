@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DiscordWebhookPreferencesController implements Initializable {
 
@@ -24,7 +25,7 @@ public class DiscordWebhookPreferencesController implements Initializable {
   @FXML
   private void onTest() {
     Platform.runLater(() -> {
-      String msg = WidgetFactory.showInputDialog(Studio.stage, "Webhook Test", "Test Message", "The given text will be passed to the configured Discord channel.", null, null);
+      String msg = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.webhook_test"), Messages.get("dialog.test_message"), Messages.get("dialog.the_given_text_will_be_passed_to"), null, null);
       if (!StringUtils.isEmpty(msg)) {
         try {
           DiscordWebhook.call(this.webhookText.getText(), msg);

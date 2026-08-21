@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AccountRowPanelController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AccountRowPanelController.class);
@@ -60,9 +61,9 @@ public class AccountRowPanelController implements Initializable {
           maniaClient.getAccountClient().update(defaultCabinetCached.getId(), account);
         }
         catch (Exception e) {
-          LOG.error("Failed to save mania account: " + e.getMessage(), e);
+          LOG.error(Messages.get("dialog.failed_to_save_mania_account") + e.getMessage(), e);
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mania account: " + e.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mania_account") + e.getMessage());
           });
         }
       }

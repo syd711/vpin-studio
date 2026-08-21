@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPXZRepositoriesPreferencesController implements Initializable {
 
@@ -66,14 +67,14 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
     }).thenAcceptLater(ping -> {
       testBtn.setDisable(false);
       if (ping == null) {
-        WidgetFactory.showAlert(Studio.stage, "Ping Failed", "Make sure that the IP matches with the one on your mobile device.", "The VPX application must be open and active.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.ping_failed"), Messages.get("dialog.make_sure_that_the_ip_matches_with"), Messages.get("dialog.the_vpx_application_must_be_open_and"));
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, "Ping Successful", "Version: " + ping.getVersion());
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.ping_successful"), Messages.get("dialog.version") + ping.getVersion());
       }
     }).onErrorLater(e -> {
         testBtn.setDisable(false);
-        WidgetFactory.showAlert(Studio.stage, "Ping Failed", "An error occurred during the ping:", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.ping_failed"), Messages.get("dialog.an_error_occurred_during_the_ping"), e.getMessage());
     });
   }
 
@@ -99,7 +100,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
           client.getVpxzService().saveVPXZSource(sourceRepresentation);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving vpxz repository: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_vpxz_repository") + e.getMessage());
         }
         onReload();
       }
@@ -114,7 +115,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
         client.getVpxzService().saveVPXZSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving vpxz repository: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_vpxz_repository") + e.getMessage());
       }
       onReload();
     }
@@ -128,7 +129,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
         client.getVpxzService().saveVPXZSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving VPXZ repository: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_vpxz_repository_2") + e.getMessage());
       }
       onReload();
     }
@@ -138,13 +139,13 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
   private void onDelete() {
     VPXZSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Repository \"" + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_repository") + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getVpxzService().deleteVPXZSource(selectedItem.getId());
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
         }
         finally {
           onReload();

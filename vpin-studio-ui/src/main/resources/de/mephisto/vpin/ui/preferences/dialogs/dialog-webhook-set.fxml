@@ -21,12 +21,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -45,7 +45,8 @@
          <children>
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="286.2000732421875" minWidth="10.0" prefWidth="148.5999755859375" />
+                <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="470.19996643066406" minWidth="10.0" prefWidth="432.60002441406255" />
               </columnConstraints>
               <rowConstraints>
@@ -54,13 +55,13 @@
                   <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TextField fx:id="nameField" promptText="Enter the name of the webhook set here." GridPane.columnIndex="1">
+                  <TextField fx:id="nameField" promptText="%pref.webhook_set.enter_the_name_of_the_webhook_set_here" GridPane.columnIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="Enabled" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label styleClass="default-text" text="Webhook Set Name:" />
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" selected="true" styleClass="default-text" text="%pref.webhook_set.enabled" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="%pref.webhook_set.webhook_set_name" wrapText="true" />
                </children>
             </GridPane>
             <ScrollPane hbarPolicy="NEVER" maxHeight="500.0">

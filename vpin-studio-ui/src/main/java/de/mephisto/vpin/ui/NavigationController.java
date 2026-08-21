@@ -44,6 +44,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class NavigationController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
@@ -186,6 +187,7 @@ public class NavigationController implements Initializable, StudioEventListener,
         else {
           try {
             FXMLLoader loader = new FXMLLoader(activeNavigation.getControllerClass().getResource(activeNavigation.getFxml()));
+            loader.setResources(Messages.getBundle());
             Parent root = loader.load();
             StudioFXController controller = loader.<StudioFXController>getController();
             activeNavigation.setController(controller);

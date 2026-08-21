@@ -46,6 +46,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlaylistManagerController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlaylistManagerController.class);
@@ -190,7 +191,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     if (selectedItem != null) {
       PlaylistRepresentation playlist = selectedItem.getValue();
       String oldValue = playlist.getName();
-      String value = WidgetFactory.showInputDialog(dialogStage, "Rename Playlist", "Enter new playlist name:", null, null, playlist.getName());
+      String value = WidgetFactory.showInputDialog(dialogStage, Messages.get("dialog.rename_playlist"), Messages.get("dialog.enter_new_playlist_name"), null, null, playlist.getName());
       rename(value, oldValue, playlist);
     }
   }
@@ -204,7 +205,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         JFXFuture.supplyAsync(() -> client.getPlaylistsService().savePlaylist(playlist))
             .thenAcceptLater(update -> reload(update, () -> {
               if (update == null) {
-                WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
+                WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.playlist_renaming_failed_please_report_this_problem"));
               }
               else {
                 select(treeView.getRoot(), update);
@@ -213,7 +214,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
       catch (Exception e) {
         LOG.error("Playlist renaming failed: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed: " + e.getMessage());
+        WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.playlist_renaming_failed") + e.getMessage());
       }
     }
   }
@@ -254,7 +255,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private void onPlaylistCreate() {
     if (client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
       String description = null;
-      String value = WidgetFactory.showInputDialog(dialogStage, "New Playlist", "Enter new playlist name:", description, null, "New Playlist");
+      String value = WidgetFactory.showInputDialog(dialogStage, Messages.get("dialog.new_playlist"), Messages.get("dialog.enter_new_playlist_name"), description, null, Messages.get("dialog.new_playlist"));
       if (!StringUtils.isEmpty(value)) {
         value = FileUtils.replaceWindowsChars(value);
         int parentId = -1;
@@ -297,7 +298,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           }))
           .onErrorLater(e -> {
             LOG.error("Playlist creation failed: {}", e.getMessage(), e);
-            WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
+            WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.playlist_creation_failed") + e.getMessage());
           });
     }
     catch (Exception e) {
@@ -311,13 +312,13 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       PlaylistRepresentation value = selectedItem.getValue();
 
       String help2 = null;
-      String btnText = "Delete Playlist";
+      String btnText = Messages.get("dialog.delete_playlist");
       if (!selectedItem.getChildren().isEmpty()) {
         help2 = "The child playlists of this playlist will be deleted too!";
         btnText = "Delete All";
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Playlist", "Delete Playlist \"" + value.getName() + "\"?", help2, btnText);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_playlist"), Messages.get("dialog.delete_playlist_2") + value.getName() + "\"?", help2, btnText);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> client.getPlaylistsService().delete(value.getId()))
             .thenLater(() -> reload(value, () -> {
@@ -925,7 +926,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       catch (Exception e) {
         LOG.error("Failed to save playlist: {}", e.getMessage(), e);
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(dialogStage, "Error", "Failed to save playlist: " + e.getMessage());
+          WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_playlist") + e.getMessage());
         });
       }
     }

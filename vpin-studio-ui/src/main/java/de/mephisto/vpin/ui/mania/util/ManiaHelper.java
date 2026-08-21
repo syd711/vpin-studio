@@ -25,6 +25,7 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ManiaHelper {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaHelper.class);
@@ -64,10 +65,10 @@ public class ManiaHelper {
         if (!StringUtils.isEmpty(completedRegistration.getResult())) {
           String result = completedRegistration.getResult();
           if (result != null && result.contains("Token not found")) {
-            WidgetFactory.showAlert(Studio.stage, "Registration Failed", "The API key is invalid.");
+            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.registration_failed"), Messages.get("dialog.the_api_key_is_invalid"));
           }
           else {
-            WidgetFactory.showAlert(Studio.stage, "Registration Failed", completedRegistration.getResult());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.registration_failed"), completedRegistration.getResult());
           }
 
           LOG.error("VPin Mania registration failed: {}", completedRegistration.getResult());
@@ -91,12 +92,12 @@ public class ManiaHelper {
           return true;
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "The registration failed.", "The cabinet may have been registered, but players and scores are no synchronized yet.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.the_registration_failed"), Messages.get("dialog.the_cabinet_may_have_been_registered_but"));
         }
       }
       catch (Exception e) {
         LOG.error("Failed to finish registration: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Registration failed!", "Please contact the administrator (see preference footer for contact details).");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.registration_failed_2"), Messages.get("dialog.please_contact_the_administrator_see_preference_footer"));
       }
     }
     return false;
@@ -112,7 +113,7 @@ public class ManiaHelper {
       LOG.info("Client authentication check for mania failed, requesting API key.");
     }
 
-    String s = WidgetFactory.showInputDialog(Studio.stage, "API Key", "Enter you VPin-Mania API key here", "The API key is required for the registration. You need to register on https://app.vpin-mania.net.", null, null);
+    String s = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.api_key"), Messages.get("dialog.enter_you_vpin_mania_api_key_here"), Messages.get("dialog.the_api_key_is_required_for_the"), null, null);
     if (s != null) {
       maniaClient.getRestClient().setApiKey(s);
       return getApiKey();
@@ -121,12 +122,12 @@ public class ManiaHelper {
   }
 
   public static boolean deregister() {
-    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Delete Cabinet Data", "Cancel", "Delete", "Delete this cabinet from your VPin-Mania account?",
-        "This will delete the cabinet and all data linked to it from the VPin Mania services.", "I understand, delete my account.");
+    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, Messages.get("dialog.delete_cabinet_data"), Messages.get("common.cancel"), Messages.get("common.delete"), Messages.get("dialog.delete_this_cabinet_from_your_vpin_mania"),
+        Messages.get("dialog.this_will_delete_the_cabinet_and_all"), Messages.get("dialog.i_understand_delete_my_account"));
     if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
       Boolean deleted = client.getManiaService().deleteCabinet();
       if (!deleted) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete the cabinet, please write a ticket for this.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_delete_the_cabinet_please_write"));
         return false;
       }
 
@@ -161,7 +162,7 @@ public class ManiaHelper {
     if (defaultCabinetCached != null) {
       List<Account> accounts = maniaClient.getAccountClient().getAccounts(defaultCabinetCached.getId());
       if (accounts.isEmpty()) {
-        WidgetFactory.showAlert(Studio.stage, "Highscore Synchronization", "The synchronization has been cancelled, no registered player found.", "Register a local player to synchronize their highscores with vpin-mania.net.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.highscore_synchronization"), Messages.get("dialog.the_synchronization_has_been_cancelled_no_registered"), Messages.get("dialog.register_a_local_player_to_synchronize_their"));
         return;
       }
 
@@ -172,7 +173,7 @@ public class ManiaHelper {
       }
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "No cabinet found.", "No default cabinet selected, check your registration.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_cabinet_found"), Messages.get("dialog.no_default_cabinet_selected_check_your_registration"));
     }
   }
 

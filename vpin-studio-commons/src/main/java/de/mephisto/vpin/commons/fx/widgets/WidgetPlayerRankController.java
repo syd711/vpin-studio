@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -188,6 +189,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loader.setResources(Messages.getBundle());
       /*Parent loadingOverlay =*/ loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Ranking...");

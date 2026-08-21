@@ -14,14 +14,14 @@
      <items>
    
        <!-- Reset to defaults -->
-       <Button fx:id="resetButton" disable="true" onAction="#onResetClicked" styleClass="default-text" text="Reset to Defaults" />
+       <Button fx:id="resetButton" disable="true" onAction="#onResetClicked" styleClass="default-text" text="%tables.table_data_tab_script_options.reset_to_defaults" />
      </items>
    </ToolBar>
 
   <!-- ── Loading / empty placeholder ─────────────────────────────────────── -->
   <StackPane fx:id="placeholderPane" visible="true" VBox.vgrow="ALWAYS">
     <VBox alignment="CENTER" maxWidth="500.0" spacing="12.0">
-      <Label fx:id="placeholderLabel" styleClass="default-text" text="Select a VPX table to see its script options." textAlignment="CENTER" wrapText="true" />
+      <Label fx:id="placeholderLabel" styleClass="default-text" text="%tables.table_data_tab_script_options.select_a_vpx_table_to_see_its_script" textAlignment="CENTER" wrapText="true" />
       <ProgressIndicator fx:id="loadingSpinner" maxHeight="40" maxWidth="40" visible="false" />
          <padding>
             <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />

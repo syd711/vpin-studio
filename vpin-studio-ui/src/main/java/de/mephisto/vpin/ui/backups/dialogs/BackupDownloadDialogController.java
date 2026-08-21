@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BackupDownloadDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(BackupDownloadDialogController.class);
@@ -67,7 +68,7 @@ public class BackupDownloadDialogController implements Initializable, DialogCont
     }
     catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Downloading backup files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.downloading_backup_files_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
     }
     finally {
       stage.close();

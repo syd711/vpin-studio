@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class RecordingProgressDialogController implements Initializable, DialogController, JobUpdatesListener {
   private final static Logger LOG = LoggerFactory.getLogger(RecordingProgressDialogController.class);
@@ -206,7 +207,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     }
 
-    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings, recorded " + jobDescriptor.getUserData() + " video(s).");
+    totalRecordingsLabel.setText(Messages.get("recorder.recording_progress_dialog.recording_status", jobDescriptor.getTasksExecuted(), recordingDataSummary.size(), jobDescriptor.getUserData()));
   }
 
   private void finishRecording(boolean cancelled) {
@@ -244,22 +245,14 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       });
 
       if (jobDescriptor.getError() != null) {
-        WidgetFactory.showAlert(Studio.stage, "Recording Failed", jobDescriptor.getError(), jobDescriptor.getErrorHint());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.recording_failed"), jobDescriptor.getError(), jobDescriptor.getErrorHint());
       }
       else if (cancelled) {
         ProgressDialog.createProgressDialog(new CancelRecordingProgressModel());
-        WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.", jobDescriptor.getErrorHint());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.recording_cancelled"), Messages.get("dialog.the_recording_has_been_cancelled"), jobDescriptor.getErrorHint());
       }
       else {
-        String game = "game";
-        String video = "video";
-        if (recordingDataSummary.size() > 1) {
-          game = "games";
-        }
-        if (((int) jobDescriptor.getUserData()) > 1) {
-          video = "videos";
-        }
-        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " " + game + ", recorded " + jobDescriptor.getUserData() + " " + video + ".");
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.recording_finished"), Messages.get("recorder.recording_progress_dialog.recording_summary", recordingDataSummary.size(), jobDescriptor.getUserData()));
       }
 
     });
@@ -269,7 +262,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     this.stage = stage;
     this.recorderController = recorderController;
     this.recordingDataSummary = recordingDataSummary;
-    tablesLabel.setText(recordingDataSummary.size() + " tables selected");
+    tablesLabel.setText(Messages.get("recorder.recording_progress_dialog.tables_selected_count", recordingDataSummary.size()));
 
 
     vpxSettings.setVisible(emulator.isVpxEmulator());
@@ -307,7 +300,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   private void refresh() {
     this.recorderController.refreshScreens();
-    totalRecordingsLabel.setText("Finished 0 of " + recordingDataSummary.size() + " recordings.");
+    totalRecordingsLabel.setText(Messages.get("recorder.recording_progress_dialog.recording_status_initial", recordingDataSummary.size()));
   }
 
   @Override

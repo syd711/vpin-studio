@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CardGenerationPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CardGenerationPreferencesController.class);
@@ -249,7 +250,7 @@ public class CardGenerationPreferencesController implements Initializable {
   class ResolutionChangeListener implements ChangeListener<String> {
     @Override
     public void changed(ObservableValue observable, String oldValue, String newValue) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Change Highscore Card Size?", "Change the default highscore card size to " + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.change_highscore_card_size"), Messages.get("dialog.change_the_default_highscore_card_size_to") + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         cardSettings.setCardResolution(CardResolution.valueOfString(newValue));
         client.getPreferenceService().setJsonPreference(cardSettings);

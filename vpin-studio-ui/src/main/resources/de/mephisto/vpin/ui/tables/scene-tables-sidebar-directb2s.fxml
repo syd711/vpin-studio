@@ -30,7 +30,7 @@
                      <children>
                         <VBox fx:id="noneActiveInfo" styleClass="info-container">
                            <children>
-                              <Label text="None of the backglasses is currently activated." textFill="WHITE">
+                              <Label text="%backglass.directb2s_sidebar.none_of_the_backglasses_is_currently_activated" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -40,14 +40,14 @@
                               </Label>
                            </children>
                         </VBox>
-                        <Label text="Version" textFill="WHITE">
+                        <Label text="%backglass.directb2s_sidebar.version" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
                         <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--" />
                         <ComboBox fx:id="directB2SCombo" prefHeight="30.0" />
-                        <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="Active backglass" />
+                        <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="%backglass.directb2s_sidebar.active_backglass" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -98,12 +98,12 @@
                                     </Label>
                                  </bottom>
                               </BorderPane>
-                              <Label text="Background Preview" textFill="WHITE">
+                              <Label text="%backglass.directb2s_sidebar.background_preview" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="14.0" text="DMD Preview" textFill="WHITE" GridPane.columnIndex="2">
+                              <Label layoutX="10.0" layoutY="14.0" text="%backglass.directb2s_sidebar.dmd_preview" textFill="WHITE" GridPane.columnIndex="2">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -155,93 +155,93 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Backglass Settings" textFill="WHITE">
+                                    <Label text="%backglass.directb2s_sidebar.backglass_settings" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
 
-                                    <Label text="Grill Visibility:" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label text="%backglass.directb2s_sidebar.grill_visibility" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="Backglass Hidden:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.backglass_hidden" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="B2S DMD Hidden:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%backglass.directb2s_sidebar.b2s_dmd_hidden" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="DMD Visibility:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.dmd_visibility" textFill="WHITE" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="Mode:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.mode" textFill="WHITE" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="83.0" text="Skip Lamp Frames:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="83.0" text="%backglass.directb2s_sidebar.skip_lamp_frames" textFill="WHITE" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="Skip GI Frames:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label layoutX="10.0" layoutY="116.0" text="%backglass.directb2s_sidebar.skip_gi_frames" textFill="WHITE" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="150.0" text="Skip Solenoid Frames:" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label layoutX="10.0" layoutY="150.0" text="%backglass.directb2s_sidebar.skip_solenoid_frames" textFill="WHITE" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="184.0" text="Skip LED Frames:" textFill="WHITE" GridPane.rowIndex="9">
+                                    <Label layoutX="10.0" layoutY="184.0" text="%backglass.directb2s_sidebar.skip_led_frames" textFill="WHITE" GridPane.rowIndex="9">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="251.0" text="Used LED Type:" textFill="WHITE" GridPane.rowIndex="10">
+                                    <Label layoutX="10.0" layoutY="251.0" text="%backglass.directb2s_sidebar.used_led_type" textFill="WHITE" GridPane.rowIndex="10">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="352.0" text="LED Bulb Light On:" textFill="WHITE" GridPane.rowIndex="11">
+                                    <Label layoutX="10.0" layoutY="352.0" text="%backglass.directb2s_sidebar.led_bulb_light_on" textFill="WHITE" GridPane.rowIndex="11">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="12">
+                                    <Label layoutX="10.0" layoutY="385.0" text="%backglass.directb2s_sidebar.glowing" textFill="WHITE" GridPane.rowIndex="12">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="251.0" text="Background:" textFill="WHITE" GridPane.rowIndex="13">
+                                    <Label layoutX="10.0" layoutY="251.0" text="%backglass.directb2s_sidebar.background" textFill="WHITE" GridPane.rowIndex="13">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="385.0" text="Start as EXE:" textFill="WHITE" GridPane.rowIndex="14">
+                                    <Label layoutX="10.0" layoutY="385.0" text="%tables.tables_sidebar_directb2s.start_as_exe" textFill="WHITE" GridPane.rowIndex="14">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="486.0" text="Start as EXE (server default):" textFill="WHITE" GridPane.rowIndex="15">
+                                    <Label layoutX="10.0" layoutY="486.0" text="%tables.tables_sidebar_directb2s.start_as_exe_server_default" textFill="WHITE" GridPane.rowIndex="15">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="284.0" text="Bring Forms:" textFill="WHITE" GridPane.rowIndex="16">
+                                    <Label layoutX="10.0" layoutY="284.0" text="%backglass.directb2s_sidebar.bring_forms" textFill="WHITE" GridPane.rowIndex="16">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="284.0" text="No Focus:" textFill="WHITE" GridPane.rowIndex="17">
+                                    <Label layoutX="10.0" layoutY="284.0" text="%backglass.directb2s_sidebar.no_focus" textFill="WHITE" GridPane.rowIndex="17">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -273,7 +273,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                     <Label layoutX="540.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
@@ -284,7 +284,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                     <Label layoutX="540.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
@@ -295,7 +295,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                     <Label layoutX="540.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
@@ -306,7 +306,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
                                        </tooltip>
                                     </Label>
 
@@ -331,42 +331,42 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label text="%backglass.directb2s_sidebar.table_type" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="Author:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.author" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="83.0" text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="83.0" text="%backglass.directb2s_sidebar.artwork" textFill="WHITE" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="116.0" text="%backglass.directb2s_sidebar.grill_height" textFill="WHITE" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label layoutX="10.0" layoutY="184.0" text="%backglass.directb2s_sidebar.number_of_players" textFill="WHITE" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="9">
+                                    <Label layoutX="10.0" layoutY="217.0" text="%backglass.directb2s_sidebar.file_size" textFill="WHITE" GridPane.rowIndex="9">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="10">
+                                    <Label layoutX="10.0" layoutY="251.0" text="%backglass.directb2s_sidebar.modification_date" textFill="WHITE" GridPane.rowIndex="10">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -411,7 +411,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="150.0" text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="150.0" text="%backglass.directb2s_sidebar.b2s_data_elements" textFill="WHITE" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -421,12 +421,12 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label text="DirectB2S File Metadata" textFill="WHITE">
+                                    <Label text="%tables.tables_sidebar_directb2s.directb2s_file_metadata" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="217.0" text="Bulbs:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label layoutX="10.0" layoutY="217.0" text="%backglass.directb2s_sidebar.bulbs" textFill="WHITE" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -447,17 +447,17 @@
                   </ScrollPane>
                   <VBox fx:id="emptyDataBox">
                      <children>
-                        <Label text="No directb2 file found." textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_directb2s.no_directb2_file_found" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                        <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
+                        <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -471,7 +471,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload">
+          <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
@@ -480,7 +480,7 @@
                </font>
             </Button>
             <Separator layoutX="274.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
                <font>
                   <Font size="14.0" />
                </font>
@@ -488,7 +488,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>
@@ -505,7 +505,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Adjust DMD position" />
+                  <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                </tooltip>
             </Button>
             <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">

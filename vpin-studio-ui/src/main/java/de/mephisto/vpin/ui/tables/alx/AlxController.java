@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AlxController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlxController.class);
@@ -196,7 +197,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
           })
           .onErrorSupply(e -> {
             LOG.error("Failed to load ALX dashboard: " + e.getMessage(), e);
-            Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Cannot load Statistics to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this."));
+            Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.cannot_load_statistics_to_initialize_dashboard") + e.getMessage(), Messages.get("dialog.please_submit_a_bug_report_with_log")));
             return new AlxSummary();
           })
           .thenAcceptLater(alxSummary -> {
@@ -205,8 +206,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
           });
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize ALX data: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize ALX data: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      LOG.error(Messages.get("dialog.failed_to_initialize_alx_data") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_alx_data") + e.getMessage(), Messages.get("dialog.please_submit_a_bug_report_with_log"));
     }
   }
 
@@ -239,8 +240,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createAvgWeekTimeTile(Studio.stage, tileList, entries, alxStartDate);
     }
     catch (Exception e) {
-      LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize ALX dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      LOG.error(Messages.get("dialog.failed_to_initialize_alx_dashboard") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_alx_dashboard") + e.getMessage(), Messages.get("dialog.please_submit_a_bug_report_with_log"));
     }
   }
 

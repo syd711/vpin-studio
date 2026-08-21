@@ -35,7 +35,7 @@
                     <children>
                         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
-                                <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
+                                <Tab fx:id="offlineTab" closable="false" text="%competitions.competitions.offline_competitions">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
@@ -43,7 +43,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
                                     </graphic>
                                 </Tab>
-                                <Tab fx:id="onlineTab" text="Discord Competitions">
+                                <Tab fx:id="onlineTab" text="%competitions.competitions.discord_competitions">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
@@ -51,7 +51,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
                                     </graphic>
                                 </Tab>
-                                <Tab fx:id="tableSubscriptionsTab" text="Table Subscriptions">
+                                <Tab fx:id="tableSubscriptionsTab" text="%competitions.competitions.table_subscriptions">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
@@ -59,7 +59,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
-                                <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="iScored Subscriptions">
+                                <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="%competitions.competitions.iscored_subscriptions">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
@@ -67,7 +67,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                                     </graphic>
                                 </Tab>
-                                <Tab fx:id="weeklySubscriptionsTab" closable="false" text="WOVP Challenges">
+                                <Tab fx:id="weeklySubscriptionsTab" closable="false" text="%competitions.competitions.wovp_challenges">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
@@ -85,7 +85,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Toggle Sidebar [F3]" />
+                                <Tooltip text="%competitions.competitions.toggle_sidebar_f3" />
                             </tooltip>
                             <StackPane.margin>
                                 <Insets right="3.0" top="6.0" />
@@ -99,7 +99,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Open Competition Settings" />
+                                <Tooltip text="%competitions.competitions.open_competition_settings" />
                             </tooltip>
                             <StackPane.margin>
                                 <Insets right="43.0" top="6.0" />
@@ -118,7 +118,7 @@
             <children>
                 <Accordion fx:id="accordion" prefWidth="600.0">
                     <panes>
-                        <TitledPane fx:id="competitionMembersPane" expanded="false" text="Members">
+                        <TitledPane fx:id="competitionMembersPane" expanded="false" text="%competitions.competitions.members">
                             <content>
                                 <ScrollPane vbarPolicy="NEVER">
                                     <content>
@@ -131,7 +131,7 @@
                                 </ScrollPane>
                             </content>
                         </TitledPane>
-                        <TitledPane fx:id="metaDataPane" text="Metadata">
+                        <TitledPane fx:id="metaDataPane" text="%competitions.competitions.metadata">
                             <content>
                                 <VBox>
                                     <children>
@@ -154,17 +154,17 @@
                                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                     </rowConstraints>
                                                     <children>
-                                                        <Label text="ID:">
+                                                        <Label text="%competitions.competitions.id">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="15.0" text="Created At:" GridPane.rowIndex="1">
+                                                        <Label layoutX="10.0" layoutY="15.0" text="%competitions.competitions.created_at" GridPane.rowIndex="1">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="45.0" text="Owner:" GridPane.rowIndex="6">
+                                                        <Label layoutX="10.0" layoutY="45.0" text="%competitions.discord_competition_join.owner" GridPane.rowIndex="6">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -181,7 +181,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Copy ID to clipboard" />
+                                                      <Tooltip text="%competitions.competitions.copy_id_to_clipboard" />
                                                    </tooltip>
                                                 </Button>
                                              </children>
@@ -191,18 +191,18 @@
                                                                 <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="76.0" text="Discord Server:" GridPane.rowIndex="7">
+                                                        <Label layoutX="10.0" layoutY="76.0" text="%competitions.discord_competition_edit.discord_server" GridPane.rowIndex="7">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
                                                         <HBox fx:id="ownerBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                                        <Label layoutX="10.0" layoutY="49.0" text="Start Date:" GridPane.rowIndex="2">
+                                                        <Label layoutX="10.0" layoutY="49.0" text="%competitions.discord_competition_edit.start_date" GridPane.rowIndex="2">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="End Date:" GridPane.rowIndex="3">
+                                                        <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="%competitions.discord_competition_edit.end_date" GridPane.rowIndex="3">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -218,7 +218,7 @@
                                                                 <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="168.0" text="Discord Channel:" GridPane.rowIndex="8">
+                                                        <Label layoutX="10.0" layoutY="168.0" text="%competitions.discord_competition_edit.discord_channel" GridPane.rowIndex="8">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -228,12 +228,12 @@
                                                                 <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="116.0" prefHeight="20.0" prefWidth="113.0" text="Score Limit:" GridPane.rowIndex="4">
+                                                        <Label layoutX="10.0" layoutY="116.0" prefHeight="20.0" prefWidth="113.0" text="%competitions.discord_competition_edit.score_limit" GridPane.rowIndex="4">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="150.0" prefHeight="20.0" prefWidth="113.0" text="Score Validation:" GridPane.rowIndex="5">
+                                                        <Label layoutX="10.0" layoutY="150.0" prefHeight="20.0" prefWidth="113.0" text="%competitions.discord_competition_edit.score_validation" GridPane.rowIndex="5">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -261,7 +261,7 @@
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane fx:id="dashboardPane" expanded="false" text="Dashboard">
+                        <TitledPane fx:id="dashboardPane" expanded="false" text="%competitions.competitions.dashboard">
                             <content>
                                 <BorderPane>
                                     <center>
@@ -269,7 +269,7 @@
                                             <content>
                                                 <VBox fx:id="dashboardBox">
                                                     <children>
-                                                        <Label fx:id="dashboardStatusLabel" styleClass="default-text" text="This competition has no dashboard URL.">
+                                                        <Label fx:id="dashboardStatusLabel" styleClass="default-text" text="%competitions.competitions.this_competition_has_no_dashboard_url">
                                                             <VBox.margin>
                                                                 <Insets />
                                                             </VBox.margin>
@@ -290,7 +290,7 @@
                                     <top>
                                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                             <items>
-                                                <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="external-component" text="Open Dashboard">
+                                                <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="external-component" text="%competitions.competitions.open_dashboard">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -298,7 +298,7 @@
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="rulesBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRulesOpen" styleClass="external-component" text="Open Rules">
+                                    <Button fx:id="rulesBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRulesOpen" styleClass="external-component" text="%competitions.competitions.open_rules">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -307,7 +307,7 @@
                                        </graphic>
                                     </Button>
                                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="Reload" textFill="WHITE">
+                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="%competitions.competitions.reload" textFill="WHITE">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>

@@ -20,7 +20,7 @@
          <center>
             <VBox fx:id="dataPanel" prefWidth="450.0">
                <children>
-                  <Label fx:id="filenameLabel" text="file name" textFill="WHITE">
+                  <Label fx:id="filenameLabel" text="%components.doftester.toy_container.file_name" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -28,7 +28,7 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="size label" textFill="WHITE">
+                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="%components.doftester.toy_container.size_label" textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="3.0" />
                      </VBox.margin></Label>
@@ -40,9 +40,9 @@
    <right>
       <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button mnemonicParsing="false" onAction="#onTest" text="Test">
+            <Button mnemonicParsing="false" onAction="#onTest" text="%components.doftester.toy_container.test">
                <tooltip>
-                  <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />
+                  <Tooltip prefWidth="300.0" text="%components.doftester.toy_container.updates_can_only_be_installed_when_vpin_studio" wrapText="true" />
                </tooltip>
                <font>
                   <Font size="14.0" />

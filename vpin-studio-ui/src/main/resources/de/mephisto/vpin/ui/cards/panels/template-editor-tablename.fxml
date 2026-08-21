@@ -19,7 +19,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="Table Name Settings" />
+            <Label text="%cards.template_editor_tablename.table_name_settings" />
          </left>
          <right>
              <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -32,7 +32,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="Toggle table name visibility" />
+                             <Tooltip text="%cards.template_editor_tablename.toggle_table_name_visibility" />
                          </tooltip>
                      </Button>
                      <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -43,7 +43,7 @@
                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                          </graphic>
                          <tooltip>
-                             <Tooltip text="Lock these properties for custom templates." />
+                             <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                          </tooltip>
                      </ToggleButton>
                  </children>
@@ -56,7 +56,7 @@
          <content>
             <VBox styleClass="accordion-container">
                <children>
-                  <Label text="Table Font" textFill="WHITE">
+                  <Label text="%cards.template_editor_tablename.table_font" textFill="WHITE">
                     <font>
                       <Font name="System Bold" size="14.0" />
                     </font>
@@ -91,7 +91,7 @@
                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" onDragDetected="#onFontTableSelect" />
                                 </graphic>
                                 <tooltip>
-                                  <Tooltip text="Apply selected font settings to all templates" />
+                                  <Tooltip text="%cards.template_editor_scores.apply_selected_font_settings_to_all_templates" />
                                 </tooltip>
                             </Button>
                           </children>
@@ -101,7 +101,7 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableUseDefaultColor" mnemonicParsing="false" text="Use Default Color" textFill="WHITE">
+                      <CheckBox fx:id="tableUseDefaultColor" mnemonicParsing="false" text="%cards.template_editor_tablename.use_default_color" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -111,7 +111,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="When checked, the table name is rendered with the same color as the score text." />
+                            <Tooltip text="%cards.template_editor_tablename.when_checked_the_table_name_is_rendered_with" />
                           </tooltip>
                       </Label>
                     </children>
@@ -122,7 +122,7 @@
 
                   <VBox fx:id="tableColorBox" spacing="3.0">
                      <children>
-                        <Label text="Table Name Color" textFill="WHITE">
+                        <Label text="%cards.template_editor_tablename.table_name_color" textFill="WHITE">
                         <font>
                            <Font size="14.0" />
                         </font>
@@ -137,7 +137,7 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableUseVpsNameCheckbox" mnemonicParsing="false" text="Use Vps Name" textFill="WHITE">
+                      <CheckBox fx:id="tableUseVpsNameCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.use_vps_name" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -147,7 +147,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="Use VPS name instead of display name, allowing the manufacturer or year not to be included in the table name." />
+                            <Tooltip text="%cards.template_editor_tablename.use_vps_name_instead_of_display_name_allowing" />
                           </tooltip>
                       </Label>
                     </children>
@@ -158,7 +158,7 @@
 
                   <HBox fx:id="tableRenderManufacturerBox" alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableRenderManufacturerCheckbox" mnemonicParsing="false" text="Render Manufacturer" textFill="WHITE">
+                      <CheckBox fx:id="tableRenderManufacturerCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.render_manufacturer" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -168,7 +168,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="When checked, the manufacturer is included in the table name." />
+                            <Tooltip text="%cards.template_editor_tablename.when_checked_the_manufacturer_is_included_in_the" />
                           </tooltip>
                       </Label>
                     </children>
@@ -179,7 +179,7 @@
 
                   <HBox fx:id="tableRenderYearBox" alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="tableRenderYearCheckbox" mnemonicParsing="false" text="Render Year" textFill="WHITE">
+                      <CheckBox fx:id="tableRenderYearCheckbox" mnemonicParsing="false" text="%cards.template_editor_tablename.render_year" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -189,7 +189,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="When checked, the year is included in the table name." />
+                            <Tooltip text="%cards.template_editor_tablename.when_checked_the_year_is_included_in_the" />
                           </tooltip>
                       </Label>
                     </children>

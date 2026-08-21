@@ -28,12 +28,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -52,7 +52,7 @@
          <center>
             <VBox fx:id="mainColumn" prefWidth="440.0">
                <children>
-                  <Label text="Table Selection" textFill="WHITE">
+                  <Label text="%competitions.discord_competition_edit.table_selection" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -73,13 +73,13 @@
                         <RowConstraints maxHeight="30.400000000000006" minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Table:" textFill="WHITE">
+                        <Label text="%competitions.discord_competition_edit.table" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <ComboBox fx:id="tableCombo" prefWidth="310.0" GridPane.columnIndex="1" />
-                        <Label text="VPS Link:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="%competitions.discord_competition_edit.vps_link" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -92,13 +92,13 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Let competition members know where to find additional resources for the table." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.let_competition_members_know_where_to_find_additional" wrapText="true" />
                            </tooltip>
                            <GridPane.margin>
                               <Insets left="6.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label text="Download Link:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%competitions.discord_competition_edit.download_link" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -111,17 +111,17 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Let competition members know where to download the table." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.let_competition_members_know_where_to_download_the" wrapText="true" />
                            </tooltip>
                            <GridPane.margin>
                               <Insets left="6.0" />
                            </GridPane.margin>
                         </Label>
-                        <Hyperlink fx:id="vpsLinkField" onAction="#onLinkClick" text="Hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Hyperlink fx:id="downloadLinkField" onAction="#onLinkClick" text="Hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Hyperlink fx:id="vpsLinkField" onAction="#onLinkClick" text="%competitions.discord_competition_edit.hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Hyperlink fx:id="downloadLinkField" onAction="#onLinkClick" text="%competitions.discord_competition_edit.hyperlink" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="182.0" text="Your VPin Settings" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="182.0" text="%competitions.discord_competition_edit.your_vpin_settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -142,12 +142,12 @@
                         <RowConstraints prefHeight="30.0" />
                     </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="189.0" text="Wheel Icon Preview:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="189.0" text="%competitions.discord_competition_edit.wheel_icon_preview" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="117.0" text="Competition Badge:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="117.0" text="%competitions.discord_competition_edit.competition_badge" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -160,12 +160,12 @@
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." />
+                                    <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.the_competition_badge_will_be_added_to_the" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label text="Reset Highscores:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="%competitions.discord_competition_edit.reset_highscores" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -185,12 +185,12 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. &#10;You can backup your existing highscore to restore it after the competition is finished." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.the_reset_is_required_in_case_your_highscore" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="49.0" text="Highs. Reset Available:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="49.0" text="%competitions.discord_competition_edit.highs_reset_available" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -212,7 +212,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="The competition badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%competitions.discord_competition_edit.the_competition_badge_will_be_added_to_the" wrapText="true" />
                            </tooltip>
                            <GridPane.margin>
                               <Insets left="6.0" />
@@ -245,10 +245,10 @@
          <bottom>
             <BorderPane fx:id="validationContainer" BorderPane.alignment="TOP_LEFT">
                <top>
-                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="%competitions.discord_competition_edit.label" BorderPane.alignment="TOP_LEFT" />
                </top>
                <bottom>
-                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="validationDescription" text="%competitions.discord_competition_edit.label" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -265,11 +265,11 @@
          <top>
             <VBox styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="Rules" />
-                  <Label styleClass="default-text" text="• Competitions are created and stored on the selected Discord channel." />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
-                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="• New highscores will only be submitted if the &quot;Score Settings&quot; criteria are met." />
-                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="%competitions.discord_competition_edit.rules" />
+                  <Label styleClass="default-text" text="%competitions.discord_competition_edit.competitions_are_created_and_stored_on_the_selected" />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" />
+                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_submitted_if_the" />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -285,7 +285,7 @@
                   <Insets bottom="12.0" left="12.0" right="24.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label text="Server Settings" textFill="WHITE">
+                  <Label text="%competitions.discord_competition_edit.server_settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -306,17 +306,17 @@
                         <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Competition Name:" textFill="WHITE">
+                        <Label text="%competitions.discord_competition_edit.competition_name" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Discord Server:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="%competitions.discord_competition_edit.discord_server" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Discord Channel:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%competitions.discord_competition_edit.discord_channel" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -333,7 +333,7 @@
                         <Insets />
                      </VBox.margin>
                   </GridPane>
-                  <Label text="Duration" textFill="WHITE">
+                  <Label text="%competitions.discord_competition_edit.duration_2" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -354,12 +354,12 @@
                         <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Start Date:" textFill="WHITE">
+                        <Label text="%competitions.discord_competition_edit.start_date" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="End Date:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="%competitions.discord_competition_edit.end_date" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -376,7 +376,7 @@
                               <ComboBox fx:id="endTime" prefWidth="100.0" />
                            </children>
                         </HBox>
-                        <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="%competitions.discord_competition_edit.duration" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -391,7 +391,7 @@
                         <Insets />
                      </VBox.margin>
                   </GridPane>
-                  <Label text="Score Settings" textFill="WHITE">
+                  <Label text="%cards.template_editor_scores.score_settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -412,7 +412,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Score Validation:" textFill="WHITE">
+                        <Label text="%competitions.discord_competition_edit.score_validation" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -422,15 +422,15 @@
                               <ComboBox fx:id="scoreValidation" prefHeight="30.0" prefWidth="331.0" />
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" text="Score Limit:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" text="%competitions.discord_competition_edit.score_limit" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="preference-description" text="Selects the amount of scores to be stored" textFill="WHITE" />
-                              <Label styleClass="preference-description" text="for the competition." textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%competitions.discord_competition_edit.selects_the_amount_of_scores_to_be_stored" textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%competitions.discord_competition_edit.for_the_competition" textFill="WHITE" />
                            </children>
                         </VBox>
                         <Spinner fx:id="scoreLimit" GridPane.columnIndex="1" GridPane.rowIndex="1" />

@@ -4,8 +4,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,26 +17,26 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsScreensPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="VALIDATORS" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Screen Validators">
+            <Label styleClass="preference-title" text="%pref.validators_backglass.validators" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.validators_screens.screen_validators" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="If enabled, the validator will check if the media has been configured with an asset." textFill="WHITE">
+            <Label styleClass="preference-description" text="%pref.validators_screens.if_enabled_the_validator_will_check_if_the" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Use the asset management view to check the validity of table assets." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.validators_screens.use_the_asset_management_view_to_check_the" textFill="WHITE" wrapText="true" />
             <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                <ColumnConstraints hgrow="SOMETIMES" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="326.39996948242185" minWidth="10.0" prefWidth="172.79990234374998" />
@@ -59,24 +59,24 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <CheckBox fx:id="Audio_30" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Audio" textFill="WHITE" GridPane.rowIndex="1">
+                  <CheckBox fx:id="Audio_30" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.audio" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font></CheckBox>
-                  <CheckBox fx:id="AudioLaunch_31" layoutX="364.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Audio Launch" GridPane.rowIndex="2" />
-                  <CheckBox fx:id="Menu_32" layoutX="364.0" layoutY="40.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Apron / Full DMD" GridPane.rowIndex="3" />
-                  <CheckBox fx:id="GameInfo_33" layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Info / Flyer" GridPane.rowIndex="4" />
-                  <CheckBox fx:id="GameHelp_34" layoutX="364.0" layoutY="90.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Help" GridPane.rowIndex="5" />
-                  <CheckBox fx:id="Topper_35" layoutX="364.0" layoutY="116.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Topper" GridPane.rowIndex="6" />
-                  <CheckBox fx:id="BackGlass_36" layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Backglass" GridPane.rowIndex="9" />
-                  <CheckBox fx:id="DMD_37" layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="DMD" GridPane.rowIndex="7" />
-                  <CheckBox fx:id="Loading_39" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Loading" GridPane.rowIndex="8" />
-                  <CheckBox fx:id="PlayField_38" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Playfield" GridPane.rowIndex="10" />
-                  <CheckBox fx:id="Other2_40" layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Other2" GridPane.rowIndex="13" />
-                  <CheckBox fx:id="Wheel_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Wheel Image" GridPane.rowIndex="11" />
-                  <CheckBox fx:id="Logo_42" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="Logo Image" GridPane.rowIndex="12" />
-                  <Label styleClass="default-headline" text="Screen" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="Preference" GridPane.columnIndex="1" />
+                  <CheckBox fx:id="AudioLaunch_31" layoutX="364.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.audio_launch" GridPane.rowIndex="2" />
+                  <CheckBox fx:id="Menu_32" layoutX="364.0" layoutY="40.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.apron_full_dmd" GridPane.rowIndex="3" />
+                  <CheckBox fx:id="GameInfo_33" layoutX="364.0" layoutY="64.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.info_flyer" GridPane.rowIndex="4" />
+                  <CheckBox fx:id="GameHelp_34" layoutX="364.0" layoutY="90.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%launcher.launcher.help" GridPane.rowIndex="5" />
+                  <CheckBox fx:id="Topper_35" layoutX="364.0" layoutY="116.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.topper" GridPane.rowIndex="6" />
+                  <CheckBox fx:id="BackGlass_36" layoutX="364.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%backglass.directb2s_admin.backglass" GridPane.rowIndex="9" />
+                  <CheckBox fx:id="DMD_37" layoutX="364.0" layoutY="166.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%backups.backups.dmd" GridPane.rowIndex="7" />
+                  <CheckBox fx:id="Loading_39" layoutX="364.0" layoutY="192.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.loading" GridPane.rowIndex="8" />
+                  <CheckBox fx:id="PlayField_38" layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.playfield" GridPane.rowIndex="10" />
+                  <CheckBox fx:id="Other2_40" layoutX="364.0" layoutY="243.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.other2" GridPane.rowIndex="13" />
+                  <CheckBox fx:id="Wheel_41" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.wheel_image" GridPane.rowIndex="11" />
+                  <CheckBox fx:id="Logo_42" layoutX="364.0" layoutY="268.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="default-text" text="%pref.validators_screens.logo_image" GridPane.rowIndex="12" />
+                  <Label styleClass="default-headline" text="%pref.validators_screens.screen" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="%pref.validators_screens.preference" wrapText="true" GridPane.columnIndex="1" />
                   <ComboBox fx:id="Audio_30_Options" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <ComboBox fx:id="AudioLaunch_31_Options" layoutX="194.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <ComboBox fx:id="Menu_32_Options" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -90,7 +90,7 @@
                   <ComboBox fx:id="Other2_40_Options" layoutX="194.0" layoutY="347.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                   <ComboBox fx:id="Wheel_41_Options" layoutX="194.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                   <ComboBox fx:id="Logo_42_Options" layoutX="194.0" layoutY="380.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                  <Label layoutX="194.0" layoutY="15.0" styleClass="default-headline" text="Preferred Media" GridPane.columnIndex="2" />
+                  <Label layoutX="194.0" layoutY="15.0" styleClass="default-headline" text="%pref.validators_screens.preferred_media" wrapText="true" GridPane.columnIndex="2" />
                   <ComboBox fx:id="Audio_30_Media" layoutX="194.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <ComboBox fx:id="AudioLaunch_31_Media" layoutX="383.0" layoutY="44.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <ComboBox fx:id="Menu_32_Media" layoutX="383.0" layoutY="78.0" onAction="#onComboChange" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
@@ -108,13 +108,13 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
-                              <Label styleClass="default-headline" text="Auto Tagging " />
-                              <Label>
+                              <Label styleClass="default-headline" text="%pref.validators_screens.auto_tagging" wrapText="true" />
+                              <Label wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="If the screen is checked and an asset is changed, the configured tags will be applied to the table." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%pref.validators_screens.if_the_screen_is_checked_and_an_asset" wrapText="true" />
                                  </tooltip>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -197,14 +197,14 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Auto Tagging" />
-            <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="If enabled and assets are changed for an auto-tagged screen, the given tags are " textFill="WHITE">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging" wrapText="true" />
+            <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="%pref.validators_screens.if_enabled_and_assets_are_changed_for_an" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="691.0" styleClass="preference-description" text="automatically applied to the table to keep track of this change (e.g. to track tables for recording)." textFill="WHITE" />
-            <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Auto Tagging Enabled" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="691.0" styleClass="preference-description" text="%pref.validators_screens.automatically_applied_to_the_table_to_keep_track" textFill="WHITE" wrapText="true" />
+            <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

@@ -44,6 +44,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentsController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentsController.class);
@@ -116,7 +117,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   public void onDismiss() {
-    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Hide this warning?", "Hide Warning", "Select the checkbox below if you do not wish to see this warning anymore.", null, "Do not show again", false);
+    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.hide_this_warning"), Messages.get("dialog.hide_warning"), Messages.get("dialog.select_the_checkbox_below_if_you_do_2"), null, Messages.get("dialog.do_not_show_again"), false);
     if (!confirmationResult.isApplyClicked()) {
       hint.setVisible(false);
     }
@@ -212,6 +213,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       overviewTab.setContent(builtInRoot);
     }
@@ -237,6 +239,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     if (Features.SCREEN_MANAGER_ENABLED && !Features.IS_STANDALONE) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreensController.class.getResource("tab-screens.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         screensTab.setContent(builtInRoot);
       }
@@ -251,6 +254,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     if (Features.DOF_TESTER_ENABLED || LocalUISettings.getBoolean("doftester.enabled")) {
       try {
         FXMLLoader loader = new FXMLLoader(DOFTesterController.class.getResource("tab-dof-tester.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         dofTesterTab.setContent(builtInRoot);
       }
@@ -265,6 +269,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     if (Features.EMULATORS_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(EmulatorsController.class.getResource("tab-emulators.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         emulatorsController = loader.getController();
         emulatorsTab.setContent(builtInRoot);
@@ -288,6 +293,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private void loadTab(Tab tab, String file) {
     try {
       FXMLLoader loader = new FXMLLoader(ComponentsController.class.getResource(file));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       tab.setContent(builtInRoot);
     }

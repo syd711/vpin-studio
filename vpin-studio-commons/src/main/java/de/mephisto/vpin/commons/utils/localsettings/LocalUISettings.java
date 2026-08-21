@@ -22,6 +22,7 @@ public class LocalUISettings {
   public static final String LAST_FOLDER_SELECTION = "lastFolderSelection";
   public static final String DROP_IN_FOLDER = "dropInFolder";
   public static final String DROP_IN_FOLDER_ENABLED = "dropInFolderEnabled";
+  public static final String LANGUAGE = "language";
 
   private static PropertiesStore store;
 
@@ -204,3 +205,4 @@ public class LocalUISettings {
     }
   }
 }
+// NOTE: LANGUAGE key added below

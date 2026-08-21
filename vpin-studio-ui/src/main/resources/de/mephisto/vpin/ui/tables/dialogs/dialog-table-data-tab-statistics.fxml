@@ -40,7 +40,7 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Delete Statistic" />
+                  <Tooltip text="%tables.table_data_tab_statistics.delete_statistic" />
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
@@ -52,7 +52,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Edit Statistic" />
+                  <Tooltip text="%tables.table_data_tab_statistics.edit_statistic" />
                </tooltip>
             </Button>
          </items>

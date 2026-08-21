@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -85,7 +86,7 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
     }
 
     Platform.runLater(() -> {
-      WidgetFactory.showOutputDialog(Studio.stage, "Results", "The logs of the media conversion are shown below.", null, builder.toString());
+      WidgetFactory.showOutputDialog(Studio.stage, Messages.get("dialog.results"), Messages.get("dialog.the_logs_of_the_media_conversion_are"), null, builder.toString());
     });
   }
 

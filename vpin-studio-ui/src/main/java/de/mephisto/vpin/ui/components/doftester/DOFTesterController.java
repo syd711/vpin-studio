@@ -44,6 +44,7 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.preferences.PreferenceType.dofSettings;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DOFTesterController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, StudioEventListener {
@@ -173,7 +174,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
               return games;
             }
         ).onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         }).thenAcceptLater(objs -> {
           @SuppressWarnings({"unchecked", "unused"})
@@ -260,6 +261,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
     try {
       FXMLLoader loader = new FXMLLoader(DOFToysController.class.getResource("dof-toys.fxml"));
+      loader.setResources(Messages.getBundle());
       toysRoot = loader.load();
       dofToysController = loader.getController();
       dofToysController.setParentController(this);

@@ -23,6 +23,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DefaultBackgroundUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -61,7 +62,7 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Uploading default background failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_default_background_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
       } finally {
         stage.close();
       }

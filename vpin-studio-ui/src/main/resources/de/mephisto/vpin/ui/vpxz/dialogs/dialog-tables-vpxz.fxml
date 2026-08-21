@@ -22,12 +22,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="exportBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onExportClick" styleClass="submit-button" text="Create">
+            <Button fx:id="exportBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onExportClick" styleClass="submit-button" text="%playlistmanager.new_playlist.create">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -48,19 +48,19 @@
                <center>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="The .vpxz file will be created for the selected table and target folder." />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select a standalone file if the name matches with the one of your tables. ">
+                        <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="%vpxz.tables_vpxz.the_vpxz_file_will_be_created_for_the" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%vpxz.tables_vpxz.select_a_standalone_file_if_the_name_matches">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
                         </Label>
-                        <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="It ensures that the table will run on mobile devices - but is not required for all tables!" />
-                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="The standalone files are provided by jsm174.">
+                        <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="%vpxz.tables_vpxz.it_ensures_that_the_table_will_run_on" />
+                        <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="%vpxz.tables_vpxz.the_standalone_files_are_provided_by_jsm174">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Hyperlink onAction="#onHyperlink" text="https://github.com/jsm174/vpx-standalone-scripts">
+                        <Hyperlink onAction="#onHyperlink" text="%vpxz.tables_vpxz.https_github_com_jsm174_vpx_standalone_scripts">
                            <VBox.margin>
                               <Insets left="-6.0" />
                            </VBox.margin>
@@ -70,9 +70,9 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                            <children>
-                              <GridPane hgap="3.0" vgap="3.0">
+                              <GridPane hgap="6.0" vgap="3.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.2000732421875" minWidth="10.0" prefWidth="155.2000732421875" />
+                                  <ColumnConstraints hgrow="SOMETIMES" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="620.7999511718749" minWidth="10.0" prefWidth="563.9999267578125" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -83,9 +83,9 @@
                                 </rowConstraints>
                                  <children>
                                     <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
-                                    <Label styleClass="default-text" text="Target:" />
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Overwrite Settings:" GridPane.rowIndex="2" />
-                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="Overwrite Existing .vpxz Files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <Label styleClass="default-text" text="%vpxz.tables_vpxz.target" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backups.tables_backup.overwrite_settings" GridPane.rowIndex="2" />
+                                    <CheckBox fx:id="overwriteCheckbox" mnemonicParsing="false" text="%vpxz.tables_vpxz.overwrite_existing_vpxz_files" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -93,7 +93,7 @@
                                     <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
                                           <ComboBox fx:id="filesCombo" editable="true" prefHeight="30.0" prefWidth="300.0" />
-                                          <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="Synchronize with Github">
+                                          <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSynchronize" text="%vpxz.tables_vpxz.synchronize_with_github">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -103,7 +103,7 @@
                                           </Button>
                                        </children>
                                     </HBox>
-                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="VPX Standalone Script:" GridPane.rowIndex="1" />
+                                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%vpxz.tables_vpxz.vpx_standalone_script" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </children>
@@ -112,7 +112,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" styleClass="default-headline" text="title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>

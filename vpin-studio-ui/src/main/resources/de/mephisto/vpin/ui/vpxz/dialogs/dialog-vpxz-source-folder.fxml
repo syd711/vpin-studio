@@ -22,12 +22,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -53,26 +53,26 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Name:" textFill="WHITE">
+                  <Label text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nameField" promptText="Enter the display name of the .vpxz folder here." GridPane.columnIndex="1">
+                  <TextField fx:id="nameField" promptText="%vpxz.vpxz_source_folder.enter_the_display_name_of_the_vpxz_folder" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
-                  <Label layoutX="10.0" layoutY="33.0" text="Folder:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label layoutX="10.0" layoutY="33.0" text="%backups.backup_source_folder.folder" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="folderField" prefHeight="30.0" promptText="Enter the location for the .vpxz folder here." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="folderField" prefHeight="30.0" promptText="%vpxz.vpxz_source_folder.enter_the_location_for_the_vpxz_folder_here" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Label layoutX="10.0" layoutY="48.0" text="Enabled:" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label layoutX="10.0" layoutY="48.0" text="%backups.backup_source_folder.enabled" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -84,7 +84,7 @@
                   </CheckBox>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select Folder..." textFill="WHITE">
+                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -97,7 +97,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Enter the folder path of the .vpxz folder on your cabinet here." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%vpxz.vpxz_source_folder.enter_the_folder_path_of_the_vpxz_folder" wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>

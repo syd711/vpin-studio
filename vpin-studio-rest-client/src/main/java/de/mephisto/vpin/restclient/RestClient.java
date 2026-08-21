@@ -243,9 +243,24 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
 
+  /**
+   * The locale language tag to include in every HTTP request as {@code Accept-Language}.
+   * Set this once at startup via {@link #setLocale(java.util.Locale)}.
+   */
+  private static String acceptLanguage = "en";
+
+  /**
+   * Updates the {@code Accept-Language} header value sent with every request.
+   * Call this once at startup after loading the local language preference.
+   */
+  public static void setLocale(java.util.Locale locale) {
+    acceptLanguage = (locale != null) ? locale.getLanguage() : "en";
+  }
+
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
     request.getHeaders().add(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+    request.getHeaders().set(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage);
 //    logRequest(request);
     ClientHttpResponse response = execution.execute(request, body);
 //    logResponse(response);

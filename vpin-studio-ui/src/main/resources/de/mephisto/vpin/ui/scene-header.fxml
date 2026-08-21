@@ -8,7 +8,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane fx:id="header" styleClass="window-header" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.HeaderController">
    <left>
-      <Label fx:id="titleLabel" text="VPin Studio Launcher" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="titleLabel" text="%header.vpin_studio_launcher" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
          <font>
             <Font name="Impact" size="18.0" />
          </font>

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DismissalUtil {
   public static void dismissValidation(GameRepresentation game, ValidationState validationState) {
@@ -21,8 +22,8 @@ public class DismissalUtil {
       dismiss(game, validationState);
     }
     else {
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, "Ignore this warning for future validations of table '" + game.getGameDisplayName() + "?", "Dismiss",
-        "The warning can be re-enabled by validating the table again.", null, "Do not show again", false);
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, Messages.get("dialog.ignore_this_warning_for_future_validations_of") + game.getGameDisplayName() + "?", "Dismiss",
+        "The warning can be re-enabled by validating the table again.", null, Messages.get("dialog.do_not_show_again"), false);
       if (!confirmationResult.isApplyClicked()) {
         dismiss(game, validationState);
       }

@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VpsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpsPreferencesController.class);
@@ -260,7 +261,7 @@ public class VpsPreferencesController implements Initializable {
           client.getPreferenceService().setJsonPreference(vpsSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
         }
       }, 300);
     });

@@ -16,18 +16,18 @@
          <content>
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                <children>
-                  <Label styleClass="preference-title" text="PRIVACY SETTINGS" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Data Submission" />
+                  <Label styleClass="preference-title" text="%mania.mania_privacy_settings.privacy_settings" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%mania.mania_privacy_settings.data_submission" />
                   <VBox>
                      <children>
-                        <CheckBox fx:id="submitAllCheckbox" mnemonicParsing="false" text="Submit All Highscores">
+                        <CheckBox fx:id="submitAllCheckbox" mnemonicParsing="false" text="%mania.mania_privacy_settings.submit_all_highscores">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="Submit your highscores to rank them on vpin-mania.net." textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="The highscore submission to vpin-mania.net is mandatory for tournaments." textFill="WHITE" />
-                        <Button fx:id="syncScoresBtn" mnemonicParsing="false" onAction="#onHighscoreSync" text="Synchronize Highscores" textFill="WHITE">
+                        <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.submit_your_highscores_to_rank_them_on_vpin" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.the_highscore_submission_to_vpin_mania_net_is" textFill="WHITE" />
+                        <Button fx:id="syncScoresBtn" mnemonicParsing="false" onAction="#onHighscoreSync" text="%mania.mania_privacy_settings.synchronize_highscores" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -42,16 +42,16 @@
                   </VBox>
                   <VBox>
                      <children>
-                        <CheckBox fx:id="submitTablesCheckbox" mnemonicParsing="false" text="Submit Installed Tables">
+                        <CheckBox fx:id="submitTablesCheckbox" mnemonicParsing="false" text="%mania.mania_registration.submit_installed_tables">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="The will push the list of all your installed VPX tables to VPin Mania." textFill="WHITE" />
-                        <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="It allows you a quicker access to the corresponding highscores of yours." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.the_will_push_the_list_of_all_your" textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="%mania.mania_privacy_settings.it_allows_you_a_quicker_access_to_the" textFill="WHITE" />
                         <VBox styleClass="checkbox-description">
                            <children>
-                              <CheckBox fx:id="submitAllRatingsCheckbox" mnemonicParsing="false" text="Submit Table Ratings">
+                              <CheckBox fx:id="submitAllRatingsCheckbox" mnemonicParsing="false" text="%mania.mania_registration.submit_table_ratings">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -59,13 +59,13 @@
                                     <Insets />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.this_anonymized_data_will_contribute_to_the_global" textFill="WHITE" />
                            </children>
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </VBox>
-                        <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="Synchronize Ratings" textFill="WHITE">
+                        <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="%mania.mania_privacy_settings.synchronize_ratings" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -78,7 +78,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
-                  <CheckBox fx:id="submitPlayedCountCheckbox" mnemonicParsing="false" text="Submit Play Count">
+                  <CheckBox fx:id="submitPlayedCountCheckbox" mnemonicParsing="false" text="%mania.mania_registration.submit_play_count">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -86,8 +86,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
-                  <CheckBox fx:id="registrationCheckbox11" disable="true" mnemonicParsing="false" selected="true" text="Synchronize Cabinet Name &amp; Avatar">
+                  <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.this_anonymized_data_will_contribute_to_the_global" textFill="WHITE" />
+                  <CheckBox fx:id="registrationCheckbox11" disable="true" mnemonicParsing="false" selected="true" text="%mania.mania_privacy_settings.synchronize_cabinet_name_avatar">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -95,12 +95,12 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Your vpin-mania.net account is bound to your cabinet, including the cabinet name and avatar." textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Activities">
+                  <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.your_vpin_mania_net_account_is_bound_to" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%mania.mania_privacy_settings.activities">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin></Label>
-                  <CheckBox fx:id="showOnlineStatusCheckbox" layoutX="34.0" layoutY="116.0" mnemonicParsing="false" text="Show Online Status">
+                  <CheckBox fx:id="showOnlineStatusCheckbox" layoutX="34.0" layoutY="116.0" mnemonicParsing="false" text="%mania.mania_privacy_settings.show_online_status">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -108,8 +108,8 @@
                         <Insets />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="Your friends can see if your cabinet is online." textFill="WHITE" />
-                  <CheckBox fx:id="showActiveGameCheckbox" layoutX="34.0" layoutY="257.0" mnemonicParsing="false" text="Share Activity Status">
+                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="%mania.mania_privacy_settings.your_friends_can_see_if_your_cabinet_is" textFill="WHITE" />
+                  <CheckBox fx:id="showActiveGameCheckbox" layoutX="34.0" layoutY="257.0" mnemonicParsing="false" text="%mania.mania_privacy_settings.share_activity_status">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -117,8 +117,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="277.0" styleClass="checkbox-description" text="Your friends can see which table you are playing right now." textFill="WHITE" />
-                  <CheckBox fx:id="searchableCheckbox" layoutX="34.0" layoutY="182.0" mnemonicParsing="false" text="Cabinet Search Enabled">
+                  <Label layoutX="34.0" layoutY="277.0" styleClass="checkbox-description" text="%mania.mania_privacy_settings.your_friends_can_see_which_table_you_are" textFill="WHITE" />
+                  <CheckBox fx:id="searchableCheckbox" layoutX="34.0" layoutY="182.0" mnemonicParsing="false" text="%mania.mania_privacy_settings.cabinet_search_enabled">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -126,8 +126,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="Other people can search for your cabinet id to send an invite to you." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Players Privacy">
+                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="%mania.mania_privacy_settings.other_people_can_search_for_your_cabinet_id" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%mania.mania_privacy_settings.players_privacy">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>

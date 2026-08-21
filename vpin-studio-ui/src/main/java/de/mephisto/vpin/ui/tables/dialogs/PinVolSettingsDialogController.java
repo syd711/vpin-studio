@@ -20,6 +20,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PinVolSettingsDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -50,6 +51,7 @@ public class PinVolSettingsDialogController implements Initializable, DialogCont
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
       center.getChildren().add(builtInRoot);

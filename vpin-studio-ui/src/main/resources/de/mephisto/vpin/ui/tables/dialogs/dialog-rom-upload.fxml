@@ -20,12 +20,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%backups.backup_upload.upload">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -44,7 +44,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="descriptionLabel" styleClass="preference-description" text="The selected zip files will be uploaded into the &quot;roms&quot; folder of VPinMAME." />
+                  <Label fx:id="descriptionLabel" styleClass="preference-description" text="%tables.rom_upload.the_selected_zip_files_will_be_uploaded_into" />
                </children>
             </VBox>
          </top>
@@ -73,15 +73,15 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
                      </children>
                   </HBox>
-                  <Label styleClass="default-text" text="ROM File:" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
+                  <Label styleClass="default-text" text="%tables.rom_upload.rom_file" GridPane.rowIndex="1" />
+                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%cards.highscore_cards.emulator" />
                   <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
                </children>
             </GridPane>

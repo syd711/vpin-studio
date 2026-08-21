@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MonitorsView implements IMonitoringView {
   private final static Logger LOG = LoggerFactory.getLogger(MonitorsView.class);
@@ -36,6 +37,7 @@ public class MonitorsView implements IMonitoringView {
     for (MonitorInfo monitorInfo : monitorInfos) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreenPanelController.class.getResource("screen-monitor-panel.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent panelRoot = loader.load();
         ScreenPanelController screenPanelController = loader.getController();
         controllers.put(monitorInfo, screenPanelController);

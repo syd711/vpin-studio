@@ -17,23 +17,23 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DiscordWebhookPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="DISCORD INTEGRATION" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Webhook">
+            <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.discord_webhook.webhook" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Discord supports webhooks for servers. Go to &quot;Server Settings -&gt; Integrations&quot; to create a new webkook." textFill="WHITE">
+            <Label styleClass="preference-description" text="%pref.discord_webhook.discord_supports_webhooks_for_servers_go_to_server" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The webhook will be used to publish new highscore events to the selected channel." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.discord_webhook.the_webhook_will_be_used_to_publish_new" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin>
@@ -49,7 +49,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label prefHeight="20.0" styleClass="preference-label" text="Webhook URL:" textFill="WHITE">
+                  <Label prefHeight="20.0" styleClass="preference-label" text="%pref.discord_webhook.webhook_url" textFill="WHITE" wrapText="true">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -59,7 +59,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="Send Test Message" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="%pref.discord_webhook.send_test_message" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets top="3.0" />
                      </GridPane.margin>
@@ -72,12 +72,12 @@
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <Label styleClass="preference-subtitle" text="How to create a Discord webhook?">
+            <Label styleClass="preference-subtitle" text="%pref.discord_webhook.how_to_create_a_discord_webhook" wrapText="true">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
             </Label>
-            <Label styleClass="preference-description" text="Open the context menu of the server and select &quot;Server Settings&quot;." textFill="WHITE" />
+            <Label styleClass="preference-description" text="%pref.discord_webhook.open_the_context_menu_of_the_server_and" textFill="WHITE" wrapText="true" />
             <ImageView fitHeight="316.0" fitWidth="182.0" pickOnBounds="true" preserveRatio="true">
                <VBox.margin>
                   <Insets top="6.0" />
@@ -86,7 +86,7 @@
                   <Image url="@../screenshots/webhook1.png" />
                </image>
             </ImageView>
-            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="Below the group &quot;Apps&quot;, select the entry &quot;Integrations&quot;." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="%pref.discord_webhook.below_the_group_apps_select_the_entry_integrations" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
@@ -99,7 +99,7 @@
                   <Image url="@../screenshots/webhook2.png" />
                </image>
             </ImageView>
-            <Label layoutX="34.0" layoutY="611.0" styleClass="preference-description" text="Next, click on &quot;View Webhooks&quot;." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="611.0" styleClass="preference-description" text="%pref.discord_webhook.next_click_on_view_webhooks" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>
@@ -112,8 +112,8 @@
                   <Image url="@../screenshots/webhook3.png" />
                </image>
             </ImageView>
-            <Label layoutX="34.0" layoutY="894.0" styleClass="preference-description" text="You are now on the webhooks overview page where you can create a new webhook." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="1213.0" styleClass="preference-description" text="Paste the generated URL into the upper textfield." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="894.0" styleClass="preference-description" text="%pref.discord_webhook.you_are_now_on_the_webhooks_overview_page" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="1213.0" styleClass="preference-description" text="%pref.discord_webhook.paste_the_generated_url_into_the_upper_textfield" textFill="WHITE" wrapText="true" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

@@ -30,28 +30,28 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%competitions.discord_competition_edit.label" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                        <Hyperlink onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%competitions.discord_competition_edit.label" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label text="No PUP pack found." textFill="WHITE">
+                  <Label text="%tables.tables_sidebar_pup_pack.no_pup_pack_found" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                  <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
+                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
@@ -64,7 +64,7 @@
                <content>
                   <VBox fx:id="dataBox">
                      <children>
-                        <Label text="PUP Pack Data" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_pup_pack.pup_pack_data" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -85,12 +85,12 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label text="%backups.backups_sidebar.last_modified" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Bundle Size (unpacked):" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="49.0" text="%tables.tables_sidebar_altsound.bundle_size_unpacked" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -110,7 +110,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="49.0" prefWidth="87.0" text="Options:" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label layoutX="10.0" layoutY="49.0" prefWidth="87.0" text="%tables.tables_sidebar_pup_pack.options" textFill="WHITE" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -118,7 +118,7 @@
                               <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <ComboBox fx:id="optionsCombo" prefHeight="30.0" prefWidth="200.0" />
-                                    <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="Apply" textFill="WHITE">
+                                    <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="%tables.table_data_tab_scoredata.apply" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -126,7 +126,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-check-outline" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="optionEditBtn" mnemonicParsing="false" onAction="#onOptionEdit" styleClass="text-button" text="Edit" textFill="WHITE">
+                                    <Button fx:id="optionEditBtn" mnemonicParsing="false" onAction="#onOptionEdit" styleClass="text-button" text="%competitions.competitions_discord.edit" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -134,7 +134,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Open PupPack Options file" />
+                                          <Tooltip text="%tables.tables_sidebar_pup_pack.open_puppack_options_file" />
                                        </tooltip>
                                     </Button>
                                     <Label textFill="WHITE">
@@ -145,7 +145,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The selected option is only shown if the options are located in the &quot;PuP-Pack_Options&quot; folder." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.the_selected_option_is_only_shown_if_the" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="6.0" top="5.0" />
@@ -153,7 +153,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="83.0" prefHeight="20.0" prefWidth="149.0" text="Additional Files:" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label layoutX="10.0" layoutY="83.0" prefHeight="20.0" prefWidth="149.0" text="%tables.tables_sidebar_pup_pack.additional_files" textFill="WHITE" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -161,7 +161,7 @@
                               <HBox layoutX="174.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
                                     <ComboBox fx:id="txtsCombo" prefHeight="30.0" prefWidth="200.0" />
-                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" prefWidth="80.0" styleClass="text-button" text="Edit" textFill="WHITE">
+                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" prefWidth="80.0" styleClass="text-button" text="%competitions.competitions_discord.edit" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -177,7 +177,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Here are text files listed that may contain additional installation instructions." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.here_are_text_files_listed_that_may_contain" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="6.0" top="5.0" />
@@ -185,7 +185,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="49.0" text="Script Only:" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label layoutX="10.0" layoutY="49.0" text="%tables.tables_sidebar_pup_pack.script_only" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -205,12 +205,12 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="If checked, there is a scriptonly.txt in the PUP pack folder and the PUP pack does not require additional config files." wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.if_checked_there_is_a_scriptonly_txt_in" wrapText="true" />
                                        </tooltip>
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.name" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -229,7 +229,7 @@
                            <children>
                               <HBox spacing="6.0">
                                  <children>
-                                    <Label text="Screens" textFill="WHITE">
+                                    <Label text="%components.components.screens" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -242,7 +242,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="This section shows only a selection of the available screen to indicate which are used." wrapText="true">
+                                          <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.this_section_shows_only_a_selection_of_the" wrapText="true">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -266,22 +266,22 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                                  <children>
-                                    <Label text="Backglass:" textFill="WHITE">
+                                    <Label text="%tables.tables_sidebar_pup_pack.backglass" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="DMD:" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.dmd" textFill="WHITE" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="49.0" text="Full DMD:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.full_dmd" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="83.0" text="Topper:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label layoutX="10.0" layoutY="83.0" text="%tables.tables_sidebar_pup_pack.topper" textFill="WHITE" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -369,7 +369,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -378,7 +378,7 @@
                </graphic>
             </Button>
             <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
                <font>
                   <Font size="14.0" />
                </font>
@@ -386,7 +386,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
                </font>
@@ -394,9 +394,9 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                </graphic>
             </Button>
-            <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="PUP Pack Editor" textFill="WHITE">
+            <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_editor" textFill="WHITE">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="PUP Pack Screen Tweaker">
+                <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_screen_tweaker">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                      </graphic>
@@ -410,7 +410,7 @@
                </graphic>
             </SplitMenuButton>
             <Separator layoutX="196.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="Enabled" textFill="WHITE">
+            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="%pref.webhook_set.enabled" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -423,7 +423,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip prefWidth="300.0" text="A PUP pack can only be disabled here if the ROM name is set in the table data." wrapText="true" />
+                  <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.a_pup_pack_can_only_be_disabled_here" wrapText="true" />
                </tooltip>
                <padding>
                   <Insets left="3.0" />

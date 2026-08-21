@@ -20,7 +20,7 @@
                   <Label fx:id="nameLabel" styleClass="default-title" text="-" textFill="WHITE" wrapText="true" />
                   <HBox spacing="6.0">
                      <children>
-                        <Label fx:id="statusLabel" styleClass="default-headline" text="Online" textFill="WHITE">
+                        <Label fx:id="statusLabel" styleClass="default-headline" text="%mania.cabinet_row_panel.online" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -30,7 +30,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label fx:id="activeGameLabel" text="Playing" textFill="WHITE">
+                  <Label fx:id="activeGameLabel" text="%mania.cabinet_row_panel.playing" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -63,7 +63,7 @@
    <bottom>
       <VBox fx:id="playerList" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Label styleClass="default-title" text="Players" />
+            <Label styleClass="default-title" text="%mania.cabinet_row_panel.players" />
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

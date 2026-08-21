@@ -23,12 +23,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Add Subscription">
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%competitions.subscription_add.add_subscription">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -47,7 +47,7 @@
          <center>
             <VBox fx:id="mainColumn">
                <children>
-                  <Label styleClass="default-title" text="Subscription Settings" textFill="WHITE">
+                  <Label styleClass="default-title" text="%competitions.subscription_add.subscription_settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -70,7 +70,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Subscription Channel Name:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label styleClass="default-text" text="%competitions.subscription_add.subscription_channel_name" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -80,7 +80,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label styleClass="default-text" text="Table:" textFill="WHITE">
+                        <Label styleClass="default-text" text="%competitions.discord_competition_edit.table" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -98,12 +98,12 @@
                         </TextField>
                         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="help-text" text="Channel Name" />
+                              <Label styleClass="help-text" text="%competitions.subscription_add.channel_name" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_CENTER" layoutX="196.0" layoutY="77.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="help-text" text="ROM Suffix" />
+                              <Label styleClass="help-text" text="%competitions.subscription_add.rom_suffix" />
                            </children>
                         </HBox>
                         <Label textFill="WHITE" GridPane.columnIndex="4" GridPane.rowIndex="1">
@@ -114,7 +114,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="The ROM name will be automatically appended and is required for the name. The actual name of the channel should not be longer than 26 characters." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%competitions.subscription_add.the_rom_name_will_be_automatically_appended_and" wrapText="true" />
                            </tooltip>
                            <GridPane.margin>
                               <Insets left="6.0" />
@@ -125,7 +125,7 @@
                         <Insets />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="182.0" styleClass="default-title" text="Your VPin Settings" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="182.0" styleClass="default-title" text="%competitions.discord_competition_edit.your_vpin_settings" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -143,7 +143,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Reset Highscores:" textFill="WHITE">
+                        <Label styleClass="default-text" text="%competitions.discord_competition_edit.reset_highscores" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -163,12 +163,12 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="The reset is required in case your highscore is already higher than the others. A backup will be automatically created before the subscription is created." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%competitions.subscription_add.the_reset_is_required_in_case_your_highscore" wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>
                         </HBox>
-                        <Label prefWidth="183.0" text="Highscore Reset Available:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label prefWidth="183.0" text="%competitions.discord_competition_join.highscore_reset_available" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -189,10 +189,10 @@
          <bottom>
             <BorderPane fx:id="validationContainer" BorderPane.alignment="TOP_LEFT">
                <top>
-                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="Label" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationTitle" alignment="TOP_LEFT" text="%competitions.discord_competition_edit.label" BorderPane.alignment="TOP_LEFT" />
                </top>
                <bottom>
-                  <Label fx:id="validationDescription" text="Label" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="validationDescription" text="%competitions.discord_competition_edit.label" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -209,12 +209,12 @@
          <top>
             <VBox styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
-                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="Rules" />
-                  <Label styleClass="default-text" text="• Subscriptions are created by the ROM name of a table (manually or dynamically)." />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="• Subscriptions have no end date and no winner." />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="• Other players may join (subscribe) their bot to these channel." />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="• New highscores will only be posted to the competitions channel if your Discord bot has your initials." />
-                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="• New highscores will be submitted a few seconds after you exited the table through PinUP Popper." />
+                  <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="%competitions.discord_competition_edit.rules" />
+                  <Label styleClass="default-text" text="%competitions.subscription_add.subscriptions_are_created_by_the_rom_name_of" />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.subscription_add.subscriptions_have_no_end_date_and_no_winner" />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.subscription_add.other_players_may_join_subscribe_their_bot_to" />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" />
                </children>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

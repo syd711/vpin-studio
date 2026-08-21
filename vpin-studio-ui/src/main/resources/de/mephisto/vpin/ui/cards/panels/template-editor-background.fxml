@@ -25,7 +25,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="Background Settings" />
+            <Label text="%cards.template_editor_background.background_settings" />
          </left>
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -38,7 +38,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Toggle background visibility" />
+                        <Tooltip text="%cards.template_editor_background.toggle_background_visibility" />
                      </tooltip>
                   </Button>
                   <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -49,7 +49,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Lock these properties for custom templates." />
+                        <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                      </tooltip>
                   </ToggleButton>
                </children>
@@ -62,7 +62,7 @@
          <content>
             <VBox styleClass="accordion-container">
                <children>
-                  <RadioButton fx:id="coloredBackgroundRadio" mnemonicParsing="false" text="Solid Background" textFill="WHITE">
+                  <RadioButton fx:id="coloredBackgroundRadio" mnemonicParsing="false" text="%cards.template_editor_background.solid_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -72,7 +72,7 @@
                   </RadioButton>
                   <VBox fx:id="coloredBackgroundPane" spacing="6.0">
                      <children>
-                        <Label text="Color:" textFill="WHITE">
+                        <Label text="%cards.template_editor_background.color" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -82,7 +82,7 @@
                      </children>
                   </VBox>
 
-                  <RadioButton fx:id="defaultBackgroundRadio" mnemonicParsing="false" text="Default Background" textFill="WHITE">
+                  <RadioButton fx:id="defaultBackgroundRadio" mnemonicParsing="false" text="%cards.template_editor_background.default_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -90,7 +90,7 @@
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </RadioButton>
-                  <Label styleClass="checkbox-description" text="Preview for selected game" />
+                  <Label styleClass="checkbox-description" text="%cards.template_editor_background.preview_for_selected_game" />
                   <VBox styleClass="accordion-container">
                      <children>
                         <BorderPane styleClass="media-parent">
@@ -107,7 +107,7 @@
                            <top>
                               <ToolBar BorderPane.alignment="CENTER">
                                  <items>
-                                    <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
+                                    <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="%backups.backup_upload.upload" textFill="WHITE">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                        </graphic>
@@ -115,7 +115,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
+                                    <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="%cards.template_editor_background.view">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
@@ -123,7 +123,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
+                                    <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="%cards.template_editor_background.reset" textFill="#ff3333">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -153,7 +153,7 @@
                      </padding>
                   </VBox>
 
-                  <RadioButton fx:id="fallbackBackgroundRadio" mnemonicParsing="false" text="Fallback Background" textFill="WHITE">
+                  <RadioButton fx:id="fallbackBackgroundRadio" mnemonicParsing="false" text="%cards.template_editor_background.fallback_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -163,7 +163,7 @@
                   </RadioButton>
                   <VBox fx:id="fallbackBackgroundPane" spacing="6.0">
                      <children>
-                        <Label text="Fallback Background Image:" textFill="WHITE">
+                        <Label text="%cards.template_editor_background.fallback_background_image" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -185,7 +185,7 @@
                      </children>
                   </VBox>
 
-                  <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
+                  <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="%cards.template_editor_background.grayscale_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -194,7 +194,7 @@
                      </VBox.margin>
                   </CheckBox>
 
-                  <Label text="Alpha Percentage:" textFill="WHITE">
+                  <Label text="%cards.template_editor_background.alpha_percentage" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -208,7 +208,7 @@
                      </VBox.margin>
                   </Slider>
 
-                  <Label text="Brighten Background:" textFill="WHITE">
+                  <Label text="%cards.template_editor_background.brighten_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -222,7 +222,7 @@
                      </VBox.margin>
                   </Slider>
 
-                  <Label text="Darken Background:" textFill="WHITE">
+                  <Label text="%cards.template_editor_background.darken_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -236,7 +236,7 @@
                      </VBox.margin>
                   </Slider>
 
-                  <Label text="Blur Background:" textFill="WHITE">
+                  <Label text="%cards.template_editor_background.blur_background" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

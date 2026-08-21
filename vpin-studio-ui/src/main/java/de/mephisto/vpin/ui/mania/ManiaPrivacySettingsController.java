@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ManiaPrivacySettingsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaPrivacySettingsController.class);
@@ -66,7 +67,7 @@ public class ManiaPrivacySettingsController implements Initializable {
   private ManiaSettings settings;
 
   private void showSyncPrompt() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Cabinet", "You privacy settings have been changed. Do you wish to synchronize you cabinet data with the VPin Mania services?", "The data is send anonymously and will help to rank table by popularity.", "Synchronize Data");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize_cabinet"), Messages.get("dialog.you_privacy_settings_have_been_changed_do"), Messages.get("dialog.the_data_is_send_anonymously_and_will"), Messages.get("dialog.synchronize_data"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ManiaHelper.runScoreSynchronization(false);
     }
@@ -222,15 +223,16 @@ public class ManiaPrivacySettingsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(CabinetRowPanelController.class.getResource("cabinet-row-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Pane node = loader.load();
       CabinetRowPanelController friendController = loader.getController();
       friendController.setData(this, maniaClient.getCabinetClient().getDefaultCabinetCached());
       playersBox.getChildren().add(node);
     }
     catch (Exception e) {
-      LOG.error("Error loading cabinet player data: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.error_loading_cabinet_player_data") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error loading cabinet player data: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_loading_cabinet_player_data") + e.getMessage());
       });
     }
   }

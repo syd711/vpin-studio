@@ -28,6 +28,7 @@ import java.util.function.Function;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
 import static de.mephisto.vpin.ui.util.FrontendUtil.addPercentIntegerValidation;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class LayerEditorFrameController extends LayerEditorBaseController implements Initializable {
 
@@ -87,7 +88,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
         }
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_image_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
       }
     }
   }
