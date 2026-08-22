@@ -209,7 +209,7 @@
                      <left>
                               <VBox BorderPane.alignment="CENTER">
                                   <children>
-                                    <GridPane hgap="3.0" vgap="3.0">
+                                    <GridPane hgap="6.0" vgap="3.0">
                                         <columnConstraints>
                                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -462,7 +462,7 @@
                                               <Insets top="12.0" />
                                           </VBox.margin>
                                       </ToolBar>
-                                      <GridPane>
+                                      <GridPane hgap="6.0" vgap="3.0">
                                           <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" />
                                               <ColumnConstraints hgrow="SOMETIMES" />
@@ -539,7 +539,7 @@
                                               </Button>
                                           </items>
                                       </ToolBar>
-                                      <GridPane vgap="3.0">
+                                      <GridPane hgap="6.0" vgap="3.0">
                                           <columnConstraints>
                                               <ColumnConstraints hgrow="SOMETIMES" />
                                               <ColumnConstraints hgrow="SOMETIMES" />

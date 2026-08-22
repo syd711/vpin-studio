@@ -51,7 +51,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <bottom>
-                  <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
+                  <GridPane hgap="6.0" vgap="3.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" />
                       <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
@@ -67,7 +67,7 @@
                      <children>
 
                         <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backglass.res_generator.display_options" GridPane.rowIndex="0" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                            <children>
                               <RadioButton fx:id="radioStretchBackglass" mnemonicParsing="false" prefWidth="170.0" text="%backglass.res_generator.stretch_backglass" textFill="WHITE">
                                  <font>
@@ -118,7 +118,7 @@
                               </Button>
                            </children>
                         </StackPane>                
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
