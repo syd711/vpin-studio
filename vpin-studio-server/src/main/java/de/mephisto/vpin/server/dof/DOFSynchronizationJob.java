@@ -32,9 +32,14 @@ public class DOFSynchronizationJob implements Job {
   @NonNull
   private String workingDir;
 
+  // Resolved eagerly in the constructor, which always runs on the HTTP request thread.
+  // execute() runs later on the async job-worker thread, where RequestContextHolder is empty.
+  private final Locale locale;
+
   public DOFSynchronizationJob(@NonNull DOFSettings dofSettings, @NonNull String workingDir) {
     this.settings = dofSettings;
     this.workingDir = workingDir;
+    this.locale = resolveLocale();
   }
 
   @Override
@@ -62,7 +67,7 @@ public class DOFSynchronizationJob implements Job {
             return;
           }
           LOG.info("Extracting DOF config folder {}", targetFolder.getAbsolutePath());
-          result.setStatus(ServerMessages.get("dof.sync.status", resolveLocale(), settings.getInstallationPath()));
+          result.setStatus(ServerMessages.get("dof.sync.status", locale, settings.getInstallationPath()));
           RarUtil.unrar(zipFile, targetFolder);
         }
       }

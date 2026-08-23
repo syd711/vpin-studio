@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -720,20 +722,21 @@ public class ClientSettingsPreferencesController implements Initializable {
    * informational restart hint label.
    */
   private void initLanguageChooser() {
-    // Display names shown in the combo-box
-    String english = Messages.get("pref.client.language.english");
-    String german  = Messages.get("pref.client.language.german");
+    // Language tags to display names shown in the combo-box, in display order
+    LinkedHashMap<String, String> languagesByTag = new LinkedHashMap<>();
+    languagesByTag.put("en", Messages.get("pref.client.language.english"));
+    languagesByTag.put("pt", Messages.get("pref.client.language.portuguese"));
+    languagesByTag.put("es", Messages.get("pref.client.language.spanish"));
+    languagesByTag.put("de", Messages.get("pref.client.language.german"));
+    languagesByTag.put("fr", Messages.get("pref.client.language.french"));
+    languagesByTag.put("it", Messages.get("pref.client.language.italian"));
 
-    languageComboBox.setItems(FXCollections.observableArrayList(english, german));
+    languageComboBox.setItems(FXCollections.observableArrayList(languagesByTag.values()));
 
     // Restore current selection from stored preference
     String storedLang = uiSettings.getLanguage();
-    if ("de".equalsIgnoreCase(storedLang)) {
-      languageComboBox.getSelectionModel().select(german);
-    }
-    else {
-      languageComboBox.getSelectionModel().select(english);
-    }
+    String selectedDisplayName = languagesByTag.getOrDefault(storedLang == null ? null : storedLang.toLowerCase(), languagesByTag.get("en"));
+    languageComboBox.getSelectionModel().select(selectedDisplayName);
 
     // Keep the hint hidden initially; show it only after the user makes a change
     languageRestartHint.setManaged(false);
@@ -743,8 +746,11 @@ public class ClientSettingsPreferencesController implements Initializable {
       if (newVal == null || newVal.equals(oldVal)) {
         return;
       }
-      boolean isDe = newVal.equals(german);
-      String langTag = isDe ? "de" : "en";
+      String langTag = languagesByTag.entrySet().stream()
+          .filter(entry -> entry.getValue().equals(newVal))
+          .map(Map.Entry::getKey)
+          .findFirst()
+          .orElse("en");
       uiSettings.setLanguage(langTag);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);

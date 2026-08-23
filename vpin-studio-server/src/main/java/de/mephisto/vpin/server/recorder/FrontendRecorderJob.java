@@ -33,12 +33,17 @@ public class FrontendRecorderJob implements Job {
   // currently recording game
   GameRecorder gameRecorder;
 
+  // Resolved eagerly in the constructor, which always runs on the HTTP request thread.
+  // execute() runs later on the async job-worker thread, where RequestContextHolder is empty.
+  final Locale locale;
+
   public FrontendRecorderJob(RecorderService recorderService, RecorderSettings settings,
                              RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
     this.recorderService = recorderService;
     this.recorderSettings = settings;
     this.recordingDataSummary = recordingDataSummary;
     this.recordingScreens = recordingScreens;
+    this.locale = resolveLocale();
   }
 
   @Override
@@ -72,7 +77,7 @@ public class FrontendRecorderJob implements Job {
         NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", resolveLocale()));
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", locale));
         if (!jobDescriptor.isCancelled() && !frontend.startFrontendRecording()) {
           jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
           jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
@@ -85,7 +90,7 @@ public class FrontendRecorderJob implements Job {
         updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
         try {
-          jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", resolveLocale(), game.getGameDisplayName()));
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", locale, game.getGameDisplayName()));
           if (!jobDescriptor.isCancelled() && !frontend.startGameRecording(game)) {
             jobDescriptor.setError("Recording cancelled, the game could not be launched.");
             jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
@@ -104,7 +109,7 @@ public class FrontendRecorderJob implements Job {
             secondToWait--;
           }
 
-          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", resolveLocale(), game.getGameDisplayName()));
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", locale, game.getGameDisplayName()));
 
           //create the game recorder which includes all screens
           gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));

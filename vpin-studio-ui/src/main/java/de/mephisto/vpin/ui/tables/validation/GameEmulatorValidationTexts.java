@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.validation;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -38,33 +39,33 @@ public class GameEmulatorValidationTexts {
     int code = state.getCode();
     switch (code) {
       case CODE_NO_INSTALLATION_DIRECTORY: {
-        label = "The emulator has no or an invalid launch folder set.";
-        text = "Fix the configuration by setting a valid launch folder.";
+        label = Messages.get("validation.emulator.no_installation_directory.label");
+        text = Messages.get("validation.emulator.no_installation_directory.text");
         break;
       }
       case CODE_NO_GAMES_FOLDER: {
-        label = "The emulator has no or an invalid games folder set.";
-        text = "Fix the configuration by setting a valid games folder.";
+        label = Messages.get("validation.emulator.no_games_folder.label");
+        text = Messages.get("validation.emulator.no_games_folder.text");
         break;
       }
       case CODE_NO_GAME_EXTENSION: {
-        label = "The emulator has no game extensions suffix set.";
-        text = "Fix the configuration by setting the extension type of the games.";
+        label = Messages.get("validation.emulator.no_game_extension.label");
+        text = Messages.get("validation.emulator.no_game_extension.text");
         break;
       }
       case CODE_INVALID_ROMS_FOLDER: {
-        label = "The ROMs folder is invalid.";
-        text = "Fix the configuration by setting a valid ROMs folder.";
+        label = Messages.get("validation.emulator.invalid_roms_folder.label");
+        text = Messages.get("validation.emulator.invalid_roms_folder.text");
         break;
       }
       case CODE_INVALID_MEDIA_FOLDER: {
-        label = "The media folder is invalid.";
-        text = "Fix the configuration by setting or creating a valid media folder.";
+        label = Messages.get("validation.emulator.invalid_media_folder.label");
+        text = Messages.get("validation.emulator.invalid_media_folder.text");
         break;
       }
       case CODE_NO_GAMES_FOUND: {
-        label = "No games found.";
-        text = "No matching games have been found for the selected games folder and file extension.";
+        label = Messages.get("validation.emulator.no_games_found.label");
+        text = Messages.get("validation.emulator.no_games_found.text");
         break;
       }
       default: {

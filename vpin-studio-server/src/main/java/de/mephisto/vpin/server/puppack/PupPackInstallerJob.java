@@ -29,6 +29,10 @@ public class PupPackInstallerJob implements Job {
 
   private final boolean async;
 
+  // Resolved eagerly in the constructor, which always runs on the HTTP request thread.
+  // execute() runs later on the async job-worker thread, where RequestContextHolder is empty.
+  private final Locale locale;
+
   public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String pupPackFolderInArchive, @NonNull String rom, boolean async) {
     this.pupPacksService = pupPacksService;
     this.pupTmpArchive = pupTmpArchive;
@@ -36,6 +40,7 @@ public class PupPackInstallerJob implements Job {
     this.pupPackFolderInArchive = pupPackFolderInArchive;
     this.rom = rom;
     this.async = async;
+    this.locale = resolveLocale();
   }
 
   @Override
@@ -47,7 +52,7 @@ public class PupPackInstallerJob implements Job {
       public boolean unzipping(String name, int index, int total) {
         double progress = (double) (100 * index / total) / 100;
         result.setProgress(progress);
-        result.setStatus(ServerMessages.get("puppack.install.status", resolveLocale(), index, total));
+        result.setStatus(ServerMessages.get("puppack.install.status", locale, index, total));
 
         boolean cancelled = result.isCancelled();
         return !cancelled;

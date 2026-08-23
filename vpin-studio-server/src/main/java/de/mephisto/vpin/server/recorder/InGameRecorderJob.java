@@ -16,9 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import de.mephisto.vpin.server.util.ServerMessages;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 public class InGameRecorderJob extends FrontendRecorderJob implements Job {
@@ -54,10 +51,10 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         }
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", resolveLocale()));
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", locale));
 
         try {
-          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", resolveLocale(), game.getGameDisplayName()));
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", locale, game.getGameDisplayName()));
 
           //create the game recorder which includes all screens
           gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));
@@ -132,19 +129,6 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
       Thread.sleep(300);
     }
     return false;
-  }
-
-  private Locale resolveLocale() {
-    try {
-      ServletRequestAttributes attrs =
-          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-      if (attrs != null) {
-        String lang = attrs.getRequest().getHeader("Accept-Language");
-        return ServerMessages.parseLocale(lang);
-      }
-    }
-    catch (Exception ignored) {}
-    return Locale.ENGLISH;
   }
 
 }

@@ -111,6 +111,14 @@ public class Messages {
     switch (lang.toLowerCase()) {
       case "de":
         return Locale.GERMAN;
+      case "fr":
+        return Locale.FRENCH;
+      case "it":
+        return Locale.ITALIAN;
+      case "es":
+        return new Locale("es");
+      case "pt":
+        return new Locale("pt");
       default:
         return Locale.ENGLISH;
     }

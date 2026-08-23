@@ -15,10 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import de.mephisto.vpin.server.util.ServerMessages;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.Locale;
 
 public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
@@ -67,14 +63,14 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_emulator", resolveLocale()));
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_emulator", locale));
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
-        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", resolveLocale(), game.getGameDisplayName()));
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", locale, game.getGameDisplayName()));
 
         recorderService.launchGame(game, recorderSettings);
 
@@ -86,12 +82,12 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         }
 
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled() || secondToWait <= 0) {
-          jobDescriptor.setStatus(ServerMessages.get("recorder.status.timeout", resolveLocale()));
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.timeout", locale));
           break;
         }
         updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
 
-        jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", resolveLocale(), game.getGameDisplayName()));
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", locale, game.getGameDisplayName()));
 
         //create the game recorder which includes all screens
         gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingScreens);
@@ -127,19 +123,6 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
     FrontendConnector frontend = recorderService.getFrontendConnector();
     frontend.killFrontend();
     super.cancel(jobDescriptor);
-  }
-
-  private Locale resolveLocale() {
-    try {
-      ServletRequestAttributes attrs =
-          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-      if (attrs != null) {
-        String lang = attrs.getRequest().getHeader("Accept-Language");
-        return ServerMessages.parseLocale(lang);
-      }
-    }
-    catch (Exception ignored) {}
-    return Locale.ENGLISH;
   }
 
 }
