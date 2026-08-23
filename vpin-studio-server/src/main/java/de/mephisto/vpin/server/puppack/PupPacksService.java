@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.system.VidUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -31,10 +32,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 import de.mephisto.vpin.server.util.ServerMessages;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Locale;
 
 @Service
@@ -115,6 +118,11 @@ public class PupPacksService implements InitializingBean {
     }
     if (!StringUtils.isEmpty(game.getTableName()) && pupPackCache.containsKey(game.getTableName().toLowerCase())) {
       return pupPackCache.get(game.getTableName().toLowerCase());
+    }
+
+    String fileName = FilenameUtils.getBaseName(game.getGameFileName());
+    if (pupPackCache.containsKey(fileName.toLowerCase())) {
+      return pupPackCache.get(fileName.toLowerCase());
     }
     return null;
   }
@@ -371,7 +379,8 @@ public class PupPacksService implements InitializingBean {
         return ServerMessages.parseLocale(lang);
       }
     }
-    catch (Exception ignored) {}
+    catch (Exception ignored) {
+    }
     return Locale.ENGLISH;
   }
 

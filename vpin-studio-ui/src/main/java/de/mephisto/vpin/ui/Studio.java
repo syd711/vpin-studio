@@ -107,6 +107,13 @@ public class Studio extends Application {
     Platform.setImplicitExit(false);
 
     // Initialize i18n locale from local settings BEFORE any UI or FXMLLoader usage
+    if (StringUtils.isBlank(LocalUISettings.getString(LocalUISettings.LANGUAGE))) {
+      // no language configured yet: fall back to the system locale, but only if a matching translation exists
+      String systemLanguage = Locale.getDefault().getLanguage();
+      if (Messages.resolveLocale(systemLanguage).getLanguage().equalsIgnoreCase(systemLanguage)) {
+        Messages.setLanguage(systemLanguage);
+      }
+    }
     Messages.reload();
     RestClient.setLocale(Messages.getLocale());
 

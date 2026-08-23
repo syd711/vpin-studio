@@ -104,7 +104,7 @@ public class Messages {
 
   // -------------------------------------------------------
 
-  private static Locale resolveLocale(String lang) {
+  public static Locale resolveLocale(String lang) {
     if (StringUtils.isBlank(lang)) {
       return Locale.ENGLISH;
     }
