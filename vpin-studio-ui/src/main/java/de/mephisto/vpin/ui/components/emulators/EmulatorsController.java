@@ -382,7 +382,7 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
       }
 
             emulatorNameLabel.setText(emulator.getName());
-            emulatorIdLabel.setText("(ID #" + emulator.getId() + ")");
+            emulatorIdLabel.setText(Messages.get("components.emulators.emulators.id", emulator.getId()));
 
             enabledCheckbox.setSelected(emulator.isEnabled());
             safeNameField.setText(emulator.getSafeName());
@@ -486,8 +486,8 @@ public class EmulatorsController implements Initializable, PreferenceChangeListe
         descriptionLabel.setVisible(false);
         romsFolderLabel.setVisible(false);
         romsFolderField.setVisible(false);
-        customField1Label.setText("Parameters:");
-        customField2Label.setText("Executable:");
+        customField1Label.setText(Messages.get("components.emulators.emulator_batscript.parameters"));
+        customField2Label.setText(Messages.get("components.emulators.emulator_batscript.executable"));
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));

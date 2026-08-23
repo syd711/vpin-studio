@@ -11,6 +11,7 @@ public class RecordingScreenOptions {
   private boolean recordAudio = false;
   private boolean rotated = false;
   private boolean openGlCommand = false;
+  private boolean nvencCommand = false;
 
   private boolean expertSettingsEnabled = false;
   private String customFfmpegCommand = null;
@@ -21,6 +22,18 @@ public class RecordingScreenOptions {
 
   public void setOpenGlCommand(boolean openGlCommand) {
     this.openGlCommand = openGlCommand;
+  }
+
+  /**
+   * Set by GameRecorder at recording time based on NVIDIA GPU detection and
+   * RecorderSettings.isNvencEnabled() — not a persisted user preference.
+   */
+  public boolean isNvencCommand() {
+    return nvencCommand;
+  }
+
+  public void setNvencCommand(boolean nvencCommand) {
+    this.nvencCommand = nvencCommand;
   }
 
   public boolean isExpertSettingsEnabled() {

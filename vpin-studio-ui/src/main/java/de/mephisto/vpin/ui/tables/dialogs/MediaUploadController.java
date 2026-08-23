@@ -305,7 +305,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     }
 
     if (filterMode != null) {
-      this.uploadBtn.setText("Apply Selection");
+      this.uploadBtn.setText(Messages.get("tables.media_upload.apply_selection"));
       this.tableInfo.setVisible(false);
       this.stage.setTitle("Asset Selector");
     }

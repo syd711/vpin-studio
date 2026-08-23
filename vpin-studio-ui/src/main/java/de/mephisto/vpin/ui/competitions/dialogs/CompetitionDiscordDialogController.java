@@ -257,7 +257,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         && existingCompetition.getDiscordServerId() == this.competition.getDiscordServerId()
         && existingCompetition.getDiscordChannelId() == this.competition.getDiscordChannelId()) {
         validationTitle.setText(Messages.get("competitions.discord_competition_edit.overlapping_competition_found"));
-        validationDescription.setText("The competition " + existingCompetition.getName() + " " + Messages.get("competitions.discord_competition_edit.overlaps_with_this_competition_for_the_given_channel"));
+        validationDescription.setText(Messages.get("competitions.discord_competition_edit.the_competition", existingCompetition.getName()) + Messages.get("competitions.discord_competition_edit.overlaps_with_this_competition_for_the_given_channel"));
         return;
       }
 

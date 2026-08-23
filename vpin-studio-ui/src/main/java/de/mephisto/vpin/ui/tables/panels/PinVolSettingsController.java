@@ -135,9 +135,9 @@ public class PinVolSettingsController implements Initializable {
         saveBtn.setVisible(games.isEmpty());
 
         if (games.size() == 1) {
-            tableLabel.setText("PinVol Settings for \"" + games.getFirst().getGameDisplayName() + "\"");
+            tableLabel.setText(Messages.get("tables.pinvol_settings.pinvol_settings_for", games.getFirst().getGameDisplayName()));
         } else {
-            tableLabel.setText("PinVol Settings for " + games.size() + " tables");
+            tableLabel.setText(Messages.get("tables.pinvol_settings.pinvol_settings_for_tables", games.size()));
         }
 
         reload(false);

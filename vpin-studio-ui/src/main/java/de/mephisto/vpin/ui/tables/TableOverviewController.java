@@ -847,7 +847,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         }
         else {
           Frontend frontend = client.getFrontendService().getFrontendCached();
-          this.validationErrorLabel.setText("No tables found");
+          this.validationErrorLabel.setText(Messages.get("tables.table_overview.no_tables_found"));
           this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]" + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
         }
 
@@ -1811,7 +1811,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         dismissBtn.setVisible(false);
 
         setValidationVisible(true);
-        validationErrorLabel.setText("One or more of the selected tables have issues.");
+        validationErrorLabel.setText(Messages.get("tables.table_overview.one_or_more_of_the_selected_tables_have_issues"));
         validationErrorText.setText("");
       }
     }

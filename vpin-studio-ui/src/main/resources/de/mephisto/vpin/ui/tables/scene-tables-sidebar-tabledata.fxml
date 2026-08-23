@@ -718,51 +718,58 @@
         <Insets left="1.0" right="1.0" />
     </padding>
     <top>
-        <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
-            <items>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
-                    <font>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+              <ToolBar fx:id="toolbar">
+                  <items>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                      <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                          <font>
+                              <Font size="14.0" />
+                          </font>
+                          <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                          </graphic>
+                      </Button>
+                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" textFill="WHITE">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%tables.table_data.auto_fill_all">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <font>
                         <Font size="14.0" />
-                    </font>
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                    </graphic>
-                </Button>
-            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" textFill="WHITE">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%tables.table_data.auto_fill_all">
+                     </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                      </graphic>
-                  </MenuItem>
-              </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
-               </graphic>
-            </SplitMenuButton>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" layoutX="238.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
-               </graphic>
-            </Button>
-            </items>
-        </ToolBar>
+                  </SplitMenuButton>
+                  </items>
+              </ToolBar>
+            <ToolBar>
+               <items>
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </items>
+            </ToolBar>
+         </children>
+      </VBox>
     </top>
    <styleClass>
       <String fx:value="accordion-container" />

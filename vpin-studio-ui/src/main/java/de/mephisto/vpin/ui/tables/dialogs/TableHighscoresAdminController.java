@@ -117,7 +117,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
         scoreLabel.setText(raw);
       }
       else {
-        scoreLabel.setText("No score selected.");
+        scoreLabel.setText(Messages.get("tables.table_highscores_admin.no_score_selected"));
       }
     });
   }
@@ -141,7 +141,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
       this.backupList.getSelectionModel().select(0);
     }
     else {
-      scoreLabel.setText("No backups found.");
+      scoreLabel.setText(Messages.get("tables.table_highscores_admin.no_backups_found"));
     }
   }
 

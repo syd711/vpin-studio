@@ -202,7 +202,7 @@
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="83.0" prefHeight="0.0" prefWidth="70.0" text="%competitions.discord_competition_edit.end_date" GridPane.rowIndex="3">
+                                                        <Label layoutX="10.0" layoutY="83.0" text="%competitions.discord_competition_edit.end_date" GridPane.rowIndex="3">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -228,12 +228,12 @@
                                                                 <Font size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="116.0" prefHeight="20.0" prefWidth="113.0" text="%competitions.discord_competition_edit.score_limit" GridPane.rowIndex="4">
+                                                        <Label layoutX="10.0" layoutY="116.0" text="%competitions.discord_competition_edit.score_limit" GridPane.rowIndex="4">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>
                                                         </Label>
-                                                        <Label layoutX="10.0" layoutY="150.0" prefHeight="20.0" prefWidth="113.0" text="%competitions.discord_competition_edit.score_validation" GridPane.rowIndex="5">
+                                                        <Label layoutX="10.0" layoutY="150.0" text="%competitions.discord_competition_edit.score_validation" GridPane.rowIndex="5">
                                                             <font>
                                                                 <Font name="System Bold" size="14.0" />
                                                             </font>

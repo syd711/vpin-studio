@@ -117,10 +117,10 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
   public void setData(List<VPXZDescriptorRepresentation> descriptors) {
     this.descriptors = descriptors;
     if (descriptors.size() == 1) {
-      this.titleLabel.setText("Download \"" + descriptors.getFirst().getFilename() + "\"");
+      this.titleLabel.setText(Messages.get("vpxz.vpxz_download_dialog.download_title", descriptors.getFirst().getFilename()));
     }
     else {
-      this.titleLabel.setText("Download " + descriptors.size() + " files");
+      this.titleLabel.setText(Messages.get("vpxz.vpxz_download_dialog.download_files", descriptors.size()));
     }
   }
 }

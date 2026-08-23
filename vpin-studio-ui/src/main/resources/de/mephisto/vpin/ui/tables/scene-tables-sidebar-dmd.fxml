@@ -111,12 +111,12 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
+                  <Label prefWidth="550.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
+                  <Label layoutX="10.0" layoutY="42.0" prefWidth="550.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />

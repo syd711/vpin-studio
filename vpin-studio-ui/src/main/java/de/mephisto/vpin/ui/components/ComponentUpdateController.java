@@ -74,7 +74,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       EventManager.getInstance().notify3rdPartyVersionUpdate(type);
     }
     else {
-      textArea.setText("Check failed. See log for details.");
+      textArea.setText(Messages.get("components.component_update_panel.check_failed_see_log_for_details"));
     }
   }
 
@@ -117,7 +117,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
           setText(log.toString());
         }
         else {
-          textArea.setText("Check failed. See log for details.");
+          textArea.setText(Messages.get("components.component_update_panel.check_failed_see_log_for_details"));
         }
 
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
@@ -166,7 +166,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       }
       catch (Exception ex) {
         LOG.error("Failed to run component update: " + ex.getMessage(), ex);
-        textArea.setText("Action failed: " + ex.getMessage());
+        textArea.setText(Messages.get("components.component_update_panel.action_failed", ex.getMessage()));
       }
     });
   }
@@ -191,7 +191,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     releasesCombo.setDisable(component.getReleases().isEmpty());
 
     if(localInstallOnly && !client.getSystemService().isLocal()) {
-      installBtn.setText("Start Installation (on cabinet only)");
+      installBtn.setText(Messages.get("components.component_update_panel.start_installation_on_cabinet_only"));
     }
 
     checkBtn.setVisible(component.isInstalled());

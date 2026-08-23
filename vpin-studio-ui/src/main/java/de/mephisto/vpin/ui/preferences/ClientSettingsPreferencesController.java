@@ -793,16 +793,16 @@ public class ClientSettingsPreferencesController implements Initializable {
 
       String startsWith = OSUtil.isWindows() ? "\\\\" : OSUtil.isMac() ? "smb://" : null;
       if (startsWith == null) {
-        winNetworkShareStatusLabel.setText("Network path is not supported on this OS.");
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.not_supported"));
       }
       else if (!newValue.startsWith(startsWith)) {
-        winNetworkShareStatusLabel.setText("Network path must begin with " + startsWith + ".");
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.must_begin_with", startsWith));
       }
       else if (path == null) {
-        winNetworkShareStatusLabel.setText("No matching path with VPX installation found, using test folder \"" + networkShareTestPath + "\"");
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.no_matching_path", networkShareTestPath));
       }
       else {
-        winNetworkShareStatusLabel.setText("Test Folder: " + path);
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.test_folder", path));
         winNetworkShareTestBtn.setDisable(false);
       }
     });

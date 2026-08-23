@@ -46,12 +46,12 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
+                  <Label prefWidth="550.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
+                  <Label layoutX="10.0" layoutY="42.0" prefWidth="550.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
@@ -367,70 +367,78 @@
         </VBox>
     </center>
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-               </graphic>
-            </Button>
-            <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-               </graphic>
-            </Button>
-            <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_editor" textFill="WHITE">
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                  <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </items>
+            </ToolBar>
+            <ToolBar>
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_screen_tweaker">
+                  <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_editor" textFill="WHITE">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_screen_tweaker">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                      </graphic>
-                  </MenuItem>
+                  </SplitMenuButton>
+                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="%pref.webhook_set.enabled" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.a_pup_pack_can_only_be_disabled_here" wrapText="true" />
+                     </tooltip>
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                  </Label>
               </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
-               </graphic>
-            </SplitMenuButton>
-            <Separator layoutX="196.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-            <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" onAction="#onPupPackEnable" text="%pref.webhook_set.enabled" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <Label textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip prefWidth="300.0" text="%tables.tables_sidebar_pup_pack.a_pup_pack_can_only_be_disabled_here" wrapText="true" />
-               </tooltip>
-               <padding>
-                  <Insets left="3.0" />
-               </padding>
-            </Label>
-         </items>
-      </ToolBar>
+            </ToolBar>
+         </children>
+      </VBox>
    </top>
    <padding>
       <Insets left="1.0" right="1.0" />

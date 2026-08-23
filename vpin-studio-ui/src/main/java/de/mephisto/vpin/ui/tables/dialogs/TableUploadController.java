@@ -476,15 +476,15 @@ public class TableUploadController implements Initializable, DialogController {
       return;
     }
 
-    assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection"));
     assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
       assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
-        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
+        assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_asset", uploaderAnalysis.getExclusions().size()));
       }
       else {
-        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded assets)");
+        assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_assets", uploaderAnalysis.getExclusions().size()));
       }
     }
 
@@ -503,44 +503,44 @@ public class TableUploadController implements Initializable, DialogController {
     assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null);
 
 
-    assetCfgLabel.setText("- .cfg File");
+    assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file"));
     if (assetCfgLabel.isVisible()) {
-      assetCfgLabel.setText("- .cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
+      assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.CFG)));
     }
 
-    assetDmdLabel.setText("- DMD Pack");
+    assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack"));
     if (assetDmdLabel.isVisible()) {
-      assetDmdLabel.setText("- DMD Pack (" + uploaderAnalysis.getDMDPath() + ")");
+      assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack_named", uploaderAnalysis.getDMDPath()));
     }
 
-    assetNvRamLabel.setText("- .nv File");
+    assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file"));
     if (assetNvRamLabel.isVisible()) {
-      assetNvRamLabel.setText("- .nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
+      assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.NV)));
     }
 
-    assetPupPackLabel.setText("- PUP Pack");
+    assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack"));
     if (assetPupPackLabel.isVisible()) {
-      assetPupPackLabel.setText("- PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
+      assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack_named", uploaderAnalysis.getRomFromPupPack()));
     }
 
-    assetIniLabel.setText("- .ini File");
+    assetIniLabel.setText(Messages.get("tables.table_upload.ini_file"));
     if (assetIniLabel.isVisible()) {
-      assetIniLabel.setText("- .ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
+      assetIniLabel.setText(Messages.get("tables.table_upload.ini_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.INI)));
     }
 
-    assetResLabel.setText("- .res File");
+    assetResLabel.setText(Messages.get("tables.table_upload.res_file"));
     if (assetResLabel.isVisible()) {
-      assetResLabel.setText("- .res File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.RES) + ")");
+      assetResLabel.setText(Messages.get("tables.table_upload.res_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.RES)));
     }
 
-    assetRomLabel.setText("- ROM");
+    assetRomLabel.setText(Messages.get("tables.table_upload.rom"));
     if (assetRomLabel.isVisible()) {
-      assetRomLabel.setText("- ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
+      assetRomLabel.setText(Messages.get("tables.table_upload.rom_named", uploaderAnalysis.getRomFromArchive()));
     }
 
-    assetAltSoundLabel.setText("- ALT Sound");
+    assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
     if (assetAltSoundLabel.isVisible()) {
-      assetAltSoundLabel.setText("- ALT Sound");
+      assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
     }
 
     assetsView.setVisible(assetBackglassLabel.isVisible()
@@ -745,8 +745,8 @@ public class TableUploadController implements Initializable, DialogController {
     this.game = game;
 
     if (game != null) {
-      this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
-      this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
+      this.uploadAndReplaceRadio.setText(Messages.get("tables.table_upload.upload_and_replace_named", game.getGameDisplayName()));
+      this.uploadAndCloneRadio.setText(Messages.get("tables.table_upload.upload_and_clone_named", game.getGameDisplayName()));
 
       GameEmulatorRepresentation gameEmulator = Studio.client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);

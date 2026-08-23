@@ -344,13 +344,13 @@
                               <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%tables.table_upload.the_uploaded_table_will_replace_the_selected_table" textFill="WHITE" wrapText="true" />
                               <VBox>
                                  <children>
-                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_table_filename_when_replacing_table" textFill="WHITE">
+                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_table_filename_when_replacing_table" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
                                     <Label styleClass="checkbox-description" text="%tables.table_upload.if_enabled_the_existing_table_filename_is_kept" textFill="WHITE" wrapText="true" />
-                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_display_name_when_replacing_table" textFill="WHITE">
+                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="%tables.table_upload.keep_existing_display_name_when_replacing_table" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -359,7 +359,7 @@
                                        </VBox.margin>
                                     </CheckBox>
                                     <Label styleClass="checkbox-description" text="%tables.table_upload.if_enabled_the_existing_display_name_of_the" textFill="WHITE" wrapText="true" />
-                                    <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="%tables.table_upload.create_backup_from_existing_table" textFill="WHITE">
+                                    <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="%tables.table_upload.create_backup_from_existing_table" textFill="WHITE" wrapText="true">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

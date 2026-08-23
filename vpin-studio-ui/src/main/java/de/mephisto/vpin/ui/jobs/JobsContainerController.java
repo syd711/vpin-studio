@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.jobs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
@@ -83,7 +84,7 @@ public class JobsContainerController implements Initializable {
     this.progressBar.setProgress(1);
     statusLabel.setText("");
     statusLabel.setGraphic(WidgetFactory.createExclamationIcon());
-    statusLabel.setText("The job has been cancelled.");
+    statusLabel.setText(Messages.get("jobs.jobs_container.job_cancelled"));
   }
 
   public void setData(JobPoller poller, JobDescriptor jobDescriptor) {
@@ -134,7 +135,7 @@ public class JobsContainerController implements Initializable {
         }
         else {
           statusLabel.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR));
-          statusLabel.setText("Job successful.");
+          statusLabel.setText(Messages.get("jobs.jobs_container.job_successful"));
         }
 
         infoLabel.setVisible(false);
@@ -168,7 +169,7 @@ public class JobsContainerController implements Initializable {
     infoLabel.managedProperty().bindBidirectional(infoLabel.visibleProperty());
     progressBar.managedProperty().bindBidirectional(progressBar.visibleProperty());
     progressBar.setVisible(false);
-    statusLabel.setText("Queued...");
+    statusLabel.setText(Messages.get("jobs.jobs_container.queued"));
     statusLabel.getGraphic().setVisible(false);
     openBtn.setDisable(true);
     removeBtn.setDisable(true);

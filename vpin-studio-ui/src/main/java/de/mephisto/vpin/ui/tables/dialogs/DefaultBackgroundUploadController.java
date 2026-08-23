@@ -107,6 +107,6 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
 
   public void setGame(@NonNull GameRepresentation game) {
     this.game = game;
-      this.titleLabel.setText("Select default background for \"" + game.getGameDisplayName() + "\":");
+      this.titleLabel.setText(Messages.get("tables.background_picture_upload.select_default_background_for", game.getGameDisplayName()));
   }
 }

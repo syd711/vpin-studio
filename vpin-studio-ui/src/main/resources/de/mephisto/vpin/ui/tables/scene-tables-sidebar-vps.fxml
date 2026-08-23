@@ -276,7 +276,7 @@
                         <VBox fx:id="multiSelectionPane">
                            <children>
                               <Label styleClass="default-headline" text="%tables.tables_sidebar_highscores.multiple_tables_are_selected" />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%tables.tables_sidebar_highscores.only_supported_actions_are_enabled_for_bulk_operations" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%tables.tables_sidebar_highscores.only_supported_actions_are_enabled_for_bulk_operations" wrapText="true" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -308,75 +308,83 @@
       <Insets left="1.0" right="1.0" />
    </padding>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
-        <items>
-          <Button mnemonicParsing="false" onAction="#onUpdate">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.tables_sidebar_vps.download_the_latest_vps_database_the_database_is" />
-               </tooltip>
-            </Button>
-            <Separator orientation="VERTICAL" />
-            <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.table_data.resets_the_assigned_vps_table_mapping" />
-               </tooltip>
-            </Button>
-            <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="%tables.tables_sidebar_vps.reset_vps_updates_indicators_in_the_overview_for" />
-               </tooltip>
-            </Button>
-            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" textFill="WHITE">
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar>
+              <items>
+                <Button mnemonicParsing="false" onAction="#onUpdate">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <graphic>
-                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
-                           <font>
-                              <Font size="14.0" />
-                           </font></FontIcon>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
                      </graphic>
-                  </MenuItem>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_sidebar_vps.download_the_latest_vps_database_the_database_is" />
+                     </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" />
+                  <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%tables.table_data.resets_the_assigned_vps_table_mapping" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_sidebar_vps.reset_vps_updates_indicators_in_the_overview_for" />
+                     </tooltip>
+                  </Button>
+                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" textFill="WHITE">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
+                           <graphic>
+                              <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </FontIcon>
+                           </graphic>
+                        </MenuItem>
+                     </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%tables.table_data.tries_to_resolve_the_matching_vps_table_and" />
+                     </tooltip>
+                  </SplitMenuButton>
+              </items>
+            </ToolBar>
+            <ToolBar>
+               <items>
+                  <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.filter_existing_assets" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <CheckBox fx:id="autoApplyCheckbox" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="6.0" />
+                     </padding>
+                  </CheckBox>
                </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.table_data.tries_to_resolve_the_matching_vps_table_and" />
-               </tooltip>
-            </SplitMenuButton>
-            <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" prefWidth="6.0" />
-            <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="%tables.tables_sidebar_vps.filter_existing_assets" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="autoApplyCheckbox" layoutX="278.0" layoutY="15.0" mnemonicParsing="false" text="%tables.table_data.auto_apply_data" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <padding>
-                  <Insets left="6.0" />
-               </padding>
-            </CheckBox>
-        </items>
-      </ToolBar>
+            </ToolBar>
+         </children>
+      </VBox>
    </top>
 </BorderPane>

@@ -85,21 +85,21 @@ public class CabinetRowPanelController implements Initializable {
         CommonImageUtil.setClippedImage(avatarView, (int) (image.getWidth() / 2));
 
         if (status.getStatus() != null && status.getStatus().equals(CabinetOnlineStatus.online)) {
-          statusLabel.setText("Online");
+          statusLabel.setText(Messages.get("mania.cabinet_row_panel.online"));
           FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle");
           icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
           statusLabel.setGraphic(icon);
           statusLabel.setStyle(WidgetFactory.OK_STYLE);
           activeGameLabel.setVisible(true);
           if (status.getActiveGame() != null) {
-            activeGameLabel.setText("Playing \"" + status.getActiveGame() + "\"");
+            activeGameLabel.setText(Messages.get("mania.cabinet_row_panel.playing_table", status.getActiveGame()));
           }
           else {
             activeGameLabel.setVisible(false);
           }
         }
         else {
-          statusLabel.setText("Offline");
+          statusLabel.setText(Messages.get("mania.cabinet_row_panel.offline"));
           FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle-outline");
           icon.setIconColor(Paint.valueOf("#FFFFFF"));
           statusLabel.setGraphic(icon);

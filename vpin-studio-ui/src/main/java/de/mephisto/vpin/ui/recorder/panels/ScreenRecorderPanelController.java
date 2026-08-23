@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.recorder.panels;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
@@ -290,7 +291,7 @@ public class ScreenRecorderPanelController implements Initializable {
       return;
     }
 
-    previewTitle.setText("Screen Preview (" + recordingScreen.getWidth() + " x " + recordingScreen.getHeight() + ")");
+    previewTitle.setText(Messages.get("recorder.screen_recorder_panel.screen_preview", recordingScreen.getWidth(), recordingScreen.getHeight()));
 
     preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
     // RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);

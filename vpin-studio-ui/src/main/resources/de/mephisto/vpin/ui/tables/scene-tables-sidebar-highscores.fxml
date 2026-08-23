@@ -246,8 +246,11 @@
                   </VBox>
                   <VBox fx:id="multiSelectionPane">
                      <children>
-                        <Label styleClass="default-headline" text="%tables.tables_sidebar_highscores.multiple_tables_are_selected" />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%tables.tables_sidebar_highscores.only_supported_actions_are_enabled_for_bulk_operations" />
+                        <Label styleClass="default-headline" text="%tables.tables_sidebar_highscores.multiple_tables_are_selected">
+                           <VBox.margin>
+                              <Insets top="3.0" />
+                           </VBox.margin></Label>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%tables.tables_sidebar_highscores.only_supported_actions_are_enabled_for_bulk_operations" wrapText="true" />
                      </children>
                   </VBox>
                       </children>
@@ -259,98 +262,108 @@
         </ScrollPane>
     </center>
     <top>
-        <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="base-component" BorderPane.alignment="CENTER">
-            <items>
-            <SplitMenuButton fx:id="scanHighscoreBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" textFill="WHITE">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="%tables.tables_overview.scan_all">
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+              <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="base-component">
+                  <items>
+                  <SplitMenuButton fx:id="scanHighscoreBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" textFill="WHITE">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="%tables.tables_overview.scan_all">
+                           <graphic>
+                              <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </FontIcon>
+                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <graphic>
-                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18">
-                           <font>
-                              <Font size="14.0" />
-                           </font></FontIcon>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
-                  </MenuItem>
-              </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-               </graphic>
-            </SplitMenuButton>
-            <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
-            <SplitMenuButton fx:id="backupBtn" mnemonicParsing="false" onAction="#onBackup" text="%backups.tables_backup.backup">
+                  </SplitMenuButton>
+                  <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+                  <SplitMenuButton fx:id="backupBtn" mnemonicParsing="false" onAction="#onBackup" text="%backups.tables_backup.backup">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onBackAll" text="%tables.tables_sidebar_highscores.backup_all" />
+                    </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </SplitMenuButton>
+                  <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  </items>
+              </ToolBar>
+            <ToolBar>
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#onBackAll" text="%tables.tables_sidebar_highscores.backup_all" />
+                      <Button fx:id="cardBtn" mnemonicParsing="false" onAction="#onCard" textFill="WHITE">
+                          <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="18" />
+                          </graphic>
+                          <font>
+                              <Font size="14.0" />
+                          </font>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_sidebar_highscores.open_highscore_card_editor" />
+                     </tooltip>
+                      </Button>
+                  <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="%cards.highscore_cards.open_table_on_vpin_mania" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="maniaSyncBtn" mnemonicParsing="false" onAction="#onManiaTableSync" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-right" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_sidebar_highscores.synchronize_table_with_vpin_mania" />
+                     </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+                      <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%tables.table_data_tab_scoredata.reset_highscores" textFill="#ff3333">
+                          <graphic>
+                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-reload-alert" iconSize="18" />
+                          </graphic>
+                          <font>
+                              <Font size="14.0" />
+                          </font>
+                     <tooltip>
+                        <Tooltip text="%tables.table_data_tab_scoredata.reset_highscores" />
+                     </tooltip>
+                      </Button>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+                  <Button fx:id="vpSaveEditBtn" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="%tables.tables_sidebar_highscores.vpreg_stg" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />
+                     </tooltip>
+                  </Button>
               </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </SplitMenuButton>
-            <Button fx:id="restoreBtn" layoutX="183.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
-                <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" textFill="WHITE">
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="18" />
-                    </graphic>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-               <tooltip>
-                  <Tooltip text="%tables.tables_sidebar_highscores.open_highscore_card_editor" />
-               </tooltip>
-                </Button>
-            <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="%cards.highscore_cards.open_table_on_vpin_mania" />
-               </tooltip>
-            </Button>
-            <Button fx:id="maniaSyncBtn" layoutX="314.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTableSync" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-right" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="%tables.tables_sidebar_highscores.synchronize_table_with_vpin_mania" />
-               </tooltip>
-            </Button>
-                <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" textFill="#ff3333">
-                    <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-reload-alert" iconSize="18" />
-                    </graphic>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-               <tooltip>
-                  <Tooltip text="%tables.table_data_tab_scoredata.reset_highscores" />
-               </tooltip>
-                </Button>
-            <Button fx:id="vpSaveEditBtn" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="%tables.tables_sidebar_highscores.vpreg_stg" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />
-               </tooltip>
-            </Button>
-            </items>
-        </ToolBar>
+            </ToolBar>
+         </children>
+      </VBox>
     </top>
     <padding>
         <Insets left="1.0" right="1.0" />

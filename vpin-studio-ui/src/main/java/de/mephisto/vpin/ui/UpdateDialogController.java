@@ -91,16 +91,16 @@ public class UpdateDialogController implements Initializable, DialogController {
     if (!updateClient) {
       clientProgress.setDisable(true);
       clientProgress.setProgress(1f);
-      clientLabel.setText("The client is already running on version " + clientVersion);
+      clientLabel.setText(Messages.get("updater.client_already_running", clientVersion));
     }
     else {
       String os = System.getProperty("os.name");
       boolean winUpdate = os.contains("Windows");
       if (winUpdate) {
-        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP);
+        clientLabel.setText(Messages.get("updater.downloading", String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP));
       }
       else {
-        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_JAR_ZIP);
+        clientLabel.setText(Messages.get("updater.downloading", String.format(Updater.BASE_URL, latestVersion) + Updater.UI_JAR_ZIP));
       }
     }
 
@@ -109,12 +109,12 @@ public class UpdateDialogController implements Initializable, DialogController {
       serverProgress.setProgress(1f);
       remoteClientProgress.setDisable(true);
       remoteClientProgress.setProgress(1f);
-      remoteClientLabel.setText("The remote client is already running on version " + serverVersion);
-      serverLabel.setText("The server is already running on version " + serverVersion);
+      remoteClientLabel.setText(Messages.get("updater.remote_client_already_running", serverVersion));
+      serverLabel.setText(Messages.get("updater.server_already_running", serverVersion));
     }
     else {
-      serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.SERVER_ZIP);
-      remoteClientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP);
+      serverLabel.setText(Messages.get("updater.downloading", String.format(Updater.BASE_URL, latestVersion) + Updater.SERVER_ZIP));
+      remoteClientLabel.setText(Messages.get("updater.downloading", String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP));
     }
 
     //execute updates
@@ -174,7 +174,7 @@ public class UpdateDialogController implements Initializable, DialogController {
               }
             }
             Platform.runLater(() -> {
-              serverLabel.setText("Restarting Server");
+              serverLabel.setText(Messages.get("updater.restarting_server"));
               serverProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 
@@ -196,7 +196,7 @@ public class UpdateDialogController implements Initializable, DialogController {
 
             Platform.runLater(() -> {
               String updatedVersion = client.getSystemService().getVersion();
-              serverLabel.setText("Update successful, server is running on version " + updatedVersion);
+              serverLabel.setText(Messages.get("updater.server_update_successful", updatedVersion));
               serverProgress.setProgress(1f);
 
               LOG.info("Server updated finished to " + updatedVersion);
@@ -245,17 +245,17 @@ public class UpdateDialogController implements Initializable, DialogController {
               }
             }
             Platform.runLater(() -> {
-              remoteClientLabel.setText("Installing Remote Client Update");
+              remoteClientLabel.setText(Messages.get("updater.installing_remote_client_update"));
               remoteClientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 
             boolean result = client.getSystemService().installRemoteClientUpdate();
             Platform.runLater(() -> {
               if (result) {
-                remoteClientLabel.setText("Update successful, the remote client has been updated to " + newServerVersion);
+                remoteClientLabel.setText(Messages.get("updater.remote_client_update_successful", newServerVersion));
               }
               else {
-                remoteClientLabel.setText("Update failed, check server log for details.");
+                remoteClientLabel.setText(Messages.get("updater.update_failed"));
               }
 
               remoteClientProgress.setProgress(1f);
@@ -327,7 +327,7 @@ public class UpdateDialogController implements Initializable, DialogController {
               }
             }
             Platform.runLater(() -> {
-              clientLabel.setText("Installing Update");
+              clientLabel.setText(Messages.get("updater.installing_update"));
               clientProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 

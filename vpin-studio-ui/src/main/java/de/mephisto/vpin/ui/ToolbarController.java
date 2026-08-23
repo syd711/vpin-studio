@@ -210,11 +210,11 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   private void refreshMuteState() {
     if (muted) {
-      muteSystemEntry.setText("Unmute System");
+      muteSystemEntry.setText(Messages.get("toolbar.unmute_system"));
       muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
     }
     else {
-      muteSystemEntry.setText("Mute System");
+      muteSystemEntry.setText(Messages.get("toolbar.mute_system"));
       muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-mute"));
     }
   }
@@ -307,14 +307,14 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         if (updateClient) {
           Platform.runLater(() -> {
             newVersion = latestVersion;
-            updateBtn.setText("Version " + newVersion + " available");
+            updateBtn.setText(Messages.get("toolbar.version_available", newVersion));
             updateBtn.setVisible(true);
           });
         }
         else if (updateServer) {
           Platform.runLater(() -> {
             newVersion = latestVersion;
-            updateBtn.setText("Version " + newVersion + " available");
+            updateBtn.setText(Messages.get("toolbar.version_available", newVersion));
             updateBtn.setVisible(updateServer);
           });
         }
@@ -354,7 +354,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null && client.getSystemService().isLocal());
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
-    frontendMenuItem.setText("Restart " + frontend.getName());
+    frontendMenuItem.setText(Messages.get("toolbar.restart_frontend_name", frontend.getName()));
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
 

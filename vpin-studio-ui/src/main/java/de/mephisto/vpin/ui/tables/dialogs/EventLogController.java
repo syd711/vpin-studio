@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import javafx.event.ActionEvent;
@@ -44,7 +45,7 @@ public class EventLogController implements Initializable, DialogController {
   public void setGame(GameRepresentation game) {
     this.game = game;
     this.textArea.setText(game.getComment());
-    this.titleLabel.setText("Event Log for \"" + game.getGameDisplayName() + "\"");
+    this.titleLabel.setText(Messages.get("tables.event_log.event_log_for", game.getGameDisplayName()));
 
     HighscoreEventLog eventLog = client.getGameService().getEventLog(game.getId());
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,7 +34,7 @@ public class SplashScreenController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    versionLabel.setText("Version " + Studio.getVersion());
+    versionLabel.setText(Messages.get("studio.splash.version", Studio.getVersion()));
     factLabel.setText("");
     try {
       int i = ThreadLocalRandom.current().nextInt(1, FACT_COUNT + 1);

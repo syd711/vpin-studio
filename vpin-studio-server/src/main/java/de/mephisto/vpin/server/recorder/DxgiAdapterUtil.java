@@ -177,6 +177,32 @@ public class DxgiAdapterUtil {
     return result;
   }
 
+  private static volatile Boolean nvidiaGpuPresent;
+
+  /**
+   * Whether any enumerated GPU adapter is an NVIDIA card, used to decide whether ffmpeg
+   * can use the h264_nvenc hardware encoder instead of software libx264. The result is
+   * cached since the installed hardware can't change while the server is running.
+   */
+  public static boolean isNvidiaGpuPresent() {
+    Boolean result = nvidiaGpuPresent;
+    if (result == null) {
+      synchronized (DxgiAdapterUtil.class) {
+        result = nvidiaGpuPresent;
+        if (result == null) {
+          List<AdapterInfo> adapters = getAdaptersViaDxgi();
+          if (adapters.isEmpty()) {
+            adapters = getAdaptersViaWMI();
+          }
+          result = adapters.stream().anyMatch(a -> a.name != null && a.name.toUpperCase().contains("NVIDIA"));
+          nvidiaGpuPresent = result;
+          LOG.info("NVIDIA GPU detection result: {} ({})", result, adapters);
+        }
+      }
+    }
+    return result;
+  }
+
   /**
    * Returns the adapter index for the given name (case-insensitive).
    * Tries DXGI first, falls back to WMI. Returns 0 if not found.

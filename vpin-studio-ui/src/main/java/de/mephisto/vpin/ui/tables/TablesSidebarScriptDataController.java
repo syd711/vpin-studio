@@ -61,9 +61,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Label labelLastModified;
 
   @FXML
-  private Button inspectBtn;
-
-  @FXML
   private SplitMenuButton editBtn;
 
   @FXML
@@ -252,36 +249,35 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
 
-  @FXML
-  private void onInspect() {
-    if (game.isPresent()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.inspect_script_of_table") + game.get().getGameDisplayName() + "\"?",
-        Messages.get("dialog.this_will_extract_the_table_script_into"),
-        Messages.get("dialog.it_will_be_opened_afterwards_in_a"));
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
-        if (!resultModel.getResults().isEmpty()) {
-          File file = (File) resultModel.getResults().getFirst();
-          try {
-            Desktop.getDesktop().open(file);
-          } catch (IOException e) {
-            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.failed_to_open_script_file") + file.getAbsolutePath() + ": " + e.getMessage());
-          }
-        }
-        else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.script_extraction_failed_check_log_for_details"));
-        }
-      }
-    }
-  }
+//  @FXML
+//  private void onInspect() {
+//    if (game.isPresent()) {
+//      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.inspect_script_of_table") + game.get().getGameDisplayName() + "\"?",
+//        Messages.get("dialog.this_will_extract_the_table_script_into"),
+//        Messages.get("dialog.it_will_be_opened_afterwards_in_a"));
+//      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+//
+//        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
+//        if (!resultModel.getResults().isEmpty()) {
+//          File file = (File) resultModel.getResults().getFirst();
+//          try {
+//            Desktop.getDesktop().open(file);
+//          } catch (IOException e) {
+//            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.failed_to_open_script_file") + file.getAbsolutePath() + ": " + e.getMessage());
+//          }
+//        }
+//        else {
+//          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.script_extraction_failed_check_log_for_details"));
+//        }
+//      }
+//    }
+//  }
 
   public void refreshView(Optional<GameRepresentation> g) {
     tableInfo = null;
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
 
     boolean gameFileAvailable = g.isPresent() && g.get().getGameFilePath() != null;
-    inspectBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     editBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     scanBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     viewScreenshotBtn.setDisable(g.isEmpty());

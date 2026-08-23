@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
@@ -26,7 +27,7 @@ public class ROMUploadController extends BaseUploadController {
     super.setSelectedEmulator(emulator);
 
     if(emulator != null && emulator.isMameEmulator()) {
-      descriptionLabel.setText("The select game for this ROM will be uploaded into the \"roms\" folder of MAME.");
+      descriptionLabel.setText(Messages.get("tables.rom_upload.the_select_game_for_this_rom_will_be"));
     }
   }
 }

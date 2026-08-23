@@ -401,17 +401,6 @@
                   <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />
                </tooltip>
             </Button>
-            <Button fx:id="inspectBtn" mnemonicParsing="false" onAction="#onInspect" text="%tables.tables_sidebar_scriptdata.inspect_script" textFill="WHITE" visible="false">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="bi-file-earmark-arrow-up" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%tables.tables_sidebar_highscores.open_the_table_script_for_the_selected_table" />
-               </tooltip>
-            </Button>
          </items>
       </ToolBar>
    </top>

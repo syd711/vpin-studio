@@ -172,8 +172,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
           emptyDataBox.setVisible(false);
           dataRoot.setVisible(false);
           errorBox.setVisible(true);
-          errorTitle.setText("The database is currently locked.");
-          errorText.setText("Exit [Frontend] to modify playlists.");
+          errorTitle.setText(Messages.get("tables.tables_sidebar_playlists.the_database_is_currently_locked"));
+          errorText.setText(Messages.get("tables.tables_sidebar_playlists.exit_frontend_to_modify_playlists"));
 
           FrontendUtil.replaceName(errorText, frontend);
           return;

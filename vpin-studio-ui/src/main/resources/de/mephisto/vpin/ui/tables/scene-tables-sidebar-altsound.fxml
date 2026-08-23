@@ -14,7 +14,8 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="altSoundRoot" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarAltSoundController">
+<BorderPane fx:id="altSoundRoot" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarAltSoundController">
     <center>
       <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -135,11 +136,11 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find">
+                  <Label prefWidth="550.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.open_the_visual_pinball_spreadsheet_section_to_find" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin></Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" />
+                  <Label layoutX="10.0" layoutY="42.0" prefWidth="550.0" styleClass="preference-description" text="%tables.tables_sidebar_altcolor.upload_downloaded_resources_here" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets bottom="24.0" left="12.0" right="12.0" top="12.0" />
@@ -149,52 +150,59 @@
       </VBox>
     </center>
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-               </graphic>
-            </Button>
-            <Separator orientation="VERTICAL" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-               </graphic>
-            </Button>
-            <Separator layoutX="204.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-          <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="restoreBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" iconSize="18" />
-               </graphic>
-            </Button>
-        </items>
-      </ToolBar>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+              </items>
+            </ToolBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                <Button fx:id="altSoundBtn" mnemonicParsing="false" onAction="#onAltSoundEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </items>
+            </ToolBar>
+         </children>
+      </VBox>
    </top>
    <padding>
       <Insets left="1.0" right="1.0" />

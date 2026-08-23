@@ -661,40 +661,40 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
         if (tableData.isBackgroundAvailable()) {
-          resolutionLabel.setText("Loading...");
+          resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.loading"));
           JFXFuture.supplyAsync(() -> new Image(client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename(), true), false))
               .thenAcceptLater(imageToLoad -> {
                 thumbnailImage.setImage(imageToLoad);
                 if (tableSettings.isHideB2SBackglass()) {
-                  resolutionLabel.setText("Backglass Hidden.");
+                  resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.backglass_hidden"));
                   JFXHelper.setImageDisabled(thumbnailImage, true);
                 }
                 else {
-                  resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
+                  resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.resolution", (int) imageToLoad.getWidth(), (int) imageToLoad.getHeight()));
                 }
               });
         }
         else {
           thumbnailImage.setImage(null);
-          resolutionLabel.setText("Failed to read image data.");
+          resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.failed_to_read_image_data"));
         }
 
         if (tableData.isDmdImageAvailable()) {
-          dmdResolutionLabel.setText("Loading...");
+          dmdResolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.loading"));
           JFXFuture.supplyAsync(() -> new Image(client.getBackglassServiceClient().getDirectB2sDmdUrl(tableData.getEmulatorId(), tableData.getFilename()), false))
               .thenAcceptLater(image -> {
                 dmdThumbnailImage.setImage(image);
                 if (tableSettings.isHideB2SDMD()) {
-                  dmdResolutionLabel.setText("B2S DMD Hidden");
+                  dmdResolutionLabel.setText(Messages.get("backglass.directb2s_admin_filter.b2s_dmd_hidden"));
                   JFXHelper.setImageDisabled(dmdThumbnailImage, true);
                 }
                 else {
-                  dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+                  dmdResolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.resolution", (int) image.getWidth(), (int) image.getHeight()));
                 }
               });
         }
         else {
-          dmdResolutionLabel.setText("No DMD background available.");
+          dmdResolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.no_dmd_background_available"));
         }
 
         if (tableSettings != null) {

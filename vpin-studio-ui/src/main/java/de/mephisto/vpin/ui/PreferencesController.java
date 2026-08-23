@@ -536,7 +536,7 @@ public class PreferencesController extends SettingsSceneController implements In
     webhooksBtn.setVisible(Features.WEBHOOKS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
-    versionLink.setText("VPin Studio Version " + Studio.getVersion());
+    versionLink.setText(Messages.get("studio.vpin_studio_version", Studio.getVersion()));
     versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
     hostLabel.setText(System.getProperty("os.name"));
 

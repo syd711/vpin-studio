@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.dropins;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.NavigationController;
@@ -114,7 +115,7 @@ public class DropInContainerController implements Initializable {
     filenameLabel.setText(file.getName());
     filenameLabel.setStyle("-fx-font-size: 15px;-fx-font-weight: bold;");
     filenameLabel.setTooltip(new Tooltip(file.getName()));
-    sizeLabel.setText("" + FileUtils.readableFileSize(file.length()) + ", created " + DateUtil.formatDateTime(new Date(file.lastModified())));
+    sizeLabel.setText(Messages.get("dropins.dropin_container.size_created", FileUtils.readableFileSize(file.length()), DateUtil.formatDateTime(new Date(file.lastModified()))));
     sizeLabel.setStyle("-fx-font-size: 13px");
 
     String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();

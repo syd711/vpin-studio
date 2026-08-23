@@ -223,7 +223,7 @@ public class DMDPositionController extends BasePrevNextController {
   }
 
   private void clearGame() {
-    titleLabel.setText("loading...");
+    titleLabel.setText(Messages.get("tables.dmd_position.loading"));
     romLabel.setText("--");
     tablePositionLabel.setText("");
     DMDTypeCombo.setValue(null);
@@ -678,13 +678,13 @@ public class DMDPositionController extends BasePrevNextController {
     if (storename != null) {
 
       if (baseMgrController != null) {
-        saveLocallyBtn.setText("Save for " + storename);
+        saveLocallyBtn.setText(Messages.get("tables.dmd_position.save_for", storename));
         saveLocallyBtn.setVisible(true);
 
-        saveCloseLocallyBtn.setText("Save & Close for " + storename);
+        saveCloseLocallyBtn.setText(Messages.get("tables.dmd_position.save_close_for", storename));
       }
       else {
-        saveCloseLocallyBtn.setText("Save for " + storename);
+        saveCloseLocallyBtn.setText(Messages.get("tables.dmd_position.save_for", storename));
       }
       saveCloseLocallyBtn.setVisible(true);
     }

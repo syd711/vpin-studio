@@ -184,7 +184,7 @@ public class TablesSidebarAltColorController implements Initializable {
     filesLabel.setText("-");
     folderLabel.setText("-");
     folderLabel.setTooltip(null);
-    restoreBtn.setText("Restore");
+    restoreBtn.setText(Messages.get("dialog.restore"));
     errorBox.setVisible(false);
 
     if (g.isPresent()) {
@@ -195,7 +195,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
       restoreBtn.setDisable(altColor.getBackedUpFiles().isEmpty());
       if (!altColor.getBackedUpFiles().isEmpty()) {
-        restoreBtn.setText("Restore (" + altColor.getBackedUpFiles().size() + ")");
+        restoreBtn.setText(Messages.get("dialog.restore_named", altColor.getBackedUpFiles().size()));
       }
 
       dataBox.setVisible(altColorAvailable);

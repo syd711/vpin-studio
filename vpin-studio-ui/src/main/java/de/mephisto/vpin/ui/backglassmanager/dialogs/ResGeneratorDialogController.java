@@ -464,7 +464,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       }
     }
     else {
-      screenResLabel.setText("No screen res file found, please run B2S_ScreenResIdentifier.exe");
+      screenResLabel.setText(Messages.get("backglass.res_generator.no_screen_res_file_found_please_run"));
       backglassDimensionLabel.setText("--");
     }
   }

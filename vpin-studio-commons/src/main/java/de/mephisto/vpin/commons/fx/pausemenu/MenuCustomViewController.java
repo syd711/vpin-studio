@@ -102,14 +102,14 @@ public class MenuCustomViewController implements Initializable {
       //boolean valid = scoreValidation.isValidScoreConfiguration();
       if (!StringUtils.isEmpty(game.getRom())) {
         if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
-          scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (supported)");
+          scoreInfoLabel.setText(Messages.get("pausemenu.menu_custom_view.rom_supported", game.getRom()));
         }
         else {
           if (scoreValidation.getHighscoreFilenameStatus() != null) {
-            scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getHighscoreFilenameStatus() + ")");
+            scoreInfoLabel.setText(Messages.get("pausemenu.menu_custom_view.rom_status", game.getRom(), scoreValidation.getHighscoreFilenameStatus()));
           }
           else {
-            scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getRomStatus() + ")");
+            scoreInfoLabel.setText(Messages.get("pausemenu.menu_custom_view.rom_status", game.getRom(), scoreValidation.getRomStatus()));
           }
         }
       }

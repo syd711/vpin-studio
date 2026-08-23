@@ -136,7 +136,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     popperDataMappingFields.setVisible(Features.FIELDS_EXTENDED);
     launchOnExitOption.setVisible(Features.MEDIA_ENABLED);
-    launchFrontendCheckbox.setText("Launch " + frontend.getName() + " on maintenance exit.");
+    launchFrontendCheckbox.setText(Messages.get("pref.settings_server.launch_on_maintenance_exit", frontend.getName()));
 
     OffsetDateTime startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(startupTime));

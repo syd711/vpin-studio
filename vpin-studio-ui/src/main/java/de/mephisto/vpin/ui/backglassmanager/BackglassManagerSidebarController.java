@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.backglassmanager;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -792,7 +793,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       gameLaunchBtn.setDisable(false);
     }
     else if (gameAvailable) {
-      gameFilenameLabel.setText("(Available, but not installed)");
+      gameFilenameLabel.setText(Messages.get("backglass.directb2s_sidebar.available_but_not_installed"));
     }
   }
 
@@ -975,17 +976,17 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             thumbnailImagePane.setCenter(thumbnailImage);
             downloadBackglassBtn.setDisable(false);
             if (tableSettings.isHideB2SBackglass()) {
-              resolutionLabel.setText("Backglass Hidden.");
+              resolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.backglass_hidden_2"));
               JFXHelper.setImageDisabled(thumbnailImage, true);
             }
             else {
-              resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
+              resolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.resolution", (int) _thumbnail.getWidth(), (int) _thumbnail.getHeight()));
             }
           }
           else {
             thumbnailImage.setImage(null);
             thumbnailImagePane.setCenter(null);
-            resolutionLabel.setText("No Image data available.");
+            resolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.no_image_data_available"));
           }
         });
 
@@ -1009,18 +1010,18 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             downloadDMDBtn.setDisable(false);
             deleteDMDBtn.setDisable(false);
             if (tableSettings.isHideB2SDMD()) {
-              dmdResolutionLabel.setText("B2S DMD Hidden");
+              dmdResolutionLabel.setText(Messages.get("backglass.directb2s_admin_filter.b2s_dmd_hidden"));
               JFXHelper.setImageDisabled(dmdThumbnailImage, true);
             } else {
-              dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
+              dmdResolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.resolution", (int) _dmdThumbnail.getWidth(), (int) _dmdThumbnail.getHeight()));
             }
             fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
           }
           else {
             dmdThumbnailImage.setImage(null);
             dmdThumbnailImagePane.setCenter(null);
-            dmdResolutionLabel.setText("No DMD background available.");
-            fullDmdLabel.setText("No");
+            dmdResolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.no_dmd_background_available"));
+            fullDmdLabel.setText(Messages.get("common.no"));
           }
         });
   }

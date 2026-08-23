@@ -101,7 +101,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
             rawDirectB2SImage.setImage(image);
             if (image.getWidth() > 300) {
               openDefaultPictureBtn.setVisible(true);
-              resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+              resolutionLabel.setText(Messages.get("cards.template_editor_background.resolution", (int) image.getWidth(), (int) image.getHeight()));
             }
           }
         });

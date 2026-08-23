@@ -131,7 +131,7 @@ public class ServerUpdatePreProcessorUI {
                     int pct = Math.min((int) (progress * 100), 99);
                     Platform.runLater(() -> {
                       progressBar.setProgress(Math.min(progress, 0.99));
-                      statusLabel.setText("Downloading " + targetFile.getName() + "... " + pct + "%");
+                      statusLabel.setText(ServerMessages.get("server.update.downloading", java.util.Locale.getDefault(), targetFile.getName(), pct));
                     });
                   }
                 }
@@ -139,7 +139,7 @@ public class ServerUpdatePreProcessorUI {
                 if (extractFolder != null) {
                   Platform.runLater(() -> {
                     progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                    statusLabel.setText("Installing " + targetFile.getName() + "...");
+                    statusLabel.setText(ServerMessages.get("server.update.installing", java.util.Locale.getDefault(), targetFile.getName()));
                   });
 
                   ZipUtil.unzip(targetFile, extractFolder, null);

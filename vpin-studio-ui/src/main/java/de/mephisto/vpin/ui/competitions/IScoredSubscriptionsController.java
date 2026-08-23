@@ -473,13 +473,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching VPS table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_vps_table_found"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       if (value.getMatches().isEmpty()) {
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_table_found"));
         fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
@@ -487,11 +487,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (value.competition == null) {
         fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
         if (value.iScoredGameRoom.isSynchronize()) {
-          fallbackLabel.setText("This game is not synchronized yet.");
+          fallbackLabel.setText(Messages.get("competitions.competitions_iscored.this_game_is_not_synchronized_yet"));
           fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
         }
         else {
-          fallbackLabel.setText("Table match found, but not subscribed yet.");
+          fallbackLabel.setText(Messages.get("competitions.competitions_iscored.table_match_found_but_not_subscribed_yet"));
           fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
         }
 
@@ -517,20 +517,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       fallbackLabel.setStyle(getLabelCss(value));
       if (value.game.isAllVersionsEnabled()) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("All versions allowed.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.all_versions_allowed"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("No matching VPS Table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_vps_table_found_2"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("All versions allowed.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.all_versions_allowed"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -80,15 +81,15 @@ public class AssetFilterPanelController implements Initializable {
       return;
     }
 
-    assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection"));
     assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
       assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
-        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
+        assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_asset", uploaderAnalysis.getExclusions().size()));
       }
       else {
-        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded assets)");
+        assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_assets", uploaderAnalysis.getExclusions().size()));
       }
     }
 
@@ -108,49 +109,49 @@ public class AssetFilterPanelController implements Initializable {
     assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null);
 
 
-    assetCfgLabel.setText("- .cfg File");
+    assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file"));
     if (assetCfgLabel.isVisible()) {
-      assetCfgLabel.setText("- .cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
+      assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.CFG)));
     }
 
-    assetDmdLabel.setText("- DMD Pack");
+    assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack"));
     if (assetDmdLabel.isVisible()) {
-      assetDmdLabel.setText("- DMD Pack (" + uploaderAnalysis.getDMDPath() + ")");
+      assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack_named", uploaderAnalysis.getDMDPath()));
     }
 
-    assetNvRamLabel.setText("- .nv File");
+    assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file"));
     if (assetNvRamLabel.isVisible()) {
-      assetNvRamLabel.setText("- .nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
+      assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.NV)));
     }
 
-    assetPupPackLabel.setText("- PUP Pack");
+    assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack"));
     if (assetPupPackLabel.isVisible()) {
-      assetPupPackLabel.setText("- PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
+      assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack_named", uploaderAnalysis.getRomFromPupPack()));
     }
 
-    assetIniLabel.setText("- .ini File");
+    assetIniLabel.setText(Messages.get("tables.table_upload.ini_file"));
     if (assetIniLabel.isVisible()) {
-      assetIniLabel.setText("- .ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
+      assetIniLabel.setText(Messages.get("tables.table_upload.ini_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.INI)));
     }
 
-    assetPatchFileLabel.setText("- .dif File");
+    assetPatchFileLabel.setText(Messages.get("tables.asset_filter_panel.dif_file"));
     if (assetPatchFileLabel.isVisible()) {
-      assetPatchFileLabel.setText("- .dif File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.DIF) + ")");
+      assetPatchFileLabel.setText(Messages.get("tables.asset_filter_panel.dif_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.DIF)));
     }
 
-    assetResLabel.setText("- .res File");
+    assetResLabel.setText(Messages.get("tables.table_upload.res_file"));
     if (assetResLabel.isVisible()) {
-      assetResLabel.setText("- .res File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.RES) + ")");
+      assetResLabel.setText(Messages.get("tables.table_upload.res_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.RES)));
     }
 
-    assetRomLabel.setText("- ROM");
+    assetRomLabel.setText(Messages.get("tables.table_upload.rom"));
     if (assetRomLabel.isVisible()) {
-      assetRomLabel.setText("- ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
+      assetRomLabel.setText(Messages.get("tables.table_upload.rom_named", uploaderAnalysis.getRomFromArchive()));
     }
 
-    assetAltSoundLabel.setText("- ALT Sound");
+    assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
     if (assetAltSoundLabel.isVisible()) {
-      assetAltSoundLabel.setText("- ALT Sound");
+      assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
     }
 
     assetsView.setVisible(assetBackglassLabel.isVisible()

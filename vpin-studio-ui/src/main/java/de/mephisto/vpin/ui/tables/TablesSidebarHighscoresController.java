@@ -324,7 +324,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
     backupBtn.setDisable(games.isEmpty());
     restoreBtn.setDisable(games.size() != 1);
-    restoreBtn.setText("Restore");
+    restoreBtn.setText(Messages.get("dialog.restore"));
 
     cardsEnabledCheckbox.setDisable(true);
 
@@ -373,7 +373,7 @@ public class TablesSidebarHighscoresController implements Initializable {
         highscoreBackups = Studio.client.getHigscoreBackupService().get(game.getId());
         backupCountLabel.setText(String.valueOf(highscoreBackups.size()));
         if (!highscoreBackups.isEmpty()) {
-          restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
+          restoreBtn.setText(Messages.get("dialog.restore_named", highscoreBackups.size()));
         }
       });
 
@@ -383,14 +383,14 @@ public class TablesSidebarHighscoresController implements Initializable {
       statusPane.setVisible(!hasHighscore);
       infoContainer.setVisible(!hasHighscore && gameEmulator.isVpxEmulator());
 
-      statusLabel.setText("Unknown status.");
+      statusLabel.setText(Messages.get("tables.tables_sidebar_highscores.unknown_status"));
       if (metadata != null) {
         if (!hasHighscore) {
           if (!StringUtils.isEmpty(metadata.getStatus())) {
             statusLabel.setText(metadata.getStatus());
           }
           else {
-            statusLabel.setText("Unknown status.");
+            statusLabel.setText(Messages.get("tables.tables_sidebar_highscores.unknown_status"));
           }
         }
 

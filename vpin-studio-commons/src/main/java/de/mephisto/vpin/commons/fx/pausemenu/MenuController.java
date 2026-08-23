@@ -145,7 +145,7 @@ public class MenuController implements Initializable {
   }
 
   private void enterMenuItemSelection() {
-    blueLabel.setText("Loading...");
+    blueLabel.setText(Messages.get("pausemenu.menu.loading"));
     bluePanel.setOpacity(1);
     loadMask.setOpacity(0);
     JFXFuture.supplyAsync(() -> {

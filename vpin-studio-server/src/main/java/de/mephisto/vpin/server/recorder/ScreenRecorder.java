@@ -125,7 +125,16 @@ public class ScreenRecorder {
   }
 
   private String getDefaultCommand(RecordingScreenOptions options) {
-    String command = options.isOpenGlCommand() ? Ffmpeg.OPEN_GL_COMMAND : Ffmpeg.DEFAULT_COMMAND;
+    String command;
+    if (options.isOpenGlCommand()) {
+      command = Ffmpeg.OPEN_GL_COMMAND;
+    }
+    else if (options.isNvencCommand()) {
+      command = Ffmpeg.DEFAULT_COMMAND_NVENC;
+    }
+    else {
+      command = Ffmpeg.DEFAULT_COMMAND;
+    }
     if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
       command = command + " -vf \"transpose=2,transpose=2\"";
     }

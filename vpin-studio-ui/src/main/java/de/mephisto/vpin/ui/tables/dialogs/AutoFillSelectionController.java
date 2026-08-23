@@ -225,7 +225,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
     this.vpsTableId = vpsTableId;
     this.vpsVersionId = vpsVersionId;
     if (this.games.size() > 1) {
-      autoFillBtn.setText("Auto-Fill All");
+      autoFillBtn.setText(Messages.get("tables.table_data.auto_fill_all"));
     }
   }
 

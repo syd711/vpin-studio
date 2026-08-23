@@ -178,18 +178,18 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         if ((ms / 1000) < 3600) {
           countdownTile.setTitle("Remaining Minutes");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "mm", false));
-          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+          countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
         }
         else {
           countdownTile.setTitle("Remaining Hours");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "HH", false));
-          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+          countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
         }
       }
       else {
         countdownTile.setTitle("Remaining Days");
         countdownTile.setDescription(String.valueOf(remainingDays));
-        countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+        countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
       }
 
       if (competition.isActive()) {
@@ -251,22 +251,22 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           if (competition.getType().equals(CompetitionType.DISCORD.name())) {
             DiscordServer discordServer = ServerFX.client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
             if (discordServer != null) {
-              titleLabel.setText("Discord: " + discordServer.getName());
+              titleLabel.setText(Messages.get("widgets.widget_competition.discord", discordServer.getName()));
             }
             else {
-              titleLabel.setText("Discord: - invalid server id -");
+              titleLabel.setText(Messages.get("widgets.widget_competition.discord_invalid_server_id"));
             }
           }
           else {
-            titleLabel.setText("Offline: " + competition.getName());
+            titleLabel.setText(Messages.get("widgets.widget_competition.offline", competition.getName()));
           }
         }
         else {
           if (competitionType.equals(CompetitionType.DISCORD)) {
-            titleLabel.setText("- No Discord Competition Found - ");
+            titleLabel.setText(Messages.get("widgets.widget_competition.no_discord_competition_found"));
           }
           else {
-            titleLabel.setText("- No Offline Competition Found - ");
+            titleLabel.setText(Messages.get("widgets.widget_competition.no_offline_competition_found"));
           }
         }
         viewStack.getChildren().remove(loadingOverlay);

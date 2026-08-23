@@ -510,7 +510,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       }
       else {
         connectionVersionLabel.setText(version.getVersion());
-        connectionStatusLabel.setText("Connected");
+        connectionStatusLabel.setText(Messages.get("vpxz.vpxz.connected"));
         infoContainer.setStyle("-fx-background-color: " + WidgetFactory.OK_DARK_COLOR);
       }
 

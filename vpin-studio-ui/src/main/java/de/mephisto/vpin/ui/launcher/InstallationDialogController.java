@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.launcher;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.Studio;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -176,13 +177,13 @@ public class InstallationDialogController implements Initializable, DialogContro
 
     if (installationFolder == null) {
       validationError.setVisible(true);
-      validationErrorLabel.setText("No frontend installation folder set.");
+      validationErrorLabel.setText(Messages.get("launcher.installer.no_frontend_installation_folder_set"));
       return;
     }
 
     if (!installationFolder.exists()) {
       validationError.setVisible(true);
-      validationErrorLabel.setText("Frontend installation folder does not exist.");
+      validationErrorLabel.setText(Messages.get("launcher.installer.frontend_installation_folder_does_not_exist"));
       return;
     }
 

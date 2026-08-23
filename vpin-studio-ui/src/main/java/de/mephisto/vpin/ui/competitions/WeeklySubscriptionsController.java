@@ -245,7 +245,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching VPS table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_weekly.no_matching_vps_table_found"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
@@ -280,13 +280,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("No matching VPS Table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_weekly.no_matching_vps_table_found_2"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("All versions allowed.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_weekly.all_versions_allowed"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
@@ -325,7 +325,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       durationLabel.setPrefWidth(80);
       durationLabel.getStyleClass().add("default-text");
       durationLabel.setStyle(getLabelCss(value));
-      durationLabel.setText("Duration:");
+      durationLabel.setText(Messages.get("competitions.discord_competition_edit.duration"));
       Label durationValueLabel = new Label();
       durationValueLabel.getStyleClass().add("default-text");
       durationValueLabel.setStyle(getLabelCss(value));
@@ -337,7 +337,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       timeRemainingLabel.setPrefWidth(80);
       timeRemainingLabel.getStyleClass().add("default-text");
       timeRemainingLabel.setStyle(getLabelCss(value));
-      timeRemainingLabel.setText("Remaining:");
+      timeRemainingLabel.setText(Messages.get("competitions.competitions_weekly.remaining"));
       Label timeRemainingValueLabel = new Label();
       timeRemainingValueLabel.getStyleClass().add("default-text");
       timeRemainingValueLabel.setStyle(getLabelCss(value));

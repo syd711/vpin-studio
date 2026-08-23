@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -85,7 +86,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     scoreLabel.setText(score.getFormattedScore());
 
     String date = simpleDateFormat.format(score.getCreatedAt().atZone(ZoneId.systemDefault()));
-    changeDateLabel.setText("Updated: " + date);
+    changeDateLabel.setText(Messages.get("widgets.widget_competition_score_item.updated", date));
 
     InputStream competitionBackground = ServerFX.client.getCompetitionService().getCompetitionBackground(game.getId());
 

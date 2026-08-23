@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.monitor.panels;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
@@ -61,7 +62,7 @@ public class ScreenPanelController implements Initializable {
     this.recorderController = recorderController;
     this.monitorInfo = monitorInfo;
     root.prefWidthProperty().bind(Studio.stage.widthProperty().subtract(960));
-    screenName.setText("Monitor #" + monitorInfo.getId() + " (" + monitorInfo.getWidth() + " x " + monitorInfo.getHeight() + ")");
+    screenName.setText(Messages.get("monitor.screen_monitor_panel.monitor_dimensions", monitorInfo.getId(), monitorInfo.getWidth(), monitorInfo.getHeight()));
     refresh();
   }
 

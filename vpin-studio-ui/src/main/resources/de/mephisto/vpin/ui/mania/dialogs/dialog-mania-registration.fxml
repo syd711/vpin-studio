@@ -48,7 +48,7 @@
                         </Label>
                         <Label styleClass="preference-description" text="%mania.mania_registration.if_you_already_had_registered_a_cabinet_and" />
                         <Label styleClass="preference-description" text="%mania.mania_registration.you_can_select_and_link_it_here_again" />
-                        <GridPane>
+                        <GridPane hgap="6.0" vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="428.0" minWidth="10.0" prefWidth="355.7999755859375" />

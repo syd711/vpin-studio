@@ -262,7 +262,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
    * Called after selection changed and before analysis start, to clean specific fields
    */
   protected void startAnalysis() {
-    this.fileNameField.setText("Analyzing, please wait...");
+    this.fileNameField.setText(Messages.get("tables.base_upload.analyzing_please_wait"));
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);
     this.uploadBtn.setDisable(true);

@@ -23,9 +23,9 @@
                             <content>
                                 <VBox>
                                     <children>
-                                        <GridPane vgap="3.0">
+                                        <GridPane hgap="6.0" vgap="3.0">
                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="157.399951171875" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.80004882812506" minWidth="10.0" prefWidth="444.80004882812506" />
                                             </columnConstraints>
                                             <rowConstraints>
@@ -40,7 +40,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -110,6 +110,9 @@
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
+                                       <GridPane.margin>
+                                          <Insets top="5.0" />
+                                       </GridPane.margin>
                                                 </Label>
                                                 <Label layoutX="10.0" layoutY="198.0" text="%backups.backups_sidebar.category" textFill="WHITE" GridPane.rowIndex="12">
                                                     <font>
@@ -202,7 +205,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label fx:id="tags" layoutX="173.0" layoutY="163.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                                <Label fx:id="tags" layoutX="173.0" layoutY="163.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="11">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -361,9 +364,9 @@
                                                 <Font name="System Bold" size="14.0" />
                                             </font>
                                         </Label>
-                                        <GridPane>
+                                        <GridPane hgap="6.0" vgap="3.0">
                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="185.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="403.20002441406245" />
                                             </columnConstraints>
                                             <rowConstraints>
@@ -455,9 +458,9 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <GridPane hgap="3.0" vgap="3.0">
+                              <GridPane hgap="6.0" vgap="3.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="331.0" minWidth="10.0" prefWidth="185.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="426.0" minWidth="10.0" prefWidth="400.0" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -510,9 +513,9 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <GridPane hgap="3.0" vgap="3.0">
+                              <GridPane hgap="6.0" vgap="3.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="288.0" minWidth="10.0" prefWidth="185.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="429.0" minWidth="10.0" prefWidth="403.0" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -552,9 +555,9 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <GridPane hgap="3.0" vgap="3.0">
+                              <GridPane hgap="6.0" vgap="3.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0" minWidth="10.0" prefWidth="185.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="413.0" minWidth="10.0" prefWidth="407.0" />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -606,9 +609,9 @@
                                                 <Font name="System Bold" size="14.0" />
                                             </font>
                                         </Label>
-                                        <GridPane>
+                                        <GridPane hgap="6.0" vgap="3.0">
                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.4000244140625" minWidth="10.0" prefWidth="183.400048828125" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="365.799951171875" />
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="40.0" />
                                             </columnConstraints>
