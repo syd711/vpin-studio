@@ -188,7 +188,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
           setItems(games);
 
           if (games.isEmpty()) {
-            tableView.setPlaceholder(new Label("No tables found"));
+            tableView.setPlaceholder(new Label(Messages.get("components.doftester.dof_tester.no_tables_found")));
           }
 
           tableView.refresh();

@@ -34,7 +34,7 @@ public class SplashScreenController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    versionLabel.setText(Messages.get("studio.splash.version", Studio.getVersion()));
+    versionLabel.setText(Studio.getVersion());
     factLabel.setText("");
     try {
       int i = ThreadLocalRandom.current().nextInt(1, FACT_COUNT + 1);

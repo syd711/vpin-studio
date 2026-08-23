@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UISettings extends JsonSettings {
+  private String language = "en";
+
   private boolean showPlayerScores = true;
 
   private boolean hideVersions;
@@ -108,6 +110,14 @@ public class UISettings extends JsonSettings {
   private boolean columnTutorial = false;
 
   private LaunchConfiguration launchConfiguration;
+
+  public String getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(String language) {
+    this.language = language;
+  }
 
   public boolean isConfirmDropInMoveToTrash() {
     return confirmDropInMoveToTrash;

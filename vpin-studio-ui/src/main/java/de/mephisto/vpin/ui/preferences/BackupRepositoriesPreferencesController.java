@@ -153,7 +153,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.backup_repositories.no_table_repository_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

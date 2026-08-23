@@ -146,7 +146,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       ComponentSummaryEntryController controller = loader.getController();
 
       if (componentCustomValues.getChildren().isEmpty()) {
-        Label label = new Label("Installation Details");
+        Label label = new Label(Messages.get("components.abstract_component_tab.installation_details"));
         label.getStyleClass().add("preference-subtitle");
         HBox box = new HBox(label);
         box.setAlignment(Pos.CENTER_LEFT);

@@ -182,7 +182,7 @@ public class TablesSidebarMediaController implements Initializable {
           VBox box = new VBox(3);
           box.setAlignment(Pos.CENTER);
           box.getChildren().add(center);
-          Label l = new Label("Backglass available");
+          Label l = new Label(Messages.get("tables.tables_sidebar_media.backglass_available"));
           l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
           box.getChildren().add(l);
           mediaRoot.setCenter(box);
@@ -192,7 +192,7 @@ public class TablesSidebarMediaController implements Initializable {
           VBox box = new VBox(3);
           box.setAlignment(Pos.CENTER);
           box.getChildren().add(center);
-          Label l = new Label("FullDMD available");
+          Label l = new Label(Messages.get("tables.tables_sidebar_media.fulldmd_available"));
           l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
           box.getChildren().add(l);
           mediaRoot.setCenter(box);

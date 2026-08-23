@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
@@ -181,7 +182,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       super.onKeyEvent(event);
     });
 
-    tableView.setPlaceholder(new Label("Empty Playlist"));
+    tableView.setPlaceholder(new Label(Messages.get("playlistmanager.playlist_table.empty_playlist")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<GameRepresentationModel>() {
       @Override

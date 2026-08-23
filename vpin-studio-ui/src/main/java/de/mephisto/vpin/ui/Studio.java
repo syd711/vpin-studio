@@ -340,6 +340,9 @@ public class Studio extends Application {
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
             client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
+            Messages.setLanguage(uiSettings.getLanguage());
+            RestClient.setLocale(Messages.getLocale());
+
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
             if (screenBounds.getWidth() > screenBounds.getHeight()) {

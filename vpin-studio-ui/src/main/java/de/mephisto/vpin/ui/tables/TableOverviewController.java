@@ -919,7 +919,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   private void bindTable() {
-    tableView.setPlaceholder(new Label("No matching games found."));
+    tableView.setPlaceholder(new Label(Messages.get("tables.table_overview.no_matching_games_found")));
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 

@@ -309,7 +309,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
-    tableView.setPlaceholder(new Label("This VPXZ source does not contain any files."));
+    tableView.setPlaceholder(new Label(Messages.get("vpxz.vpxz.no_files_found")));
 
     openFolderButton.setVisible(client.getSystemService().isLocal());
     endSeparator.setVisible(client.getSystemService().isLocal());

@@ -382,7 +382,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
-    tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
+    tableView.setPlaceholder(new Label("         " + Messages.get("competitions.competitions_iscored.no_iscored_subscription_found")));
 
     this.editBtn.setDisable(true);
 
@@ -560,8 +560,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       return new SimpleObjectProperty(fallbackLabel);
     });
 
-    tableView.setPlaceholder(new Label("                          Try iScored subscriptions!\n" +
-        "Create new subscriptions adding game rooms in the iScored preferences."));
+    tableView.setPlaceholder(new Label("                          " + Messages.get("competitions.competitions_iscored.try_iscored_subscriptions")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
@@ -749,11 +748,10 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
 
     if (defaultPlayer == null) {
-      tableView.setPlaceholder(new Label("                                 No default player set!\n" +
-          "Go to the players section and set the default player for this cabinet!"));
+      tableView.setPlaceholder(new Label("                                 " + Messages.get("competitions.competitions_iscored.no_default_player_set")));
     }
     else {
-      tableView.setPlaceholder(new Label("            No iScored subscription found.\nClick the '+' button to create a new one."));
+      tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_iscored.no_iscored_subscription_found")));
     }
 
     if (model.isPresent() && model.get().competition != null) {

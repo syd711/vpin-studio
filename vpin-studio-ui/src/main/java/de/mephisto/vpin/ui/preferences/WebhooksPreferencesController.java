@@ -162,7 +162,7 @@ public class WebhooksPreferencesController implements Initializable {
     startFileBtn.setDisable(!client.getSystemService().isLocal());
     stopFileBtn.setDisable(!client.getSystemService().isLocal());
 
-    tableView.setPlaceholder(new Label("              No webhook sets found.\nAdd a webhook set to connect with other systems."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.webhooks.no_webhook_sets_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

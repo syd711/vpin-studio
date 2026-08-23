@@ -86,7 +86,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.table_asset_sources.no_table_repository_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

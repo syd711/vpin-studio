@@ -176,7 +176,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     item.setContent(box);
     this.dropInsBtn.getItems().addFirst(item);
 
-    Label placeholder = new Label("No drop-in files found");
+    Label placeholder = new Label(Messages.get("dropins.drop_in_manager.no_drop_in_files_found"));
     placeholder.setStyle("-fx-text-fill: #AAAAAA; -fx-font-size: 13px;");
     fileListView = new ListView<>();
     fileListView.setPlaceholder(placeholder);

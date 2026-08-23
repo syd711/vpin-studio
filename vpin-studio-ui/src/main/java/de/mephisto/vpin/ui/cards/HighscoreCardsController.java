@@ -173,7 +173,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           setItems(games);
 
           if (games.isEmpty()) {
-            tableView.setPlaceholder(new Label("No tables found"));
+            tableView.setPlaceholder(new Label(Messages.get("cards.highscore_cards.no_tables_found")));
           }
           templateEditorPane.setVisible(!games.isEmpty());
 

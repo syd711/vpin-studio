@@ -140,7 +140,7 @@ public class TableImportController implements Initializable, DialogController {
     checkBoxes.clear();
     tableBox.getChildren().removeAll(tableBox.getChildren());
 
-    Label loading = new Label("loading...");
+    Label loading = new Label(Messages.get("common.loading"));
     loading.setStyle("-fx-font-size: 14px;");
     tableBox.getChildren().add(loading);
 
@@ -161,7 +161,7 @@ public class TableImportController implements Initializable, DialogController {
           tableBox.getChildren().remove(loading);
 
           if (importableTables.getItems().isEmpty()) {
-            Label label = new Label("No tables found for \"" + emulator.getName() + "\" that have not been imported yet.");
+            Label label = new Label(Messages.get("tables.table_import.no_tables_found_for_emulator", emulator.getName()));
             label.setStyle("-fx-font-size: 14px;");
             tableBox.getChildren().add(label);
           }

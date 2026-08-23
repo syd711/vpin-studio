@@ -242,7 +242,7 @@ public class DiscordBotPreferencesController implements Initializable {
     }
 
     if (allowList.isEmpty()) {
-      Label label = new Label("No users are filtered. All server members can execute bot commands.");
+      Label label = new Label(Messages.get("pref.discord_bot.no_users_filtered"));
       label.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
       allowListPane.getChildren().add(label);
     }

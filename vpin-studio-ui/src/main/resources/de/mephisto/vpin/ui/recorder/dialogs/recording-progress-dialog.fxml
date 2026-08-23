@@ -53,7 +53,7 @@
                         <VBox>
                            <children>
                               <RadioButton fx:id="emulatorRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="%recorder.recording_progress_dialog.emulator_recording" />
-                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.the_tables_will_be_launched_by_their_emulator" textFill="WHITE">
+                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.the_tables_will_be_launched_by_their_emulator" textFill="WHITE" wrapText="true">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
@@ -118,7 +118,7 @@
                                     </Label>
                                  </children>
                               </HBox>
-                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.the_tables_will_be_launched_through_the" textFill="WHITE">
+                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.the_tables_will_be_launched_through_the" textFill="WHITE" wrapText="true">
                                  <VBox.margin>
                                     <Insets top="6.0" />
                                  </VBox.margin>
@@ -129,7 +129,7 @@
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="425.60002441406255" minWidth="10.0" prefWidth="425.60002441406255" />
                                  </columnConstraints>
                               </GridPane>
-                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.frontend_using_the_configured_emulator" textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.frontend_using_the_configured_emulator" textFill="WHITE" wrapText="true" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -150,9 +150,9 @@
                         <Insets />
                      </VBox.margin></Label>
                   <ProgressBar fx:id="progressBar" disable="true" prefWidth="800.0" progress="0.0" />
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="144.8" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="604.0" minWidth="10.0" prefWidth="604.0" />
                      </columnConstraints>
                      <rowConstraints>

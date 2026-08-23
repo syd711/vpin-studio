@@ -238,9 +238,6 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    // ---- Language chooser ----
-    initLanguageChooser();
-
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
     sectionAssets.managedProperty().bindBidirectional(sectionAssets.visibleProperty());
@@ -274,6 +271,9 @@ public class ClientSettingsPreferencesController implements Initializable {
     networkShareTestPath = client.getFrontendService().getFrontend().getInstallationDirectory();
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    // ---- Language chooser ----
+    initLanguageChooser();
 
     // dropin setup
     ToggleGroup toggleGroup = new ToggleGroup();
@@ -716,7 +716,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   /**
    * Populates the language {@link ComboBox} and wires its change listener.
-   * The selected value is persisted in the local settings and triggers an
+   * The selected value is persisted in the server-side UI settings and triggers an
    * informational restart hint label.
    */
   private void initLanguageChooser() {
@@ -727,7 +727,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     languageComboBox.setItems(FXCollections.observableArrayList(english, german));
 
     // Restore current selection from stored preference
-    String storedLang = LocalUISettings.getString(LocalUISettings.LANGUAGE);
+    String storedLang = uiSettings.getLanguage();
     if ("de".equalsIgnoreCase(storedLang)) {
       languageComboBox.getSelectionModel().select(german);
     }
@@ -745,11 +745,13 @@ public class ClientSettingsPreferencesController implements Initializable {
       }
       boolean isDe = newVal.equals(german);
       String langTag = isDe ? "de" : "en";
-      LocalUISettings.saveProperty(LocalUISettings.LANGUAGE, langTag);
+      uiSettings.setLanguage(langTag);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
 
       // Update the REST-client header immediately so future calls already use
       // the new locale (full effect requires restart for FX labels)
-      Messages.reload();
+      Messages.setLanguage(langTag);
       RestClient.setLocale(Messages.getLocale());
 
       // Show restart hint

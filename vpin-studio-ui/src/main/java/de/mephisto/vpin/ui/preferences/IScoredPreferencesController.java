@@ -138,7 +138,7 @@ public class IScoredPreferencesController implements Initializable {
       }
     });
 
-    tableView.setPlaceholder(new Label("              No game rooms found.\nCreate an iScored game room to submit highscores to."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.iscored.no_game_rooms_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

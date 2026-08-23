@@ -264,7 +264,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
-    tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_offline.no_competitions_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -291,7 +291,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       GameRepresentation game = client.getGameService().getGame(value.getGameId());
-      Label label = new Label("- not available anymore -");
+      Label label = new Label(Messages.get("competitions.competitions_offline.not_available_anymore"));
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
@@ -365,8 +365,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       return new SimpleObjectProperty(winner);
     });
 
-    tableView.setPlaceholder(new Label("            Mmmh, not up for a challenge yet?\n" +
-        "Create a new competition by pressing the '+' button."));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_offline.not_up_for_challenge")));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
       refreshView(Optional.ofNullable(newSelection));

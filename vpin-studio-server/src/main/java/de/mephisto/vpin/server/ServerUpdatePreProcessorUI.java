@@ -82,7 +82,7 @@ public class ServerUpdatePreProcessorUI {
       stage.initStyle(StageStyle.UNDECORATED);
       stage.setTitle(ServerMessages.get("server.update.title", java.util.Locale.getDefault()));
 
-      Label titleLabel = new Label("VPin Studio Server Resource Installation");
+      Label titleLabel = new Label(ServerMessages.get("server.update.label_title", java.util.Locale.getDefault()));
       titleLabel.setTextFill(Color.WHITE);
       titleLabel.setFont(Font.font(14));
 
@@ -90,7 +90,7 @@ public class ServerUpdatePreProcessorUI {
       progressBar.setPrefWidth(560);
       progressBar.setPrefHeight(14);
 
-      Label statusLabel = new Label("Downloading " + targetFile.getName() + "...");
+      Label statusLabel = new Label(ServerMessages.get("server.update.downloading", java.util.Locale.getDefault(), targetFile.getName(), 0));
       statusLabel.setTextFill(Color.WHITE);
 
       VBox vbox = new VBox(12, titleLabel, progressBar, statusLabel);

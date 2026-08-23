@@ -238,8 +238,7 @@ public class AltSoundEditorController implements Initializable {
       tableView.refresh();
     });
 
-    tableView.setPlaceholder(new Label("               No matching entries found!\n" +
-        "Adapt the filter criteria to find matching entries."));
+    tableView.setPlaceholder(new Label("               " + Messages.get("tables.editors.altsound.no_matching_entries_found")));
   }
 
   public void setAltSound(GameRepresentation game, AltSound altSound) {

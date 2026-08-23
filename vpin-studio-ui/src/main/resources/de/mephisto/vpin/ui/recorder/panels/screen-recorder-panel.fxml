@@ -28,15 +28,15 @@
          <left>
             <VBox minWidth="330.0" BorderPane.alignment="CENTER">
                <children>
-                  <BorderPane prefWidth="300.0">
+                  <BorderPane>
                      <left>
                         <Label fx:id="screenName" styleClass="default-title" text="-" BorderPane.alignment="CENTER" />
                      </left>
                   </BorderPane>
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.2000732421875" minWidth="10.0" prefWidth="129.60009765625" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.0" minWidth="10.0" prefWidth="166.39990234375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -132,9 +132,9 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <GridPane fx:id="fpsPanel" layoutX="22.0" layoutY="328.0" vgap="3.0">
+                  <GridPane fx:id="fpsPanel" hgap="6.0" layoutX="22.0" layoutY="328.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.599951171875" minWidth="10.0" prefWidth="132.599951171875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="182.20007324218747" minWidth="10.0" prefWidth="167.80004882812497" />
                      </columnConstraints>
                      <rowConstraints>
@@ -149,9 +149,9 @@
                         </CheckBox>
                      </children>
                   </GridPane>
-                  <GridPane fx:id="audioPanel" vgap="3.0">
+                  <GridPane fx:id="audioPanel" hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.599951171875" minWidth="10.0" prefWidth="132.599951171875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="182.20007324218747" minWidth="10.0" prefWidth="167.80004882812497" />
                      </columnConstraints>
                      <rowConstraints>
@@ -169,9 +169,9 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                   </GridPane>
-                  <GridPane fx:id="rotationPanel" vgap="3.0">
+                  <GridPane fx:id="rotationPanel" hgap="6.0" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.599951171875" minWidth="10.0" prefWidth="132.599951171875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="182.20007324218747" minWidth="10.0" prefWidth="167.80004882812497" />
                      </columnConstraints>
                      <rowConstraints>

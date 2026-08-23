@@ -236,7 +236,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("table", "tables", new VpsTablesColumnSorter(this));
-    tableView.setPlaceholder(new Label("The list of VPS tables is shown here."));
+    tableView.setPlaceholder(new Label(Messages.get("vps.vps_tables.info")));
 
     super.loadFilterPanel("scene-vps-tables-filter.fxml");
 

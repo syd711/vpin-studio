@@ -17,7 +17,11 @@ import java.util.ResourceBundle;
  *   de/mephisto/vpin/ui/messages/messages.properties        (English fallback)
  *   de/mephisto/vpin/ui/messages/messages_de.properties     (German)
  * <p>
- * Call {@link #reload()} after the locale preference changes to pick up the new language.
+ * The language preference lives server-side in {@code UISettings}, but that is not known
+ * until the client has connected and fetched it. To render the splash screen and the very
+ * first REST calls in the right language, the last-known language tag is cached locally
+ * (see {@link LocalUISettings#LANGUAGE}) and used until {@link #setLanguage(String)} is
+ * called with the (possibly updated) server-provided value, which refreshes the cache.
  */
 public class Messages {
   private static final Logger LOG = LoggerFactory.getLogger(Messages.class);
@@ -26,18 +30,28 @@ public class Messages {
 
   private static ResourceBundle bundle;
   private static Locale currentLocale;
+  private static String currentLanguageTag = LocalUISettings.getString(LocalUISettings.LANGUAGE);
 
   static {
     reload();
   }
 
   /**
-   * (Re-)loads the resource bundle for the locale stored in local settings.
-   * Falls back to English if no locale is stored or the bundle is not found.
+   * Sets the active language tag (e.g. "en", "de"), caches it locally so the next
+   * startup already knows it before connecting to the server, and reloads the bundle.
+   */
+  public static void setLanguage(String languageTag) {
+    currentLanguageTag = languageTag;
+    LocalUISettings.saveProperty(LocalUISettings.LANGUAGE, languageTag);
+    reload();
+  }
+
+  /**
+   * (Re-)loads the resource bundle for the currently active language.
+   * Falls back to English if no language is set or the bundle is not found.
    */
   public static void reload() {
-    String lang = LocalUISettings.getString(LocalUISettings.LANGUAGE);
-    currentLocale = resolveLocale(lang);
+    currentLocale = resolveLocale(currentLanguageTag);
     Locale.setDefault(currentLocale);
     try {
       bundle = ResourceBundle.getBundle(BUNDLE_BASE, currentLocale);

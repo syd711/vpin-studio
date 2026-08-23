@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.vps.VpsChangeFilter;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
@@ -88,7 +89,7 @@ public class VpsTableColumn extends HBox {
     }
     catch (Exception e) {
       LOG.error("Failed to render VPS table container: " + e.getMessage(), e);
-      this.getChildren().add(new Label("ERROR"));
+      this.getChildren().add(new Label(Messages.get("vps.vps_table_column.render_error")));
     }
   }
 

@@ -137,12 +137,12 @@ public class MenuCustomViewController implements Initializable {
         stats3Col.setAlignment(Pos.CENTER);
 
         if (scores.isEmpty()) {
-          Label noScoresLabel = new Label("No scores found.");
+          Label noScoresLabel = new Label(Messages.get("pausemenu.menu_custom_view.no_scores_found"));
           noScoresLabel.setStyle("-fx-font-size: 20px;-fx-text-fill: #FFFFFF;");
           noScoresLabel.setPadding(new Insets(50, 0, 0, 0));
           stats3Col.getChildren().add(noScoresLabel);
 
-          Label info = new Label("(Note that this list may be filtered.)");
+          Label info = new Label(Messages.get("pausemenu.menu_custom_view.filtered_note"));
           info.setStyle("-fx-font-size:16px;-fx-text-fill: #FFFFFF;");
           stats3Col.getChildren().add(info);
         }

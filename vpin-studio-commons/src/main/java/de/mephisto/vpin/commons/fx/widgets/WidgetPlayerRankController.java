@@ -80,7 +80,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("                     No players listed here?\nCreate players to match their initials with highscores."));
+    tableView.setPlaceholder(new Label("                     " + Messages.get("widgets.widget_player_rank.no_players_placeholder")));
 
     columnRank.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();

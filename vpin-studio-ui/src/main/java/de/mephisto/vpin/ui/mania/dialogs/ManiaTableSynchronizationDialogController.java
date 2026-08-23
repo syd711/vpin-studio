@@ -72,7 +72,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    tableView.setPlaceholder(new Label("No synchronization data found."));
+    tableView.setPlaceholder(new Label(Messages.get("mania.mania_table_synchronization_dialog.no_data_found")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
     statusColumn.setCellValueFactory(cellData -> {

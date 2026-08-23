@@ -91,7 +91,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
         List<ScoreRepresentation> scores = scoreSummary.getScores();
         if (scores.isEmpty()) {
-          Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");
+          Label label = new Label("                            " + Messages.get("widgets.widget_latest_scores.no_highscore_placeholder"));
           label.setPadding(new Insets(80, 0, 0, 100));
           label.getStyleClass().add("preference-description");
 //          scoresPanels.add(label);

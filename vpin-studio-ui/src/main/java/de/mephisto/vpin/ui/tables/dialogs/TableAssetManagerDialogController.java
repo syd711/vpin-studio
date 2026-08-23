@@ -610,14 +610,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         serverAssetsList.refresh();
 
         if (assets.isEmpty()) {
-          serverAssetsList.setPlaceholder(new Label("No matching assets found."));
+          serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.no_matching_assets_found")));
         }
         return;
       }
 
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
-      serverAssetsList.setPlaceholder(new Label("Enter a search term to find assets for this screen and table."));
+      serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.enter_search_term")));
       serverAssetsList.refresh();
     });
   }
@@ -874,8 +874,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("          Press the search button\nto find assets for this screen and table."));
-    assetList.setPlaceholder(new Label("No assets found for this screen and table."));
+    serverAssetsList.setPlaceholder(new Label("          " + Messages.get("tables.table_asset_manager.press_search_button")));
+    assetList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.no_assets_found")));
     assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     assetList.setOnDragDetected(event -> {
       FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
@@ -899,7 +899,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       EventManager.getInstance().addListener(this);
     }
 
-    Label label = new Label("No asset preview activated.");
+    Label label = new Label(Messages.get("tables.table_asset_manager.no_preview_activated"));
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
     serverAssetMediaPane.setCenter(label);
 
@@ -910,7 +910,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         downloadBtn.setVisible(false);
         webPreviewBtn.setVisible(false);
 
-        Label label = new Label("No asset preview activated.");
+        Label label = new Label(Messages.get("tables.table_asset_manager.no_preview_activated"));
         label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
         serverAssetMediaPane.setCenter(label);
 
@@ -938,7 +938,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         if (list.isEmpty()) {
           conversionMenu.setDisable(true);
 
-          Label label = new Label("No media selected");
+          Label label = new Label(Messages.get("tables.table_asset_manager.no_media_selected"));
           label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
           label.setUserData(null);
           mediaPane.setCenter(label);
@@ -1394,7 +1394,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         addToPlaylistBtn.setDisable(true);
 
         serverAssetsList.setItems(FXCollections.emptyObservableList());
-        serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
+        serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.press_search_button_2")));
         serverAssetsList.refresh();
       }
 

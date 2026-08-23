@@ -164,7 +164,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("              No VPXZ repository found.\nAdd a VPXZ repository to manage .vpxz files."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.vpxz_repositories.no_vpxz_repository_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

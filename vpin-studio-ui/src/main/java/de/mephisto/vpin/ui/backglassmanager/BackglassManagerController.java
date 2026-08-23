@@ -322,7 +322,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
 
-    tableView.setPlaceholder(new Label("No backglasses found."));
+    tableView.setPlaceholder(new Label(Messages.get("backglass.directb2s_admin.no_backglasses_found")));
 
     resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
 

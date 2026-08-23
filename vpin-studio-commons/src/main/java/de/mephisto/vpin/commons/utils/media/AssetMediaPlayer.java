@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.scene.control.Label;
 import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
@@ -23,13 +24,13 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
   }
 
   protected Label getErrorLabel() {
-    Label label = new Label("  Media available\n(but not playable)");
+    Label label = new Label("  " + Messages.get("media.asset_media_player.not_playable"));
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
     return label;
   }
 
   protected Label getEncodingNotSupportedLabel() {
-    Label label = new Label("        Media available\n(encoding not supported)");
+    Label label = new Label("        " + Messages.get("media.asset_media_player.not_supported"));
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
     return label;
   }

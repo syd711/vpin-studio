@@ -274,7 +274,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           refreshFilters();
 
           if (data.isEmpty()) {
-            tableView.setPlaceholder(new Label("No tables found"));
+            tableView.setPlaceholder(new Label(Messages.get("recorder.recorder.no_tables_found")));
           }
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);

@@ -206,7 +206,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
-    tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
+    tableView.setPlaceholder(new Label(Messages.get("competitions.competitions_weekly.no_weekly_challenge_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -348,8 +348,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       return new SimpleObjectProperty(vBox);
     });
 
-    tableView.setPlaceholder(new Label("                          Try weekly challenges!\n" +
-        "Join new challenges by enabling them in the preferences."));
+    tableView.setPlaceholder(new Label("                          " + Messages.get("competitions.competitions_weekly.try_weekly_challenges")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
@@ -495,11 +494,10 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     reloadBtn.setDisable(defaultPlayer == null);
 
     if (defaultPlayer == null) {
-      tableView.setPlaceholder(new Label("                                 No default player set!\n" +
-          "Go to the players section and set the default player for this cabinet!"));
+      tableView.setPlaceholder(new Label("                                 " + Messages.get("competitions.competitions_weekly.no_default_player_set")));
     }
     else {
-      tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
+      tableView.setPlaceholder(new Label(Messages.get("competitions.competitions_weekly.no_weekly_challenge_found")));
     }
   }
 

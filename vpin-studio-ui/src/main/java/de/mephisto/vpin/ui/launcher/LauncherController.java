@@ -368,8 +368,7 @@ public class LauncherController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("                 No connections found.\n" +
-        "Install the service or connect to another system."));
+    tableView.setPlaceholder(new Label("                 " + Messages.get("launcher.launcher.no_connections_found")));
 
     this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
     this.installBtn.setDisable(client.getSystemService().getVersion() != null);

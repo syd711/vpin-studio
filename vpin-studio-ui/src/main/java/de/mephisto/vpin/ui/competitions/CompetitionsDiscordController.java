@@ -340,7 +340,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       reloadBtn.setDisable(true);
       joinBtn.setDisable(true);
 
-      tableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
+      tableView.setPlaceholder(new Label("                                         " + Messages.get("competitions.competitions_discord.no_discord_bot_found")));
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
@@ -404,7 +404,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
-    tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_discord.no_competitions_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -428,7 +428,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       GameRepresentation game = client.getGameService().getGame(value.getGameId());
-      Label label = new Label("- not available anymore -");
+      Label label = new Label(Messages.get("competitions.competitions_discord.not_available_anymore"));
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
@@ -481,7 +481,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
         return new SimpleObjectProperty(hBox);
       }
 
-      Label label = new Label("- Not Found -");
+      Label label = new Label(Messages.get("competitions.competitions_discord.not_found"));
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -566,8 +566,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       return new SimpleObjectProperty(winner);
     });
 
-    tableView.setPlaceholder(new Label("            Mmmh, not up for a challenge yet?\n" +
-        "Create a new competition by pressing the '+' button."));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_discord.not_up_for_challenge")));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });

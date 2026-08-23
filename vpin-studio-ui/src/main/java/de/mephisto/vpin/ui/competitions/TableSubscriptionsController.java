@@ -254,7 +254,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       reloadBtn.setDisable(true);
       joinBtn.setDisable(true);
 
-      tableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
+      tableView.setPlaceholder(new Label("                                         " + Messages.get("competitions.competitions_subscriptions.no_discord_bot_found")));
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
@@ -307,7 +307,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
-    tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_subscriptions.no_competitions_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -339,7 +339,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       try {
         CompetitionRepresentation value = cellData.getValue();
         GameRepresentation game = client.getGameService().getGameCached(value.getGameId());
-        Label label = new Label("- not available anymore -");
+        Label label = new Label(Messages.get("competitions.competitions_subscriptions.not_available_anymore"));
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
 
@@ -441,8 +441,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
     });
 
-    tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
-        "Create a new subscription by pressing the '+' button."));
+    tableView.setPlaceholder(new Label("                      " + Messages.get("competitions.competitions_subscriptions.try_table_subscriptions")));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
