@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayButtonController implements Initializable, ChangeListener<LaunchConfiguration> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -92,18 +93,18 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
 
       String exeName = gameEmulator != null ? gameEmulator.getExeName() : null;
       if (!StringUtils.isEmpty(exeName)) {
-        items.add(new LaunchConfiguration("Emulator Default", false, exeName, null));
+        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.emulator_default"), false, exeName, null));
       }
 
       if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
-        items.add(new LaunchConfiguration("Launch via PinUP Popper", true, null, null));
+        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.launch_via_popper"), true, null, null));
       }
 
       if (client.getEmulatorService().isVpxGame(game) && altExeNames != null) {
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
           if (isCameraModeSupported(altExeName)) {
-            items.add(new LaunchConfiguration(altExeName + " [Camera Mode]", false, altExeName, "cameraMode"));
+            items.add(new LaunchConfiguration(altExeName + " " + Messages.get("tables.play_btn.camera_mode_suffix"), false, altExeName, "cameraMode"));
           }
         }
       }
@@ -113,13 +114,13 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         }
       }
       else if (client.getEmulatorService().isZenGame(game) && !gameEmulator.getType().equals(EmulatorType.ZenFX2)) {
-        items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
+        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.launch_via_steam"), false, null, null));
       }
       else if (client.getEmulatorService().isZaccariaGame(game)) {
-        items.add(new LaunchConfiguration("Launch via Steam", false, null, null));
+        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.launch_via_steam"), false, null, null));
       }
       else if (client.getEmulatorService().isMameGame(game)) {
-        items.add(new LaunchConfiguration("Launch via MAME", false, null, null));
+        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.launch_via_mame"), false, null, null));
       }
 
       launchCombo.setItems(FXCollections.observableList(items));
@@ -170,9 +171,9 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
       Frontend frontend = client.getFrontendService().getFrontendCached();
 
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
-          "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
-          FrontendUtil.replaceNames("All existing emulator and [Frontend] processes will be terminated.", frontend, "VPX"),
-          null, "Do not show again", false);
+          Messages.get("dialog.start_playing_table") + game.getGameDisplayName() + "\"?", Messages.get("dialog.start_table"),
+          FrontendUtil.replaceNames(Messages.get("dialog.all_existing_emulator_and_frontend_processes_will"), frontend, Messages.get("dialog.vpx")),
+          null, Messages.get("dialog.do_not_show_again"), false);
 
       if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {

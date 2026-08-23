@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -318,7 +319,7 @@ public class UploadsButtonController implements Initializable {
 
   public void setCompact(boolean b) {
     if (!b) {
-      uploadTableBtn.setText("Uploads");
+      uploadTableBtn.setText(Messages.get("tables.uploads_btn.uploads"));
     }
   }
 

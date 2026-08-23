@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -315,10 +316,10 @@ public class TableDeleteController implements Initializable, DialogController {
     this.tableOverviewController = tableOverviewController;
     this.games = selectedGames;
     if (selectedGames.size() == 1) {
-      this.titleLabel.setText("Delete \"" + selectedGames.getFirst().getGameDisplayName() + "\"?");
+      this.titleLabel.setText(Messages.get("tables.table_delete.delete_table", selectedGames.getFirst().getGameDisplayName()));
     }
     else {
-      this.titleLabel.setText("Delete " + selectedGames.size() + " Tables?");
+      this.titleLabel.setText(Messages.get("tables.table_delete.delete_tables", selectedGames.size()));
     }
 
     this.validationContainer.setVisible(false);

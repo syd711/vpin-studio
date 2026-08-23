@@ -42,6 +42,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarPlaylistsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -171,8 +172,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
           emptyDataBox.setVisible(false);
           dataRoot.setVisible(false);
           errorBox.setVisible(true);
-          errorTitle.setText("The database is currently locked.");
-          errorText.setText("Exit [Frontend] to modify playlists.");
+          errorTitle.setText(Messages.get("tables.tables_sidebar_playlists.the_database_is_currently_locked"));
+          errorText.setText(Messages.get("tables.tables_sidebar_playlists.exit_frontend_to_modify_playlists"));
 
           FrontendUtil.replaceName(errorText, frontend);
           return;
@@ -230,8 +231,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
           refreshPlaylist(client.getPlaylistsService().getPlaylist(playlist.getId()), false);
         }
         catch (Exception e) {
-          LOG.error("Failed to update playlists: " + e.getMessage(), e);
-          WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+          LOG.error(Messages.get("dialog.failed_to_update_playlists") + e.getMessage(), e);
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_playlists") + e.getMessage());
         }
       }
     });
@@ -307,8 +308,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
             refreshPlaylist(update, true);
           }
           catch (Exception e) {
-            LOG.error("Failed to update playlists: " + e.getMessage(), e);
-            WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+            LOG.error(Messages.get("dialog.failed_to_update_playlists") + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_playlists") + e.getMessage());
           }
         }
       });

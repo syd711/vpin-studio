@@ -42,6 +42,7 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class HighscoreCardsController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, StudioEventListener {
@@ -157,7 +158,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
             }
         )
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         })
         .thenAcceptLater(objs -> {
@@ -172,7 +173,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
           setItems(games);
 
           if (games.isEmpty()) {
-            tableView.setPlaceholder(new Label("No tables found"));
+            tableView.setPlaceholder(new Label(Messages.get("cards.highscore_cards.no_tables_found")));
           }
           templateEditorPane.setVisible(!games.isEmpty());
 
@@ -198,7 +199,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     templateEditorPane.setVisible(game != null);
     maniaBtn.setDisable(tableView.getSelectionModel().getSelectedItems().size() != 1 || game == null || StringUtils.isEmpty(game.getExtTableId()));
 
-    List<String> breadcrumb = new ArrayList<>(Arrays.asList("Designer", "Highscore Cards"));
+    List<String> breadcrumb = new ArrayList<>(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
     if (game != null) {
       breadcrumb.add(game.getGameDisplayName());
     }
@@ -210,7 +211,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("Designer", "Highscore Cards"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
 
     if (options != null && options.getGameId() > 0) {
       GameRepresentationModel selectedItem = tableView.getItems().stream().filter(g -> g.getGameId() == options.getGameId()).findFirst().orElse(null);
@@ -237,10 +238,11 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     iconMania.setFitHeight(18);
     maniaBtn.setGraphic(iconMania);
 
-    NavigationController.setBreadCrumb(Arrays.asList("Designer", "Highscore Cards"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
 
     try {
       FXMLLoader loader = new FXMLLoader(TemplateEditorController.class.getResource("template-editor.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent editorRoot = loader.load();
       templateEditorController = loader.getController();
       templateEditorController.setCardsController(this);

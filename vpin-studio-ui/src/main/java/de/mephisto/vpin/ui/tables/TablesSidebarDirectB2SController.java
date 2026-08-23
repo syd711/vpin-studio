@@ -40,6 +40,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarDirectB2SController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -282,11 +283,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         if (tableData != null) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + tableData.getFilename() + "\"?", null, Messages.get("common.delete"));
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             boolean b = client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
             if (!b) {
-              WidgetFactory.showAlert(Studio.stage, "Error", "Backglass deletion failed, check log file for details.");
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.backglass_deletion_failed_check_log_file_for"));
             }
             client.getBackglassServiceClient().clearCache();
             EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
@@ -295,7 +296,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       }
     }
     catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_delete_backglass_file") + ex.getMessage());
     }
   }
 
@@ -500,7 +501,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           .thenAcceptLater((b2s) -> {
             BackglassManagerControllerUtils.notifyChange(b2s);
           })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + this.tableData.getName() + " as default", e.getMessage()));
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_set") + this.tableData.getName() + Messages.get("dialog.as_default"), e.getMessage()));
     }
   }
 
@@ -511,7 +512,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           .thenAcceptLater((b2s) -> {
             BackglassManagerControllerUtils.notifyChange(b2s);
           })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + this.tableData.getName() + " as default", e.getMessage()));
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_set") + this.tableData.getName() + Messages.get("dialog.as_default"), e.getMessage()));
     }
   }
 
@@ -538,8 +539,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_save_b2stablesettings_xml") + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_b2stablesettings_xml") + e.getMessage());
       }
     }
   }
@@ -660,40 +661,40 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
         if (tableData.isBackgroundAvailable()) {
-          resolutionLabel.setText("Loading...");
+          resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.loading"));
           JFXFuture.supplyAsync(() -> new Image(client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename(), true), false))
               .thenAcceptLater(imageToLoad -> {
                 thumbnailImage.setImage(imageToLoad);
                 if (tableSettings.isHideB2SBackglass()) {
-                  resolutionLabel.setText("Backglass Hidden.");
+                  resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.backglass_hidden"));
                   JFXHelper.setImageDisabled(thumbnailImage, true);
                 }
                 else {
-                  resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
+                  resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.resolution", (int) imageToLoad.getWidth(), (int) imageToLoad.getHeight()));
                 }
               });
         }
         else {
           thumbnailImage.setImage(null);
-          resolutionLabel.setText("Failed to read image data.");
+          resolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.failed_to_read_image_data"));
         }
 
         if (tableData.isDmdImageAvailable()) {
-          dmdResolutionLabel.setText("Loading...");
+          dmdResolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.loading"));
           JFXFuture.supplyAsync(() -> new Image(client.getBackglassServiceClient().getDirectB2sDmdUrl(tableData.getEmulatorId(), tableData.getFilename()), false))
               .thenAcceptLater(image -> {
                 dmdThumbnailImage.setImage(image);
                 if (tableSettings.isHideB2SDMD()) {
-                  dmdResolutionLabel.setText("B2S DMD Hidden");
+                  dmdResolutionLabel.setText(Messages.get("backglass.directb2s_admin_filter.b2s_dmd_hidden"));
                   JFXHelper.setImageDisabled(dmdThumbnailImage, true);
                 }
                 else {
-                  dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+                  dmdResolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.resolution", (int) image.getWidth(), (int) image.getHeight()));
                 }
               });
         }
         else {
-          dmdResolutionLabel.setText("No DMD background available.");
+          dmdResolutionLabel.setText(Messages.get("tables.tables_sidebar_directb2s.no_dmd_background_available"));
         }
 
         if (tableSettings != null) {

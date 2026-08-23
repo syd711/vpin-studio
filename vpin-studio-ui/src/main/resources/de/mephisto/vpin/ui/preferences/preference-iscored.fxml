@@ -17,26 +17,26 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.IScoredPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="iScored Game Rooms" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="iScored game rooms used for competitions can be preconfigured here." textFill="WHITE">
+            <Label styleClass="preference-title" text="%pref.backglass.3rd_party_preferences" textFill="WHITE" wrapText="true" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.iscored.iscored_game_rooms" wrapText="true" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="%pref.iscored.iscored_game_rooms_used_for_competitions_can_be" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="24.0" top="12.0" />
                </VBox.margin>
             </Label>
             <VBox>
                <children>
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="iScored Integration Enabled">
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.iscored.iscored_integration_enabled">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="Enable the iScored integration to subscribe to game room games." textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%pref.iscored.enable_the_iscored_integration_to_subscribe_to_game" textFill="WHITE" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="enabledBox">
@@ -51,11 +51,11 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Reload all webhook sets" />
+                                <Tooltip text="%pref.iscored.reload_all_webhook_sets" />
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="Add" textFill="WHITE">
+                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -63,7 +63,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -72,7 +72,7 @@
                            </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -84,10 +84,10 @@
                   </ToolBar>
                   <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
-                        <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="Sync. Enabled" />
-                      <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="Game Room URL" />
-                        <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Read API" />
-                        <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Scoring API" />
+                        <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="%pref.iscored.sync_enabled" />
+                      <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="%pref.iscored.game_room_url" />
+                        <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="%pref.iscored.read_api" />
+                        <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="%pref.iscored.scoring_api" />
                     </columns>
                   </TableView>
                </children>

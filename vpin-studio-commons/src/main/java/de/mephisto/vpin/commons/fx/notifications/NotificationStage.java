@@ -23,6 +23,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class NotificationStage {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -63,6 +64,7 @@ public class NotificationStage {
       }
 
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
+      loader.setResources(Messages.getBundle());
       root = loader.load();
       notificationController = loader.getController();
       notificationController.setNotification(notification);

@@ -10,108 +10,96 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsVPXPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VALIDATORS" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Configuration Validators" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every VPX table. The validators can be disabled for every table individually," textFill="WHITE">
+                  <Label styleClass="preference-title" text="%pref.validators_backglass.validators" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_vpx.configuration_validators" wrapText="true" />
+                  <Label styleClass="preference-description" text="%pref.validators_vpx.if_enabled_the_validation_is_executed_for_every" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_82" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.alt_color_files_missing" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_files_for_alt_color_folders_are" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_5" layoutX="34.0" layoutY="220.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.nvoffset_check" />
+                  <Label layoutX="34.0" layoutY="258.0" styleClass="checkbox-description" text="%pref.validators_vpx.if_a_table_has_set_an_nvoffset_all" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_3" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.rom_file_check" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_a_rom_file_for_the_selected" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_6" layoutX="34.0" layoutY="280.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.vpin_mame_rom_check" />
+                  <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_via_vpin_mame_if_the_existing_rom" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_1" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.rom_name_check" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_a_rom_name_was_resolved_for" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.vpx_file_check" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_vpx_file_for_the_selected" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_23" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.vpx_force_backglass_disabled_check" />
+                  <Label layoutX="34.0" layoutY="499.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_table_has_a_backglass_but" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_10" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.screen_settings_check" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_frontend_and_emulator_screens_are" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="532.0" styleClass="preference-subtitle" text="%pref.validators_vpx.script_validators" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="when the validation message is dismissed." textFill="WHITE" />
-                  <CheckBox fx:id="pref_82" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Color Files Missing" />
-                  <Label styleClass="checkbox-description" text="Checks if files for ALT Color folders are missing." textFill="WHITE" />
-                  <CheckBox fx:id="pref_5" layoutX="34.0" layoutY="220.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="NVOffset Check" />
-                  <Label layoutX="34.0" layoutY="258.0" styleClass="checkbox-description" text="If a table has set an NVOffset, all tables using the same ROM must have set it." textFill="WHITE" />
-                  <CheckBox fx:id="pref_3" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM File Check" />
-                  <Label styleClass="checkbox-description" text="Checks if a ROM file for the selected table was found." textFill="WHITE" />
-                  <CheckBox fx:id="pref_6" layoutX="34.0" layoutY="280.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPin MAME ROM Check" />
-                  <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="Checks via VPin MAME if the existing ROM file is valid." textFill="WHITE" />
-                  <CheckBox fx:id="pref_1" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM Name Check" />
-                  <Label styleClass="checkbox-description" text="Checks if a ROM name was resolved for the table." textFill="WHITE" />
-                  <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPX File Check" />
-                  <Label styleClass="checkbox-description" text="Checks if the VPX file for the selected table was found." textFill="WHITE" />
-                  <CheckBox fx:id="pref_23" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPX Force Backglass Disabled Check" />
-                  <Label layoutX="34.0" layoutY="499.0" styleClass="checkbox-description" text="Checks if the table has a backglass but the backglasses are disabled in VPX." textFill="WHITE" />
-                  <CheckBox fx:id="pref_10" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Screen Settings Check" />
-                  <Label styleClass="checkbox-description" text="Checks if the frontend and emulator screens are properly setup." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="532.0" styleClass="preference-subtitle" text="Script Validators">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label layoutX="34.0" layoutY="608.0" styleClass="preference-description" text="These validators check the VPX script for possible errors." textFill="WHITE" />
-                  <CheckBox fx:id="pref_90" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;Controller.stop&quot; Routine Call" />
-                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="Checks for ROM based games, if the &quot;Controller.stop&quot; routine is called." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="This routine also triggers the writing of the nvram file which stores the highscores." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="652.0" styleClass="checkbox-description" text="You may need to re-scan your table(s) to update the status of this validation." textFill="WHITE" />
-                  <CheckBox fx:id="pref_7" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;VR Room&quot; Check" />
-                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the script contains a variable for VR room settings and if it is enabled." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="793.0" styleClass="checkbox-description" text="Disable this validator if you do not use VR." textFill="WHITE" />
-                  <CheckBox fx:id="pref_22" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;DMD Folder&quot; Check" />
-                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the script loads the UltraDMD or FlexDMD object." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="If the validator is triggered, check if the associated DMD folder exists." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="608.0" styleClass="preference-description" text="%pref.validators_vpx.these_validators_check_the_vpx_script_for_possible" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_90" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.controller_stop_routine_call" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_for_rom_based_games_if_the_controller" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_7" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.vr_room_check" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_script_contains_a_variable_for" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_22" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.dmd_folder_check" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_script_loads_the_ultradmd_or" textFill="WHITE" wrapText="true" />
 
-                  <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="MAME Settings Validators">
+                  <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="%pref.validators_vpx.mame_settings_validators" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="These validators help to check if the VPinMAME settings of tables are correct." textFill="WHITE" />
-                  <CheckBox fx:id="pref_50" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Package Disabled" />
-                  <Label styleClass="checkbox-description" text="Checks for ALT Sound packages if they are enabled for the selected table." textFill="WHITE" />
-                  <CheckBox fx:id="pref_80" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Colorize DMD Not Enabled" />
-                  <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="Checks if the &quot;Colorize DMD&quot; property is set in the VPin Mame settings when ALT Color is available." textFill="WHITE" />
-                  <CheckBox fx:id="pref_52" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Force Stereo" />
-                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="Enable this validator when you have a 7.1 system with SSF in your cabinet." textFill="WHITE" />
-                  <CheckBox fx:id="pref_81" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="External DMD Not Enabled" />
-                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the &quot;External DMD&quot; property is set in the VPin Mame settings when ALT Color is available." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="923.0" styleClass="preference-subtitle" text="Virtual Pinball Spreadsheet Validators">
+                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="%pref.validators_vpx.these_validators_help_to_check_if_the_vpinmame" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_50" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.alt_sound_package_disabled" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_for_alt_sound_packages_if_they_are" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_80" layoutX="34.0" layoutY="592.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.colorize_dmd_not_enabled" />
+                  <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_colorize_dmd_property_is_set" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_52" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.mame.force_stereo" />
+                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="%pref.validators_vpx.enable_this_validator_when_you_have_a_7" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_81" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.external_dmd_not_enabled" />
+                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_the_external_dmd_property_is_set" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="923.0" styleClass="preference-subtitle" text="%pref.validators_vpx.virtual_pinball_spreadsheet_validators" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="904.0" styleClass="preference-description" text="Checks if the VPS entry set." textFill="WHITE" />
-                  <CheckBox fx:id="pref_70" layoutX="34.0" layoutY="700.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Virtual Pinball Spreadsheet Data" />
-                  <Label layoutX="34.0" layoutY="738.0" styleClass="checkbox-description" text="Checks if a table and its version has been matched against the &quot;Virtual Pinball Spreadsheet&quot; data." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="798.0" styleClass="checkbox-description" text="This ensures that table updates will be shown in the table overview." textFill="WHITE" />
-                  <CheckBox fx:id="pref_71" layoutX="34.0" layoutY="1305.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Color Check" />
-                  <Label layoutX="34.0" layoutY="1344.0" styleClass="checkbox-description" text="Checks if there is an ALT color resource available and installed." textFill="WHITE" />
-                  <CheckBox fx:id="pref_72" layoutX="34.0" layoutY="1224.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Check" />
-                  <Label layoutX="34.0" layoutY="1262.0" styleClass="checkbox-description" text="Checks if there is an ALT sound bundle available and installed." textFill="WHITE" />
-                  <CheckBox fx:id="pref_73" layoutX="34.0" layoutY="1365.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Check" />
-                  <Label layoutX="34.0" layoutY="1404.0" styleClass="checkbox-description" text="Checks if there is a PUP pack available and installed." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Additional Media Validators">
+                  <Label layoutX="34.0" layoutY="904.0" styleClass="preference-description" text="%pref.validators_vpx.checks_if_the_vps_entry_set" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_70" layoutX="34.0" layoutY="700.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.virtual_pinball_spreadsheet_data" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_a_table_and_its_version_has" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_71" layoutX="34.0" layoutY="1305.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.alt_color_check" />
+                  <Label layoutX="34.0" layoutY="1344.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_there_is_an_alt_color_resource" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_72" layoutX="34.0" layoutY="1224.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.alt_sound_check" />
+                  <Label layoutX="34.0" layoutY="1262.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_there_is_an_alt_sound_bundle" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_73" layoutX="34.0" layoutY="1365.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.pup_pack_check" />
+                  <Label layoutX="34.0" layoutY="1404.0" styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_there_is_a_pup_pack_available" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_vpx.additional_media_validators" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-description" text="Several validators checking the integrity of the media files and bundles." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="You can turn off the missing file checks if you are not planning to fix PUP or ALT sound bundles." textFill="WHITE" />
-                  <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Files Missing (expensive)" />
-                  <Label styleClass="checkbox-description" text="Checks if audio files for ALT Sound packages are missing." textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.validators_vpx.several_validators_checking_the_integrity_of_the_media" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.alt_sound_files_missing_expensive" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_audio_files_for_alt_sound_packages" textFill="WHITE" wrapText="true" />
                   <VBox fx:id="pupPackValidator">
                      <children>
-                        <CheckBox fx:id="pref_60" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Files Missing (expensive)" />
-                        <Label styleClass="checkbox-description" text="Checks if files for PUP packs are missing." textFill="WHITE" />
+                        <CheckBox fx:id="pref_60" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.pup_pack_files_missing_expensive" />
+                        <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_files_for_pup_packs_are_missing" textFill="WHITE" wrapText="true" />
                      </children>
                   </VBox>
                   <VBox fx:id="tagPane">
                      <children>
-                        <CheckBox fx:id="pref_61" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Music Files Missing" />
-                        <Label styleClass="checkbox-description" text="Checks if audio files from the &quot;Music&quot; folder are missing." textFill="WHITE" />
-                        <Label styleClass="preference-subtitle" text="Auto Tagging">
+                        <CheckBox fx:id="pref_61" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_vpx.music_files_missing" />
+                        <Label styleClass="checkbox-description" text="%pref.validators_vpx.checks_if_audio_files_from_the_music_folder" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="If enabled and the table is replaced, the given tags are automatically applied to the table data" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="to keep track of this change (e.g. to track tables for recording)." textFill="WHITE" />
-                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Auto Tagging Enabled" textFill="WHITE">
+                        <Label styleClass="preference-description" text="%pref.validators_vpx.if_enabled_and_the_table_is_replaced_the" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

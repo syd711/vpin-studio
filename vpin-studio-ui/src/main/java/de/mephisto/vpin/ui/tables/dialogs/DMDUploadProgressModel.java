@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DMDUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -35,7 +36,7 @@ public class DMDUploadProgressModel extends UploadProgressModel {
         progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError());
         });
       }
       else {

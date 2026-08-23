@@ -45,6 +45,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -286,7 +287,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           }
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT sound folder found for game \"" + game.get().getId() + "\".");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_valid_alt_sound_folder_found_for") + game.get().getId() + "\".");
         }
       }
     }
@@ -315,7 +316,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           }
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_valid_alt_color_folder_found_for") + game.get().getId() + "\".");
         }
       }
     }
@@ -368,7 +369,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         File dmdFolder = dmdPackage != null ? new File(tablesFolder, dmdPackage.getName()) : null;
         if (dmdFolder == null) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "No DMD found.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_dmd_found"));
         }
         else {
           SystemUtil.openFolder(dmdFolder, tablesFolder);
@@ -396,8 +397,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to open VPX: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPX: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_open_vpx") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpx") + e.getMessage());
     }
   }
 
@@ -449,6 +450,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarAudioController = loader.getController();
       tablesSidebarAudioController.setSidebarController(this);
@@ -460,6 +462,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altcolor.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarAltColorController = loader.getController();
       tablesSidebarAltColorController.setSidebarController(this);
@@ -471,6 +474,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-vps.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarVpsController = loader.getController();
       tablesSidebarVpsController.setSidebarController(this);
@@ -482,6 +486,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarHighscoresController.class.getResource("scene-tables-sidebar-highscores.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarHighscoresController = loader.getController();
       tablesSidebarHighscoresController.setSidebarController(this);
@@ -494,6 +499,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     if (!frontend.getSupportedScreens().isEmpty()) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarMediaController.class.getResource("scene-tables-sidebar-media.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent tablesRoot = loader.load();
         tablesSidebarMediaController = loader.getController();
         tablesSidebarMediaController.setSidebarController(this);
@@ -510,6 +516,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     if (Features.PLAYLIST_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent tablesRoot = loader.load();
         tablesSidebarPlaylistsController = loader.getController();
         tablesSidebarPlaylistsController.setTableOverviewController(this.getTableOverviewController());
@@ -525,6 +532,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarScriptDataController.class.getResource("scene-tables-sidebar-scriptdata.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarMetadataController = loader.getController();
       tablesSidebarMetadataController.setSidebarController(this);
@@ -536,6 +544,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarPovController.class.getResource("scene-tables-sidebar-pov.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarPovController = loader.getController();
       tablesSidebarPovController.setSidebarController(this);
@@ -547,6 +556,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarDirectB2SController.class.getResource("scene-tables-sidebar-directb2s.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarDirectB2SController = loader.getController();
       tablesSidebarDirectB2SController.setRootController(tablesController);
@@ -559,6 +569,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     if (Features.PUPPACKS_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPUPPackController.class.getResource("scene-tables-sidebar-pup-pack.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent tablesRoot = loader.load();
         tablesSidebarPUPPackController = loader.getController();
         tablesSidebarPUPPackController.setSidebarController(this);
@@ -574,6 +585,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarDMDController.class.getResource("scene-tables-sidebar-dmd.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarDMDController = loader.getController();
       tablesSidebarDMDController.setSidebarController(this);
@@ -585,6 +597,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledata.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarTableDetailsController = loader.getController();
       tablesSidebarTableDetailsController.setSidebarController(this);
@@ -597,6 +610,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarMameController.class.getResource("scene-tables-sidebar-mame.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent tablesRoot = loader.load();
       tablesSidebarMameController = loader.getController();
       tablesSidebarMameController.setSidebarController(this);

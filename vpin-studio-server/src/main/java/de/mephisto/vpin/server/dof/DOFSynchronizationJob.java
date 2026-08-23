@@ -18,6 +18,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class DOFSynchronizationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(DOFSynchronizationJob.class);
@@ -27,9 +32,14 @@ public class DOFSynchronizationJob implements Job {
   @NonNull
   private String workingDir;
 
+  // Resolved eagerly in the constructor, which always runs on the HTTP request thread.
+  // execute() runs later on the async job-worker thread, where RequestContextHolder is empty.
+  private final Locale locale;
+
   public DOFSynchronizationJob(@NonNull DOFSettings dofSettings, @NonNull String workingDir) {
     this.settings = dofSettings;
     this.workingDir = workingDir;
+    this.locale = resolveLocale();
   }
 
   @Override
@@ -57,7 +67,7 @@ public class DOFSynchronizationJob implements Job {
             return;
           }
           LOG.info("Extracting DOF config folder {}", targetFolder.getAbsolutePath());
-          result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
+          result.setStatus(ServerMessages.get("dof.sync.status", locale, settings.getInstallationPath()));
           RarUtil.unrar(zipFile, targetFolder);
         }
       }
@@ -109,4 +119,18 @@ public class DOFSynchronizationJob implements Job {
     Job.super.cancel(jobDescriptor);
     LOG.info("Cancelled {}", this);
   }
+
+  private Locale resolveLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }

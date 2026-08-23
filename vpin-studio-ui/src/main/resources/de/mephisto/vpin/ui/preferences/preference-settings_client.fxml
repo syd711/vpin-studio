@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -19,109 +20,133 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Client Settings">
+                  <Label styleClass="preference-title" text="%pref.title" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.client.title" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Miscellaneous options for the user interface can be configured here." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.client.description" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-subtitle" text="Emulators">
+                  <VBox>
+                     <children>
+                        <!-- ============ Language ============ -->
+                        <Label styleClass="preference-subtitle" text="%pref.client.language.title" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.client.language.description" textFill="WHITE" wrapText="true">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                           <children>
+                              <ComboBox fx:id="languageComboBox" prefWidth="200.0" />
+                              <Label fx:id="languageRestartHint" managed="false" styleClass="preference-description" text="%pref.client.language.restart_hint" textFill="ORANGE" visible="false" wrapText="true" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Label styleClass="preference-subtitle" text="%pref.client.emulators.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="This section configures which game emulators are visible for the Studio." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description" text="The unchecked emulators will remain active for the frontend, but won't be shown in the different views." textFill="WHITE" />
+                  <Label styleClass="preference-description" text="%pref.client.emulators.description1" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="208.0" styleClass="preference-description" text="%pref.client.emulators.description2" textFill="WHITE" wrapText="true" />
                   <VBox fx:id="emulatorList" spacing="6.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin></VBox>
-                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="Drop-In Folder">
+                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="%pref.client.dropin.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin></Label>
                   <VBox fx:id="dropIns" spacing="3.0">
                      <children>
-                        <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="Enable &quot;Drop-In&quot; folder imports" textFill="WHITE">
+                        <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="%pref.client.dropin.enable" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <VBox spacing="6.0">
                            <children>
-                              <Label styleClass="preference-description" text="If checked, new files of the selected drop-in folder will be shown in the menu once the download is finished." textFill="WHITE" />
+                              <Label styleClass="preference-description" text="%pref.client.dropin.description" textFill="WHITE" wrapText="true" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <TextField fx:id="dropInTextField" editable="false" prefWidth="400.0" promptText="Select Drop-In Folder...">
+                                    <TextField fx:id="dropInTextField" editable="false" prefWidth="400.0" promptText="%pref.client.dropin.select_dropin_folder">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="Select Folder..." textFill="WHITE">
+                                    <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="%pref.client.select.folder" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label styleClass="preference-description" text="Once the file is installed, choose an action to perform :" textFill="WHITE" />
-                              <RadioButton fx:id="radioDoNothing" mnemonicParsing="false" text="Do nothing" textFill="WHITE">
+                              <Label styleClass="preference-description" text="%pref.client.dropin.action" textFill="WHITE" wrapText="true" />
+                              <RadioButton fx:id="radioDoNothing" mnemonicParsing="false" text="%pref.client.dropin.action.nothing" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                              <VBox>
                                  <children>
-                                    <RadioButton fx:id="radioMoveToFolder" mnemonicParsing="false" text="Move to folder" textFill="WHITE">
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <RadioButton fx:id="radioMoveToFolder" mnemonicParsing="false" text="%pref.client.dropin.action.move" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </RadioButton>
+                                          <TextField fx:id="dropInMoveTargetTextField" editable="false" prefWidth="400.0" promptText="%pref.client.select.folder">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button fx:id="dropInMoveTargetButton" mnemonicParsing="false" onAction="#onDropInMoveTargetFolderSelection" text="%pref.client.select.folder" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <CheckBox fx:id="dropInMoveTargetCheckbox" mnemonicParsing="false" text="%pref.client.dropin.action.pertable" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
-                                    </RadioButton>
-                                    <TextField fx:id="dropInMoveTargetTextField" editable="false" prefWidth="400.0" promptText="Select Folder...">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <Button fx:id="dropInMoveTargetButton" mnemonicParsing="false" onAction="#onDropInMoveTargetFolderSelection" text="Select Folder..." textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Button>
-                                    <CheckBox fx:id="dropInMoveTargetCheckbox" mnemonicParsing="false" text="Use a folder per table" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
+                                       <VBox.margin>
+                                          <Insets left="23.0" top="3.0" />
+                                       </VBox.margin>
                                     </CheckBox>
                                  </children>
-                              </HBox>
-                              <RadioButton fx:id="radioDoMove" mnemonicParsing="false" text="Ask for a folder and move the file into it" textFill="WHITE">
+                              </VBox>
+                              <RadioButton fx:id="radioDoMove" mnemonicParsing="false" text="%pref.client.dropin.action.ask" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
                               <HBox alignment="CENTER_LEFT" spacing="12.0">
                                  <children>
-                                    <RadioButton fx:id="radioDoDelete" mnemonicParsing="false" text="Delete the file" textFill="WHITE">
+                                    <RadioButton fx:id="radioDoDelete" mnemonicParsing="false" text="%pref.client.dropin.action.delete" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </RadioButton>
-                                    <CheckBox fx:id="dropInMoveTrashCheckbox" mnemonicParsing="false" text="Move to trash" textFill="WHITE">
+                                    <CheckBox fx:id="dropInMoveTrashCheckbox" mnemonicParsing="false" text="%pref.client.dropin.action.trash" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="dropInConfirmDeletionCheckbox" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="Confirm Deletion" textFill="WHITE">
+                                    <CheckBox fx:id="dropInConfirmDeletionCheckbox" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.dropin.confirm" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -138,17 +163,17 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </VBox>
-                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Table Overview Settings">
+                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="%pref.client.overview.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="You can customize the appearance of the table overview here." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="%pref.client.overview.description" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Show table version update indicators in the table overview." textFill="WHITE">
+                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="%pref.client.overview.show_version" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -156,9 +181,9 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the your table version" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
-                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint1" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="%pref.client.overview.version_hint2" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="%pref.client.overview.auto_edit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -166,8 +191,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
-                  <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" styleClass="default-text" text="Use Material UI playlist icons instead of custom ones." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="%pref.client.overview.auto_edit_hint" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" styleClass="default-text" text="%pref.client.overview.material_icons" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -175,8 +200,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description" text="If checked, only Material UI icons will be used for all playlists." textFill="WHITE" />
-                  <CheckBox fx:id="uiHideGreenMarker" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" styleClass="default-text" text="Use green check marker icons for tables with no issues." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="526.0" styleClass="checkbox-description" text="%pref.client.overview.material_icons_hint" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="uiHideGreenMarker" layoutX="34.0" layoutY="620.0" mnemonicParsing="false" styleClass="default-text" text="%pref.client.overview.green_marker" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -184,8 +209,8 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="If checked, a green check marker icon is shown for tables with no issues." textFill="WHITE" />
-                  <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="640.0" styleClass="checkbox-description" text="%pref.client.overview.green_marker_hint" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="default-headline" text="%pref.client.columns.title" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -197,42 +222,42 @@
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="columnAltColor" layoutX="10.0" layoutY="248.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                              <CheckBox fx:id="columnAltColor" layoutX="10.0" layoutY="248.0" mnemonicParsing="false" text="%pref.client.col.altcolor" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnAltSound" layoutX="10.0" layoutY="221.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                              <CheckBox fx:id="columnAltSound" layoutX="10.0" layoutY="221.0" mnemonicParsing="false" text="%pref.client.col.altsound" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnBackglass" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                              <CheckBox fx:id="columnBackglass" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%pref.client.col.backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnBackupDate" mnemonicParsing="false" text="Backup Date" textFill="WHITE">
+                              <CheckBox fx:id="columnBackupDate" mnemonicParsing="false" text="%pref.client.col.backup_date" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnComment" mnemonicParsing="false" text="Comment" textFill="WHITE">
+                              <CheckBox fx:id="columnComment" mnemonicParsing="false" text="%pref.client.col.comment" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnDateAdded" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Date Added" textFill="WHITE">
+                              <CheckBox fx:id="columnDateAdded" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.date_added" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnDateModified" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Date Updated" textFill="WHITE">
+                              <CheckBox fx:id="columnDateModified" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.date_updated" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnEmulator" mnemonicParsing="false" text="Emulator" textFill="WHITE">
+                              <CheckBox fx:id="columnEmulator" mnemonicParsing="false" text="%pref.client.col.emulator" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -241,42 +266,42 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="columnHighscore" mnemonicParsing="false" text="Highscore Type" textFill="WHITE">
+                              <CheckBox fx:id="columnHighscore" mnemonicParsing="false" text="%pref.client.col.highscore" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text=".ini File" textFill="WHITE">
+                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text="%pref.client.col.ini" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnLauncher" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Launcher" textFill="WHITE">
+                              <CheckBox fx:id="columnLauncher" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.col.launcher" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                              <CheckBox fx:id="columnMusic" mnemonicParsing="false" text="%pref.client.col.music" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPatchVersion" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Patch Version" textFill="WHITE">
+                              <CheckBox fx:id="columnPatchVersion" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.patch_version" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPinVol" mnemonicParsing="false" text="PinVol" textFill="WHITE">
+                              <CheckBox fx:id="columnPinVol" mnemonicParsing="false" text="%pref.client.col.pinvol" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPlaylists" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                              <CheckBox fx:id="columnPlaylists" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="%pref.client.col.playlists" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text=".pov File (Point of View)" textFill="WHITE">
+                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text="%pref.client.col.pov" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -285,42 +310,42 @@
                         </VBox>
                         <VBox spacing="6.0">
                            <children>
-                              <CheckBox fx:id="columnPupPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                              <CheckBox fx:id="columnPupPack" mnemonicParsing="false" text="%pref.client.col.puppack" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text=".res File" textFill="WHITE">
+                              <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.col.res" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnRating" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Rating" textFill="WHITE">
+                              <CheckBox fx:id="columnRating" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.rating" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                              <CheckBox fx:id="columnRom" mnemonicParsing="false" text="%pref.client.col.rom" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnTutorials" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Tutorials" textFill="WHITE">
+                              <CheckBox fx:id="columnTutorials" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="%pref.client.col.tutorials" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnVbs" mnemonicParsing="false" text=".vbs File (VBS Script)" textFill="WHITE">
+                              <CheckBox fx:id="columnVbs" mnemonicParsing="false" text="%pref.client.col.vbs" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnVersion" mnemonicParsing="false" text="Version" textFill="WHITE">
+                              <CheckBox fx:id="columnVersion" mnemonicParsing="false" text="%pref.client.col.version" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnVpsStatus" mnemonicParsing="false" text="Virtual Pinball Spreadsheet (VPS) Status" textFill="WHITE">
+                              <CheckBox fx:id="columnVpsStatus" mnemonicParsing="false" text="%pref.client.col.vps_status" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -329,7 +354,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="Visible Sidebar Sections" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="%pref.client.sections.title" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -341,27 +366,27 @@
                      <children>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                              <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.altcolor" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                              <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.altsound" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                              <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="%pref.client.sec.backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
+                              <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.sec.dmd" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionHighscore" mnemonicParsing="false" text="Highscore" textFill="WHITE">
+                              <CheckBox fx:id="sectionHighscore" mnemonicParsing="false" text="%pref.client.sec.highscore" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -370,22 +395,22 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
-                              <CheckBox fx:id="sectionAssets" mnemonicParsing="false" text="Media Assets" textFill="WHITE">
+                              <CheckBox fx:id="sectionAssets" mnemonicParsing="false" text="%pref.client.sec.media_assets" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionPov" mnemonicParsing="false" text="Point of View (POV)" textFill="WHITE">
+                              <CheckBox fx:id="sectionPov" mnemonicParsing="false" text="%pref.client.sec.pov" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionPlaylists" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                              <CheckBox fx:id="sectionPlaylists" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="%pref.client.sec.playlists" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionPupPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                              <CheckBox fx:id="sectionPupPack" mnemonicParsing="false" text="%pref.client.sec.puppack" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -394,22 +419,22 @@
                         </VBox>
                         <VBox spacing="6.0">
                            <children>
-                              <CheckBox fx:id="sectionScriptDetails" mnemonicParsing="false" text="Script Details" textFill="WHITE">
+                              <CheckBox fx:id="sectionScriptDetails" mnemonicParsing="false" text="%pref.client.sec.script_details" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionTableData" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Table Data" textFill="WHITE">
+                              <CheckBox fx:id="sectionTableData" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%pref.client.sec.table_data" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionVps" mnemonicParsing="false" text="Virtual Pinball Spreadsheet (VPS) " textFill="WHITE">
+                              <CheckBox fx:id="sectionVps" mnemonicParsing="false" text="%pref.client.sec.vps" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="sectionVPinMAME" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="VPin MAME" textFill="WHITE">
+                              <CheckBox fx:id="sectionVPinMAME" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%pref.client.sec.vpin_mame" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -420,31 +445,31 @@
                   </HBox>
                   <VBox fx:id="networkSettings">
                      <children>
-                        <Label styleClass="preference-subtitle" text="Network Settings">
+                        <Label styleClass="preference-subtitle" text="%pref.client.network.title" wrapText="true">
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="Using windows network share (e.g. \\localhost\vPinball) allows to access remote folders of your VPin." textFill="WHITE" />
-                        <Label styleClass="preference-description" text="Note that this feature is only supported for Windows clients. The share should be the root folder of the frontend installation." textFill="WHITE" />
-                        <Label styleClass="preference-description" text="You have to restart the Studio after applying changes." textFill="WHITE" />
+                        <Label styleClass="preference-description" text="%pref.client.network.description1" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.client.network.description2" textFill="WHITE" wrapText="true" />
+                        <Label styleClass="preference-description" text="%pref.client.network.restart_hint" textFill="WHITE" wrapText="true" />
                         <GridPane alignment="BASELINE_RIGHT">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.0" minWidth="10.0" prefWidth="188.3999267578125" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="560.7999023437501" minWidth="10.0" prefWidth="552.0000732421875" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="570.0" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="Windows Network Share:" textFill="WHITE">
+                              <Label prefHeight="20.0" prefWidth="200.0" styleClass="preference-label" text="%pref.client.network.label" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                              <Label fx:id="vpinNameLabel1" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" wrapText="true" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -454,7 +479,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="folder-component" text="Test" textFill="WHITE" GridPane.columnIndex="2">
+                              <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="folder-component" text="%pref.client.network.test" textFill="WHITE" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -462,13 +487,13 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="DirectB2S Folder" />
+                                    <Tooltip text="%pref.client.network.test_tooltip" />
                                  </tooltip>
                                  <GridPane.margin>
                                     <Insets left="6.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Label fx:id="winNetworkShareStatusLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="winNetworkShareStatusLabel" text="-" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                            <opaqueInsets>
                               <Insets />
@@ -479,12 +504,14 @@
                         </GridPane>
                      </children>
                   </VBox>
-                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Dialogs">
+
+                  <!-- ============ Dialogs ============ -->
+                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="%pref.client.dialogs.title" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onHideReset" text="Restore Hidden Dialogs" textFill="WHITE">
+                  <Button mnemonicParsing="false" onAction="#onHideReset" text="%pref.client.dialogs.restore" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -492,8 +519,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Button>
-                  <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description" text="Resets the &quot;Do not show again&quot; flags for all dialogs." textFill="WHITE" />
-                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="Reset Dialogs" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description" text="%pref.client.dialogs.restore_hint" textFill="WHITE" wrapText="true" />
+                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="%pref.client.dialogs.reset" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -501,7 +528,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Button>
-                  <Label layoutX="34.0" layoutY="1500.0" styleClass="preference-description" text="Resets all dialogs sizes and positions." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="1500.0" styleClass="preference-description" text="%pref.client.dialogs.reset_hint" textFill="WHITE" wrapText="true" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

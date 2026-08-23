@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -73,7 +74,7 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
       this.altButton.setText(altText);
     }
     else {
-      this.altButton.setText("Cancel");
+      this.altButton.setText(Messages.get("common.cancel"));
     }
 
     if (helpText1 != null) {

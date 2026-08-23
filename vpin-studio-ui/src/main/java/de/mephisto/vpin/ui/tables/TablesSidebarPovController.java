@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarPovController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -221,7 +222,7 @@ public class TablesSidebarPovController implements Initializable {
 
   @FXML
   private void onPOVDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete POV file for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_pov_file_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Studio.client.getVpxService().deletePOV(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);

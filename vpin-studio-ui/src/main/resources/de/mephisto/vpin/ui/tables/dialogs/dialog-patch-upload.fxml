@@ -21,12 +21,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Patch Table">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%tables.patch_upload.patch_table">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -61,7 +61,7 @@
                            <children>
                               <HBox GridPane.columnIndex="1">
                                  <children>
-                                    <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="350.0" promptText="Select or drop a patch or archive file here.">
+                                    <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="350.0" promptText="%tables.patch_upload.select_or_drop_a_patch_or_archive_file">
                                        <HBox.margin>
                                           <Insets right="12.0" />
                                        </HBox.margin>
@@ -69,17 +69,17 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label styleClass="default-text" text="Patch File:" />
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Table:" GridPane.rowIndex="2" />
+                              <Label styleClass="default-text" text="%tables.patch_upload.patch_file" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%competitions.discord_competition_edit.table" GridPane.rowIndex="2" />
                               <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="49.0" maxWidth="450.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label fx:id="titleLabel11" text="README.txt" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label fx:id="titleLabel11" text="%tables.patch_upload.readme_txt" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -91,7 +91,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="readmeBtn" mnemonicParsing="false" onAction="#onReadme" styleClass="text-button" text="View README" textFill="WHITE">
+                                    <Button fx:id="readmeBtn" mnemonicParsing="false" onAction="#onReadme" styleClass="text-button" text="%tables.patch_upload.view_readme" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -101,10 +101,10 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Patch Version:" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.settings_server.patch_version" GridPane.rowIndex="1" />
                               <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <TextField fx:id="patchVersionField" prefHeight="30.0" prefWidth="350.0" promptText="Enter the patch name or version here.">
+                                    <TextField fx:id="patchVersionField" prefHeight="30.0" prefWidth="350.0" promptText="%tables.patch_upload.enter_the_patch_name_or_version_here">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -126,7 +126,7 @@
                <children>
                   <VBox fx:id="uploadCloneBox" prefWidth="430.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" text="Patch and Clone" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_clone" textFill="WHITE" wrapText="true">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -134,7 +134,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="The game file will be patched and patched file will be added as new game using the same media as the original." textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="%tables.patch_upload.the_game_file_will_be_patched_and_patched" textFill="WHITE" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -145,7 +145,7 @@
                   </VBox>
                   <VBox fx:id="uploadReplaceBox" prefWidth="430.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="Patch and Replace" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="%tables.patch_upload.patch_and_replace" textFill="WHITE" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -153,8 +153,8 @@
                               <Insets />
                            </VBox.margin>
                         </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="The game file will be patched, the existing game file will be overwritten." textFill="WHITE" wrapText="true" />
-                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="Attention: Choosing the wrong table for the patch will corrupt the .vpx file." textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="%tables.patch_upload.the_game_file_will_be_patched_the_existing" textFill="WHITE" wrapText="true" />
+                        <Label fx:id="uploadAndReplaceDescription1" layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="%tables.patch_upload.attention_choosing_the_wrong_table_for_the_patch" textFill="WHITE" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

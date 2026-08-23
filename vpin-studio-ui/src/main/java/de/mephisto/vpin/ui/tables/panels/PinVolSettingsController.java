@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.FrontendUtil.addIntegerValidation;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PinVolSettingsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -134,9 +135,9 @@ public class PinVolSettingsController implements Initializable {
         saveBtn.setVisible(games.isEmpty());
 
         if (games.size() == 1) {
-            tableLabel.setText("PinVol Settings for \"" + games.getFirst().getGameDisplayName() + "\"");
+            tableLabel.setText(Messages.get("tables.pinvol_settings.pinvol_settings_for", games.getFirst().getGameDisplayName()));
         } else {
-            tableLabel.setText("PinVol Settings for " + games.size() + " tables");
+            tableLabel.setText(Messages.get("tables.pinvol_settings.pinvol_settings_for_tables", games.size()));
         }
 
         reload(false);
@@ -213,7 +214,7 @@ public class PinVolSettingsController implements Initializable {
         }
 
         if (systemVolume == null) {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinVol settings, no system volume set.");
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinvol_settings_no_system"));
             return false;
         }
 
@@ -227,7 +228,7 @@ public class PinVolSettingsController implements Initializable {
             dirty.set(false);
         } catch (Exception e) {
             LOG.error("Failed to save pinvol update: {}", e.getMessage(), e);
-            WidgetFactory.showAlert(stage, "Error", "Failed to save PinVol update: " + e.getMessage());
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinvol_update") + e.getMessage());
             return false;
         }
 

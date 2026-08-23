@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collections;
+import de.mephisto.vpin.server.util.ServerMessages;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class PupPackInstallerJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackInstallerJob.class);
@@ -24,6 +29,10 @@ public class PupPackInstallerJob implements Job {
 
   private final boolean async;
 
+  // Resolved eagerly in the constructor, which always runs on the HTTP request thread.
+  // execute() runs later on the async job-worker thread, where RequestContextHolder is empty.
+  private final Locale locale;
+
   public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String pupPackFolderInArchive, @NonNull String rom, boolean async) {
     this.pupPacksService = pupPacksService;
     this.pupTmpArchive = pupTmpArchive;
@@ -31,6 +40,7 @@ public class PupPackInstallerJob implements Job {
     this.pupPackFolderInArchive = pupPackFolderInArchive;
     this.rom = rom;
     this.async = async;
+    this.locale = resolveLocale();
   }
 
   @Override
@@ -42,7 +52,7 @@ public class PupPackInstallerJob implements Job {
       public boolean unzipping(String name, int index, int total) {
         double progress = (double) (100 * index / total) / 100;
         result.setProgress(progress);
-        result.setStatus("Unpacking " + index + " of " + total);
+        result.setStatus(ServerMessages.get("puppack.install.status", locale, index, total));
 
         boolean cancelled = result.isCancelled();
         return !cancelled;
@@ -64,4 +74,18 @@ public class PupPackInstallerJob implements Job {
 
     pupPacksService.loadPupPack(rom);
   }
+
+  private Locale resolveLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {}
+    return Locale.ENGLISH;
+  }
+
 }

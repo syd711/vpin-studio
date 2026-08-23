@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -136,6 +137,7 @@ public class PauseMenu extends Application {
       PauseMenuUIDefaults.init(monitorInfo);
 
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
+      loader.setResources(Messages.getBundle());
       BorderPane rootPane = loader.load();
       menuController = loader.getController();
 

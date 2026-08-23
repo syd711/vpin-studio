@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -113,11 +114,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   private Label emptylabel;
 
-  private final static String MANIA_EMPTY_TEXT = "                 No VPin Mania highscores found.\nBe the first and create a highscore on this table!";
-  private final static String ISCORED_EMPTY_TEXT = "         No iScored subscription found.\nInstall the required table and subscribe to it.";
-  private final static String OFFLINE_EMPTY_TEXT = "                        No active offline competition found.\nStart an offline competition to compete with friends and family.";
-  private final static String ONLINE_EMPTY_TEXT = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
-
   // Add a public no-args constructor
   public WidgetCompetitionSummaryController() {
   }
@@ -152,19 +148,19 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
     if (competition == null) {
       if (competitionType.equals(CompetitionType.DISCORD)) {
-        emptylabel.setText(ONLINE_EMPTY_TEXT);
+        emptylabel.setText(Messages.get("widgets.widget_competition_summary.online_empty_text"));
       }
       else if (competitionType.equals(CompetitionType.OFFLINE)) {
-        emptylabel.setText(OFFLINE_EMPTY_TEXT);
+        emptylabel.setText(Messages.get("widgets.widget_competition_summary.offline_empty_text"));
       }
       else if (competitionType.equals(CompetitionType.ISCORED)) {
-        emptylabel.setText(ISCORED_EMPTY_TEXT);
+        emptylabel.setText(Messages.get("widgets.widget_competition_summary.iscored_empty_text"));
       }
       else if (competitionType.equals(CompetitionType.MANIA)) {
-        emptylabel.setText(MANIA_EMPTY_TEXT);
+        emptylabel.setText(Messages.get("widgets.widget_competition_summary.mania_empty_text"));
       }
       else {
-        emptylabel.setText(OFFLINE_EMPTY_TEXT);
+        emptylabel.setText(Messages.get("widgets.widget_competition_summary.offline_empty_text"));
       }
       durationLabel.setText("");
       emptylabel.setVisible(true);
@@ -184,7 +180,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     }
 
     if (competedGame != null) {
-      durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+      durationLabel.setText(Messages.get("widgets.widget_competition_summary.duration", DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate())));
       tableNameLabel.setText(competedGame.getGameDisplayName());
     }
     else {
@@ -293,16 +289,16 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           }
 
           if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-            durationLabel.setText("Table Subscription");
-            tableNameLabel.setText("Top Scores");
+            durationLabel.setText(Messages.get("widgets.widget_competition_summary.table_subscription"));
+            tableNameLabel.setText(Messages.get("widgets.widget_competition_summary.top_scores"));
           }
           else if (competitionType.equals(CompetitionType.ISCORED)) {
-            durationLabel.setText("iScored Subscription");
-            tableNameLabel.setText("Top Scores");
+            durationLabel.setText(Messages.get("widgets.widget_competition_summary.iscored_subscription"));
+            tableNameLabel.setText(Messages.get("widgets.widget_competition_summary.top_scores"));
           }
           else if (competitionType.equals(CompetitionType.MANIA)) {
             durationLabel.setText("");
-            tableNameLabel.setText("Top-5 Scores");
+            tableNameLabel.setText(Messages.get("widgets.widget_competition_summary.top5_scores"));
           }
 
           loadingPane.setVisible(false);

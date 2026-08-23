@@ -32,6 +32,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ServerSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ServerSettingsPreferencesController.class);
@@ -79,7 +80,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onMediaIndex() {
-    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Media Cache", "Cancel", "Regenerate Media Cache", "Regenerate the media cache?", null);
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, Messages.get("dialog.media_cache"), Messages.get("common.cancel"), Messages.get("dialog.regenerate_media_cache"), Messages.get("dialog.regenerate_the_media_cache"), null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new RegenerateMediaCacheProgressModel(client.getGameService().getVpxGamesCached()));
@@ -89,7 +90,7 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onRestart() {
-    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Server Restart", "Cancel", "Restart Server", "Are you sure you want to restart the VPin Studio Server?", null);
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, Messages.get("dialog.server_restart"), Messages.get("common.cancel"), Messages.get("dialog.restart_server"), Messages.get("dialog.are_you_sure_you_want_to_restart"), null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getSystemService().restart();
       ProgressDialog.createProgressDialog(new RestartProgressModel());
@@ -111,12 +112,12 @@ public class ServerSettingsPreferencesController implements Initializable {
           IOUtils.write(backup, fileOutputStream, StandardCharsets.UTF_8);
           LOG.info("Written backup file {}", file.getAbsolutePath());
           fileOutputStream.close();
-          WidgetFactory.showInformation(Studio.stage, "Backup Finished", "Written backup file \"" + file.getAbsolutePath() + "\".");
+          WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.backup_finished"), Messages.get("dialog.written_backup_file") + file.getAbsolutePath() + "\".");
         }
       }
       catch (Exception e) {
         LOG.error("Error creating backup file {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create backup file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_create_backup_file") + e.getMessage());
       }
     }
   }
@@ -135,7 +136,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     popperDataMappingFields.setVisible(Features.FIELDS_EXTENDED);
     launchOnExitOption.setVisible(Features.MEDIA_ENABLED);
-    launchFrontendCheckbox.setText("Launch " + frontend.getName() + " on maintenance exit.");
+    launchFrontendCheckbox.setText(Messages.get("pref.settings_server.launch_on_maintenance_exit", frontend.getName()));
 
     OffsetDateTime startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(startupTime));

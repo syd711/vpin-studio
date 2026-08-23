@@ -22,12 +22,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close">
                <HBox.margin>
                   <Insets left="12.0" right="12.0" />
                </HBox.margin>
             </Button>
-            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Apply Changes">
+            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%tables.editors.altsound2_profile.apply_changes">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -66,7 +66,7 @@
                               <Insets top="12.0" />
                            </GridPane.margin>
                            <children>
-                              <Label text="Group Volume" textFill="WHITE">
+                              <Label text="%tables.editors.altsound2_sample_type.group_volume" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -82,7 +82,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="The relative group volume for sample type." />
+                                    <Tooltip prefWidth="400.0" text="%tables.editors.altsound2_sample_type.the_relative_group_volume_for_sample_type" />
                                  </tooltip>
                               </Label>
                            </children>
@@ -122,32 +122,32 @@
                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Ducks:" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="Pauses:" GridPane.rowIndex="3" />
-                        <Label layoutX="10.0" layoutY="208.0" styleClass="default-text" text="Stops:" GridPane.rowIndex="4" />
+                        <Label styleClass="default-text" text="%tables.editors.altsound2_sample_type.ducks" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="%tables.editors.altsound2_sample_type.pauses" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="208.0" styleClass="default-text" text="%tables.editors.altsound2_sample_type.stops" GridPane.rowIndex="4" />
                         <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <CheckBox fx:id="ducksCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="Callout" textFill="WHITE">
+                              <CheckBox fx:id="ducksCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%tables.editors.altsound2_sample_type.callout" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="ducksMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                              <CheckBox fx:id="ducksMusic" mnemonicParsing="false" text="%backups.backup_restore.music" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="ducksOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="Overlay" textFill="WHITE">
+                              <CheckBox fx:id="ducksOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%cards.template_editor_overlay.overlay" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="ducksSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="SFX" textFill="WHITE">
+                              <CheckBox fx:id="ducksSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.editors.altsound2_profile.sfx" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="ducksSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Solo" textFill="WHITE">
+                              <CheckBox fx:id="ducksSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%tables.editors.altsound2_sample_type.solo" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -166,27 +166,27 @@
                            <children>
                               <VBox spacing="6.0">
                                  <children>
-                                    <CheckBox fx:id="stopsCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="Callout" textFill="WHITE">
+                                    <CheckBox fx:id="stopsCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%tables.editors.altsound2_sample_type.callout" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="stopsMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                                    <CheckBox fx:id="stopsMusic" mnemonicParsing="false" text="%backups.backup_restore.music" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="stopsOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="Overlay" textFill="WHITE">
+                                    <CheckBox fx:id="stopsOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%cards.template_editor_overlay.overlay" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="stopsSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="SFX" textFill="WHITE">
+                                    <CheckBox fx:id="stopsSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.editors.altsound2_profile.sfx" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="stopsSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Solo" textFill="WHITE">
+                                    <CheckBox fx:id="stopsSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%tables.editors.altsound2_sample_type.solo" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -195,7 +195,7 @@
                               </VBox>
                            </children>
                         </VBox>
-                        <Label styleClass="default-text" text="Sample Type:" textFill="WHITE" />
+                        <Label styleClass="default-text" text="%tables.editors.altsound2_sample_type.sample_type" textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
                            <children>
                               <Label fx:id="sampleTypeLabel" prefHeight="0.0" prefWidth="100.0" styleClass="default-text" text="-" />
@@ -207,7 +207,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="SOLO and MUSIC types cannot duck other types. &#10;Sample types cannot duck themselves.&#10;SFX can not be stopped.&#10;Solo can not be ducked.&#10;Only a Solo can stop Solos.&#10;" />
+                                    <Tooltip text="%tables.editors.altsound2_sample_type.solo_and_music_types_cannot_duck_other_types" />
                                  </tooltip>
                                  <HBox.margin>
                                     <Insets left="6.0" />
@@ -217,27 +217,27 @@
                         </HBox>
                         <VBox layoutX="123.0" layoutY="71.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <CheckBox fx:id="pausesCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="Callout" textFill="WHITE">
+                              <CheckBox fx:id="pausesCallout" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="%tables.editors.altsound2_sample_type.callout" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="pausesMusic" mnemonicParsing="false" text="Music" textFill="WHITE">
+                              <CheckBox fx:id="pausesMusic" mnemonicParsing="false" text="%backups.backup_restore.music" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="pausesOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="Overlay" textFill="WHITE">
+                              <CheckBox fx:id="pausesOverlay" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="%cards.template_editor_overlay.overlay" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="pausesSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="SFX" textFill="WHITE">
+                              <CheckBox fx:id="pausesSfx" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%tables.editors.altsound2_profile.sfx" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="pausesSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Solo" textFill="WHITE">
+                              <CheckBox fx:id="pausesSolo" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="%tables.editors.altsound2_sample_type.solo" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

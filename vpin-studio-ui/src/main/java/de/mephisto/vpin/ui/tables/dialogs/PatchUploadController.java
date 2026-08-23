@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PatchUploadController extends BaseUploadController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -140,7 +141,7 @@ public class PatchUploadController extends BaseUploadController {
       }
       catch (Exception e) {
         LOG.error("Patching table post upload failed: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Patching table post upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.patching_table_post_upload_failed") + e.getMessage());
       }
     }
   }
@@ -199,6 +200,7 @@ public class PatchUploadController extends BaseUploadController {
 
     try {
       FXMLLoader loader = new FXMLLoader(AssetFilterPanelController.class.getResource("asset-filter-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       assetsFilterPanel = loader.load();
       assetsFilterPanel.managedProperty().bindBidirectional(assetsFilterPanel.visibleProperty());
       assetFilterPanelController = loader.getController();

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.validation;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -18,8 +19,6 @@ import static de.mephisto.vpin.ui.Studio.Features;
  */
 public class GameValidationTexts {
 
-  private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or format.";
-
   public static LocalizedValidation validate(@NonNull GameRepresentation game) {
     String label = null;
     String text = null;
@@ -37,220 +36,222 @@ public class GameValidationTexts {
     int code = state.getCode();
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
-        label = "VPX file \"" + game.getGameFileName() + "\" does not exist.";
-        text = FrontendUtil.replaceName("Fix the configuration for this table in [Frontend] or delete it.", frontend);
+        label = Messages.get("validation.game.vpx_not_exists.label", game.getGameFileName());
+        text = FrontendUtil.replaceName(Messages.get("validation.game.vpx_not_exists.text"), frontend);
         break;
       }
       case CODE_NO_ROM: {
-        label = "No ROM name could be resolved.";
-        text = FrontendUtil.replaceName("Consider setting the ROM name in the \"Script Details\" section or [Frontend]" 
-          + ". Otherwise no highscore can be evaluated for this table.", frontend);
+        label = Messages.get("validation.game.no_rom.label");
+        text = FrontendUtil.replaceName(Messages.get("validation.game.no_rom.text"), frontend);
         break;
       }
       case CODE_ROM_NOT_EXISTS: {
-        label = "ROM file does not exist.";
-        text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM in the \"Script Details\" section.";
+        label = Messages.get("validation.game.rom_not_exists.label");
+        text = Messages.get("validation.game.rom_not_exists.text");
         break;
       }
       case CODE_ROM_INVALID: {
-        label = "ROM file is invalid.";
-        text = "The VPinMAME ROM check failed for this ROM. Upload a correct ROM file for this table if you are having issues playing it.";
+        label = Messages.get("validation.game.rom_invalid.label");
+        text = Messages.get("validation.game.rom_invalid.text");
         break;
       }
       case CODE_SCREEN_SIZE_ISSUE: {
-        label = "Invalid screen size configuration";
-        text = "FILL THIS text here!";
+        label = Messages.get("validation.game.screen_size_issue.label");
+        text = Messages.get("validation.game.screen_size_issue.text");
         break;
       }
       case CODE_VR_DISABLED: {
-        label = "The VR room setting is disabled.";
-        text = "The table has VR support, but it is disabled. Change the VR room variable inside the script to enabled it.";
+        label = Messages.get("validation.game.vr_disabled.label");
+        text = Messages.get("validation.game.vr_disabled.text");
         break;
       }
       case CODE_NVOFFSET_MISMATCH: {
-        label = "\"NVOffset\" mismatch found.";
-        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" and shares the ROM with table \"" + state.getOptions().getFirst() + "\" which has the NVOffset value \"" + state.getOptions().get(2) + "\".";
+        label = Messages.get("validation.game.nvoffset_mismatch.label");
+        text = Messages.get("validation.game.nvoffset_mismatch.text",
+            state.getOptions().get(1), state.getOptions().getFirst(), state.getOptions().get(2));
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
-        label = "No directb2s file found.";
-        if(Features.PUPPACKS_ENABLED) {
-          label = "No PUP pack and no directb2s file found.";
+        label = Messages.get("validation.game.no_directb2s_or_puppack.label");
+        if (Features.PUPPACKS_ENABLED) {
+          label = Messages.get("validation.game.no_directb2s_or_puppack.label_puppacks");
         }
-        text = "Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";
+        text = Messages.get("validation.game.no_directb2s_or_puppack.text");
         break;
       }
       case CODE_BACKGLASS_AND_BACKGLASSES_DISABLED: {
-        label = "directb2s file found, but backglasses are not enabled.";
-        text = "The table has a backglass, but you have force disabled the backglasses in your VPX settings.";
+        label = Messages.get("validation.game.backglass_and_backglasses_disabled.label");
+        text = Messages.get("validation.game.backglass_and_backglasses_disabled.text");
         break;
       }
       case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED: {
-        label = "PUP Pack not enabled.";
-        text = "The table does not have a backglass and the PUP pack is not enabled.";
+        label = Messages.get("validation.game.no_directb2s_and_puppack_disabled.label");
+        text = Messages.get("validation.game.no_directb2s_and_puppack_disabled.text");
         break;
       }
       case CODE_NO_DMDFOLDER: {
-        label = "DMD Folder not found.";
-        text = "The table uses UltraDMD or FlexDMD but the needed DMD folder \"" + state.getOption() + "\" is not found.";
+        label = Messages.get("validation.game.no_dmdfolder.label");
+        text = Messages.get("validation.game.no_dmdfolder.text", state.getOption());
         break;
       }
       case CODE_NO_AUDIO: {
         label = invalidAssetMessage("Audio");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_AUDIO_LAUNCH: {
         label = invalidAssetMessage("Audio Launch");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_APRON: {
         label = invalidAssetMessage("Full DMD");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_INFO: {
         label = invalidAssetMessage("Info");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_HELP: {
         label = invalidAssetMessage("Help");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_TOPPER: {
         label = invalidAssetMessage("Topper");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_BACKGLASS: {
         label = invalidAssetMessage("Backglass");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_DMD: {
         label = invalidAssetMessage("DMD");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_LOADING: {
         label = invalidAssetMessage("Loading");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_PLAYFIELD: {
         label = invalidAssetMessage("Playfield");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_OTHER2: {
         label = invalidAssetMessage("Other2");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_LOGO: {
         label = invalidAssetMessage("Logo");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_WHEEL_IMAGE: {
         label = invalidAssetMessage("Wheel");
-        text = NO_MEDIA_TEXT;
+        text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_ALT_SOUND_NOT_ENABLED: {
-        label = "ALT sound not enabled.";
-        text = "The table has an ALT sound package, but \"Sound Mode\" is not checked in the \"VPin MAME\" settings.";
+        label = Messages.get("validation.game.alt_sound_not_enabled.label");
+        text = Messages.get("validation.game.alt_sound_not_enabled.text");
         break;
       }
       case CODE_ALT_SOUND_FILE_MISSING: {
-        label = "ALT sound audio file(s) missing.";
-        text = "Audio files of this ALT sound package are missing. Open the ALT sound editor for details.";
+        label = Messages.get("validation.game.alt_sound_file_missing.label");
+        text = Messages.get("validation.game.alt_sound_file_missing.text");
         break;
       }
       case CODE_FORCE_STEREO: {
-        label = "Force Stereo not enabled.";
-        text = "Enable \"Force Stereo\" for this table in the VPinMAME settings.";
+        label = Messages.get("validation.game.force_stereo.label");
+        text = Messages.get("validation.game.force_stereo.text");
         break;
       }
       case CODE_PUP_PACK_FILE_MISSING: {
-        label = "PUP pack media file missing.";
+        label = Messages.get("validation.game.pup_pack_file_missing.label_single");
         if (state.getOptions().size() > 1) {
-          label = "PUP pack media files missing.";
+          label = Messages.get("validation.game.pup_pack_file_missing.label_plural");
         }
         if (state.getOptions().size() > 2) {
           List<String> entries = state.getOptions().subList(0, 2);
-          text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
+          text = Messages.get("validation.game.pup_pack_file_missing.text_more",
+              String.join("\", \"", entries), state.getOptions().size() - 2);
         }
         else {
-          text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
+          text = Messages.get("validation.game.pup_pack_file_missing.text", String.join("\", \"", state.getOptions()));
         }
         break;
       }
       case CODE_MUSIC_FILE_MISSING: {
-        label = "Music file is missing.";
+        label = Messages.get("validation.game.music_file_missing.label_single");
         if (state.getOptions().size() > 1) {
-          label = "Music files are missing.";
+          label = Messages.get("validation.game.music_file_missing.label_plural");
         }
         if (state.getOptions().size() > 2) {
           List<String> entries = state.getOptions().subList(0, 2);
-          text = "The table script references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more files)";
+          text = Messages.get("validation.game.music_file_missing.text_more",
+              String.join("\", \"", entries), state.getOptions().size() - 2);
         }
         else {
-          text = "The table script references invalid file(s): \"" + String.join("\", \"", state.getOptions()) + "\"";
+          text = Messages.get("validation.game.music_file_missing.text", String.join("\", \"", state.getOptions()));
         }
         break;
       }
       case CODE_VPS_MAPPING_MISSING: {
-        label = "No \"Virtual Pinball Spreadsheet\" match found.";
-        text = "The table and its version has not been matched against the Virtual Pinball Spreadsheet.";
+        label = Messages.get("validation.game.vps_mapping_missing.label");
+        text = Messages.get("validation.game.vps_mapping_missing.text");
         break;
       }
       case CODE_VPS_ALTCOLOR_MISSING: {
-        label = "No ALT color resource found.";
-        text = "There is an ALT color resource available on the Virtual Pinball Spreadsheet for this table.";
+        label = Messages.get("validation.game.vps_altcolor_missing.label");
+        text = Messages.get("validation.game.vps_altcolor_missing.text");
         break;
       }
       case CODE_VPS_ALTSOUND_MISSING: {
-        label = "No ALT sound bundle found.";
-        text = "There is an ALT sound bundle available on the Virtual Pinball Spreadsheet for this table.";
+        label = Messages.get("validation.game.vps_altsound_missing.label");
+        text = Messages.get("validation.game.vps_altsound_missing.text");
         break;
       }
       case CODE_VPS_PUPPACK_MISSING: {
-        label = "No PUP pack found.";
-        text = "There is a PUP pack available on the Virtual Pinball Spreadsheet for this table.";
+        label = Messages.get("validation.game.vps_puppack_missing.label");
+        text = Messages.get("validation.game.vps_puppack_missing.text");
         break;
       }
       case CODE_ALT_COLOR_FILES_MISSING: {
-        label = "ALT Color files missing.";
-        text = "An ALT Color file is missing: " + state.getOption();
+        label = Messages.get("validation.game.alt_color_files_missing.label");
+        text = Messages.get("validation.game.alt_color_files_missing.text", state.getOption());
         break;
       }
       case CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED: {
-        label = "External DMD not enabled.";
-        text = "The table contains an ALT Color file, but the external DMD is not enabled in the VPin MAME settings.";
+        label = Messages.get("validation.game.alt_color_external_dmd_not_enabled.label");
+        text = Messages.get("validation.game.alt_color_external_dmd_not_enabled.text");
         break;
       }
       case CODE_ALT_COLOR_COLORIZE_DMD_ENABLED: {
-        label = "Colorize DMD not enabled.";
-        text = "The table contains an ALT Color file, but the DMD colorization is not enabled in the VPin MAME settings.";
+        label = Messages.get("validation.game.alt_color_colorize_dmd_enabled.label");
+        text = Messages.get("validation.game.alt_color_colorize_dmd_enabled.text");
         break;
       }
       case CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING: {
-        label = "DMD device files missing.";
-        text = "Mandatory file not found to run ALT Color: " + state.getOption();
+        label = Messages.get("validation.game.alt_color_dmddevice_files_missing.label");
+        text = Messages.get("validation.game.alt_color_dmddevice_files_missing.text", state.getOption());
         break;
       }
       case CODE_SCRIPT_CONTROLLER_STOP_MISSING: {
-        label = "No \"Controller.stop\" call found in script.";
-        text = "The VPX script has an exit method but does not call \"Controller.stop\". This call is required so that the tables nvram file is written.";
+        label = Messages.get("validation.game.script_controller_stop_missing.label");
+        text = Messages.get("validation.game.script_controller_stop_missing.text");
         break;
       }
       case CODE_SCRIPT_FILES_MISSING: {
-        label = "An included script is missing.";
-        text = "The VBS script \"" + state.getOption() + "\" is missing in the \"scripts\" folder.";
+        label = Messages.get("validation.game.script_files_missing.label");
+        text = Messages.get("validation.game.script_files_missing.text", state.getOption());
         break;
       }
       default: {
@@ -262,6 +263,6 @@ public class GameValidationTexts {
   }
 
   private static String invalidAssetMessage(String name) {
-    return "Assets for screen \"" + name + "\" do not match with the configured screen validator configuration.";
+    return Messages.get("validation.game.invalid_asset.label", name);
   }
 }

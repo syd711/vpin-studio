@@ -30,9 +30,9 @@
                <children>
                   <VBox styleClass="info-container">
                      <children>
-                        <GridPane>
+                        <GridPane hgap="6.0" vgap="3.0">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="288.199951171875" minWidth="10.0" prefWidth="77.3999267578125" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="507.8000732421875" minWidth="10.0" prefWidth="507.8000732421875" />
                           </columnConstraints>
                           <rowConstraints>
@@ -42,8 +42,8 @@
                            <children>
                               <Label fx:id="tableNameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" />
                               <Label fx:id="tableStatusLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label styleClass="default-text" text="Table:" />
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Status:" GridPane.rowIndex="1" />
+                              <Label styleClass="default-text" text="%competitions.discord_competition_edit.table" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%mania.mania_table_sync.status" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                      </children>
@@ -54,14 +54,14 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </VBox>
-                  <Label fx:id="statsLabel" styleClass="default-text" text="highscores have been synchronized with vpin-mania.net." />
+                  <Label fx:id="statsLabel" styleClass="default-text" text="%mania.mania_table_sync.highscores_have_been_synchronized_with_vpin_mania_net" />
                </children>
             </VBox>
          </left>
          <right>
             <VBox alignment="BOTTOM_CENTER" BorderPane.alignment="CENTER">
                <children>
-                <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
+                <Button defaultButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close" />
                </children>
             </VBox>
          </right>
@@ -73,10 +73,10 @@
             <TableView fx:id="tableView" prefHeight="630.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="statusColumn" prefWidth="50.0" style="-fx-alignment: BASELINE_CENTER;" />
-                <TableColumn fx:id="nameColumn" prefWidth="500.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                  <TableColumn fx:id="typeColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Table Type" />
-                <TableColumn fx:id="accountColumn" minWidth="0.0" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Account" />
-                  <TableColumn fx:id="scoreColumn" prefWidth="214.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Highscore" />
+                <TableColumn fx:id="nameColumn" prefWidth="500.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_discord.table" />
+                  <TableColumn fx:id="typeColumn" prefWidth="90.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%mania.mania_table_sync.table_type" />
+                <TableColumn fx:id="accountColumn" minWidth="0.0" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%mania.mania_table_sync.account" />
+                  <TableColumn fx:id="scoreColumn" prefWidth="214.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="%mania.mania_table_sync.highscore" />
               </columns>
             </TableView>
          </content>

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.AvatarImageUtil;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -27,7 +28,7 @@ public class AvatarGeneratorProgressModel extends ProgressModel<File> {
   private final Iterator<File> avatarIterator;
 
   public AvatarGeneratorProgressModel(Tile avatar, File avatarFile) {
-    super("Generating Avatar");
+    super(Messages.get("players.player_edit.generating_avatar"));
     this.avatar = avatar;
     this.files = Arrays.asList(avatarFile);
     this.avatarIterator = files.iterator();

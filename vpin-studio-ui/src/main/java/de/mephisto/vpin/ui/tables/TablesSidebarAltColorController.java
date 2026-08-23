@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarAltColorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -112,7 +113,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete ALT Color files for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_alt_color_files_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getAltColorService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
@@ -183,7 +184,7 @@ public class TablesSidebarAltColorController implements Initializable {
     filesLabel.setText("-");
     folderLabel.setText("-");
     folderLabel.setTooltip(null);
-    restoreBtn.setText("Restore");
+    restoreBtn.setText(Messages.get("dialog.restore"));
     errorBox.setVisible(false);
 
     if (g.isPresent()) {
@@ -194,7 +195,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
       restoreBtn.setDisable(altColor.getBackedUpFiles().isEmpty());
       if (!altColor.getBackedUpFiles().isEmpty()) {
-        restoreBtn.setText("Restore (" + altColor.getBackedUpFiles().size() + ")");
+        restoreBtn.setText(Messages.get("dialog.restore_named", altColor.getBackedUpFiles().size()));
       }
 
       dataBox.setVisible(altColorAvailable);

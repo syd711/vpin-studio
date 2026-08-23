@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableAssetSourceFolderDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetSourceFolderDialogController.class);
@@ -92,7 +93,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       client.getAssetSourcesService().saveAssetSource(source);
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error saving media source: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_media_source") + e.getMessage());
     }
 
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();

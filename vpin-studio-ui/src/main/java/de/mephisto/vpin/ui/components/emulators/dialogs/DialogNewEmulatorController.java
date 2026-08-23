@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components.emulators.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import javafx.beans.value.ChangeListener;
@@ -123,13 +124,13 @@ public class DialogNewEmulatorController implements Initializable, DialogControl
               infoContainer.setVisible(true);
               errorContainer.setVisible(false);
               if (emulatorType.equals(EmulatorType.ZenFX) || emulatorType.equals(EmulatorType.ZenFX3) || emulatorType.equals(EmulatorType.Zaccaria) || emulatorType.equals(EmulatorType.PinballM)) {
-                validationText.setText("The games of this emulator type will be automatically imported.");
+                validationText.setText(Messages.get("components.emulators.new_emulator.the_games_of_this_emulator_type_will_be"));
               }
               else {
-                validationText.setText("You can setup the emulator and continue with the configuration.");
+                validationText.setText(Messages.get("components.emulators.new_emulator.you_can_setup_the_emulator_and_continue_with"));
               }
 
-              validationTitle.setText("Validation Successful");
+              validationTitle.setText(Messages.get("components.emulators.new_emulator.validation_successful"));
             }
 
             nameField.selectAll();

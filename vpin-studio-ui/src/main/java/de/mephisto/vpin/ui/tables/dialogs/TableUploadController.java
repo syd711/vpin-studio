@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -258,8 +259,8 @@ public class TableUploadController implements Initializable, DialogController {
       }
 
       if (!similar) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",
-            "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(s, Messages.get("common.warning"),
+            Messages.get("dialog.the_selected_file") + selection.getName() + Messages.get("dialog.doesn_t_seem_to_match_with_table") + game.getGameDisplayName() + "\".", Messages.get("dialog.proceed_anyway"), Messages.get("dialog.yes_replace_table"));
         if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
           return false;
         }
@@ -270,7 +271,7 @@ public class TableUploadController implements Initializable, DialogController {
     if (uploadType.equals(UploadType.uploadAndImport)) {
       try {
         ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s,
-            new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
+            new WaitProgressModel<>(Messages.get("dialog.pre_checks"), Messages.get("dialog.running_pre_checks_before_upload"), () -> {
               return client.getGameService().findMatch(fileName);
             }));
         if (checkResult.isCancelled()) {
@@ -278,8 +279,8 @@ public class TableUploadController implements Initializable, DialogController {
         }
         GameRepresentation game = checkResult.getFirstTypedResult();
         if (game != null) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Potential Table Match Found", "The selected file \"" + selection.getName() + "\" seems to match with the table \"" + game.getGameDisplayName() + "\".",
-              "Would you like to proceed adding a new table?", "Yes, upload as new table");
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(s, Messages.get("dialog.potential_table_match_found"), Messages.get("dialog.the_selected_file") + selection.getName() + Messages.get("dialog.seems_to_match_with_the_table") + game.getGameDisplayName() + "\".",
+              Messages.get("dialog.would_you_like_to_proceed_adding_a"), Messages.get("dialog.yes_upload_as_new_table"));
           if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
             return false;
           }
@@ -358,7 +359,7 @@ public class TableUploadController implements Initializable, DialogController {
             // If the analysis failed.
             if (analyzeVpx != null && analyzeVpt != null && _analyzeFpt != null) {
               uploadBtn.setDisable(true);
-              WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
+              WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_table_file_found_in_this_archive"));
               this.selection = null;
 
               this.fileNameField.setText("");
@@ -425,7 +426,7 @@ public class TableUploadController implements Initializable, DialogController {
     GameEmulatorRepresentation value = emulatorCombo.getValue();
 
     if(emulatorType == null) {
-      WidgetFactory.showAlert(stage, "Invalid File", "No matching emulator found for the selected file.");
+      WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_file"), Messages.get("dialog.no_matching_emulator_found_for_the_selected"));
       return false;
     }
 
@@ -435,13 +436,17 @@ public class TableUploadController implements Initializable, DialogController {
         return true;
       }
 
-      Optional<GameEmulatorRepresentation> first = this.emulatorCombo.getItems().stream().filter(GameEmulatorRepresentation::isVpxEmulator).findFirst();
-      if (first.isPresent()) {
-        emulatorCombo.setValue(first.get());
+      List<GameEmulatorRepresentation> vpxEmulators = this.emulatorCombo.getItems().stream().filter(GameEmulatorRepresentation::isVpxEmulator).collect(Collectors.toList());
+      Optional<GameEmulatorRepresentation> saved = vpxEmulators.stream().filter(e -> e.getId() == uiSettings.getDefaultUploadVpxEmulatorId()).findFirst();
+      Optional<GameEmulatorRepresentation> selected = saved.isPresent() ? saved : vpxEmulators.stream().findFirst();
+      if (selected.isPresent()) {
+        emulatorCombo.setValue(selected.get());
+        uiSettings.setDefaultUploadVpxEmulatorId(selected.get().getId());
+        client.getPreferenceService().setJsonPreference(uiSettings);
         return true;
       }
       else {
-        WidgetFactory.showAlert(stage, "Invalid File", "No matching emulator found.");
+        WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_file"), Messages.get("dialog.no_matching_emulator_found"));
         this.selection = null;
         setSelection(false);
       }
@@ -457,7 +462,7 @@ public class TableUploadController implements Initializable, DialogController {
         return true;
       }
       else {
-        WidgetFactory.showAlert(stage, "Invalid File", "No matching Future Pinball emulator found.");
+        WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_file"), Messages.get("dialog.no_matching_future_pinball_emulator_found"));
         this.selection = null;
         setSelection(false);
       }
@@ -471,15 +476,15 @@ public class TableUploadController implements Initializable, DialogController {
       return;
     }
 
-    assetFilterBtn.setText("Filter Selection");
+    assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection"));
     assetFilterBtn.getStyleClass().remove("error-title");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
       assetFilterBtn.getStyleClass().add("error-title");
       if (uploaderAnalysis.getExclusions().size() == 1) {
-        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
+        assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_asset", uploaderAnalysis.getExclusions().size()));
       }
       else {
-        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded assets)");
+        assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_assets", uploaderAnalysis.getExclusions().size()));
       }
     }
 
@@ -498,44 +503,44 @@ public class TableUploadController implements Initializable, DialogController {
     assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null);
 
 
-    assetCfgLabel.setText("- .cfg File");
+    assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file"));
     if (assetCfgLabel.isVisible()) {
-      assetCfgLabel.setText("- .cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
+      assetCfgLabel.setText(Messages.get("tables.table_upload.cfg_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.CFG)));
     }
 
-    assetDmdLabel.setText("- DMD Pack");
+    assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack"));
     if (assetDmdLabel.isVisible()) {
-      assetDmdLabel.setText("- DMD Pack (" + uploaderAnalysis.getDMDPath() + ")");
+      assetDmdLabel.setText(Messages.get("tables.table_upload.dmd_pack_named", uploaderAnalysis.getDMDPath()));
     }
 
-    assetNvRamLabel.setText("- .nv File");
+    assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file"));
     if (assetNvRamLabel.isVisible()) {
-      assetNvRamLabel.setText("- .nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
+      assetNvRamLabel.setText(Messages.get("tables.table_upload.nv_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.NV)));
     }
 
-    assetPupPackLabel.setText("- PUP Pack");
+    assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack"));
     if (assetPupPackLabel.isVisible()) {
-      assetPupPackLabel.setText("- PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
+      assetPupPackLabel.setText(Messages.get("tables.table_upload.pup_pack_named", uploaderAnalysis.getRomFromPupPack()));
     }
 
-    assetIniLabel.setText("- .ini File");
+    assetIniLabel.setText(Messages.get("tables.table_upload.ini_file"));
     if (assetIniLabel.isVisible()) {
-      assetIniLabel.setText("- .ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
+      assetIniLabel.setText(Messages.get("tables.table_upload.ini_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.INI)));
     }
 
-    assetResLabel.setText("- .res File");
+    assetResLabel.setText(Messages.get("tables.table_upload.res_file"));
     if (assetResLabel.isVisible()) {
-      assetResLabel.setText("- .res File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.RES) + ")");
+      assetResLabel.setText(Messages.get("tables.table_upload.res_file_named", uploaderAnalysis.getFileNameForAssetType(AssetType.RES)));
     }
 
-    assetRomLabel.setText("- ROM");
+    assetRomLabel.setText(Messages.get("tables.table_upload.rom"));
     if (assetRomLabel.isVisible()) {
-      assetRomLabel.setText("- ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
+      assetRomLabel.setText(Messages.get("tables.table_upload.rom_named", uploaderAnalysis.getRomFromArchive()));
     }
 
-    assetAltSoundLabel.setText("- ALT Sound");
+    assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
     if (assetAltSoundLabel.isVisible()) {
-      assetAltSoundLabel.setText("- ALT Sound");
+      assetAltSoundLabel.setText(Messages.get("tables.table_upload.alt_sound"));
     }
 
     assetsView.setVisible(assetBackglassLabel.isVisible()
@@ -582,7 +587,10 @@ public class TableUploadController implements Initializable, DialogController {
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
-    emulatorRepresentation = gameEmulators.getFirst();
+    emulatorRepresentation = gameEmulators.stream()
+        .filter(e -> e.isVpxEmulator() && e.getId() == uiSettings.getDefaultUploadVpxEmulatorId())
+        .findFirst()
+        .orElse(gameEmulators.getFirst());
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulatorRepresentation);
@@ -737,8 +745,8 @@ public class TableUploadController implements Initializable, DialogController {
     this.game = game;
 
     if (game != null) {
-      this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
-      this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
+      this.uploadAndReplaceRadio.setText(Messages.get("tables.table_upload.upload_and_replace_named", game.getGameDisplayName()));
+      this.uploadAndCloneRadio.setText(Messages.get("tables.table_upload.upload_and_clone_named", game.getGameDisplayName()));
 
       GameEmulatorRepresentation gameEmulator = Studio.client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);

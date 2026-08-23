@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 abstract public class AbstractComponentTab implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(AbstractComponentTab.class);
@@ -102,6 +103,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       componentUpdateController = loader.getController();
       componentInstallerPane.setCenter(builtInRoot);
@@ -112,6 +114,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentSummaryController.class.getResource("component-summary-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       componentSummaryController = loader.getController();
       componentSummaryPane.getChildren().add(builtInRoot);
@@ -138,11 +141,12 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected ComponentSummaryEntryController addCustomValue(ComponentSummaryEntry entry) {
     try {
       FXMLLoader loader = new FXMLLoader(ComponentSummaryEntryController.class.getResource("component-summary-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       ComponentSummaryEntryController controller = loader.getController();
 
       if (componentCustomValues.getChildren().isEmpty()) {
-        Label label = new Label("Installation Details");
+        Label label = new Label(Messages.get("components.abstract_component_tab.installation_details"));
         label.getStyleClass().add("preference-subtitle");
         HBox box = new HBox(label);
         box.setAlignment(Pos.CENTER_LEFT);
@@ -167,7 +171,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       openFolder(new File(folder));
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "Error", "The server was unable to determine the target folder.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_server_was_unable_to_determine_the"));
     }
   }
 
@@ -177,7 +181,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
         SystemUtil.openFolder(file);
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder\"" + file.getAbsolutePath() + "\" does not exist.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("dialog.the_folder") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
       }
     }
     catch (Exception e) {
@@ -188,7 +192,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected void openFile(File file) {
     boolean open = Studio.open(file);
     if (!open) {
-      WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("dialog.the_folder_2") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
     }
   }
 

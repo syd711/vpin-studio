@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AutoFillSelectionController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -100,8 +101,8 @@ public class AutoFillSelectionController implements Initializable, DialogControl
         tableDetails = client.getFrontendService().autoFillTableDetailsSimulated(game.getId(), tableDetails, vpsTableId, vpsVersionId);
       }
       catch (Exception ex) {
-        LOG.error("Failed to fill table details: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(stage, "Error", "Failed to fill table details: " + ex.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_fill_table_details") + ex.getMessage(), ex);
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_fill_table_details") + ex.getMessage());
       }
     }
 
@@ -224,7 +225,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
     this.vpsTableId = vpsTableId;
     this.vpsVersionId = vpsVersionId;
     if (this.games.size() > 1) {
-      autoFillBtn.setText("Auto-Fill All");
+      autoFillBtn.setText(Messages.get("tables.table_data.auto_fill_all"));
     }
   }
 

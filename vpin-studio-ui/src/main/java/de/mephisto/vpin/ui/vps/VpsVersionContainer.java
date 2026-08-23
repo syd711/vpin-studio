@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.vps;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -58,7 +59,7 @@ public class VpsVersionContainer extends VBox {
       }
 
       HBox row = new HBox(6);
-      Label titleLabel = new Label("Version:");
+      Label titleLabel = new Label(Messages.get("vps.vps_version_container.version_label"));
       titleLabel.setPrefWidth(TITLE_WIDTH);
       titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
       Label valueLabel = new Label(item.getVersion());
@@ -68,7 +69,7 @@ public class VpsVersionContainer extends VBox {
       this.getChildren().add(row);
 
       row = new HBox(6);
-      titleLabel = new Label("VPS Update:");
+      titleLabel = new Label(Messages.get("vps.vps_version_container.vps_update_label"));
       titleLabel.setPrefWidth(TITLE_WIDTH);
       titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
       
@@ -114,7 +115,7 @@ public class VpsVersionContainer extends VBox {
     }
     catch (Exception e) {
       LOG.error("Failed to render VPS version container: " + e.getMessage(), e);
-      this.getChildren().add(new Label("ERROR"));
+      this.getChildren().add(new Label(Messages.get("vps.vps_version_container.render_error")));
     }
   }
 }

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class StudioBackupRestoreProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(StudioBackupRestoreProgressModel.class);
@@ -67,7 +68,7 @@ public class StudioBackupRestoreProgressModel extends ProgressModel<String> {
   @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
     Platform.runLater(() -> {
-      WidgetFactory.showInformation(Studio.stage, "Backup Restore Finished", "The backup file was successfully imported.");
+      WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.backup_restore_finished"), Messages.get("dialog.the_backup_file_was_successfully_imported"));
       PreferencesController.markDirty(PreferenceType.uiSettings);
     });
   }
@@ -80,7 +81,7 @@ public class StudioBackupRestoreProgressModel extends ProgressModel<String> {
     }
     catch (Exception ex) {
       LOG.error("Failed to write backup file: {}", ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to write backup file: " + ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_write_backup_file") + ex.getMessage());
     }
   }
 }

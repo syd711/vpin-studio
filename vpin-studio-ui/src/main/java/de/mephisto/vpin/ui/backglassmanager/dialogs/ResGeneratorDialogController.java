@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ResGeneratorDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(ResGeneratorDialogController.class);
@@ -125,8 +126,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   @FXML
   private void onGenerateClick(ActionEvent event) {
-    ProgressResultModel result =  ProgressDialog.createProgressDialog(new WaitProgressModel<>("Generate .res File...", 
-      "Generating and saving .res file", 
+    ProgressResultModel result =  ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.generate_res_file"),
+      Messages.get("dialog.generating_and_saving_res_file"),
       () -> {
           DirectB2sScreenRes screenres = client.getBackglassServiceClient().getGlobalScreenRes();
           // Mind that the case where globalRes has a frame background is not fully tested...
@@ -203,7 +204,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     if (result.isSuccess()) {
       ReturnMessage status = result.getFirstTypedResult();
       if (status != null && !status.isOk()) {
-        WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", status.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_saving_res_file"), status.getMessage());
       }
       else {
         stage.close();
@@ -364,8 +365,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       return; 
     }
 
-    ProgressResultModel img =  ProgressDialog.createProgressDialog(new WaitProgressModel<>("Generate Frame...", 
-          "Generating a '" + frameType + "' frame", 
+    ProgressResultModel img =  ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.generate_frame"),
+          Messages.get("dialog.generating_a_frame", frameType),
           () -> {
             try {
               InputStream in = client.getBackglassServiceClient().generateFrame(emulatorId, b2sFileName, frameType);
@@ -395,7 +396,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(emulatorId, fileName, false))
         .thenAcceptLater(res -> setScreenRes(res))
-        .onErrorLater(ex -> WidgetFactory.showAlert(stage, "Error", "Cannt load .res file :", ex.getMessage()));
+        .onErrorLater(ex -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannt_load_res_file"), ex.getMessage()));
 
     JFXFuture.supplyAsync(() -> {
           DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(emulatorId, fileName);
@@ -463,7 +464,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       }
     }
     else {
-      screenResLabel.setText("No screen res file found, please run B2S_ScreenResIdentifier.exe");
+      screenResLabel.setText(Messages.get("backglass.res_generator.no_screen_res_file_found_please_run"));
       backglassDimensionLabel.setText("--");
     }
   }

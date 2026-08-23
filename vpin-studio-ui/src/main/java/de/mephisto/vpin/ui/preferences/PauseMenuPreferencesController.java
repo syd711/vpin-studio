@@ -33,6 +33,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.*;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PauseMenuPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuPreferencesController.class);
@@ -380,7 +381,7 @@ public class PauseMenuPreferencesController implements Initializable {
         PreferencesController.markDirty(PreferenceType.competitionSettings);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
       }
     });
 

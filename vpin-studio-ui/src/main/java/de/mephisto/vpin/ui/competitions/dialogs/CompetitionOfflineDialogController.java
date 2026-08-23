@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -119,7 +121,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
 
     competition = new CompetitionRepresentation();
     competition.setType(CompetitionType.OFFLINE.name());
-    competition.setName("My next competition");
+    competition.setName(UIDefaults.DEFAULT_COMPETITION_NAME);
     competition.setUuid(UUID.randomUUID().toString());
 
     Instant end = LocalDate.now().plus(7, ChronoUnit.DAYS).atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -240,20 +242,20 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
     this.durationLabel.setText(DateUtil.formatDuration(startDate, endDate));
 
     if (StringUtils.isEmpty(competition.getName())) {
-      validationTitle.setText("No competition name set.");
-      validationDescription.setText("Define a meaningful competition name.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.no_competition_name_set"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_edit.define_a_meaningful_competition_name"));
       return;
     }
 
     if (competition.getGameId() <= 0) {
-      validationTitle.setText("No table selected.");
-      validationDescription.setText("Select a table for the competition.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.no_table_selected"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_edit.select_a_table_for_the_competition"));
       return;
     }
 
     if (startDate == null || endDate == null || !startDate.isBefore(endDate)) {
-      validationTitle.setText("Invalid start/end date set.");
-      validationDescription.setText("Define a valid start and end date.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.invalid_start_end_date_set"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_edit.define_a_valid_start_and_end_date"));
       return;
     }
 

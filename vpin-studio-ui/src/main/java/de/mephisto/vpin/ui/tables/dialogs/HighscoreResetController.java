@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
@@ -88,12 +89,12 @@ public class HighscoreResetController implements Initializable, DialogController
         this.singleNVRamLabel.setVisible(resettedRomAvailable);
         this.singleNVRamNoResetLabel.setVisible(!resettedRomAvailable);
       }
-      title.setText("Reset the highscores of \"" + game.getGameDisplayName() + "\"?");
+      title.setText(Messages.get("tables.highscore_reset.reset_the_highscores_of", game.getGameDisplayName()));
     }
     else {
       multiNVRamLabel.setVisible(true);
       scoreValueBox.setVisible(this.games.stream().anyMatch(g -> !HighscoreType.NVRam.name().equals(g.getHighscoreType())));
-      title.setText("Reset the highscores of " + games.size() + " tables?");
+      title.setText(Messages.get("tables.highscore_reset.reset_the_highscores_of_tables", games.size()));
     }
   }
 

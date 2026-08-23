@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class LayerEditorTableNameController extends LayerEditorBaseController {
 
@@ -47,7 +48,7 @@ public class LayerEditorTableNameController extends LayerEditorBaseController {
 
   @FXML
   private void onFontTableApplyAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.apply_to_all"), Messages.get("dialog.apply_selected_font_settings_to_all_templates"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       CardTemplate selection = templateEditorController.getSelectedCardTemplate();
       templateEditorController.applyFontOnAllTemplates(item -> {

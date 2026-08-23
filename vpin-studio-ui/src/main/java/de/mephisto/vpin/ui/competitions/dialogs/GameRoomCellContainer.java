@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Insets;
 import javafx.scene.control.Hyperlink;
@@ -38,7 +39,7 @@ public class GameRoomCellContainer extends HBox {
 
     boolean publicScoreEnabled = gameRoom.getSettings().isPublicScoreEnteringEnabled();
     row = new HBox(6);
-    titleLabel = new Label("Public Scores Enabled:");
+    titleLabel = new Label(Messages.get("pref.iscored_gameroom.public_scores_enabled"));
     titleLabel.setPrefWidth(TITLE_WIDTH);
     titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     Label valueLabel = new Label(String.valueOf(publicScoreEnabled));
@@ -49,7 +50,7 @@ public class GameRoomCellContainer extends HBox {
 
     boolean longNamesEnabled = gameRoom.getSettings().isLongNameInputEnabled();
     row = new HBox(6);
-    titleLabel = new Label("Long Names Enabled:");
+    titleLabel = new Label(Messages.get("pref.iscored_gameroom.long_names_enabled"));
     titleLabel.setPrefWidth(TITLE_WIDTH);
     titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
     valueLabel = new Label(String.valueOf(longNamesEnabled));

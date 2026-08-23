@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import de.mephisto.vpin.server.util.ServerMessages;
 
 public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
@@ -62,14 +63,14 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus("Launching Emulator");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_emulator", locale));
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
-        jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", locale, game.getGameDisplayName()));
 
         recorderService.launchGame(game, recorderSettings);
 
@@ -81,12 +82,12 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         }
 
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled() || secondToWait <= 0) {
-          jobDescriptor.setStatus("Timeout waiting for emulator.");
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.timeout", locale));
           break;
         }
         updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
 
-        jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", locale, game.getGameDisplayName()));
 
         //create the game recorder which includes all screens
         gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingScreens);
@@ -123,4 +124,5 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
     frontend.killFrontend();
     super.cancel(jobDescriptor);
   }
+
 }

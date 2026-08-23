@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -272,7 +273,7 @@ public class TablesBackupDialogController implements Initializable, DialogContro
       this.titleLabel.setText(games.getFirst().getGameDisplayName());
     }
     else {
-      this.titleLabel.setText("Backup of " + games.size() + " tables");
+      this.titleLabel.setText(Messages.get("backups.tables_backup.backup_of_n_tables", games.size()));
     }
   }
 }

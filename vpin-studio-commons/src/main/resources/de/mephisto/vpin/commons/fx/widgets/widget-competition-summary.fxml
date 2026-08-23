@@ -17,7 +17,7 @@
             <children>
             <BorderPane fx:id="emptyPanel" layoutX="10.0" layoutY="10.0">
                <bottom>
-                  <Label text="No highscores found." textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label text="%widgets.widget_competition_summary.no_highscores_found" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="24.0" />
                      </font>
@@ -43,7 +43,7 @@
                   <ProgressIndicator minHeight="100.0" minWidth="100.0" BorderPane.alignment="CENTER" />
                </center>
                <bottom>
-                  <Label text="Loading..." textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label text="%players.widget_highscore.loading" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="24.0" />
                      </font>

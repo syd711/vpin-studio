@@ -1,9 +1,12 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -17,6 +20,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -34,6 +40,12 @@ import static de.mephisto.vpin.ui.Studio.*;
 
 public class ClientSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ClientSettingsPreferencesController.class);
+
+  @FXML
+  private ComboBox<String> languageComboBox;
+
+  @FXML
+  private Label languageRestartHint;
 
   @FXML
   private VBox emulatorList;
@@ -181,7 +193,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onDialogReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset all dialogs?", "All dialog sizes and positions will be resetted.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.reset_all_dialogs"), Messages.get("dialog.all_dialog_sizes_and_positions_will_be"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       LocalUISettings.reset();
     }
@@ -189,7 +201,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private void onHideReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset \"Do not show again\" flags?", "All previously hidden dialogs or panels will be shown again.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.reset_do_not_show_again_flags"), Messages.get("dialog.all_previously_hidden_dialogs_or_panels_will"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
@@ -261,6 +273,9 @@ public class ClientSettingsPreferencesController implements Initializable {
     networkShareTestPath = client.getFrontendService().getFrontend().getInstallationDirectory();
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    // ---- Language chooser ----
+    initLanguageChooser();
 
     // dropin setup
     ToggleGroup toggleGroup = new ToggleGroup();
@@ -697,6 +712,70 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   }
 
+  // -----------------------------------------------------------------------
+  // Language chooser
+  // -----------------------------------------------------------------------
+
+  /**
+   * Populates the language {@link ComboBox} and wires its change listener.
+   * The selected value is persisted in the server-side UI settings and triggers an
+   * informational restart hint label.
+   */
+  private void initLanguageChooser() {
+    // Language tags to display names shown in the combo-box, in display order
+    LinkedHashMap<String, String> languagesByTag = new LinkedHashMap<>();
+    languagesByTag.put("en", Messages.get("pref.client.language.english"));
+    languagesByTag.put("pt", Messages.get("pref.client.language.portuguese"));
+    languagesByTag.put("es", Messages.get("pref.client.language.spanish"));
+    languagesByTag.put("de", Messages.get("pref.client.language.german"));
+    languagesByTag.put("fr", Messages.get("pref.client.language.french"));
+    languagesByTag.put("it", Messages.get("pref.client.language.italian"));
+
+    languageComboBox.setItems(FXCollections.observableArrayList(languagesByTag.values()));
+
+    // Restore current selection from stored preference
+    String storedLang = uiSettings.getLanguage();
+    String selectedDisplayName = languagesByTag.getOrDefault(storedLang == null ? null : storedLang.toLowerCase(), languagesByTag.get("en"));
+    languageComboBox.getSelectionModel().select(selectedDisplayName);
+
+    // Keep the hint hidden initially; show it only after the user makes a change
+    languageRestartHint.setManaged(false);
+    languageRestartHint.setVisible(false);
+
+    languageComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+      if (newVal == null || newVal.equals(oldVal)) {
+        return;
+      }
+      String langTag = languagesByTag.entrySet().stream()
+          .filter(entry -> entry.getValue().equals(newVal))
+          .map(Map.Entry::getKey)
+          .findFirst()
+          .orElse("en");
+      uiSettings.setLanguage(langTag);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+
+      // Update the REST-client header immediately so future calls already use
+      // the new locale (full effect requires restart for FX labels)
+      Messages.setLanguage(langTag);
+      RestClient.setLocale(Messages.getLocale());
+
+      // Show restart hint
+      languageRestartHint.setManaged(true);
+      languageRestartHint.setVisible(true);
+
+      // Ask the user whether to restart now to apply the new language
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(
+          de.mephisto.vpin.ui.Studio.stage,
+          Messages.get("pref.client.language.restart_confirm"),
+          Messages.get("pref.client.language.restart_message")
+      );
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Updater.restartClient();
+      }
+    });
+  }
+
   private void setDropInFieldEnabled(Boolean enabled) {
     dropInTextField.setDisable(!enabled);
     dropInFolderButton.setDisable(!enabled);
@@ -722,16 +801,16 @@ public class ClientSettingsPreferencesController implements Initializable {
 
       String startsWith = OSUtil.isWindows() ? "\\\\" : OSUtil.isMac() ? "smb://" : null;
       if (startsWith == null) {
-        winNetworkShareStatusLabel.setText("Network path is not supported on this OS.");
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.not_supported"));
       }
       else if (!newValue.startsWith(startsWith)) {
-        winNetworkShareStatusLabel.setText("Network path must begin with " + startsWith + ".");
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.must_begin_with", startsWith));
       }
       else if (path == null) {
-        winNetworkShareStatusLabel.setText("No matching path with VPX installation found, using test folder \"" + networkShareTestPath + "\"");
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.no_matching_path", networkShareTestPath));
       }
       else {
-        winNetworkShareStatusLabel.setText("Test Folder: " + path);
+        winNetworkShareStatusLabel.setText(Messages.get("pref.client.network.test_folder", path));
         winNetworkShareTestBtn.setDisable(false);
       }
     });

@@ -18,7 +18,7 @@
         <top>
             <ToolBar BorderPane.alignment="CENTER">
             <items>
-               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -26,11 +26,11 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Open Serum Installation Folder" />
+                     <Tooltip text="%components.dof.open_serum_installation_folder" />
                   </tooltip>
                </Button>
                <Separator fx:id="folderSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -39,7 +39,7 @@
                   </graphic>
                </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="configBtn" mnemonicParsing="false" onAction="#onPrefs" text="DOF Preferences" textFill="WHITE">
+               <Button fx:id="configBtn" mnemonicParsing="false" onAction="#onPrefs" text="%components.dof.dof_preferences" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -47,7 +47,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                     <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_set_the_latest_available_version_as" wrapText="true" />
                   </tooltip>
                </Button>
             </items>
@@ -64,7 +64,7 @@
 
                      <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
                         <children>
-                           <Label styleClass="default-text" text="The installer will extract the latest update into the DOFLinx installation folder." />
+                           <Label styleClass="default-text" text="%components.dof.the_installer_will_extract_the_latest_update_into" />
                         </children>
                         <padding>
                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

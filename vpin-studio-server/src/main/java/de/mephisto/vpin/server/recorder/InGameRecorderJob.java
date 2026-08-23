@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import de.mephisto.vpin.server.util.ServerMessages;
+import java.util.Locale;
 
 public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(InGameRecorderJob.class);
@@ -49,10 +51,10 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         }
 
         jobDescriptor.setGameId(game.getId());
-        jobDescriptor.setStatus("Launching Frontend");
+        jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", locale));
 
         try {
-          jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+          jobDescriptor.setStatus(ServerMessages.get("recorder.status.recording", locale, game.getGameDisplayName()));
 
           //create the game recorder which includes all screens
           gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));
@@ -89,7 +91,8 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
 
   private void showEndNotification(JobDescriptor jobDescriptor, RecordingData data) {
     if (showNotifications && notificationSettings.isRecordingEndNotification()) {
-      Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder End", "The recording has been finished.");
+      Locale locale = ServerMessages.resolveLocalLocale();
+      Notification notification = NotificationFactory.createNotification(null, ServerMessages.get("notification.recording.title", locale), ServerMessages.get("notification.recording.end", locale), ServerMessages.get("notification.recording.end_message", locale));
       recorderService.showNotificationNow(notification);
     }
   }
@@ -107,7 +110,8 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
       }
 
       seconds = seconds + wait;
-      Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder Start", "The recorder will start in " + seconds + " seconds.");
+      Locale startLocale = ServerMessages.resolveLocalLocale();
+      Notification notification = NotificationFactory.createNotification(null, ServerMessages.get("notification.recording.title", startLocale), ServerMessages.get("notification.recording.start", startLocale), ServerMessages.get("notification.recording.start_message", startLocale, seconds));
       if (seconds > 0) {
         notification.setDurationSec(seconds - 1);
       }
@@ -126,4 +130,5 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
     }
     return false;
   }
+
 }

@@ -32,6 +32,7 @@ import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarAltSoundController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -108,7 +109,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete ALTSound package for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_altsound_package_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new AltSoundDeleteProgressModel(this.game.get()));
     }
@@ -122,13 +123,13 @@ public class TablesSidebarAltSoundController implements Initializable {
       }
       else if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
         if (altSound.getFilesize() == -1) {
-          WidgetFactory.showAlert(Studio.stage, "Invalid Configuration", "The table must be played once, so that the necessary configuration files are generated.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.invalid_configuration"), Messages.get("dialog.the_table_must_be_played_once_so"));
           return;
         }
         tablesSidebarController.getTableOverviewController().showAltSound2Editor(this.game.get(), altSound);
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Unknown alt sound format \"" + altSound.getFormat() + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.unknown_alt_sound_format") + altSound.getFormat() + "\".");
       }
     }
   }
@@ -158,7 +159,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onRestore() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Restore Backup");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.restore_backup"), Messages.get("dialog.revert_all_changes_and_restore_the_original"), null, Messages.get("dialog.restore_backup_2"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tablesSidebarController.getTableOverviewController().closeEditors();
         Studio.client.getAltSoundService().restoreAltSound(game.get().getId());

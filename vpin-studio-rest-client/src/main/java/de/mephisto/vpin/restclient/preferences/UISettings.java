@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UISettings extends JsonSettings {
+  private String language = "en";
+
   private boolean showPlayerScores = true;
 
   private boolean hideVersions;
@@ -41,6 +43,7 @@ public class UISettings extends JsonSettings {
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
   private boolean uploadMediaPreview = true;
+  private int defaultUploadVpxEmulatorId = -1;
 
   // dropins setup
   public static final int DROP_IN_POSTACTION_DONOTHING = 0;
@@ -108,6 +111,14 @@ public class UISettings extends JsonSettings {
 
   private LaunchConfiguration launchConfiguration;
 
+  public String getLanguage() {
+    return language;
+  }
+
+  public void setLanguage(String language) {
+    this.language = language;
+  }
+
   public boolean isConfirmDropInMoveToTrash() {
     return confirmDropInMoveToTrash;
   }
@@ -164,6 +175,14 @@ public class UISettings extends JsonSettings {
 
   public void setDefaultUploadMode(String defaultUploadMode) {
     this.defaultUploadMode = defaultUploadMode;
+  }
+
+  public int getDefaultUploadVpxEmulatorId() {
+    return defaultUploadVpxEmulatorId;
+  }
+
+  public void setDefaultUploadVpxEmulatorId(int defaultUploadVpxEmulatorId) {
+    this.defaultUploadVpxEmulatorId = defaultUploadVpxEmulatorId;
   }
 
   public String getLocalFavsColor() {

@@ -26,7 +26,7 @@
                <top>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <Label styleClass="preference-description" text="The file will be uploaded and installed for the selected table." />
+                        <Label styleClass="preference-description" text="%tables.altcolor_upload.the_file_will_be_uploaded_and_installed_for" />
                      </children>
                      <BorderPane.margin>
                         <Insets bottom="6.0" />
@@ -48,7 +48,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font></Button>
@@ -57,7 +57,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label styleClass="default-text" text="ALT Color File:" />
+                        <Label styleClass="default-text" text="%tables.altcolor_upload.alt_color_file" />
                      </children>
                      <BorderPane.margin>
                         <Insets top="6.0" />
@@ -69,12 +69,12 @@
          <bottom>
             <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                <children>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%backups.backup_upload.upload">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>

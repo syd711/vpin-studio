@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -79,7 +80,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("                     No players listed here?\nCreate players to match their initials with highscores."));
+    tableView.setPlaceholder(new Label("                     " + Messages.get("widgets.widget_player_rank.no_players_placeholder")));
 
     columnRank.setCellValueFactory(cellData -> {
       RankedPlayerRepresentation value = cellData.getValue();
@@ -188,6 +189,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
 
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loader.setResources(Messages.getBundle());
       /*Parent loadingOverlay =*/ loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Ranking...");

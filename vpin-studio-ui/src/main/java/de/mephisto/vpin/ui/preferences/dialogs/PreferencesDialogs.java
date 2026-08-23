@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 import org.jspecify.annotations.NonNull;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PreferencesDialogs {
   public static void openMediaSource(@NonNull TableAssetSource source) {
@@ -31,61 +32,61 @@ public class PreferencesDialogs {
         break;
       }
       default:
-        WidgetFactory.showAlert(Studio.stage, "Error", "Adapter not supported.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.adapter_not_supported"));
     }
   }
 
   private static void openMediaSourceFolderDialog(@NonNull TableAssetSource source) {
-    Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceFolderDialogController.class, "dialog-asset-source-folder.fxml", "Media Source");
+    Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceFolderDialogController.class, "dialog-asset-source-folder.fxml", Messages.get("dialog.media_source"));
     TableAssetSourceFolderDialogController controller = (TableAssetSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
   }
 
   private static void openMediaSourceWebAssetDialog(@NonNull TableAssetSource source) {
-    Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceWebAssetDialogController.class, "dialog-asset-source-web-asset.fxml", "Media Source");
+    Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceWebAssetDialogController.class, "dialog-asset-source-web-asset.fxml", Messages.get("dialog.media_source"));
     TableAssetSourceWebAssetDialogController controller = (TableAssetSourceWebAssetDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
   }
 
   public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {
-    Stage stage = Dialogs.createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bot-allowlist-dialog.fxml", "Bot Allow-List");
+    Stage stage = Dialogs.createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bot-allowlist-dialog.fxml", Messages.get("dialog.bot_allow_list"));
     DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();
     controller.setPreferencesController(preferencesController);
     stage.showAndWait();
   }
 
   public static void openBotServerIdTutorial() {
-    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-server-id-tutorial.fxml", "Server ID Instructions");
+    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-server-id-tutorial.fxml", Messages.get("dialog.server_id_instructions"));
     stage.showAndWait();
   }
 
   public static void openBotTokenTutorial() {
-    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-token-tutorial.fxml", "Bot Token Instructions");
+    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-token-tutorial.fxml", Messages.get("dialog.bot_token_instructions"));
     stage.showAndWait();
   }
 
   public static void openButtonRecorder() {
-    Stage stage = Dialogs.createStudioDialogStage(BtnRecorderDialogController.class, "preference-table-pause-btn-recorder-dialog.fxml", "Controller Bindings");
+    Stage stage = Dialogs.createStudioDialogStage(BtnRecorderDialogController.class, "preference-table-pause-btn-recorder-dialog.fxml", Messages.get("dialog.controller_bindings"));
     BtnRecorderDialogController controller = (BtnRecorderDialogController) stage.getUserData();
     stage.showAndWait();
   }
 
   public static void openBotTutorial() {
-    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-tutorial.fxml", "Discord Bot Instructions");
+    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-tutorial.fxml", Messages.get("dialog.discord_bot_instructions"));
     stage.showAndWait();
   }
 
   public static void openPINemHiUIDialog(IniSettings settings) {
-    Stage stage = Dialogs.createStudioDialogStage(PINemHiUIPreferenceController.class, "preference-pinemhi-ui.fxml", "PINemHi UI Settings");
+    Stage stage = Dialogs.createStudioDialogStage(PINemHiUIPreferenceController.class, "preference-pinemhi-ui.fxml", Messages.get("dialog.pinemhi_ui_settings"));
     PINemHiUIPreferenceController controller = (PINemHiUIPreferenceController) stage.getUserData();
     controller.setSettings(settings);
     stage.showAndWait();
   }
 
   public static void openRestoreBackupDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(StudioRestoreBackupDialogController.class, "dialog-restore-backup.fxml", "Restore Backup");
+    Stage stage = Dialogs.createStudioDialogStage(StudioRestoreBackupDialogController.class, "dialog-restore-backup.fxml", Messages.get("dialog.restore_backup_2"));
     StudioRestoreBackupDialogController controller = (StudioRestoreBackupDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();

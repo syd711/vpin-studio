@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarPUPPackController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -147,7 +148,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete PUP pack for table '" + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_pup_pack_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       deleteBtn.setDisable(true);
       new Thread(() -> {
@@ -163,14 +164,14 @@ public class TablesSidebarPUPPackController implements Initializable {
   private void onOptionApply() {
     String option = optionsCombo.getValue();
     if (!StringUtils.isEmpty(option)) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Apply \"" + option + "\"?", "The existing settings will be overwritten.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply") + option + "\"?", Messages.get("dialog.the_existing_settings_will_be_overwritten"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JobDescriptor jobExecutionResult = null;
         try {
           jobExecutionResult = client.getPupPackService().option(game.get().getId(), option);
 
           if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
-            WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getError());
+            WidgetFactory.showOutputDialog(Studio.stage, Messages.get("dialog.option_command_result"), option, Messages.get("dialog.the_command_returned_this_output"), jobExecutionResult.getError());
           }
 
           client.getPupPackService().clearCache();
@@ -179,7 +180,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         }
         catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.option_execution_failed"), e.getMessage());
         }
         finally {
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
@@ -226,7 +227,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value + ".bat");
         if (!file.exists()) {
-            WidgetFactory.showAlert(Studio.stage, "Did not find file.","Are you on the server? ", file.getName());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_file"),Messages.get("dialog.are_you_on_the_server"), file.getName());
             return;
         }
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -239,7 +240,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     File file = new File(frontend.getInstallationDirectory(), "PinUpPackEditor.exe");
     if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find PinUpPackEditor.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_pinuppackeditor_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
     }
     else {
       Studio.open(file);
@@ -251,7 +252,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     File file = new File(frontend.getInstallationDirectory(), "PupPackScreenTweaker.exe");
     if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find PupPackScreenTweaker.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_puppackscreentweaker_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
     }
     else {
       SystemCommandExecutor executor = new SystemCommandExecutor(List.of(file.getName()));
@@ -271,7 +272,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
       if (StringUtils.isEmpty(g.getRom())) {
-        WidgetFactory.showAlert(Studio.stage, "No ROM name found for \"" + g.getGameDisplayName() + "\".", "To upload a PUP pack, a ROM name must have been resolved for the table.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom_name_found_for") + g.getGameDisplayName() + "\".", Messages.get("dialog.to_upload_a_pup_pack_a_rom"));
         return;
       }
 

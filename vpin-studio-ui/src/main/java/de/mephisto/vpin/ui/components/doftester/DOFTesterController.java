@@ -44,6 +44,7 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.preferences.PreferenceType.dofSettings;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DOFTesterController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, StudioEventListener {
@@ -123,10 +124,10 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
       Platform.runLater(() -> {
         VBox msg = new VBox(3);
         msg.setPadding(new Insets(12));
-        Label defaultLabel = WidgetFactory.createDefaultLabel("Invalid DOF Settings");
+        Label defaultLabel = WidgetFactory.createDefaultLabel(Messages.get("components.doftester.dof_tester.invalid_dof_settings"));
         defaultLabel.getStyleClass().add("default-title");
 
-        Button button = new Button("DOF Settings", WidgetFactory.createIcon("mdi2c-cog"));
+        Button button = new Button(Messages.get("components.doftester.dof_tester.dof_settings"), WidgetFactory.createIcon("mdi2c-cog"));
         button.getStyleClass().add("default-text");
         button.setOnAction(new EventHandler<ActionEvent>() {
           @Override
@@ -136,7 +137,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
         });
 
         msg.getChildren().add(defaultLabel);
-        msg.getChildren().add(WidgetFactory.createDefaultLabel("Open the DOF settings and configure the path to your DOF configuration."));
+        msg.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("components.doftester.dof_tester.open_the_dof_settings_and_configure")));
         msg.getChildren().add(button);
         toysEditorPane.setCenter(msg);
       });
@@ -173,7 +174,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
               return games;
             }
         ).onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         }).thenAcceptLater(objs -> {
           @SuppressWarnings({"unchecked", "unused"})
@@ -187,7 +188,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
           setItems(games);
 
           if (games.isEmpty()) {
-            tableView.setPlaceholder(new Label("No tables found"));
+            tableView.setPlaceholder(new Label(Messages.get("components.doftester.dof_tester.no_tables_found")));
           }
 
           tableView.refresh();
@@ -221,7 +222,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     tableOpenBtn.setDisable(game ==null);
     scriptBtn.setDisable(game ==null);
 
-    List<String> breadcrumb = new ArrayList<>(Arrays.asList("System Manager", "DOF Tester"));
+    List<String> breadcrumb = new ArrayList<>(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof_tester")));
     if (game != null) {
       breadcrumb.add(game.getGameDisplayName());
     }
@@ -234,7 +235,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF Tester"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("pref.update_manager.system_manager"), Messages.get("components.components.dof_tester")));
 
     if (options != null && options.getGameId() > 0) {
       GameRepresentationModel selectedItem = tableView.getItems().stream().filter(g -> g.getGameId() == options.getGameId()).findFirst().orElse(null);
@@ -256,10 +257,11 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
     tableEditBtn.setDisable(true);
     scriptBtn.setDisable(true);
 
-    NavigationController.setBreadCrumb(Arrays.asList("Designer", "Highscore Cards"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.designer"), Messages.get("cards.template_editor.highscore_cards")));
 
     try {
       FXMLLoader loader = new FXMLLoader(DOFToysController.class.getResource("dof-toys.fxml"));
+      loader.setResources(Messages.getBundle());
       toysRoot = loader.load();
       dofToysController = loader.getController();
       dofToysController.setParentController(this);

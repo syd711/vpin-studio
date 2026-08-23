@@ -15,17 +15,17 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PinballYSettingsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="FRONTEND PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%pref.pinballx_settings.frontend_preferences" textFill="WHITE" wrapText="true" />
             <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
                <content>
                   <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
-                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="PinballY Settings" />
+                        <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.pinbally_settings.pinbally_settings" wrapText="true" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="163.200048828125" />
@@ -36,7 +36,7 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Database File Encoding:" textFill="WHITE">
+                              <Label text="%pref.pinbally_settings.database_file_encoding" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -44,8 +44,8 @@
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <VBox />
-                                    <Label styleClass="preference-description" text="The encoding should match with that of your cabinets operating system, e.g. &quot;Windows-1252&quot;." textFill="WHITE" />
-                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="You can check the encoding by opening the database XML file with an editor like Notepad++." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="%pref.pinbally_settings.the_encoding_should_match_with_that_of_your" textFill="WHITE" wrapText="true" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.pinbally_settings.you_can_check_the_encoding_by_opening_the" textFill="WHITE" wrapText="true" />
                                  </children>
                               </VBox>
                               <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1">

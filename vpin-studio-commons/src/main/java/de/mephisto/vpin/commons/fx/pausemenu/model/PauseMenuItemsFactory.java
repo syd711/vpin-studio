@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -41,12 +42,12 @@ public class PauseMenuItemsFactory {
     FeaturesInfo Features = ServerFX.client.getSystemService().getFeatures();
 
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
-    PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
+    PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, Messages.get("pausemenu.items_factory.continue"), Messages.get("pausemenu.items_factory.continue_game"), new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
     if (state.isScoreSubmitterEnabled()) {
       Optional<CompetitionRepresentation> first = client.getCompetitionService().getWeeklyCompetitions().stream().filter(c -> c.getGameId() == game.getId()).findFirst();
-      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.wovp, "World Of Virtual Pinball", "Score Submitter for World Of Virtual Pinball", new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
+      PauseMenuItem scoreSubmitterItem = new PauseMenuItem(PauseMenuItemTypes.wovp, Messages.get("pausemenu.items_factory.world_of_virtual_pinball"), Messages.get("pausemenu.items_factory.score_submitter_for_world_of_virtual_pinball"), new Image(PauseMenu.class.getResourceAsStream("wovp-wheel.png")));
       scoreSubmitterItem.setCompetition(first.get());
       pauseMenuItems.add(scoreSubmitterItem);
     }
@@ -58,7 +59,7 @@ public class PauseMenuItemsFactory {
             && !StringUtils.isEmpty(game.getExtTableId())
             && String.valueOf(competition.getVpsTableId()).equalsIgnoreCase(String.valueOf(game.getExtTableId()))
             && String.valueOf(competition.getVpsTableVersionId()).equals(String.valueOf(game.getExtTableVersionId()))) {
-          PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iscored.png")));
+          PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, Messages.get("pausemenu.items_factory.iscored"), Messages.get("pausemenu.items_factory.iscored_game_room_scores"), new Image(PauseMenu.class.getResourceAsStream("iscored.png")));
           iScoredItem.setCompetition(competition);
           pauseMenuItems.add(iScoredItem);
         }
@@ -68,34 +69,34 @@ public class PauseMenuItemsFactory {
     if (pauseMenuSettings.isShowManiaScores() && Features.MANIA_ENABLED) {
       VpsTableVersion tableVersion = client.getVpsService().getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
       if (tableVersion != null) {
-        PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.maniaScores, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
+        PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.maniaScores, Messages.get("pausemenu.items_factory.vpin_mania"), Messages.get("pausemenu.items_factory.vpin_mania_scores"), new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
         pauseMenuItems.add(maniaItem);
 
         CompetitionRepresentation competition = new CompetitionRepresentation();
         competition.setType(CompetitionType.MANIA.name());
-        competition.setName("VPin Mania Scores");
+        competition.setName(Messages.get("pausemenu.items_factory.vpin_mania_scores"));
         competition.setGameId(game.getId());
         maniaItem.setCompetition(competition);
       }
     }
 
     if (!game.isCardDisabled()) {
-      item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
+      item = new PauseMenuItem(PauseMenuItemTypes.highscores, Messages.get("pausemenu.items_factory.highscores"), Messages.get("pausemenu.items_factory.highscore_card"), new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
       pauseMenuItems.add(item);
     }
 
     //only load the media of those screens that are not the highscore card screen or if no highscore card screen is set
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
       if (pauseMenuSettings.isShowInfoCard()) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, Messages.get("pausemenu.items_factory.instructions"), Messages.get("pausemenu.items_factory.info_card"), "infocard.png", "tutorial.png");
       }
     }
     if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
-      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "tutorial.png");
+      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, Messages.get("pausemenu.items_factory.instructions"), Messages.get("pausemenu.items_factory.info"), "infocard.png", "tutorial.png");
     }
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
       if (pauseMenuSettings.isShowRules()) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, Messages.get("pausemenu.items_factory.rules"), Messages.get("pausemenu.items_factory.table_rules"), "rules.png", "rules.png");
       }
     }
 
@@ -104,7 +105,7 @@ public class PauseMenuItemsFactory {
     }
 
     if (pauseMenuSettings.isShowTodos()) {
-      PauseMenuItem todoItem = new PauseMenuItem(PauseMenuItemTypes.todos, "Todo List", "Todo List for this Table", new Image(PauseMenu.class.getResourceAsStream("todo.png")));
+      PauseMenuItem todoItem = new PauseMenuItem(PauseMenuItemTypes.todos, Messages.get("pausemenu.items_factory.todo_list"), Messages.get("pausemenu.items_factory.todo_list_for_this_table"), new Image(PauseMenu.class.getResourceAsStream("todo.png")));
       pauseMenuItems.add(todoItem);
     }
 
@@ -115,7 +116,7 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item;
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
-      item = new PauseMenuItem(PauseMenuItemTypes.help, "Tutorial", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("tutorial.png")));
+      item = new PauseMenuItem(PauseMenuItemTypes.help, Messages.get("pausemenu.items_factory.tutorial"), Messages.get("pausemenu.items_factory.tutorial_colon") + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("tutorial.png")));
       String videoUrl = createVideoUrl(game);
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);

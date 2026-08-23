@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.Label;
@@ -58,7 +59,7 @@ public class VpsGameCellContainer extends HBox {
     column.getChildren().add(title);
 
     if (games.isEmpty()) {
-      Label label = new Label("No matching table installed");
+      Label label = new Label(Messages.get("competitions.vps_game_cell.no_matching_table_installed"));
       label.setStyle("-fx-padding: 3 6 3 6;" + customStyles);
       label.getStyleClass().add("error-title");
       column.getChildren().add(label);
@@ -67,7 +68,7 @@ public class VpsGameCellContainer extends HBox {
       Label label = new Label("+");
       label.getStyleClass().add("default-text");
       label.setStyle(customStyles);
-      label.setTooltip(new Tooltip((games.size() - 1) + " additional matching tables have been found."));
+      label.setTooltip(new Tooltip(Messages.get("competitions.vps_game_cell.additional_matching_tables_have_been_found", games.size() - 1)));
       label.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
       FontIcon icon = WidgetFactory.createIcon("mdi2n-numeric-" + games.size() + "-box-multiple-outline");
       icon.setIconSize(26);

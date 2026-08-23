@@ -14,6 +14,7 @@ import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TileFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -21,6 +22,7 @@ public class TileFactory {
   public static MenuCustomTileEntryController createCustomTile(Pane root) {
     try {
       FXMLLoader loader = new FXMLLoader(MenuCustomTileEntryController.class.getResource("menu-custom-tile.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       MenuCustomTileEntryController controller = loader.getController();
       root.getChildren().add(builtInRoot);

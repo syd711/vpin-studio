@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.panels;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.webhooks.Webhook;
 import de.mephisto.vpin.restclient.webhooks.WebhookEventType;
 import de.mephisto.vpin.restclient.webhooks.WebhookType;
@@ -50,23 +51,23 @@ public class WebhookConfigPanelController implements Initializable {
 
     switch (webhookType) {
       case game:
-        titleLabel.setText("Games Webhook");
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.games_webhook"));
         break;
       case score:
-        titleLabel.setText("Highscores Webhook");
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.highscores_webhook"));
         deleteCheckbox.setVisible(false);
         createCheckbox.setVisible(false);
         break;
       case player:
-        titleLabel.setText("Players Webhook");
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.players_webhook"));
         break;
       case pause:
-        titleLabel.setText("Game Pause");
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.game_pause"));
         deleteCheckbox.setVisible(false);
         createCheckbox.setVisible(false);
         break;
       case unpause:
-        titleLabel.setText("Game Unpause");
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.game_unpause"));
         deleteCheckbox.setVisible(false);
         createCheckbox.setVisible(false);
         break;

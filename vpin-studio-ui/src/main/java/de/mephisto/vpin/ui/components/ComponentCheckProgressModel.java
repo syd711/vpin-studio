@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentCheckProgressModel extends ProgressModel<ComponentInstallation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentCheckProgressModel.class);
@@ -58,7 +59,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "Failed retrieve component information for  " + next + ": " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_check_failed"), Messages.get("dialog.failed_retrieve_component_information_for") + next + ": " + e.getMessage());
       });
     }
   }

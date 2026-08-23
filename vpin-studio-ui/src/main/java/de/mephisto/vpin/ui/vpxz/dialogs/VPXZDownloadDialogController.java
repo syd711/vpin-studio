@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPXZDownloadDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZDownloadDialogController.class);
@@ -67,7 +68,7 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
     }
     catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Downloading .vpxz files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.downloading_vpxz_files_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
     }
     finally {
       stage.close();
@@ -116,10 +117,10 @@ public class VPXZDownloadDialogController implements Initializable, DialogContro
   public void setData(List<VPXZDescriptorRepresentation> descriptors) {
     this.descriptors = descriptors;
     if (descriptors.size() == 1) {
-      this.titleLabel.setText("Download \"" + descriptors.getFirst().getFilename() + "\"");
+      this.titleLabel.setText(Messages.get("vpxz.vpxz_download_dialog.download_title", descriptors.getFirst().getFilename()));
     }
     else {
-      this.titleLabel.setText("Download " + descriptors.size() + " files");
+      this.titleLabel.setText(Messages.get("vpxz.vpxz_download_dialog.download_files", descriptors.size()));
     }
   }
 }

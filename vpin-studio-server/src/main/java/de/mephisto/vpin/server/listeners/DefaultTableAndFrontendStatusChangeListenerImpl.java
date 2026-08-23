@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.util.ServerMessages;
 import javafx.application.Platform;
 
 import java.io.File;
@@ -151,7 +152,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
     if (notificationSettings.isHighscoreCheckedNotification() && game.isVpxGame()) {
       File wheelImage = frontendService.getWheelImage(game);
-      Notification notification = NotificationFactory.createNotification(wheelImage, game.getGameDisplayName(), "Highscore scan finished!");
+      Notification notification = NotificationFactory.createNotification(wheelImage, game.getGameDisplayName(), ServerMessages.get("notification.highscore.scan_finished", ServerMessages.resolveLocalLocale()));
       notificationService.showNotification(notification);
     }
   }

@@ -39,17 +39,17 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <Label fx:id="titleLabel" text="PUP Pack File:" textFill="WHITE">
+                                <Label fx:id="titleLabel" text="%tables.puppack_upload.pup_pack_file" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="fileNameField" editable="false" prefWidth="400.0" promptText="Select a PUP pack file for upload..." GridPane.columnIndex="1">
+                                <TextField fx:id="fileNameField" editable="false" prefWidth="400.0" promptText="%tables.puppack_upload.select_a_pup_pack_file_for_upload" GridPane.columnIndex="1">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select File..." GridPane.columnIndex="2">
+                                <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" GridPane.columnIndex="2">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -59,7 +59,7 @@
                                 </Button>
                                 <HBox fx:id="tableBox" alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="2">
                                     <children>
-                                    <Label text="Matching Table:" textFill="WHITE">
+                                    <Label text="%competitions.discord_competition_join.matching_table" textFill="WHITE">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -69,7 +69,7 @@
                                             <Font size="14.0" />
                                         </font>
                                         <tooltip>
-                                            <Tooltip prefWidth="300.0" text="The match might remain empty here and is not related to the table selection. You can upload the PUP pack anyway, even if no matching table is found based on the PUP pack name." wrapText="true" />
+                                            <Tooltip prefWidth="300.0" text="%tables.puppack_upload.the_match_might_remain_empty_here_and_is" wrapText="true" />
                                         </tooltip>
                                         <graphic>
                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -78,7 +78,7 @@
                                     </children>
                                 </HBox>
                                 <Label fx:id="tableLabel" prefWidth="400.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="Resolved PUP Pack Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="%tables.puppack_upload.resolved_pup_pack_name" textFill="WHITE" GridPane.rowIndex="1">
                                     <font>
                                         <Font size="14.0" />
                                     </font>
@@ -96,8 +96,8 @@
                                 <Insets bottom="6.0" />
                             </BorderPane.margin>
                             <children>
-                                <Label styleClass="preference-description" text="Download a PUP pack and upload it here." />
-                                <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder." />
+                                <Label styleClass="preference-description" text="%tables.puppack_upload.download_a_pup_pack_and_upload_it_here" />
+                                <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%tables.altsound_upload.the_file_will_be_analyzed_and_extracted_into" />
                             </children>
                         </VBox>
                     </top>
@@ -106,12 +106,12 @@
             <bottom>
                 <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                     <children>
-                        <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                        <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                             <HBox.margin>
                                 <Insets right="12.0" />
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                        <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%backups.backup_upload.upload">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>

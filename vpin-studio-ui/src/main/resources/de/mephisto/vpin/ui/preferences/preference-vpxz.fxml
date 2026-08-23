@@ -22,15 +22,15 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VPXZRepositoriesPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="%pref.asset_sources.vpin_studio_preferences" textFill="WHITE" wrapText="true" />
                   <HBox prefWidth="200.0" styleClass="info-container">
                      <children>
-                        <Label styleClass="default-headline" text="This feature is still in an experimental state and needs more testing." />
+                        <Label styleClass="default-headline" text="%pref.vpxz.this_feature_is_still_in_an_experimental_state" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -39,24 +39,24 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="110.0" styleClass="preference-subtitle" text="VPX Mobile Settings" />
-            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="This section configures the settings for the .vpxz file manager." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="These files are only used when you intend to play VPX on mobile devices." textFill="WHITE" />
-                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Enable VPXZ File Support">
+                  <Label layoutX="34.0" layoutY="110.0" styleClass="preference-subtitle" text="%pref.vpxz.vpx_mobile_settings" wrapText="true" />
+            <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.vpxz.this_section_configures_the_settings_for_the_vpxz" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="%pref.vpxz.these_files_are_only_used_when_you_intend" textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.vpxz.enable_vpxz_file_support">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="136.0" styleClass="preference-subtitle" text="Mobile Device Settings">
+                  <Label layoutX="34.0" layoutY="136.0" styleClass="preference-subtitle" text="%pref.vpxz.mobile_device_settings" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="175.0" styleClass="preference-description" text="You need to input the values from the VPX mobile settings page here." textFill="WHITE" />
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <Label layoutX="34.0" layoutY="175.0" styleClass="preference-description" text="%pref.vpxz.you_need_to_input_the_values_from_the" textFill="WHITE" wrapText="true" />
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="369.2000732421875" minWidth="10.0" prefWidth="218.3999755859375" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="582.0000152587891" minWidth="10.0" prefWidth="530.4000244140625" />
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                      <ColumnConstraints hgrow="ALWAYS" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -66,13 +66,13 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
-                              <Label styleClass="default-text" text="Mobile Device Webserver IP:" />
-                              <Label prefHeight="40.0" prefWidth="18.0">
+                              <Label styleClass="default-text" text="%pref.vpxz.mobile_device_webserver_ip" wrapText="true" />
+                              <Label prefHeight="40.0" prefWidth="18.0" wrapText="true">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                                  <tooltip>
-                                    <Tooltip prefWidth="300.0" text="You can find this IP in the preferences of the VPX app." wrapText="true" />
+                                    <Tooltip prefWidth="300.0" text="%pref.vpxz.you_can_find_this_ip_in_the_preferences" wrapText="true" />
                                  </tooltip>
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
@@ -83,15 +83,15 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Mobile Device Webserver Port:" GridPane.rowIndex="1" />
-                        <TextField fx:id="serverHost" promptText="Enter the IP address of your mobile device here." GridPane.columnIndex="1">
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vpxz.mobile_device_webserver_port" wrapText="true" GridPane.rowIndex="1" />
+                        <TextField fx:id="serverHost" promptText="%pref.vpxz.enter_the_ip_address_of_your_mobile_device" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
                         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="serverPort" prefHeight="30.0" prefWidth="190.0" promptText="Enter the post number here.">
+                              <TextField fx:id="serverPort" prefHeight="30.0" prefWidth="190.0" promptText="%pref.vpxz.enter_the_post_number_here">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -100,7 +100,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="Test Connection">
+                              <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="%pref.pinballx_settings.test_connection">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -112,17 +112,17 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPXZ Repositories">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.vpxz.vpxz_repositories" wrapText="true">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin></Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The devices will be refreshed on reload in the VPXZ files view." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.vpxz.the_devices_will_be_refreshed_on_reload_in" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="Add" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="%competitions.competitions_discord.add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -130,7 +130,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -139,7 +139,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -151,9 +151,9 @@
             </ToolBar>
             <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
-                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Enabled" />
-                <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Location" />
+                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="%pref.webhook_set.enabled" />
+                <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="%pref.asset_sources.location" />
               </columns>
             </TableView>
          </children>

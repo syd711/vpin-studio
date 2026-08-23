@@ -23,7 +23,7 @@
    <graphic>
       <BorderPane prefWidth="250.0">
          <left>
-            <Label text="Title Settings" />
+            <Label text="%cards.template_editor_title.title_settings" />
          </left>
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
@@ -36,7 +36,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Toggle title visibility" />
+                        <Tooltip text="%cards.template_editor_title.toggle_title_visibility" />
                      </tooltip>
                   </Button>
                   <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
@@ -47,7 +47,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Lock these properties for custom templates." />
+                        <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
                      </tooltip>
                   </ToggleButton>
                </children>
@@ -60,7 +60,7 @@
          <content>
             <VBox styleClass="accordion-container" >
                <children>
-                  <Label text="Title:" textFill="WHITE">
+                  <Label text="%cards.template_editor_title.title" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -73,7 +73,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </TextField>
-                  <Label text="Title Font" textFill="WHITE">
+                  <Label text="%cards.template_editor_title.title_font" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -108,7 +108,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Apply selected font settings to all templates" />
+                                    <Tooltip text="%cards.template_editor_scores.apply_selected_font_settings_to_all_templates" />
                                  </tooltip>
                               </Button>
                            </children>
@@ -118,7 +118,7 @@
 
                   <HBox alignment="BASELINE_LEFT" spacing="6.0">
                     <children>
-                      <CheckBox fx:id="titleUseDefaultColor" mnemonicParsing="false" text="Use Default Color" textFill="WHITE">
+                      <CheckBox fx:id="titleUseDefaultColor" mnemonicParsing="false" text="%cards.template_editor_tablename.use_default_color" textFill="WHITE">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -128,7 +128,7 @@
                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                           </graphic>
                           <tooltip>
-                            <Tooltip text="When checked, the title is rendered with the same color as the score text." />
+                            <Tooltip text="%cards.template_editor_title.when_checked_the_title_is_rendered_with_the" />
                           </tooltip>
                       </Label>
                     </children>
@@ -139,7 +139,7 @@
 
                   <VBox fx:id="titleColorBox" spacing="3.0">
                      <children>
-                        <Label text="Title Color" textFill="WHITE">
+                        <Label text="%cards.template_editor_title.title_color" textFill="WHITE">
                         <font>
                            <Font size="14.0" />
                         </font>

@@ -47,6 +47,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WidgetCompetitionController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -137,6 +138,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetLatestScoresController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       BorderPane root = loader.load();
       root.setMaxWidth(Double.MAX_VALUE);
       summaryWidgetController = loader.getController();
@@ -148,6 +150,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Competition...");
@@ -175,18 +178,18 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         if ((ms / 1000) < 3600) {
           countdownTile.setTitle("Remaining Minutes");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "mm", false));
-          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+          countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
         }
         else {
           countdownTile.setTitle("Remaining Hours");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "HH", false));
-          countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+          countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
         }
       }
       else {
         countdownTile.setTitle("Remaining Days");
         countdownTile.setDescription(String.valueOf(remainingDays));
-        countdownTile.setText("Competition End: " + DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault())));
+        countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
       }
 
       if (competition.isActive()) {
@@ -248,22 +251,22 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           if (competition.getType().equals(CompetitionType.DISCORD.name())) {
             DiscordServer discordServer = ServerFX.client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
             if (discordServer != null) {
-              titleLabel.setText("Discord: " + discordServer.getName());
+              titleLabel.setText(Messages.get("widgets.widget_competition.discord", discordServer.getName()));
             }
             else {
-              titleLabel.setText("Discord: - invalid server id -");
+              titleLabel.setText(Messages.get("widgets.widget_competition.discord_invalid_server_id"));
             }
           }
           else {
-            titleLabel.setText("Offline: " + competition.getName());
+            titleLabel.setText(Messages.get("widgets.widget_competition.offline", competition.getName()));
           }
         }
         else {
           if (competitionType.equals(CompetitionType.DISCORD)) {
-            titleLabel.setText("- No Discord Competition Found - ");
+            titleLabel.setText(Messages.get("widgets.widget_competition.no_discord_competition_found"));
           }
           else {
-            titleLabel.setText("- No Offline Competition Found - ");
+            titleLabel.setText(Messages.get("widgets.widget_competition.no_offline_competition_found"));
           }
         }
         viewStack.getChildren().remove(loadingOverlay);

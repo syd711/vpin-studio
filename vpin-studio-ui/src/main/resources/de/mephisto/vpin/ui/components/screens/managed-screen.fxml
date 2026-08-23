@@ -27,7 +27,7 @@
             <Insets left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
-            <Label styleClass="default-title" text="Screens Overview" />
+            <Label styleClass="default-title" text="%components.screens.managed_screen.screens_overview" />
             <ScrollPane hbarPolicy="NEVER">
                <VBox.margin>
                   <Insets top="12.0" />
@@ -37,7 +37,7 @@
                      <children>
                         <VBox fx:id="frontendPanel" spacing="6.0">
                            <children>
-                              <Label styleClass="default-headline" text="Frontend Displays">
+                              <Label styleClass="default-headline" text="%components.screens.managed_screen.frontend_displays">
                                  <graphic>
                                     <FontIcon fx:id="frontendScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
                                  </graphic>
@@ -45,7 +45,7 @@
                                     <Insets bottom="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <CheckBox fx:id="showAllFrontendCheckbox" mnemonicParsing="false" selected="true" text="Show All">
+                              <CheckBox fx:id="showAllFrontendCheckbox" mnemonicParsing="false" selected="true" text="%components.screens.managed_screen.show_all">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -57,7 +57,7 @@
                         </VBox>
                         <VBox fx:id="screenResPanel" spacing="6.0">
                            <children>
-                              <Label styleClass="default-headline" text="ScreenRes.txt Displays">
+                              <Label styleClass="default-headline" text="%components.screens.managed_screen.screenres_txt_displays">
                                  <graphic>
                                     <FontIcon fx:id="screenResScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
                                  </graphic>
@@ -65,7 +65,7 @@
                                     <Insets bottom="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <CheckBox fx:id="showAllScreenResCheckbox" mnemonicParsing="false" selected="true" text="Show All">
+                              <CheckBox fx:id="showAllScreenResCheckbox" mnemonicParsing="false" selected="true" text="%components.screens.managed_screen.show_all">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -77,7 +77,7 @@
                         </VBox>
                         <VBox fx:id="vpxPanel" spacing="6.0">
                            <children>
-                              <Label styleClass="default-headline" text="VPX Display">
+                              <Label styleClass="default-headline" text="%components.screens.managed_screen.vpx_display">
                                  <graphic>
                                     <FontIcon fx:id="vpxScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
                                  </graphic>
@@ -85,7 +85,7 @@
                                     <Insets bottom="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <CheckBox fx:id="showAllVpxCheckbox" mnemonicParsing="false" selected="true" text="Show All">
+                              <CheckBox fx:id="showAllVpxCheckbox" mnemonicParsing="false" selected="true" text="%components.screens.managed_screen.show_all">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

@@ -16,6 +16,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class UniversalUploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -31,7 +32,7 @@ public class UniversalUploadUtil {
         final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.getFirst();
         if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Upload Failed: " + uploadDescriptor.getError());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.upload_failed") + uploadDescriptor.getError());
           });
           return result;
         }
@@ -41,7 +42,7 @@ public class UniversalUploadUtil {
     }
     catch (Exception e) {
       LOG.error("Upload failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Uploading game media failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_game_media_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
     }
     return result;
   }
@@ -54,7 +55,7 @@ public class UniversalUploadUtil {
         UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().getFirst();
         if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Error: " + uploadedAndImportedDescriptor.getError());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error") + uploadedAndImportedDescriptor.getError());
           });
           return result;
         }
@@ -65,7 +66,7 @@ public class UniversalUploadUtil {
     catch (Exception e) {
       LOG.error("Upload post processing failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Post processing failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.post_processing_failed_2"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
       });
     }
     return result;

@@ -16,6 +16,7 @@ import java.lang.invoke.MethodHandles;
 import static de.mephisto.vpin.restclient.util.OSUtil.isMac;
 import static de.mephisto.vpin.restclient.util.OSUtil.isWindows;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -92,7 +93,7 @@ public class SystemUtil {
       }
 
       if (!folder.exists() && (fallback != null && !fallback.exists())) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_local_folder") + folder.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
         return;
       }
 
@@ -104,7 +105,7 @@ public class SystemUtil {
           openFolderWithOS(fallback.getAbsolutePath());
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_local_folder") + folder.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
         }
       }
       catch (IOException e) {
@@ -134,8 +135,8 @@ public class SystemUtil {
           }
         }
         catch (Exception e) {
-          LOG.error("Failed to open network folder: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open network folder: " + e.getMessage());
+          LOG.error(Messages.get("dialog.failed_to_open_network_folder") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_network_folder") + e.getMessage());
         }
       }
     }

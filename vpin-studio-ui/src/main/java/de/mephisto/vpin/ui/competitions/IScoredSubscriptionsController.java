@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionsController.class);
@@ -248,14 +249,14 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       }
 
       String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + selection.competition.getName() + "\"?",
-          help, help2, "Delete iScored Subscription");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete") + selection.competition.getName() + "\"?",
+          help, help2, Messages.get("dialog.delete_iscored_subscription"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
-            "Deleting iScored Subscription",
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
+            Messages.get("dialog.deleting_iscored_subscription"),
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
         this.iScoredSubscriptions = null;
         doReload(true);
 
@@ -267,16 +268,16 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     if (selections.size() > 1) {
       String help = "The selected subscriptions will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete selected iScored subscriptions?",
-          help, null, "Delete iScored Subscriptions");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_selected_iscored_subscriptions"),
+          help, null, Messages.get("dialog.delete_iscored_subscriptions"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Delete Subscriptions", selections,
-            selection -> "Deleting iScored Subscription",
+        ProgressDialog.createProgressDialog(new WaitNProgressModel<>(Messages.get("dialog.delete_subscriptions"), selections,
+            selection -> Messages.get("dialog.deleting_iscored_subscription"),
             selection -> {
               client.getCompetitionService().deleteCompetition(selection.competition);
             }));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
         doReload(true);
 
         for (Integer gameId : gameIds) {
@@ -380,8 +381,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
-    tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
+    tableView.setPlaceholder(new Label("         " + Messages.get("competitions.competitions_iscored.no_iscored_subscription_found")));
 
     this.editBtn.setDisable(true);
 
@@ -390,6 +391,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -471,13 +473,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching VPS table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_vps_table_found"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       if (value.getMatches().isEmpty()) {
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_table_found"));
         fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
@@ -485,11 +487,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (value.competition == null) {
         fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
         if (value.iScoredGameRoom.isSynchronize()) {
-          fallbackLabel.setText("This game is not synchronized yet.");
+          fallbackLabel.setText(Messages.get("competitions.competitions_iscored.this_game_is_not_synchronized_yet"));
           fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
         }
         else {
-          fallbackLabel.setText("Table match found, but not subscribed yet.");
+          fallbackLabel.setText(Messages.get("competitions.competitions_iscored.table_match_found_but_not_subscribed_yet"));
           fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
         }
 
@@ -515,20 +517,20 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       fallbackLabel.setStyle(getLabelCss(value));
       if (value.game.isAllVersionsEnabled()) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("All versions allowed.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.all_versions_allowed"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("No matching VPS Table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_vps_table_found_2"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("All versions allowed.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_iscored.all_versions_allowed"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
@@ -558,8 +560,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       return new SimpleObjectProperty(fallbackLabel);
     });
 
-    tableView.setPlaceholder(new Label("                          Try iScored subscriptions!\n" +
-        "Create new subscriptions adding game rooms in the iScored preferences."));
+    tableView.setPlaceholder(new Label("                          " + Messages.get("competitions.competitions_iscored.try_iscored_subscriptions")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
@@ -567,6 +568,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
@@ -632,6 +634,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);
@@ -745,11 +748,10 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
 
     if (defaultPlayer == null) {
-      tableView.setPlaceholder(new Label("                                 No default player set!\n" +
-          "Go to the players section and set the default player for this cabinet!"));
+      tableView.setPlaceholder(new Label("                                 " + Messages.get("competitions.competitions_iscored.no_default_player_set")));
     }
     else {
-      tableView.setPlaceholder(new Label("            No iScored subscription found.\nClick the '+' button to create a new one."));
+      tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_iscored.no_iscored_subscription_found")));
     }
 
     if (model.isPresent() && model.get().competition != null) {

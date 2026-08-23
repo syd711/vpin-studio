@@ -1,9 +1,11 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
+
 public interface UIDefaults {
   String VPIN_NAME = "My VPin";
   String DEFAULT_POINTS = "4,2,1,0";
-  String DEFAULT_COMPETITION_NAME = "My next competition";
+  String DEFAULT_COMPETITION_NAME = Messages.get("competitions.competitions.my_next_competition");
 
   String DISCORD_INVITE_LINK = "https://discord.gg/AMPwvAZHvy";
 

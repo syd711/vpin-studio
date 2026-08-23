@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WebhooksPreferencesController implements Initializable {
 
@@ -123,7 +124,7 @@ public class WebhooksPreferencesController implements Initializable {
   private void onDelete() {
     WebhookSet selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Webhook Set \"" + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_webhook_set") + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           WebhookSettings webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
@@ -131,7 +132,7 @@ public class WebhooksPreferencesController implements Initializable {
           client.getPreferenceService().setJsonPreference(webhookSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
         }
         finally {
           reload();
@@ -161,7 +162,7 @@ public class WebhooksPreferencesController implements Initializable {
     startFileBtn.setDisable(!client.getSystemService().isLocal());
     stopFileBtn.setDisable(!client.getSystemService().isLocal());
 
-    tableView.setPlaceholder(new Label("              No webhook sets found.\nAdd a webhook set to connect with other systems."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.webhooks.no_webhook_sets_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

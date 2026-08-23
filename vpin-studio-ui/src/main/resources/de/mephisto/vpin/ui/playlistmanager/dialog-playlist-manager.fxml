@@ -19,7 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1000.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController">
+<BorderPane fx:id="root" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController">
     <top>
         <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-resizeable-header.fxml" />
     </top>
@@ -31,7 +31,7 @@
          <right>
               <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                   <children>
-                      <Button fx:id="closeBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
+                      <Button fx:id="closeBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="%update_info.close">
                           <HBox.margin>
                               <Insets />
                           </HBox.margin>
@@ -40,7 +40,7 @@
               </HBox>
          </right>
          <left>
-            <Label fx:id="hintLabel" text="Note: Favourites are automatically added on front end. There is no need to add favourite playlists manually." BorderPane.alignment="CENTER" />
+            <Label fx:id="hintLabel" text="%playlistmanager.playlist_manager.note_favourites_are_automatically_added_on_front_end" BorderPane.alignment="CENTER" />
          </left>
       </BorderPane>
     </bottom>
@@ -66,7 +66,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Reload all table data" />
+                                          <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                                        </tooltip>
                                     </Button>
                                     <Separator layoutX="82.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -75,7 +75,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                     <tooltip>
-                                                        <Tooltip text="Create a new playlist" />
+                                                        <Tooltip text="%playlistmanager.playlist_manager.create_a_new_playlist" />
                                                     </tooltip>
                                                     <graphic>
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-star" iconSize="18" />
@@ -89,7 +89,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Rename Playlist" />
+                                          <Tooltip text="%playlistmanager.playlist_manager.rename_playlist" />
                                        </tooltip>
                                     </Button>
                                                 <Separator layoutX="125.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -101,7 +101,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                     <tooltip>
-                                                        <Tooltip text="Open Asset Manager for Playlist" />
+                                                        <Tooltip text="%playlistmanager.playlist_manager.open_asset_manager_for_playlist" />
                                                     </tooltip>
                                                 </Button>
                                                 <Separator fx:id="assetManagerSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -113,7 +113,7 @@
                                                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                                                     </graphic>
                                                     <tooltip>
-                                                        <Tooltip text="Delete playlist" />
+                                                        <Tooltip text="%playlistmanager.playlist_manager.delete_playlist" />
                                                     </tooltip>
                                                 </Button>
                                             </items>
@@ -144,7 +144,7 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </padding>
                            <top>
-                              <Label styleClass="default-title" text="Playlist Games" BorderPane.alignment="TOP_LEFT">
+                              <Label styleClass="default-title" text="%playlistmanager.playlist_manager.playlist_games" BorderPane.alignment="TOP_LEFT">
                                  <BorderPane.margin>
                                     <Insets bottom="3.0" left="3.0" />
                                  </BorderPane.margin>
@@ -169,7 +169,7 @@
                                              <children>
                                                 <HBox fx:id="visibleBox">
                                                    <children>
-                                                                    <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Visible" textFill="WHITE">
+                                                                    <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_manager.visible" textFill="WHITE">
                                                                         <font>
                                                                             <Font size="14.0" />
                                                                         </font>
@@ -178,7 +178,7 @@
                                                 </HBox>
                                                               <HBox fx:id="uglyBox" spacing="6.0">
                                                                   <children>
-                                                                      <CheckBox fx:id="uglyCheckbox" mnemonicParsing="false" text="Ugly" textFill="WHITE">
+                                                                      <CheckBox fx:id="uglyCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_manager.ugly" textFill="WHITE">
                                                                           <font>
                                                                               <Font size="14.0" />
                                                                           </font>
@@ -191,7 +191,7 @@
                                                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                           </graphic>
                                                                           <tooltip>
-                                                                              <Tooltip prefWidth="300.0" text="Playlist is ignored during &quot;Attract&quot; mode." wrapText="true" />
+                                                                              <Tooltip prefWidth="300.0" text="%playlistmanager.playlist_manager.playlist_is_ignored_during_attract_mode" wrapText="true" />
                                                                           </tooltip>
                                                                       </Label>
                                                                   </children>
@@ -202,7 +202,7 @@
                                              <children>
                                                               <HBox fx:id="mediaDefaultsBox" spacing="6.0">
                                                                   <children>
-                                                                      <CheckBox fx:id="defaultMediaCheckbox" mnemonicParsing="false" text="Media Defaults" textFill="WHITE">
+                                                                      <CheckBox fx:id="defaultMediaCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_manager.media_defaults" textFill="WHITE">
                                                                           <font>
                                                                               <Font size="14.0" />
                                                                           </font>
@@ -215,14 +215,14 @@
                                                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                           </graphic>
                                                                           <tooltip>
-                                                                              <Tooltip prefWidth="300.0" text="Use emulator media only when checked." wrapText="true" />
+                                                                              <Tooltip prefWidth="300.0" text="%playlistmanager.playlist_manager.use_emulator_media_only_when_checked" wrapText="true" />
                                                                           </tooltip>
                                                                       </Label>
                                                                   </children>
                                                               </HBox>
                                                               <HBox fx:id="disableSysListsBox" spacing="6.0">
                                                                   <children>
-                                                                      <CheckBox fx:id="disableSysListsCheckbox" mnemonicParsing="false" text="Disable All SysLists" textFill="WHITE">
+                                                                      <CheckBox fx:id="disableSysListsCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_manager.disable_all_syslists" textFill="WHITE">
                                                                           <font>
                                                                               <Font size="14.0" />
                                                                           </font>
@@ -235,7 +235,7 @@
                                                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                           </graphic>
                                                                           <tooltip>
-                                                                              <Tooltip prefWidth="300.0" text="Choose wether the &quot;Recent&quot; and &quot;Favorites&quot; playlists should be displayed as part of this playlist." wrapText="true" />
+                                                                              <Tooltip prefWidth="300.0" text="%playlistmanager.playlist_manager.choose_wether_the_recent_and_favorites_playlists_should" wrapText="true" />
                                                                           </tooltip>
                                                                       </Label>
                                                                   </children>
@@ -246,7 +246,7 @@
                                     </HBox>
                                                   <HBox fx:id="colorPickerBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="116.0" minHeight="30.0" spacing="6.0">
                                                       <children>
-                                                          <Label prefWidth="100.0" styleClass="default-text" text="Color:" />
+                                                          <Label prefWidth="100.0" styleClass="default-text" text="%cards.template_editor_background.color" />
                                                           <ColorPicker fx:id="colorPicker" />
                                                       </children>
                                        <VBox.margin>
@@ -255,8 +255,8 @@
                                                   </HBox>
                                                   <HBox fx:id="dofCommandBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="89.0" spacing="6.0">
                                                       <children>
-                                                          <Label prefWidth="100.0" styleClass="default-text" text="DOF Command:" />
-                                                          <TextField fx:id="dofCommandText" promptText="Enter DOF Command...">
+                                                          <Label prefWidth="100.0" styleClass="default-text" text="%playlistmanager.playlist_manager.dof_command" />
+                                                          <TextField fx:id="dofCommandText" promptText="%playlistmanager.playlist_manager.enter_dof_command">
                                                               <font>
                                                                   <Font size="14.0" />
                                                               </font>
@@ -265,8 +265,8 @@
                                                   </HBox>
                                     <HBox fx:id="mediaNameBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="152.0" spacing="6.0">
                                        <children>
-                                          <Label prefWidth="100.0" styleClass="default-text" text="Media Name:" />
-                                          <TextField fx:id="mediaNameText" promptText="Enter media files prefix...">
+                                          <Label prefWidth="100.0" styleClass="default-text" text="%playlistmanager.playlist_manager.media_name" />
+                                          <TextField fx:id="mediaNameText" promptText="%playlistmanager.playlist_manager.enter_media_files_prefix">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -275,8 +275,8 @@
                                     </HBox>
                                     <HBox fx:id="passcodeBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="136.0" spacing="6.0">
                                        <children>
-                                          <Label prefWidth="100.0" styleClass="default-text" text="Passcode:" />
-                                          <TextField fx:id="passcodeText" promptText="Enter 4 digit code...">
+                                          <Label prefWidth="100.0" styleClass="default-text" text="%playlistmanager.playlist_manager.passcode" />
+                                          <TextField fx:id="passcodeText" promptText="%playlistmanager.playlist_manager.enter_4_digit_code">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -293,7 +293,7 @@
                                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                     </padding>
                                     <top>
-                                        <Label styleClass="default-title" text="Settings" BorderPane.alignment="TOP_LEFT">
+                                        <Label styleClass="default-title" text="%backups.backup_restore.settings" BorderPane.alignment="TOP_LEFT">
                                             <BorderPane.margin>
                                                 <Insets bottom="12.0" />
                                             </BorderPane.margin>
@@ -307,7 +307,7 @@
                                  <top>
                                                 <BorderPane BorderPane.alignment="CENTER">
                                                     <left>
-                                                        <CheckBox fx:id="sqlCheckbox" mnemonicParsing="false" text="SQL Playlist" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                        <CheckBox fx:id="sqlCheckbox" mnemonicParsing="false" text="%playlistmanager.playlist_manager.sql_playlist" textFill="WHITE" BorderPane.alignment="CENTER">
                                                             <font>
                                                                 <Font size="14.0" />
                                                             </font>
@@ -322,14 +322,14 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-search-outline" iconSize="14" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="Choose a pre-defined SQL template." />
+                                                <Tooltip text="%playlistmanager.playlist_manager.choose_a_pre_defined_sql_template" />
                                              </tooltip>
                                           </MenuButton>
                                        </right>
                                                 </BorderPane>
                                  </top>
                                  <center>
-                                                <TextArea fx:id="sqlText" promptText="Enter SQL Query here..." wrapText="true" BorderPane.alignment="CENTER" />
+                                                <TextArea fx:id="sqlText" promptText="%playlistmanager.playlist_manager.enter_sql_query_here" wrapText="true" BorderPane.alignment="CENTER" />
                                  </center>
                                  <bottom>
                                     <VBox BorderPane.alignment="CENTER">
@@ -339,7 +339,7 @@
                                        <children>
                                           <HBox alignment="BASELINE_RIGHT">
                                              <children>
-                                                <Button fx:id="saveSQLBtn" mnemonicParsing="false" onAction="#onSQLSave" text="Save Query" textFill="WHITE">
+                                                <Button fx:id="saveSQLBtn" mnemonicParsing="false" onAction="#onSQLSave" text="%playlistmanager.playlist_manager.save_query" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -354,7 +354,7 @@
                                           </HBox>
                                           <HBox fx:id="errorContainer" styleClass="error-container">
                                              <children>
-                                                <Label fx:id="errorLabel" styleClass="error-title" text="Label" />
+                                                <Label fx:id="errorLabel" styleClass="error-title" text="%competitions.discord_competition_edit.label" />
                                              </children>
                                           </HBox>
                                        </children>

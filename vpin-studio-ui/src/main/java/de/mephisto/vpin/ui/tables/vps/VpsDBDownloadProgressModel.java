@@ -13,6 +13,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VpsDBDownloadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -61,9 +62,9 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
       Studio.client.getVpsService().update();
     }
     catch (Exception e) {
-      LOG.error("VPS database download failed: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.vps_database_download_failed") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Download Failed", "VPS database download failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.download_failed"), Messages.get("dialog.vps_database_download_failed") + e.getMessage());
       });
     }
   }

@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableDataTabStatisticsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -124,6 +125,7 @@ public class TableDataTabStatisticsController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       timesPlayedTile = loader.getController();
       col1.getChildren().add(builtInRoot);
@@ -134,6 +136,7 @@ public class TableDataTabStatisticsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       timePlayedTile = loader.getController();
       col1.getChildren().add(builtInRoot);
@@ -144,6 +147,7 @@ public class TableDataTabStatisticsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       scoresCountTile = loader.getController();
       col2.getChildren().add(builtInRoot);

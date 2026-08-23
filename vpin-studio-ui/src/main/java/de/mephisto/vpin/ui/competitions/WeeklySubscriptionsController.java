@@ -49,6 +49,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WeeklySubscriptionsController extends BaseCompetitionController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(WeeklySubscriptionsController.class);
@@ -204,11 +205,12 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
-    tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
+    tableView.setPlaceholder(new Label(Messages.get("competitions.competitions_weekly.no_weekly_challenge_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -243,7 +245,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.setStyle(ERROR_STYLE);
-        fallbackLabel.setText("No matching VPS table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_weekly.no_matching_vps_table_found"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
@@ -278,13 +280,13 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("No matching VPS Table found.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_weekly.no_matching_vps_table_found_2"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
       VpsTableVersion vpsTableVersion = vpsTable.getTableVersionById(value.getVpsTableVersionId());
       if (vpsTableVersion == null) {
         fallbackLabel.getStyleClass().add("default-text");
-        fallbackLabel.setText("All versions allowed.");
+        fallbackLabel.setText(Messages.get("competitions.competitions_weekly.all_versions_allowed"));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
@@ -323,7 +325,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       durationLabel.setPrefWidth(80);
       durationLabel.getStyleClass().add("default-text");
       durationLabel.setStyle(getLabelCss(value));
-      durationLabel.setText("Duration:");
+      durationLabel.setText(Messages.get("competitions.discord_competition_edit.duration"));
       Label durationValueLabel = new Label();
       durationValueLabel.getStyleClass().add("default-text");
       durationValueLabel.setStyle(getLabelCss(value));
@@ -335,7 +337,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       timeRemainingLabel.setPrefWidth(80);
       timeRemainingLabel.getStyleClass().add("default-text");
       timeRemainingLabel.setStyle(getLabelCss(value));
-      timeRemainingLabel.setText("Remaining:");
+      timeRemainingLabel.setText(Messages.get("competitions.competitions_weekly.remaining"));
       Label timeRemainingValueLabel = new Label();
       timeRemainingValueLabel.getStyleClass().add("default-text");
       timeRemainingValueLabel.setStyle(getLabelCss(value));
@@ -346,8 +348,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       return new SimpleObjectProperty(vBox);
     });
 
-    tableView.setPlaceholder(new Label("                          Try weekly challenges!\n" +
-        "Join new challenges by enabling them in the preferences."));
+    tableView.setPlaceholder(new Label("                          " + Messages.get("competitions.competitions_weekly.try_weekly_challenges")));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
@@ -410,6 +411,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);
@@ -492,11 +494,10 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     reloadBtn.setDisable(defaultPlayer == null);
 
     if (defaultPlayer == null) {
-      tableView.setPlaceholder(new Label("                                 No default player set!\n" +
-          "Go to the players section and set the default player for this cabinet!"));
+      tableView.setPlaceholder(new Label("                                 " + Messages.get("competitions.competitions_weekly.no_default_player_set")));
     }
     else {
-      tableView.setPlaceholder(new Label("No weekly challenge found.\nClick the '+' button to join one."));
+      tableView.setPlaceholder(new Label(Messages.get("competitions.competitions_weekly.no_weekly_challenge_found")));
     }
   }
 

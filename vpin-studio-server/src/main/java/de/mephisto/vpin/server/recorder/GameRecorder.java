@@ -82,7 +82,11 @@ public class GameRecorder {
             public RecordingResult call() {
               boolean useOpenGl = recorderSettings.isCustomLauncherEnabled() && recorderSettings.getCustomLauncher() != null && recorderSettings.getCustomLauncher().toLowerCase().contains("gl");
               option.setOpenGlCommand(SystemService.isFPRunning() || useOpenGl);
-              LOG.info("Starting [glmode={}] recording for \"{}\", {}: {}", option.isOpenGlCommand(), game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
+
+              boolean useNvenc = !option.isOpenGlCommand() && recorderSettings.isNvencEnabled() && DxgiAdapterUtil.isNvidiaGpuPresent();
+              option.setNvencCommand(useNvenc);
+
+              LOG.info("Starting [glmode={}, nvenc={}] recording for \"{}\", {}: {}", option.isOpenGlCommand(), option.isNvencCommand(), game.getGameDisplayName(), screen.name(), recordingTempFile.getAbsolutePath());
 
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);

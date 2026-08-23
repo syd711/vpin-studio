@@ -13,8 +13,8 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
-            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
+            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
+            <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="%backups.backup_source_folder.save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

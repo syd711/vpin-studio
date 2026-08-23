@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableDataTabScoreDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -109,7 +110,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
   @FXML
   private void onTableScan() {
-    ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Collections.singletonList(game)));
+    ProgressDialog.createProgressDialog(new TableScanProgressModel(Messages.get("dialog.scanning", game.getGameDisplayName()), Collections.singletonList(game)));
     this.game = client.getGameService().getGame(this.game.getId());
     refreshScannedValues();
   }
@@ -120,7 +121,7 @@ public class TableDataTabScoreDataController implements Initializable {
     FileInfo hsFileinfo = client.getGameService().getHighscoreFileInfo(this.game.getId());
     File userFolder = hsFileinfo.getFallback();
     if (!userFolder.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file, \"User\" folder not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_em_highscore_file_user"));
       return;
     }
     try {
@@ -128,7 +129,7 @@ public class TableDataTabScoreDataController implements Initializable {
     }
     catch (IOException e) {
       LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_em_highscore_file") + e.getMessage());
     }
   }
 
@@ -223,7 +224,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
     scannedHighscoreFileName.setText(game.getScannedHsFileName());
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
-    hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
+    hsMappingLabel.setText(Messages.get("tables.table_data_tab_scoredata.the_value_is_mapped_to_popper_field", serverSettings.getMappingHsFileName()));
 
     highscoreFileName.setValue(game.getHsFileName());
 

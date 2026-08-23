@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
@@ -87,27 +88,27 @@ public class PlayersController implements Initializable, StudioFXController {
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
-    playerScoreLabel.setText("Player Highscores");
+    playerScoreLabel.setText(Messages.get("players.players.player_highscores"));
     if (player.isPresent()) {
       PlayerRepresentation p = player.get();
       if (StringUtils.isEmpty(p.getInitials())) {
         noScoreLabel.setVisible(true);
-        noScoreLabel.setText("Player has no initials, no highscores could be resolved.");
+        noScoreLabel.setText(Messages.get("players.players.no_initials"));
         return;
       }
 
       if(!uiSettings.isShowPlayerScores()) {
         noScoreLabel.setVisible(true);
-        noScoreLabel.setText("The score list has been disabled.");
+        noScoreLabel.setText(Messages.get("players.players.score_list_disabled"));
         return;
       }
 
       if (!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
         validationError.setVisible(true);
-        errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials for one of them.");
+        errorTextLabel.setText(Messages.get("players.players.duplicate_initials_message", p.getName(), p.getDuplicatePlayerName()));
       }
 
-      playerScoreLabel.setText("Player Highscores \"" + player.get().getName() + "\"");
+      playerScoreLabel.setText(Messages.get("players.players.player_highscores_for", player.get().getName()));
 
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel));
@@ -122,20 +123,20 @@ public class PlayersController implements Initializable, StudioFXController {
     int index = tabPane.getSelectionModel().selectedIndexProperty().get();
     if (index == 0) {
       if (player.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players", player.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players"), player.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
       }
 
       playerCountLabel.setText(builtInPlayersController.getCount() + " players");
     }
     else {
       if (player.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players", player.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players"), player.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
       }
 
       playerCountLabel.setText(discordPlayersController.getCount() + " players");
@@ -145,12 +146,13 @@ public class PlayersController implements Initializable, StudioFXController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+    NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
     validationError.setVisible(false);
     noScoreLabel.managedProperty().bindBidirectional(noScoreLabel.visibleProperty());
 
     try {
       FXMLLoader loader = new FXMLLoader(BuiltInPlayersController.class.getResource("tab-builtin-users.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       builtInPlayersController = loader.getController();
       builtInPlayersController.setPlayersController(this);
@@ -161,6 +163,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     try {
       FXMLLoader loader = new FXMLLoader(DiscordPlayersController.class.getResource("tab-discord-users.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       discordPlayersController = loader.getController();
       discordPlayersController.setPlayersController(this);
@@ -187,12 +190,12 @@ public class PlayersController implements Initializable, StudioFXController {
 
   private void refreshTabSelection(Number t1) {
     if (t1.intValue() == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
       Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
       updateSelection(selection);
     }
     else {
-      NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
       Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
       updateSelection(selection);
     }

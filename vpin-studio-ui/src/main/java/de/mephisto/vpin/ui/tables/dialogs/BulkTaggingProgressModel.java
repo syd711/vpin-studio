@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -101,9 +102,9 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to tag table: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.failed_to_tag_table") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to tag table: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_tag_table") + e.getMessage());
       });
     }
   }

@@ -30,7 +30,7 @@
                   <children>
                   <VBox fx:id="tableFilesBox">
                      <children>
-                        <Label text="Table Files" textFill="WHITE">
+                        <Label text="%backups.backup_restore.table_files" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -47,17 +47,17 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text=".ini File:" textFill="WHITE">
+                              <Label text="%tables.tables_sidebar_tabledata.ini_file" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text=".res File:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="15.0" text="%tables.tables_sidebar_tabledata.res_file" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="48.0" text=".pov File:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label layoutX="10.0" layoutY="48.0" text="%tables.tables_sidebar_tabledata.pov_file" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -139,7 +139,7 @@
                         <Insets bottom="24.0" />
                      </VBox.margin>
                   </VBox>
-                  <Label text="Table Details" textFill="WHITE">
+                  <Label text="%backups.backups_sidebar.table_details" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -160,17 +160,17 @@
                         <RowConstraints vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                              <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label text="%backups.backups_sidebar.game_display_name" textFill="WHITE" GridPane.rowIndex="3">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="137.0" text="Game File Name:" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label layoutX="10.0" layoutY="137.0" text="%backups.backups_sidebar.game_file_name" textFill="WHITE" GridPane.rowIndex="4">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Game Name:" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.game_name" textFill="WHITE" GridPane.rowIndex="5">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -190,7 +190,7 @@
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                        <Label layoutX="10.0" layoutY="106.0" text="Game Version:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="106.0" text="%backups.backups_sidebar.game_version" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -205,18 +205,18 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="180.0" text="Status:" textFill="WHITE" GridPane.rowIndex="6">
+                        <Label layoutX="10.0" layoutY="180.0" text="%mania.mania_table_sync.status" textFill="WHITE" GridPane.rowIndex="6">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="442.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="7" GridPane.valignment="TOP">
+                        <Label layoutX="10.0" layoutY="442.0" text="%backups.backups_sidebar.notes" textFill="WHITE" GridPane.rowIndex="7" GridPane.valignment="TOP">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <TextArea fx:id="notes" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Label layoutX="190.0" layoutY="245.0" styleClass="default-text" text="Emulator:" GridPane.rowIndex="1">
+                        <Label layoutX="190.0" layoutY="245.0" styleClass="default-text" text="%cards.highscore_cards.emulator" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -226,7 +226,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label text="Date Added:" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_tabledata.date_added" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -243,7 +243,7 @@
                       </GridPane>
                   <BorderPane fx:id="tags" nodeOrientation="LEFT_TO_RIGHT" prefHeight="96.0">
                      <left>
-                              <Label maxWidth="180.0" minWidth="180.0" prefWidth="180.0" text="Tags:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                              <Label maxWidth="180.0" minWidth="180.0" prefWidth="180.0" text="%backups.backups_sidebar.tags" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -253,7 +253,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </BorderPane>
-                  <Label layoutX="22.0" layoutY="657.0" text="Table Data" textFill="WHITE">
+                  <Label layoutX="22.0" layoutY="657.0" text="%pref.restore_backup.table_data" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -272,7 +272,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                              <Label text="ROM Name:" textFill="WHITE">
+                              <Label text="%backups.backups_sidebar.rom_name" textFill="WHITE">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -282,7 +282,7 @@
                                       <Font size="14.0" />
                                   </font>
                               </Label>
-                        <Label text="Alternative ROM Name:" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label text="%tables.table_data_tab_scoredata.alternative_rom_name" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -296,7 +296,7 @@
                   </GridPane>
                   <VBox fx:id="gameMetaDataFields">
                      <children>
-                        <Label text="Meta Data Information" textFill="WHITE">
+                        <Label text="%tables.table_data.meta_data_information" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -324,7 +324,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Game Type:" textFill="WHITE" GridPane.rowIndex="1">
+                              <Label text="%backups.backups_sidebar.game_type" textFill="WHITE" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -334,7 +334,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Game Theme:" textFill="WHITE" GridPane.rowIndex="2">
+                              <Label text="%backups.backups_sidebar.game_theme" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -344,7 +344,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                                    <Label text="Game Year:" textFill="WHITE" GridPane.rowIndex="3">
+                                    <Label text="%backups.backups_sidebar.game_year" textFill="WHITE" GridPane.rowIndex="3">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -354,7 +354,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="4">
+                                    <Label text="%backups.backups_sidebar.manufacturer" textFill="WHITE" GridPane.rowIndex="4">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -364,7 +364,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Author:" textFill="WHITE" GridPane.rowIndex="5">
+                                    <Label text="%backglass.directb2s_sidebar.author" textFill="WHITE" GridPane.rowIndex="5">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -374,7 +374,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Category:" textFill="WHITE" GridPane.rowIndex="6">
+                                    <Label text="%tables.tables_sidebar_tabledata.category" textFill="WHITE" GridPane.rowIndex="6">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -384,7 +384,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label text="%backglass.directb2s_sidebar.number_of_players" textFill="WHITE" GridPane.rowIndex="7">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -394,7 +394,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Game Rating:" textFill="WHITE" GridPane.rowIndex="8">
+                                    <Label text="%backups.backups_sidebar.game_rating" textFill="WHITE" GridPane.rowIndex="8">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -404,7 +404,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="9">
+                                    <Label text="%backups.backups_sidebar.ipdb_number" textFill="WHITE" GridPane.rowIndex="9">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -414,7 +414,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="URL:" textFill="WHITE" GridPane.rowIndex="10">
+                                    <Label text="%backups.backups_sidebar.url" textFill="WHITE" GridPane.rowIndex="10">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -424,7 +424,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Designed By:" textFill="WHITE" GridPane.rowIndex="11">
+                                    <Label text="%backups.backups_sidebar.designed_by" textFill="WHITE" GridPane.rowIndex="11">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -434,12 +434,12 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Times Played:" textFill="WHITE" GridPane.rowIndex="12">
+                                    <Label text="%tables.alx.alx_update.times_played" textFill="WHITE" GridPane.rowIndex="12">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Last Played:" textFill="WHITE" GridPane.rowIndex="13">
+                                    <Label text="%tables.tables_sidebar_tabledata.last_played" textFill="WHITE" GridPane.rowIndex="13">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -454,7 +454,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                              <Label text="Media Search:" textFill="WHITE">
+                              <Label text="%tables.table_data.media_search" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -470,7 +470,7 @@
                   </VBox>
                   <VBox fx:id="screenFields">
                      <children>
-                        <Label text="Screens" textFill="WHITE">
+                        <Label text="%components.components.screens" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -486,7 +486,7 @@
                         </rowConstraints>
                            <children>
             
-                                          <Label text="Keep Displays:" textFill="WHITE">
+                                          <Label text="%backups.backups_sidebar.keep_displays" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -502,7 +502,7 @@
                   </VBox>
                   <VBox fx:id="popperRuntimeFields">
                      <children>
-                        <Label text="Launch and Runtime Customizations" textFill="WHITE">
+                        <Label text="%tables.tables_sidebar_tabledata.launch_and_runtime_customizations" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -532,27 +532,27 @@
                               <RowConstraints vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Custom 4:" textFill="WHITE" GridPane.rowIndex="5">
+                              <Label text="%backups.backups_sidebar.custom_4" textFill="WHITE" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="Custom 5:" textFill="WHITE" GridPane.rowIndex="6">
+                              <Label layoutX="10.0" layoutY="15.0" text="%backups.backups_sidebar.custom_5" textFill="WHITE" GridPane.rowIndex="6">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="76.0" text="Web DB Id:" textFill="WHITE" GridPane.rowIndex="8">
+                              <Label layoutX="10.0" layoutY="76.0" text="%backups.backups_sidebar.web_db_id" textFill="WHITE" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="106.0" text="Web Link:" textFill="WHITE" GridPane.rowIndex="9">
+                              <Label layoutX="10.0" layoutY="106.0" text="%tables.table_data.web_link" textFill="WHITE" GridPane.rowIndex="9">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="137.0" text="Is Mod:" textFill="WHITE" GridPane.rowIndex="10">
+                              <Label layoutX="10.0" layoutY="137.0" text="%tables.table_data.is_mod" textFill="WHITE" GridPane.rowIndex="10">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -582,7 +582,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Custom 3:" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label text="%backups.backups_sidebar.custom_3" textFill="WHITE" GridPane.rowIndex="4">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -592,7 +592,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Custom 2:" textFill="WHITE" GridPane.rowIndex="3">
+                              <Label text="%backups.backups_sidebar.custom_2" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -602,7 +602,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Alternative Launcher:" textFill="WHITE">
+                              <Label text="%tables.table_data.alternative_launcher" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -612,7 +612,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                                    <Label text="Custom Launch Parameters:" textFill="WHITE" GridPane.rowIndex="2">
+                                    <Label text="%tables.table_data.custom_launch_parameters" textFill="WHITE" GridPane.rowIndex="2">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -622,7 +622,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="DOF Parameters:" textFill="WHITE" GridPane.rowIndex="7">
+                                    <Label text="%backups.backups_sidebar.dof_parameters" textFill="WHITE" GridPane.rowIndex="7">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -632,7 +632,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                                    <Label text="Alternative Run Mode:" textFill="WHITE" GridPane.rowIndex="1">
+                                    <Label text="%backups.backups_sidebar.alternative_run_mode" textFill="WHITE" GridPane.rowIndex="1">
                                         <font>
                                             <Font size="14.0" />
                                         </font>
@@ -642,7 +642,7 @@
                                             <Font size="14.0" />
                                         </font>
                                     </Label>
-                              <Label text="Volume:" textFill="WHITE" GridPane.rowIndex="11">
+                              <Label text="%tables.tables_sidebar_mame.volume" textFill="WHITE" GridPane.rowIndex="11">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -656,7 +656,7 @@
                         </GridPane>
                         <VBox fx:id="extrasPanel">
                            <children>
-                              <Label layoutX="10.0" layoutY="10.0" text="Extras" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="10.0" text="%tables.table_data.extras" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -678,25 +678,25 @@
                             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Details:" textFill="WHITE" GridPane.valignment="TOP">
+                              <Label text="%tables.tables_sidebar_tabledata.details" textFill="WHITE" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <TextArea fx:id="gDetails" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" />
-                              <Label text="Notes:" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                              <Label text="%backups.backups_sidebar.notes" textFill="WHITE" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <TextArea fx:id="gNotes" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label text="Log:" textFill="WHITE" GridPane.rowIndex="2" GridPane.valignment="TOP">
+                              <Label text="%tables.table_data.log" textFill="WHITE" GridPane.rowIndex="2" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <TextArea fx:id="gLog" editable="false" prefHeight="90.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label text="Play Log:" textFill="WHITE" GridPane.rowIndex="3" GridPane.valignment="TOP">
+                              <Label text="%tables.table_data.play_log" textFill="WHITE" GridPane.rowIndex="3" GridPane.valignment="TOP">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -718,51 +718,58 @@
         <Insets left="1.0" right="1.0" />
     </padding>
     <top>
-        <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
-            <items>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="Edit" textFill="WHITE">
-                    <font>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+              <ToolBar fx:id="toolbar">
+                  <items>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                      <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
+                          <font>
+                              <Font size="14.0" />
+                          </font>
+                          <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                          </graphic>
+                      </Button>
+                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" textFill="WHITE">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%tables.table_data.auto_fill_all">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <font>
                         <Font size="14.0" />
-                    </font>
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                    </graphic>
-                </Button>
-            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                     </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                      </graphic>
-                  </MenuItem>
-              </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
-               </graphic>
-            </SplitMenuButton>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" layoutX="238.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
-               </graphic>
-            </Button>
-            </items>
-        </ToolBar>
+                  </SplitMenuButton>
+                  </items>
+              </ToolBar>
+            <ToolBar>
+               <items>
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </items>
+            </ToolBar>
+         </children>
+      </VBox>
     </top>
    <styleClass>
       <String fx:value="accordion-container" />

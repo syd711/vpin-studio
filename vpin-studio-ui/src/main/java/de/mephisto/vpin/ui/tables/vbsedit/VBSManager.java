@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VBSManager {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -61,7 +62,7 @@ public class VBSManager {
       if (msg != null) {
         msg = msg.replaceAll("\\\\n", "\n");
       }
-      WidgetFactory.showOutputDialog(Studio.stage, "Error", "The extraction of the .vbs file failed.", "Please report this issue to: https://github.com/syd711/vpin-studio/issues", msg);
+      WidgetFactory.showOutputDialog(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_extraction_of_the_vbs_file_failed"), Messages.get("dialog.please_report_this_issue_to_https_github"), msg);
     }
   }
 

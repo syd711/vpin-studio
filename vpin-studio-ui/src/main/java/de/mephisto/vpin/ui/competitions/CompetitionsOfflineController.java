@@ -45,6 +45,7 @@ import java.time.format.FormatStyle;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionsOfflineController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsOfflineController.class);
@@ -182,21 +183,21 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       String help = null;
       String help2 = null;
       if (!StringUtils.isEmpty(selection.getWinnerInitials())) {
-        help = "The player '" + selection.getWinnerInitials() + "' will have one less won competition.";
+        help = Messages.get("dialog.delete_competition_hint_winner", selection.getWinnerInitials());
       }
       else if (selection.isActive()) {
-        help = "The competition is still active for another " + selection.remainingDays() + " days.";
-        help2 = "This will cancel the competition, no winner will be announced.";
+        help = Messages.get("dialog.delete_competition_hint_active", selection.remainingDays());
+        help2 = Messages.get("dialog.delete_competition_hint_cancel");
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_competition") + selection.getName() + "'?",
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition", 
-          "Deleting Competition " + selection.getName(), 
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_competition_2"),
+          Messages.get("dialog.deleting_competition", selection.getName()),
           () -> client.getCompetitionService().deleteCompetition(selection)));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Offline Competitions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.offline_competitions")));
         onReload();
       }
     }
@@ -209,7 +210,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
       String helpText2 = "Finishing the competition will set the current leader as winner.";
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Finish Competition '" + selection.getName() + "'?", helpText1, helpText2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.finish_competition") + selection.getName() + "'?", helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getCompetitionService().finishCompetition(selection);
         onReload();
@@ -262,11 +263,12 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
-    tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_offline.no_competitions_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -289,7 +291,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       GameRepresentation game = client.getGameService().getGame(value.getGameId());
-      Label label = new Label("- not available anymore -");
+      Label label = new Label(Messages.get("competitions.competitions_offline.not_available_anymore"));
       if (game != null) {
         label = new Label(game.getGameDisplayName());
       }
@@ -363,8 +365,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       return new SimpleObjectProperty(winner);
     });
 
-    tableView.setPlaceholder(new Label("            Mmmh, not up for a challenge yet?\n" +
-        "Create a new competition by pressing the '+' button."));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_offline.not_up_for_challenge")));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
       refreshView(Optional.ofNullable(newSelection));
@@ -372,6 +373,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);

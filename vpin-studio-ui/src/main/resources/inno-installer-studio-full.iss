@@ -33,6 +33,19 @@ WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+
+[CustomMessages]
+english.CreateDesktopIconFull=Create Desktop Icon for VPin Studio
+portuguese.CreateDesktopIconFull=Criar ícone no ambiente de trabalho para o VPin Studio
+spanish.CreateDesktopIconFull=Crear icono de escritorio para VPin Studio
+german.CreateDesktopIconFull=Desktopsymbol für VPin Studio erstellen
+french.CreateDesktopIconFull=Créer une icône sur le bureau pour VPin Studio
+italian.CreateDesktopIconFull=Crea un'icona sul desktop per VPin Studio
 
 [Code]
 function IsProcessRunning(const ProcessName: String): Boolean;
@@ -76,7 +89,7 @@ begin
 end;
 
 [Tasks]
-Name: "desktopicon"; Description: "Create Desktop Icon for the VPin Studio"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIconFull}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Dirs]
 Name: "{app}\resources"; Permissions: users-full

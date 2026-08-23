@@ -17,9 +17,23 @@ public class RecorderSettings extends JsonSettings {
     private boolean customLauncherEnabled;
     private String customLauncher;
     private boolean primaryParam;
+    private boolean nvencEnabled = true;
 
     private String startCommand;
   private String stopCommand;
+
+  /**
+   * Escape hatch for GPU/driver issues: when true (default) and an NVIDIA GPU is detected,
+   * recordings on gdigrab-based screens use the h264_nvenc hardware encoder instead of
+   * software libx264. Set to false to force software encoding for all screens.
+   */
+  public boolean isNvencEnabled() {
+    return nvencEnabled;
+  }
+
+  public void setNvencEnabled(boolean nvencEnabled) {
+    this.nvencEnabled = nvencEnabled;
+  }
 
   public String getStartCommand() {
     return startCommand;

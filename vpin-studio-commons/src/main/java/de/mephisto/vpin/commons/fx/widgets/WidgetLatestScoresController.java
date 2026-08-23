@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WidgetLatestScoresController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -56,6 +57,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay-plain.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Latest Scores...");
@@ -89,7 +91,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
         List<ScoreRepresentation> scores = scoreSummary.getScores();
         if (scores.isEmpty()) {
-          Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");
+          Label label = new Label("                            " + Messages.get("widgets.widget_latest_scores.no_highscore_placeholder"));
           label.setPadding(new Insets(80, 0, 0, 100));
           label.getStyleClass().add("preference-description");
 //          scoresPanels.add(label);
@@ -102,6 +104,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
               continue;
             }
             FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+            loader.setResources(Messages.getBundle());
             Pane row = loader.load();
             row.setPrefWidth(root.getPrefWidth() - 24);
             WidgetLatestScoreItemController controller = loader.getController();

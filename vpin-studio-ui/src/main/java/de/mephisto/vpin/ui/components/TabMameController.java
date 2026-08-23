@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabMameController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabMameController.class);
@@ -34,7 +35,7 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @FXML
   private void onMameSetup() {
     if (!client.getMameService().runSetup()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file was not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_setup_exe"), Messages.get("dialog.the_exe_file_was_not_found"));
     }
   }
 

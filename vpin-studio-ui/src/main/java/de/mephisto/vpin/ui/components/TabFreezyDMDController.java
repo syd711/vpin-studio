@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TabFreezyDMDController extends AbstractComponentTab implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TabFreezyDMDController.class);
@@ -43,7 +44,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @FXML
   private void onFlexDMD() {
     if (!client.getMameService().runFlexSetup()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_flexdmd_ui"), Messages.get("dialog.the_exe_file_was_not_found"));
     }
   }
 
@@ -63,7 +64,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
       }
       catch (Exception e) {
         LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DmdDeviceIni file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_dmddeviceini_file") + e.getMessage());
       }
     }
   }

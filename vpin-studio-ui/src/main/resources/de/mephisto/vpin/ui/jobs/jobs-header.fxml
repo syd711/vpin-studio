@@ -19,8 +19,8 @@
          <right>
             <HBox spacing="12.0" BorderPane.alignment="CENTER">
                <children>
-                  <Hyperlink fx:id="cancelAll" layoutX="10.0" layoutY="10.0" onAction="#onCancelAll" text="Cancel All" />
-                  <Hyperlink fx:id="clearAll" onAction="#onClearAll" text="Clear All" />
+                  <Hyperlink fx:id="cancelAll" layoutX="10.0" layoutY="10.0" onAction="#onCancelAll" text="%jobs.jobs_header.cancel_all" />
+                  <Hyperlink fx:id="clearAll" onAction="#onClearAll" text="%jobs.jobs_header.clear_all" />
                </children>
             </HBox>
          </right>

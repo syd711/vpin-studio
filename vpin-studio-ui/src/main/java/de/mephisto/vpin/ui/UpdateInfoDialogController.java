@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class UpdateInfoDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(UpdateInfoDialogController.class);
@@ -125,7 +126,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
     }
     catch (Exception e) {
       LOG.error("Failed to load release info: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to load release info: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_load_release_info") + e.getMessage());
     }
 
     Platform.runLater(() -> {

@@ -50,6 +50,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  *
@@ -207,10 +208,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     DirectB2SModel selection = getSelectedModel();
     if (selection != null) {
       //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      String newName = WidgetFactory.showInputDialog(Studio.stage, "Rename Backglass", "Enter new name for backglass file \"" + selection.getFileName() + "\"", "The renaming will include all versions of the backglass too.", null, selection.getName());
+      String newName = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.rename_backglass"), Messages.get("dialog.enter_new_name_for_backglass_file") + selection.getFileName() + "\"", "The renaming will include all versions of the backglass too.", null, selection.getName());
       if (newName != null) {
         if (!FileUtils.isValidFilename(newName)) {
-          WidgetFactory.showAlert(stage, "Invalid Filename", "The specified file name contains invalid characters.");
+          WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_filename"), Messages.get("dialog.the_specified_file_name_contains_invalid_characters"));
           return;
         }
 
@@ -231,7 +232,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           }
         }
         catch (Exception ex) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_dupliate_backglass") + ex.getMessage());
         }
       }
     }
@@ -266,8 +267,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private void onReload() {
-    ProgressDialog.createProgressDialog(new WaitProgressModel<>("Invalidate Cache",
-        "Invalidating Backglasses Cache...", () -> {
+    ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.invalidate_cache"),
+        Messages.get("dialog.invalidating_backglasses_cache"), () -> {
       client.getBackglassServiceClient().clearCache();
     }));
     doReload();
@@ -321,7 +322,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
 
-    tableView.setPlaceholder(new Label("No backglasses found."));
+    tableView.setPlaceholder(new Label(Messages.get("backglass.directb2s_admin.no_backglasses_found")));
 
     resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
 
@@ -378,7 +379,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(List.of("Backglasses"));
+    NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.backglasses")));
 
     // first time activation
     if (models == null || models.isEmpty()) {
@@ -536,10 +537,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @Override
   protected void refreshView(@Nullable DirectB2SModel model) {
     if (model != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Backglasses", model.getName()));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("tables.tables.backglasses"), model.getName()));
     }
     else {
-      NavigationController.setBreadCrumb(List.of("Backglasses"));
+      NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.backglasses")));
     }
 
     setValidationVisible(false);

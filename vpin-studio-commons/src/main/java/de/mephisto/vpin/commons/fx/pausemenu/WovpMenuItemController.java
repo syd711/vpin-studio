@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WovpMenuItemController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -203,6 +204,7 @@ public class WovpMenuItemController implements Initializable {
   @NonNull
   private static BorderPane createScoreItem(CompetitionScore score) throws IOException {
     FXMLLoader loader = new FXMLLoader(WidgetWeeklyCompetitionScoreItemController.class.getResource("widget-weekly-competition-score-item.fxml"));
+    loader.setResources(Messages.getBundle());
     BorderPane row = loader.load();
     WidgetWeeklyCompetitionScoreItemController controller = loader.getController();
     row.setMaxWidth(Double.MAX_VALUE);
@@ -251,7 +253,7 @@ public class WovpMenuItemController implements Initializable {
       submitBtn.setDisable(false);
       submitBtn.setVisible(false);
       errorContainer.setVisible(true);
-      errorMsg.setText("Failed to connect to World of VPin: " + ex.getMessage());
+      errorMsg.setText(Messages.get("pausemenu.wovp_menu_item.failed_to_connect_to_world_of_vpin", ex.getMessage()));
     });
   }
 
@@ -310,7 +312,7 @@ public class WovpMenuItemController implements Initializable {
     Transition blink = TransitionUtil.createBlink(submitBtn);
     blink.play();
 
-    submitBtn.setText("Sending Highscores...");
+    submitBtn.setText(Messages.get("pausemenu.wovp_menu_item.sending_highscores"));
     submitBtn.setDisable(true);
     JFXFuture.supplyAsync(() -> {
       return client.getCompetitionService().submitScore(wovpPlayer, false);
@@ -324,7 +326,7 @@ public class WovpMenuItemController implements Initializable {
         errorMsg.setText(result.getErrorMessage());
       }
       else {
-        submitBtn.setText("Your highscore has been submitted.");
+        submitBtn.setText(Messages.get("pausemenu.wovp_menu_item.your_highscore_has_been_submitted"));
       }
 
       JFXFuture.supplyAsync(() -> {
@@ -343,7 +345,7 @@ public class WovpMenuItemController implements Initializable {
       submitBtn.setVisible(false);
       playerSelectorBox.setVisible(false);
       errorContainer.setVisible(true);
-      errorMsg.setText("Failed to connect to World of VPin: " + ex.getMessage());
+      errorMsg.setText(Messages.get("pausemenu.wovp_menu_item.failed_to_connect_to_world_of_vpin", ex.getMessage()));
     });
   }
 

@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -227,8 +228,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
 
 
     if (server == null) {
-      validationTitle.setText("No discord server selected.");
-      validationDescription.setText("Select a discord server where the competition takes place.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.no_discord_server_selected"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_edit.select_a_discord_server_where_the_competition_takes_place"));
       return;
     }
 
@@ -237,21 +238,21 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     if (botStatus == null || botStatus.getBotInitials().isEmpty()) {
-      validationTitle.setText("Invalid BOT nickname.");
-      validationDescription.setText("To submit highscores, your bot must have the name pattern \"<NAME> | [<INITIALS>]\" on the selected server.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.invalid_bot_nickname"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_edit.to_submit_highscores_your_bot_must_have_the_name_pattern"));
       return;
     }
 
     if (channel == null) {
-      validationTitle.setText("No discord channel selected.");
-      validationDescription.setText("Select a discord channel where the competition takes place.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.no_discord_channel_selected"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.select_a_discord_channel_where_the_competition_takes_place"));
       return;
     }
 
     //check Discord permissions
     if (!client.getCompetitionService().hasChannelManagePermissions(server.getId(), channel.getId())) {
-      validationTitle.setText("Insufficient permissions");
-      validationDescription.setText("Your Discord bot has insufficient permissions to start a competition. Please check the documentation for details.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_join.insufficient_permissions"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.your_discord_bot_has_insufficient_permissions_to_start"));
       return;
     }
 
@@ -270,8 +271,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     }
 
     if (this.discordCompetitionData == null) {
-      validationTitle.setText("No competition found");
-      validationDescription.setText("Select a discord server and channel where the competition takes place.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_join.no_competition_found"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.select_a_discord_server_and_channel_where_the_competition_takes_place"));
       return;
     }
 
@@ -311,26 +312,26 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     CompetitionRepresentation existingEntry = client.getCompetitionService().getCompetitionByUuid(this.discordCompetitionData.getUuid());
     boolean isOwner = this.discordCompetitionData.getOwner().equals(String.valueOf(botStatus.getBotId()));
     if (existingEntry != null && isOwner) {
-      validationTitle.setText("Invalid competition selected");
-      validationDescription.setText("You are the owner of this competition.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_join.invalid_competition_selected"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.you_are_the_owner_of_this_competition"));
       return;
     }
 
     if (existingEntry != null) {
-      validationTitle.setText("Competition exist");
-      validationDescription.setText("You already joined this competition.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_join.competition_exist"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.you_already_joined_this_competition"));
       return;
     }
 
     if (this.discordCompetitionData.getEdt().isBefore(OffsetDateTime.now())) {
-      validationTitle.setText("Invalid competition data");
-      validationDescription.setText("Ups, looks like the selected competition wasn't reset. It's already finished.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_join.invalid_competition_data"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.ups_looks_like_the_selected_competition_wasnt_reset"));
       return;
     }
 
     if (tableCombo.getItems().isEmpty()) {
-      validationTitle.setText("No matching table found");
-      validationDescription.setText("None of your tables matches the ROM name \"" + this.discordCompetitionData.getRom() + "\" of \"" + this.discordCompetitionData.getTname() + "\"");
+      validationTitle.setText(Messages.get("competitions.discord_competition_join.no_matching_table_found"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_join.none_of_your_tables_matches_the_rom_name", this.discordCompetitionData.getRom(), this.discordCompetitionData.getTname()));
       return;
     }
 
@@ -351,8 +352,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
         long min = competitionTableSize - (1024*1024);
         long max = competitionTableSize + (1024*1024);
         if (tableSize < min || tableSize > max) {
-          validationTitle.setText("The table file size does not match.");
-          validationDescription.setText("The size of your VPX file differs by ~" + FileUtils.readableFileSize(competitionTableSize-tableSize) + ".");
+          validationTitle.setText(Messages.get("competitions.discord_competition_join.the_table_file_size_does_not_match"));
+          validationDescription.setText(Messages.get("competitions.discord_competition_join.the_size_of_your_vpx_file_differs_by", FileUtils.readableFileSize(competitionTableSize-tableSize)));
           return;
         }
       }
@@ -360,8 +361,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
         String checksum = client.getVpxService().getCheckSum(game);
         String chksm = discordCompetitionData.getChksm();
         if(!chksm.equalsIgnoreCase(checksum)) {
-          validationTitle.setText("The checksum does not match with the one of the competition.");
-          validationDescription.setText("This mean the script of your VPX file and that of the competition owner differs.");
+          validationTitle.setText(Messages.get("competitions.discord_competition_join.the_checksum_does_not_match"));
+          validationDescription.setText(Messages.get("competitions.discord_competition_join.this_mean_the_script_of_your_vpx_file_and_that_of"));
           return;
         }
       }
@@ -370,8 +371,8 @@ public class CompetitionDiscordJoinDialogController implements Initializable, Di
     CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
 
     if (!resetCheckbox.isSelected()) {
-      validationTitle.setText("Highscore reset required");
-      validationDescription.setText("The reset is required in case your highscore is already higher than the others.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.highscore_reset_required"));
+      validationDescription.setText(Messages.get("competitions.discord_competition_edit.the_reset_is_required_in_case_your_highscore_2"));
       return;
     }
 

@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
+import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -104,6 +106,10 @@ public class Studio extends Application {
 
     Platform.setImplicitExit(false);
 
+    // Initialize i18n locale from local settings BEFORE any UI or FXMLLoader usage
+    Messages.reload();
+    RestClient.setLocale(Messages.getLocale());
+
     runOperatingSystemChecks();
     runExtensionsInstallation();
 
@@ -116,7 +122,7 @@ public class Studio extends Application {
     }
     catch (IOException e) {
       LOG.error("Application already running!");
-      WidgetFactory.showAlert(stage, "Another VPin Studio client is already running!");
+      WidgetFactory.showAlert(stage, Messages.get("dialog.another_vpin_studio_client_is_already_running"));
       System.exit(-1);
     }
 
@@ -141,20 +147,20 @@ public class Studio extends Application {
         NavigationController.refreshViewCache();
 
         Studio.loadLauncher(createLauncherStage());
-        WidgetFactory.showAlert(stage, "Server Connection Failed", "You have been disconnected from the server.");
+        WidgetFactory.showAlert(stage, Messages.get("dialog.server_connection_failed"), Messages.get("dialog.you_have_been_disconnected_from_the_server"));
       });
     };
 
     // offload connection logic so the splash screen can actually render
     new Thread(() -> {
       if (splashController != null) {
-        splashController.setStatus("Connecting to last server...");
+        splashController.setStatus(Messages.get("studio.splash.connecting_to_last_server"));
       }
 
       //replace the OverlayFX client with the Studio one
       Studio.client = new VPinStudioClient("localhost");
       if (splashController != null) {
-        splashController.setStatus("Checking localhost...");
+        splashController.setStatus(Messages.get("studio.splash.checking_localhost"));
       }
       Studio.Features = client.getSystemService().getFeatures();
       ServerFX.client = Studio.client;
@@ -165,7 +171,7 @@ public class Studio extends Application {
       }
       else {
         if (splashController != null) {
-          splashController.setStatus("Checking connections...");
+          splashController.setStatus(Messages.get("studio.splash.checking_connections"));
         }
 
         ConnectionProperties connectionProperties = new ConnectionProperties();
@@ -173,7 +179,7 @@ public class Studio extends Application {
         if (!connections.isEmpty()) {
           for (ConnectionEntry connection : connections) {
             if (splashController != null) {
-              splashController.setStatus("Checking " + connection.getName() + "...");
+              splashController.setStatus(Messages.get("studio.splash.checking_connection", connection.getName()));
             }
             Studio.client = new VPinStudioClient(connection.getIp());
             version = client.getSystemService().getVersion();
@@ -233,12 +239,13 @@ public class Studio extends Application {
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(LauncherController.class.getResource("scene-launcher.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent root = loader.load();
 
 
       Scene scene = new Scene(root);
       scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-      stage.setTitle("VPin Studio Launcher");
+      stage.setTitle(Messages.get("studio.launcher.title"));
       if (!OSUtil.isMac()) {//Let MacOS handle this to use dynamic icons
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
       }
@@ -260,12 +267,12 @@ public class Studio extends Application {
     LOG.info("Launching Studio...");
     try {
       if (splashController != null) {
-        splashController.setStatus("Initializing application...");
+        splashController.setStatus(Messages.get("studio.splash.initializing_application"));
       }
 
       try {
         if (splashController != null) {
-          splashController.setStatus("Checking SevenZip binaries...");
+          splashController.setStatus(Messages.get("studio.splash.checking_sevenzip_binaries"));
         }
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
         if (!sevenZipTempFolder.exists()) {
@@ -301,7 +308,7 @@ public class Studio extends Application {
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
             if (splashController != null) {
-              splashController.setStatus("Fetching data from server...");
+              splashController.setStatus(Messages.get("studio.splash.fetching_data_from_server"));
             }
             //force pre-caching, this way, the table overview does not need to execute single GET requests
             new Thread(() -> {
@@ -320,7 +327,7 @@ public class Studio extends Application {
             List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
             if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
               if (splashController != null) {
-                splashController.setStatus("Scanning for table changes...");
+                splashController.setStatus(Messages.get("studio.splash.scanning_for_table_changes"));
               }
               LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
               ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
@@ -328,10 +335,13 @@ public class Studio extends Application {
             }
 
             if (splashController != null) {
-              splashController.setStatus("Loading preferences...");
+              splashController.setStatus(Messages.get("studio.splash.loading_preferences"));
             }
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
             client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
+
+            Messages.setLanguage(uiSettings.getLanguage());
+            RestClient.setLocale(Messages.getLocale());
 
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
@@ -343,9 +353,10 @@ public class Studio extends Application {
             }
 
             if (splashController != null) {
-              splashController.setStatus("Building user interface...");
+              splashController.setStatus(Messages.get("studio.splash.building_user_interface"));
             }
             FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
+            loader.setResources(Messages.getBundle());
             Parent root = null;
             try {
               root = loader.load();
@@ -398,7 +409,7 @@ public class Studio extends Application {
 
             //launch VPSMonitor
             if (splashController != null) {
-              splashController.setStatus("Finalizing startup...");
+              splashController.setStatus(Messages.get("studio.splash.finalizing_startup"));
             }
             VBSManager.getInstance();
           })
@@ -412,6 +423,7 @@ public class Studio extends Application {
   private static Stage createSplash() throws Exception {
     LOG.info("Load FXML for splash screen...");
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
+    loader.setResources(Messages.getBundle());
     StackPane root = loader.load();
     splashController = loader.getController();
 
@@ -511,12 +523,12 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"xdg-open", url});
         }
         catch (IOException e) {
-          LOG.error("Error opening browser: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
         }
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_determine_operating_system_for_name") + osName + "\".");
       }
     }
   }
@@ -589,8 +601,8 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-t", file.getAbsolutePath()});
         }
         catch (IOException e) {
-          LOG.error("Error opening browser: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
         }
       }
       else if (osName.toLowerCase().contains("nux")) {
@@ -598,12 +610,12 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }
         catch (IOException e) {
-          LOG.error("Error opening browser: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
         }
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_determine_operating_system_for_name") + osName + "\".");
       }
     }
     return false;
@@ -617,7 +629,7 @@ public class Studio extends Application {
 
       if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
         Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
+        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.exit_and_launch") + frontend.getName(), Messages.get("dialog.exit_and_launch") + frontend.getName(), Messages.get("dialog.exit"), Messages.get("dialog.select_the_checkbox_below_if_you_do"), null, Messages.get("dialog.do_not_show_again"), false);
         if (confirmationResult.isCancelClicked()) {
           return false;
         }
@@ -654,7 +666,7 @@ public class Studio extends Application {
 
 
     if (polling.get()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, exit VPin Studio");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.jobs_running"), Messages.get("dialog.there_are_still_jobs_running"), Messages.get("dialog.these_jobs_will_continue_after_quitting"), Messages.get("dialog.got_it_exit_vpin_studio"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         System.exit(0);
       }

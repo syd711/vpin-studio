@@ -10,40 +10,39 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsBackglassPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VALIDATORS" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backglass Validators" />
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every backglass." textFill="WHITE">
+                  <Label styleClass="preference-title" text="%pref.validators_backglass.validators" textFill="WHITE" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.validators_backglass.backglass_validators" wrapText="true" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="%pref.validators_backglass.if_enabled_the_validation_is_executed_for_every" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
 
-                  <CheckBox fx:id="pref_1001" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="No Game installed" />
-                  <Label styleClass="checkbox-description" text="Checks if a game is installed for the backglass." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1001" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.no_game_installed" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_a_game_is_installed_for_the" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="pref_1002" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Run as EXE" />
-                  <Label styleClass="checkbox-description" text="Checks if the backglass runs as EXE." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1002" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.run_as_exe" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_backglass_runs_as_exe" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="pref_1010" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="No Full DMD" />
-                  <Label styleClass="checkbox-description" text="Checks if the backglass has a full DMD B2S." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1010" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.no_full_dmd" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_backglass_has_a_full_dmd" textFill="WHITE" wrapText="true" />
 
-                  <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Full DMD Aspect ratio" />
-                  <Label styleClass="checkbox-description" text="Checks if the full DMD B2S has an appropriate ratio." textFill="WHITE" />
+                  <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="%pref.validators_backglass.full_dmd_aspect_ratio" />
+                  <Label styleClass="checkbox-description" text="%pref.validators_backglass.checks_if_the_full_dmd_b2s_has_an" textFill="WHITE" wrapText="true" />
                   <VBox fx:id="tagPane">
                      <children>
-                        <Label styleClass="preference-subtitle" text="Auto Tagging">
+                        <Label styleClass="preference-subtitle" text="%pref.validators_backglass.auto_tagging" wrapText="true">
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="If enabled and the backglass is replaced, the given tags are automatically applied to the table data" textFill="WHITE" />
-                        <Label styleClass="preference-description" text="to keep track of this change (e.g. to track tables for recording)." textFill="WHITE" />
-                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Auto Tagging Enabled" textFill="WHITE">
+                        <Label styleClass="preference-description" text="%pref.validators_backglass.if_enabled_and_the_backglass_is_replaced_the" textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="taggingEnabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%pref.validators_backglass.auto_tagging_enabled" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

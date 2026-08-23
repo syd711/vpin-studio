@@ -52,10 +52,11 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class VPXZController extends BaseTableController<VPXZDescriptorRepresentation, VPXZModel> implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPXZController.class);
-  public static final String TAB_NAME = "VPXZ Files";
+  public static final String TAB_NAME = Messages.get("navigation.vpxz_files");
 
   @FXML
   private Button deleteBtn;
@@ -165,7 +166,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }
 
     if (this.connectionVersionLabel.getText().equalsIgnoreCase("-")) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Mobile device is not connected.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.mobile_device_is_not_connected"));
       return;
     }
 
@@ -196,18 +197,18 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }
 
     if (this.connectionVersionLabel.getText().equalsIgnoreCase("-")) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Mobile device is not connected.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.mobile_device_is_not_connected"));
       return;
     }
 
     String baseName = FilenameUtils.getBaseName(selectedItem.getBean().getFilename());
     Optional<Table> installedTable = this.installedTables.getTables().stream().filter(t -> t.getName().equalsIgnoreCase(baseName)).findFirst();
     if (installedTable.isEmpty()) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "No installation found for this table.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_installation_found_for_this_table"));
       return;
     }
 
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete the table \"" + selectedItem.getName() + "\" from your device?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_the_table") + selectedItem.getName() + Messages.get("dialog.from_your_device"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getVpxzService().deleteFromDevice(installedTable.get().getUuid());
       doReload(Optional.empty());
@@ -284,7 +285,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       if (selectedItems.size() == 1) {
         title = "Delete File \"" + selectedItems.getFirst().getName() + "\"?";
       }
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, Messages.get("common.delete"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         List<VPXZDescriptorRepresentation> vpxzDescriptors = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
         ProgressDialog.createProgressDialog(new VPXZDeleteProgressModel(vpxzDescriptors));
@@ -308,7 +309,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
-    tableView.setPlaceholder(new Label("This VPXZ source does not contain any files."));
+    tableView.setPlaceholder(new Label(Messages.get("vpxz.vpxz.no_files_found")));
 
     openFolderButton.setVisible(client.getSystemService().isLocal());
     endSeparator.setVisible(client.getSystemService().isLocal());
@@ -509,7 +510,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       }
       else {
         connectionVersionLabel.setText(version.getVersion());
-        connectionStatusLabel.setText("Connected");
+        connectionStatusLabel.setText(Messages.get("vpxz.vpxz.connected"));
         infoContainer.setStyle("-fx-background-color: " + WidgetFactory.OK_DARK_COLOR);
       }
 

@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DOFToysController implements Initializable {
 
@@ -67,7 +68,7 @@ public class DOFToysController implements Initializable {
         msg.setPadding(new Insets(12));
         info.getChildren().add(msg);
         info.getStyleClass().add("info-container");
-        Label defaultLabel = WidgetFactory.createDefaultLabel("The following events have been extracted from the table script.");
+        Label defaultLabel = WidgetFactory.createDefaultLabel(Messages.get("components.doftester.dof_toys.the_following_events_have_been_extracted"));
         defaultLabel.getStyleClass().add("infoLabel");
         msg.getChildren().add(defaultLabel);
         toyListPane.getChildren().add(info);
@@ -76,6 +77,7 @@ public class DOFToysController implements Initializable {
       for (String toy : toys.getToys()) {
         try {
           FXMLLoader loader = new FXMLLoader(ToyContainerController.class.getResource("toy-container.fxml"));
+          loader.setResources(Messages.getBundle());
           Pane root = loader.load();
           root.getStyleClass().add("dropin-menu-item");
           ToyContainerController controller = loader.getController();

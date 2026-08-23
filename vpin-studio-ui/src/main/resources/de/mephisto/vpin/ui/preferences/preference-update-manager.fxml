@@ -17,28 +17,28 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.UpdateManagerPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN SYSTEM PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="System Manager">
+                  <Label styleClass="preference-title" text="%pref.update_manager.vpin_system_preferences" textFill="WHITE" wrapText="true" />
+                  <Label styleClass="preference-subtitle" text="%pref.update_manager.system_manager" wrapText="true">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="The system manager gives you an overview about the installed VPin software and their status." textFill="WHITE">
+                  <Label styleClass="preference-description" text="%pref.update_manager.the_system_manager_gives_you_an_overview_about" textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="VPin MAME">
+                  <Label fx:id="mameTitleLabel" contentDisplay="RIGHT" styleClass="preference-subtitle" text="%components.components.vpin_mame" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Hyperlink onAction="#onHyperlink" text="https://github.com/vpinball/pinmame/releases">
+                  <Hyperlink onAction="#onHyperlink" text="%pref.update_manager.https_github_com_vpinball_pinmame_releases">
                      <VBox.margin>
                         <Insets left="-5.0" />
                      </VBox.margin>
@@ -55,20 +55,20 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Installed Version:" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Latest Version:" GridPane.rowIndex="2" />
-                        <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label styleClass="default-text" text="%components.component_short_summary_panel.installed_version" wrapText="true" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.update_manager.latest_version" GridPane.rowIndex="2" wrapText="true" />
+                        <Label fx:id="mameLatestVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="mameInstalledVersionLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Last Modified:" GridPane.rowIndex="1" />
-                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" wrapText="true" />
+                        <Label fx:id="mameLastModifiedLabel" layoutX="200.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -77,7 +77,7 @@
                   </GridPane>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" text="Install Latest Version ..." textFill="WHITE">
+                        <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" text="%pref.update_manager.install_latest_version" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -85,7 +85,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-up-bold-hexagon-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" text="Set As Installed Version" textFill="WHITE">
+                        <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" text="%components.component_summary_panel.set_as_installed_version" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -93,10 +93,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="This will set the latest available version as the installed version." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_set_the_latest_available_version_as" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" text="Check Installation" textFill="WHITE">
+                        <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" text="%pref.update_manager.check_installation" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -104,10 +104,10 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Checks the installation files for possible arrows and creates a diff against the latest available version." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="%pref.update_manager.checks_the_installation_files_for_possible_arrows_and" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="VPin MAME Setup" textFill="WHITE">
+                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="%components.mame.vpin_mame_setup" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

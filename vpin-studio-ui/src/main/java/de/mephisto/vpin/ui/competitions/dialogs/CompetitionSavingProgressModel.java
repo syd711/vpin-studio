@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionSavingProgressModel.class);
@@ -45,7 +46,7 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
 
   @Override
   public String nextToString(CompetitionRepresentation c) {
-    return "Saving \"" + c.getName() + "\"";
+    return Messages.get("dialog.saving", c.getName());
   }
 
   @Override
@@ -63,9 +64,9 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
     } catch (Exception e) {
-      LOG.error("Failed to save competitions data: " + e.getMessage(), e);
+      LOG.error(Messages.get("dialog.failed_to_save_competitions_data") + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Competition Update Failed", "Failed to save competitions data: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.competition_update_failed"), Messages.get("dialog.failed_to_save_competitions_data") + e.getMessage());
       });
     }
   }

@@ -35,6 +35,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class MenuCustomViewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -101,14 +102,14 @@ public class MenuCustomViewController implements Initializable {
       //boolean valid = scoreValidation.isValidScoreConfiguration();
       if (!StringUtils.isEmpty(game.getRom())) {
         if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
-          scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (supported)");
+          scoreInfoLabel.setText(Messages.get("pausemenu.menu_custom_view.rom_supported", game.getRom()));
         }
         else {
           if (scoreValidation.getHighscoreFilenameStatus() != null) {
-            scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getHighscoreFilenameStatus() + ")");
+            scoreInfoLabel.setText(Messages.get("pausemenu.menu_custom_view.rom_status", game.getRom(), scoreValidation.getHighscoreFilenameStatus()));
           }
           else {
-            scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getRomStatus() + ")");
+            scoreInfoLabel.setText(Messages.get("pausemenu.menu_custom_view.rom_status", game.getRom(), scoreValidation.getRomStatus()));
           }
         }
       }
@@ -136,12 +137,12 @@ public class MenuCustomViewController implements Initializable {
         stats3Col.setAlignment(Pos.CENTER);
 
         if (scores.isEmpty()) {
-          Label noScoresLabel = new Label("No scores found.");
+          Label noScoresLabel = new Label(Messages.get("pausemenu.menu_custom_view.no_scores_found"));
           noScoresLabel.setStyle("-fx-font-size: 20px;-fx-text-fill: #FFFFFF;");
           noScoresLabel.setPadding(new Insets(50, 0, 0, 0));
           stats3Col.getChildren().add(noScoresLabel);
 
-          Label info = new Label("(Note that this list may be filtered.)");
+          Label info = new Label(Messages.get("pausemenu.menu_custom_view.filtered_note"));
           info.setStyle("-fx-font-size:16px;-fx-text-fill: #FFFFFF;");
           stats3Col.getChildren().add(info);
         }
@@ -149,6 +150,7 @@ public class MenuCustomViewController implements Initializable {
         for (ScoreRepresentation score : scores) {
           try {
             FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+            loader.setResources(Messages.getBundle());
             Pane row = loader.load();
             row.setPrefWidth(stats3Col.getPrefWidth() - 24);
             WidgetLatestScoreItemController controller = loader.getController();

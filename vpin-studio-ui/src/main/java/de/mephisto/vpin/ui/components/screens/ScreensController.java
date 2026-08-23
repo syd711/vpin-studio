@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ScreensController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ScreensController.class);
@@ -58,6 +59,7 @@ public class ScreensController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
       FXMLLoader loader = new FXMLLoader(ManagedScreenController.class.getResource("managed-screen.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       controller = loader.getController();
       screenRoot.setCenter(builtInRoot);

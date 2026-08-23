@@ -19,12 +19,12 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%backups.backup_upload.upload">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -43,7 +43,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="preference-description" text="The selected .json file will be used to create a new Cards Template." />
+                  <Label styleClass="preference-description" text="%cards.template_editor_upload.the_selected_json_file_will_be_used_to" />
                </children>
             </VBox>
          </top>
@@ -63,10 +63,10 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label styleClass="default-text" text="Template Name:" />
+                  <Label styleClass="default-text" text="%cards.template_editor_upload.template_name" />
                   <TextField fx:id="templateNameField" prefHeight="30.0" prefWidth="400.0" GridPane.columnIndex="1" />
 
-                  <Label styleClass="default-text" text="Template File:" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="%cards.template_editor_upload.template_file" GridPane.rowIndex="1" />
                   <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <HBox.margin>
                         <Insets right="12.0" />
@@ -75,7 +75,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

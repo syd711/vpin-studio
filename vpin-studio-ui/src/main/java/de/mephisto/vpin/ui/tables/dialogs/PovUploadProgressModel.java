@@ -15,6 +15,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.POV_INSTALL;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PovUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -32,7 +33,7 @@ public class PovUploadProgressModel extends UploadProgressModel {
       UploadDescriptor result = Studio.client.getVpxService().uploadPov(next, gameId, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError());
         });
       }
       else {

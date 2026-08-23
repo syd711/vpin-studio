@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class IScoredPreferencesController implements Initializable {
 
@@ -89,7 +90,7 @@ public class IScoredPreferencesController implements Initializable {
     IScoredGameRoomModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       PreferencesController.markDirty(PreferenceType.competitionSettings);
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored game room \"" + selectedItem.iScoredGameRoom.getUrl() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_iscored_game_room") + selectedItem.iScoredGameRoom.getUrl() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
           ProgressDialog.createProgressDialog(new IScoredGameRoomDeletionProgressModel(selectedItem.iScoredGameRoom));
@@ -137,7 +138,7 @@ public class IScoredPreferencesController implements Initializable {
       }
     });
 
-    tableView.setPlaceholder(new Label("              No game rooms found.\nCreate an iScored game room to submit highscores to."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.iscored.no_game_rooms_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

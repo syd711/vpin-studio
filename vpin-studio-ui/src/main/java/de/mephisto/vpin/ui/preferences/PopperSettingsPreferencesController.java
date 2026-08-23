@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PopperSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PopperSettingsPreferencesController.class);
@@ -326,8 +327,8 @@ public class PopperSettingsPreferencesController implements Initializable {
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to save PinUP Popper custom options: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinUP Popper custom options: " + e.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_save_pinup_popper_custom_options") + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinup_popper_custom_options") + e.getMessage());
       }
     });
   }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.jspecify.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -79,9 +80,9 @@ public class ServerUpdatePreProcessorUI {
     Platform.runLater(() -> {
       Stage stage = new Stage();
       stage.initStyle(StageStyle.UNDECORATED);
-      stage.setTitle("VPin Studio - Resource Installation");
+      stage.setTitle(ServerMessages.get("server.update.title", java.util.Locale.getDefault()));
 
-      Label titleLabel = new Label("VPin Studio Server Resource Installation");
+      Label titleLabel = new Label(ServerMessages.get("server.update.label_title", java.util.Locale.getDefault()));
       titleLabel.setTextFill(Color.WHITE);
       titleLabel.setFont(Font.font(14));
 
@@ -89,7 +90,7 @@ public class ServerUpdatePreProcessorUI {
       progressBar.setPrefWidth(560);
       progressBar.setPrefHeight(14);
 
-      Label statusLabel = new Label("Downloading " + targetFile.getName() + "...");
+      Label statusLabel = new Label(ServerMessages.get("server.update.downloading", java.util.Locale.getDefault(), targetFile.getName(), 0));
       statusLabel.setTextFill(Color.WHITE);
 
       VBox vbox = new VBox(12, titleLabel, progressBar, statusLabel);
@@ -130,7 +131,7 @@ public class ServerUpdatePreProcessorUI {
                     int pct = Math.min((int) (progress * 100), 99);
                     Platform.runLater(() -> {
                       progressBar.setProgress(Math.min(progress, 0.99));
-                      statusLabel.setText("Downloading " + targetFile.getName() + "... " + pct + "%");
+                      statusLabel.setText(ServerMessages.get("server.update.downloading", java.util.Locale.getDefault(), targetFile.getName(), pct));
                     });
                   }
                 }
@@ -138,7 +139,7 @@ public class ServerUpdatePreProcessorUI {
                 if (extractFolder != null) {
                   Platform.runLater(() -> {
                     progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-                    statusLabel.setText("Installing " + targetFile.getName() + "...");
+                    statusLabel.setText(ServerMessages.get("server.update.installing", java.util.Locale.getDefault(), targetFile.getName()));
                   });
 
                   ZipUtil.unzip(targetFile, extractFolder, null);

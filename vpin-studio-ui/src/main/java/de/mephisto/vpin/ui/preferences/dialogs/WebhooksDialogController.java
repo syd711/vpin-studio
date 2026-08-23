@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class WebhooksDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(WebhooksDialogController.class);
@@ -104,6 +105,7 @@ public class WebhooksDialogController implements Initializable, DialogController
   private void addWebhookPanel(Webhook webhook, WebhookType webhookType) {
     try {
       FXMLLoader loader = new FXMLLoader(WebhookConfigPanelController.class.getResource("webhook-config-panel.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       WebhookConfigPanelController controller = loader.getController();
       webhookPanelsControllers.add(controller);

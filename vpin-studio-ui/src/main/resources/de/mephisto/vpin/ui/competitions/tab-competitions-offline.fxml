@@ -23,12 +23,12 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                                <TableColumn fx:id="columnTable" prefWidth="280.8000183105469" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
-                                <TableColumn fx:id="columnName" prefWidth="240.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="130.0" style="-fx-alignment: CENTER;" text="Status" />
-                                <TableColumn fx:id="columnStartDate" prefWidth="180.0" style="-fx-alignment: CENTER;" text="Start Date" />
-                                <TableColumn fx:id="columnEndDate" prefWidth="180.0" style="-fx-alignment: CENTER;" text="End Date" />
-                                <TableColumn fx:id="columnWinner" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Winner" />
+                                <TableColumn fx:id="columnTable" prefWidth="280.8000183105469" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_discord.table" />
+                                <TableColumn fx:id="columnName" prefWidth="240.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />
+                                <TableColumn fx:id="columnStatus" minWidth="0.0" prefWidth="130.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
+                                <TableColumn fx:id="columnStartDate" prefWidth="180.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.start_date" />
+                                <TableColumn fx:id="columnEndDate" prefWidth="180.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.end_date" />
+                                <TableColumn fx:id="columnWinner" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.winner" />
                             </columns>
                         </TableView>
                     </children>
@@ -48,7 +48,7 @@
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                              <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="200.0" promptText="Competition Search...">
+                              <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="200.0" promptText="%competitions.competitions_discord.competition_search">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -64,7 +64,7 @@
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                        <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="%competitions.competitions_discord.add" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -72,7 +72,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
-                        <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                        <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -80,7 +80,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
-                        <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
+                        <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="%competitions.competitions_discord.duplicate" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -89,7 +89,7 @@
                             </graphic>
                         </Button>
                   <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="Finish" textFill="WHITE">
+                        <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="%competitions.competitions_discord.finish" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -98,7 +98,7 @@
                             </graphic>
                         </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" textFill="#ff3333">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -122,7 +122,7 @@
                                         <Insets bottom="3.0" left="12.0" top="3.0" />
                                     </BorderPane.margin>
                                     <children>
-                                        <Label fx:id="validationErrorLabel" text="Loading Competitions.." textFill="WHITE">
+                                        <Label fx:id="validationErrorLabel" text="%competitions.competitions_discord.loading_competitions" textFill="WHITE">
                                             <font>
                                                 <Font name="System Bold" size="14.0" />
                                             </font>

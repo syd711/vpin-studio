@@ -23,12 +23,12 @@
          <center>
             <HBox alignment="BASELINE_RIGHT">
                <children>
-                <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                      <HBox.margin>
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="Delete">
+                  <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="%backups.backups.delete">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -37,7 +37,7 @@
             </HBox>
          </center>
          <left>
-            <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="Yes, I know what I'm doing!" BorderPane.alignment="CENTER">
+            <CheckBox fx:id="confirmationCheckbox" mnemonicParsing="false" text="%tables.alx.alx_delete.yes_i_know_what_i_m_doing" BorderPane.alignment="CENTER">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -60,7 +60,7 @@
                      <children>
                         <VBox>
                            <children>
-                              <CheckBox fx:id="deleteAllCheckbox" mnemonicParsing="false" text="Delete All">
+                              <CheckBox fx:id="deleteAllCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_all">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -69,7 +69,7 @@
                         </VBox>
                         <VBox fx:id="frontendSelectionField">
                            <children>
-                              <Label fx:id="titleLabel1" styleClass="default-title" text="Frontend" textFill="WHITE">
+                              <Label fx:id="titleLabel1" styleClass="default-title" text="%tables.table_delete.frontend" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -77,7 +77,7 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </Label>
-                              <CheckBox fx:id="frontendCheckbox" mnemonicParsing="false" selected="true" text="Remove from Frontend">
+                              <CheckBox fx:id="frontendCheckbox" mnemonicParsing="false" selected="true" text="%tables.table_delete.remove_from_frontend">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -85,11 +85,11 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="This will remove the game from the frontend's database.">
+                              <Label styleClass="checkbox-description" text="%tables.table_delete.this_will_remove_the_game_from_the_frontend">
                                  <VBox.margin>
                                     <Insets top="3.0" />
                                  </VBox.margin></Label>
-                              <CheckBox fx:id="keepAssetsCheckbox" layoutX="10.0" layoutY="22.0" mnemonicParsing="false" text="Keep Frontend Media Assets">
+                              <CheckBox fx:id="keepAssetsCheckbox" layoutX="10.0" layoutY="22.0" mnemonicParsing="false" text="%tables.table_delete.keep_frontend_media_assets">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -108,7 +108,7 @@
                                  <children>
                                     <VBox spacing="6.0">
                                        <children>
-                                          <Label fx:id="" styleClass="default-title" text="Files" textFill="WHITE">
+                                          <Label fx:id="" styleClass="default-title" text="%tables.table_delete.files" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -116,7 +116,7 @@
                                                 <Insets />
                                              </VBox.margin>
                                           </Label>
-                                          <CheckBox fx:id="deleteAllFilesCheckbox" layoutX="10.0" layoutY="44.0" mnemonicParsing="false" text="Delete All">
+                                          <CheckBox fx:id="deleteAllFilesCheckbox" layoutX="10.0" layoutY="44.0" mnemonicParsing="false" text="%tables.table_delete.delete_all">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -124,37 +124,37 @@
                                                 <Insets bottom="12.0" />
                                              </VBox.margin>
                                           </CheckBox>
-                                          <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File">
+                                          <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_game_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete .directb2s File">
+                                          <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_directb2s_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="povCheckbox" mnemonicParsing="false" text="Delete .pov File">
+                                          <CheckBox fx:id="povCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_pov_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="iniCheckbox" mnemonicParsing="false" text="Delete .ini File">
+                                          <CheckBox fx:id="iniCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_ini_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="resCheckbox" mnemonicParsing="false" text="Delete .res File">
+                                          <CheckBox fx:id="resCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_res_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="vbsCheckbox" mnemonicParsing="false" text="Delete .vbs File">
+                                          <CheckBox fx:id="vbsCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_vbs_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="romCheckbox" mnemonicParsing="false" text="Delete ROM File">
+                                          <CheckBox fx:id="romCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_rom_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -163,12 +163,12 @@
                                     </VBox>
                                     <VBox fx:id="mediaColumn" spacing="6.0">
                                        <children>
-                                          <Label fx:id="titleLabel112" styleClass="default-title" text="Media" textFill="WHITE">
+                                          <Label fx:id="titleLabel112" styleClass="default-title" text="%tables.table_delete.media" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <CheckBox fx:id="deleteAllMediaCheckbox" mnemonicParsing="false" text="Delete All">
+                                          <CheckBox fx:id="deleteAllMediaCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_all">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -176,22 +176,22 @@
                                                 <Insets bottom="12.0" />
                                              </VBox.margin>
                                           </CheckBox>
-                                          <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" text="Delete PUP Pack">
+                                          <CheckBox fx:id="pupPackCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_pup_pack">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="Delete Flex/Ultra DMD Files">
+                                          <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_flex_ultra_dmd_files">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="altSoundCheckbox" mnemonicParsing="false" prefHeight="0.0" prefWidth="165.0" text="Delete &quot;altsound&quot; Files">
+                                          <CheckBox fx:id="altSoundCheckbox" mnemonicParsing="false" prefHeight="0.0" prefWidth="165.0" text="%tables.table_delete.delete_altsound_files">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="altColorCheckbox" mnemonicParsing="false" text="Delete &quot;altcolor&quot; Files">
+                                          <CheckBox fx:id="altColorCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_altcolor_files">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -201,7 +201,7 @@
                                                 <Insets />
                                              </VBox.margin>
                                              <children>
-                                                <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="Delete Music Files">
+                                                <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_music_files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -211,7 +211,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="300.0" text="Only subfolders of Visual Pinball's &quot;Music&quot; folder will be deleted." wrapText="true" />
+                                                      <Tooltip prefWidth="300.0" text="%tables.table_delete.only_subfolders_of_visual_pinball_s_music_folder" wrapText="true" />
                                                    </tooltip>
                                                    <font>
                                                       <Font size="14.0" />
@@ -223,12 +223,12 @@
                                     </VBox>
                                     <VBox fx:id="settingsColumn" spacing="6.0">
                                        <children>
-                                          <Label fx:id="titleLabel111" styleClass="default-title" text="Settings" textFill="WHITE">
+                                          <Label fx:id="titleLabel111" styleClass="default-title" text="%backups.backup_restore.settings" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <CheckBox fx:id="deleteAllSettingsCheckbox" mnemonicParsing="false" text="Delete All">
+                                          <CheckBox fx:id="deleteAllSettingsCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_all">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -236,29 +236,29 @@
                                                 <Insets bottom="12.0" />
                                              </VBox.margin>
                                           </CheckBox>
-                                          <CheckBox fx:id="bamCfgCheckbox" mnemonicParsing="false" text="Delete BAM .cfg File">
+                                          <CheckBox fx:id="bamCfgCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_bam_cfg_file">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="pinVolCheckbox" mnemonicParsing="false" text="Delete PinVol Settings">
+                                          <CheckBox fx:id="pinVolCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_pinvol_settings">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                           <CheckBox fx:id="aliasCheckbox" layoutX="10.0" layoutY="82.0" mnemonicParsing="false" text="Delete VPMAlias.txt Entry">
+                                           <CheckBox fx:id="aliasCheckbox" layoutX="10.0" layoutY="82.0" mnemonicParsing="false" text="%tables.table_delete.delete_vpmalias_txt_entry">
                                                <font>
                                                    <Font size="14.0" />
                                                </font>
                                            </CheckBox>
-                                          <CheckBox fx:id="mameConfigCheckbox" mnemonicParsing="false" text="Delete Mame Settings">
+                                          <CheckBox fx:id="mameConfigCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_mame_settings">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
                                           <HBox alignment="CENTER_LEFT" spacing="6.0">
                                              <children>
-                                                <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="Delete Highscores">
+                                                <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="%tables.table_delete.delete_highscores">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -268,7 +268,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="300.0" text="This will delete the highscore history of the game and also reset existing ones." wrapText="true" />
+                                                      <Tooltip prefWidth="300.0" text="%tables.table_delete.this_will_delete_the_highscore_history_of_the" wrapText="true" />
                                                    </tooltip>
                                                    <font>
                                                       <Font size="14.0" />
@@ -276,12 +276,12 @@
                                                 </Label>
                                              </children>
                                           </HBox>
-                                          <CheckBox fx:id="dmdDeviceIniCheckbox" layoutX="10.0" layoutY="188.0" mnemonicParsing="false" text="Delete DMDDevice.ini Entry">
+                                          <CheckBox fx:id="dmdDeviceIniCheckbox" layoutX="10.0" layoutY="188.0" mnemonicParsing="false" text="%tables.table_delete.delete_dmddevice_ini_entry">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="b2sTableSettingsCheckbox" layoutX="10.0" layoutY="188.0" mnemonicParsing="false" text="Delete B2STableSettings.xml Entry">
+                                          <CheckBox fx:id="b2sTableSettingsCheckbox" layoutX="10.0" layoutY="188.0" mnemonicParsing="false" text="%tables.table_delete.delete_b2stablesettings_xml_entry">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -302,7 +302,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" text="title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                  <Label fx:id="titleLabel" text="%backups.tables_backup.title" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -317,7 +317,7 @@
             </BorderPane>
             <BorderPane fx:id="validationContainer">
                <top>
-                  <Label fx:id="validationTitle" text="Different versions a selected table have been found, only the game files can be deleted." textFill="WHITE" BorderPane.alignment="TOP_LEFT" />
+                  <Label fx:id="validationTitle" text="%tables.table_delete.different_versions_a_selected_table_have_been_found" textFill="WHITE" BorderPane.alignment="TOP_LEFT" />
                </top>
                <VBox.margin>
                   <Insets top="12.0" />
@@ -326,7 +326,7 @@
                   <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                </padding>
                <bottom>
-                  <Label fx:id="validationDescription" text="The default backup folder contains no backup of the selected tables." textFill="WHITE" BorderPane.alignment="CENTER_LEFT" />
+                  <Label fx:id="validationDescription" text="%tables.table_delete.the_default_backup_folder_contains_no_backup_of" textFill="WHITE" BorderPane.alignment="CENTER_LEFT" />
                </bottom>
             </BorderPane>
          </children>

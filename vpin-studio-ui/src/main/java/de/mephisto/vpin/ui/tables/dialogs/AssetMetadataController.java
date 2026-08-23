@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,7 +38,7 @@ public class AssetMetadataController implements Initializable, DialogController 
 
   public void setData(AssetMetaData metaData) {
     if(metaData == null) {
-      dataRoot.getChildren().add(WidgetFactory.createDefaultLabel("Cannot get  metadata information"));
+      dataRoot.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("tables.asset_metadata.cannot_get_metadata_information")));
       return;
     }
 

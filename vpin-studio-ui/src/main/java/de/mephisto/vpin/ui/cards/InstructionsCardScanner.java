@@ -19,6 +19,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  * What is it ? 
@@ -54,6 +55,7 @@ public class InstructionsCardScanner extends Application {
     try {
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
       FXMLLoader loader = new FXMLLoader(InstructionsCardScanner.class.getResource("instructions-card.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent root = loader.load();
       InstructionsCardsController controller = loader.getController();
       controller.setRootFolder(folder);

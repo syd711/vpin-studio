@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -64,8 +65,8 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
 
     if (filtered.isEmpty() && !event.getDragboard().hasContent(DataFormat.URL)) {
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "None of the selected is valid for this upload.",
-            "Only files with extension(s) \"" + String.join("\", \"", suffixes) + "\" are accepted here.");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.none_of_the_selected_is_valid_for"),
+            Messages.get("dialog.only_files_with_extension_s") + String.join(Messages.get("dialog.item_2"), suffixes) + Messages.get("dialog.are_accepted_here"));
       });
       return;
     }
@@ -123,7 +124,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     catch (IOException e) {
       LOG.info("Creating drop copies failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Creating copies from drop failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.creating_copies_from_drop_failed") + e.getMessage());
       });
       return;
     }
@@ -152,9 +153,9 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       VPinScreen loadingScreenId = VPinScreen.Loading;
       if (!medias.getMediaItems(screen).isEmpty()) {
         append = false;
-        Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
-            "A media asset already exists.",
-            "Append new asset or overwrite existing asset?", "Overwrite", "Append");
+        Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, Messages.get("dialog.replace_media"),
+            Messages.get("dialog.a_media_asset_already_exists"),
+            Messages.get("dialog.append_new_asset_or_overwrite_existing_asset"), Messages.get("dialog.overwrite"), Messages.get("dialog.append"));
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
         }
         else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {

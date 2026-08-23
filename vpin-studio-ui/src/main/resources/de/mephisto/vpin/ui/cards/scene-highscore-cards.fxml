@@ -31,10 +31,10 @@
                                  <children>
                                     <TableView fx:id="tableView" prefWidth="258.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                        <columns>
-                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                          <TableColumn fx:id="columnTemplate" minWidth="70.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_CENTER;" text="Custom" />
-                                          <TableColumn fx:id="columnBaseTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Base Template" />
-                                          <TableColumn fx:id="columnWheel" minWidth="60.0" prefWidth="-1.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;" text="Wheel" />
+                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.display_name" />
+                                          <TableColumn fx:id="columnTemplate" minWidth="70.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_CENTER;" text="%cards.highscore_cards.custom" />
+                                          <TableColumn fx:id="columnBaseTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="%cards.highscore_cards.base_template" />
+                                          <TableColumn fx:id="columnWheel" minWidth="60.0" prefWidth="-1.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;" text="%cards.highscore_cards.wheel" />
                                        </columns>
                                     </TableView>
                                  </children>
@@ -52,7 +52,7 @@
                                              <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                             <Tooltip text="Toggle Filter View" />
+                                             <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                                        </tooltip>
                                        <graphic>
                                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -66,13 +66,13 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Reload all table data" />
+                                          <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                                        </tooltip>
                                     </Button>
                                     <Separator orientation="VERTICAL" prefWidth="12.0" />
             		                <StackPane alignment="CENTER_RIGHT">
             		                    <children>
-            		                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+            		                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%cards.highscore_cards.search_table">
             		                            <font>
             		                                <Font size="14.0" />
             		                            </font>
@@ -98,7 +98,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Open Table in Table Overview" />
+                                          <Tooltip text="%cards.highscore_cards.open_table_in_table_overview" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
@@ -109,7 +109,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Asset Manager" />
+                                          <Tooltip text="%cards.template_editor.asset_manager" />
                                        </tooltip>
                                     </Button>
             
@@ -123,7 +123,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Open Table on VPin Mania" />
+                                          <Tooltip text="%cards.highscore_cards.open_table_on_vpin_mania" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings">
@@ -134,14 +134,14 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip text="Open Highscore Card Settings" />
+                                          <Tooltip text="%cards.highscore_cards.open_highscore_card_settings" />
                                        </tooltip>
                                     </Button>
                                  </items>
                               </ToolBar>
                               <ToolBar prefHeight="40.0" prefWidth="200.0">
                                  <items>
-                                    <Label text="Emulator:" textFill="WHITE">
+                                    <Label text="%cards.highscore_cards.emulator" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

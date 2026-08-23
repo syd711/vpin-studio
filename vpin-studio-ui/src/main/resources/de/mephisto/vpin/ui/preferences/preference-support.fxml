@@ -11,52 +11,51 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.SupportPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
 
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label prefHeight="32.0" prefWidth="310.0" styleClass="preference-title" text="HELP &amp; SUPPORT" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Submit a Bug Report">
+            <Label prefHeight="32.0" prefWidth="310.0" styleClass="preference-title" text="%pref.shortcuts.help_support" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.support.submit_a_bug_report" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="Found a bug or missing something?" textFill="WHITE">
+            <Label styleClass="preference-description" text="%pref.support.found_a_bug_or_missing_something" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="103.0" styleClass="preference-description" text="You have various options to give feedback or report bugs." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="103.0" styleClass="preference-description" text="%pref.support.you_have_various_options_to_give_feedback_or" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="138.0" styleClass="preference-description" text="Describe your problem or question on the VPin Studio Discord server:" textFill="WHITE" />
-            <Hyperlink onAction="#onDiscordLink" text="Visit the VPin Studio Discord" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="138.0" styleClass="preference-description" text="%pref.support.describe_your_problem_or_question_on_the_vpin" textFill="WHITE" wrapText="true" />
+            <Hyperlink onAction="#onDiscordLink" text="%pref.support.visit_the_vpin_studio_discord" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <VBox.margin>
-                  <Insets top="3.0" />
+                  <Insets left="-5.0" top="3.0" />
                </VBox.margin>
             </Hyperlink>
-            <Label layoutX="34.0" layoutY="160.0" styleClass="preference-description" text="Another option is to submit a ticket on github." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="160.0" styleClass="preference-description" text="%pref.support.another_option_is_to_submit_a_ticket_on" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="235.0" styleClass="preference-description" text="Especially if you encounter serious bugs, make sure to use the &quot;Zip Log Files&quot; button below" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="256.0" styleClass="preference-description" text="and submit a ticket with this file attached." textFill="WHITE" />
-            <Hyperlink layoutX="34.0" layoutY="184.0" onAction="#onGithubLink" text="https://github.com/syd711/vpin-studio/issues" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="235.0" styleClass="preference-description" text="%pref.support.especially_if_you_encounter_serious_bugs_make_sure" textFill="WHITE" wrapText="true" />
+            <Hyperlink layoutX="34.0" layoutY="184.0" onAction="#onGithubLink" text="%components.components.https_github_com_syd711_vpin_studio_issues" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <VBox.margin>
-                  <Insets top="3.0" />
+                  <Insets left="-5.0" top="3.0" />
                </VBox.margin>
             </Hyperlink>
-            <Button mnemonicParsing="false" onAction="#onZipDownload" text="Zip Log Files" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#onZipDownload" text="%pref.support.zip_log_files" textFill="WHITE">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
@@ -64,20 +63,19 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Support">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%pref.support.support" wrapText="true">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="If you're enjoying the software, please consider supporting the development" textFill="WHITE">
+            <Label layoutX="34.0" layoutY="278.0" styleClass="preference-description" text="%pref.support.if_you_re_enjoying_the_software_please_consider" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="445.0" styleClass="preference-description" text="of the project buying me a coffee or subscribing." textFill="WHITE" />
             <VBox>
                <children>
-                  <Hyperlink onAction="#onLink" text="https://ko-fi.com/syd711" textFill="WHITE">
+                  <Hyperlink onAction="#onLink" text="%pref.support.https_ko_fi_com_syd711" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -95,7 +93,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
                <children>
-                  <Hyperlink onAction="#onLink" text="https://www.youtube.com/@vpin-studio/videos" textFill="WHITE">
+                  <Hyperlink onAction="#onLink" text="%pref.support.https_www_youtube_com_vpin_studio_videos" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

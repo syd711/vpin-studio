@@ -19,14 +19,14 @@
             <center>
                 <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                     <tabs>
-                        <Tab fx:id="buildInUsersTab" closable="false" text="Built-In Players">
+                        <Tab fx:id="buildInUsersTab" closable="false" text="%players.players.built_in_players">
                             <content>
                             </content>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details" iconSize="18" />
                      </graphic>
                         </Tab>
-                        <Tab fx:id="discordTab" closable="false" text="Discord Players">
+                        <Tab fx:id="discordTab" closable="false" text="%players.players.discord_players">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-details-outline" iconSize="18" />
                      </graphic>
@@ -50,12 +50,12 @@
                      <left>
                         <VBox BorderPane.alignment="CENTER">
                            <children>
-                              <Label fx:id="errorTitleLabel" text="Duplicate Initials" textFill="WHITE">
+                              <Label fx:id="errorTitleLabel" text="%players.players.duplicate_initials" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="errorTextLabel" text="Label" textFill="WHITE">
+                              <Label fx:id="errorTextLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -69,7 +69,7 @@
                   </BorderPane>
                </center>
                <top>
-                  <Label fx:id="playerCountLabel" text="Label" BorderPane.alignment="TOP_RIGHT" />
+                  <Label fx:id="playerCountLabel" text="%competitions.discord_competition_edit.label" BorderPane.alignment="TOP_RIGHT" />
                </top>
             </BorderPane>
          </bottom>
@@ -90,7 +90,7 @@
                               <VBox fx:id="highscoreList" spacing="6.0" />
                            </center>
                            <top>
-                              <Label fx:id="noScoreLabel" text="No highscores found for this player." textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+                              <Label fx:id="noScoreLabel" text="%players.players.no_highscores_found_for_this_player" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -106,10 +106,10 @@
                <graphic>
                   <BorderPane prefWidth="550.0">
                      <left>
-                        <Label fx:id="playerScoreLabel" text="Player Highscores" BorderPane.alignment="CENTER" />
+                        <Label fx:id="playerScoreLabel" text="%players.players.player_highscores" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <CheckBox fx:id="loadScoreList" mnemonicParsing="false" text="Load Score List" BorderPane.alignment="CENTER">
+                        <CheckBox fx:id="loadScoreList" mnemonicParsing="false" text="%players.players.load_score_list" BorderPane.alignment="CENTER">
                            <font>
                               <Font size="11.0" />
                            </font>

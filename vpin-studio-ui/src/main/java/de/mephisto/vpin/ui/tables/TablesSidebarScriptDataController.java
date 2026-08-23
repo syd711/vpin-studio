@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarScriptDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -58,9 +59,6 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private Label labelLastModified;
-
-  @FXML
-  private Button inspectBtn;
 
   @FXML
   private SplitMenuButton editBtn;
@@ -233,7 +231,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   public void onScan() {
     if (this.game.isPresent()) {
-      ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Table \"" + this.game.get().getGameDisplayName() + "\"", List.of(this.game.get())));
+      ProgressDialog.createProgressDialog(new TableScanProgressModel(Messages.get("dialog.scanning_table", this.game.get().getGameDisplayName()), List.of(this.game.get())));
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
     }
   }
@@ -245,42 +243,41 @@ public class TablesSidebarScriptDataController implements Initializable {
       builder.directory(new File("resources"));
       builder.start();
     } catch (IOException e) {
-      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
+      LOG.error(Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage());
     }
   }
 
 
-  @FXML
-  private void onInspect() {
-    if (game.isPresent()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Inspect script of table\"" + game.get().getGameDisplayName() + "\"?",
-        "This will extract the table script into a temporary file.",
-        "It will be opened afterwards in a text editor.");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
-        if (!resultModel.getResults().isEmpty()) {
-          File file = (File) resultModel.getResults().getFirst();
-          try {
-            Desktop.getDesktop().open(file);
-          } catch (IOException e) {
-            WidgetFactory.showAlert(Studio.stage, "Failed to open script file " + file.getAbsolutePath() + ": " + e.getMessage());
-          }
-        }
-        else {
-          WidgetFactory.showAlert(Studio.stage, "Script extraction failed, check log for details.");
-        }
-      }
-    }
-  }
+//  @FXML
+//  private void onInspect() {
+//    if (game.isPresent()) {
+//      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.inspect_script_of_table") + game.get().getGameDisplayName() + "\"?",
+//        Messages.get("dialog.this_will_extract_the_table_script_into"),
+//        Messages.get("dialog.it_will_be_opened_afterwards_in_a"));
+//      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+//
+//        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScriptDownloadProgressModel("Extracting Table Script", game.get()));
+//        if (!resultModel.getResults().isEmpty()) {
+//          File file = (File) resultModel.getResults().getFirst();
+//          try {
+//            Desktop.getDesktop().open(file);
+//          } catch (IOException e) {
+//            WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.failed_to_open_script_file") + file.getAbsolutePath() + ": " + e.getMessage());
+//          }
+//        }
+//        else {
+//          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.script_extraction_failed_check_log_for_details"));
+//        }
+//      }
+//    }
+//  }
 
   public void refreshView(Optional<GameRepresentation> g) {
     tableInfo = null;
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
 
     boolean gameFileAvailable = g.isPresent() && g.get().getGameFilePath() != null;
-    inspectBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     editBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     scanBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     viewScreenshotBtn.setDisable(g.isEmpty());

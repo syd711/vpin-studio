@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class PreferencesController extends SettingsSceneController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
@@ -170,6 +171,7 @@ public class PreferencesController extends SettingsSceneController implements In
     if (instance == null) {
       try {
         FXMLLoader loader = new FXMLLoader(PreferencesController.class.getResource("scene-preferences.fxml"));
+        loader.setResources(Messages.getBundle());
         Node preferencesRoot = loader.load();
         PreferencesController controller = loader.getController();
         preferencesRoot.setUserData(controller);
@@ -480,12 +482,13 @@ public class PreferencesController extends SettingsSceneController implements In
 
     try {
       FXMLLoader loader = new FXMLLoader(ClientSettingsPreferencesController.class.getResource(screen));
+      loader.setResources(Messages.getBundle());
       Node node = loader.load();
       preferencesMain.setCenter(node);
     }
     catch (Exception e) {
       LOG.error("Failed to loading settings view {}: {}", screen, e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
     }
   }
 
@@ -533,7 +536,7 @@ public class PreferencesController extends SettingsSceneController implements In
     webhooksBtn.setVisible(Features.WEBHOOKS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
-    versionLink.setText("VPin Studio Version " + Studio.getVersion());
+    versionLink.setText(Messages.get("studio.vpin_studio_version", Studio.getVersion()));
     versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
     hostLabel.setText(System.getProperty("os.name"));
 

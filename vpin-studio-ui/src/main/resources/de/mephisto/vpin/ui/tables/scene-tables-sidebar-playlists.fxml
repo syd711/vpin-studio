@@ -24,18 +24,18 @@
                <children>
                   <BorderPane>
                      <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="Label" wrapText="true" BorderPane.alignment="CENTER" />
+                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%competitions.discord_competition_edit.label" wrapText="true" BorderPane.alignment="CENTER" />
                      </left>
                      <right>
-                        <Hyperlink fx:id="dismissLink" onAction="#onDismiss" text="Dismiss" BorderPane.alignment="CENTER" />
+                        <Hyperlink fx:id="dismissLink" onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" BorderPane.alignment="CENTER" />
                      </right>
                   </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
+                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%competitions.discord_competition_edit.label" wrapText="true" />
                </children>
             </VBox>
             <VBox fx:id="emptyDataBox">
                <children>
-                  <Label fx:id="emptyDataLabel" styleClass="preference-description" text="No table selected." />
+                  <Label fx:id="emptyDataLabel" styleClass="preference-description" text="%tables.tables_sidebar_mame.no_table_selected" />
                </children>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -43,12 +43,12 @@
             </VBox>
             <VBox fx:id="dataRoot">
                <children>
-                  <Label fx:id="dialogTitleLabel" styleClass="default-title" text="Playlists" textFill="WHITE">
+                  <Label fx:id="dialogTitleLabel" styleClass="default-title" text="%tables.table_asset_manager.playlists" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="dialogCommentLabel" text="Changes in this tab will be stored immediately, no additional saving is needed!" wrapText="true">
+                  <Label fx:id="dialogCommentLabel" text="%tables.tables_sidebar_playlists.changes_in_this_tab_will_be_stored_immediately" wrapText="true">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-rhombus-outline" iconSize="18" />
                      </graphic>
@@ -78,7 +78,7 @@
    <top>
       <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="playlistManagerBtn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" text="Playlist Manager" textFill="WHITE">
+            <Button fx:id="playlistManagerBtn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" text="%tables.tables_sidebar_playlists.playlist_manager" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
                </graphic>
@@ -86,11 +86,11 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Edit Playlist Assets" />
+                  <Tooltip text="%tables.tables_sidebar_playlists.edit_playlist_assets" />
                </tooltip>
             </Button>
             <Separator fx:id="playlistManagerSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="Edit Playlist Assets" textFill="WHITE">
+            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="%tables.tables_sidebar_playlists.edit_playlist_assets" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                </graphic>
@@ -98,7 +98,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Edit Playlist Assets" />
+                  <Tooltip text="%tables.tables_sidebar_playlists.edit_playlist_assets" />
                </tooltip>
             </Button>
          </items>

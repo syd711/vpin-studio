@@ -55,6 +55,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class DMDPositionController extends BasePrevNextController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -222,7 +223,7 @@ public class DMDPositionController extends BasePrevNextController {
   }
 
   private void clearGame() {
-    titleLabel.setText("loading...");
+    titleLabel.setText(Messages.get("tables.dmd_position.loading"));
     romLabel.setText("--");
     tablePositionLabel.setText("");
     DMDTypeCombo.setValue(null);
@@ -279,7 +280,7 @@ public class DMDPositionController extends BasePrevNextController {
           }
         })
         .onErrorLater(e -> {
-          WidgetFactory.showAlert(headerController.getStage(), "Cannot save DMD Position", e.getMessage());
+          WidgetFactory.showAlert(headerController.getStage(), Messages.get("dialog.cannot_save_dmd_position"), e.getMessage());
         });
   }
 
@@ -592,8 +593,8 @@ public class DMDPositionController extends BasePrevNextController {
   private void setDmdError(Throwable e) {
     LOG.error("Error getting dmd information, set an empty one");
     this.dmdinfo = new DMDInfo();
-    WidgetFactory.showAlert(Studio.stage, "Getting DMD information failed", 
-      "Please check your screenres.txt or <tablename>.res file exists, else check the server logs");
+    WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.getting_dmd_information_failed"), 
+      Messages.get("dialog.please_check_your_screenres_txt_or_tablename"));
   }
 
   private void disableAll() {
@@ -677,13 +678,13 @@ public class DMDPositionController extends BasePrevNextController {
     if (storename != null) {
 
       if (baseMgrController != null) {
-        saveLocallyBtn.setText("Save for " + storename);
+        saveLocallyBtn.setText(Messages.get("tables.dmd_position.save_for", storename));
         saveLocallyBtn.setVisible(true);
 
-        saveCloseLocallyBtn.setText("Save & Close for " + storename);
+        saveCloseLocallyBtn.setText(Messages.get("tables.dmd_position.save_close_for", storename));
       }
       else {
-        saveCloseLocallyBtn.setText("Save for " + storename);
+        saveCloseLocallyBtn.setText(Messages.get("tables.dmd_position.save_for", storename));
       }
       saveCloseLocallyBtn.setVisible(true);
     }

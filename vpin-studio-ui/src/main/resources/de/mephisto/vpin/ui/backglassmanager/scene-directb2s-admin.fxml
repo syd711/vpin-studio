@@ -27,7 +27,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Toggle Filter View" />
+                        <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
                     </tooltip>
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
@@ -41,13 +41,13 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Reload all table data" />
+                        <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
                     </tooltip>
                 </Button>
                 <Separator layoutX="281.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
                 <StackPane alignment="CENTER_RIGHT">
                     <children>
-                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Backglass...">
+                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%backglass.directb2s_admin.search_backglass">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -72,7 +72,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Open Emulator Manager" />
+                  <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
                </tooltip>
             </Button>
             <Separator layoutX="868.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
@@ -89,7 +89,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Upload a new backglass" />
+                        <Tooltip text="%backglass.directb2s_admin.upload_a_new_backglass" />
                     </tooltip>
                 </Button>
             <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
@@ -100,11 +100,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Rename the backglass (including versions)" />
+                  <Tooltip text="%backglass.directb2s_admin.rename_the_backglass_including_versions" />
                </tooltip>
             </Button>
                 <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text=".res Editor" textFill="WHITE">
+                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -112,10 +112,10 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Open .res editor" />
+                        <Tooltip text="%backglass.directb2s_admin.open_res_editor" />
                     </tooltip>
                 </Button>
-                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Position" textFill="WHITE">
+                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="%backglass.directb2s_admin.dmd_position" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -123,7 +123,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Adjust DMD position" />
+                        <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                     </tooltip>
                 </Button>
                 <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -135,7 +135,7 @@
                         <Font size="14.0" />
                     </font>
                     <tooltip>
-                        <Tooltip text="Open table information on VPS." />
+                        <Tooltip text="%backglass.directb2s_admin.open_table_information_on_vps" />
                     </tooltip>
                 </Button>
                 <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
@@ -143,7 +143,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                     </graphic>
                     <tooltip>
-                        <Tooltip text="Open .ini File" />
+                        <Tooltip text="%backglass.directb2s_admin.open_ini_file" />
                     </tooltip>
                     <font>
                         <Font size="14.0" />
@@ -163,16 +163,16 @@
                                   <children>
                                       <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
                                           <columns>
-                                              <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Backglass" />
-                                              <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="# directB2S" />
-                                              <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Table Match" />
-                                              <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="FullDMD" />
-                                              <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Grill" />
-                                              <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Score" />
-                                              <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="RES" />
-                                              <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Frame" />
-                                              <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                                              <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
+                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.backglass" />
+                                              <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.directb2s" />
+                                              <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.table_match" />
+                                              <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.fulldmd" />
+                                              <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.grill" />
+                                              <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.score" />
+                                              <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
+                                              <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.frame" />
+                                              <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />
                                           </columns>
                                       </TableView>
                                   </children>
@@ -197,7 +197,7 @@
                                                 <children>
                                                     <BorderPane>
                                                     <left>
-                                                        <Label fx:id="validationErrorLabel" text="Loading Backglasses..." textFill="WHITE" BorderPane.alignment="CENTER">
+                                                        <Label fx:id="validationErrorLabel" text="%backglass.directb2s_admin.loading_backglasses" textFill="WHITE" BorderPane.alignment="CENTER">
                                                             <font>
                                                             <Font name="System Bold" size="14.0" />
                                                             </font>
@@ -206,7 +206,7 @@
                                                     <right>
                                                         <HBox BorderPane.alignment="CENTER">
                                                             <children>
-                                                                <!--Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="Dismiss" textFill="WHITE">
+                                                                <!--Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" textFill="WHITE">
                                                                 <font>
                                                                                       <Font size="10.0" />
                                                                                   </font>
@@ -214,7 +214,7 @@
                                                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
                                                                                   </graphic>
                                                                                   </Hyperlink-->
-                                                                <!--Hyperlink onAction="#onDismissAll" text="Dismiss All ..." textFill="WHITE">
+                                                                <!--Hyperlink onAction="#onDismissAll" text="%backglass.directb2s_admin.dismiss_all" textFill="WHITE">
                                                                 <font>
                                                                                       <Font size="10.0" />
                                                                                   </font>
@@ -230,7 +230,7 @@
                                                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                                                 </graphic>
                                                                 <tooltip>
-                                                                    <Tooltip text="Open Validators Settings" />
+                                                                    <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
                                                                 </tooltip>
                                                                 </Button>
                                                             </children>

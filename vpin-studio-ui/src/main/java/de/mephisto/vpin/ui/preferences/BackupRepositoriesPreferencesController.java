@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BackupRepositoriesPreferencesController implements Initializable {
 
@@ -71,7 +72,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
           client.getBackupService().saveBackupSource(sourceRepresentation);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_repository") + e.getMessage());
         }
         onReload();
       }
@@ -86,7 +87,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
         client.getBackupService().saveBackupSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_repository") + e.getMessage());
       }
       onReload();
     }
@@ -100,7 +101,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
         client.getBackupService().saveBackupSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_repository") + e.getMessage());
       }
       onReload();
     }
@@ -110,13 +111,13 @@ public class BackupRepositoriesPreferencesController implements Initializable {
   private void onDelete() {
     BackupSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Repository \"" + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_repository") + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getBackupService().deleteBackupSource(selectedItem.getId());
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
         }
         finally {
           onReload();
@@ -152,7 +153,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.backup_repositories.no_table_repository_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

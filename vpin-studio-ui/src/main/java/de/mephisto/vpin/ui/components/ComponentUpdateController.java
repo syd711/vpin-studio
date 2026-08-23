@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class ComponentUpdateController implements Initializable, ChangeListener<GithubReleaseRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
@@ -73,7 +74,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       EventManager.getInstance().notify3rdPartyVersionUpdate(type);
     }
     else {
-      textArea.setText("Check failed. See log for details.");
+      textArea.setText(Messages.get("components.component_update_panel.check_failed_see_log_for_details"));
     }
   }
 
@@ -116,21 +117,21 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
           setText(log.toString());
         }
         else {
-          textArea.setText("Check failed. See log for details.");
+          textArea.setText(Messages.get("components.component_update_panel.check_failed_see_log_for_details"));
         }
 
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
       }
       catch (Exception e) {
-        LOG.error("Failed to execute component check: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute component check: " + e.getMessage());
+        LOG.error(Messages.get("dialog.failed_to_execute_component_check") + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_execute_component_check") + e.getMessage());
       }
     });
   }
 
   private void runInstall() {
     String artifact = artifactCombo.getValue();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Install Update \"" + artifact + "\"?", "Existing files will be overwritten.", "Make sure to follow the additional instructions shown below.", "Continue");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.install_update") + artifact + "\"?", Messages.get("dialog.existing_files_will_be_overwritten"), Messages.get("dialog.make_sure_to_follow_the_additional_instructions"), "Continue");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       run(false, Collections.emptyList());
     }
@@ -165,7 +166,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
       }
       catch (Exception ex) {
         LOG.error("Failed to run component update: " + ex.getMessage(), ex);
-        textArea.setText("Action failed: " + ex.getMessage());
+        textArea.setText(Messages.get("components.component_update_panel.action_failed", ex.getMessage()));
       }
     });
   }
@@ -190,7 +191,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     releasesCombo.setDisable(component.getReleases().isEmpty());
 
     if(localInstallOnly && !client.getSystemService().isLocal()) {
-      installBtn.setText("Start Installation (on cabinet only)");
+      installBtn.setText(Messages.get("components.component_update_panel.start_installation_on_cabinet_only"));
     }
 
     checkBtn.setVisible(component.isInstalled());

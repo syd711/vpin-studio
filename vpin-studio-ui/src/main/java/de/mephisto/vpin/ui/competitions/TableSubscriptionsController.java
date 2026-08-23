@@ -51,6 +51,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableSubscriptionsController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TableSubscriptionsController.class);
@@ -127,7 +128,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   private void onCompetitionValidate() {
     CompetitionRepresentation selectedItem = this.tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Subscription", "This will re-check your local highscores against the Discord server data.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize_subscription"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
       if (result.get().equals(ButtonType.OK)) {
         client.getDiscordService().clearCache();
         client.getDiscordService().checkCompetition(selectedItem);
@@ -139,7 +140,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> subscriptions = client.getCompetitionService().getSubscriptions();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + subscriptions.size() + " Subscription(s)?", "This will re-check your local highscores against the Discord server data.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize") + subscriptions.size() + Messages.get("dialog.subscription_s"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
     if (result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Table Subscriptions", subscriptions));
       this.onReload();
@@ -151,7 +152,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
     long guildId = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);
     if (discordStatus.getServerId() == 0 || discordStatus.getCategoryId() == 0) {
-      WidgetFactory.showAlert(Studio.stage, "Invalid Discord Configuration", "No default Discord server and category for subscriptions found.", "Open the Bot Settings in the preferences to configure the subscription settings.");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.invalid_discord_configuration"), Messages.get("dialog.no_default_discord_server_and_category_for"), Messages.get("dialog.open_the_bot_settings_in_the_preferences"));
       return;
     }
 
@@ -219,14 +220,14 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
         help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Subscription '" + selection.getName() + "'?",
-          help, help2, "Delete Subscription");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_subscription") + selection.getName() + "'?",
+          help, help2, Messages.get("dialog.delete_subscription_2"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
-            "Deleting Subscription " + selection.getName(),
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>(Messages.get("dialog.delete_subscription_2"),
+            Messages.get("dialog.deleting_subscription", selection.getName()),
             () -> client.getCompetitionService().deleteCompetition(selection)));
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Table Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions")));
         onReload();
       }
     }
@@ -253,7 +254,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       reloadBtn.setDisable(true);
       joinBtn.setDisable(true);
 
-      tableView.setPlaceholder(new Label("                                         No Discord bot found.\nCreate a Discord bot and add it in the preference section \"Discord Preferences\"."));
+      tableView.setPlaceholder(new Label("                                         " + Messages.get("competitions.competitions_subscriptions.no_discord_bot_found")));
       tableView.setVisible(true);
       tableStack.getChildren().remove(loadingOverlay);
 
@@ -305,11 +306,12 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    NavigationController.setBreadCrumb(List.of("Competitions"));
-    tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
+    NavigationController.setBreadCrumb(List.of(Messages.get("navigation.competitions")));
+    tableView.setPlaceholder(new Label("            " + Messages.get("competitions.competitions_subscriptions.no_competitions_found")));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
+      loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
@@ -328,7 +330,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
       }
     });
 
@@ -337,7 +339,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       try {
         CompetitionRepresentation value = cellData.getValue();
         GameRepresentation game = client.getGameService().getGameCached(value.getGameId());
-        Label label = new Label("- not available anymore -");
+        Label label = new Label(Messages.get("competitions.competitions_subscriptions.not_available_anymore"));
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
 
@@ -365,7 +367,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
       }
     });
 
@@ -402,7 +404,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
       }
     });
 
@@ -435,18 +437,18 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label("Error: " + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
       }
     });
 
-    tableView.setPlaceholder(new Label("                      Try table subscriptions!\n" +
-        "Create a new subscription by pressing the '+' button."));
+    tableView.setPlaceholder(new Label("                      " + Messages.get("competitions.competitions_subscriptions.try_table_subscriptions")));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      loader.setResources(Messages.getBundle());
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);

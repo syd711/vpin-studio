@@ -47,10 +47,11 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BackupsController extends BaseTableController<BackupDescriptorRepresentation, BackupModel> implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(BackupsController.class);
-  public static final String TAB_NAME = "Table Backups";
+  public static final String TAB_NAME = Messages.get("navigation.backups");
 
   @FXML
   private Button deleteBtn;
@@ -255,7 +256,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
       if (selectedItems.size() == 1) {
         title = "Delete Archive \"" + selectedItems.getFirst().getName() + "\"?";
       }
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, Messages.get("common.delete"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         List<BackupDescriptorRepresentation> backups = selectedItems.stream().map(s -> s.getBean()).collect(Collectors.toList());
         ProgressDialog.createProgressDialog(new BackupDeleteProgressModel(backups));
@@ -585,7 +586,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
         this.doReload(selection);
       }
       else {
-        WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.authentication_required"), Messages.get("dialog.go_to_the_backup_settings_for_more"));
       }
     });
   }

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionSyncProgressModel.class);
@@ -42,7 +43,7 @@ public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepre
 
   @Override
   public String nextToString(CompetitionRepresentation c) {
-    return "Synchronizing \"" + c.toString() + "\"";
+    return Messages.get("dialog.synchronizing", c.toString());
   }
 
   @Override
@@ -56,7 +57,7 @@ public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepre
       client.getDiscordService().checkCompetition(next);
     } catch (Exception e) {
       LOG.error("Failed sync competitions data: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Competition Synchronize Failed", "Failed to sync competitions data: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.competition_synchronize_failed"), Messages.get("dialog.failed_to_sync_competitions_data") + e.getMessage());
     }
   }
 

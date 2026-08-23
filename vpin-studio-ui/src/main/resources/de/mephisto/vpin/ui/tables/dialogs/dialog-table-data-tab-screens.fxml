@@ -13,24 +13,24 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
    <children>
-      <Label styleClass="default-title" text="Screen Settings" textFill="WHITE">
+      <Label styleClass="default-title" text="%tables.table_data_tab_screens.screen_settings" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label styleClass="preference-description" text="All screens hide during gameplay. You can keep displays on. " textFill="WHITE">
+      <Label styleClass="preference-description" text="%tables.table_data_tab_screens.all_screens_hide_during_gameplay_you_can_keep" textFill="WHITE">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
       <VBox prefHeight="200.0" prefWidth="100.0" spacing="6.0">
          <children>
-            <CheckBox fx:id="useEmuDefaultsCheckbox" mnemonicParsing="false" text="Use Emulator Defaults">
+            <CheckBox fx:id="useEmuDefaultsCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.use_emulator_defaults">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="hideAllCheckbox" mnemonicParsing="false" prefHeight="20.0" prefWidth="198.0" text="Hide All">
+            <CheckBox fx:id="hideAllCheckbox" mnemonicParsing="false" prefHeight="20.0" prefWidth="198.0" text="%tables.table_data_tab_screens.hide_all">
                <font>
                   <Font size="14.0" />
                </font>
@@ -38,12 +38,12 @@
                   <Insets bottom="12.0" />
                </VBox.margin>
             </CheckBox>
-            <Label styleClass="default-text" text="Keep the following displays on:" textFill="WHITE">
+            <Label styleClass="default-text" text="%tables.table_data_tab_screens.keep_the_following_displays_on" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" text="Topper">
+            <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" text="%pref.validators_screens.topper">
                <font>
                   <Font size="14.0" />
                </font>
@@ -51,24 +51,24 @@
                   <Insets />
                </VBox.margin>
             </CheckBox>
-            <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="DMD (4:1 slim)">
+            <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.dmd_4_1_slim">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="backglassCheckbox" mnemonicParsing="false" text="Backglass">
+            <CheckBox fx:id="backglassCheckbox" mnemonicParsing="false" text="%backglass.directb2s_admin.backglass">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="playfieldCheckbox" mnemonicParsing="false" text="Playfield">
+            <CheckBox fx:id="playfieldCheckbox" mnemonicParsing="false" text="%pref.validators_screens.playfield">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
-                  <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="Music">
+                  <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="%backups.backup_restore.music">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -78,37 +78,37 @@
                         <Font size="14.0" />
                      </font>
                      <tooltip>
-                        <Tooltip prefWidth="300.0" text="Check this only if your table uses files from the music folder." wrapText="true" />
+                        <Tooltip prefWidth="300.0" text="%tables.table_data_tab_screens.check_this_only_if_your_table_uses_files" wrapText="true" />
                      </tooltip>
                   </Label>
                </children>
             </HBox>
-            <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" text="Full DMD/Apron">
+            <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.full_dmd_apron">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="wheelbarCheckbox" mnemonicParsing="false" text="Wheelbar">
+            <CheckBox fx:id="wheelbarCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.wheelbar">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="loadingCheckbox" mnemonicParsing="false" text="Loading">
+            <CheckBox fx:id="loadingCheckbox" mnemonicParsing="false" text="%pref.validators_screens.loading">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="otherCheckbox" mnemonicParsing="false" text="Other">
+            <CheckBox fx:id="otherCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.other">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="flyerCheckbox" mnemonicParsing="false" text="Flyer">
+            <CheckBox fx:id="flyerCheckbox" mnemonicParsing="false" text="%tables.table_data_tab_screens.flyer">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="helpCheckbox" mnemonicParsing="false" text="Help">
+            <CheckBox fx:id="helpCheckbox" mnemonicParsing="false" text="%launcher.launcher.help">
                <font>
                   <Font size="14.0" />
                </font>

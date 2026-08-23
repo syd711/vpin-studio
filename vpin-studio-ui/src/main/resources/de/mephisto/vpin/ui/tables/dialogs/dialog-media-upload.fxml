@@ -50,22 +50,22 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="3">
+                              <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="450.0" promptText="Select or drop a media archive here" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="450.0" promptText="%tables.media_upload.select_or_drop_a_media_archive_here" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Label styleClass="default-text" text="Media Pack File:" GridPane.rowIndex="3" />
-                              <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Table:" />
+                              <Label styleClass="default-text" text="%tables.media_upload.media_pack_file" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.table" />
                               <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
-                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Table File:" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%backups.backups_sidebar.table_file" GridPane.rowIndex="1" />
                               <Label fx:id="tableFileLabel" layoutX="124.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Target Emulator:" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="%backups.backup_restore.target_emulator" GridPane.rowIndex="2" />
                               <Label fx:id="emulatorLabel" layoutX="124.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </children>
                         </GridPane>
@@ -92,10 +92,10 @@
                                                 <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
                                              </graphic>
                                           </TableColumn>
-                                          <TableColumn fx:id="columnFilename" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Archive Entry" />
-                                          <TableColumn fx:id="columnPreview" minWidth="10.4000244140625" prefWidth="250.0" sortable="false" style="-fx-alignment: CENTER;" text="Preview" />
-                                          <TableColumn fx:id="columnAssetType" minWidth="100.0" prefWidth="150.0" style="-fx-alignment: BASELINE_CENTER;" text="Asset Type" />
-                                          <TableColumn fx:id="columnTarget" minWidth="10.4000244140625" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Target" />
+                                          <TableColumn fx:id="columnFilename" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.media_upload.archive_entry" />
+                                          <TableColumn fx:id="columnPreview" minWidth="10.4000244140625" prefWidth="250.0" sortable="false" style="-fx-alignment: CENTER;" text="%backglass.res_generator.preview" />
+                                          <TableColumn fx:id="columnAssetType" minWidth="100.0" prefWidth="150.0" style="-fx-alignment: BASELINE_CENTER;" text="%tables.media_upload.asset_type" />
+                                          <TableColumn fx:id="columnTarget" minWidth="10.4000244140625" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.media_upload.target" />
                                        </columns>
                                     </TableView>
                                  </children>
@@ -129,12 +129,12 @@
                <right>
                   <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                      <children>
-                      <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                      <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel">
                            <HBox.margin>
                               <Insets right="12.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                        <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="%backups.backup_upload.upload">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -143,7 +143,7 @@
                   </HBox>
                </right>
                <left>
-                  <CheckBox fx:id="previewCheckbox" mnemonicParsing="false" styleClass="default-text" text="Preview Media" BorderPane.alignment="CENTER" />
+                  <CheckBox fx:id="previewCheckbox" mnemonicParsing="false" styleClass="default-text" text="%tables.media_upload.preview_media" BorderPane.alignment="CENTER" />
                </left>
             </BorderPane>
          </bottom>

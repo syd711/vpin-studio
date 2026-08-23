@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableAltColorAdminController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -49,7 +50,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
 
     String selectedItem = backupList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Restore selected highscore for table \"" + game.getGameDisplayName() + "\"?", "The existing ALT Color file(s) will be moved to the backup folder.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.restore_selected_highscore_for_table") + game.getGameDisplayName() + "\"?", Messages.get("dialog.the_existing_alt_color_file_s_will"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getAltColorService().restore(game.getId(), selectedItem);
@@ -58,7 +59,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
         }
         catch (Exception ex) {
           LOG.error("Failed to restore ALT color: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to restore ALT color backup: " + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_restore_alt_color_backup") + ex.getMessage());
         }
       }
     }
@@ -70,7 +71,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
 
     List<String> selectedItems = backupList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + " backup(s)?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + Messages.get("dialog.backup_s"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         for (String selectedItem : selectedItems) {
           client.getAltColorService().deleteBackup(game.getId(), selectedItem);

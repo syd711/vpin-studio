@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -144,8 +145,8 @@ public class SubscriptionDialogController implements Initializable, DialogContro
 
     //check table selection
     if (this.tableCombo.getValue() == null) {
-      validationTitle.setText("No table selected.");
-      validationDescription.setText("Select a table for the subscription.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.no_table_selected"));
+      validationDescription.setText(Messages.get("competitions.subscription_join.select_a_table_for_the_subscription"));
       return;
     }
 
@@ -153,8 +154,8 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     CompetitionsDialogHelper.refreshResetStatusIcon(game, nvRamList, nvramLabel);
 
     if (StringUtils.isEmpty(competition.getName())) {
-      validationTitle.setText("No channel name set.");
-      validationDescription.setText("The channel name must be set and should match the name of the table.");
+      validationTitle.setText(Messages.get("competitions.subscription_add.no_channel_name_set"));
+      validationDescription.setText(Messages.get("competitions.subscription_add.the_channel_name_must_be_set_and_should_match"));
       return;
     }
 
@@ -163,21 +164,21 @@ public class SubscriptionDialogController implements Initializable, DialogContro
     }
 
     if (this.botStatus.getServerId() == 0) {
-      validationTitle.setText("No Discord server selected.");
-      validationDescription.setText("Select a default server in the bot preferences.");
+      validationTitle.setText(Messages.get("competitions.subscription_join.no_discord_server_selected"));
+      validationDescription.setText(Messages.get("competitions.subscription_add.select_a_default_server_in_the_bot_preferences"));
       return;
     }
 
     if (this.botStatus.getCategoryId() == 0) {
-      validationTitle.setText("No category selected.");
-      validationDescription.setText("Select a category used for subscriptions in the bot preferences.");
+      validationTitle.setText(Messages.get("competitions.subscription_add.no_category_selected"));
+      validationDescription.setText(Messages.get("competitions.subscription_add.select_a_category_used_for_subscriptions_in_the_bot_preferences"));
       return;
     }
 
     //check Discord permissions
     if (!client.getCompetitionService().hasChannelManagePermissions(competition.getDiscordServerId())) {
-      validationTitle.setText("Insufficient Permissions");
-      validationDescription.setText("Your Discord bot has insufficient permissions to create a subscription. Please check the documentation for details.");
+      validationTitle.setText(Messages.get("competitions.discord_competition_edit.insufficient_permissions"));
+      validationDescription.setText(Messages.get("competitions.subscription_add.your_discord_bot_has_insufficient_permissions_to_create_a_subscription"));
       return;
     }
 

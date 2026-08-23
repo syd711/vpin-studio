@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TableAssetSourcesPreferencesController implements Initializable {
 
@@ -62,13 +63,13 @@ public class TableAssetSourcesPreferencesController implements Initializable {
   private void onDelete() {
     TableAssetSource selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Media Source \"" + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_media_source") + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getAssetSourcesService().deleteAssetSource(selectedItem.getId());
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
         }
         finally {
           onReload();
@@ -85,7 +86,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
+    tableView.setPlaceholder(new Label("              " + Messages.get("pref.table_asset_sources.no_table_repository_found")));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
 

@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AlxFactory {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -58,6 +59,7 @@ public class AlxFactory {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
       controller.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", totalTimeFormatted));
@@ -75,6 +77,7 @@ public class AlxFactory {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
       controller.refresh(stage, new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total)));
@@ -93,6 +96,7 @@ public class AlxFactory {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
       controller.refresh(stage, new AlxTileEntry("Total Highscores Created", "(The total amount of times a #1 score has been created)", String.valueOf(total)));
@@ -121,6 +125,7 @@ public class AlxFactory {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
       String dateString = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(start);
@@ -139,6 +144,7 @@ public class AlxFactory {
 
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
+      loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
 
@@ -177,6 +183,7 @@ public class AlxFactory {
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
         controller.refresh(stage, entry);
@@ -215,6 +222,7 @@ public class AlxFactory {
 
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
         controller.refresh(stage, entry);
@@ -257,6 +265,7 @@ public class AlxFactory {
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
         controller.refresh(stage, entry);
@@ -296,6 +305,7 @@ public class AlxFactory {
       AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
+        loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
         controller.refresh(stage, entry);
