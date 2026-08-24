@@ -1,0 +1,36 @@
+name: Translate i18n Bundles
+
+on:
+  workflow_dispatch:
+    inputs:
+      languages:
+        description: 'Languages to translate (comma-separated: fr,es,pt,it)'
+        required: false
+        default: 'fr,es,pt,it'
+      batch_size:
+        description: 'Strings per API call'
+        required: false
+        default: '60'
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run translation script
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LANGUAGES: ${{ github.event.inputs.languages }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size }}
+        run: python3 .github/scripts/translate_bundles.py
