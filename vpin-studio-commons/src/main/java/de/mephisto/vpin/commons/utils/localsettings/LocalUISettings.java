@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LocalUISettings {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -196,12 +193,14 @@ public class LocalUISettings {
   }
 
   public static void reset() {
-    store.getProperties().clear();
-    if (!propertiesFile.delete()) {
-      LOG.error("Reset failed.");
-    }
-    else {
-      LOG.info("Deleted {}", propertiesFile.getAbsolutePath());
+    Set<Object> objects = store.getProperties().keySet();
+    for (Object object : objects) {
+      if (String.valueOf(object).endsWith(".x") ||
+          String.valueOf(object).endsWith(".y") ||
+          String.valueOf(object).endsWith(".width") ||
+          String.valueOf(object).endsWith(".height")) {
+        store.remove(String.valueOf(object));
+      }
     }
   }
 }
