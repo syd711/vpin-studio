@@ -27,7 +27,7 @@ import static de.mephisto.vpin.restclient.util.FileUtils.isFileBelowFolder;
 
 public class UploaderAnalysis {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1");
+  private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1", "ic1", "ic2", "ic3");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "crz", "pal", "pac", "cromc");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
   private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg", "wav");
