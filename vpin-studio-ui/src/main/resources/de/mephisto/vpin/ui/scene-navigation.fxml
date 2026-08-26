@@ -2,8 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -20,7 +18,7 @@
                   <VBox fx:id="tablesBtn" alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-list" iconSize="28" />
-                        <Label text="%navigation.tables" textFill="WHITE">
+                        <Label text="%navigation.tables" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -30,7 +28,7 @@
                   <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-grid-outline" iconSize="28" />
-                        <Label text="%competitions.competitions.dashboard" textFill="WHITE">
+                        <Label text="%competitions.competitions.dashboard" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -40,7 +38,7 @@
                   <VBox fx:id="playersBtn" alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple-outline" iconSize="28" />
-                        <Label text="%mania.cabinet_row_panel.players" textFill="WHITE">
+                        <Label text="%mania.cabinet_row_panel.players" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -50,7 +48,7 @@
                   <VBox fx:id="competitionsBtn" alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-outline" iconSize="28" />
-                        <Label text="%navigation.competitions" textFill="WHITE">
+                        <Label text="%navigation.competitions" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,7 +58,7 @@
                   <VBox fx:id="cardsBtn" alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
                       <children>
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2p-palette-outline" iconSize="28" />
-                          <Label text="%navigation.designer" textFill="WHITE" wrapText="true">
+                          <Label text="%navigation.designer" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -75,12 +73,12 @@
                         <VBox fx:id="systemManagerBtn" alignment="CENTER" onMousePressed="#onSystemClick">
                            <children>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2r-remote-desktop" iconSize="24" />
-                              <Label text="%navigation.system" textFill="WHITE">
+                              <Label text="%navigation.system" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="30.0" layoutY="34.0" text="%navigation.manager" textFill="WHITE">
+                              <Label layoutX="30.0" layoutY="34.0" text="%navigation.manager" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
