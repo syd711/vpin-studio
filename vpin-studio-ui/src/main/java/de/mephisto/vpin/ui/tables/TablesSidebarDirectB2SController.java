@@ -272,6 +272,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     this.reloadBtn.setDisable(true);
 
     if (game.isPresent()) {
+      client.getGameService().reload(game.get().getId());
       client.getBackglassServiceClient().clearCache();
       EventManager.getInstance().notifyTableChange(game.get().getId(), null);
     }
@@ -291,6 +292,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             }
             client.getBackglassServiceClient().clearCache();
             EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+            onReload();
           }
         }
       }

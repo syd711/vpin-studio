@@ -19,6 +19,12 @@ So if components look broken, please drop a screenshot on my Discord! Also: **A 
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/reset-dialogs.png?raw=true" width="600" />
 
 
+### Changes
+
+- **Future Pinball**
+  - Enabled table scan with PUP pack detection (thanks @select.nl!!!)
+  - Fixed issues with .directb2s file detection and refreshes.
+
 ### Bugfixes
 
 - **Notifications**

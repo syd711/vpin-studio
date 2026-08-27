@@ -2200,7 +2200,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.exportBtn.setVisible(vpxEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator || emulator.isMameEmulator());
     this.vpxzBtn.setVisible(vpxEmulator);
-    this.scanBtn.setVisible(vpxEmulator);
+    this.scanBtn.setVisible(vpxOrFpEmulator);
 
     this.uploadsButtonController.updateVisibility(emulator);
 

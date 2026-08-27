@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.roms;
 
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
+import de.mephisto.vpin.server.fp.FPFileScanner;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.VPXFileScanner;
@@ -59,6 +60,10 @@ public class RomService {
 
       LOG.info("Skipped reading of \"{}\", VPX file '{}' does not exist.", game.getGameDisplayName(), game.getGameFile().getAbsolutePath());
       return new ScanResult();
+    }
+    else if(game.isFpGame()) {
+      ScanResult scan = FPFileScanner.scan(game.getGameFile());
+      return scan;
     }
     LOG.info("Skipped reading of \"{}\" (emulator '{}'), only VPX tables can be scanned.", game.getGameDisplayName(), game.getEmulator());
     return new ScanResult();

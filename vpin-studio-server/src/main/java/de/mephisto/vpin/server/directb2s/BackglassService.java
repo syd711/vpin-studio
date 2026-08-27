@@ -617,7 +617,15 @@ public class BackglassService implements InitializingBean {
   public DirectB2S getCacheDirectB2SAndVersions(Game game) {
     if (game != null) {
       String baseName = FileUtils.baseUniqueFile(game.getGameFileName());
-      return cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName.replaceAll("\\\\", "/"));
+      String key = game.getEmulatorId() + "@" + baseName.replaceAll("\\\\", "/");
+      if (cacheDirectB2SVersion.containsKey(key)) {
+        return cacheDirectB2SVersion.get(key);
+      }
+
+      key = game.getEmulatorId() + "@" + FilenameUtils.getBaseName(BackglassNamingHelper.getBackglassFileName(game));
+      if (cacheDirectB2SVersion.containsKey(key)) {
+        return cacheDirectB2SVersion.get(key);
+      }
     }
     return null;
   }

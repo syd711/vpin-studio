@@ -388,7 +388,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
       tableDetails = frontendService.getTableDetails(game.getId());
 
-      if (game.isVpxGame()) {
+      if (game.isVpxGame() || game.isFpGame()) {
         ScanResult scanResult = romService.scanGameFile(game);
         String scannedRomName = scanResult.getRom();
         String scannedTableName = scanResult.getTableName();
