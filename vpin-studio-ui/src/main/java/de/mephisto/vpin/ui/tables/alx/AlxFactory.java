@@ -62,7 +62,7 @@ public class AlxFactory {
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", totalTimeFormatted));
+      controller.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_time_played"), Messages.get("tables.alx.alx_factory.total_emulation_time_of_all_tables"), totalTimeFormatted));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -80,7 +80,7 @@ public class AlxFactory {
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total)));
+      controller.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_scores_created"), Messages.get("pausemenu.tile_factory.total_amount_of_recorded_scores"), String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -99,7 +99,7 @@ public class AlxFactory {
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry("Total Highscores Created", "(The total amount of times a #1 score has been created)", String.valueOf(total)));
+      controller.refresh(stage, new AlxTileEntry(Messages.get("tables.alx.alx_factory.total_highscores_created"), Messages.get("tables.alx.alx_factory.total_amount_of_times_a_1_score_has_been_created"), String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -129,7 +129,7 @@ public class AlxFactory {
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
       String dateString = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(start);
-      controller.refresh(stage, new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + dateString + ")", time));
+      controller.refresh(stage, new AlxTileEntry(Messages.get("tables.alx.alx_factory.avg_playtime_week"), Messages.get("tables.alx.alx_factory.average_time_played_every_week_starting", dateString), time));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -149,8 +149,8 @@ public class AlxFactory {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
 
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry("Total Games Played",
-              FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend),
+      controller.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_games_played"),
+              FrontendUtil.replaceName(Messages.get("tables.alx.alx_factory.total_number_of_table_launches_from_frontend"), frontend),
               String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {

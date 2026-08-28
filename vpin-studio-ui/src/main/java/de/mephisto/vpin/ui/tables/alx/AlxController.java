@@ -131,7 +131,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
 
-    this.waitOverlay = new WaitOverlay(loaderStack, "Loading Statistics...");
+    this.waitOverlay = new WaitOverlay(loaderStack, Messages.get("tables.alx.alx.loading_statistics"));
 
     this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> refreshAlxData());
 

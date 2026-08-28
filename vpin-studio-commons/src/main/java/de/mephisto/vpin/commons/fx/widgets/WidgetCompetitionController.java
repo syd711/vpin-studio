@@ -153,7 +153,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Competition...");
+      ctrl.setLoadingMessage(Messages.get("widgets.widget_competition.loading_competition"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

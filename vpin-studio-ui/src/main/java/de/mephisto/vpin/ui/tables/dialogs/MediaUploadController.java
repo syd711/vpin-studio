@@ -213,7 +213,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
     }
 
-    startReload("Generating Previews...");
+    startReload(Messages.get("tables.media_upload.generating_previews"));
 
     // run later to let the splash render properly
     JFXFuture.runAsync(() -> {
@@ -229,7 +229,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
             List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).toList();
             for (int i = 0; i < images.size(); i++) {
               MediaUploadArchiveItem model = images.get(i);
-              String message = "Generating Previews... (" + (i + 1) + "/" + images.size() + ")";
+              String message = Messages.get("tables.media_upload.generating_previews_progress", i + 1, images.size());
               Platform.runLater(() -> {
                 loadingOverlay.setMessage(message);
               });

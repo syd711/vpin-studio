@@ -332,7 +332,7 @@ public class LauncherController implements Initializable {
       loader.setResources(Messages.getBundle());
       BorderPane loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Installing Server, waiting for initial connect...");
+      ctrl.setLoadingMessage(Messages.get("launcher.launcher.installing_server_waiting_for_initial_connect"));
 
       main.setCenter(loadingOverlay);
 

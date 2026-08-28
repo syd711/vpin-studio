@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components.emulators;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -79,7 +80,7 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
   }
 
   private void doReload() {
-    startReload("Loading Emulators...");
+    startReload(Messages.get("components.emulators.emulators.loading_emulators"));
 
     // run later to let the splash render properly
     JFXFuture.runAsync(() -> {

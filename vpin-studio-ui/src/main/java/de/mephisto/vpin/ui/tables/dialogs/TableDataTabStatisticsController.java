@@ -94,10 +94,10 @@ public class TableDataTabStatisticsController implements Initializable {
         catch (Exception e) {
           LOG.error("Error calculating total play time: " + e.getMessage());
         }
-        timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted));
+        timePlayedTile.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_time_played"), Messages.get("pausemenu.tile_factory.total_emulation_time_of_this_table"), totalTimeFormatted));
       }
       else {
-        timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
+        timePlayedTile.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_time_played"), Messages.get("pausemenu.tile_factory.total_emulation_time_of_this_table"), "-"));
       }
 
 
@@ -108,15 +108,15 @@ public class TableDataTabStatisticsController implements Initializable {
           played = tableDetails.getNumberPlays();
         }
       }
-      timesPlayedTile.refresh(stage, new AlxTileEntry("Total Times Played",
-          FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend),
+      timesPlayedTile.refresh(stage, new AlxTileEntry(Messages.get("tables.table_data_tab_statistics.total_times_played"),
+          FrontendUtil.replaceName(Messages.get("tables.alx.alx_factory.total_number_of_table_launches_from_frontend"), frontend),
           String.valueOf(played)));
     });
 
     JFXFuture.supplyAsync(() -> {
       return client.getGameService().getGameScores(game.getId()).getScores().size();
     }).thenAcceptLater((scores) -> {
-      AlxTileEntry entry = new AlxTileEntry("Recorded Scores", "(Total number of scores recorded by the VPin Studio)", String.valueOf(scores));
+      AlxTileEntry entry = new AlxTileEntry(Messages.get("tables.alx.alx.recorded_scores"), Messages.get("tables.alx.alx.total_number_of_scores_recorded_by_vpin_studio"), String.valueOf(scores));
       scoresCountTile.refresh(stage, entry);
     });
   }

@@ -187,7 +187,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   public void doReload(boolean forceReload) {
     LOG.info("reload vps tables");
 
-    startReload("Loading Tables...");
+    startReload(Messages.get("vps.vps_tables.loading_tables"));
 
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
 

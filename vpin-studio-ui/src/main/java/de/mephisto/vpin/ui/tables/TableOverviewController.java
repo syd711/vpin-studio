@@ -778,7 +778,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !vpsSettings.isHideVPSUpdates();
 
-    startReload("Loading Emulators...");
+    startReload(Messages.get("tables.tables_overview.loading_emulators"));
 
     refreshPlaylists();
 
@@ -803,7 +803,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     // otherwise the initial load races and falls back to isAllVpx(null)=true,
     // loading only VPX-emulator tables (and racing against the emulator cache).
     refreshEmulators().thenLater(() -> {
-      startReload("Loading Tables...");
+      startReload(Messages.get("tables.tables_overview.loading_tables"));
       GameRepresentation selection = getSelection();
       GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
       GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();

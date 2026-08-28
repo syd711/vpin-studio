@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -26,16 +27,39 @@
                                     <Font size="13.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onCabinetSettings" styleClass="preference-button" text="%mania.mania_preferences.cabinet_settings" />
+                              <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onCabinetSettings" styleClass="preference-button" text="%mania.mania_preferences.cabinet_settings">
+                                 <tooltip>
+                                    <Tooltip text="%mania.mania_preferences.cabinet_settings" />
+                                 </tooltip>
+                              </Button>
                               <Button fx:id="settings_clientBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onClientSettings" styleClass="preference-button" text="%preferences.client_settings">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
+                                 <tooltip>
+                                    <Tooltip text="%preferences.client_settings" />
+                                 </tooltip>
                               </Button>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="%competitions.discord_competition_edit.server_settings" />
-                              <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="%preferences.backup_settings" />
-                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="%pref.webhooks.integration_settings" />
-                              <Button fx:id="vrBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onVR" styleClass="preference-button" text="%pref.vr.vr_settings" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="%competitions.discord_competition_edit.server_settings">
+                                 <tooltip>
+                                    <Tooltip text="%competitions.discord_competition_edit.server_settings" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="%preferences.backup_settings">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.backup_settings" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="webhooksBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onWebhooks" styleClass="preference-button" text="%pref.webhooks.integration_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.webhooks.integration_settings" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="vrBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onVR" styleClass="preference-button" text="%pref.vr.vr_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.vr.vr_settings" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="%pref.inputs.vpin_studio_frontend_preferences">
                                  <font>
                                     <Font size="13.0" />
@@ -44,14 +68,29 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onControllerSetup" styleClass="preference-button" text="%pref.inputs.controller_setup" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onControllerSetup" styleClass="preference-button" text="%pref.inputs.controller_setup">
+                                 <tooltip>
+                                    <Tooltip text="%pref.inputs.controller_setup" />
+                                 </tooltip>
+                              </Button>
                               <Button fx:id="overlayBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="%cards.template_editor_overlay.overlay">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
+                                 <tooltip>
+                                    <Tooltip text="%cards.template_editor_overlay.overlay" />
+                                 </tooltip>
                               </Button>
-                              <Button fx:id="pauseMenuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="%pref.pause_menu.pause_menu" />
-                              <Button fx:id="notificationsButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="100.0" mnemonicParsing="false" onAction="#onNotifications" styleClass="preference-button" text="%pref.notifications.notifications" />
+                              <Button fx:id="pauseMenuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="%pref.pause_menu.pause_menu">
+                                 <tooltip>
+                                    <Tooltip text="%pref.pause_menu.pause_menu" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="notificationsButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="100.0" mnemonicParsing="false" onAction="#onNotifications" styleClass="preference-button" text="%pref.notifications.notifications">
+                                 <tooltip>
+                                    <Tooltip text="%pref.notifications.notifications" />
+                                 </tooltip>
+                              </Button>
                               <VBox fx:id="frontendPreferences">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="%pref.pinballx_settings.frontend_preferences">
@@ -62,10 +101,26 @@
                                           <Insets top="24.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.popper_settings.popper_settings" />
-                                    <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballXSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.pinballx_settings.pinballx_settings" />
-                                    <Button fx:id="pinballYSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballYSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.pinbally_settings.pinbally_settings" />
-                                    <Button fx:id="mediaSourcesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMediaSources" styleClass="preference-button" text="%pref.asset_sources.media_sources" />
+                                    <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.popper_settings.popper_settings">
+                                       <tooltip>
+                                          <Tooltip text="%pref.popper_settings.popper_settings" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballXSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.pinballx_settings.pinballx_settings">
+                                       <tooltip>
+                                          <Tooltip text="%pref.pinballx_settings.pinballx_settings" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="pinballYSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballYSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="%pref.pinbally_settings.pinbally_settings">
+                                       <tooltip>
+                                          <Tooltip text="%pref.pinbally_settings.pinbally_settings" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="mediaSourcesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMediaSources" styleClass="preference-button" text="%pref.asset_sources.media_sources">
+                                       <tooltip>
+                                          <Tooltip text="%pref.asset_sources.media_sources" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
                               </VBox>
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="%preferences.validators_tagging">
@@ -76,9 +131,21 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="validators_screensBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="%pref.validators_screens.screen_validators" />
-                              <Button fx:id="validators_vpxBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXValidation" styleClass="preference-button" text="%preferences.table_validators" />
-                              <Button fx:id="validators_backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onBackglassValidation" styleClass="preference-button" text="%pref.validators_backglass.backglass_validators" />
+                              <Button fx:id="validators_screensBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="%pref.validators_screens.screen_validators">
+                                 <tooltip>
+                                    <Tooltip text="%pref.validators_screens.screen_validators" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="validators_vpxBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXValidation" styleClass="preference-button" text="%preferences.table_validators">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.table_validators" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="validators_backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onBackglassValidation" styleClass="preference-button" text="%pref.validators_backglass.backglass_validators">
+                                 <tooltip>
+                                    <Tooltip text="%pref.validators_backglass.backglass_validators" />
+                                 </tooltip>
+                              </Button>
 
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="133.0" styleClass="preference-section" text="%pref.highscore_cards.highscore_preferences">
                                  <font>
@@ -92,8 +159,15 @@
                                  <VBox.margin>
                                     <Insets top="4.0" />
                                  </VBox.margin>
+                                 <tooltip>
+                                    <Tooltip text="%pref.restore_backup.highscore_card_settings" />
+                                 </tooltip>
                               </Button>
-                              <Button fx:id="highscoresBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="%pref.highscores.highscore_settings" />
+                              <Button fx:id="highscoresBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="%pref.highscores.highscore_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.highscores.highscore_settings" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="380.0" styleClass="preference-section" text="%pref.player_rankings.player_preferences">
                                  <font>
                                     <Font size="13.0" />
@@ -102,7 +176,11 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="446.0" mnemonicParsing="false" onAction="#onRankings" styleClass="preference-button" text="%pref.player_rankings.ranking" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="446.0" mnemonicParsing="false" onAction="#onRankings" styleClass="preference-button" text="%pref.player_rankings.ranking">
+                                 <tooltip>
+                                    <Tooltip text="%pref.player_rankings.ranking" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="560.0" styleClass="preference-section" text="%pref.discord_bot.discord_integration">
                                  <font>
                                     <Font size="13.0" />
@@ -111,8 +189,16 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="%pref.discord_bot.bot_settings" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="832.0" mnemonicParsing="false" onAction="#onDiscordBotFaq" styleClass="preference-button" text="%pref.discord_faq.bot_faq" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="%pref.discord_bot.bot_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.discord_bot.bot_settings" />
+                                 </tooltip>
+                              </Button>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="832.0" mnemonicParsing="false" onAction="#onDiscordBotFaq" styleClass="preference-button" text="%pref.discord_faq.bot_faq">
+                                 <tooltip>
+                                    <Tooltip text="%pref.discord_faq.bot_faq" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="%pref.backglass.3rd_party_preferences">
                                  <font>
                                     <Font size="13.0" />
@@ -121,19 +207,71 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="%pref.backglass.backglass_server" />
-                              <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="%preferences.direct_output_framework_dof" />
-                              <Button fx:id="dmdDeviceBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1105.0" mnemonicParsing="false" onAction="#onDMD" styleClass="preference-button" text="%preferences.dmd_device" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1049.0" mnemonicParsing="false" onAction="#onDOFLinx" styleClass="preference-button" text="%components.components.doflinx" />
-                              <Button fx:id="iScoredBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1116.0" mnemonicParsing="false" onAction="#onIScored" styleClass="preference-button" text="%pref.iscored.iscored_game_rooms" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="%preferences.pinemhi" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="%preferences.pinvol_volume" />
-                              <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="%components.components.vpin_mame" />
-                              <Button fx:id="vpuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1184.0" mnemonicParsing="false" onAction="#onVpu" styleClass="preference-button" text="%preferences.virtual_pinball_universe" />
-                              <Button fx:id="vpsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1286.0" mnemonicParsing="false" onAction="#onVps" styleClass="preference-button" text="%pref.vps.virtual_pinball_spreadsheet" />
-                              <Button fx:id="vpfBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1184.0" mnemonicParsing="false" onAction="#onVpf" styleClass="preference-button" text="%preferences.vp_forums" />
-                              <Button fx:id="vpxzBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onVpxzRepositories" styleClass="preference-button" text="%pref.vpxz.vpx_mobile_settings" />
-                              <Button fx:id="wovpBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1374.0" mnemonicParsing="false" onAction="#onWovp" styleClass="preference-button" text="%pref.wovp.world_of_virtual_pinball" />
+                              <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="%pref.backglass.backglass_server">
+                                 <tooltip>
+                                    <Tooltip text="%pref.backglass.backglass_server" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="%preferences.direct_output_framework_dof">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.direct_output_framework_dof" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="dmdDeviceBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1105.0" mnemonicParsing="false" onAction="#onDMD" styleClass="preference-button" text="%preferences.dmd_device">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.dmd_device" />
+                                 </tooltip>
+                              </Button>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1049.0" mnemonicParsing="false" onAction="#onDOFLinx" styleClass="preference-button" text="%components.components.doflinx">
+                                 <tooltip>
+                                    <Tooltip text="%components.components.doflinx" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="iScoredBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1116.0" mnemonicParsing="false" onAction="#onIScored" styleClass="preference-button" text="%pref.iscored.iscored_game_rooms">
+                                 <tooltip>
+                                    <Tooltip text="%pref.iscored.iscored_game_rooms" />
+                                 </tooltip>
+                              </Button>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="%preferences.pinemhi">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.pinemhi" />
+                                 </tooltip>
+                              </Button>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="%preferences.pinvol_volume">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.pinvol_volume" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="%components.components.vpin_mame">
+                                 <tooltip>
+                                    <Tooltip text="%components.components.vpin_mame" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="vpuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1184.0" mnemonicParsing="false" onAction="#onVpu" styleClass="preference-button" text="%preferences.virtual_pinball_universe">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.virtual_pinball_universe" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="vpsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1286.0" mnemonicParsing="false" onAction="#onVps" styleClass="preference-button" text="%pref.vps.virtual_pinball_spreadsheet">
+                                 <tooltip>
+                                    <Tooltip text="%pref.vps.virtual_pinball_spreadsheet" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="vpfBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1184.0" mnemonicParsing="false" onAction="#onVpf" styleClass="preference-button" text="%preferences.vp_forums">
+                                 <tooltip>
+                                    <Tooltip text="%preferences.vp_forums" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="vpxzBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="133.0" mnemonicParsing="false" onAction="#onVpxzRepositories" styleClass="preference-button" text="%pref.vpxz.vpx_mobile_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.vpxz.vpx_mobile_settings" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="wovpBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1374.0" mnemonicParsing="false" onAction="#onWovp" styleClass="preference-button" text="%pref.wovp.world_of_virtual_pinball">
+                                 <tooltip>
+                                    <Tooltip text="%pref.wovp.world_of_virtual_pinball" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="982.0" styleClass="preference-section" text="%pref.shortcuts.help_support">
                                  <font>
                                     <Font size="13.0" />
@@ -142,8 +280,16 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1331.0" mnemonicParsing="false" onAction="#onShortcuts" styleClass="preference-button" text="%pref.shortcuts.shortcuts" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="1004.0" mnemonicParsing="false" onAction="#onSupport" styleClass="preference-button" text="%pref.support.submit_a_bug_report" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1331.0" mnemonicParsing="false" onAction="#onShortcuts" styleClass="preference-button" text="%pref.shortcuts.shortcuts">
+                                 <tooltip>
+                                    <Tooltip text="%pref.shortcuts.shortcuts" />
+                                 </tooltip>
+                              </Button>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="1004.0" mnemonicParsing="false" onAction="#onSupport" styleClass="preference-button" text="%pref.support.submit_a_bug_report">
+                                 <tooltip>
+                                    <Tooltip text="%pref.support.submit_a_bug_report" />
+                                 </tooltip>
+                              </Button>
                            </children>
                            <opaqueInsets>
                               <Insets />

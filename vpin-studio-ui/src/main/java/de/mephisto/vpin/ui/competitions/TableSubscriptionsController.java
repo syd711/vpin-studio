@@ -314,7 +314,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
-      loaderController.setLoadingMessage("Loading Competitions...");
+      loaderController.setLoadingMessage(Messages.get("competitions.competitions_subscriptions.loading_competitions"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

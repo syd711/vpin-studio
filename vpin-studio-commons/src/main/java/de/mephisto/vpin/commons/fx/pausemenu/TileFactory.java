@@ -47,7 +47,7 @@ public class TileFactory {
       LOG.error("Error calculating total play time: " + e.getMessage());
     }
 
-    return new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted);
+    return new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_time_played"), Messages.get("pausemenu.tile_factory.total_emulation_time_of_this_table"), totalTimeFormatted);
   }
   //--------------------------------------------------------------------------------------------------------------------
 
@@ -57,19 +57,19 @@ public class TileFactory {
     for (TableAlxEntry entry : entries) {
       total += entry.getScores();
     }
-    return new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total));
+    return new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_scores_created"), Messages.get("pausemenu.tile_factory.total_amount_of_recorded_scores"), String.valueOf(total));
   }
   //--------------------------------------------------------------------------------------------------------------------
 
   public static AlxTileEntry toSessionDurationTile(OffsetDateTime startDate) {
     if (startDate == null) {
-      return new AlxTileEntry("Play Time", "(Current playtime of this table)", "-");
+      return new AlxTileEntry(Messages.get("pausemenu.tile_factory.play_time"), Messages.get("pausemenu.tile_factory.current_playtime_of_this_table"), "-");
     }
     long durationMin = Duration.between(startDate, OffsetDateTime.now()).toMinutes();
     if (durationMin == 0) {
       durationMin = 1;
     }
-    return new AlxTileEntry("Play Time", "(Current playtime of this table)", durationMin + " min");
+    return new AlxTileEntry(Messages.get("pausemenu.tile_factory.play_time"), Messages.get("pausemenu.tile_factory.current_playtime_of_this_table"), durationMin + " min");
   }
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -79,6 +79,6 @@ public class TileFactory {
     for (TableAlxEntry entry : entries) {
       total += entry.getNumberOfPlays();
     }
-    return new AlxTileEntry("Total Games Played", "(Numer of launches)", String.valueOf(total));
+    return new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_games_played"), Messages.get("pausemenu.tile_factory.number_of_launches"), String.valueOf(total));
   }
 }

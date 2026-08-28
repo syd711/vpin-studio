@@ -251,7 +251,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     tableView.setVisible(false);
     labelCount.setText("-");
 
-    startReload("Loading .vpxz Files...");
+    startReload(Messages.get("vpxz.vpxz.loading_vpxz_files"));
     JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
         client.getVpxzService().invalidateVPXZCache();

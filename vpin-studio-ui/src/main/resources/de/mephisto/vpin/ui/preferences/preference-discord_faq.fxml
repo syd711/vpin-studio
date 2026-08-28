@@ -59,7 +59,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onBotTutorial" prefWidth="210.0" text="%pref.discord_faq.how_to_create_a_discord_bot" GridPane.rowIndex="1">
+                        <Button mnemonicParsing="false" onAction="#onBotTutorial" text="%pref.discord_faq.how_to_create_a_discord_bot" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -74,7 +74,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button layoutX="10.0" layoutY="38.0" mnemonicParsing="false" onAction="#onBotTokenTutorial" prefWidth="210.0" text="%pref.discord_faq.how_to_get_the_bot_token" GridPane.rowIndex="2">
+                        <Button layoutX="10.0" layoutY="38.0" mnemonicParsing="false" onAction="#onBotTokenTutorial" text="%pref.discord_faq.how_to_get_the_bot_token" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

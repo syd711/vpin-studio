@@ -411,7 +411,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       loaderController = loader.getController();
-      loaderController.setLoadingMessage("Loading Competitions...");
+      loaderController.setLoadingMessage(Messages.get("competitions.competitions_discord.loading_competitions"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

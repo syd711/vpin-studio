@@ -192,7 +192,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       loader.setResources(Messages.getBundle());
       /*Parent loadingOverlay =*/ loader.load();
       LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Ranking...");
+      ctrl.setLoadingMessage(Messages.get("widgets.widget_player_rank.loading_ranking"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

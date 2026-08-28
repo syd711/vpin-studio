@@ -213,7 +213,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
-      loaderController.setLoadingMessage("Loading Competitions...");
+      loaderController.setLoadingMessage(Messages.get("competitions.competitions_weekly.loading_competitions"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: {}", e.getMessage(), e);

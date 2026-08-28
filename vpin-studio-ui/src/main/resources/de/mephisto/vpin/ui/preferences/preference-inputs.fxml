@@ -34,10 +34,9 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="%pref.inputs.and_other_options_supported_by_the_vpin_studio" textFill="WHITE" wrapText="true" />
-                  <GridPane hgap="3.0" vgap="3.0">
+                  <GridPane hgap="6.0" vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="6.0" minWidth="6.0" prefWidth="6.0" />
                       <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
@@ -60,7 +59,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <children>
                               <Spinner fx:id="inputDebounceSpinner" prefHeight="26.0" prefWidth="118.0" />
                               <Label styleClass="default-text" text="%pref.inputs.milliseconds" textFill="WHITE" wrapText="true">
@@ -70,7 +69,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <VBox prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                        <VBox prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                            <children>
                               <Label styleClass="preference-description" text="%pref.inputs.this_will_avoid_repetitive_input_events_for_the" textFill="WHITE" wrapText="true" />
                            </children>
@@ -80,7 +79,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%pref.inputs.configure_controller_inputs" textFill="WHITE">
                                  <font>
@@ -89,7 +88,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label styleClass="preference-description" text="%pref.inputs.the_bindings_can_only_be_configured_on_the" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Label styleClass="preference-description" text="%pref.inputs.the_bindings_can_only_be_configured_on_the" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -105,12 +104,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="filterListText" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                        <TextField fx:id="filterListText" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label styleClass="preference-description" text="%pref.inputs.comma_separated_value_list_for_inputs_to_ignore" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                        <Label styleClass="preference-description" text="%pref.inputs.comma_separated_value_list_for_inputs_to_ignore" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>

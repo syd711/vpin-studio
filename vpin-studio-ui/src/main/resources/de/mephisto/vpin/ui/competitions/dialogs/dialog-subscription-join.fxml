@@ -189,10 +189,10 @@
             <VBox styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
                   <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="%competitions.discord_competition_edit.rules" />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.subscription_join.subscribe_your_bot_to_a_channel_of_another" />
-                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.subscription_add.subscriptions_have_no_end_date_and_no_winner" />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" />
-                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.subscription_join.subscribe_your_bot_to_a_channel_of_another" wrapText="true" />
+                  <Label layoutX="23.0" layoutY="50.0" styleClass="default-text" text="%competitions.subscription_add.subscriptions_have_no_end_date_and_no_winner" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" wrapText="true" />
                </children>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

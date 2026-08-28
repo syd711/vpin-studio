@@ -266,10 +266,10 @@
             <VBox styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
                   <Label layoutX="11.0" layoutY="11.0" styleClass="default-title" text="%competitions.discord_competition_edit.rules" />
-                  <Label styleClass="default-text" text="%competitions.discord_competition_edit.competitions_are_created_and_stored_on_the_selected" />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" />
-                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_submitted_if_the" />
-                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" />
+                  <Label styleClass="default-text" text="%competitions.discord_competition_edit.competitions_are_created_and_stored_on_the_selected" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_submitted_if_the" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" wrapText="true" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -407,9 +407,8 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="%competitions.discord_competition_edit.score_validation" textFill="WHITE">
@@ -429,8 +428,7 @@
                         </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <Label styleClass="preference-description" text="%competitions.discord_competition_edit.selects_the_amount_of_scores_to_be_stored" textFill="WHITE" wrapText="true" />
-                              <Label styleClass="preference-description" text="%competitions.discord_competition_edit.for_the_competition" textFill="WHITE" wrapText="true" />
+                              <Label styleClass="preference-description" text="%competitions.discord_competition_edit.selects_the_amount_of_scores_to_be_stored_for_the_competition" textFill="WHITE" wrapText="true" />
                            </children>
                         </VBox>
                         <Spinner fx:id="scoreLimit" GridPane.columnIndex="1" GridPane.rowIndex="1" />

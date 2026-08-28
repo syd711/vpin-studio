@@ -147,7 +147,7 @@ public class DOFTesterController extends BaseTableController<GameRepresentation,
 
       Platform.runLater(() -> {
         toysEditorPane.setCenter(toysRoot);
-        startReload("Loading Tables...");
+        startReload(Messages.get("components.doftester.dof_tester.loading_tables"));
         refreshEmulators();
 
         // capture the selected emulator on the FX thread after refreshEmulators() has run,

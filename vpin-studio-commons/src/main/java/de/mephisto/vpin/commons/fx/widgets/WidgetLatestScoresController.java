@@ -60,7 +60,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
       loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Latest Scores...");
+      ctrl.setLoadingMessage(Messages.get("widgets.widget_latest_scores.loading_latest_scores"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());

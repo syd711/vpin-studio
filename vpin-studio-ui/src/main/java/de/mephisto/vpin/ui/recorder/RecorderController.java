@@ -231,7 +231,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   private void doReload(boolean clearCache) {
-    startReload("Loading Tables...");
+    startReload(Messages.get("recorder.recorder.loading_tables"));
 
     if (clearCache) {
       client.getFrontendService().getScreenSummary(true);

@@ -5,6 +5,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 
@@ -48,15 +49,15 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
   }
 
   public static ClearCacheProgressModel getFullClearCacheModel() {
-    return new ClearCacheProgressModel("Clearing Caches", ALL_CACHES, TableOverviewController.ALL_VPX_ID);
+    return new ClearCacheProgressModel(Messages.get("dialog.clearing_caches"), ALL_CACHES, TableOverviewController.ALL_VPX_ID);
   }
 
   public static ClearCacheProgressModel getReloadGamesClearCacheModel(boolean invalidateMame) {
-    return new ClearCacheProgressModel("Reloading Games", invalidateMame ? RELOADGAMES_CACHES_WITH_MAME : RELOADGAMES_CACHES, TableOverviewController.ALL_VPX_ID);
+    return new ClearCacheProgressModel(Messages.get("dialog.reloading_games"), invalidateMame ? RELOADGAMES_CACHES_WITH_MAME : RELOADGAMES_CACHES, TableOverviewController.ALL_VPX_ID);
   }
 
   public static ClearCacheProgressModel getReloadGamesClearCacheModel(int emulatorId) {
-    return new ClearCacheProgressModel("Reloading Games", RELOADGAMES_CACHES_WITH_MAME, emulatorId);
+    return new ClearCacheProgressModel(Messages.get("dialog.reloading_games"), RELOADGAMES_CACHES_WITH_MAME, emulatorId);
   }
 
   @Override
@@ -91,7 +92,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String msg) {
-    return "Clearing " + msg + " Cache";
+    return Messages.get("dialog.clearing_cache", msg);
   }
 
   @Override

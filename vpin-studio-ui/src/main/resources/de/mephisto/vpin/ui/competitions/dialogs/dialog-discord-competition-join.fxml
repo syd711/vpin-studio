@@ -218,10 +218,10 @@
             <VBox styleClass="info-container" BorderPane.alignment="CENTER">
                <children>
                   <Label layoutX="20.0" layoutY="20.0" styleClass="default-title" text="%competitions.discord_competition_edit.rules" />
-                  <Label styleClass="default-text" text="%competitions.discord_competition_join.your_competition_membership_will_be_stored_on_the" />
-                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" />
-                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_submitted_if_the" />
-                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" />
+                  <Label styleClass="default-text" text="%competitions.discord_competition_join.your_competition_membership_will_be_stored_on_the" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="49.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_posted_to_the" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="69.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_only_be_submitted_if_the" wrapText="true" />
+                  <Label layoutX="22.0" layoutY="89.0" styleClass="default-text" text="%competitions.discord_competition_edit.new_highscores_will_be_submitted_a_few_seconds" wrapText="true" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

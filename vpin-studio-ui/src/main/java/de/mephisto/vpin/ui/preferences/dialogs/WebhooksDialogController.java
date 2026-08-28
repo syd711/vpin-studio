@@ -87,7 +87,7 @@ public class WebhooksDialogController implements Initializable, DialogController
     if (webhookSet == null) {
       webhookSet = new WebhookSet();
       webhookSet.setUuid(UUID.randomUUID().toString());
-      webhookSet.setName("My Webhooks");
+      webhookSet.setName("Webhooks");
     }
 
     nameField.setText(webhookSet.getName());

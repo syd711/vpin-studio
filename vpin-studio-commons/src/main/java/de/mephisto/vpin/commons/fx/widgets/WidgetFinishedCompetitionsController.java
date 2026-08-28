@@ -47,7 +47,7 @@ public class WidgetFinishedCompetitionsController extends WidgetController imple
       loader.setResources(Messages.getBundle());
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Finished Competitions...");
+      ctrl.setLoadingMessage(Messages.get("widgets.widget_finished_competitions.loading_finished_competitions"));
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }

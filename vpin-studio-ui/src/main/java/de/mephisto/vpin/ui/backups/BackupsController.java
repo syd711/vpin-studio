@@ -222,7 +222,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     tableView.setVisible(false);
     labelCount.setText("-");
 
-    startReload("Loading Backups...");
+    startReload(Messages.get("backups.backups.loading_backups"));
     JFXFuture.supplyAsync(() -> {
       if (selectedItem != null && invalidate) {
         client.getBackupService().invalidateBackupCache();

@@ -155,7 +155,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="%backglass.directb2s_sidebar.backglass_settings" textFill="WHITE">
+                                    <Label text="%backglass.directb2s_sidebar.backglass_settings" textFill="WHITE" GridPane.columnSpan="2">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>
@@ -421,7 +421,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label text="%tables.tables_sidebar_directb2s.directb2s_file_metadata" textFill="WHITE">
+                                    <Label text="%tables.tables_sidebar_directb2s.directb2s_file_metadata" textFill="WHITE" GridPane.columnSpan="2">
                                        <font>
                                           <Font name="System Bold" size="14.0" />
                                        </font>

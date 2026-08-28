@@ -132,7 +132,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   }
 
   public void doReload(boolean force) {
-    startReload("Loading Tables...");
+    startReload(Messages.get("cards.highscore_cards.loading_tables"));
 
     refreshEmulators();
 

@@ -275,7 +275,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   public void doReload() {
-    startReload("Loading Backglasses...");
+    startReload(Messages.get("backglass.directb2s_admin.loading_backglasses"));
 
     refreshPlaylists();
     refreshEmulators();
