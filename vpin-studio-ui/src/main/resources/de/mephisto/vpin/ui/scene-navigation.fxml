@@ -28,7 +28,7 @@
                   <VBox fx:id="dashboardBtn" alignment="CENTER" onMousePressed="#onDashboardClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-grid-outline" iconSize="28" />
-                        <Label text="%competitions.competitions.dashboard" textAlignment="CENTER" textFill="WHITE">
+                        <Label text="%competitions.competitions.dashboard" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -81,6 +81,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
         EventManager.getInstance().notifyAlxUpdate(gameRepresentation);
       });
     }
+    stage.close();
   }
 
   @FXML
