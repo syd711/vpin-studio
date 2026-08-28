@@ -85,7 +85,8 @@ public class NotificationStageService extends Application {
     NotificationStage notificationStage = new NotificationStage(notification);
     stages.offer(notificationStage);
     MonitorInfo screenBounds = notificationStage.getScreenBounds();
-    LOG.info("Showing {} on screen id={}, x={}, y={}", notification, screenBounds.getId(), screenBounds.getX(), screenBounds.getY());
+    Stage stage = notificationStage.getStage();
+    LOG.info("Showing {} on screen id={} (stage x={}, y={})", notification, screenBounds.getId(), stage.getX(), stage.getY());
     SLOG.info("Showing " + notification);
     notificationStage.getStage().setOnHiding(new EventHandler<WindowEvent>() {
       @Override

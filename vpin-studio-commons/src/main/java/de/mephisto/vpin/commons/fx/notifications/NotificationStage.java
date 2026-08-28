@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.ThreadUtils;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.Objects;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
@@ -63,6 +65,14 @@ public class NotificationStage {
       if (this.screenBounds == null) {
         this.screenBounds = ServerFX.client.getSystemService().getScreenInfo(-1);
       }
+
+      // Use JavaFX Screen bounds for positioning to avoid AWT/JNA vs JavaFX coordinate system mismatches
+      // (AWT getBounds() and JNA EnumDisplayMonitors use different DPI reference scales than JavaFX Stage.setX())
+      Screen targetScreen = Screen.getScreens().stream()
+          .min(Comparator.comparingDouble(s ->
+              Math.pow(s.getBounds().getMinX() - screenBounds.getScaledX(), 2) +
+              Math.pow(s.getBounds().getMinY() - screenBounds.getMinY(), 2)))
+          .orElse(Screen.getPrimary());
 
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
       loader.setResources(Messages.getBundle());
@@ -115,8 +125,8 @@ public class NotificationStage {
         inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
         outTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (screenBounds.getHeight() / 2));
 
-        stage.setY(screenBounds.getHeight() / 2 - notification.getMargin());
-        stage.setX(screenBounds.getX());
+        stage.setY(targetScreen.getBounds().getMinY() + screenBounds.getHeight() / 2 - notification.getMargin());
+        stage.setX(targetScreen.getBounds().getMinX());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
       else {
@@ -142,8 +152,8 @@ public class NotificationStage {
         inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (screenBounds.getWidth() / 2));
         outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getWidth() / 2));
 
-        stage.setY(0);
-        stage.setX(screenBounds.getX() + notification.getMargin());
+        stage.setY(targetScreen.getBounds().getMinY());
+        stage.setX(targetScreen.getBounds().getMinX() + notification.getMargin());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
 
