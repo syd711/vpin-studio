@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.CommentType;
@@ -25,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Pane;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.util.*;
@@ -354,6 +356,26 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses());
     statuses.addFirst( null);
     statusCombo.setItems(FXCollections.observableList(statuses));
+    statusCombo.setConverter(new StringConverter<TableStatus>() {
+      @Override
+      public String toString(TableStatus status) {
+        if (status == null) {
+          return "";
+        }
+        switch (status.getValue()) {
+          case 0: return Messages.get("tables.tables_overview_filter.status_disabled");
+          case 1: return Messages.get("tables.tables_overview_filter.status_normal");
+          case 2: return Messages.get("tables.tables_overview_filter.status_mature");
+          case 3: return Messages.get("tables.tables_overview_filter.status_wip");
+          default: return status.getLabel();
+        }
+      }
+
+      @Override
+      public TableStatus fromString(String s) {
+        return statusCombo.getValue();
+      }
+    });
     if (filterSettings.getGameStatus() >= 0) {
       statusCombo.setValue(statuses.get(filterSettings.getGameStatus()));
     }
@@ -370,6 +392,27 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     List<CommentType> noteTypes = new ArrayList<>(Arrays.asList(CommentType.values()));
     noteTypes.addFirst( null);
     commentsCombo.setItems(FXCollections.observableList(noteTypes));
+    commentsCombo.setConverter(new StringConverter<CommentType>() {
+      @Override
+      public String toString(CommentType noteType) {
+        if (noteType == null) {
+          return "";
+        }
+        switch (noteType) {
+          case Any: return Messages.get("tables.tables_overview_filter.note_type_any");
+          case Errors: return Messages.get("tables.tables_overview_filter.note_type_errors");
+          case Todos: return Messages.get("tables.tables_overview_filter.note_type_todos");
+          case Outdated: return Messages.get("tables.tables_overview_filter.note_type_outdated");
+          case None:
+          default: return Messages.get("tables.tables_overview_filter.note_type_none");
+        }
+      }
+
+      @Override
+      public CommentType fromString(String s) {
+        return commentsCombo.getValue();
+      }
+    });
     commentsCombo.setValue(filterSettings.getNoteType());
     commentsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {

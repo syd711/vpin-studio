@@ -3,12 +3,14 @@ package de.mephisto.vpin.connectors.wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.util.Timeout;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +27,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.*;
 
 public class Wovp {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final static ObjectMapper objectMapper;
+
+  private final static Duration CONNECT_TIMEOUT = Duration.ofSeconds(10);
+  private final static Duration REQUEST_TIMEOUT = Duration.ofSeconds(30);
 
   public static final String URL = "https://worldofvirtualpinball.com/api/whsc/v1/";
   public static final String SCORE_PHOTO_URL = URL + "scores/submit-photo";
@@ -107,7 +113,12 @@ public class Wovp {
   }
 
   private UploadResponse submitPhoto(File screenshot) throws Exception {
-    try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+    RequestConfig requestConfig = RequestConfig.custom()
+        .setConnectTimeout(Timeout.ofSeconds(CONNECT_TIMEOUT.toSeconds()))
+        .setResponseTimeout(Timeout.ofSeconds(REQUEST_TIMEOUT.toSeconds()))
+        .build();
+
+    try (CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(requestConfig).build()) {
       HttpPost httppost = new HttpPost(SCORE_PHOTO_URL);
 
       HttpEntity entity = MultipartEntityBuilder.create()
@@ -138,13 +149,14 @@ public class Wovp {
   public ApiKeyValidationResponse validateKey() {
     ApiKeyValidationResponse r = new ApiKeyValidationResponse();
     if (apiKey != null) {
-      HttpClient client = HttpClient.newBuilder().build();
+      HttpClient client = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT).build();
       String json = "{\"apikey\": \"" + apiKey + "\"}";
 
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(VALIDATION_URL))
           .header("Content-Type", "application/json")
           .header("X-Client-ID", "vpin-studio")
+          .timeout(REQUEST_TIMEOUT)
           .POST(HttpRequest.BodyPublishers.ofString(json))
           .build();
 
@@ -179,13 +191,14 @@ public class Wovp {
   }
 
   private <T> T doPost(String json, Class<T> clazz, String url) throws Exception {
-    HttpClient client = HttpClient.newBuilder().build();
+    HttpClient client = HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT).build();
 
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(url))
         .header("Content-Type", "application/json")
         .header("X-Client-ID", "vpin-studio")
         .header("Authorization", "Bearer " + apiKey)
+        .timeout(REQUEST_TIMEOUT)
         .POST(HttpRequest.BodyPublishers.ofString(json))
         .build();
 

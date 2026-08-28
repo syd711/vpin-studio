@@ -61,7 +61,7 @@
                         <CheckBox fx:id="notInstalledOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%vps.vps_tables_filter.only_not_installed_tables" />
 
                         <Label styleClass="preference-checkbox" text="%vps.vps_tables_filter.last_update_date" />
-                        <StackPane alignment="CENTER_RIGHT">
+                        <StackPane alignment="CENTER_LEFT">
                            <children>
                               <DatePicker fx:id="lastUpdateDate" maxWidth="204.0" styleClass="preference-datepicker" />
                               <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
