@@ -69,17 +69,6 @@
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                            <children>
                               <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" />
-                              <Label wrapText="true">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="400.0" text="%pref.notifications.the_server_needs_to_be_restarted_to_apply" wrapText="true" />
-                                 </tooltip>
-                              </Label>
                            </children>
                         </HBox>
                         <Label layoutX="10.0" layoutY="49.0" styleClass="preference-label" text="%pref.notifications.notification_margin" textFill="WHITE" wrapText="true" GridPane.rowIndex="2">

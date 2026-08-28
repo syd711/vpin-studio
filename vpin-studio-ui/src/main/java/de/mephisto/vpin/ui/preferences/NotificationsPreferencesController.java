@@ -132,7 +132,7 @@ public class NotificationsPreferencesController implements Initializable {
     }, 100));
 
     int margin = notificationSettings.getMargin();
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-800, 800, margin);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-8000, 8000, margin);
     offsetSpinner.setValueFactory(factory2);
     factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("notificationMargin", () -> {
       notificationSettings.setMargin(t1);
@@ -140,7 +140,7 @@ public class NotificationsPreferencesController implements Initializable {
     }, 100));
 
     int textMargin = notificationSettings.getTextboxMargin();
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-800, 800, textMargin);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-8000, 8000, textMargin);
     offsetTextSpinner.setValueFactory(factory3);
     factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("notificationTextBoxMargin", () -> {
       notificationSettings.setTextboxMargin(t1);

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -83,7 +84,8 @@ public class NotificationStageService extends Application {
     Notification notification = queue.poll();
     NotificationStage notificationStage = new NotificationStage(notification);
     stages.offer(notificationStage);
-    LOG.info("Showing " + notification);
+    MonitorInfo screenBounds = notificationStage.getScreenBounds();
+    LOG.info("Showing {} on screen id={}, x={}, y={}", notification, screenBounds.getId(), screenBounds.getX(), screenBounds.getY());
     SLOG.info("Showing " + notification);
     notificationStage.getStage().setOnHiding(new EventHandler<WindowEvent>() {
       @Override

@@ -214,6 +214,10 @@ public class NotificationStage {
     return stage;
   }
 
+  public MonitorInfo getScreenBounds() {
+    return screenBounds;
+  }
+
   @Override
   public String toString() {
     return "Notification Stage [" + notification + "]";

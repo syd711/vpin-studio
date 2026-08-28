@@ -67,6 +67,11 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     //no support for standalone
     if (!Features.IS_STANDALONE) {
       if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
+        //the notification stage/controller resolve the target screen via ServerFX's own REST client,
+        //which caches json preferences; clear it here so a changed notificationsScreenId (or other
+        //setting) is picked up immediately instead of requiring a server restart
+        ServerFX.client.getPreferenceService().clearCache(PreferenceNames.NOTIFICATION_SETTINGS);
+
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
         notification.setMargin(notificationSettings.getMargin());
