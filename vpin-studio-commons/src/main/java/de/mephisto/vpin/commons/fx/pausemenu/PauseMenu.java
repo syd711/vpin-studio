@@ -219,7 +219,9 @@ public class PauseMenu extends Application {
         else {
           //falls down too much
           scaling = 0.65;
-          stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
+          if (Screen.getScreens().size() > 1) {
+            stage.setY(Screen.getScreens().get(1).getBounds().getMinY());
+          }
         }
       }
     }
