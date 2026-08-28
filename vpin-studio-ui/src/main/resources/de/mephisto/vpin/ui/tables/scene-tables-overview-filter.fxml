@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
    <children>
       <VBox>
          <children>
@@ -49,7 +49,7 @@
       </VBox>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="230.0" spacing="6.0">
+            <VBox fx:id="titlePaneRoot" prefWidth="300.0" spacing="6.0">
                <children>
 
                   <Label styleClass="default-title" text="%preferences.table_validators">
@@ -72,6 +72,14 @@
                               <Insets />
                            </HBox.margin>
                         </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                     <children>
+                        <ComboBox fx:id="issueTypesCombo" prefWidth="200.0" />
                         <Label>
                            <font>
                               <Font size="14.0" />
@@ -87,11 +95,7 @@
                            </HBox.margin>
                         </Label>
                      </children>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
                   </HBox>
-                  <ComboBox fx:id="issueTypesCombo" prefWidth="200.0" />
                   <VBox fx:id="tableAssetFilters" spacing="6.0">
                      <children>
                         <Label styleClass="default-title" text="%tables.tables_overview_filter.table_asset_filters">

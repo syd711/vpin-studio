@@ -28,6 +28,8 @@ import javafx.scene.layout.VBox;
  */
 public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> {
 
+  public static final int FILTER_WIDTH = 300;
+
   protected boolean visible = false;
 
   @FXML
@@ -114,7 +116,7 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
 
   protected void refreshState() {
     if (visible) {
-      filteredTable.setMaxWidth(stackPane.getWidth() - 250);
+      filteredTable.setMaxWidth(stackPane.getWidth() - FILTER_WIDTH);
     }
     else {
       filteredTable.setMaxWidth(stackPane.getWidth());
@@ -136,7 +138,7 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
       visible = true;
       filterRoot.setVisible(true);
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
-      TranslateTransition filterTransition = TransitionUtil.createTranslateByXTransition(filteredTable, 300, 250);
+      TranslateTransition filterTransition = TransitionUtil.createTranslateByXTransition(filteredTable, 300, FILTER_WIDTH);
       filterTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
         @Override
         public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
@@ -151,7 +153,7 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
     else {
       visible = false;
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
-      TranslateTransition translateByXTransition = TransitionUtil.createTranslateByXTransition(filteredTable, 300, -250);
+      TranslateTransition translateByXTransition = TransitionUtil.createTranslateByXTransition(filteredTable, 300, -FILTER_WIDTH);
       translateByXTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
         @Override
         public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {

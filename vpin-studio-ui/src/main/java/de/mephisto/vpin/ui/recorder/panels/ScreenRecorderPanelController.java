@@ -125,6 +125,25 @@ public class ScreenRecorderPanelController implements Initializable {
     }
 
     recordModeComboBox.setItems(FXCollections.observableList(RECORD_MODE_LIST));
+    recordModeComboBox.setConverter(new StringConverter<RecordingWriteMode>() {
+      @Override
+      public String toString(RecordingWriteMode mode) {
+        if (mode == null) {
+          return "";
+        }
+        switch (mode) {
+          case overwrite: return Messages.get("recorder.screen_recorder_panel.record_mode.overwrite");
+          case append: return Messages.get("recorder.screen_recorder_panel.record_mode.append");
+          case ifMissing:
+          default: return Messages.get("recorder.screen_recorder_panel.record_mode.if_missing");
+        }
+      }
+
+      @Override
+      public RecordingWriteMode fromString(String s) {
+        return recordModeComboBox.getValue();
+      }
+    });
 
     RecorderSettings settingsLookup = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     if (settingsLookup == null) {

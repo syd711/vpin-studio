@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
    <children>
       <BorderPane>
          <left>
@@ -47,7 +47,7 @@
       </BorderPane>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="204.0">
+            <VBox fx:id="titlePaneRoot" prefWidth="270.0">
                <children>
 
                   <Label styleClass="default-title" text="%vps.vps_tables_filter.table_filters">

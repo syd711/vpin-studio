@@ -83,29 +83,6 @@ public class DateUtil {
     return new Date();
   }
 
-  public static String formatDuration(Date start, Date end) {
-    if (start != null && end != null) {
-      long ms = end.getTime() - start.getTime();
-      if (ms < 0) {
-        return "-";
-      }
-
-      LocalDate s = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-      LocalDate e = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-      long diff = ChronoUnit.DAYS.between(s, e);
-      if (diff == 1) {
-        return diff + " day";
-      }
-
-      if (diff > 0) {
-        return diff + " days";
-      }
-      return DurationFormatUtils.formatDuration(ms, "HH 'hours', mm 'minutes'", false);
-    }
-    return "-";
-  }
-
   public static String formatDuration(OffsetDateTime start, OffsetDateTime end) {
     if (start != null && end != null) {
       long ms = ChronoUnit.MILLIS.between(start, end);
