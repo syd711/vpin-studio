@@ -16,6 +16,15 @@ public class Notification {
   private int textBoxMargin;
   private boolean desktopMode;
   private boolean showOnEmulatorExit = true;
+  private String rotation = "auto";
+
+  public String getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(String rotation) {
+    this.rotation = rotation;
+  }
 
   public int getTextBoxMargin() {
     return textBoxMargin;

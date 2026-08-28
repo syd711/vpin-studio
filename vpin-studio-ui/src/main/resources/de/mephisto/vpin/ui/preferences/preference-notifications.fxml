@@ -47,6 +47,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -103,7 +104,29 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button fx:id="testButton" mnemonicParsing="false" onAction="#onNotificationTest" text="%pref.notifications.test_notification" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="117.0" styleClass="preference-label" text="%pref.notifications.notification_rotation" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <ComboBox fx:id="rotationCombo" prefWidth="150.0" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="%pref.notifications.degree_rotation" textFill="WHITE" wrapText="true" />
+                              <Label prefHeight="40.0" prefWidth="18.0" wrapText="true">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="%pref.notifications.rotates_the_notification_to_match_the_orientation" wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Button fx:id="testButton" mnemonicParsing="false" onAction="#onNotificationTest" text="%pref.notifications.test_notification" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>

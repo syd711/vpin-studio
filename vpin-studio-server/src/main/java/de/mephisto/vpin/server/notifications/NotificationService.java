@@ -71,6 +71,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         notification.setDurationSec(notificationSettings.getDurationSec());
         notification.setMargin(notificationSettings.getMargin());
         notification.setTextBoxMargin(notificationSettings.getTextboxMargin());
+        notification.setRotation(notificationSettings.getRotation());
         notification.setWindowTitle(frontendService.getFrontendType().equals(FrontendType.Popper) && pinVolAutostart ? "PinUP Popper" : "VPin Studio Notification");
 
         if (checkEmulator) {

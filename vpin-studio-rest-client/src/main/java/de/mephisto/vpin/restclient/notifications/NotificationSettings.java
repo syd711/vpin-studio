@@ -19,6 +19,15 @@ public class NotificationSettings extends JsonSettings {
   private int notificationsScreenId = -1;
   private int margin = 0;
   private int textboxMargin = 0;
+  private String rotation = "auto";
+
+  public String getRotation() {
+    return rotation;
+  }
+
+  public void setRotation(String rotation) {
+    this.rotation = rotation;
+  }
 
   public int getTextboxMargin() {
     return textboxMargin;

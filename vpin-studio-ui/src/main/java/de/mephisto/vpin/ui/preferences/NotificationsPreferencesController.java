@@ -11,10 +11,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -64,6 +66,9 @@ public class NotificationsPreferencesController implements Initializable {
   private ComboBox<MonitorInfo> screenInfoComboBox;
 
   @FXML
+  private ComboBox<String> rotationCombo;
+
+  @FXML
   private Button testButton;
 
   @FXML
@@ -98,6 +103,24 @@ public class NotificationsPreferencesController implements Initializable {
         notificationSettings.setNotificationsScreenId(newValue.getId());
         client.getPreferenceService().setJsonPreference(notificationSettings);
       }
+    });
+
+    rotationCombo.setItems(FXCollections.observableList(Arrays.asList("auto", "0", "90", "180", "270")));
+    rotationCombo.setConverter(new StringConverter<String>() {
+      @Override
+      public String toString(String value) {
+        return "auto".equals(value) ? "Auto" : value;
+      }
+
+      @Override
+      public String fromString(String string) {
+        return string;
+      }
+    });
+    rotationCombo.setValue(notificationSettings.getRotation());
+    rotationCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      notificationSettings.setRotation(newValue);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     int durationSec = notificationSettings.getDurationSec();

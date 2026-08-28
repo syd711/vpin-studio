@@ -34,6 +34,7 @@ public class NotificationStage {
   private final Notification notification;
   private MonitorInfo screenBounds;
   private NotificationController notificationController;
+  private boolean sidewaysLayout;
 
   private BorderPane root;
   private Transition inTransition;
@@ -70,9 +71,35 @@ public class NotificationStage {
       notificationController.setNotification(notification);
       scaleStage(root, screenBounds);
 
-      if (screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode()) {
+      // "auto" keeps the legacy heuristic (rotate whenever the target screen is wider than it is tall),
+      // which is correct for un-rotated playfield monitors but wrong for e.g. a landscape backglass/DMD screen.
+      // An explicit rotation value lets the user override this per notification screen.
+      String rotationSetting = notification.getRotation();
+      boolean autoRotation = rotationSetting == null || "auto".equalsIgnoreCase(rotationSetting);
+      int explicitDegrees = 0;
+      if (!autoRotation) {
+        try {
+          explicitDegrees = Integer.parseInt(rotationSetting);
+        }
+        catch (NumberFormatException e) {
+          LOG.info("Failed to parse notification rotation \"" + rotationSetting + "\", falling back to auto.");
+          autoRotation = true;
+        }
+      }
+
+      double rotate;
+      if (autoRotation) {
+        sidewaysLayout = screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode();
+        rotate = sidewaysLayout ? -90 : 0;
+      }
+      else {
+        sidewaysLayout = (explicitDegrees == 90 || explicitDegrees == 270) && !notification.isDesktopMode();
+        rotate = explicitDegrees == 90 ? -90 : (explicitDegrees == 270 ? 90 : explicitDegrees);
+      }
+      root.setRotate(rotate);
+
+      if (sidewaysLayout) {
         LOG.info("Window Mode: Portrait");
-        root.setRotate(-90);
         //WQHD
         double y = (screenBounds.getHeight() / 2);
         //HD
@@ -131,7 +158,7 @@ public class NotificationStage {
 
   public void move() {
     Transition transition = null;
-    if (screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode()) {
+    if (sidewaysLayout) {
       transition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (WIDTH * scaling / 3) + OFFSET);
     }
     else {

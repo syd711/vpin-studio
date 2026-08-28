@@ -25,6 +25,9 @@ So if components look broken or is missing translation, please drop a screenshot
   - Enabled table scan with PUP pack detection (thanks @select.nl!!!)
 - **Table Overview**
   - Fixed issues with .directb2s file detection and refreshes.
+- **Notifications**
+  - Added option to rotate notifications which is required when they are not shown on the playfield.
+  - A server restart is not required anymore when the target screen for notifications is changed.
 
 ### Bugfixes
 
