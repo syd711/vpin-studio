@@ -106,6 +106,9 @@ public class Studio extends Application {
 
     Platform.setImplicitExit(false);
 
+    // Set OS-specific system properties (e.g. MAC_WRITE_PATH) BEFORE anything that might rely on them, such as logging
+    runOperatingSystemChecks();
+
     // Initialize i18n locale from local settings BEFORE any UI or FXMLLoader usage
     if (StringUtils.isBlank(LocalUISettings.getString(LocalUISettings.LANGUAGE))) {
       // no language configured yet: fall back to the system locale, but only if a matching translation exists
@@ -117,7 +120,6 @@ public class Studio extends Application {
     Messages.reload();
     RestClient.setLocale(Messages.getLocale());
 
-    runOperatingSystemChecks();
     runExtensionsInstallation();
 
     LOG.info("Studio Starting...");
