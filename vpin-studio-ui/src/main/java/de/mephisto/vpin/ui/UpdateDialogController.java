@@ -158,6 +158,17 @@ public class UpdateDialogController implements Initializable, DialogController {
         return new Task<>() {
           @Override
           protected Object call() throws Exception {
+            if (client.getFrontendService().isFrontendRunning()) {
+              LOG.info("Frontend is running, terminating it before installing the server update.");
+              client.getFrontendService().terminateFrontend();
+
+              int count = 10;
+              while (client.getFrontendService().isFrontendRunning() && count > 0) {
+                Thread.sleep(1000);
+                count--;
+              }
+            }
+
             client.getSystemService().startServerUpdate(newServerVersion);
             while (true) {
               int progress = client.getSystemService().getServerUpdateProgress();
