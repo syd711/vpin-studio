@@ -91,19 +91,27 @@ public class SystemBackupService implements InitializingBean {
     List<Player> buildInPlayers = playerService.getBuildInPlayers();
     backup.put("players", buildInPlayers);
 
-    List<Game> games = gameService.getGames();
-    List<Object> gameEntryList = new ArrayList<>();
+    //Skip the game section while tables have not been scanned yet, e.g. on the very first server start:
+    //gameService.getGames() forces a full scan of every unscanned table, which must not happen before
+    //the client can show its own scanning progress.
+    if (gameService.getUnknownGames().isEmpty()) {
+      List<Game> games = gameService.getGames();
+      List<Object> gameEntryList = new ArrayList<>();
 
-    for (Game game : games) {
-      Map<String, Object> gameData = new HashMap<>();
-      gameData.put("fileName", game.getGameFileName());
-      gameData.put("notes", game.getComment());
-      gameData.put("vpsTableId", game.getExtTableId());
-      gameData.put("vpsVersionId", game.getExtTableVersionId());
-      gameData.put("version", game.getVersion());
-      gameData.put("highscoreCardsDisabled", game.isCardDisabled());
-      gameEntryList.add(gameData);
-      backup.put("games", gameEntryList);
+      for (Game game : games) {
+        Map<String, Object> gameData = new HashMap<>();
+        gameData.put("fileName", game.getGameFileName());
+        gameData.put("notes", game.getComment());
+        gameData.put("vpsTableId", game.getExtTableId());
+        gameData.put("vpsVersionId", game.getExtTableVersionId());
+        gameData.put("version", game.getVersion());
+        gameData.put("highscoreCardsDisabled", game.isCardDisabled());
+        gameEntryList.add(gameData);
+        backup.put("games", gameEntryList);
+      }
+    }
+    else {
+      LOG.info("Skipped writing game data for system backup, not all tables have been scanned yet.");
     }
 
     List<VpsDbEntry> allVpsEntries = vpsEntryService.getAllVpsEntries();

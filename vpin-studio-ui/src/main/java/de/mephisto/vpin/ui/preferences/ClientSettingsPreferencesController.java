@@ -771,7 +771,7 @@ public class ClientSettingsPreferencesController implements Initializable {
           Messages.get("pref.client.language.restart_message")
       );
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Updater.restartClient();
+        Updater.restartClient(de.mephisto.vpin.ui.Studio::releaseInstanceLock);
       }
     });
   }

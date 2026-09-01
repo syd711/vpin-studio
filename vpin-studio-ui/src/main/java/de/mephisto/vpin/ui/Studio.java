@@ -87,7 +87,7 @@ public class Studio extends Application {
 
   public static HostServices hostServices;
 
-  private ServerSocket ss;
+  private static ServerSocket ss;
   private static Stage splash;
   private static SplashScreenController splashController;
 
@@ -205,6 +205,21 @@ public class Studio extends Application {
         Platform.runLater(() -> loadLauncher(stage));
       }
     }, "Studio Connection Initializer").start();
+  }
+
+  /**
+   * Releases the single-instance lock (port 1044) so a freshly-launched instance
+   * can acquire it immediately. Must be called before spawning a replacement process.
+   */
+  public static void releaseInstanceLock() {
+    if (ss != null) {
+      try {
+        ss.close();
+      }
+      catch (IOException e) {
+        LOG.error("Failed to release instance lock: " + e.getMessage(), e);
+      }
+    }
   }
 
   private void runOperatingSystemChecks() {

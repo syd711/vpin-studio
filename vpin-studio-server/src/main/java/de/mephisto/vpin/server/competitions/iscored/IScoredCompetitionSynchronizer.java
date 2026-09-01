@@ -364,7 +364,10 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.ISCORED_SETTINGS.equals(propertyName)) {
-      synchronizeGameRooms();
+      IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      if (Features.ISCORED_ENABLED && iScoredSettings.isEnabled()) {
+        synchronizeGameRooms();
+      }
     }
   }
 }

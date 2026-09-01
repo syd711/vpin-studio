@@ -245,10 +245,17 @@ public class Updater {
   }
 
   /**
-   * Relaunches the Studio client and exits the current process, giving the
-   * new instance time to start before this one releases its single-instance lock.
+   * Relaunches the Studio client and exits the current process.
+   *
+   * @param releaseInstanceLock called before the new process is spawned, so the new
+   *                            instance does not detect this (still running) process
+   *                            as an already-running instance and refuse to start.
    */
-  public static void restartClient() {
+  public static void restartClient(Runnable releaseInstanceLock) {
+    if (releaseInstanceLock != null) {
+      releaseInstanceLock.run();
+    }
+
     if (OSUtil.isWindows()) {
       List<String> commands = List.of("VPin-Studio.exe");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
