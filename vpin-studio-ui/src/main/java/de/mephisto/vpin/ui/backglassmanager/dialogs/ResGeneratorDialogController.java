@@ -157,14 +157,10 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
             screenres.setBackgroundFilePath(null);
           }
           else if (customWidthPx > 0) {
-            // Custom-width: pin backglass to the requested pixel width, height proportional
+            // Custom-width: pin backglass to the requested pixel width, always stretched
+            // to the full screen height (no aspect-ratio preservation).
             int backglassFitWidth = customWidthPx;
-            int backglassFitHeight = (int) ((double) backglassFitWidth * backglassImg.getHeight() / backglassImg.getWidth());
-            // Clamp to screen height
-            if (backglassFitHeight > h) {
-              backglassFitHeight = h;
-              backglassFitWidth = (int) ((double) backglassFitHeight * backglassImg.getWidth() / backglassImg.getHeight());
-            }
+            int backglassFitHeight = h;
 
             if (uploadedFrame != null) {
               String newFrameName = client.getBackglassServiceClient().uploadScreenResFrame(emulatorId, b2sFileName, uploadedFrame);
@@ -322,8 +318,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       int backgroundWidth = previewWidth;
       int backgroundHeight = previewHeight;
       if (customWidthPx > 0) {
-        // Custom-width mode: scale backglass to the requested pixel width (proportionally),
-        // expressed as a fraction of the preview's own coordinate space.
+        // Custom-width mode: scale backglass to the requested pixel width, expressed as a
+        // fraction of the preview's own coordinate space, always stretched to the full
+        // preview height (no aspect-ratio preservation).
         double ratio = (double) customWidthPx / (double) (previewWidth > 0 ? previewWidth : 1);
         // Guard: full-screen dimensions are fetched async; fall back to screen dims when available
         DirectB2sScreenRes sr = null;
@@ -332,12 +329,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
           ratio = (double) customWidthPx / (double) sr.getFullBackglassWidth();
         }
         backgroundWidth = (int) (previewWidth * ratio);
-        backgroundHeight = (int) ((double) backgroundWidth * backglassImg.getHeight() / backglassImg.getWidth());
-        // Clamp so we never exceed the preview canvas
-        if (backgroundHeight > previewHeight) {
-          backgroundHeight = previewHeight;
-          backgroundWidth = (int) ((double) backgroundHeight * backglassImg.getWidth() / backglassImg.getHeight());
-        }
+        backgroundHeight = previewHeight;
       }
       else if (!stretchedBackglass) {
         // Center mode: fit backglass aspect-ratio within the preview

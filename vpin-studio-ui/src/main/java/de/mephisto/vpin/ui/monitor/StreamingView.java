@@ -5,7 +5,9 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
+import de.mephisto.vpin.restclient.monitor.PlayfieldRotation;
 import de.mephisto.vpin.ui.monitor.panels.ScreenPanelController;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -36,12 +39,22 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class StreamingView implements IMonitoringView {
   private final static Logger LOG = LoggerFactory.getLogger(StreamingView.class);
 
+  /** Gap between the left (PlayField) and right (other screens) columns. */
+  private static final double COLUMN_GAP = 4;
+  /** Padding inside each column, on every side. */
+  private static final double COLUMN_PADDING = 4;
+  /** Vertical gap between the stacked panels in the right column. */
+  private static final double ROW_GAP = 4;
+  /** Fraction of the available width given to the left (PlayField) column. */
+  private static final double LEFT_COLUMN_RATIO = 0.40;
+
   private final Stage stage;
   private final ScrollPane scrollPane;
   private final HBox root;
 
   /** Controller for the PlayField panel (left column) */
   private ScreenPanelController playFieldController;
+  private PlayfieldRotation playfieldRotation = PlayfieldRotation.ROTATE_0;
   /** Controllers for all other screens (right column) */
   private final Map<VPinScreen, ScreenPanelController> otherControllers = new HashMap<>();
 
@@ -55,16 +68,17 @@ public class StreamingView implements IMonitoringView {
 
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(
         PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+    this.playfieldRotation = settings.getPlayfieldRotation();
 
     List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
 
     // --- Left column: PlayField ---
     VBox leftColumn = new VBox();
-    leftColumn.setStyle("-fx-padding: 6;");
+    leftColumn.setStyle("-fx-padding: " + COLUMN_PADDING + ";");
 
     // --- Right column: all other screens ---
-    VBox rightColumn = new VBox(6);
-    rightColumn.setStyle("-fx-padding: 6;");
+    VBox rightColumn = new VBox(ROW_GAP);
+    rightColumn.setStyle("-fx-padding: " + COLUMN_PADDING + ";");
 
     for (FrontendPlayerDisplay display : recordingScreens) {
       try {
@@ -90,12 +104,14 @@ public class StreamingView implements IMonitoringView {
       }
     }
 
-    // Build two-column HBox
-    root = new HBox(6);
-    HBox.setHgrow(leftColumn, Priority.ALWAYS);
-    HBox.setHgrow(rightColumn, Priority.ALWAYS);
-    leftColumn.setMaxWidth(Double.MAX_VALUE);
-    rightColumn.setMaxWidth(Double.MAX_VALUE);
+    // Build two-column HBox, columns fixed to an exact 40/60 split of the available
+    // width so the width StreamingView hands down to each panel (see refresh()) always
+    // matches what the columns actually render - avoids drift that causes horizontal scrolling.
+    root = new HBox(COLUMN_GAP);
+    leftColumn.prefWidthProperty().bind(availableContentWidth().multiply(LEFT_COLUMN_RATIO));
+    rightColumn.prefWidthProperty().bind(availableContentWidth().multiply(1 - LEFT_COLUMN_RATIO));
+    leftColumn.setMaxWidth(Region.USE_PREF_SIZE);
+    rightColumn.setMaxWidth(Region.USE_PREF_SIZE);
     root.getChildren().addAll(leftColumn, rightColumn);
 
     // Bind the root width/height to the scroll pane so it fills the viewport
@@ -134,27 +150,39 @@ public class StreamingView implements IMonitoringView {
   }
 
   @Override
+  public void setPlayfieldRotation(PlayfieldRotation rotation) {
+    this.playfieldRotation = rotation;
+    refresh();
+  }
+
+  /**
+   * Width remaining for the two columns once the scroll pane's own reserve and the
+   * gap between the columns are subtracted. Used both to bind the columns' actual
+   * width and to compute the width handed down to each panel, so the two can never
+   * drift apart and cause horizontal scrolling.
+   */
+  private DoubleBinding availableContentWidth() {
+    return scrollPane.widthProperty().subtract(20).subtract(COLUMN_GAP);
+  }
+
+  @Override
   public void refresh() {
-    double totalW = stage.getWidth() - 30;
-    double totalH = stage.getHeight() - 100;
+    double contentW = Math.max(0, scrollPane.getWidth() - 20 - COLUMN_GAP);
 
-    // Left column: portrait playfield takes ~40% of width, full height
-    double leftW = totalW * 0.40;
-    double leftH = totalH;
+    // Left column: portrait playfield; right column: remaining screens, stacked
+    double leftColumnW = contentW * LEFT_COLUMN_RATIO;
+    double rightColumnW = contentW * (1 - LEFT_COLUMN_RATIO);
 
-    // Right column: remaining width, screens share height equally
-    double rightW = totalW * 0.60;
-    int otherCount = (int) otherControllers.values().stream()
-        .filter(c -> c.isCurrentlyVisible())
-        .count();
-    double rightH = otherCount > 0 ? totalH / otherCount : totalH;
+    // Width actually available to the panel once the column's own padding is subtracted
+    double leftPanelW = Math.max(0, leftColumnW - 2 * COLUMN_PADDING);
+    double rightPanelW = Math.max(0, rightColumnW - 2 * COLUMN_PADDING);
 
     if (playFieldController != null && playFieldController.isCurrentlyVisible()) {
-      playFieldController.refreshWithSize(leftW, leftH, true);
+      playFieldController.refreshWithSize(leftPanelW, playfieldRotation);
     }
     for (ScreenPanelController ctrl : otherControllers.values()) {
       if (ctrl.isCurrentlyVisible()) {
-        ctrl.refreshWithSize(rightW, rightH, false);
+        ctrl.refreshWithSize(rightPanelW, PlayfieldRotation.ROTATE_0);
       }
     }
   }

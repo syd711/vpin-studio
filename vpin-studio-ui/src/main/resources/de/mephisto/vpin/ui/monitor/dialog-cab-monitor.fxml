@@ -65,6 +65,17 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
                      </graphic>
                   </MenuButton>
+                  <Separator fx:id="playfieldRotationSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <HBox fx:id="playfieldRotationBox" alignment="CENTER_LEFT" spacing="6.0">
+                     <children>
+                        <Label styleClass="default-text" text="%monitor.cab_monitor.playfield" />
+                        <ComboBox fx:id="playfieldRotationCombo" prefWidth="90.0">
+                           <tooltip>
+                              <Tooltip text="%monitor.cab_monitor.playfield_rotation" />
+                           </tooltip>
+                        </ComboBox>
+                     </children>
+                  </HBox>
                   <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

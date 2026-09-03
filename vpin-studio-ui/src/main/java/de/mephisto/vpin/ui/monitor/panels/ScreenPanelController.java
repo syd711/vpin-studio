@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.monitor.panels;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.monitor.PlayfieldRotation;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
@@ -104,49 +105,59 @@ public class ScreenPanelController implements Initializable {
   }
 
   /**
-   * Refreshes the panel using explicit pixel dimensions rather than deriving
-   * them from the stage size. Used by StreamingView to lay out the two-column
-   * portrait layout.
-   *
-   * @param widthPx    available width in pixels for this panel
-   * @param heightPx   available height in pixels for this panel
-   * @param portrait   when true the image is displayed with a portrait aspect
-   *                   ratio (width / height swapped relative to a landscape screen)
+   * Combined horizontal space eaten up inside this panel by fixed FXML insets
+   * (the root VBox's BorderPane.margin, the media-container's padding, and the
+   * ImageView's BorderPane.margin) between the panel's own width and the image.
+   * Keep in sync with screen-monitor-panel.fxml.
    */
-  public void refreshWithSize(double widthPx, double heightPx, boolean portrait) {
+  private static final double PANEL_INTERNAL_OVERHEAD = 28;
+
+  /**
+   * Refreshes the panel using an explicit pixel width rather than deriving it
+   * from the stage size. Used by StreamingView to lay out the two-column layout.
+   *
+   * @param widthPx  available width in pixels for this panel (i.e. the width
+   *                 StreamingView's column actually hands to this panel, after
+   *                 the column's own padding)
+   * @param rotation rotation applied to the captured (landscape) image; 90°/270°
+   *                 swap the box to a portrait aspect, 0°/180° keep it landscape
+   */
+  public void refreshWithSize(double widthPx, PlayfieldRotation rotation) {
     if (!root.isVisible()) {
       return;
     }
 
-    // Reserve space for the label and padding
-    double availableH = heightPx - 60;
-    double availableW = widthPx - 24;
+    // The default binding sizes this panel for the single-column ScreensView layout;
+    // unbind it so the BorderPane can stretch the panel to the width StreamingView
+    // actually assigns it instead.
+    if (root.prefWidthProperty().isBound()) {
+      root.prefWidthProperty().unbind();
+    }
 
+    double availableW = widthPx - PANEL_INTERNAL_OVERHEAD;
+    int degrees = rotation.getDegrees();
+    boolean swapped = degrees == 90 || degrees == 270;
+
+    // Always use the full available width so the preview is as large as possible;
+    // the manual zoom slider is ignored here (it only applies to the other views) and
+    // the surrounding scroll pane accommodates whatever height that produces.
+    // Sizes are computed pre-rotation (assuming a 16:9 source), since setRotate()
+    // below swaps the rendered width/height for a 90°/270° turn.
     double fitW;
     double fitH;
-
-    if (portrait) {
-      // Portrait: constrain by height first, then clamp to available width
-      fitH = availableH * (scaling * 100) / 100;
-      fitW = fitH * 9.0 / 16.0; // rotate landscape 90° → portrait ratio
-      if (fitW > availableW) {
-        fitW = availableW;
-        fitH = fitW * 16.0 / 9.0;
-      }
+    if (swapped) {
+      fitH = availableW;
+      fitW = fitH * 16.0 / 9.0;
     }
     else {
-      // Landscape: standard 16:9 fit
-      fitW = availableW * (scaling * 100) / 100;
+      fitW = availableW;
       fitH = fitW * 9.0 / 16.0;
-      if (fitH > availableH) {
-        fitH = availableH;
-        fitW = fitH * 16.0 / 9.0;
-      }
     }
 
     imageView.setPreserveRatio(true);
     imageView.setFitWidth(fitW);
     imageView.setFitHeight(fitH);
+    imageView.setRotate(degrees);
 
     if (recordingScreen != null) {
       Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);

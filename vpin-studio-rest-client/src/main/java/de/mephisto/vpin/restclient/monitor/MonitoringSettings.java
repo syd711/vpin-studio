@@ -14,6 +14,7 @@ public class MonitoringSettings extends JsonSettings {
   private int refreshInterval = 2;
   private double scaling = 1;
   private List<VPinScreen> disabledScreens = new ArrayList<>();
+  private PlayfieldRotation playfieldRotation = PlayfieldRotation.ROTATE_90;
 
   public double getScaling() {
     return scaling;
@@ -53,6 +54,17 @@ public class MonitoringSettings extends JsonSettings {
 
   public void setDisabledScreens(List<VPinScreen> disabledScreens) {
     this.disabledScreens = disabledScreens;
+  }
+
+  public PlayfieldRotation getPlayfieldRotation() {
+    if (playfieldRotation == null) {
+      playfieldRotation = PlayfieldRotation.ROTATE_90;
+    }
+    return playfieldRotation;
+  }
+
+  public void setPlayfieldRotation(PlayfieldRotation playfieldRotation) {
+    this.playfieldRotation = playfieldRotation;
   }
 
   @Override

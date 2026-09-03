@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.Group?>
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.monitor.panels.ScreenPanelController">
    <center>
@@ -15,14 +16,21 @@
                <children>
                   <BorderPane styleClass="media-container">
                      <center>
-                        <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" styleClass="media-container">
+                        <!-- Group (not the ImageView directly) is the BorderPane's center child so that a
+                             rotated PlayField preview reports its rotated (post-transform) bounds up to the
+                             layout; a plain Region parent only sizes children by their unrotated layout bounds,
+                             which would misalign/overflow a 90°/270° rotated image. -->
+                        <Group BorderPane.alignment="CENTER">
                            <BorderPane.margin>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                            </BorderPane.margin>
-                        </ImageView>
+                           <children>
+                              <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" styleClass="media-container" />
+                           </children>
+                        </Group>
                      </center>
                      <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                      <top>
                         <Label fx:id="screenName" styleClass="default-headline" text="%monitor.screen_monitor_panel.screen_preview" BorderPane.alignment="CENTER_LEFT">
@@ -36,7 +44,7 @@
             </StackPane>
          </children>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
          </BorderPane.margin>
       </VBox>
    </center>

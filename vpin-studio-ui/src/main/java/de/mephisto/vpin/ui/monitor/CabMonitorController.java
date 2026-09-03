@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringMode;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
+import de.mephisto.vpin.restclient.monitor.PlayfieldRotation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.ToolbarController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -21,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -53,6 +55,15 @@ public class CabMonitorController implements Initializable, DialogController {
 
   @FXML
   private ComboBox<MonitoringMode> monitoringModeCombo;
+
+  @FXML
+  private ComboBox<PlayfieldRotation> playfieldRotationCombo;
+
+  @FXML
+  private HBox playfieldRotationBox;
+
+  @FXML
+  private Separator playfieldRotationSeparator;
 
   @FXML
   private Spinner<Integer> refreshInterval;
@@ -142,18 +153,40 @@ public class CabMonitorController implements Initializable, DialogController {
       monitoringMode = MonitoringMode.frontendScreens;
     }
     monitoringModeCombo.setValue(monitoringMode);
-    screenMenuButton.setDisable(monitoringMode.equals(MonitoringMode.monitors) || monitoringMode.equals(MonitoringMode.streamingView));
+    screenMenuButton.setDisable(monitoringMode.equals(MonitoringMode.monitors));
+
+    playfieldRotationCombo.setItems(FXCollections.observableList(Arrays.asList(PlayfieldRotation.values())));
+    playfieldRotationCombo.setValue(settings.getPlayfieldRotation());
+    updatePlayfieldRotationVisibility(monitoringMode);
+    playfieldRotationCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      MonitoringSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+      s.setPlayfieldRotation(newValue);
+      client.getPreferenceService().setJsonPreference(s);
+      if (monitoringView != null) {
+        monitoringView.setPlayfieldRotation(newValue);
+      }
+    });
+
     monitoringModeCombo.valueProperty().addListener(new ChangeListener<MonitoringMode>() {
       @Override
       public void changed(ObservableValue<? extends MonitoringMode> observable, MonitoringMode oldValue, MonitoringMode newValue) {
         Platform.runLater(() -> {
-          screenMenuButton.setDisable(newValue.equals(MonitoringMode.monitors) || newValue.equals(MonitoringMode.streamingView));
+          screenMenuButton.setDisable(newValue.equals(MonitoringMode.monitors));
+          updatePlayfieldRotationVisibility(newValue);
           settings.setMonitoringMode(newValue);
           client.getPreferenceService().setJsonPreference(settings);
           updateMonitoringMode(newValue);
         });
       }
     });
+  }
+
+  private void updatePlayfieldRotationVisibility(MonitoringMode mode) {
+    boolean streaming = mode.equals(MonitoringMode.streamingView);
+    playfieldRotationBox.setVisible(streaming);
+    playfieldRotationBox.setManaged(streaming);
+    playfieldRotationSeparator.setVisible(streaming);
+    playfieldRotationSeparator.setManaged(streaming);
   }
 
   public void setData(Stage stage) {
