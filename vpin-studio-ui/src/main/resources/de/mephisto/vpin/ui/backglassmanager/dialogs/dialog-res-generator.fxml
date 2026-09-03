@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
@@ -79,6 +80,13 @@
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
+                              <RadioButton fx:id="radioCustomWidth" mnemonicParsing="false" prefWidth="170.0" text="%backglass.res_generator.custom_width" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <Spinner fx:id="customWidthSpinner" prefWidth="90.0" editable="true" disable="true" />
+                              <Label styleClass="default-text" text="px" />
                            </children>
                         </HBox>
 

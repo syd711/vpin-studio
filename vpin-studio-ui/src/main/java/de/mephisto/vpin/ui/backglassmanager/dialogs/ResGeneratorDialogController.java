@@ -87,6 +87,12 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private RadioButton radioCenterBackglass;
 
   @FXML
+  private RadioButton radioCustomWidth;
+
+  @FXML
+  private Spinner<Integer> customWidthSpinner;
+
+  @FXML
   private ComboBox<DirectB2SFrameType> frameTypeCombo;
 
   @FXML
@@ -118,6 +124,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private Map<DirectB2SFrameType, BufferedImage> mapFrames = new HashMap<>();
 
   private boolean stretchedBackglass;
+  /** > 0 when "Custom Width" mode is active; otherwise ignored */
+  private int customWidthPx = 0;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -147,6 +155,45 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
             screenres.setBackgroundWidth(0);
             screenres.setBackgroundHeight(0);
             screenres.setBackgroundFilePath(null);
+          }
+          else if (customWidthPx > 0) {
+            // Custom-width: pin backglass to the requested pixel width, height proportional
+            int backglassFitWidth = customWidthPx;
+            int backglassFitHeight = (int) ((double) backglassFitWidth * backglassImg.getHeight() / backglassImg.getWidth());
+            // Clamp to screen height
+            if (backglassFitHeight > h) {
+              backglassFitHeight = h;
+              backglassFitWidth = (int) ((double) backglassFitHeight * backglassImg.getWidth() / backglassImg.getHeight());
+            }
+
+            if (uploadedFrame != null) {
+              String newFrameName = client.getBackglassServiceClient().uploadScreenResFrame(emulatorId, b2sFileName, uploadedFrame);
+              if (newFrameName != null) {
+                screenres.setBackgroundFilePath(newFrameName);
+                uploadedFrame = null;
+              }
+              else {
+                JFXFuture.throwException("Cannot store frame " + uploadedFrame);
+              }
+            }
+            else {
+              screenres.setBackgroundFilePath(fileNameField.getText());
+            }
+
+            screenres.setFrameType(frameTypeCombo.getValue());
+
+            screenres.setBackglassX(x + (w - backglassFitWidth) / 2);
+            screenres.setBackglassY(y + (h - backglassFitHeight) / 2);
+            screenres.setBackglassWidth(backglassFitWidth);
+            screenres.setBackglassHeight(backglassFitHeight);
+
+            screenres.setDmdX(screenres.getDmdX() - (w - backglassFitWidth) / 2);
+            screenres.setDmdY(screenres.getDmdY() - (h - backglassFitHeight) / 2);
+
+            screenres.setBackgroundX(x);
+            screenres.setBackgroundY(y);
+            screenres.setBackgroundWidth(w);
+            screenres.setBackgroundHeight(h);
           }
           else {
             if (uploadedFrame != null) {
@@ -274,9 +321,26 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
       int backgroundWidth = previewWidth;
       int backgroundHeight = previewHeight;
-      if (!stretchedBackglass) {
-        // If background is centered, fit new backgroundWidth and backgroundHeight within the preview
-        // case where height constraint => add horizontal bezels
+      if (customWidthPx > 0) {
+        // Custom-width mode: scale backglass to the requested pixel width (proportionally),
+        // expressed as a fraction of the preview's own coordinate space.
+        double ratio = (double) customWidthPx / (double) (previewWidth > 0 ? previewWidth : 1);
+        // Guard: full-screen dimensions are fetched async; fall back to screen dims when available
+        DirectB2sScreenRes sr = null;
+        try { sr = client.getBackglassServiceClient().getGlobalScreenRes(); } catch (Exception ignored) {}
+        if (sr != null && sr.getFullBackglassWidth() > 0) {
+          ratio = (double) customWidthPx / (double) sr.getFullBackglassWidth();
+        }
+        backgroundWidth = (int) (previewWidth * ratio);
+        backgroundHeight = (int) ((double) backgroundWidth * backglassImg.getHeight() / backglassImg.getWidth());
+        // Clamp so we never exceed the preview canvas
+        if (backgroundHeight > previewHeight) {
+          backgroundHeight = previewHeight;
+          backgroundWidth = (int) ((double) backgroundHeight * backglassImg.getWidth() / backglassImg.getHeight());
+        }
+      }
+      else if (!stretchedBackglass) {
+        // Center mode: fit backglass aspect-ratio within the preview
         if (backglassImg.getWidth() * previewHeight < backglassImg.getHeight() * previewWidth) {
           backgroundWidth = (int) ((0.0 + previewHeight) * backglassImg.getWidth() / backglassImg.getHeight());
         }
@@ -328,15 +392,29 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     frameTypeTooltip.setText(null);
     frameTypeTooltip.setGraphic(tooltiplbl);
 
-    // create a toggle group 
+    // create a toggle group
     ToggleGroup tg = new ToggleGroup();
     radioStretchBackglass.setToggleGroup(tg);
     radioCenterBackglass.setToggleGroup(tg);
+    radioCustomWidth.setToggleGroup(tg);
     tg.selectedToggleProperty().addListener((obs, o, n) -> {
-      this.stretchedBackglass = n == radioStretchBackglass;
+      this.stretchedBackglass = (n == radioStretchBackglass);
+      boolean customActive = (n == radioCustomWidth);
+      customWidthSpinner.setDisable(!customActive);
+      this.customWidthPx = customActive ? customWidthSpinner.getValue() : 0;
       refreshPreview();
     });
     tg.selectToggle(radioStretchBackglass);
+
+    // Custom-width spinner: 1–9999 px, default 1280
+    SpinnerValueFactory<Integer> widthFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999, 1280);
+    customWidthSpinner.setValueFactory(widthFactory);
+    customWidthSpinner.valueProperty().addListener((obs, o, n) -> {
+      if (radioCustomWidth.isSelected()) {
+        this.customWidthPx = n;
+        refreshPreview();
+      }
+    });
 
     // load screen dimensions
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getGlobalScreenRes())
@@ -440,7 +518,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
 
       if (screenres.isBackglassCentered()) {
-        radioCenterBackglass.setSelected(true);
+        int bgW = screenres.getBackglassWidth();
+        int fullW = screenres.getFullBackglassWidth();
+        // If the stored backglass width doesn't fill the full screen it was saved with a custom width
+        if (bgW > 0 && fullW > 0 && bgW < fullW) {
+          customWidthSpinner.getValueFactory().setValue(bgW);
+          customWidthPx = bgW;
+          radioCustomWidth.setSelected(true);
+        }
+        else {
+          radioCenterBackglass.setSelected(true);
+        }
       }
       else {
         radioStretchBackglass.setSelected(true);
