@@ -364,7 +364,20 @@ public class Studio extends Application {
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
             client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
-            Messages.setLanguage(uiSettings.getLanguage());
+            if (StringUtils.isNotBlank(uiSettings.getLanguage())) {
+              Messages.setLanguage(uiSettings.getLanguage());
+            }
+            else {
+              // no language chosen on the server yet (fresh install): keep the OS-locale
+              // language already resolved at startup and persist it as the explicit choice
+              uiSettings.setLanguage(Messages.getLanguageTag());
+              try {
+                client.getPreferenceService().setJsonPreference(uiSettings, true);
+              }
+              catch (Exception e) {
+                LOG.error("Failed to persist auto-detected language preference: {}", e.getMessage(), e);
+              }
+            }
             RestClient.setLocale(Messages.getLocale());
 
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();

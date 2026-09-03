@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UISettings extends JsonSettings {
-  private String language = "en";
+  /** Null/blank means no explicit language has been chosen yet; the client falls back to the OS locale. */
+  private String language;
 
   private boolean showPlayerScores = true;
 
