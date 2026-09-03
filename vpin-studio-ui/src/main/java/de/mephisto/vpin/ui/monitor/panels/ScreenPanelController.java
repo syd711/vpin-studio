@@ -99,6 +99,65 @@ public class ScreenPanelController implements Initializable {
     root.setVisible(b);
   }
 
+  public boolean isCurrentlyVisible() {
+    return root.isVisible();
+  }
+
+  /**
+   * Refreshes the panel using explicit pixel dimensions rather than deriving
+   * them from the stage size. Used by StreamingView to lay out the two-column
+   * portrait layout.
+   *
+   * @param widthPx    available width in pixels for this panel
+   * @param heightPx   available height in pixels for this panel
+   * @param portrait   when true the image is displayed with a portrait aspect
+   *                   ratio (width / height swapped relative to a landscape screen)
+   */
+  public void refreshWithSize(double widthPx, double heightPx, boolean portrait) {
+    if (!root.isVisible()) {
+      return;
+    }
+
+    // Reserve space for the label and padding
+    double availableH = heightPx - 60;
+    double availableW = widthPx - 24;
+
+    double fitW;
+    double fitH;
+
+    if (portrait) {
+      // Portrait: constrain by height first, then clamp to available width
+      fitH = availableH * (scaling * 100) / 100;
+      fitW = fitH * 9.0 / 16.0; // rotate landscape 90° → portrait ratio
+      if (fitW > availableW) {
+        fitW = availableW;
+        fitH = fitW * 16.0 / 9.0;
+      }
+    }
+    else {
+      // Landscape: standard 16:9 fit
+      fitW = availableW * (scaling * 100) / 100;
+      fitH = fitW * 9.0 / 16.0;
+      if (fitH > availableH) {
+        fitH = availableH;
+        fitW = fitH * 16.0 / 9.0;
+      }
+    }
+
+    imageView.setPreserveRatio(true);
+    imageView.setFitWidth(fitW);
+    imageView.setFitHeight(fitH);
+
+    if (recordingScreen != null) {
+      Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);
+      imageView.setImage(image);
+    }
+    else if (monitorInfo != null) {
+      Image image = MonitoringManager.getInstance().getMonitorImage(monitorInfo);
+      imageView.setImage(image);
+    }
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     root.managedProperty().bindBidirectional(root.visibleProperty());

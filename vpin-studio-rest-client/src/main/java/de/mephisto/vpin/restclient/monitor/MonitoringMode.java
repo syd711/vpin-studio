@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.monitor;
 
 public enum MonitoringMode {
-  frontendScreens, monitors;
+  frontendScreens, monitors, streamingView;
 
 
   @Override
@@ -9,6 +9,7 @@ public enum MonitoringMode {
       return switch (this) {
           case monitors -> "All Monitors";
           case frontendScreens -> "Frontend Screens";
+          case streamingView -> "Streaming View";
       };
   }
 }
