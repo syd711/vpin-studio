@@ -406,7 +406,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       int validationCode = model.getValidationCode();
       if (validationCode > 0) {
         Label icon = new Label();
-        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has configuration issue(s)."));
+        icon.setTooltip(new Tooltip(Messages.get("dialog.backglass_file_configuration_issues", model.getName())));
         icon.setGraphic(WidgetFactory.createExclamationIcon(getIconColor(value)));
         return icon;
       }
