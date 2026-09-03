@@ -21,6 +21,10 @@ So if components look broken or is missing translation, please drop a screenshot
 
 ### Changes
 
+- **Cabinet Monitor**
+  - Added new **Streaming View** mode: a two-column layout that shows the PlayField screen in portrait orientation on the left and all other screens stacked vertically on the right. Both columns scale proportionally with the window size.
+- **Backglass Manager — .res File Generator**
+  - Added **Custom Width** display option alongside the existing Stretch and Center modes. When selected, a pixel spinner lets you pin the backglass to an exact width; height is derived proportionally and the result is centred on the screen. The preview updates live and the value is restored correctly when an existing .res file is loaded.
 - **Future Pinball**
   - Enabled table scan with PUP pack detection (thanks @select.nl!!!)
 - **Table Overview**
