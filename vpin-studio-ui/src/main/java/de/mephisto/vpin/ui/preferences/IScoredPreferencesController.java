@@ -192,7 +192,7 @@ public class IScoredPreferencesController implements Initializable {
       });
       row.itemProperty().addListener((obs, oldItem, newItem) -> {
         if (newItem != null && newItem.gameRoom == null) {
-          row.setTooltip(new Tooltip("Failed to load this game room. The URL may be invalid or the room may no longer exist."));
+          row.setTooltip(new Tooltip(Messages.get("dialog.failed_to_load_game_room_url")));
         }
         else {
           row.setTooltip(null);

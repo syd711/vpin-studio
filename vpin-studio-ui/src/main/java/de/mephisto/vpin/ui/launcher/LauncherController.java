@@ -428,7 +428,7 @@ public class LauncherController implements Initializable {
           FontIcon discoveredIcon = new FontIcon("mdi2a-antenna");
           discoveredIcon.setIconSize(18);
           discoveredIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR)); // Green for discovered
-          Tooltip discoveredTooltip = new Tooltip("This connection was discovered on the local network.");
+          Tooltip discoveredTooltip = new Tooltip(Messages.get("dialog.connection_discovered_on_local_network"));
           Tooltip.install(discoveredIcon, discoveredTooltip); // Attach tooltip to the icon
           statusBox.getChildren().add(discoveredIcon);
         }
@@ -443,7 +443,7 @@ public class LauncherController implements Initializable {
           wolButton.setGraphic(wolIcon);
           wolButton.getStyleClass().add("wol-button");
           stage.getScene().getStylesheets().add(getClass().getResource("scene-launcher.css").toExternalForm());
-          Tooltip wolTooltip = new Tooltip("Send a Wake-on-LAN signal to wake this device.");
+          Tooltip wolTooltip = new Tooltip(Messages.get("dialog.send_wol_signal_hint"));
           Tooltip.install(wolButton, wolTooltip); // Attach tooltip to the button
 
           wolButton.setOnAction(event -> {
@@ -502,7 +502,7 @@ public class LauncherController implements Initializable {
         });
 
         // Add tooltip to the delete button
-        Tooltip deleteTooltip = new Tooltip("Permanently delete this connection.");
+        Tooltip deleteTooltip = new Tooltip(Messages.get("dialog.permanently_delete_this_connection"));
         Tooltip.install(deleteButton, deleteTooltip);
 
         actionBox.getChildren().add(deleteButton);

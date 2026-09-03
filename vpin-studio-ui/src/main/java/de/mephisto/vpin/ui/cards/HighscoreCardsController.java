@@ -265,7 +265,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       label.getStyleClass().add("default-text");
       if (value.isCardDisabled()) {
         label.setStyle("-fx-text-fill: " + DISABLED_COLOR);
-        label.setTooltip(new Tooltip("The card generation is disabled for this game."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.card_generation_disabled_for_game")));
       }
       return label;
     }, this, true);

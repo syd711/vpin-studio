@@ -393,7 +393,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
         HBox hBox = new HBox(3);
         hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().add(label);
-        Tooltip tt = new Tooltip("Please check manually if this file is an actual ROM.");
+        Tooltip tt = new Tooltip(Messages.get("dialog.check_manually_if_rom_file"));
         FontIcon icon = WidgetFactory.createIcon("mdi2h-help-circle-outline");
         icon.setIconSize(18);
         Label iconLabel = new Label();

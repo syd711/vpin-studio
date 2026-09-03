@@ -422,7 +422,7 @@ public class ClientSettingsPreferencesController implements Initializable {
       checkBox.setUserData(gameEmulator);
       checkBox.setDisable(gameEmulator.isVpxEmulator());
       if (checkBox.isDisabled()) {
-        checkBox.setTooltip(new Tooltip("Emulators with backglasses can not be disabled here."));
+        checkBox.setTooltip(new Tooltip(Messages.get("dialog.emulators_with_backglasses_cannot_be_disabled")));
       }
       checkBox.setSelected(checkBox.isDisabled() || !uiSettings.getIgnoredEmulatorIds().contains(gameEmulator.getId()));
       checkBox.getStyleClass().add("default-text");

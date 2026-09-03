@@ -721,7 +721,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       artworkLabel.setText(directB2SData.getArtwork());
       grillLabel.setText(String.valueOf(directB2SData.getGrillHeight()));
       b2sElementsLabel.setText(String.valueOf(directB2SData.getB2sElements()));
-      b2sElementsLabel.setTooltip(new Tooltip(directB2SData.getB2sElements() + " variants exist for this backglass"));
+      b2sElementsLabel.setTooltip(new Tooltip(Messages.get("dialog.variants_exist_for_backglass", directB2SData.getB2sElements())));
       scoresLabel.setText(String.valueOf(directB2SData.getNbScores()));
       playersLabel.setText(String.valueOf(directB2SData.getNumberOfPlayers()));
       filesizeLabel.setText(FileUtils.readableFileSize(directB2SData.getFilesize()));

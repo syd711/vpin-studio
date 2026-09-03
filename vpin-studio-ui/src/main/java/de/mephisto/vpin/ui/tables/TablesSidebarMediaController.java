@@ -51,7 +51,7 @@ public class TablesSidebarMediaController implements Initializable {
   private TableAssetManagerPane<TablesSidebarMediaItemPane> mediaRootPane;
 
 
-  private final Tooltip highscoreCardTooltip = new Tooltip("Highscore cards are generated for this screen.");
+  private final Tooltip highscoreCardTooltip = new Tooltip(Messages.get("dialog.highscore_cards_generated_for_screen"));
 
   private Optional<GameRepresentation> game = Optional.empty();
 

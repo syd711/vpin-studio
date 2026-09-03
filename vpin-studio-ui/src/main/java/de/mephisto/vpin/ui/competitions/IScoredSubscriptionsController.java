@@ -411,53 +411,53 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
       if (value.game.isAllVersionsEnabled()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("Highscores from all versions of the table can be submitted. The scoring is not limited to one table version."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_all_versions_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2c-check-all"));
         result.getChildren().add(label);
       }
       else {
         Label label = new Label();
-        label.setTooltip(new Tooltip("Only highscores for this table version can be submitted. Scores from other versions of this table will be ignored."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_this_version_only_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
         result.getChildren().add(label);
       }
 
       if (value.game.isGameHidden()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("This game is hidden from the public game room."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_game_hidden_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2e-eye-off"));
         result.getChildren().add(label);
       }
       else {
         Label label = new Label();
-        label.setTooltip(new Tooltip("This game is a public and visible on the game room dashboard."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_game_public_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2e-eye-outline"));
         result.getChildren().add(label);
       }
 
       if (value.game.isGameLocked()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("This game is currently locked. No highscores will be accepted."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_game_locked_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2l-lock"));
         result.getChildren().add(label);
       }
       else if (value.game.isDisabled()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("This game is currently disabled. No highscores will be accepted."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_game_disabled_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2l-lock"));
         result.getChildren().add(label);
       }
 
       if (value.game.isSingleScore()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("Only one score per player can be submitted. All subsequent scores will be ignored, even higher scores."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_one_score_per_player_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2n-numeric-1-box"));
         result.getChildren().add(label);
       }
 
       if (value.game.isMultiScore()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("All scores of the players will be submitted."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.iscored_all_scores_hint")));
         label.setGraphic(WidgetFactory.createIcon("mdi2n-numeric-9-plus-box"));
         result.getChildren().add(label);
       }
@@ -480,7 +480,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (value.getMatches().isEmpty()) {
         fallbackLabel.setStyle(ERROR_STYLE);
         fallbackLabel.setText(Messages.get("competitions.competitions_iscored.no_matching_table_found"));
-        fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
+        fallbackLabel.setTooltip(new Tooltip(Messages.get("dialog.no_matching_table_found_download_hint")));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
@@ -488,11 +488,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
         if (value.iScoredGameRoom.isSynchronize()) {
           fallbackLabel.setText(Messages.get("competitions.competitions_iscored.this_game_is_not_synchronized_yet"));
-          fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
+          fallbackLabel.setTooltip(new Tooltip(Messages.get("dialog.sync_enabled_but_competition_not_created")));
         }
         else {
           fallbackLabel.setText(Messages.get("competitions.competitions_iscored.table_match_found_but_not_subscribed_yet"));
-          fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
+          fallbackLabel.setTooltip(new Tooltip(Messages.get("dialog.subscription_can_be_created_by_pressing")));
         }
 
         return new SimpleObjectProperty<>(fallbackLabel);

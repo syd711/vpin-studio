@@ -457,7 +457,7 @@ public class TablesSidebarMameController implements Initializable {
           row.getChildren().add(label);
 
           Button button = new Button("", WidgetFactory.createIcon("mdi2l-lead-pencil"));
-          button.setTooltip(new Tooltip("Edit table data"));
+          button.setTooltip(new Tooltip(Messages.get("backglass.directb2s_sidebar.edit_table_data")));
           button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -468,7 +468,7 @@ public class TablesSidebarMameController implements Initializable {
 
           if (HighscoreType.NVRam.equals(sharedGame.getHighscoreType())) {
             Button nvOffsetButton = new Button("", WidgetFactory.createIcon("mdi2s-script-text"));
-            nvOffsetButton.setTooltip(new Tooltip("Set NVOffset"));
+            nvOffsetButton.setTooltip(new Tooltip(Messages.get("dialog.set_nvoffset")));
             nvOffsetButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
               public void handle(ActionEvent event) {
@@ -557,7 +557,7 @@ public class TablesSidebarMameController implements Initializable {
 
     applyDefaultsBtn.setText(b ? "Override Defaults" : "Apply Defaults");
 
-    Tooltip tooltip = new Tooltip(b ? "Uses the default VPin MAME settings and applies them for the ROM of the selected game." : "Delete the VPin MAME settings for this table so that the system defaults are used.");
+    Tooltip tooltip = new Tooltip(b ? Messages.get("dialog.mame_defaults_hint_use") : Messages.get("dialog.mame_defaults_hint_delete"));
     applyDefaultsBtn.setTooltip(tooltip);
   }
 

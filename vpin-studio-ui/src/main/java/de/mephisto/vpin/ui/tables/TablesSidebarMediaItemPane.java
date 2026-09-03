@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane.MediaPane;
@@ -60,7 +61,7 @@ public class TablesSidebarMediaItemPane extends MediaPane {
 
     if (hasDmdPos()) {
       btn_dmdPos = createButton("mdi2t-target-variant", null, null, e -> controller.onDMDPosition());
-      btn_dmdPos.setTooltip(new Tooltip("Adjust DMD position"));
+      btn_dmdPos.setTooltip(new Tooltip(Messages.get("backglass.directb2s_admin.adjust_dmd_position")));
       lefthbox.getChildren().add(btn_dmdPos);
     }
   }

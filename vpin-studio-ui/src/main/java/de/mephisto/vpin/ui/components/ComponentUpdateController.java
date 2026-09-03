@@ -199,7 +199,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || (localInstallOnly && !client.getSystemService().isLocal()));
     if (installBtn.isDisabled()) {
-      installBtn.setTooltip(new Tooltip("The component can not be updated via remote client."));
+      installBtn.setTooltip(new Tooltip(Messages.get("dialog.component_not_updatable_remote")));
     }
     else {
       installBtn.setTooltip(new Tooltip(""));

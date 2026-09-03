@@ -1021,7 +1021,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         String color = WidgetFactory.ERROR_COLOR;
-        label.setTooltip(new Tooltip("No ROM file was found for this table, but it was detected as required."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.no_rom_file_found_but_required")));
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
       }
       else {
@@ -1070,7 +1070,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         });
 
         if (hasUpdate) {
-          button.setTooltip(new Tooltip("A new backglass version or an update for the existing one is available"));
+          button.setTooltip(new Tooltip(Messages.get("dialog.new_backglass_version_available")));
         }
         else {
           button.setTooltip(new Tooltip(value.getDirectB2SPath()));
@@ -1111,7 +1111,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (value.getIniPath() != null) {
         Button compBtn = new Button();
         compBtn.getStyleClass().add("table-media-button");
-        compBtn.setTooltip(new Tooltip("Edit " + value.getIniPath()));
+        compBtn.setTooltip(new Tooltip(Messages.get("dialog.edit_named", value.getIniPath())));
         FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
         cmpIcon.setIconSize(22);
         compBtn.setGraphic(cmpIcon);
@@ -1138,7 +1138,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (value.getResPath() != null) {
         Button compBtn = new Button();
         compBtn.getStyleClass().add("table-media-button");
-        compBtn.setTooltip(new Tooltip("Edit " + value.getResPath()));
+        compBtn.setTooltip(new Tooltip(Messages.get("dialog.edit_named", value.getResPath())));
         FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
         cmpIcon.setIconSize(22);
         compBtn.setGraphic(cmpIcon);
@@ -1165,7 +1165,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (value.getVbsPath() != null) {
         Button compBtn = new Button();
         compBtn.getStyleClass().add("table-media-button");
-        compBtn.setTooltip(new Tooltip("Edit " + value.getVbsPath()));
+        compBtn.setTooltip(new Tooltip(Messages.get("dialog.edit_named", value.getVbsPath())));
         FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
         cmpIcon.setIconSize(22);
         compBtn.setGraphic(cmpIcon);
@@ -1268,7 +1268,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (iScoredSettings != null && iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
         Button compBtn = new Button();
         compBtn.getStyleClass().add("table-media-button");
-        compBtn.setTooltip(new Tooltip("This table is competed."));
+        compBtn.setTooltip(new Tooltip(Messages.get("dialog.table_is_competed")));
         FontIcon cmpIcon = WidgetFactory.createIcon("mdi2t-trophy-variant");
         cmpIcon.setIconColor(Paint.valueOf("#00c4ec"));
         compBtn.setGraphic(cmpIcon);
@@ -1318,7 +1318,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         if (backup != null) {
           Button compBtn = new Button();
           compBtn.getStyleClass().add("table-media-button");
-          compBtn.setTooltip(new Tooltip("Show the backup of this table in the backups view."));
+          compBtn.setTooltip(new Tooltip(Messages.get("dialog.show_backup_in_backups_view")));
           FontIcon cmpIcon = WidgetFactory.createIcon("mdi2a-archive-outline");
           compBtn.setGraphic(cmpIcon);
           row.getChildren().add(compBtn);
@@ -1336,7 +1336,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
         if (validationState != null && validationState.getCode() > 0) {
           statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
-          statusLabel.setTooltip(new Tooltip("This table has configuration issues."));
+          statusLabel.setTooltip(new Tooltip(Messages.get("dialog.table_has_configuration_issues")));
         }
       }
       statusLabel.setGraphic(statusIcon);

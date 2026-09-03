@@ -1179,35 +1179,35 @@ public class TableDataController extends BasePrevNextController implements AutoC
       case "WEBGameID": {
         webDbId.setText(value);
         webDbId.setDisable(true);
-        webDbId.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        webDbId.setTooltip(new Tooltip(Messages.get("dialog.field_reserved_for_vpin_studio_data")));
         hintWebId.setVisible(true);
         break;
       }
       case "CUSTOM2": {
         custom2.setValue(value);
         custom2.setDisable(true);
-        custom2.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        custom2.setTooltip(new Tooltip(Messages.get("dialog.field_reserved_for_vpin_studio_data")));
         hintCustom2.setVisible(true);
         break;
       }
       case "CUSTOM3": {
         custom3.setValue(value);
         custom3.setDisable(true);
-        custom3.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        custom3.setTooltip(new Tooltip(Messages.get("dialog.field_reserved_for_vpin_studio_data")));
         hintCustom3.setVisible(true);
         break;
       }
       case "CUSTOM4": {
         custom4.setText(value);
         custom4.setDisable(true);
-        custom4.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        custom4.setTooltip(new Tooltip(Messages.get("dialog.field_reserved_for_vpin_studio_data")));
         hintCustom4.setVisible(true);
         break;
       }
       case "CUSTOM5": {
         custom5.setText(value);
         custom5.setDisable(true);
-        custom5.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
+        custom5.setTooltip(new Tooltip(Messages.get("dialog.field_reserved_for_vpin_studio_data")));
         hintCustom5.setVisible(true);
         break;
       }

@@ -96,7 +96,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
           }
         })
         .thenAcceptLater(image -> {
-          openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
+          openDefaultPictureBtn.setTooltip(new Tooltip(Messages.get("dialog.open_directb2s_image")));
           if (image != null) {
             rawDirectB2SImage.setImage(image);
             if (image.getWidth() > 300) {
