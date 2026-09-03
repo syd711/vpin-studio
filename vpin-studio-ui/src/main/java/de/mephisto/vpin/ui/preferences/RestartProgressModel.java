@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -15,8 +16,8 @@ public class RestartProgressModel extends ProgressModel<String> {
   private final Iterator<String> syncIterator;
 
   public RestartProgressModel() {
-    super("Waiting For Server");
-    this.syncIterator = Arrays.asList("Waiting for VPin Studio Server to become available again...").iterator();
+    super(Messages.get("dialog.waiting_for_server"));
+    this.syncIterator = Arrays.asList(Messages.get("dialog.waiting_for_server_message")).iterator();
   }
 
   @Override

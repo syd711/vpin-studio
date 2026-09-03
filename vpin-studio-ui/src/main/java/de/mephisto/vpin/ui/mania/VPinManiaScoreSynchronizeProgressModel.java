@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
@@ -22,13 +23,13 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
   private List<VpsTable> vpsTableList = new ArrayList<>();
 
   public VPinManiaScoreSynchronizeProgressModel() {
-    super("VPin Mania Synchronization");
+    super(Messages.get("dialog.vpin_mania_synchronization"));
     this.vpsTableList = Studio.client.getGameService().getInstalledVpsTables();
     this.iterator = vpsTableList.iterator();
   }
 
   public VPinManiaScoreSynchronizeProgressModel(List<VpsTable> vpsTableList) {
-    super("VPin Mania Synchronization");
+    super(Messages.get("dialog.vpin_mania_synchronization"));
     this.vpsTableList = vpsTableList;
     this.iterator = vpsTableList.iterator();
   }
@@ -45,7 +46,7 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
 
   @Override
   public String nextToString(VpsTable t) {
-    return "Synchronizing \"" + t.getDisplayName() + "\"";
+    return Messages.get("dialog.synchronizing_quoted", t.getDisplayName());
   }
 
   @Override

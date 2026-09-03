@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -20,7 +21,7 @@ public class PupPackLoadProgressModel extends ProgressModel<GameRepresentation> 
   private final Iterator<GameRepresentation> gameIterator;
 
   public PupPackLoadProgressModel(GameRepresentation game) {
-    super("Loading PUP Pack Data");
+    super(Messages.get("dialog.loading_pup_pack_data"));
     this.games = Arrays.asList(game);
     this.gameIterator = games.iterator();
   }
@@ -52,7 +53,7 @@ public class PupPackLoadProgressModel extends ProgressModel<GameRepresentation> 
 
   @Override
   public String nextToString(GameRepresentation game) {
-    return "Loading PUP pack for \"" + game.getGameDisplayName() + "\"";
+    return Messages.get("dialog.loading_pup_pack_for", game.getGameDisplayName());
   }
 
   @Override

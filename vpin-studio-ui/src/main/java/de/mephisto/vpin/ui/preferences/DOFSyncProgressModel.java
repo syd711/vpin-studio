@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -18,8 +19,8 @@ public class DOFSyncProgressModel extends ProgressModel<String> {
   private final Iterator<String> syncIterator;
 
   public DOFSyncProgressModel() {
-    super("Synchronizing DOF Configuration");
-    this.syncIterator = Arrays.asList("Downloading DOF configuration, please be patient...").iterator();
+    super(Messages.get("dialog.synchronizing_dof_configuration"));
+    this.syncIterator = Arrays.asList(Messages.get("dialog.downloading_dof_configuration_please_wait")).iterator();
   }
 
   @Override

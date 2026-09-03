@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -20,7 +21,7 @@ public class IScoredGameRoomDeletionProgressModel extends ProgressModel<IScoredG
   private final Iterator<IScoredGameRoom> iterator;
 
   public IScoredGameRoomDeletionProgressModel(IScoredGameRoom gameRoom) {
-    super("Deleting iScored Game Room");
+    super(Messages.get("dialog.deleting_iscored_game_room"));
     this.gameRooms = new ArrayList<>(Arrays.asList(gameRoom));
     this.iterator = this.gameRooms.iterator();
   }
@@ -52,7 +53,7 @@ public class IScoredGameRoomDeletionProgressModel extends ProgressModel<IScoredG
 
   @Override
   public String nextToString(IScoredGameRoom item) {
-    return "Deleting \"" + item.getUrl() + "\"";
+    return Messages.get("dialog.deleting_quoted", item.getUrl());
   }
 
   @Override

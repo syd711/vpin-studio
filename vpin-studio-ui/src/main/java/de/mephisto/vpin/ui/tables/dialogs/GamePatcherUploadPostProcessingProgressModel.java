@@ -54,7 +54,7 @@ public class GamePatcherUploadPostProcessingProgressModel extends ProgressModel<
 
   @Override
   public String nextToString(UploadDescriptor descriptor) {
-    return "Applying \"" + uploadDescriptor.getOriginalUploadFileName() + "\", please wait...";
+    return Messages.get("dialog.applying_please_wait", uploadDescriptor.getOriginalUploadFileName());
   }
 
   @Override

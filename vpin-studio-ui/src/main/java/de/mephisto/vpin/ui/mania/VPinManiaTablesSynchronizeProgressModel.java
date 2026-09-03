@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -19,7 +20,7 @@ public class VPinManiaTablesSynchronizeProgressModel extends ProgressModel<Strin
   private List<String> list;
 
   public VPinManiaTablesSynchronizeProgressModel() {
-    super("VPin Mania Synchronization");
+    super(Messages.get("dialog.vpin_mania_synchronization"));
     this.list = Arrays.asList("");
     this.iterator = this.list.iterator();
   }
@@ -41,7 +42,7 @@ public class VPinManiaTablesSynchronizeProgressModel extends ProgressModel<Strin
 
   @Override
   public String nextToString(String t) {
-    return "Synchronizing Table List";
+    return Messages.get("dialog.synchronizing_table_list");
   }
 
   @Override

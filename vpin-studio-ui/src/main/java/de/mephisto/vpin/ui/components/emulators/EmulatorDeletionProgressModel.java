@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components.emulators;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,7 +22,7 @@ public class EmulatorDeletionProgressModel extends ProgressModel<GameEmulatorRep
   private final Iterator<GameEmulatorRepresentation> iterator;
 
   public EmulatorDeletionProgressModel(GameEmulatorRepresentation emulator, EmulatorsController emulatorsController) {
-    super("Deletion of \"" + emulator.getName()+  "\"");
+    super(Messages.get("dialog.deletion_of_quoted", emulator.getName()));
     this.emulators = Arrays.asList(emulator);
     this.emulatorsController = emulatorsController;
     this.iterator = emulators.iterator();
@@ -44,7 +45,7 @@ public class EmulatorDeletionProgressModel extends ProgressModel<GameEmulatorRep
 
   @Override
   public String nextToString(GameEmulatorRepresentation c) {
-    return "Deleting emulator and linked game entries";
+    return Messages.get("dialog.deleting_emulator_and_linked");
   }
 
   @Override

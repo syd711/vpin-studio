@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -18,7 +19,7 @@ public class NvRamDownloadProgressModel extends ProgressModel<String> {
 
   public NvRamDownloadProgressModel(String title) {
     super(title);
-    List<String> list = Arrays.asList("Download NV RAM Files");
+    List<String> list = Arrays.asList(Messages.get("dialog.download_nv_ram_files"));
     this.fileIterator = list.iterator();
   }
 

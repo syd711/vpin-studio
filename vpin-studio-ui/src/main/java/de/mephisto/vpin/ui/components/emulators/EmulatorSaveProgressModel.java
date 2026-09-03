@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components.emulators;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,7 +22,7 @@ public class EmulatorSaveProgressModel extends ProgressModel<GameEmulatorReprese
   private final Iterator<GameEmulatorRepresentation> iterator;
 
   public EmulatorSaveProgressModel(GameEmulatorRepresentation emulator, EmulatorsController emulatorsController) {
-    super("Saving \"" + emulator.getName()+  "\"");
+    super(Messages.get("dialog.saving", emulator.getName()));
     this.emulators = Arrays.asList(emulator);
     this.emulatorsController = emulatorsController;
     this.iterator = emulators.iterator();
@@ -44,7 +45,7 @@ public class EmulatorSaveProgressModel extends ProgressModel<GameEmulatorReprese
 
   @Override
   public String nextToString(GameEmulatorRepresentation c) {
-    return "Saving emulator and validating game list";
+    return Messages.get("dialog.saving_emulator_and_validating");
   }
 
   @Override

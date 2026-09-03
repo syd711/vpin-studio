@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.vpxz.VPXZServiceClient;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
@@ -44,7 +45,7 @@ public class VPXZUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File file) {
-    return "Uploading " + file.getName();
+    return Messages.get("dialog.uploading_named", file.getName());
   }
 
   @Override

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backups;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -22,7 +23,7 @@ public class BackupDeleteProgressModel extends ProgressModel<BackupDescriptorRep
   private final List<BackupDescriptorRepresentation> backups;
 
   public BackupDeleteProgressModel(List<BackupDescriptorRepresentation> backups) {
-    super("Backup Deletion");
+    super(Messages.get("dialog.backup_deletion"));
     this.iterator = backups.iterator();
     this.backups = backups;
   }
@@ -54,7 +55,7 @@ public class BackupDeleteProgressModel extends ProgressModel<BackupDescriptorRep
 
   @Override
   public String nextToString(BackupDescriptorRepresentation f) {
-    return "Deleting " + f.getFilename();
+    return Messages.get("dialog.deleting_named", f.getFilename());
   }
 
   @Override

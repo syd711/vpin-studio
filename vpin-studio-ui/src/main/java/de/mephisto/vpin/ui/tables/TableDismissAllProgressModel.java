@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
@@ -23,7 +24,7 @@ public class TableDismissAllProgressModel extends ProgressModel<GameRepresentati
   private final Iterator<GameRepresentation> gameIterator;
 
   public TableDismissAllProgressModel(List<GameRepresentation> games) {
-    super("Dismissing Table Validation Errors");
+    super(Messages.get("dialog.dismissing_table_validation_errors"));
     this.games = games;
     this.gameIterator = games.iterator();
   }

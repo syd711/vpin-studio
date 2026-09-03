@@ -28,7 +28,7 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
   private final boolean addTags;
 
   public BulkTaggingProgressModel(List<GameRepresentation> games, List<String> tags, boolean addTags) {
-    super("Tagging Tables");
+    super(Messages.get("dialog.tagging_tables"));
     this.games = games;
     this.gameIterator = games.iterator();
     this.tags = tags;
@@ -62,7 +62,7 @@ public class BulkTaggingProgressModel extends ProgressModel<GameRepresentation> 
 
   @Override
   public String nextToString(GameRepresentation game) {
-    return "Tagging \"" + game.getGameDisplayName() + "\"";
+    return Messages.get("dialog.tagging_quoted", game.getGameDisplayName());
   }
 
   @Override

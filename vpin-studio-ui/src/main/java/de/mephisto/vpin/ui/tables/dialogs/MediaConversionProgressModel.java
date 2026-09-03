@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
@@ -56,7 +57,7 @@ public class MediaConversionProgressModel extends ProgressModel<FrontendMediaIte
 
   @Override
   public String nextToString(FrontendMediaItemRepresentation item) {
-    return "Converting video \"" + item.getName() + "\"";
+    return Messages.get("dialog.converting_video", item.getName());
   }
 
   @Override

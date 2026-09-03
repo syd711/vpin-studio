@@ -31,7 +31,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   private VPinScreen loadingScreenId;
 
   public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, GameRepresentation game, TableAsset tableAsset, boolean append, VPinScreen loadingScreenId) {
-    super("Downloading " + tableAsset.getName());
+    super(Messages.get("dialog.downloading_named", tableAsset.getName()));
     this.stage = stage;
     this.screen = VPinScreen;
     this.game = game;
@@ -41,7 +41,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   }
 
   public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, PlaylistRepresentation playlist, TableAsset tableAsset, boolean append) {
-    super("Downloading " + tableAsset.getName());
+    super(Messages.get("dialog.downloading_named", tableAsset.getName()));
     this.stage = stage;
     this.screen = VPinScreen;
     this.playlist = playlist;
@@ -66,7 +66,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
 
   @Override
   public String nextToString(TableAsset asset) {
-    return "Downloading " + asset;
+    return Messages.get("dialog.downloading_named", asset);
   }
 
   @Override

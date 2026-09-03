@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class AvatarUploadProgressModel extends ProgressModel<File> {
   private final Iterator<File> iterator;
 
   public AvatarUploadProgressModel(File file) {
-    super("Uploading Avatar");
+    super(Messages.get("dialog.uploading_avatar_title"));
     this.iterator = Arrays.asList(file).iterator();
   }
 
@@ -48,7 +49,7 @@ public class AvatarUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File f) {
-    return "Uploading \"" + f.getName() + "\"";
+    return Messages.get("dialog.uploading_quoted", f.getName());
   }
 
   @Override

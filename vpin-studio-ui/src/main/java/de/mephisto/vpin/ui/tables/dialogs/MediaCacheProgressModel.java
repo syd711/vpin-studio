@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 
@@ -15,7 +16,7 @@ public class MediaCacheProgressModel extends ProgressModel<String> {
 
 
   public MediaCacheProgressModel() {
-    super("Rebuilding Search Index");
+    super(Messages.get("dialog.rebuilding_search_index"));
     assetSources = client.getAssetSourcesService().getAssetSources().stream().map(s -> s.getId()).collect(Collectors.toList());
     this.iterator = assetSources.iterator();
   }
@@ -37,7 +38,7 @@ public class MediaCacheProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String v) {
-    return "Invalidating Asset Source \"" + v + "\"";
+    return Messages.get("dialog.invalidating_asset_source", v);
   }
 
   @Override

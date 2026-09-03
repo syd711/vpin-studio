@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
@@ -22,14 +23,14 @@ public class IScoredGameRoomLoadingProgressModel extends ProgressModel<String> {
   private final Iterator<String> iterator;
 
   public IScoredGameRoomLoadingProgressModel(String dashboardUrl, boolean reload) {
-    super("Loading iScored Game Room");
+    super(Messages.get("dialog.loading_iscored_game_room"));
     this.forceReload = reload;
     this.urls = new ArrayList<>(Arrays.asList(dashboardUrl));
     this.iterator = this.urls.iterator();
   }
 
   public IScoredGameRoomLoadingProgressModel(List<IScoredGameRoom> dashboardUrls, boolean reload) {
-    super("Loading iScored Game Rooms");
+    super(Messages.get("dialog.loading_iscored_game_rooms"));
     this.urls = new ArrayList<>(dashboardUrls.stream().map(gr -> gr.getUrl()).collect(Collectors.toList()));
     this.forceReload = reload;
     this.iterator = this.urls.iterator();
@@ -62,7 +63,7 @@ public class IScoredGameRoomLoadingProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String item) {
-    return "Loading \"" + item + "\"";
+    return Messages.get("dialog.loading_named", item);
   }
 
   @Override

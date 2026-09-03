@@ -1,6 +1,7 @@
 
 package de.mephisto.vpin.ui.recorder.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ public class CancelRecordingProgressModel extends ProgressModel<String> {
   private boolean next = true;
 
   public CancelRecordingProgressModel() {
-    super("Cancelling Recording");
+    super(Messages.get("dialog.cancelling_recording"));
   }
 
   @Override
@@ -44,7 +45,7 @@ public class CancelRecordingProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String v) {
-    return "Awaiting process termination...";
+    return Messages.get("dialog.awaiting_process_termination");
   }
 
   @Override

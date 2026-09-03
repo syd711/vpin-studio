@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -20,7 +21,7 @@ public class VpsInstallerProgressModel extends ProgressModel<String> {
   private boolean hasNext = true;
 
   public VpsInstallerProgressModel(String link) {
-    super("Getting files...");
+    super(Messages.get("dialog.getting_files"));
     this.link = link;
   }
 

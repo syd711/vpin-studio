@@ -29,7 +29,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
   private final boolean forceDownload;
 
   public ComponentChecksProgressModel(boolean forceDownload) {
-    super("Fetching Latest Github Releases");
+    super(Messages.get("dialog.fetching_latest_github_releases"));
     this.forceDownload = forceDownload;
     ArrayList<ComponentInstallation> installs = new ArrayList<>();
     for (ComponentType type : ComponentType.getValues()) {
@@ -60,7 +60,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
 
   @Override
   public String nextToString(ComponentInstallation c) {
-    return "Checking \"" + c.getComponent() + "\"";
+    return Messages.get("dialog.checking_quoted", c.getComponent());
   }
 
   @Override

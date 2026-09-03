@@ -25,7 +25,7 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
   private final List<IScoredGame> games;
 
   public IScoredGameRoomGamesSynchronizationProgressModel(IScoredGameRoom gameRoom, List<IScoredGame> games, boolean manualSubscription) {
-    super("iScored Synchronization");
+    super(Messages.get("dialog.iscored_synchronization"));
     this.gameRoom = gameRoom;
     this.games = games;
     this.iterator = games.iterator();
@@ -49,7 +49,7 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
 
   @Override
   public String nextToString(IScoredGame c) {
-    return "Synchronizing \"" + c.getName() + "\"";
+    return Messages.get("dialog.synchronizing_quoted", c.getName());
   }
 
   @Override

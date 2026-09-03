@@ -25,7 +25,7 @@ public class HighscoreBackupDeleteProgressModel extends ProgressModel<HighscoreB
   private final int gameId;
 
   public HighscoreBackupDeleteProgressModel(List<HighscoreBackup> backups, int gameId) {
-    super("Deleting Highscore Backups");
+    super(Messages.get("dialog.deleting_highscore_backups"));
     this.backups = backups;
     this.iterator = backups.iterator();
     this.gameId = gameId;

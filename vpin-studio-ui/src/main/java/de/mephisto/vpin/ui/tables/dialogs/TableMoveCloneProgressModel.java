@@ -29,7 +29,7 @@ public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentatio
   private final SubfolderNaming subfolderNaming;
 
   public TableMoveCloneProgressModel(List<GameRepresentation> games, GameEmulatorRepresentation targetEmulator, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) {
-    super(move ? "Moving Table" : "Cloning Table");
+    super(move ? Messages.get("dialog.moving_table") : Messages.get("dialog.cloning_table_title"));
     this.games = games;
     this.gameIterator = games.iterator();
     this.targetEmulator = targetEmulator;
@@ -65,7 +65,8 @@ public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentatio
 
   @Override
   public String nextToString(GameRepresentation game) {
-    return (move ? "Moving \"" : "Cloning \"") + game.getGameDisplayName() + "\" to \"" + targetEmulator.getName() + "\"";
+    return move ? Messages.get("dialog.moving_to", game.getGameDisplayName(), targetEmulator.getName())
+        : Messages.get("dialog.cloning_to", game.getGameDisplayName(), targetEmulator.getName());
   }
 
   @Override

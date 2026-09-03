@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -20,7 +21,7 @@ public class PlaylistLoadingProgressModel extends ProgressModel<PlaylistGame> {
   private int count = 0;
 
   public PlaylistLoadingProgressModel(PlaylistRepresentation playlist) {
-    super("Loading Games for \"" + playlist.getName() + "\"");
+    super(Messages.get("dialog.loading_games_for", playlist.getName()));
     this.games = playlist.getGames();
     this.gameIterator = games.iterator();
   }

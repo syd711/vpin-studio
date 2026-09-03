@@ -9,6 +9,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 
@@ -54,9 +55,9 @@ public class BackglassManagerDmdUploadProgressModel extends ProgressModel<File> 
 
   @Override
   public String nextToString(File f) {
-    return f != null? 
-      "Setting DMD image \"" + f.getName() + "\" in backglass" : 
-      "Removing DMD image from backglass";
+    return f != null?
+      Messages.get("dialog.setting_dmd_image_in_backglass", f.getName()) :
+      Messages.get("dialog.removing_dmd_image_from_backglass");
   }
 
   @Override

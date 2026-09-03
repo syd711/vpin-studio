@@ -104,7 +104,7 @@ public class JobsContainerController implements Initializable {
 
       if (!jobDescriptor.isCancelable()) {
         stopBtn.setDisable(true);
-        stopBtn.setTooltip(new Tooltip("This job can not be canceled."));
+        stopBtn.setTooltip(new Tooltip(Messages.get("dialog.job_cannot_be_canceled")));
       }
 
       progressBar.setVisible(!StringUtils.isEmpty(jobDescriptor.getStatus()));

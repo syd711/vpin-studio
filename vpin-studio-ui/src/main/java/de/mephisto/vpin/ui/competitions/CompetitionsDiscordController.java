@@ -171,7 +171,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize") + competitionRepresentations.size() + Messages.get("dialog.competitions"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
     if (result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
+      ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel(Messages.get("dialog.synchronizing_competition"), competitionRepresentations));
       this.onReload();
     }
   }
@@ -182,7 +182,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, null);
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", List.of(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel(Messages.get("dialog.creating_competition"), List.of(c)));
         Platform.runLater(() -> {
           Platform.runLater(() -> {
             onReload();
@@ -205,7 +205,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       CompetitionRepresentation c = CompetitionDialogs.openDiscordCompetitionDialog(this.competitions, clone);
       if (c != null) {
         try {
-          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Competition", List.of(c)));
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel(Messages.get("dialog.creating_competition"), List.of(c)));
           Platform.runLater(() -> {
             onReload();
             tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
@@ -233,7 +233,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
     CompetitionRepresentation c = CompetitionDialogs.openDiscordJoinCompetitionDialog();
     if (c != null) {
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", List.of(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel(Messages.get("dialog.joining_competition"), List.of(c)));
         onReload();
         tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
       }
@@ -280,15 +280,15 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
       String help = null;
       String help2 = null;
-      String remainingDayMsg = selection.remainingDays() == 1 ? "The competition is active for another day." :
-          "The competition is still active for another " + selection.remainingDays() + " days.";
+      String remainingDayMsg = selection.remainingDays() == 1 ? Messages.get("dialog.competition_active_for_one_day") :
+          Messages.get("dialog.delete_competition_hint_active", selection.remainingDays());
 
       if (isOwner && selection.isActive()) {
         help = remainingDayMsg;
-        help2 = "This will cancel the competition, no winner will be announced.";
+        help2 = Messages.get("dialog.delete_competition_hint_cancel");
       }
       else if (!isOwner && selection.isActive()) {
-        help = "You are a member of this competition. The competition information will be removed from your VPin.";
+        help = Messages.get("dialog.competition_member_removal_hint");
         help2 = remainingDayMsg;
       }
 
@@ -309,8 +309,8 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   private void onFinish() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null && selection.isActive()) {
-      String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
-      String helpText2 = "Finishing the competition will set the current leader as winner.";
+      String helpText1 = Messages.get("dialog.finish_competition_hint_active", selection.remainingDays());
+      String helpText2 = Messages.get("dialog.finish_competition_hint_winner");
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.finish_competition") + selection.getName() + "'?", helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -490,7 +490,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       CompetitionRepresentation value = cellData.getValue();
       List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(value.getDiscordServerId());
       Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == value.getDiscordChannelId()).findFirst();
-      String status = "- Not Found -";
+      String status = Messages.get("competitions.competitions_discord.not_found");
       if (first.isPresent()) {
         status = first.get().getName();
       }
@@ -523,15 +523,15 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
     columnStatus.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      String status = "FINISHED";
+      String status = Messages.get("dialog.status_finished");
       if (value.getValidationState().getCode() > 0) {
-        status = "INVALID";
+        status = Messages.get("dialog.status_invalid");
       }
       else if (value.isActive()) {
-        status = "ACTIVE";
+        status = Messages.get("dialog.status_active");
       }
       else if (value.isPlanned()) {
-        status = "PLANNED";
+        status = Messages.get("dialog.status_planned");
       }
 
       Label label = new Label(status);

@@ -41,13 +41,13 @@ public class VpsTableColumn extends HBox {
         FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(disabled ? WidgetFactory.DISABLED_COLOR : null);
         checkboxIcon.setIconSize(iconSize);
         label.setGraphic(checkboxIcon);
-        label.setTooltip(new Tooltip("VPS Table:\n" + vpsTable.getDisplayName()));
+        label.setTooltip(new Tooltip(Messages.get("dialog.vps_table_colon", vpsTable.getDisplayName())));
       }
       else {
         label.setText(" - ");
         label.setPrefWidth(WidgetFactory.DEFAULT_ICON_SIZE);
         label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
-        label.setTooltip(new Tooltip("No VPS table mapped."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.no_vps_table_mapped")));
       }
       this.getChildren().add(label);
 
@@ -60,13 +60,13 @@ public class VpsTableColumn extends HBox {
         FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(disabled ? WidgetFactory.DISABLED_COLOR : null);
         checkboxIcon.setIconSize(iconSize);
         label.setGraphic(checkboxIcon);
-        label.setTooltip(new Tooltip("VPS Table Version:\n" + vpsTableVersion.toString()));
+        label.setTooltip(new Tooltip(Messages.get("dialog.vps_table_version_colon", vpsTableVersion.toString())));
       }
       else {
         label.setText(" - ");
         label.setPrefWidth(WidgetFactory.DEFAULT_ICON_SIZE);
         label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
-        label.setTooltip(new Tooltip("No VPS table version mapped."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.no_vps_table_version_mapped")));
       }
       this.getChildren().add(label);
 
@@ -79,7 +79,7 @@ public class VpsTableColumn extends HBox {
       if (ignoreUpdates) {
         FontIcon ignoredIcon = WidgetFactory.createIcon("mdi2b-bell-cancel-outline");
         label.setGraphic(ignoredIcon);
-        label.setTooltip(new Tooltip("Updates for this table are ignored."));
+        label.setTooltip(new Tooltip(Messages.get("dialog.updates_for_this_table_are_ignored")));
       }
       else {
         applyChanges(label, vpsTable, updates, disabled, vpsSettings);
@@ -118,7 +118,7 @@ public class VpsTableColumn extends HBox {
         }
         label.setGraphic(updateIcon);
 
-        String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the reset action from the context menu.";
+        String tooltip = Messages.get("dialog.table_or_assets_received_updates", builder.toString());
         Tooltip tt = new Tooltip(tooltip);
         tt.setStyle("-fx-font-weight: bold;");
         tt.setWrapText(true);
@@ -129,7 +129,7 @@ public class VpsTableColumn extends HBox {
 
     if (changeCounter == 0) {
       label.setText(" - ");
-      label.setTooltip(new Tooltip("No updates available."));
+      label.setTooltip(new Tooltip(Messages.get("dialog.no_updates_available")));
       label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
     }
   }

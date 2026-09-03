@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -26,7 +27,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
   private UploaderAnalysis uploaderAnalysis;
 
   public UploadDispatchAnalysisZipProgressModel(File file) throws IOException {
-    super("Analyzing Archive");
+    super(Messages.get("dialog.analyzing_archive"));
     ZipFile zipFile = new ZipFile(file);
     size = zipFile.size();
     zipFile.close();
@@ -77,7 +78,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
 
   @Override
   public String nextToString(ZipEntry zipEntry) {
-    return "Analyzing \"" + zipEntry.getName() + "\"";
+    return Messages.get("dialog.analyzing_quoted", zipEntry.getName());
   }
 
   @Override

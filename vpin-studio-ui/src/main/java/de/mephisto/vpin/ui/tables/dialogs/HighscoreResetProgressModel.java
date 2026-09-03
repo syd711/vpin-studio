@@ -26,7 +26,7 @@ public class HighscoreResetProgressModel extends ProgressModel<GameRepresentatio
   private final long value;
 
   public HighscoreResetProgressModel(List<GameRepresentation> games, long value) {
-    super("Resetting Highscores");
+    super(Messages.get("dialog.resetting_highscores"));
     this.games = games;
     this.gameIterator = games.iterator();
     this.value = value;

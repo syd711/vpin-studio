@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -19,7 +20,7 @@ public class AltSoundRefreshProgressModel extends ProgressModel<GameRepresentati
   private final Iterator<GameRepresentation> gameIterator;
 
   public AltSoundRefreshProgressModel(GameRepresentation game) {
-    super("Reloading ALT Sounds");
+    super(Messages.get("dialog.reloading_alt_sounds"));
     this.games = Arrays.asList(game);
     this.gameIterator = games.iterator();
   }
@@ -51,7 +52,7 @@ public class AltSoundRefreshProgressModel extends ProgressModel<GameRepresentati
 
   @Override
   public String nextToString(GameRepresentation game) {
-    return "Invalidating Cache";
+    return Messages.get("dialog.invalidating_cache");
   }
 
   @Override

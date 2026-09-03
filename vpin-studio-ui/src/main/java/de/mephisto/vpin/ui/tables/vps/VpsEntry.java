@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -234,7 +235,7 @@ public class VpsEntry extends HBox {
       if (update != null) {
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         label.setGraphic(updateIcon);
-        label.setTooltip(new Tooltip("Update Available\n\n" + update));
+        label.setTooltip(new Tooltip(Messages.get("dialog.update_available_details", update)));
       }
       children.add(label);
 

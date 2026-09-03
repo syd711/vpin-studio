@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -20,7 +21,7 @@ public class TableImportProgressModel extends ProgressModel<GameListItem> {
   private final GameList gameList;
 
   public TableImportProgressModel(GameList gameList) {
-    super("Importing Tables");
+    super(Messages.get("dialog.importing_tables"));
     this.gameList = gameList;
     iterator = this.gameList.getItems().iterator();
   }
@@ -42,7 +43,7 @@ public class TableImportProgressModel extends ProgressModel<GameListItem> {
 
   @Override
   public String nextToString(GameListItem item) {
-    return "Importing " + item.getName();
+    return Messages.get("dialog.importing_named", item.getName());
   }
 
   @Override

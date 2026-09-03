@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.launcher;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -19,7 +20,7 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   private String lastScannedName = null;
 
   public ServiceInstallationProgressModel(VPinStudioClient client) {
-    super("Initial Table Scan");
+    super(Messages.get("dialog.initial_table_scan"));
     gameIds = client.getGameService().getGameIds();
     gameIdIterator = gameIds.iterator();
   }
@@ -47,7 +48,7 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   @Override
   public String nextToString(Integer id) {
     if (lastScannedName != null) {
-      return "Scanned \"" + lastScannedName + "\"";
+      return Messages.get("dialog.scanned", lastScannedName);
     }
     return null;
   }

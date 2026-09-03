@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -18,7 +19,7 @@ public class TableHighscoresScanProgressModel extends ProgressModel<GameRepresen
   private final Iterator<GameRepresentation> gameIterator;
 
   public TableHighscoresScanProgressModel(List<GameRepresentation> games) {
-    super("Scanning Highscore Updates");
+    super(Messages.get("dialog.scanning_highscore_updates"));
     this.games = games;
     this.gameIterator = games.iterator();
   }

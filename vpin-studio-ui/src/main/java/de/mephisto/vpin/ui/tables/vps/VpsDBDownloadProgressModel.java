@@ -42,7 +42,7 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File file) {
-    return "Download VPS Database";
+    return Messages.get("dialog.download_vps_database");
   }
 
   @Override

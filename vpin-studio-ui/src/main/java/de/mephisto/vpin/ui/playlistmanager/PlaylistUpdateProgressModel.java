@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -58,9 +59,9 @@ public class PlaylistUpdateProgressModel extends ProgressModel<GameRepresentatio
   @Override
   public String nextToString(GameRepresentation game) {
     if (add) {
-      return "Adding \"" + game.getGameDisplayName() + "\"";
+      return Messages.get("dialog.adding_quoted", game.getGameDisplayName());
     }
-    return "Removing \"" + game.getGameDisplayName() + "\"";
+    return Messages.get("dialog.removing_quoted", game.getGameDisplayName());
   }
 
   @Override

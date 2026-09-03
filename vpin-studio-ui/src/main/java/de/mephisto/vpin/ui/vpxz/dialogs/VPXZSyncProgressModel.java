@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class VPXZSyncProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String file) {
-    return "Synchronizing " + file;
+    return Messages.get("dialog.synchronizing_named", file);
   }
 
   @Override

@@ -48,7 +48,7 @@ public class GameMediaUploadPostProcessingProgressModel extends ProgressModel<Up
 
   @Override
   public String nextToString(UploadDescriptor descriptor) {
-    return "Unpacking \"" + uploadDescriptor.getOriginalUploadFileName() + "\", please wait...";
+    return Messages.get("dialog.unpacking_please_wait", uploadDescriptor.getOriginalUploadFileName());
   }
 
   @Override

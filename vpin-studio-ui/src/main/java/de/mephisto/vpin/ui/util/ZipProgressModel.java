@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.util.ZipProgressable;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import javafx.application.Platform;
@@ -54,7 +55,7 @@ public class ZipProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File f) {
-    return "Preparing Upload Bundle";
+    return Messages.get("dialog.preparing_upload_bundle");
   }
 
   @Override

@@ -26,7 +26,7 @@ public class VPSResetProgressModel extends ProgressModel<GameRepresentation> {
   private final Iterator<GameRepresentation> gameIterator;
 
   public VPSResetProgressModel(List<GameRepresentation> games) {
-    super("Resetting VPS Update Indicators");
+    super(Messages.get("dialog.resetting_vps_update_indicators"));
     this.games = games;
     this.gameIterator = games.iterator();
   }

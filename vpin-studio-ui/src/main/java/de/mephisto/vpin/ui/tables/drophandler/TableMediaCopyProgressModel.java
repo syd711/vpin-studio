@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -26,7 +27,7 @@ public class TableMediaCopyProgressModel extends ProgressModel<FrontendMediaItem
   private final List<FrontendMediaItemRepresentation> items = new ArrayList<>();
 
   public TableMediaCopyProgressModel(GameRepresentation game, VPinScreen targetScreen, FrontendMediaItemRepresentation mediaItem) {
-    super("Copying " + mediaItem.getName());
+    super(Messages.get("dialog.copying_named", mediaItem.getName()));
     this.targetScreen = targetScreen;
     this.items.add(mediaItem);
     this.iterator = this.items.iterator();
@@ -35,7 +36,7 @@ public class TableMediaCopyProgressModel extends ProgressModel<FrontendMediaItem
   }
 
   public TableMediaCopyProgressModel(PlaylistRepresentation playlist, VPinScreen targetScreen, FrontendMediaItemRepresentation mediaItem) {
-    super("Copying " + mediaItem.getName());
+    super(Messages.get("dialog.copying_named", mediaItem.getName()));
     this.targetScreen = targetScreen;
     this.items.add(mediaItem);
     this.iterator = this.items.iterator();
@@ -65,7 +66,7 @@ public class TableMediaCopyProgressModel extends ProgressModel<FrontendMediaItem
 
   @Override
   public String nextToString(FrontendMediaItemRepresentation item) {
-    return "Copying \"" + item.getName() + "\" to screen \"" + targetScreen.name() + "\"";
+    return Messages.get("dialog.copying_to_screen", item.getName(), targetScreen.name());
   }
 
   @Override

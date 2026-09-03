@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
@@ -55,7 +56,7 @@ public class TableAssetSearchProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String term) {
-    return "Search assets for '" + term + "'";
+    return Messages.get("dialog.search_assets_for", term);
   }
 
   @Override

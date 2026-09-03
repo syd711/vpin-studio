@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -18,7 +19,7 @@ public class RegenerateMediaCacheProgressModel extends ProgressModel<GameReprese
   private final Iterator<GameRepresentation> gameIterator;
 
   public RegenerateMediaCacheProgressModel(List<GameRepresentation> games) {
-    super("Regenerating Media Cache");
+    super(Messages.get("dialog.regenerating_media_cache"));
     this.games = games;
     this.gameIterator = games.iterator();
   }

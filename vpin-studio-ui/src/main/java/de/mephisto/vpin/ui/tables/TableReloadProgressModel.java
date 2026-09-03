@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -20,7 +21,7 @@ public class TableReloadProgressModel extends ProgressModel<Integer> {
   private String lastScannedName = null;
 
   public TableReloadProgressModel(List<Integer> gameIds) {
-    super("Scanning New Tables");
+    super(Messages.get("dialog.scanning_new_tables"));
     this.gameIdIterator = gameIds.iterator();
     this.gameIds = gameIds;
   }
@@ -48,7 +49,7 @@ public class TableReloadProgressModel extends ProgressModel<Integer> {
   @Override
   public String nextToString(Integer id) {
     if (lastScannedName != null) {
-      return "Scanned \"" + lastScannedName + "\"";
+      return Messages.get("dialog.scanned", lastScannedName);
     }
     return null;
   }

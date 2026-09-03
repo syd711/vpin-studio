@@ -62,11 +62,11 @@ public class VpsTutorialColumn extends HBox {
               String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + vpsTable.getId() + ".mp4";
               boolean check = HttpUtils.check(videoUrl);
               if (check) {
-                btn.setTooltip(new Tooltip("Michael Kongedam tutorial, available on vpin-mania.net"));
+                btn.setTooltip(new Tooltip(Messages.get("dialog.vps_tutorial_kongedam")));
                 icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
               }
               else {
-                btn.setTooltip(new Tooltip("The Kongedam tutorial video has not been uploaded to VPin Mania yet."));
+                btn.setTooltip(new Tooltip(Messages.get("dialog.vps_tutorial_not_uploaded")));
                 icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
               }
               btn.setGraphic(icon);

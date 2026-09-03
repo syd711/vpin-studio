@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -19,7 +20,7 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   private Iterator<GameRepresentation> gameIterator;
 
   public TableDataAutoFillProgressModel(List<GameRepresentation> games) {
-    super("Auto-Fill Table Data");
+    super(Messages.get("dialog.auto_fill_table_data"));
     this.games = games;
     this.gameIterator = games.iterator();
   }

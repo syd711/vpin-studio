@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -19,7 +20,7 @@ public class AltSoundDeleteProgressModel extends ProgressModel<Integer> {
   private final GameRepresentation gameRepresentation;
 
   public AltSoundDeleteProgressModel(GameRepresentation gameRepresentation) {
-    super("ALTSound Deletion");
+    super(Messages.get("dialog.altsound_deletion"));
     this.gameRepresentation = gameRepresentation;
     this.games = List.of(gameRepresentation.getId());
     this.gameIterator = games.iterator();
@@ -52,7 +53,7 @@ public class AltSoundDeleteProgressModel extends ProgressModel<Integer> {
 
   @Override
   public String nextToString(Integer game) {
-    return "Deleting ALTSound Package";
+    return Messages.get("dialog.deleting_altsound_package");
   }
 
   @Override

@@ -28,7 +28,7 @@ public class StudioBackupRestoreProgressModel extends ProgressModel<String> {
   private final Iterator<String> iterator;
 
   public StudioBackupRestoreProgressModel(File file, StudioBackupDescriptor descriptor) {
-    super("Restoring Backup");
+    super(Messages.get("dialog.restoring_backup"));
     this.entries = Arrays.asList("Restoring \"" + file.getName() + "\"");
     this.file = file;
     this.descriptor = descriptor;

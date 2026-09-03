@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components.emulators;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,7 +22,7 @@ public class EmulatorCreateProgressModel extends ProgressModel<GameEmulatorRepre
   private final Iterator<GameEmulatorRepresentation> iterator;
 
   public EmulatorCreateProgressModel(GameEmulatorRepresentation emulator, EmulatorsController emulatorsController) {
-    super("Creating \"" + emulator.getName() + "\"");
+    super(Messages.get("dialog.creating_quoted", emulator.getName()));
     this.emulators = List.of(emulator);
     this.emulatorsController = emulatorsController;
     this.iterator = emulators.iterator();
@@ -45,7 +46,7 @@ public class EmulatorCreateProgressModel extends ProgressModel<GameEmulatorRepre
   @Override
   public String nextToString(GameEmulatorRepresentation c) {
     if (c.getType().isPupGameImportSupported()) {
-      return "Importing Emulator Games";
+      return Messages.get("dialog.importing_emulator_games");
     }
     return "";
   }

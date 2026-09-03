@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -21,7 +22,7 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
   private final Iterator<GameRepresentation> gameIterator;
 
   public TableVpsDataAutoMatchProgressModel(List<GameRepresentation> games, boolean overwrite, boolean simulate) {
-    super("Auto-Matching");
+    super(Messages.get("dialog.auto_matching"));
     this.overwrite = overwrite;
     this.simulate = simulate;
     this.games = games;

@@ -27,10 +27,10 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentInstal
   public ComponentInstallProgressModel(ComponentInstallation component, boolean simulate) {
     super("");
     if(simulate) {
-      super.setTitle("Installation Simulator for " + component.getArtifactName());
+      super.setTitle(Messages.get("dialog.installing_component_simulator", component.getArtifactName()));
     }
     else {
-      super.setTitle("Installing " + component.getArtifactName());
+      super.setTitle(Messages.get("dialog.installing_component", component.getArtifactName()));
     }
 
     this.components = Arrays.asList(component);
@@ -56,9 +56,9 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentInstal
   @Override
   public String nextToString(ComponentInstallation c) {
     if (simulate) {
-      return "Simulating Installation of " + c.getArtifactName();
+      return Messages.get("dialog.simulating_installation_of", c.getArtifactName());
     }
-    return "Updating " + c.getArtifactName();
+    return Messages.get("dialog.updating_named", c.getArtifactName());
   }
 
   @Override

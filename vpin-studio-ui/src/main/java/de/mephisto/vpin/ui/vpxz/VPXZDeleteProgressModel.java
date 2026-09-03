@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
@@ -23,7 +24,7 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
   private final List<VPXZDescriptorRepresentation> vpxzFiles;
 
   public VPXZDeleteProgressModel(List<VPXZDescriptorRepresentation> vpxzFiles) {
-    super(".vpxz Deletion");
+    super(Messages.get("dialog.vpxz_deletion"));
     this.iterator = vpxzFiles.iterator();
     this.vpxzFiles = vpxzFiles;
   }
@@ -55,7 +56,7 @@ public class VPXZDeleteProgressModel extends ProgressModel<VPXZDescriptorReprese
 
   @Override
   public String nextToString(VPXZDescriptorRepresentation f) {
-    return "Deleting " + f.getFilename();
+    return Messages.get("dialog.deleting_named", f.getFilename());
   }
 
   @Override

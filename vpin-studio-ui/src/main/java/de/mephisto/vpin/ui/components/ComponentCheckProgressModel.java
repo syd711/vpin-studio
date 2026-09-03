@@ -43,7 +43,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
 
   @Override
   public String nextToString(ComponentInstallation c) {
-    return "Checking \"" + c.getComponent() + "\"";
+    return Messages.get("dialog.checking_quoted", c.getComponent());
   }
 
   @Override

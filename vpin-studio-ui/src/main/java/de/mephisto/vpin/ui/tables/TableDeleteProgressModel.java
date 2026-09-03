@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -21,7 +22,7 @@ public class TableDeleteProgressModel extends ProgressModel<Integer> {
   private final Iterator<Integer> gameIterator;
 
   public TableDeleteProgressModel(TableOverviewController tableOverviewController, DeleteDescriptor descriptor) {
-    super("Table Deletion");
+    super(Messages.get("dialog.table_deletion"));
     this.tableOverviewController = tableOverviewController;
     this.games = descriptor.getGameIds();
     this.descriptor = descriptor;
@@ -55,7 +56,7 @@ public class TableDeleteProgressModel extends ProgressModel<Integer> {
 
   @Override
   public String nextToString(Integer game) {
-    return "Deleting Table";
+    return Messages.get("dialog.deleting_table_status");
   }
 
   @Override

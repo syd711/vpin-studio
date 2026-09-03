@@ -25,7 +25,7 @@ public class HighscoreBackupProgressModel extends ProgressModel<GameRepresentati
   private final Iterator<GameRepresentation> gameIterator;
 
   public HighscoreBackupProgressModel(List<GameRepresentation> games) {
-    super("Creating Highscore Backup");
+    super(Messages.get("dialog.creating_highscore_backup"));
     this.games = games;
     this.gameIterator = games.iterator();
   }

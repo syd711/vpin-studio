@@ -54,7 +54,7 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
 
   @Override
   public String nextToString(GameRepresentation item) {
-    return "Converting assets for \"" + item.getGameDisplayName() + "\"";
+    return Messages.get("dialog.converting_assets_for", item.getGameDisplayName());
   }
 
   @Override

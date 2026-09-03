@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -32,7 +33,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   private UploaderAnalysis uploaderAnalysis;
 
   public UploadDispatchAnalysisRarProgressModel(File file) throws IOException {
-    super("Analyzing Archive");
+    super(Messages.get("dialog.analyzing_archive"));
 
 
     randomAccessFile = new RandomAccessFile(file, "r");
@@ -82,7 +83,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   @Override
   public String nextToString(ISimpleInArchiveItem entry) {
     try {
-      return "Analyzing \"" + entry.getPath() + "\"";
+      return Messages.get("dialog.analyzing_quoted", entry.getPath());
     }
     catch (SevenZipException e) {
       LOG.error("Failed to read entry: " + e.getMessage(), e);

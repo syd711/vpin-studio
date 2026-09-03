@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.util.ServerMessages;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
@@ -18,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,9 +57,23 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
     conf.setEnabled(true);
     conf.setName("PinballX");
     conf.setId(TableAssetSourceType.PinballX.name());
-    conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
+    conf.setAssetSearchLabel(ServerMessages.get("assets.pinballx.search_label", resolveLocale()));
     conf.setAssetSearchIcon("gameex.png");
     return conf;
+  }
+
+  private Locale resolveLocale() {
+    try {
+      ServletRequestAttributes attrs =
+          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+      if (attrs != null) {
+        String lang = attrs.getRequest().getHeader("Accept-Language");
+        return ServerMessages.parseLocale(lang);
+      }
+    }
+    catch (Exception ignored) {
+    }
+    return Locale.ENGLISH;
   }
 
   @Override

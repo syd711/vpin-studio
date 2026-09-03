@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ abstract public class UploadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File file) {
-    return files != null? file.getName() : "Uploading " + file.getName();
+    return files != null? file.getName() : Messages.get("dialog.uploading_named", file.getName());
   }
 
   @Override

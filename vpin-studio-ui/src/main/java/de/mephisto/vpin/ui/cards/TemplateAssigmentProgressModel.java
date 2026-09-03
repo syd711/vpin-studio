@@ -32,7 +32,7 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
    * BaseTemplate is used when CardTemplate is null, the template use 
    */
   public TemplateAssigmentProgressModel(List<GameRepresentation> games, @Nullable CardTemplate cardTemplate, boolean switchToCustom, CardTemplateType templateType) {
-    super("Applying Template");
+    super(Messages.get("dialog.applying_template"));
     this.games = games;
     this.gameIterator = games.iterator();
     this.cardTemplate = cardTemplate;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -39,7 +40,7 @@ public class VPXZInstallationProgressModel extends ProgressModel<VPXZDescriptorR
 
   @Override
   public String nextToString(VPXZDescriptorRepresentation model) {
-    return "Uploading " + model.getFilename();
+    return Messages.get("dialog.uploading_named", model.getFilename());
   }
 
   @Override
