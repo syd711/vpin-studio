@@ -32,6 +32,9 @@ If any components look broken or have missing translations, please drop a screen
 - **Notifications**
   - Added option to rotate notifications, which is required when they are not shown on the playfield.
   - A server restart is no longer required when the target screen for notifications is changed.
+- **Move/Copy Tables**
+  - Added bulk action support.
+  - Added option to move/copy tables into subfolders. 
 
 ### Bugfixes
 
@@ -43,9 +46,6 @@ If any components look broken or have missing translations, please drop a screen
   - Fixed an issue where the wheel icon had not been generated for some tables.
 - **Java Runtime**
   - Fixed a JDK issue by adding JVM parameters to prevent it from recurring. This fix cannot be applied through an update — only by reinstalling. If you experience regular crashes of the server or client, you can reinstall the Studio over the existing installation to rewrite the affected settings.
-- **Move/Copy Tables**
-  - Added bulk action support.
-  - Added option to move/copy tables into subfolders.
 - **ALT Color**
   - Fixed issue with aliased cROMc-based ALT color files.
 - **Updater**
