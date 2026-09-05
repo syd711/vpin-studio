@@ -14,7 +14,7 @@
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <center>
-      <VBox alignment="BASELINE_LEFT" maxWidth="600.0" BorderPane.alignment="TOP_LEFT">
+      <VBox alignment="TOP_LEFT" maxWidth="600.0" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label fx:id="textLabel" text="%competitions.discord_competition_edit.label" textFill="WHITE">
                <font>
