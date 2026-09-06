@@ -247,7 +247,7 @@
                         </Hyperlink>
                         <VBox>
                            <children>
-                              <CheckBox fx:id="addInputCheckbox" mnemonicParsing="false" text="Show input field for additional message" textFill="WHITE">
+                              <CheckBox fx:id="addInputCheckbox" mnemonicParsing="false" text="%pref.wovp.show_input_field_for_additional_message" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -255,7 +255,7 @@
                                     <Insets />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="When enabled, an additional input field will be that allows to submit an additional message with the screenshot." textFill="WHITE" wrapText="true" />
+                              <Label styleClass="checkbox-description" text="%pref.wovp.when_enabled_an_additional_input_field_will_be" textFill="WHITE" wrapText="true" />
                            </children>
                         </VBox>
                      </children>
