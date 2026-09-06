@@ -4,7 +4,8 @@ import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
-import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
+import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
 import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
@@ -61,10 +62,10 @@ public class CompetitionResource {
     return wovpService.isScoreSubmitEnabled();
   }
 
-  @GetMapping("/weekly/submit/{userId}/{simulate}")
-  public ScoreSubmitResult submitScore(@PathVariable("userId") String userId, @PathVariable("simulate") boolean simulate) {
-    WovpPlayer player = wovpService.getPlayer(userId);
-    return wovpService.submitScore(player, simulate);
+  @PostMapping("/weekly/submit")
+  public ScoreSubmit submitScore(@RequestBody ScoreSubmit scoreSubmit) {
+    WovpPlayer player = wovpService.getPlayer(scoreSubmit.getPlayerId());
+    return wovpService.submitScore(player, scoreSubmit.getMessage(), scoreSubmit.isSimulate());
   }
 
   @GetMapping("/subscriptions")

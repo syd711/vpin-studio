@@ -80,6 +80,9 @@ public class WOVPPreferencesController implements Initializable {
   private CheckBox subscriptionCheckbox;
 
   @FXML
+  private CheckBox addInputCheckbox;
+
+  @FXML
   private CheckBox badgeCheckbox;
 
   @FXML
@@ -156,6 +159,18 @@ public class WOVPPreferencesController implements Initializable {
     subscriptionCheckbox.setSelected(wovpSettings.isEnabled());
     subscriptionCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       wovpSettings.setEnabled(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(wovpSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
+      }
+    });
+
+    addInputCheckbox.setSelected(wovpSettings.isAllowAdditionalInput());
+    addInputCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setAllowAdditionalInput(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
         PreferencesController.markDirty(PreferenceType.competitionSettings);

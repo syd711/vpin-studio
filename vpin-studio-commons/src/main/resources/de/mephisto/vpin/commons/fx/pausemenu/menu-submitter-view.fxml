@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -159,11 +160,20 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Button fx:id="submitBtn" layoutX="362.0" layoutY="10.0" minWidth="400.0" mnemonicParsing="false" styleClass="submit-button" text="%pausemenu.menu_submitter_view.submit_highscore">
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                              </Button>
+                              <HBox alignment="CENTER" spacing="12.0">
+                                 <children>
+                                    <TextField fx:id="messageText" prefWidth="600.0" promptText="Enter additional message here.">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font>
+                                    </TextField>
+                                    <Button fx:id="submitBtn" minWidth="400.0" mnemonicParsing="false" styleClass="submit-button" text="%pausemenu.menu_submitter_view.submit_highscore">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>

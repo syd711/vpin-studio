@@ -26,6 +26,7 @@ public class WOVPSettings extends JsonSettings {
   private boolean taggingEnabled;
   private boolean resetHighscores = true;
   private boolean useScoreSubmitter = true;
+  private boolean allowAdditionalInput = false;
   private List<String> tags = new ArrayList<>();
 
   @JsonIgnore
@@ -77,6 +78,14 @@ public class WOVPSettings extends JsonSettings {
       index++;
     }
     return result;
+  }
+
+  public boolean isAllowAdditionalInput() {
+    return allowAdditionalInput;
+  }
+
+  public void setAllowAdditionalInput(boolean allowAdditionalInput) {
+    this.allowAdditionalInput = allowAdditionalInput;
   }
 
   public boolean isApiKey1Enabled() {

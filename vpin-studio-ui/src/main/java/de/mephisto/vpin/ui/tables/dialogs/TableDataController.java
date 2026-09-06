@@ -1066,7 +1066,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
 
       this.titleLabel.setText(game.getGameDisplayName());
-      databaseIdLabel.setText(Messages.get("tables.table_data.id", game.getId()));
+      databaseIdLabel.setText("(ID: " +game.getId() + ")");
 
       this.initialVpxFileName = game.getGameFileName();
 

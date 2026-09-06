@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.wovp;
 
 import de.mephisto.vpin.connectors.wovp.models.ApiKeyValidationResponse;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
-import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
 import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -26,7 +25,6 @@ import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class WovpServiceTest {
@@ -88,7 +86,7 @@ public class WovpServiceTest {
     wovpSettings.setEnabled(false);
     WovpPlayer player = new WovpPlayer();
 
-    ScoreSubmitResult result = service.submitScore(player, false);
+    ScoreSubmit result = service.submitScore(player, null, false);
 
     assertNotNull(result);
     assertNotNull(result.getErrorMessage());
@@ -101,7 +99,7 @@ public class WovpServiceTest {
     wovpSettings.setUseScoreSubmitter(false);
     WovpPlayer player = new WovpPlayer();
 
-    ScoreSubmitResult result = service.submitScore(player, false);
+    ScoreSubmit result = service.submitScore(player, null, false);
 
     assertNotNull(result);
     assertNotNull(result.getErrorMessage());

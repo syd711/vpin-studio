@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +34,14 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
   }
 
 
-  public ScoreSubmitResult submitScore(WovpPlayer player, boolean simulate) {
-    ScoreSubmitResult result = getRestClient().get(API + "competitions/weekly/submit/" + player.getId() + "/" + simulate, ScoreSubmitResult.class);
+  public ScoreSubmit submitScore(WovpPlayer player, String message, boolean simulate) {
+    ScoreSubmit submit = new ScoreSubmit();
+    submit.setMessage(message);
+    submit.setPlayerId(player.getId());
+    submit.setSimulate(simulate);
+    ScoreSubmit result = getRestClient().post(API + "competitions/weekly/submit", submit, ScoreSubmit.class);
     if (result == null) {
-      result = new ScoreSubmitResult();
+      result = new ScoreSubmit();
       result.setErrorMessage("VPin Studio server is not available.");
     }
     return result;

@@ -4,9 +4,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -31,5 +29,11 @@ public class GameStatusResource {
   @GetMapping("unpaused")
   public GameStatus endPause() {
     return gameStatusService.finishPause();
+  }
+
+  @PostMapping
+  public GameStatus setGameStatus(@RequestBody GameStatus status) {
+    gameStatusService.setActiveStatus(status.getGameId());
+    return gameStatusService.getStatus();
   }
 }

@@ -245,6 +245,19 @@
                               <Insets bottom="12.0" left="-5.0" />
                            </VBox.margin>
                         </Hyperlink>
+                        <VBox>
+                           <children>
+                              <CheckBox fx:id="addInputCheckbox" mnemonicParsing="false" text="Show input field for additional message" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="When enabled, an additional input field will be that allows to submit an additional message with the screenshot." textFill="WHITE" wrapText="true" />
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                   <VBox fx:id="tagPane">

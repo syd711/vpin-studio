@@ -6,10 +6,12 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.wovp.models.WovpPlayer;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import javafx.animation.Transition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -87,6 +90,9 @@ public class WovpMenuItemController implements Initializable {
   private Pane scoresLoader;
 
   @FXML
+  private TextField messageText;
+
+  @FXML
   private ImageView screenshotView;
 
   private static List<WovpPlayer> players;
@@ -125,6 +131,15 @@ public class WovpMenuItemController implements Initializable {
     }
 
     loadingIndicator.setVisible(true);
+
+
+    messageText.managedProperty().bindBidirectional(messageText.visibleProperty());
+    JFXFuture.supplyAsync(() -> {
+      return client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+    }).thenAcceptLater((settings) -> {
+      messageText.setVisible(settings.isAllowAdditionalInput());
+    });
+
 
     JFXFuture.supplyAsync(() -> {
       if (players == null) {
@@ -231,8 +246,8 @@ public class WovpMenuItemController implements Initializable {
     playerBtn.setText((playerSelectionIndex + 1) + ". Player: " + wovpPlayer.getName());
 
     JFXFuture.supplyAsync(() -> {
-      ScoreSubmitResult scoreSubmitResult = client.getCompetitionService().submitScore(wovpPlayer, true);
-      return scoreSubmitResult;
+      ScoreSubmit scoreSubmit = client.getCompetitionService().submitScore(wovpPlayer, messageText.getText(), true);
+      return scoreSubmit;
     }).thenAcceptLater(result -> {
       loadingIndicator.setVisible(false);
       InputStream screenshot = client.getScreenshot();
@@ -315,7 +330,7 @@ public class WovpMenuItemController implements Initializable {
     submitBtn.setText(Messages.get("pausemenu.wovp_menu_item.sending_highscores"));
     submitBtn.setDisable(true);
     JFXFuture.supplyAsync(() -> {
-      return client.getCompetitionService().submitScore(wovpPlayer, false);
+      return client.getCompetitionService().submitScore(wovpPlayer, messageText.getText(), false);
     }).thenAcceptLater((result) -> {
       blink.stop();
       submitBtn.setVisible(true);

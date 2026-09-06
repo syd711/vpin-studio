@@ -96,8 +96,9 @@ public class PauseMenu extends Application {
     GameStatus gameStatus = null;
 
     gameStatus = new GameStatus();
-    gameStatus.setGameId(8100);
+    gameStatus.setGameId(5305);
     gameStatus.setStarted(OffsetDateTime.now());
+    client.getGameStatusService().setGameStatus(gameStatus);
 
     INSTANCE.togglePauseMenu(gameStatus, true);
   }

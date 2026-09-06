@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.wovp.ScoreSubmitResult;
+import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
@@ -89,8 +89,8 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     return Wovp.getPlayer(userId);
   }
 
-  public ScoreSubmitResult submitScore(@NonNull WovpPlayer wovpPlayer, boolean simulate) {
-    ScoreSubmitResult result = new ScoreSubmitResult();
+  public ScoreSubmit submitScore(@NonNull WovpPlayer wovpPlayer, @Nullable String message, boolean simulate) {
+    ScoreSubmit result = new ScoreSubmit();
     if (!wovpSettings.isEnabled()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP not enabled");
       result.setErrorMessage("WOVP not enabled");
@@ -239,8 +239,8 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     List<WovpPlayer> players = Wovp.getPlayers();
     if (!players.isEmpty()) {
-      ScoreSubmitResult scoreSubmitResult = submitScore(players.getFirst(), true);
-      return scoreSubmitResult.getErrorMessage() == null;
+      ScoreSubmit scoreSubmit = submitScore(players.getFirst(), null, true);
+      return scoreSubmit.getErrorMessage() == null;
     }
     return false;
   }
