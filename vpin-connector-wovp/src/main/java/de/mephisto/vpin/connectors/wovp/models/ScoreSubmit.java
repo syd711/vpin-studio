@@ -6,6 +6,15 @@ public class ScoreSubmit {
   private long score;
   private ScoreSubmitMetadata metadata = new ScoreSubmitMetadata();
   private int playingPlatform = 0;
+  private String note;
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
+  }
 
   public ScoreSubmitMetadata getMetadata() {
     return metadata;

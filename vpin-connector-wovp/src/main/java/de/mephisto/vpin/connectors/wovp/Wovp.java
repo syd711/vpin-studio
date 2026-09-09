@@ -12,6 +12,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.util.Timeout;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.DeserializationFeature;
@@ -92,7 +93,7 @@ public class Wovp {
     return challenges;
   }
 
-  public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @NonNull ScoreSubmitMetadata scoreSubmitMetadata) throws Exception {
+  public void submitScore(@NonNull File screenshots, @NonNull String challengeId, long score, @Nullable String message, @NonNull ScoreSubmitMetadata scoreSubmitMetadata) throws Exception {
     long start = System.currentTimeMillis();
     UploadResponse uploadResponse = submitPhoto(screenshots);
     if (uploadResponse != null && uploadResponse.getData().getErrors().isEmpty()) {
@@ -100,6 +101,7 @@ public class Wovp {
       ScoreSubmit scoreSubmit = new ScoreSubmit();
       scoreSubmit.setMetadata(scoreSubmitMetadata);
       scoreSubmit.setScore(score);
+      scoreSubmit.setNote(message);
       scoreSubmit.setPlayingPlatform(0);
       scoreSubmit.setChallengeId(challengeId);
       scoreSubmit.setPlayingPlatform(scoreSubmitMetadata.getPlatform());
