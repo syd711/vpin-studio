@@ -163,7 +163,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       }
 
       try {
-        wovp.submitScore(screenshotFile, challenge.get().getId(), 0, getMetadata(game));
+        wovp.submitScore(screenshotFile, challenge.get().getId(), 0, message, getMetadata(game));
         LOG.info("[WOVP simulate={}] WOVP score submit finished. Submitted a score for {}", simulate, cachedPlayer.getName());
         SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP score submit finished. Submitted a score for " + cachedPlayer.getName());
       }

@@ -28,7 +28,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
                            RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
     super(recorderService, settings, recordingDataSummary, recordingScreens);
     this.notificationSettings = notificationSettings;
-    this.showNotifications = !recorderService.isEmulatorInFullscreenMode();
+    this.showNotifications = true; //TODO maybe because of  => !recorderService.isEmulatorInFullscreenMode();
   }
 
   @Override
