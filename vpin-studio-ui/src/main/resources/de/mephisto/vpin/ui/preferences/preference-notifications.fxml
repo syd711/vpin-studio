@@ -203,6 +203,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
+                  <Label layoutX="34.0" layoutY="149.0" styleClass="preference-description" text="%pref.notifications.fullscreen_recording_hint" textFill="WHITE" wrapText="true" />
                   <CheckBox fx:id="recordingStartCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.recording_start" />
                   <Label styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_when_the_in_game_recording" textFill="WHITE" wrapText="true" />
                   <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="%pref.notifications.the_actual_start_of_the_recording_will_be" textFill="WHITE" wrapText="true" />
