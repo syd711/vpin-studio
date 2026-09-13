@@ -2,6 +2,8 @@
 
 ### Changes
 
+- Added WOVP text input
+- Enabled recording notifications again
 
 
 ---
