@@ -2,9 +2,13 @@ package de.mephisto.vpin.restclient.util;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
+import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -19,7 +23,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RarUtil {
 
@@ -128,6 +134,11 @@ public class RarUtil {
       int total = inArchive.getNumberOfItems();
       int index = 0;
 
+      //first a cheap metadata-only pass to work out which entries to extract and where they go,
+      //so cancellation and progress reporting stay fast even on huge archives
+      Map<Integer, File> targetsByIndex = new LinkedHashMap<>();
+      boolean cancelled = false;
+
       for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
         if (item.isFolder()) {
           //ignore
@@ -136,6 +147,7 @@ public class RarUtil {
           if (listener != null) {
             boolean continueOp = listener.unzipping(item.getPath(), index, total);
             if (!continueOp) {
+              cancelled = true;
               break;
             }
           }
@@ -174,15 +186,17 @@ public class RarUtil {
               }
             }
 
-            RandomAccessFile rafOut = new RandomAccessFile(target, "rw");
-            RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
-            ExtractOperationResult result = item.extractSlow(fos);
-
-            LOG.info("Unrar \"{}\": {}", target.getAbsolutePath(), result.name());
-            fos.close();
-            rafOut.close();
+            targetsByIndex.put(item.getItemIndex(), target);
           }
         }
+      }
+
+      //extract every matching entry in a single sequential pass through the archive stream instead of calling
+      //extractSlow() once per file: for a solid archive, extractSlow() re-decodes the preceding data from the
+      //start of the solid block on every call, which turns extraction of many files into a near-quadratic operation
+      if (!cancelled && !targetsByIndex.isEmpty()) {
+        int[] indices = targetsByIndex.keySet().stream().mapToInt(Integer::intValue).sorted().toArray();
+        inArchive.extract(indices, false, new BulkExtractCallback(targetsByIndex));
       }
 
       inArchive.close();
@@ -197,6 +211,71 @@ public class RarUtil {
       LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
     return success;
+  }
+
+  /**
+   * Delivers the output for a batch {@link IInArchive#extract} call to the target file resolved for
+   * each requested item index. Used instead of {@link ISimpleInArchiveItem#extractSlow} so that extracting
+   * many entries out of the same (possibly solid) archive only decodes the underlying stream once.
+   */
+  private static class BulkExtractCallback implements IArchiveExtractCallback {
+    private final Map<Integer, File> targetsByIndex;
+    private File currentTarget;
+    private RandomAccessFile currentRandomAccessFile;
+    private RandomAccessFileOutStream currentOutStream;
+
+    private BulkExtractCallback(Map<Integer, File> targetsByIndex) {
+      this.targetsByIndex = targetsByIndex;
+    }
+
+    @Override
+    public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) throws SevenZipException {
+      currentTarget = targetsByIndex.get(index);
+      if (currentTarget == null || extractAskMode != ExtractAskMode.EXTRACT) {
+        return null;
+      }
+      try {
+        currentRandomAccessFile = new RandomAccessFile(currentTarget, "rw");
+        currentOutStream = new RandomAccessFileOutStream(currentRandomAccessFile);
+        return currentOutStream;
+      }
+      catch (IOException e) {
+        throw new SevenZipException("Failed to open unrar target file " + currentTarget.getAbsolutePath(), e);
+      }
+    }
+
+    @Override
+    public void prepareOperation(ExtractAskMode extractAskMode) {
+      //no-op
+    }
+
+    @Override
+    public void setOperationResult(ExtractOperationResult extractOperationResult) throws SevenZipException {
+      if (currentOutStream == null) {
+        return;
+      }
+      try {
+        currentOutStream.close();
+        currentRandomAccessFile.close();
+      }
+      catch (IOException e) {
+        throw new SevenZipException("Failed to close unrar target file " + currentTarget.getAbsolutePath(), e);
+      }
+      LOG.info("Unrar \"{}\": {}", currentTarget.getAbsolutePath(), extractOperationResult.name());
+      currentOutStream = null;
+      currentRandomAccessFile = null;
+      currentTarget = null;
+    }
+
+    @Override
+    public void setTotal(long total) {
+      //no-op, only per-file progress is reported via UnzipChangeListener during the metadata pass
+    }
+
+    @Override
+    public void setCompleted(long complete) {
+      //no-op
+    }
   }
 
   public static byte[] readFile(File file, String name) {

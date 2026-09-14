@@ -31,6 +31,8 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   private Iterator<ISimpleInArchiveItem> iterator;
 
   private UploaderAnalysis uploaderAnalysis;
+  private boolean readmeCounted = false;
+  private boolean readmeStepDone = false;
 
   public UploadDispatchAnalysisRarProgressModel(File file) throws IOException {
     super(Messages.get("dialog.analyzing_archive"));
@@ -72,16 +74,28 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
 
   @Override
   public boolean hasNext() {
-    return iterator.hasNext();
+    if (iterator.hasNext()) {
+      return true;
+    }
+    //once all archive entries have been scanned, run the (potentially slow) readme extraction
+    //as one final, clearly labeled step instead of blocking the scan on whichever entry it happens to be
+    return uploaderAnalysis.hasPendingReadme() && !readmeStepDone;
   }
 
   @Override
   public ISimpleInArchiveItem getNext() {
-    return iterator.next();
+    if (iterator.hasNext()) {
+      return iterator.next();
+    }
+    //sentinel value for the deferred readme extraction step, see processNext()/nextToString()
+    return null;
   }
 
   @Override
   public String nextToString(ISimpleInArchiveItem entry) {
+    if (entry == null) {
+      return Messages.get("dialog.analyzing_quoted", "readme file");
+    }
     try {
       return Messages.get("dialog.analyzing_quoted", entry.getPath());
     }
@@ -94,7 +108,18 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   @Override
   public void processNext(ProgressResultModel progressResultModel, ISimpleInArchiveItem next) {
     try {
+      if (next == null) {
+        uploaderAnalysis.extractPendingReadme();
+        readmeStepDone = true;
+        return;
+      }
+
       uploaderAnalysis.analyze(inArchive, next, next.getPath(), next.isFolder(), next.getSize());
+      if (!readmeCounted && uploaderAnalysis.hasPendingReadme()) {
+        //account for the extra readme extraction step added at the end of the scan
+        readmeCounted = true;
+        size++;
+      }
     }
     catch (Exception e) {
       LOG.error("Error reading zip file: " + e.getMessage(), e);

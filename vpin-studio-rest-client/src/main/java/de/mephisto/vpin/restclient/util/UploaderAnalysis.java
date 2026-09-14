@@ -51,6 +51,8 @@ public class UploaderAnalysis {
   private List<String> excludedFolders = new ArrayList<>();
 
   private String readme;
+  private ISimpleInArchiveItem pendingReadmeItem;
+  private String pendingReadmeName;
   private boolean supportPupPacks;
   private String pupFolder;
 
@@ -360,8 +362,23 @@ public class UploaderAnalysis {
   public void analyze(IInArchive in, ISimpleInArchiveItem archiveEntry, String name, boolean directory, long size) {
     String formattedName = name.replaceAll("\\\\", "/");
     boolean checkReadme = analyze(formattedName, directory, size);
-    if (checkReadme) {
-      readReadme(archiveEntry, formattedName);
+    if (checkReadme && isReadMe(formattedName) && pendingReadmeItem == null) {
+      //solid 7z/rar archives can require decompressing a large part of the archive to reach a single
+      //entry, so the readme is not extracted here but deferred until after the full item scan has finished
+      pendingReadmeItem = archiveEntry;
+      pendingReadmeName = formattedName;
+    }
+  }
+
+  public boolean hasPendingReadme() {
+    return pendingReadmeItem != null;
+  }
+
+  public void extractPendingReadme() {
+    if (pendingReadmeItem != null) {
+      readReadme(pendingReadmeItem, pendingReadmeName);
+      pendingReadmeItem = null;
+      pendingReadmeName = null;
     }
   }
 
