@@ -23,7 +23,7 @@
          <center>
             <VBox fx:id="dataPanel" prefWidth="250.0">
                <children>
-                  <Label fx:id="filenameLabel" text="%components.doftester.toy_container.file_name" textFill="WHITE">
+                  <Label fx:id="filenameLabel" maxWidth="400.0" text="%components.doftester.toy_container.file_name" textFill="WHITE">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -53,7 +53,7 @@
    <right>
       <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="installBtn" minWidth="100.0" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install">
+            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install">
                <tooltip>
                   <Tooltip prefWidth="300.0" text="%components.doftester.toy_container.updates_can_only_be_installed_when_vpin_studio" wrapText="true" />
                </tooltip>
