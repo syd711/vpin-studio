@@ -8,7 +8,16 @@ public class IScoredGameRoom {
   private boolean synchronize = true;
   private boolean scoreReset = true;
   private boolean ignoreHidden = true;
+  private String tags;
   private String badge;
+
+  public String getTags() {
+    return tags;
+  }
+
+  public void setTags(String tags) {
+    this.tags = tags;
+  }
 
   public boolean isIgnoreHidden() {
     return ignoreHidden;

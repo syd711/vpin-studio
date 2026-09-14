@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -61,6 +63,11 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
   public void processNext(ProgressResultModel progressResultModel, IScoredGame next) {
     try {
       client.getCompetitionService().synchronizeIScoredGameRoomGame(gameRoom, next, this.games.indexOf(next) == 0, manualSubscription);
+      List<GameRepresentation> matches = client.getGameService().getGamesByVpsTable(next.getVpsTableId(), next.getVpsTableVersionId());
+      for (GameRepresentation match : matches) {
+        client.getGameService().reload(match.getId());
+        EventManager.getInstance().notifyTableChange(match.getId(), null);
+      }
     }
     catch (Exception e) {
       LOG.error(Messages.get("dialog.failed_to_sync_competitions_data") + e.getMessage(), e);

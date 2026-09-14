@@ -244,7 +244,7 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </HBox.margin>
                         </VBox>
-                        <VBox fx:id="mainColumn">
+                        <VBox fx:id="mainColumn" minHeight="200.0">
                            <children>
                               <Label layoutX="10.0" layoutY="182.0" text="%competitions.discord_competition_edit.your_vpin_settings" textFill="WHITE" wrapText="true">
                                  <font>
@@ -400,6 +400,21 @@
                                     <Insets top="6.0" />
                                  </VBox.margin>
                               </GridPane>
+                              <Label styleClass="default-title" text="%tables.autofill_settings.tags" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <VBox minHeight="210.0" prefWidth="400.0">
+                                 <children>
+                                    <Label styleClass="preference-description" text="%pref.iscored_gameroom.game_room_tables_that_match_with_your_tables_will_be_automat" wrapText="true" />
+                                    <VBox fx:id="tags" spacing="6.0">
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                 </children>
+                              </VBox>
                            </children>
                            <HBox.margin>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

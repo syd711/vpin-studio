@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
@@ -10,10 +11,12 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController;
 import de.mephisto.vpin.ui.preferences.PreferencesSavingModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.tags.TagField;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,6 +26,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -98,8 +103,12 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   @FXML
   private CheckBox tournamentColumnCheckbox;
 
+  @FXML
+  private Pane tags;
+
   private IScoredSettings iScoredSettings;
   private IScoredGameRoom gameRoom;
+  private TagField tagField;
 
   private boolean result = false;
 
@@ -232,6 +241,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     gameRoom.setSynchronize(synchronizationCheckbox.isSelected());
     gameRoom.setIgnoreHidden(ignoreHiddenCheckbox.isSelected());
     gameRoom.setBadge(badgeCombo.getValue());
+    gameRoom.setTags(TaggingUtil.join(tagField.getTags()));
 
     List<IScoredGameRoom> collect = new ArrayList<>(iScoredSettings.getGameRooms().stream().filter(s -> !s.getUuid().equals(gameRoom.getUuid())).collect(Collectors.toList()));
     collect.add(gameRoom);
@@ -261,6 +271,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     }
     else {
       this.urlField.setText(gr.getUrl());
+      this.tagField.setTags(TaggingUtil.getTags(gr.getTags()));
     }
 
     this.resetCheckbox.setSelected(gameRoom.isScoreReset());
@@ -294,6 +305,15 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
         saveBtn.setDisable(true);
         setDisabled(true);
       }
+    });
+
+    tagField = new TagField(Collections.emptyList());
+    tags.getChildren().add(tagField);
+
+    JFXFuture.supplyAsync(() -> {
+      return client.getTaggingService().getTags();
+    }).thenAcceptLater((initialTags) -> {
+      tagField.setSuggestions(initialTags);
     });
   }
 

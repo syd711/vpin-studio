@@ -6,10 +6,13 @@ import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
@@ -45,6 +48,9 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
 
   @Autowired
   private FrontendStatusService frontendStatusService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -133,13 +139,15 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     long start = System.currentTimeMillis();
     List<Competition> subs = new ArrayList<>(iScoredSubscriptions);
     for (Competition iScoredSubscription : subs) {
+      //the game room config (and therefore its tags) is kept independently of the global enabled flag
+      Optional<IScoredGameRoom> anyGameRoomMatch = iScoredSettings.getGameRooms().stream().filter(g -> g.getUrl().equals(iScoredSubscription.getUrl())).findAny();
+
       if (!iScoredSettings.isEnabled()) {
+        anyGameRoomMatch.ifPresent(iScoredGameRoom -> removeTags(iScoredGameRoom, iScoredSubscription, knownGames));
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because iScored is not enabled.", iScoredSubscription);
         continue;
       }
-
-      Optional<IScoredGameRoom> anyGameRoomMatch = iScoredSettings.getGameRooms().stream().filter(g -> g.getUrl().equals(iScoredSubscription.getUrl())).findAny();
 
       //delete if the game room does not exists anymore
       if (anyGameRoomMatch.isEmpty()) {
@@ -147,6 +155,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         LOG.info("Deleted competition {} because no matching iScored Game Room found for URL {}", iScoredSubscription, iScoredSubscription.getUrl());
         continue;
       }
+      IScoredGameRoom iScoredGameRoom = anyGameRoomMatch.get();
 
       //skip validation if the game room could not be loaded (transient network failure, API error)
       GameRoom gameRoom = IScored.getGameRoom(iScoredSubscription.getUrl(), false);
@@ -159,19 +168,21 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
 
       //no matching game found in the game room, so it has been removed
       if (iScoredGame == null) {
+        removeTags(iScoredGameRoom, iScoredSubscription, knownGames);
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because no matching Game Room game found for VPS table/version: {}/{}", iScoredSubscription, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
         continue;
       }
 
-      IScoredGameRoom iScoredGameRoom = anyGameRoomMatch.get();
       if (iScoredGame.isGameHidden() && iScoredGameRoom.isIgnoreHidden()) {
+        removeTags(iScoredGameRoom, iScoredSubscription, knownGames);
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because the matching game is hidden", iScoredSubscription);
         continue;
       }
 
       if (iScoredGame.isAllVersionsEnabled() && !StringUtils.isEmpty(iScoredSubscription.getVpsTableVersionId())) {
+        removeTags(iScoredGameRoom, iScoredSubscription, knownGames);
         deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because the it has a VPS version id, but all versions are enabled.", iScoredSubscription);
         continue;
@@ -193,6 +204,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       }
       else {
         synchronizeBadge(iScoredGameRoom, gameByVpsTable);
+        synchronizeTags(iScoredGameRoom, gameByVpsTable, true);
       }
     }
     LOG.info("Existing competitions sync took {}ms", (System.currentTimeMillis() - start));
@@ -209,9 +221,70 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     }
   }
 
+  /**
+   * Applies or removes the tags configured on the iScored game room to/from the matching local game.
+   */
+  private void synchronizeTags(IScoredGameRoom iScoredGameRoom, Game game, boolean add) {
+    List<String> roomTags = TaggingUtil.getTags(iScoredGameRoom.getTags());
+    if (roomTags.isEmpty()) {
+      return;
+    }
+
+    TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+    List<String> tagList = TaggingUtil.getTags(tableDetails.getTags());
+    boolean dirty = false;
+    for (String tag : roomTags) {
+      if (add) {
+        if (!tagList.contains(tag)) {
+          tagList.add(tag);
+          dirty = true;
+        }
+      }
+      else if (tagList.remove(tag)) {
+        dirty = true;
+      }
+    }
+
+    if (dirty) {
+      tableDetails.setTags(TaggingUtil.join(tagList));
+      frontendService.saveTableDetails(game.getId(), tableDetails);
+    }
+  }
+
+  /**
+   * Resolves the local game a subscription about to be deleted was pointing to and removes the
+   * game room's tags from it.
+   */
+  private void removeTags(IScoredGameRoom iScoredGameRoom, Competition iScoredSubscription, List<Game> knownGames) {
+    Game game = gameService.getGameByVpsTable(knownGames, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
+    if (game != null) {
+      synchronizeTags(iScoredGameRoom, game, false);
+    }
+  }
+
   private void deleteSubscription(List<Competition> iScoredSubscriptions, Competition iScoredSubscription) {
     competitionService.delete(iScoredSubscription.getId());
     iScoredSubscriptions.remove(iScoredSubscription);
+  }
+
+  /**
+   * Resolves the local games matching the given iScored game's VPS settings and synchronizes
+   * their badge and tags with the game room's configuration.
+   */
+  private List<Game> synchronizeMatchingGames(IScoredGameRoom iScoredGameRoom, IScoredGame game, List<Game> knownGames) {
+    List<Game> matches;
+    if (game.isAllVersionsEnabled()) {
+      matches = gameService.getGamesByVpsTableId(knownGames, game.getVpsTableId(), null);
+    }
+    else {
+      matches = gameService.getGamesByVpsTableId(knownGames, game.getVpsTableId(), game.getVpsTableVersionId());
+    }
+
+    for (Game match : matches) {
+      synchronizeBadge(iScoredGameRoom, match);
+      synchronizeTags(iScoredGameRoom, match, true);
+    }
+    return matches;
   }
 
   /**
@@ -238,27 +311,16 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     //check if there is an existing competition
     for (Competition c : iScoredSubscriptions) {
       if (game.matches(c.getVpsTableId(), c.getVpsTableVersionId())) {
+        synchronizeMatchingGames(iScoredGameRoom, game, knownGames);
         return;
       }
     }
 
-    List<Game> matches = null;
-    if (game.isAllVersionsEnabled()) {
-      matches = gameService.getGamesByVpsTableId(knownGames, game.getVpsTableId(), null);
-    }
-    else {
-      matches = gameService.getGamesByVpsTableId(knownGames, game.getVpsTableId(), game.getVpsTableVersionId());
-    }
-
+    List<Game> matches = synchronizeMatchingGames(iScoredGameRoom, game, knownGames);
     if (matches.isEmpty()) {
       LOG.info("Skipped synchronization of iScored game \"{}\": No local game found that matches this VPS settings (all versions enabled: {}).", game.getName(), game.isAllVersionsEnabled());
       return;
     }
-
-    for (Game match : matches) {
-      synchronizeBadge(iScoredGameRoom, match);
-    }
-
 
     Competition competition = new Competition();
     competition.setType(CompetitionType.ISCORED.name());
