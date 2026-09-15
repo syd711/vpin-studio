@@ -5,7 +5,7 @@
 - **WOVP Competitions**: The pause menu entry to submit scores to WOVP contains an optional text input now. It is disabled by default, but can be enabled in the WOVP settings and be used to submit additional information about the score or screenshot.
 - **Media Recorder**: Enabled recording notifications again. These had been disabled because some users experienced focus issues, but the settings were never removed—they were simply ignored. The old behaviour has been restored for now.
 - **iScored Integration**: Added tagging support for iScored game rooms. This means you can auto-tag tables that are matched against one of the Game Rooms. The configuration dialog for a Game Room has an additional "Tags" field now. These table tags are added or removed when the game room is synchronized. E.g. you can add the tag _Syd711_ and create a new SQL playlist with _SELECT * FROM Games WHERE visible=1 AND EMUID = 1 AND tags like '%Syd711%' AND TourneyID like '%iscored%' ORDER BY GameDisplay_. This allows you to create separate playlists for every iScored Game Room. (https://github.com/syd711/vpin-studio/wiki/iScored#iscored-playlists)
-- **Uploader**: Fixed big performance issue for 7z based archives. E.g. PUP packs like for Superman LE are extract way faster now.
+- **Uploader**: Fixed big performance issue for 7z based archives. E.g. PUP packs like for Superman LE are extracted way faster now.
 
 ---
 
