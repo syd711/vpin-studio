@@ -19,6 +19,9 @@
         <java.version>25</java.version>
         <javafx.version>25.0.3</javafx.version>
         <maven.compiler.release>25</maven.compiler.release>
+        <!-- JavaFX natives bundled into the server jar, and the Windows launcher: see the linux profile -->
+        <server.javafx.platform>win</server.javafx.platform>
+        <launch4j.skip>false</launch4j.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <commons-io.version>2.22.0</commons-io.version>
@@ -450,7 +453,7 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <classifier>${server.javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -461,7 +464,7 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <classifier>${server.javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -472,7 +475,7 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
             <version>${javafx.version}</version>
-            <classifier>win</classifier>
+            <classifier>${server.javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
@@ -589,6 +592,7 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
+                            <skip>${launch4j.skip}</skip>
                             <headerType>console</headerType>
                             <icon>${project.basedir}/src/main/resources/logo.ico</icon>
                             <outfile>target/VPin-Studio-Server.exe</outfile>
@@ -777,6 +781,17 @@
         </plugins>
 
     </build>
+
+    <profiles>
+        <!-- mvn -Plinux package: a server jar for Linux, see LINUX-SERVER.md -->
+        <profile>
+            <id>linux</id>
+            <properties>
+                <server.javafx.platform>linux</server.javafx.platform>
+                <launch4j.skip>true</launch4j.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>

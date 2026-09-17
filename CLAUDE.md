@@ -13,9 +13,9 @@ This document provides guidance for AI agents working with the VPin Studio codeb
 
 | Component | Technology |
 |-----------|------------|
-| Language | Java 11 |
-| Server | Spring Boot 2.7.4 |
-| UI Framework | JavaFX 11/17 with FXML |
+| Language | Java 25 |
+| Server | Spring Boot 4.0.6 |
+| UI Framework | JavaFX 25 with FXML |
 | Build Tool | Maven 3.x |
 | Database | SQLite |
 | Logging | SLF4J + Logback |
@@ -234,12 +234,17 @@ Key test files:
 
 ## Development Setup
 
-1. Install JDK 11 (Zulu with JavaFX recommended)
+1. Install JDK 25 with JavaFX (Zulu `jdk+fx` recommended)
 2. Clone repository
-3. Copy `resources/jvm/jinput-dx8_64.dll` to JDK's bin folder
+3. Windows: copy `resources/jvm/jinput-dx8_64.dll` to JDK's bin folder
 4. Create `resources/system.properties` with PinUP System path
 5. Build: `mvn clean install -DskipTests`
 6. Use IDEA run configurations in `.run/`
+
+### Linux
+
+The server runs on Linux in Standalone mode, see `LINUX-SERVER.md`. Windows-only code is guarded with
+`OSUtil.isWindows()`; build with `mvn -Plinux` to skip the Windows launcher.
 
 ## External Integrations
 
