@@ -282,6 +282,35 @@ public class FolderLookupServiceTest {
     assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(nvram);
   }
 
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void standaloneLayout_romFilesAreFoundRegardlessOfCase() throws Exception {
+    // the table script says cGameName = "SS_15", PinMAME writes lowercase file names
+    File tableFolder = tempDir.resolve("Scared Stiff").toFile();
+    File nvram = new File(tableFolder, "pinmame/nvram/ss_15.nv");
+    File rom = new File(tableFolder, "pinmame/roms/ss_15.zip");
+    nvram.getParentFile().mkdirs();
+    rom.getParentFile().mkdirs();
+    nvram.createNewFile();
+    rom.createNewFile();
+    Game game = mockGame(mock(GameEmulator.class));
+    when(game.getGameFolder()).thenReturn(tableFolder);
+    when(game.getRom()).thenReturn("SS_15");
+
+    assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(nvram);
+    assertThat(folderLookupService.getRomFile(game)).isEqualTo(rom);
+  }
+
+  @Test
+  void findIgnoreCase_prefersExactNameAndFallsBackToGivenName() throws Exception {
+    File exact = tempDir.resolve("ss_15.nv").toFile();
+    exact.createNewFile();
+
+    assertThat(FolderLookupService.findIgnoreCase(tempDir.toFile(), "ss_15.nv")).isEqualTo(exact);
+    assertThat(FolderLookupService.findIgnoreCase(tempDir.toFile(), "missing.nv")).isEqualTo(tempDir.resolve("missing.nv").toFile());
+    assertThat(FolderLookupService.findIgnoreCase(tempDir.resolve("nofolder").toFile(), "x.nv")).doesNotExist();
+  }
+
   /**
    * An emulator with a VPinMAME folder, which keeps the shared legacy layout on every platform.
    */

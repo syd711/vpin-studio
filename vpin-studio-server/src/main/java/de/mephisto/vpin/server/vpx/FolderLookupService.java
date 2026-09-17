@@ -296,7 +296,7 @@ public class FolderLookupService {
   public File getRomFile(@NonNull Game game) {
     File romFolder = getRomFolder(game);
     if (romFolder.exists() && !StringUtils.isEmpty(game.getRom())) {
-      return new File(romFolder, game.getRom() + ".zip");
+      return findIgnoreCase(romFolder, game.getRom() + ".zip");
     }
     return null;
   }
@@ -326,33 +326,33 @@ public class FolderLookupService {
 
     File nvRamFolder = getNvRamFolder(game);
     String rom = game.getRom();
-    File defaultNvRam = new File(nvRamFolder, rom + ".nv");
+    File defaultNvRam = findIgnoreCase(nvRamFolder, rom + ".nv");
     if (defaultNvRam.exists() && game.getNvOffset() == 0) {
       return defaultNvRam;
     }
 
     if (!StringUtils.isEmpty(game.getScannedRom())) {
-      File defaultNvRam2 = new File(nvRamFolder, game.getScannedRom() + ".nv");
+      File defaultNvRam2 = findIgnoreCase(nvRamFolder, game.getScannedRom() + ".nv");
       if (defaultNvRam2.exists() && game.getNvOffset() == 0) {
         return defaultNvRam2;
       }
     }
 
     //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
-    File versionTextFile = new File(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
+    File versionTextFile = findIgnoreCase(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
       return defaultNvRam;
     }
 
     if (!StringUtils.isEmpty(game.getScannedRom())) {
-      File versionTextFile2 = new File(nvRamFolder, game.getScannedRom() + " v" + game.getNvOffset() + ".txt");
+      File versionTextFile2 = findIgnoreCase(nvRamFolder, game.getScannedRom() + " v" + game.getNvOffset() + ".txt");
       if (versionTextFile2.exists()) {
         return versionTextFile2;
       }
     }
 
     //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
-    File nvOffsettedNvRam = new File(nvRamFolder, rom + " v" + game.getNvOffset() + ".nv");
+    File nvOffsettedNvRam = findIgnoreCase(nvRamFolder, rom + " v" + game.getNvOffset() + ".nv");
     if (nvOffsettedNvRam.exists()) {
       return nvOffsettedNvRam;
     }
@@ -364,19 +364,37 @@ public class FolderLookupService {
   public File getCfgFile(@NonNull Game game) {
     File folder = getCfgFolder(game);
     if (!StringUtils.isEmpty(game.getRom()) && folder != null) {
-      File f = new File(folder, game.getRom() + ".cfg");
+      File f = findIgnoreCase(folder, game.getRom() + ".cfg");
       if (f.exists()) {
         return f;
       }
     }
 
     if (!StringUtils.isEmpty(game.getScannedRom())) {
-      File scannedRom = new File(folder, game.getScannedRom() + ".cfg");
+      File scannedRom = findIgnoreCase(folder, game.getScannedRom() + ".cfg");
       if (scannedRom.exists()) {
         return scannedRom;
       }
     }
     return null;
+  }
+
+  /**
+   * PinMAME names its files after the lowercase ROM name, while table scripts may spell the ROM in any case
+   * (cGameName = "SS_15"). Finds the existing file regardless of case, for case-sensitive file systems.
+   *
+   * @return the existing file, or the file with the given name if there is none
+   */
+  @NonNull
+  static File findIgnoreCase(@NonNull File folder, @NonNull String name) {
+    File file = new File(folder, name);
+    if (!file.exists()) {
+      File[] matches = folder.listFiles((dir, candidate) -> candidate.equalsIgnoreCase(name));
+      if (matches != null && matches.length > 0) {
+        return matches[0];
+      }
+    }
+    return file;
   }
 
   /**
