@@ -21,6 +21,21 @@ public class FileUtils {
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS_WITH_PATH = {'"', '*', '<', '>', '?', '|', '/', ':'};
 
+  /**
+   * Builds a game file name relative to the tables folder, as stored by the frontends:
+   * "Folder\Table.vpx" on Windows, "Folder/Table.vpx" elsewhere.
+   */
+  public static String joinGameFileName(@NonNull String folder, @NonNull String name) {
+    return folder + File.separator + name;
+  }
+
+  /**
+   * @return the index of the last '\' or '/' in a relative game file name, -1 if there is none
+   */
+  public static int lastSeparatorIndex(@NonNull String name) {
+    return Math.max(name.lastIndexOf('\\'), name.lastIndexOf('/'));
+  }
+
   public static boolean checkedCopy(@NonNull File source, @NonNull File target) {
     try {
       if (!target.exists() || source.length() != target.length()) {

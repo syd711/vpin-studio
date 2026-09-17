@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
@@ -41,6 +42,7 @@ import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
@@ -945,10 +947,28 @@ public abstract class BaseConnector implements FrontendConnector {
 
     for (ProcessHandle process : processes) {
       String cmd = process.info().command().get();
-      boolean b = process.destroyForcibly();
+      boolean b = OSUtil.isWindows() ? process.destroyForcibly() : terminate(process);
       LOG.info("Destroyed process '{}', result: {}", cmd, b);
     }
     return true;
+  }
+
+  /**
+   * On Windows destroy() is a forced kill anyway. Elsewhere it sends SIGTERM, which lets VPX write
+   * its nvram and VPReg.stg; SIGKILL follows if the process does not exit in time.
+   */
+  private static boolean terminate(ProcessHandle process) {
+    if (!process.destroy()) {
+      return process.destroyForcibly();
+    }
+    try {
+      process.onExit().get(5, TimeUnit.SECONDS);
+      return true;
+    }
+    catch (Exception e) {
+      LOG.info("Process {} did not exit after SIGTERM, killing it.", process.pid());
+      return process.destroyForcibly();
+    }
   }
 
   @Override

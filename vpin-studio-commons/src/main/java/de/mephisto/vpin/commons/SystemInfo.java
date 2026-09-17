@@ -25,6 +25,8 @@ public class SystemInfo {
   public final static String STANDALONE_INSTALLATION_DIR = "visualPinball.installationDir";
   public final static String STANDALONE_CONFIG_FILE = "visualPinball.configFile";
   public final static String STANDALONE_TABLES_DIR = "visualPinball.tablesFolder";
+  /** Optional launcher for standalone VPX, absolute or relative to the installation dir, e.g. a wrapper script */
+  public final static String STANDALONE_EXECUTABLE = "visualPinball.executable";
 
   public final static String B2SSERVER_INSTALLATION_DIR = "B2SServer.installationDir";
 

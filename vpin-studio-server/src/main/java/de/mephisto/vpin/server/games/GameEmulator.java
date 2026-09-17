@@ -257,7 +257,9 @@ public class GameEmulator {
   @JsonIgnore
   public File getExe() {
     if (exeName != null) {
-      return new File(getInstallationFolder(), exeName);
+      File exe = new File(exeName);
+      // a launcher outside the installation folder is stored with its absolute path
+      return exe.isAbsolute() ? exe : new File(getInstallationFolder(), exeName);
     }
     return null;
   }

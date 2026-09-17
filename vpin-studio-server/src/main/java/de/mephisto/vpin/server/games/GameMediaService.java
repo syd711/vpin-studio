@@ -355,8 +355,9 @@ public class GameMediaService extends MediaService {
     //if the VPX file is inside a subfolder, we have to prepend the folder name
     String name = target.getName();
     String oldName = tableDetails.getGameFileName();
-    if (oldName.contains("\\")) {
-      name = oldName.substring(0, oldName.lastIndexOf("\\") + 1) + target.getName();
+    int separatorIndex = FileUtils.lastSeparatorIndex(oldName);
+    if (separatorIndex >= 0) {
+      name = oldName.substring(0, separatorIndex + 1) + target.getName();
     }
 
     LOG.info("Updated database filename to \"{}\"", name);
@@ -504,7 +505,7 @@ public class GameMediaService extends MediaService {
       targetSubFolder = FileUtils.uniqueFolder(targetSubFolder);
       targetSubFolder.mkdirs();
       target = new File(targetSubFolder, target.getName());
-      fileName = targetSubFolder.getName() + "\\" + target.getName();
+      fileName = FileUtils.joinGameFileName(targetSubFolder.getName(), target.getName());
 
       LOG.info("Clone of {} is created into subfolder \"{}\"", existingVPXFile.getName(), targetSubFolder.getAbsolutePath());
     }

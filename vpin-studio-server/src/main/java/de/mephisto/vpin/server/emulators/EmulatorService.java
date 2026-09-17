@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
@@ -83,7 +84,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
   public List<String> getAltExeNames(GameEmulator emulator) {
     if (emulator.isVpxEmulator() && emulator.isValid() && emulator.getInstallationFolder().exists()) {
       File installationFolder = emulator.getInstallationFolder();
-      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && !name.toLowerCase().contains("install"));
+      String[] exeFiles = OSUtil.isWindows() ?
+          installationFolder.list((dir, name) -> name.endsWith(".exe") && !name.toLowerCase().contains("install")) :
+          // standalone builds: VPinballX_BGFX, VPinballX_GL, ...
+          installationFolder.list((dir, name) -> name.startsWith("VPinballX") && new File(dir, name).canExecute());
       if (exeFiles == null) {
         exeFiles = new String[]{};
       }
@@ -180,9 +184,10 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
           if (romFolder != null && romFolder.exists()) {
             emulator.setRomDirectory(romFolder.getAbsolutePath());
           }
-          else {
+          else if (mameFolder.exists()) {
             emulator.setRomDirectory(new File(mameFolder, "roms").getAbsolutePath());
           }
+          // else standalone layout: roms are next to each table, see FolderLookupService
         }
       }
 

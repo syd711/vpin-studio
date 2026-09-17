@@ -1,11 +1,14 @@
 package de.mephisto.vpin.server.frontend.standalone;
 
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -69,23 +72,47 @@ public class StandaloneConnector extends BaseConnector {
   /** The resolved execution file, cannot be null but can be dummy ! */
   private File vpxExe;
 
+  private static final String[] WINDOWS_EXES = {"VPinballX64.exe", "VPinballX.exe", "VPinball995.exe"};
+  /** Names of the standalone builds, BGFX first as it is the default renderer since 10.8.1 */
+  private static final String[] STANDALONE_EXES = {"VPinballX_BGFX", "VPinballX_GL", "VPinballX"};
+
   @Override
   public void initializeConnector() {
-    vpxExe = resolveExe();
+    File installFolder = getInstallationFolder();
+    vpxExe = resolveExe(installFolder, systemService.getStandaloneExecutable(), OSUtil.isWindows());
+    if (!vpxExe.exists()) {
+      LOG.error("Cannot find a valid standard executable in {}, tables cannot be properly launched !", installFolder);
+    }
+    else {
+      LOG.info("Using VPX executable {}", vpxExe.getAbsolutePath());
+    }
   }
 
-  private File resolveExe() {
-    File installFolder = getInstallationFolder();
-    String[] exes = {"VPinballX64.exe", "VPinballX.exe", "VPinball995.exe" };
-    for (String exe : exes) {
-      File fexe = new File(installFolder, exe);
+  /**
+   * @param configured the value of visualPinball.executable, absolute or relative to the installation folder
+   * @return the executable, or a non-existing placeholder file inside the installation folder, never null
+   */
+  @NonNull
+  static File resolveExe(@NonNull File installFolder, @Nullable String configured, boolean windows) {
+    if (StringUtils.isNotEmpty(configured)) {
+      File fexe = new File(configured);
+      if (!fexe.isAbsolute()) {
+        fexe = new File(installFolder, configured);
+      }
       if (fexe.exists()) {
         return fexe;
       }
+      LOG.error("The configured VPX executable {} does not exist, searching the installation folder.", fexe.getAbsolutePath());
     }
-    LOG.error("Cannot find a valid standard executable in {}, tables cannot be properly launched !", installFolder);
+
+    for (String exe : windows ? WINDOWS_EXES : STANDALONE_EXES) {
+      File fexe = new File(installFolder, exe);
+      if (fexe.isFile() && (windows || fexe.canExecute())) {
+        return fexe;
+      }
+    }
     // cannot be null
-    return new File(installFolder, "vpx_not_found.exe");
+    return new File(installFolder, windows ? "vpx_not_found.exe" : "vpx_not_found");
   }
 
   @Override
@@ -104,6 +131,10 @@ public class StandaloneConnector extends BaseConnector {
     File tablesFolder = systemService.getStandaloneTablesFolder();
     if (tablesFolder == null) {
       tablesFolder = new File(getInstallationFolder(), "Tables");
+      File lowerCase = new File(getInstallationFolder(), "tables");
+      if (!tablesFolder.exists() && lowerCase.exists()) {
+        tablesFolder = lowerCase;
+      }
     }
     return tablesFolder;
   }
@@ -161,8 +192,16 @@ public class StandaloneConnector extends BaseConnector {
     e.setSafeName(emuname);
     e.setName(emuname);
     e.setGamesDirectory(tablesDir.getAbsolutePath());
-    e.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
-    e.setExeName(vpxExe.getName());
+    // a configured launcher, e.g. a wrapper script, may live outside the installation folder,
+    // which must still point at VPX itself
+    if (vpxExe.getParentFile().equals(installDir)) {
+      e.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
+      e.setExeName(vpxExe.getName());
+    }
+    else {
+      e.setInstallationDirectory(installDir.getAbsolutePath());
+      e.setExeName(vpxExe.getAbsolutePath());
+    }
     e.setGameExt(type.getExtension());
     e.setEnabled(true);
     return e;
