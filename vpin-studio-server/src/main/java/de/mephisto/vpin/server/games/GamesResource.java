@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
@@ -22,6 +20,7 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.steam.SteamService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.WindowsUtil;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,28 +147,7 @@ public class GamesResource {
         SLOG.initLog(game.getId());
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
-          new Thread(()-> {
-            Thread.currentThread().setName("Visual Pinball Player Focus Thread");
-            long timeoutMs = 30000;
-            long start = System.currentTimeMillis();
-
-            while (System.currentTimeMillis() - start < timeoutMs) {
-              WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, "Visual Pinball Player");
-
-              if (hwnd != null) {
-                try { Thread.sleep(4000); } catch (InterruptedException e) { break; }
-                User32.INSTANCE.ShowWindow(hwnd, 9); // SW_RESTORE
-                User32.INSTANCE.SetForegroundWindow(hwnd);
-
-                try { Thread.sleep(4000); } catch (InterruptedException e) { break; }
-                User32.INSTANCE.ShowWindow(hwnd, 9); // SW_RESTORE
-                User32.INSTANCE.SetForegroundWindow(hwnd);
-                return;
-              }
-
-              try { Thread.sleep(500); } catch (InterruptedException e) { break; }
-            }
-          }).start();
+          WindowsUtil.focusWindowAsync("Visual Pinball Player");
           return true;
         }
       }

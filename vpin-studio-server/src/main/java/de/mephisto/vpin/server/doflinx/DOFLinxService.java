@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.doflinx;
 
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentType;
@@ -254,7 +255,10 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     try {
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.DOFLINX_SETTINGS, null, null);
-      if (dofLinxSettings.isAutostart()) {
+      if (dofLinxSettings.isAutostart() && !OSUtil.isWindows()) {
+        LOG.info("DOFLinx is only available on Windows, autostart skipped.");
+      }
+      else if (dofLinxSettings.isAutostart()) {
         startDOFLinx();
         LOG.info("Auto-started DOFLinx");
       }

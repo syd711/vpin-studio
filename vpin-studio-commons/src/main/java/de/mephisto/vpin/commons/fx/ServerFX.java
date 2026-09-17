@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
@@ -70,6 +72,21 @@ public class ServerFX extends Application {
     return INSTANCE;
   }
 
+  /**
+   * Runs the action against the overlay, if there is one: there is none when the server runs headless
+   * or JavaFX failed to start.
+   *
+   * @return true if the action was run
+   */
+  public static boolean ifAvailable(Consumer<ServerFX> action) {
+    ServerFX instance = INSTANCE;
+    if (instance == null) {
+      return false;
+    }
+    action.accept(instance);
+    return true;
+  }
+
   public static void main(String[] args) {
     System.setProperty("java.awt.headless", "false");
     ApngImageLoaderFactory.install();
@@ -90,17 +107,31 @@ public class ServerFX extends Application {
     return overlayVisible;
   }
 
-  public static void waitForOverlay() {
+  /**
+   * Blocks until the overlay has been created, or JavaFX failed to start.
+   *
+   * @return true if the overlay is available
+   */
+  public static boolean waitForOverlay() {
     try {
-      latch.await();
+      if (!latch.await(2, TimeUnit.MINUTES)) {
+        LOG.error("JavaFX did not start within 2 minutes, continuing without the overlay.");
+        return false;
+      }
+      if (INSTANCE == null) {
+        LOG.error("JavaFX failed to start, continuing without the overlay.");
+        return false;
+      }
       LOG.info("OverlayFX creation finished.");
       for (ServerFXListener listener : listeners) {
         listener.fxInitialized();
       }
+      return true;
     }
     catch (InterruptedException e) {
       LOG.warn("Overlay waiting failed: {}", e.getMessage());
     }
+    return false;
   }
 
   public void showOverlay(boolean visible) {

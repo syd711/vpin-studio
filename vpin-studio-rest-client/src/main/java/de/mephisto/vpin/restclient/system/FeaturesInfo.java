@@ -79,4 +79,17 @@ public class FeaturesInfo {
 
   public boolean VPXZ_ENABLED  = true;
   public boolean FP_HIGHSCORES_ENABLED  = true;
+
+  /**
+   * Turns off the features that depend on Windows-only tools or APIs:
+   * the recorder (ffmpeg gdigrab/ddagrab), PINemHi, the DOF tester (DirectOutput COM),
+   * DmdDevice.ini (dmdext) and the highscore monitor, which detects running tables by window title.
+   */
+  public void disableWindowsOnlyFeatures() {
+    RECORDER = false;
+    NVRAM_PARSING_USE_PINEMHI = false;
+    DOF_TESTER_ENABLED = false;
+    DMD_DEVICE_INI = false;
+    HIGHSCORE_MONITORING = false;
+  }
 }

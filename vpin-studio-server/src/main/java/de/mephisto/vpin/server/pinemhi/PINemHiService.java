@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.pinemhi;
 
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FuturePinballService;
@@ -233,7 +234,10 @@ public class PINemHiService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     try {
       this.enabled = getAutoStart();
-      if (enabled) {
+      if (enabled && !OSUtil.isWindows()) {
+        LOG.info("PINemHi is only available on Windows, autostart skipped.");
+      }
+      else if (enabled) {
         startMonitor();
         LOG.info("Auto-started Pinemhi {}", PROCESS_NAME);
       }

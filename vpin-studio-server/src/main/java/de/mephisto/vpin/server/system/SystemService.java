@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.system;
 
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
@@ -14,6 +12,7 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -172,6 +171,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
       // now that frontend is determined, activate or deactivate features
       frontendType.apply(Features);
+      if (!OSUtil.isWindows()) {
+        Features.disableWindowsOnlyFeatures();
+      }
       // Possibly override features from system
       apply(Features, store.get(SYSTEM_FEATURES_ON), true);
       apply(Features, store.get(SYSTEM_FEATURES_OFF), false);
@@ -439,8 +441,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public boolean isWindowOpened(String name) {
-    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    return windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), name));
+    return WindowsUtil.isWindowOpened(name);
   }
 
   public static void main(String[] args) {
