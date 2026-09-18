@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPRegFile;
@@ -116,12 +117,9 @@ public class FolderLookupService {
 
   @NonNull
   public File getScriptsFolder(@NonNull Game game) {
+    // the core scripts ship with VPX in both layouts; VPX searches the table folder before this one
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
-      return new File(emulator.getInstallationFolder(), "scripts");
-    }
-
-    return new File(game.getGameFolder(), "pinmame/scripts/");
+    return new File(emulator.getInstallationFolder(), "scripts");
   }
 
   @Nullable
@@ -194,7 +192,11 @@ public class FolderLookupService {
   @Nullable
   public File getMusicFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    return getMusicFolder(emulator);
+    if (isPreferLegacyFileStructure(emulator)) {
+      return getMusicFolder(emulator);
+    }
+    // VPX resolves PlayMusic() against the music folder next to the table
+    return new File(game.getGameFolder(), "music/");
   }
 
 
@@ -204,11 +206,8 @@ public class FolderLookupService {
       return new File(emulator.getInstallationFolder(), "Music/");
     }
 
-    File folder = new File(emulator.getGamesFolder(), "music/");
-    if (!folder.exists() && !folder.mkdirs()) {
-      LOG.warn("Failed to create game music folder {}", folder.getAbsolutePath());
-    }
-    return folder;
+    // without a table, there is no table folder to put the music next to
+    return new File(emulator.getGamesFolder(), "music/");
   }
 
   @NonNull
@@ -260,7 +259,7 @@ public class FolderLookupService {
       tableName = highscoreMapping.getTableName();
     }
 
-    File stgFile = new File(emulator.getInstallationFolder(), "User/VPReg.stg");
+    File stgFile = new File(getUserFolder(emulator), "VPReg.stg");
     if (stgFile.exists()) {
       VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
       if (reg.isValid()) {
@@ -268,14 +267,13 @@ public class FolderLookupService {
       }
     }
 
-    if (isPreferLegacyFileStructure(emulator)) {
-      File gameFileParent = game.getGameFile().getParentFile();
-      stgFile = new File(gameFileParent, "user/VPReg.stg");
-      if (!stgFile.exists() && gameFileParent != null) {
-        File grandparent = gameFileParent.getParentFile();
-        if (grandparent != null) {
-          stgFile = new File(grandparent, "user/VPReg.stg");
-        }
+    // the user folder next to the table, where VPX 10.8.1 writes it
+    File gameFileParent = game.getGameFile().getParentFile();
+    stgFile = new File(gameFileParent, "user/VPReg.stg");
+    if (!stgFile.exists() && gameFileParent != null) {
+      File grandparent = gameFileParent.getParentFile();
+      if (grandparent != null) {
+        stgFile = new File(grandparent, "user/VPReg.stg");
       }
     }
 
@@ -298,7 +296,7 @@ public class FolderLookupService {
   public File getRomFile(@NonNull Game game) {
     File romFolder = getRomFolder(game);
     if (romFolder.exists() && !StringUtils.isEmpty(game.getRom())) {
-      return new File(romFolder, game.getRom() + ".zip");
+      return findIgnoreCase(romFolder, game.getRom() + ".zip");
     }
     return null;
   }
@@ -321,39 +319,40 @@ public class FolderLookupService {
 
   @Nullable
   public File getNvRamFile(@NonNull Game game) {
-    if (game.getEmulator() == null || game.getEmulator().getMameDirectory() == null) {
+    GameEmulator emulator = game.getEmulator();
+    if (emulator == null || (isPreferLegacyFileStructure(emulator) && emulator.getMameDirectory() == null)) {
       return null;
     }
 
     File nvRamFolder = getNvRamFolder(game);
     String rom = game.getRom();
-    File defaultNvRam = new File(nvRamFolder, rom + ".nv");
+    File defaultNvRam = findIgnoreCase(nvRamFolder, rom + ".nv");
     if (defaultNvRam.exists() && game.getNvOffset() == 0) {
       return defaultNvRam;
     }
 
     if (!StringUtils.isEmpty(game.getScannedRom())) {
-      File defaultNvRam2 = new File(nvRamFolder, game.getScannedRom() + ".nv");
+      File defaultNvRam2 = findIgnoreCase(nvRamFolder, game.getScannedRom() + ".nv");
       if (defaultNvRam2.exists() && game.getNvOffset() == 0) {
         return defaultNvRam2;
       }
     }
 
     //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
-    File versionTextFile = new File(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
+    File versionTextFile = findIgnoreCase(nvRamFolder, game.getRom() + " v" + game.getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
       return defaultNvRam;
     }
 
     if (!StringUtils.isEmpty(game.getScannedRom())) {
-      File versionTextFile2 = new File(nvRamFolder, game.getScannedRom() + " v" + game.getNvOffset() + ".txt");
+      File versionTextFile2 = findIgnoreCase(nvRamFolder, game.getScannedRom() + " v" + game.getNvOffset() + ".txt");
       if (versionTextFile2.exists()) {
         return versionTextFile2;
       }
     }
 
     //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
-    File nvOffsettedNvRam = new File(nvRamFolder, rom + " v" + game.getNvOffset() + ".nv");
+    File nvOffsettedNvRam = findIgnoreCase(nvRamFolder, rom + " v" + game.getNvOffset() + ".nv");
     if (nvOffsettedNvRam.exists()) {
       return nvOffsettedNvRam;
     }
@@ -365,14 +364,14 @@ public class FolderLookupService {
   public File getCfgFile(@NonNull Game game) {
     File folder = getCfgFolder(game);
     if (!StringUtils.isEmpty(game.getRom()) && folder != null) {
-      File f = new File(folder, game.getRom() + ".cfg");
+      File f = findIgnoreCase(folder, game.getRom() + ".cfg");
       if (f.exists()) {
         return f;
       }
     }
 
     if (!StringUtils.isEmpty(game.getScannedRom())) {
-      File scannedRom = new File(folder, game.getScannedRom() + ".cfg");
+      File scannedRom = findIgnoreCase(folder, game.getScannedRom() + ".cfg");
       if (scannedRom.exists()) {
         return scannedRom;
       }
@@ -380,7 +379,44 @@ public class FolderLookupService {
     return null;
   }
 
+  /**
+   * PinMAME names its files after the lowercase ROM name, while table scripts may spell the ROM in any case
+   * (cGameName = "SS_15"). Finds the existing file regardless of case, for case-sensitive file systems.
+   *
+   * @return the existing file, or the file with the given name if there is none
+   */
+  @NonNull
+  static File findIgnoreCase(@NonNull File folder, @NonNull String name) {
+    File file = new File(folder, name);
+    if (!file.exists()) {
+      File[] matches = folder.listFiles((dir, candidate) -> candidate.equalsIgnoreCase(name));
+      if (matches != null && matches.length > 0) {
+        return matches[0];
+      }
+    }
+    return file;
+  }
+
+  /**
+   * The user folder of the installation, "User" on Windows but "user" in the standalone builds.
+   */
+  @NonNull
+  private File getUserFolder(@NonNull GameEmulator emulator) {
+    File installationFolder = emulator.getInstallationFolder();
+    File userFolder = new File(installationFolder, "User");
+    File lowerCase = new File(installationFolder, "user");
+    return !userFolder.exists() && lowerCase.exists() ? lowerCase : userFolder;
+  }
+
   private boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator) {
-    return true; //emulator.getName().contains("10.8.1");//TODO 10.8.1
+    return isPreferLegacyFileStructure(emulator, OSUtil.isWindows());
+  }
+
+  /**
+   * Windows installs keep PinMAME files in the shared VPinMAME folder. A standalone install without that folder
+   * keeps them next to each table, e.g. Tables/Twister/pinmame/roms, as VPX 10.8.1 does.
+   */
+  static boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator, boolean windows) {
+    return windows || emulator.getMameDirectory() != null;
   }
 }

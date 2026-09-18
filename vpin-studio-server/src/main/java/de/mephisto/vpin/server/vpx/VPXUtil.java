@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
 import org.jspecify.annotations.NonNull;
@@ -19,6 +20,8 @@ import java.util.*;
 public class VPXUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VPXUtil.class);
   private final static String VPX_TOOL_EXE = "vpxtool.exe";
+  /** The Linux/macOS release of https://github.com/francisdb/vpxtool, installed manually into the resources folder */
+  private final static String VPX_TOOL = "vpxtool";
 
   public static String readScript(@NonNull File file) {
     long extractionStart = System.currentTimeMillis();
@@ -177,11 +180,7 @@ public class VPXUtil {
       }
       org.apache.commons.io.FileUtils.writeStringToFile(vbsFile, vps, Charset.defaultCharset());
 
-      String vpxFilePath = "\"" + vpxFile.getAbsolutePath() + "\"";
-      List<String> cmds = Arrays.asList(VPX_TOOL_EXE, "importvbs", vpxFilePath);
-      LOG.info("VBS Import CMD: {}", String.join(" ", cmds));
-      SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
-      executor.setDir(new File("./resources"));
+      SystemCommandExecutor executor = vpxTool("importvbs", vpxFile);
       executor.executeCommand();
 
       if (!keepVbsFile && !vbsFile.delete()) {
@@ -200,11 +199,7 @@ public class VPXUtil {
       if (vbsFile.exists()) {
         vbsFile.delete();
       }
-      String vpxFilePath = "\"" + vpxFile.getAbsolutePath() + "\"";
-      List<String> cmds = Arrays.asList(VPX_TOOL_EXE, "extractvbs", vpxFilePath);
-      LOG.info("VBS Export CMD: {}", String.join(" ", cmds));
-      SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
-      executor.setDir(new File("./resources"));
+      SystemCommandExecutor executor = vpxTool("extractvbs", vpxFile);
       executor.executeCommand();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
@@ -222,6 +217,29 @@ public class VPXUtil {
       LOG.error("Exporting VBS failed for {}: {} - {}", vpxFile.getAbsolutePath(), error, e.getMessage(), e);
       throw new Exception("Exporting VBS failed for \"" + vpxFile.getAbsolutePath() + "\": " + error);
     }
+  }
+
+  static List<String> vpxToolCommand(@NonNull String command, @NonNull File vpxFile, @NonNull File resourcesFolder, boolean windows) {
+    if (windows) {
+      // runs through cmd.exe, which needs the quotes
+      return Arrays.asList(VPX_TOOL_EXE, command, "\"" + vpxFile.getAbsolutePath() + "\"");
+    }
+    // executed directly: the executable needs an absolute path, and quotes would become part of the argument
+    return Arrays.asList(new File(resourcesFolder, VPX_TOOL).getAbsolutePath(), command, vpxFile.getAbsolutePath());
+  }
+
+  private static SystemCommandExecutor vpxTool(@NonNull String command, @NonNull File vpxFile) {
+    File resourcesFolder = new File("./resources");
+    boolean windows = OSUtil.isWindows();
+    if (!windows && !new File(resourcesFolder, VPX_TOOL).canExecute()) {
+      LOG.error("{} not found in {}, install the release for this platform from https://github.com/francisdb/vpxtool/releases",
+          VPX_TOOL, resourcesFolder.getAbsolutePath());
+    }
+    List<String> cmds = vpxToolCommand(command, vpxFile, resourcesFolder, windows);
+    LOG.info("vpxtool CMD: {}", String.join(" ", cmds));
+    SystemCommandExecutor executor = new SystemCommandExecutor(cmds, windows);
+    executor.setDir(resourcesFolder);
+    return executor;
   }
 
   public static String getChecksum(File gameFile) {

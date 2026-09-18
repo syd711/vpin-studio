@@ -5,6 +5,8 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
@@ -35,7 +37,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getAltSoundFolder_legacyLayout_usesEmulatorMameFolder() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getMameFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
 
@@ -49,7 +51,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getAltColorFolder_legacyLayout_usesVPinMameAltColorFolder() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     File altColorRoot = tempDir.resolve("altcolor").toFile();
     when(vPinMameService.getAltColorFolder()).thenReturn(altColorRoot);
     Game game = mockGame(emulator);
@@ -64,7 +66,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getNvRamFolder_legacyLayout_usesVPinMameNvRamFolder() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     File nvRamFolder = tempDir.resolve("nvram").toFile();
     when(vPinMameService.getNvRamFolder()).thenReturn(nvRamFolder);
     Game game = mockGame(emulator);
@@ -76,7 +78,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getNvRamFolder_legacyLayout_fallsBackToMameFolderWhenNvRamFolderNull() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(vPinMameService.getNvRamFolder()).thenReturn(null);
     when(emulator.getMameFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
@@ -90,7 +92,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getMusicFolder_legacyLayout_returnsInstallationFolderMusic() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
 
@@ -104,7 +106,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getGameMusicFolder_noAssets_noRom_returnsMusicRoot() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getAssets()).thenReturn(null);
@@ -117,7 +119,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getGameMusicFolder_noAssets_withRom_returnsRomSubfolder() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getAssets()).thenReturn("");
@@ -130,7 +132,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getGameMusicFolder_assetsAtRoot_returnsMusicRoot() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getAssets()).thenReturn("intro.mp3|theme.mp3");
@@ -144,7 +146,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getGameMusicFolder_singleSubfolder_usesThatSubfolder() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getAssets()).thenReturn("MFDOOM/Attract*.mp3|MFDOOM/intro.mp3");
@@ -157,7 +159,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getGameMusicFolder_multipleFolders_prefersRomMatch() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getAssets()).thenReturn("myrom/track1.mp3|other/track2.mp3");
@@ -170,7 +172,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getGameMusicFolder_multipleFolders_noRomMatch_picksDeepest() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getAssets()).thenReturn("a/b/c/track.mp3|a/track.mp3");
@@ -187,7 +189,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getHighscoreTextFile_withHsFileName_returnsFile() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     when(emulator.getInstallationFolder()).thenReturn(tempDir.toFile());
     Game game = mockGame(emulator);
     when(game.getHsFileName()).thenReturn("scores.txt");
@@ -212,7 +214,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getRomFile_withRomAndExistingFolder_returnsRomZip() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     File romFolder = tempDir.toFile();
     when(vPinMameService.getRomsFolder()).thenReturn(romFolder);
     Game game = mockGame(emulator);
@@ -226,7 +228,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getRomFile_withNoRom_returnsNull() {
-    GameEmulator emulator = mock(GameEmulator.class);
+    GameEmulator emulator = legacyEmulator();
     File romFolder = tempDir.toFile();
     when(vPinMameService.getRomsFolder()).thenReturn(romFolder);
     Game game = mockGame(emulator);
@@ -235,6 +237,88 @@ public class FolderLookupServiceTest {
     File result = folderLookupService.getRomFile(game);
 
     assertThat(result).isNull();
+  }
+
+  // ---- standalone layout: PinMAME files next to each table ----
+
+  @Test
+  void isPreferLegacyFileStructure_dependsOnPlatformAndVPinMameFolder() {
+    GameEmulator standalone = mock(GameEmulator.class);
+    assertThat(FolderLookupService.isPreferLegacyFileStructure(standalone, true)).isTrue();
+    assertThat(FolderLookupService.isPreferLegacyFileStructure(standalone, false)).isFalse();
+    assertThat(FolderLookupService.isPreferLegacyFileStructure(legacyEmulator(), false)).isTrue();
+  }
+
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void standaloneLayout_pinmameFoldersAreNextToTheTable() {
+    File tableFolder = tempDir.resolve("Twister (1996)").toFile();
+    File installFolder = tempDir.resolve("vpx").toFile();
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getInstallationFolder()).thenReturn(installFolder);
+    Game game = mockGame(emulator);
+    when(game.getGameFolder()).thenReturn(tableFolder);
+
+    assertThat(folderLookupService.getRomFolder(game)).isEqualTo(new File(tableFolder, "pinmame/roms"));
+    assertThat(folderLookupService.getNvRamFolder(game)).isEqualTo(new File(tableFolder, "pinmame/nvram"));
+    assertThat(folderLookupService.getMusicFolder(game)).isEqualTo(new File(tableFolder, "music"));
+    assertThat(folderLookupService.getUserFolder(game)).isEqualTo(new File(tableFolder, "user"));
+    // the core scripts ship with VPX
+    assertThat(folderLookupService.getScriptsFolder(game)).isEqualTo(new File(installFolder, "scripts"));
+    verifyNoInteractions(vPinMameService);
+  }
+
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void standaloneLayout_nvRamFileIsFoundWithoutVPinMameFolder() throws Exception {
+    File nvramFolder = tempDir.resolve("Twister (1996)/pinmame/nvram").toFile();
+    nvramFolder.mkdirs();
+    File nvram = new File(nvramFolder, "twst_405.nv");
+    nvram.createNewFile();
+    Game game = mockGame(mock(GameEmulator.class));
+    when(game.getGameFolder()).thenReturn(nvramFolder.getParentFile().getParentFile());
+    when(game.getRom()).thenReturn("twst_405");
+
+    assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(nvram);
+  }
+
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void standaloneLayout_romFilesAreFoundRegardlessOfCase() throws Exception {
+    // the table script says cGameName = "SS_15", PinMAME writes lowercase file names
+    File tableFolder = tempDir.resolve("Scared Stiff").toFile();
+    File nvram = new File(tableFolder, "pinmame/nvram/ss_15.nv");
+    File rom = new File(tableFolder, "pinmame/roms/ss_15.zip");
+    nvram.getParentFile().mkdirs();
+    rom.getParentFile().mkdirs();
+    nvram.createNewFile();
+    rom.createNewFile();
+    Game game = mockGame(mock(GameEmulator.class));
+    when(game.getGameFolder()).thenReturn(tableFolder);
+    when(game.getRom()).thenReturn("SS_15");
+
+    assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(nvram);
+    assertThat(folderLookupService.getRomFile(game)).isEqualTo(rom);
+  }
+
+  @Test
+  void findIgnoreCase_prefersExactNameAndFallsBackToGivenName() throws Exception {
+    File exact = tempDir.resolve("ss_15.nv").toFile();
+    exact.createNewFile();
+
+    assertThat(FolderLookupService.findIgnoreCase(tempDir.toFile(), "ss_15.nv")).isEqualTo(exact);
+    assertThat(FolderLookupService.findIgnoreCase(tempDir.toFile(), "missing.nv")).isEqualTo(tempDir.resolve("missing.nv").toFile());
+    assertThat(FolderLookupService.findIgnoreCase(tempDir.resolve("nofolder").toFile(), "x.nv")).doesNotExist();
+  }
+
+  /**
+   * An emulator with a VPinMAME folder, which keeps the shared legacy layout on every platform.
+   */
+  private GameEmulator legacyEmulator() {
+    GameEmulator emulator = mock(GameEmulator.class);
+    // not consulted on Windows, where the legacy layout is always used
+    lenient().when(emulator.getMameDirectory()).thenReturn(tempDir.resolve("VPinMAME").toString());
+    return emulator;
   }
 
   private Game mockGame(GameEmulator emulator) {

@@ -96,6 +96,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private File standaloneInstallationFolder;
   private File standaloneConfigFile;
   private File standaloneTablesFolder;
+  private String standaloneExecutable;
 
   private File backglassServerFolder;
   private File vpxInstallationFolder;
@@ -121,7 +122,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public File resolveVpxExe() {
     File vpxExe = super.resolveVpxExe();
     if ((vpxExe == null || !vpxExe.exists()) && getVpxFolder() != null) {
-      vpxExe = new File(getVpxFolder(), "VPinballX.exe");
+      vpxExe = new File(getVpxFolder(), OSUtil.isWindows() ? "VPinballX.exe" : "VPinballX_BGFX");
     }
     return vpxExe;
   }
@@ -141,6 +142,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
         if (store.containsNonEmptyKey(STANDALONE_TABLES_DIR)) {
           this.standaloneTablesFolder = new File(store.get(STANDALONE_TABLES_DIR));
+        }
+        if (store.containsNonEmptyKey(STANDALONE_EXECUTABLE)) {
+          this.standaloneExecutable = store.get(STANDALONE_EXECUTABLE);
         }
       }
 
@@ -331,6 +335,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getStandaloneTablesFolder() {
     return standaloneTablesFolder;
+  }
+
+  @Nullable
+  public String getStandaloneExecutable() {
+    return standaloneExecutable;
   }
 
   public int getServerPort() {
