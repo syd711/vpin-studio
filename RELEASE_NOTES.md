@@ -1,3 +1,11 @@
+## Release Notes 5.3.2
+
+### Changes
+
+- **Theming**: Added theming support for the pause menu and notifications. For both components a proper documentation with sample files have been added (https://github.com/syd711/vpin-studio/wiki/Theming).
+
+---
+
 ## Release Notes 5.3.1
 
 ### Changes

@@ -23,7 +23,7 @@
                         <Insets bottom="1200.0"/>
                     </StackPane.margin>
                     <children>
-                        <ImageView fitHeight="800.0" fitWidth="1400.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="screenBackgroundImageView" fitHeight="800.0" fitWidth="1400.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@screen.png"/>
                             </image>
@@ -58,7 +58,7 @@
                             <children>
                                 <StackPane fx:id="footerStack">
                                     <children>
-                                        <ImageView fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true"
+                                        <ImageView fx:id="footerImageView" fitHeight="150.0" fitWidth="1200.0" pickOnBounds="true"
                                                    preserveRatio="true">
                                             <image>
                                                 <Image url="@footer.png"/>
@@ -110,7 +110,7 @@
                 <BorderPane fx:id="baseSelector" layoutX="110.0" layoutY="110.0" maxHeight="400.0" maxWidth="400.0"
                             styleClass="base-selector">
                     <center>
-                        <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true"
+                        <ImageView fx:id="baseSelectorImageView" fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true"
                                    BorderPane.alignment="CENTER">
                             <image>
                                 <Image url="@blue.png"/>
@@ -128,7 +128,7 @@
                     <center>
                         <StackPane styleClass="root" BorderPane.alignment="CENTER">
                             <children>
-                                <ImageView fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fx:id="bluePanelImageView" fitHeight="440.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@blue.png"/>
                                     </image>

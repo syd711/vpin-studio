@@ -222,4 +222,44 @@
   "name" : "pinemhi/showboard.exe",
   "length" : 890880,
   "crc32" : "#7A69B370"
+}, {
+  "name" : "themes/README.txt",
+  "length" : 311,
+  "crc32" : "#BAC39EB8"
+}, {
+  "name" : "themes/notifications/README.md",
+  "length" : 2121,
+  "crc32" : "#9B45B7CA"
+}, {
+  "name" : "themes/notifications/default/logo.png",
+  "length" : 402907,
+  "crc32" : "#E681F3BC"
+}, {
+  "name" : "themes/notifications/default/row.png",
+  "length" : 163452,
+  "crc32" : "#8F17C7C4"
+}, {
+  "name" : "themes/pause-menu/README.md",
+  "length" : 2791,
+  "crc32" : "#AA0EC56B"
+}, {
+  "name" : "themes/pause-menu/default/blue.png",
+  "length" : 344762,
+  "crc32" : "#33D5BF73"
+}, {
+  "name" : "themes/pause-menu/default/footer.png",
+  "length" : 24792,
+  "crc32" : "#5C800C05"
+}, {
+  "name" : "themes/pause-menu/default/row.png",
+  "length" : 917219,
+  "crc32" : "#C70F8B03"
+}, {
+  "name" : "themes/pause-menu/default/screen.png",
+  "length" : 66893,
+  "crc32" : "#75FA87D3"
+}, {
+  "name" : "themes/pause-menu/default/wheel.png",
+  "length" : 235132,
+  "crc32" : "#5EE97AB2"
 } ]
