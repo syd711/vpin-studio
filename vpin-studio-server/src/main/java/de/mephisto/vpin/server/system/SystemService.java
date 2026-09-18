@@ -85,7 +85,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         robot = new Robot();
       }
     }
-    catch (AWTException e) {
+    catch (Throwable e) {
+      // an unreachable display throws an AWTError rather than an AWTException
       LOG.error("Failed to create robot: {}", e.getMessage());
     }
   }

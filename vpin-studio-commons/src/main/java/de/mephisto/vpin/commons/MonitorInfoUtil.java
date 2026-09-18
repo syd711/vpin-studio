@@ -36,9 +36,15 @@ public class MonitorInfoUtil {
         monitors.addAll(monitorsGde);
       }
     }
-    catch (Exception e) {
+    catch (Throwable e) {
+      // an unreachable display throws an AWTError rather than an Exception
       LOG.error("Monitor initialization failed: {}", e.getMessage());
-      monitors.addAll(getMonitors(true));
+      try {
+        monitors.addAll(getMonitors(true));
+      }
+      catch (Throwable t) {
+        LOG.error("No monitors available: {}", t.getMessage());
+      }
     }
   }
 
