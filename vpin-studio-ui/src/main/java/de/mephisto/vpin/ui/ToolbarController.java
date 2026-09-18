@@ -350,6 +350,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     vrModeButton.managedProperty().bindBidirectional(vrModeButton.visibleProperty());
     vrModeButton.setVisible(false);
 
+    // system mute/volume is controlled server-side via a Windows-only audio API
+    muteSystemEntry.setVisible(Studio.isServerWindows());
+
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null && client.getSystemService().isLocal());
@@ -526,8 +529,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }
     else if (key.equals(PreferenceNames.PINVOL_AUTOSTART_ENABLED)) {
       PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
-      pinVolStartItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
-      pinVolStopItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
+      boolean pinVolAvailable = Studio.isServerWindows() && client.getSystemService().isLocal() && preference.getBooleanValue();
+      pinVolStartItem.setVisible(pinVolAvailable);
+      pinVolStopItem.setVisible(pinVolAvailable);
 
       boolean running = client.getPinVolService().isRunning();
       pinVolStartItem.setDisable(running);

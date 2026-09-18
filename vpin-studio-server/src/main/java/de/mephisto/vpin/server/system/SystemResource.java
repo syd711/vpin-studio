@@ -191,6 +191,7 @@ public class SystemResource {
     id.setSystemName(name);
 
     id.setVersion(systemService.getVersion());
+    id.setOperatingSystem(systemService.getOperatingSystem());
     return id;
   }
 

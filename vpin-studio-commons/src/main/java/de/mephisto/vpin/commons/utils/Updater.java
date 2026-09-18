@@ -158,11 +158,31 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", loadTemplate("update-server.bat"));
-    List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(getWriteableBaseFolder());
-    executor.executeCommandAsync();
+    if (OSUtil.isLinux()) {
+      String cmds = loadTemplate("update-server-linux.sh");
+      File file = FileUtils.writeBatch("update-server.sh", cmds);
+      LOG.info("Written temporary bash: {}", cmds);
+
+      Set<PosixFilePermission> perms = new HashSet<>();
+      perms.add(PosixFilePermission.OWNER_READ);
+      perms.add(PosixFilePermission.OWNER_WRITE);
+      perms.add(PosixFilePermission.OWNER_EXECUTE);
+      Files.setPosixFilePermissions(file.toPath(), perms);
+      LOG.info("Applied execute permissions to: {}", file.getAbsolutePath());
+
+      List<String> commands = List.of("./update-server.sh");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
+      executor.setDir(getWriteableBaseFolder());
+      executor.enableLogging(true);
+      executor.executeCommandAsync();
+    }
+    else {
+      FileUtils.writeBatch("update-server.bat", loadTemplate("update-server.bat"));
+      List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(getWriteableBaseFolder());
+      executor.executeCommandAsync();
+    }
     return true;
   }
 

@@ -17,6 +17,7 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.system.OperatingSystem;
 import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -80,6 +81,11 @@ public class Studio extends Application {
    */
   public static FeaturesInfo Features;
 
+  /**
+   * The operating system the connected server is running on, static for a simple access in code
+   */
+  public static OperatingSystem ServerOS;
+
   public static Stage stage;
 
   public static VPinStudioClient client;
@@ -93,6 +99,10 @@ public class Studio extends Application {
 
   public static void main(String[] args) {
     launch(args);
+  }
+
+  public static boolean isServerWindows() {
+    return ServerOS == OperatingSystem.WINDOWS;
   }
 
   private static VPinStudioClientErrorHandler errorHandler;
@@ -172,6 +182,7 @@ public class Studio extends Application {
         splashController.setStatus(Messages.get("studio.splash.checking_localhost"));
       }
       Studio.Features = client.getSystemService().getFeatures();
+      Studio.ServerOS = client.getSystemService().getSystemId().getOperatingSystem();
       ServerFX.client = Studio.client;
 
       String version = client.getSystemService().getVersion();
@@ -195,6 +206,7 @@ public class Studio extends Application {
             if (!StringUtils.isEmpty(version)) {
               //moved this inside because we are using the version to check connection. It was slowing this process down
               Studio.Features = client.getSystemService().getFeatures();
+              Studio.ServerOS = client.getSystemService().getSystemId().getOperatingSystem();
               final VPinStudioClient foundClient = Studio.client;
               Platform.runLater(() -> loadStudio(stage, foundClient));
               return;
@@ -318,6 +330,7 @@ public class Studio extends Application {
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
       Studio.Features = client.getSystemService().getFeatures();
+      Studio.ServerOS = client.getSystemService().getSystemId().getOperatingSystem();
       ServerFX.client = Studio.client;
 
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
