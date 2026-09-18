@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
+import de.mephisto.vpin.restclient.system.OperatingSystem;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
@@ -401,6 +402,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public String getVersion() {
     return VersionUtil.getVersion();
+  }
+
+  public OperatingSystem getOperatingSystem() {
+    if (OSUtil.isWindows()) {
+      return OperatingSystem.WINDOWS;
+    }
+    if (OSUtil.isMac()) {
+      return OperatingSystem.MAC;
+    }
+    if (OSUtil.isLinux()) {
+      return OperatingSystem.LINUX;
+    }
+    return OperatingSystem.UNKNOWN;
   }
 
   public List<String> getCompetitionBadges() {
