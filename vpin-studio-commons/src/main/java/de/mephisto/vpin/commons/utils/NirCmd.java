@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
 import com.sun.jna.ptr.FloatByReference;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,23 +16,17 @@ public class NirCmd {
 
   public static void focusWindow(String title) {
     List<String> commands = Arrays.asList("nircmd.exe", "win", "activate", "ititle", "\"" + title + "\"");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./resources"));
-    executor.executeCommandAsync();
+    run(commands);
   }
 
   public static void setTopMost(String title) {
     List<String> commands = Arrays.asList("nircmd.exe", "win", "settopmost", "ititle", "\"" + title + "\"", "1");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./resources"));
-    executor.executeCommandAsync();
+    run(commands);
   }
 
   public static void muteSystem(boolean mute) {
     List<String> commands = Arrays.asList("nircmd.exe", "mutesysvolume", mute ? "1" : "0");
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./resources"));
-    executor.executeCommandAsync();
+    run(commands);
   }
 
   public static int getSystemVolume() {
@@ -45,15 +40,23 @@ public class NirCmd {
   public static void setVolume(int volume) {
     int vol = 65535 * volume / 100;
     List<String> commands = Arrays.asList("nircmd.exe", "setvolume", "0", String.valueOf(vol), String.valueOf(vol));
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("./resources"));
-    executor.executeCommandAsync();
+    run(commands);
   }
 
   public static void setTaskBarVisible(boolean visible) {
     List<String> commands = Arrays.asList("nircmd.exe", "win", "hide", "class", "Shell_TrayWnd");
     if (visible) {
       commands = Arrays.asList("nircmd.exe", "win", "show", "class", "Shell_TrayWnd");
+    }
+    run(commands);
+  }
+
+  /**
+   * nircmd.exe is a Windows tool, so every call is a no-op elsewhere.
+   */
+  private static void run(List<String> commands) {
+    if (!OSUtil.isWindows()) {
+      return;
     }
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./resources"));

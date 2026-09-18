@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpxz;
 
+import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
 import de.mephisto.vpin.restclient.vpxz.VPXZType;
 import de.mephisto.vpin.restclient.vpxz.VpxzArchiveUtil;
@@ -7,7 +8,6 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -74,8 +74,7 @@ public class VPXZSourceAdapterFolder implements VPXZSourceAdapter {
   public boolean delete(VPXZDescriptor descriptor) {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
-    if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
-      LOG.error("Failed moving file to trash: {}", file.getAbsolutePath());
+    if (file.exists() && !TrashBin.moveTo(file)) {
       if (!file.delete()) {
         LOG.error("Failed to delete {}", file.getAbsolutePath());
         return false;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.backups.adapters.vpa;
 
+import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -9,7 +10,6 @@ import de.mephisto.vpin.server.backups.BackupSourceAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,8 +76,7 @@ public class BackupSourceAdapterFolder implements BackupSourceAdapter {
   public boolean delete(BackupDescriptor descriptor) {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
-    if (file.exists() && !Desktop.getDesktop().moveToTrash(file)) {
-      LOG.error("Failed moving file to trash: {}", file.getAbsolutePath());
+    if (file.exists() && !TrashBin.moveTo(file)) {
       if (!file.delete()) {
         LOG.error("Failed to delete {}", file.getAbsolutePath());
         return false;

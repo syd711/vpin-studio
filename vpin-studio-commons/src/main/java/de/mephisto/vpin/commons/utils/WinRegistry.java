@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.utils;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The registry only exists on Windows: every accessor is a no-op elsewhere, because JNA fails to load
+ * Advapi32 with an Error that the catch blocks below would not handle.
+ */
 public class WinRegistry {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -20,6 +25,9 @@ public class WinRegistry {
    */
   @NonNull
   public static List<String> getCurrentUserKeys(@NonNull String path) {
+    if (!OSUtil.isWindows()) {
+      return Collections.emptyList();
+    }
     try {
       return Arrays.asList(Advapi32Util.registryGetKeys(WinReg.HKEY_CURRENT_USER, path));
     }
@@ -34,6 +42,9 @@ public class WinRegistry {
    */
   @NonNull
   public static List<String> getLocalMachineKeys(@NonNull String path) {
+    if (!OSUtil.isWindows()) {
+      return Collections.emptyList();
+    }
     try {
       return Arrays.asList(Advapi32Util.registryGetKeys(WinReg.HKEY_LOCAL_MACHINE, path));
     }
@@ -45,6 +56,9 @@ public class WinRegistry {
 
   @NonNull
   public static Map<String, Object> getClassesValues(@NonNull String path) {
+    if (!OSUtil.isWindows()) {
+      return Collections.emptyMap();
+    }
     try {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CLASSES_ROOT, path);
     }
@@ -56,6 +70,9 @@ public class WinRegistry {
 
   @NonNull
   public static boolean hasCurrentUserValues(@NonNull String path) {
+    if (!OSUtil.isWindows()) {
+      return false;
+    }
     try {
       return Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, path);
     }
@@ -67,6 +84,9 @@ public class WinRegistry {
 
   @NonNull
   public static Map<String, Object> getCurrentUserValues(@NonNull String path) {
+    if (!OSUtil.isWindows()) {
+      return Collections.emptyMap();
+    }
     try {
       return Advapi32Util.registryGetValues(WinReg.HKEY_CURRENT_USER, path);
     }
@@ -77,6 +97,9 @@ public class WinRegistry {
   }
 
   public static String readUserValue(String path, String key) {
+    if (!OSUtil.isWindows()) {
+      return null;
+    }
     try {
       return Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER, path, key);
     }
@@ -87,6 +110,9 @@ public class WinRegistry {
   }
 
   public static void setUserIntValue(@NonNull String path, @NonNull String key, int value) {
+    if (!OSUtil.isWindows()) {
+      return;
+    }
     try {
       Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, path, key, value);
       LOG.info("Written userInt {}/{} => {}", path, key, value);
@@ -97,6 +123,9 @@ public class WinRegistry {
   }
 
   public static void setUserValue(@NonNull String path, @NonNull String key, String value) {
+    if (!OSUtil.isWindows()) {
+      return;
+    }
     try {
       Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, path, key, value);
       LOG.info("Written userString {}/{} => {}", path, key, value);
@@ -107,6 +136,9 @@ public class WinRegistry {
   }
 
   public static void createUserKey(@NonNull String key) {
+    if (!OSUtil.isWindows()) {
+      return;
+    }
     try {
       Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, key);
       LOG.info("Created key {}\\{}", key, key);
@@ -117,6 +149,9 @@ public class WinRegistry {
   }
 
   public static void deleteUserKey(@NonNull String key) {
+    if (!OSUtil.isWindows()) {
+      return;
+    }
     try {
       Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, key);
       LOG.info("Deleted key: {}", key);
@@ -127,6 +162,9 @@ public class WinRegistry {
   }
 
   public static void deleteUserValue(@NonNull String path, @NonNull String key) {
+    if (!OSUtil.isWindows()) {
+      return;
+    }
     try {
       Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, path, key);
       LOG.info("Deleted key: {}", key);
