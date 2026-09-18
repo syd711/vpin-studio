@@ -174,6 +174,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         this.vpxInstallationFolder = new File(store.get(VPX_INSTALLATION_DIR));
       }
 
+      // Popper, PinballX and PinballY are all Windows-only frontends, so they can never actually
+      // run on a non-Windows server (this also protects against the FrontendType.Popper default
+      // when no frontend-specific installation directory has been configured at all)
+      if (!OSUtil.isWindows() && !frontendType.equals(FrontendType.Standalone)) {
+        LOG.warn("Frontend type {} is not supported on non-Windows systems, falling back to {}.", frontendType, FrontendType.Standalone);
+        frontendType = FrontendType.Standalone;
+      }
+
       // now that frontend is determined, activate or deactivate features
       frontendType.apply(Features);
       if (!OSUtil.isWindows()) {

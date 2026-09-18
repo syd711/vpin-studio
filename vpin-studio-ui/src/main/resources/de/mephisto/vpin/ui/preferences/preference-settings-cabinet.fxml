@@ -179,7 +179,7 @@
                      </VBox.margin>
                   </GridPane>
                   <CheckBox fx:id="stickyKeysCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.settings_cabinet.disable_sticky_keys" />
-                  <Label styleClass="checkbox-description" text="%pref.settings_cabinet.this_will_change_the_registry_key_hkey_current" textFill="WHITE" wrapText="true" />
+                  <Label fx:id="stickyKeysDescriptionLabel" styleClass="checkbox-description" text="%pref.settings_cabinet.this_will_change_the_registry_key_hkey_current" textFill="WHITE" wrapText="true" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

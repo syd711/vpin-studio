@@ -79,6 +79,18 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button mameBtn;
 
   @FXML
+  private Button dofBtn;
+
+  @FXML
+  private Button doflinxBtn;
+
+  @FXML
+  private Button pinemhiBtn;
+
+  @FXML
+  private Button pinvolBtn;
+
+  @FXML
   private Button vpuBtn;
 
   @FXML
@@ -511,10 +523,20 @@ public class PreferencesController extends SettingsSceneController implements In
     dmdDeviceBtn.managedProperty().bindBidirectional(dmdDeviceBtn.visibleProperty());
     vpxzBtn.managedProperty().bindBidirectional(vpxzBtn.visibleProperty());
     vrBtn.managedProperty().bindBidirectional(vrBtn.visibleProperty());
+    dofBtn.managedProperty().bindBidirectional(dofBtn.visibleProperty());
+    doflinxBtn.managedProperty().bindBidirectional(doflinxBtn.visibleProperty());
+    pinemhiBtn.managedProperty().bindBidirectional(pinemhiBtn.visibleProperty());
+    pinvolBtn.managedProperty().bindBidirectional(pinvolBtn.visibleProperty());
 
     vpxzBtn.setVisible(Features.VPXZ_ENABLED);
     repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
     dmdDeviceBtn.setVisible(Features.DMD_DEVICE_INI);
+
+    // these all rely on Windows-only tools/APIs on the server (DirectOutput, DOFLinx.exe, PinVol.exe/NirCmd)
+    dofBtn.setVisible(Studio.isServerWindows());
+    doflinxBtn.setVisible(Studio.isServerWindows());
+    pinvolBtn.setVisible(Studio.isServerWindows());
+    pinemhiBtn.setVisible(Features.NVRAM_PARSING_USE_PINEMHI);
 
     // activation of custom options according to installed frontend
     FrontendType frontendType = client.getFrontendService().getFrontendType();
