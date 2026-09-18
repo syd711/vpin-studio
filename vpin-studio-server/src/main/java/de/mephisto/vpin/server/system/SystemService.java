@@ -129,7 +129,21 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private void initBaseFolders() throws VPinStudioException {
     try {
-      PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
+      // On Linux, always use system-linux.properties instead of system.properties, unless a
+      // test profile already selected a different name (system-test, system-pinballX, ...).
+      String propertiesName = systemProperties;
+      boolean linuxDefaultProfile = OSUtil.isLinux() && DEFAULT_SYSTEM_PROPERTIES_NAME.equals(systemProperties);
+      if (linuxDefaultProfile) {
+        propertiesName = LINUX_SYSTEM_PROPERTIES_NAME;
+        LOG.info("Running on Linux, using {}.properties", propertiesName);
+      }
+
+      File propertiesFile = new File(RESOURCES, propertiesName.endsWith(".properties") ? propertiesName : propertiesName + ".properties");
+      PropertiesStore store = PropertiesStore.create(propertiesFile);
+
+      if (linuxDefaultProfile) {
+        validateLinuxProperties(store, propertiesFile);
+      }
 
       // Determination of the installed Frontend
       //Standalone Folder
@@ -205,10 +219,66 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
       }
     }
+    catch (LinuxConfigurationException e) {
+      throw e;
+    }
     catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
+    }
+  }
+
+  /**
+   * The server on Linux only supports Standalone mode. Rather than start half-configured when
+   * resources/system-linux.properties is missing or one of its values does not resolve to an
+   * existing file or folder, collect every problem and stop the server with a single message.
+   */
+  private void validateLinuxProperties(@NonNull PropertiesStore store, @NonNull File propertiesFile) throws LinuxConfigurationException {
+    List<String> errors = new ArrayList<>();
+
+    if (!propertiesFile.exists()) {
+      errors.add("the file does not exist. Create it, starting from the template resources/system-linux.properties (see LINUX-SERVER.md).");
+    }
+    else if (!store.containsNonEmptyKey(STANDALONE_INSTALLATION_DIR)) {
+      errors.add(STANDALONE_INSTALLATION_DIR + " is required and must point to the VPX standalone installation folder.");
+    }
+    else {
+      File installDir = new File(store.get(STANDALONE_INSTALLATION_DIR));
+      if (!installDir.isDirectory()) {
+        errors.add(STANDALONE_INSTALLATION_DIR + " (\"" + store.get(STANDALONE_INSTALLATION_DIR) + "\") does not exist or is not a directory.");
+      }
+
+      if (store.containsNonEmptyKey(STANDALONE_EXECUTABLE)) {
+        String configured = store.get(STANDALONE_EXECUTABLE);
+        File exe = new File(configured);
+        if (!exe.isAbsolute()) {
+          exe = new File(installDir, configured);
+        }
+        if (!exe.isFile()) {
+          errors.add(STANDALONE_EXECUTABLE + " (\"" + configured + "\") does not resolve to an existing file.");
+        }
+      }
+
+      if (store.containsNonEmptyKey(STANDALONE_TABLES_DIR)) {
+        File tablesDir = new File(store.get(STANDALONE_TABLES_DIR));
+        if (!tablesDir.isDirectory()) {
+          errors.add(STANDALONE_TABLES_DIR + " (\"" + store.get(STANDALONE_TABLES_DIR) + "\") does not exist or is not a directory.");
+        }
+      }
+
+      if (store.containsNonEmptyKey(STANDALONE_CONFIG_FILE)) {
+        File configFile = new File(store.get(STANDALONE_CONFIG_FILE));
+        File parent = configFile.getParentFile();
+        if (parent == null || !parent.isDirectory()) {
+          errors.add(STANDALONE_CONFIG_FILE + " (\"" + store.get(STANDALONE_CONFIG_FILE) + "\") is not in an existing folder.");
+        }
+      }
+    }
+
+    if (!errors.isEmpty()) {
+      String msg = "Invalid Linux server configuration in " + propertiesFile.getAbsolutePath() + ":\n  - " + String.join("\n  - ", errors);
+      throw new LinuxConfigurationException(msg);
     }
   }
 
@@ -856,6 +926,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
       initBaseFolders();
       logSystemInfo();
+    }
+    catch (LinuxConfigurationException e) {
+      LOG.error("----------------------------------------------");
+      LOG.error(e.getMessage());
+      LOG.error("Stopping the server.");
+      LOG.error("==============================================");
+      this.shutdown();
+      return;
     }
     catch (Exception e) {
       LOG.error("Failed to initialize system service: {}", e.getMessage(), e);

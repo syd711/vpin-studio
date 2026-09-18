@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.restclient.util.OSUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,7 +222,8 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
         LOG.info("Sticky keys enabled: {}", serverSettings.isStickyKeysEnabled());
 
 
-        File propertiesFile = new File(SystemInfo.RESOURCES + "system.properties");
+        String propertiesName = OSUtil.isLinux() ? SystemInfo.LINUX_SYSTEM_PROPERTIES_NAME : SystemInfo.DEFAULT_SYSTEM_PROPERTIES_NAME;
+        File propertiesFile = new File(SystemInfo.RESOURCES + propertiesName + ".properties");
         PropertiesStore store = PropertiesStore.create(propertiesFile);
         store.set("startup.delay", serverSettings.getStartupDelay());
       }

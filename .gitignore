@@ -164,3 +164,4 @@ vpin-studio-logs.zip
 win32/java/bin/jinput-dx8_64.dll
 
 /resources/vpxz/*.vpxz
+/PUPDatabase.db

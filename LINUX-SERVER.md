@@ -55,9 +55,11 @@ tables/
    one folder together with the repository's `resources` folder, `VPin-Studio-Server-linux_x64.sh`
    and `zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz` from <https://cdn.azul.com/zulu/bin/>.
    The server downloads its remaining data files on the first start.
-2. Create `resources/system.properties`, starting from
-   [`resources/system-linux.properties`](resources/system-linux.properties).
-   `visualPinball.installationDir` is required: it selects Standalone mode.
+2. Edit [`resources/system-linux.properties`](resources/system-linux.properties). On Linux the server
+   always reads this file instead of `system.properties` — there is nothing to copy or rename.
+   `visualPinball.installationDir` is required: it selects Standalone mode. If it, or any other path
+   set in the file, does not exist, the server logs the problem and stops rather than starting
+   half-configured.
 3. Optional: to import and export table scripts, download the Linux build of
    [vpxtool](https://github.com/francisdb/vpxtool/releases) and put the `vpxtool` binary into
    `resources/`.
@@ -95,6 +97,11 @@ menu, which is enough to manage the tables.
 
 ## Things to know
 
+- **The server always uses `resources/system-linux.properties` on Linux**, never
+  `resources/system.properties` (that file is only read on Windows/macOS). If the file is missing, or
+  `visualPinball.installationDir`, `visualPinball.executable`, `visualPinball.configFile` or
+  `visualPinball.tablesFolder` is set but does not resolve to an existing path, the server logs every
+  problem it found and stops instead of starting with an incomplete configuration.
 - **VPX rewrites `VPinballX.ini` when it exits.** Settings changed in the client while a table is
   running are lost. Change them while VPX is stopped.
 - The server launches tables with `-Play <table>` (or `-PovEdit`). The standalone builds reject the

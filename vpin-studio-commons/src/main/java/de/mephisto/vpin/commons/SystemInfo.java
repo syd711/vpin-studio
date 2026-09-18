@@ -33,6 +33,11 @@ public class SystemInfo {
   public final static String SYSTEM_FEATURES_ON = "system.featuresOn";
   public final static String SYSTEM_FEATURES_OFF = "system.featuresOff";
 
+  /** The default value of the {@code system.properties} Spring property, i.e. no profile-specific override. */
+  public final static String DEFAULT_SYSTEM_PROPERTIES_NAME = "system";
+  /** On Linux, {@link #DEFAULT_SYSTEM_PROPERTIES_NAME} is always resolved to this file instead. */
+  public final static String LINUX_SYSTEM_PROPERTIES_NAME = "system-linux";
+
 
   public final static String DOT_NET = "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP";
 

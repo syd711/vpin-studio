@@ -3,6 +3,7 @@ package de.mephisto.vpin.server;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,8 @@ public class VPinStudioServer extends SpringBootServletInitializer {
 
   private static void runDelayCheck() {
     try {
-      File propertiesFile = new File(SystemInfo.RESOURCES + "system.properties");
+      String propertiesName = OSUtil.isLinux() ? SystemInfo.LINUX_SYSTEM_PROPERTIES_NAME : SystemInfo.DEFAULT_SYSTEM_PROPERTIES_NAME;
+      File propertiesFile = new File(SystemInfo.RESOURCES + propertiesName + ".properties");
       PropertiesStore store = PropertiesStore.create(propertiesFile);
       String delay = store.get("startup.delay");
       if (!StringUtils.isEmpty(delay)) {
