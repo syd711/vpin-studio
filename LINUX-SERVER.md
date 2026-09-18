@@ -51,9 +51,12 @@ tables/
 
 ## Installation
 
-1. There is no Linux server package yet. [Build](#building) `vpin-studio-server.jar` and put it into
-   one folder together with the repository's `resources` folder, `VPin-Studio-Server-linux_x64.sh`
-   and `zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz` from <https://cdn.azul.com/zulu/bin/>.
+1. Download `VPin-Studio-Server-linux-x64.zip` from the
+   [latest release](https://github.com/syd711/vpin-studio/releases) and unzip it. It contains
+   `vpin-studio-server.jar`, `VPin-Studio-Server-linux_x64.sh`, the repository's `resources` folder
+   and the Zulu FX JRE tarball. Alternatively, [build](#building) `vpin-studio-server.jar` yourself and
+   assemble the same folder next to `VPin-Studio-Server-linux_x64.sh`, `resources`, and
+   `zulu25.34.17-ca-fx-jre25.0.3-linux_x64.tar.gz` from <https://cdn.azul.com/zulu/bin/>.
    The server downloads its remaining data files on the first start.
 2. Create `resources/system.properties`, starting from
    [`resources/system-linux.properties`](resources/system-linux.properties).
