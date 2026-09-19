@@ -248,14 +248,18 @@ public class VPinMameService implements InitializingBean {
 
   //---------------------------------
 
+  /**
+   * @return true if the file is gone afterwards, also if there was none
+   */
   public boolean deleteCfg(@NonNull Game game) {
-    File cfgFile = folderLookupService.getCfgFile(game);
-    return cfgFile != null && cfgFile.exists() && SystemUtil.deleteFileOrFolder(cfgFile);
+    return SystemUtil.deleteFileOrFolder(folderLookupService.getCfgFile(game));
   }
 
+  /**
+   * @return true if the file is gone afterwards, also if there was none, e.g. deleted with a table of the same folder before
+   */
   public boolean deleteRom(@NonNull Game game) {
-    File romFile = folderLookupService.getRomFile(game);
-    return romFile != null && romFile.exists() && SystemUtil.deleteFileOrFolder(romFile);
+    return SystemUtil.deleteFileOrFolder(folderLookupService.getRomFile(game));
   }
 
   //--------------------------------

@@ -146,6 +146,8 @@ public class TableDeleteController implements Initializable, DialogController {
 
   private TableOverviewController tableOverviewController;
 
+  private boolean perTableFileStructure;
+
   private final List<CheckBox> fileChecks = new ArrayList<>();
   private final List<CheckBox> settingsChecks = new ArrayList<>();
   private final List<CheckBox> mediaChecks = new ArrayList<>();
@@ -223,26 +225,12 @@ public class TableDeleteController implements Initializable, DialogController {
     confirmationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteBtn.setDisable(!newValue));
 
     deleteAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      vpxFileCheckbox.setSelected(newValue);
-      directb2sCheckbox.setSelected(newValue);
-      frontendCheckbox.setSelected(newValue);
-      pupPackCheckbox.setSelected(newValue);
-      dmdCheckbox.setSelected(newValue);
-      musicCheckbox.setSelected(newValue);
-      mameConfigCheckbox.setSelected(newValue);
-      highscoreCheckbox.setSelected(newValue);
-      altSoundCheckbox.setSelected(newValue);
-      altColorCheckbox.setSelected(newValue);
-      vbsCheckbox.setSelected(newValue);
-      iniCheckbox.setSelected(newValue);
-      resCheckbox.setSelected(newValue);
-      povCheckbox.setSelected(newValue);
-      pinVolCheckbox.setSelected(newValue);
-      bamCfgCheckbox.setSelected(newValue);
-      dmdDeviceIniCheckbox.setSelected(newValue);
-      b2sTableSettingsCheckbox.setSelected(newValue);
-      aliasCheckbox.setSelected(newValue);
-      romCheckbox.setSelected(newValue);
+      List<CheckBox> all = new ArrayList<>();
+      all.add(frontendCheckbox);
+      all.addAll(fileChecks);
+      all.addAll(mediaChecks);
+      all.addAll(settingsChecks);
+      all.forEach(c -> setSelectedIfEnabled(c, newValue));
 
       deleteAllFilesCheckbox.setSelected(newValue);
       deleteAllMediaCheckbox.setSelected(newValue);
@@ -285,9 +273,10 @@ public class TableDeleteController implements Initializable, DialogController {
     deleteAllFilesCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        fileChecks.stream().forEach(c -> {
-          if (!c.equals(romCheckbox)) {
-            c.setSelected(newValue);
+        //the ROM is shared with other tables, unless it is located in the folder of the table
+        fileChecks.forEach(c -> {
+          if (perTableFileStructure || !c.equals(romCheckbox)) {
+            setSelectedIfEnabled(c, newValue);
           }
         });
       }
@@ -296,14 +285,14 @@ public class TableDeleteController implements Initializable, DialogController {
     deleteAllMediaCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        mediaChecks.stream().forEach(c -> c.setSelected(newValue));
+        mediaChecks.forEach(c -> setSelectedIfEnabled(c, newValue));
       }
     });
 
     deleteAllSettingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        settingsChecks.stream().forEach(c -> c.setSelected(newValue));
+        settingsChecks.forEach(c -> setSelectedIfEnabled(c, newValue));
       }
     });
   }
@@ -328,6 +317,7 @@ public class TableDeleteController implements Initializable, DialogController {
     this.validationDescription.setVisible(false);
 
     GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.getFirst().getEmulatorId());
+    this.perTableFileStructure = emulator.isPerTableFileStructure();
 
     //whole columns
     settingsColumn.setVisible(emulator.isVpxEmulator() || emulator.isFpEmulator());
@@ -360,37 +350,62 @@ public class TableDeleteController implements Initializable, DialogController {
     }
   }
 
+  /**
+   * The files of a table are shared with the tables that use the same ROM, so they are locked if there is such a table.
+   * With the per table file structure, ROM, NVRAM, config, music and so on are located in the folder of the table.
+   * These are only shared with a table of the same folder. The DMDDevice.ini and B2STableSettings.xml stay shared.
+   */
   private void refreshVariantsCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    boolean variantExists = false;
-    for (GameRepresentation selectedGame : selectedGames) {
-      if (variantExists) {
-        break;
-      }
+    GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(selectedGames.getFirst().getEmulatorId());
+    boolean perTable = emulator.isPerTableFileStructure();
 
+    boolean variantExists = false;
+    boolean folderVariantExists = false;
+    for (GameRepresentation selectedGame : selectedGames) {
       if (!StringUtils.isEmpty(selectedGame.getRom())) {
         String rom = selectedGame.getRom();
         List<GameRepresentation> variants = allGames.stream().filter(g -> rom.equalsIgnoreCase(g.getRom())).toList();
         for (GameRepresentation variant : variants) {
           if (!selectedGames.contains(variant)) {
             variantExists = true;
-            this.validationContainer.setVisible(true);
-            this.validationTitle.setVisible(true);
-            break;
+            folderVariantExists |= isSameFolder(selectedGame, variant);
           }
         }
       }
     }
 
-    updateDisabled(deleteAllCheckbox, variantExists);
-    updateDisabled(dmdCheckbox, variantExists);
-    updateDisabled(musicCheckbox, variantExists);
-    updateDisabled(mameConfigCheckbox, variantExists);
-    updateDisabled(highscoreCheckbox, variantExists);
-    updateDisabled(altSoundCheckbox, variantExists);
-    updateDisabled(altColorCheckbox, variantExists);
+    if (variantExists) {
+      this.validationContainer.setVisible(true);
+      this.validationTitle.setVisible(true);
+    }
+
+    boolean folderLocked = perTable ? folderVariantExists : variantExists;
+    updateDisabled(deleteAllCheckbox, folderLocked);
+    updateDisabled(dmdCheckbox, folderLocked);
+    updateDisabled(musicCheckbox, folderLocked);
+    updateDisabled(mameConfigCheckbox, folderLocked);
+    updateDisabled(highscoreCheckbox, folderLocked);
+    updateDisabled(altSoundCheckbox, folderLocked);
+    updateDisabled(altColorCheckbox, folderLocked);
+    updateDisabled(romCheckbox, folderLocked);
+
     updateDisabled(dmdDeviceIniCheckbox, variantExists);
     updateDisabled(b2sTableSettingsCheckbox, variantExists);
-    updateDisabled(romCheckbox, variantExists);
+  }
+
+  private static boolean isSameFolder(GameRepresentation game, GameRepresentation other) {
+    return game.getGameFilePath() != null && other.getGameFilePath() != null
+        && folderOf(game.getGameFilePath()).equals(folderOf(other.getGameFilePath()));
+  }
+
+  private static String folderOf(String gameFilePath) {
+    return StringUtils.substringBeforeLast(gameFilePath.replace('\\', '/'), "/");
+  }
+
+  private static void setSelectedIfEnabled(CheckBox checkBox, boolean selected) {
+    if (!checkBox.isDisabled()) {
+      checkBox.setSelected(selected);
+    }
   }
 
   private void updateDisabled(CheckBox checkBox, boolean variantExists) {
