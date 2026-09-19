@@ -34,22 +34,61 @@ The pause menu and overlay preferences are hidden in Standalone mode, so the tem
 
 ## Table layout
 
-VPX 10.8.1 keeps each table's files in the table's folder, and so does the server when the VPX
-installation has no `VPinMAME` folder:
+VPX 10.8.1 keeps each table's files in the table's folder (see [VPX-10.8.1-FileLayout.md](VPX-10.8.1-FileLayout.md)),
+and so does the server, **but only when the VPX installation has no `VPinMAME` folder**:
 
 ```
 tables/
   Twister (1996)/
     Twister (1996).vpx
     Twister (1996).directb2s
-    music/
-    user/VPReg.stg
+    Twister (1996).ini          table settings override
+    music/                      PlayMusic() files
+    user/VPReg.stg              highscores of tables that use it
+    altsound/<rom>/             AltSound
+    serum/<rom>/<rom>.cRZ       Serum colorization
+    vni/<rom>/                  VNI and PAL colorization
     pinmame/
       roms/twst_405.zip
       nvram/twst_405.nv
-      altcolor/
-      altsound/
+      cfg/
 ```
+
+The layout is chosen once per VPX installation, by looking for `<visualPinball.installationDir>/VPinMAME`
+when the server starts. It is not chosen per table and the two layouts are never mixed:
+
+| | Per-table layout (no `VPinMAME` folder) | Legacy layout (`VPinMAME` folder exists) |
+|---|---|---|
+| ROMs, nvram, cfg | `<table folder>/pinmame/{roms,nvram,cfg}` | `VPinMAME/{roms,nvram,cfg}` |
+| AltSound | `<table folder>/altsound/` | `VPinMAME/altsound/` |
+| Colorization | `<table folder>/serum/` (`.cRZ`, `.cROMc`), `<table folder>/vni/` (`.pal`, `.vni`, `.pac`) | `VPinMAME/altcolor/` |
+| Music | `<table folder>/music/` | `<installationDir>/Music/` |
+| `VPReg.stg` and other user files | `<table folder>/user/` | `<installationDir>/User/` (or `user/`) |
+
+VPX 10.8.1 still runs legacy installations, but discourages them. Use the per-table layout for a new cabinet.
+
+### What to do with VPX 10.8.1
+
+- **Do not keep a `VPinMAME` folder in the VPX installation folder** unless you want the legacy layout. If it is
+  there, the server ignores each table's `pinmame/` folder, and ROMs and nvram that Studio uploads or reads
+  end up in `VPinMAME/` instead of next to the table. When you switch, move the ROMs, nvram and cfg files
+  from `VPinMAME/` into each table's `pinmame/` folder, and restart the server.
+- **Put every table in its own folder.** VPX searches next to the table file, so tables that share a folder
+  also share `pinmame/`, `user/` and `music/`, and tables with the same ROM overwrite each other's nvram.
+- **Backglasses can be named after the table file or after the folder**, like VPX 10.8.1 does. The
+  server looks for `<table file>.directb2s` first and for `<folder name>.directb2s` next to it if there is none.
+  The `.ini`, `.pov` and `.vbs` files are only found by the table file's name, so name those after the table file.
+- **Colorization is split like VPX 10.8.1 splits it.** Studio reads and writes Serum files in
+  `<table folder>/serum/<rom>/` and VNI/PAL/PAC files in `<table folder>/vni/<rom>/`, and lists both as
+  the table's colorization. A folder that Studio created earlier as `altcolor/` is no longer used; move its files
+  into `serum/<rom>/` or `vni/<rom>/`.
+- **Leave `VPinballX.ini` where VPX put it.** 10.8.1 stores it per minor version, in
+  `~/.local/share/VPinballX/10.8/`. The server uses the newest version folder; set
+  `visualPinball.configFile` to use a different one.
+- **Old `VPReg.stg` files.** VPX 10.8.1 writes `<table folder>/user/VPReg.stg`, but the server reads
+  `<installationDir>/User/VPReg.stg` first (also `user/`). A file left over from an older install can shadow
+  the table's own one; delete it if highscores look stale.
+- The server does not use `cache/`, `medias/`, `pupvideos/` or the `.info` files.
 
 ## Installation
 
@@ -114,20 +153,3 @@ to force it, for instance when the server starts before the session and `DISPLAY
   Windows-only `-Minimized` and `-Primary` options.
 - The server stops VPX with SIGTERM, and kills it only if it has not exited after 5 seconds.
 - When new tables are detected, the server stops a running VPX, as it does on Windows.
-
-## Building
-
-The server builds on Linux and macOS with a JDK 25 that includes JavaFX (e.g. Zulu `jdk+fx`):
-
-```bash
-mvn -N install
-mvn -pl vpin-studio-server -am -Plinux package -DskipTests
-```
-
-The jar is written to `vpin-studio-server/target/vpin-studio-server.jar`. The `linux` profile skips
-the Windows launcher and packages the Linux JavaFX libraries.
-
-To build and run without installing a JDK, [vpin-studio-devenv](https://github.com/sfrazer/vpin-studio-devenv)
-has a container image with the Zulu FX JDK and a sandbox cabinet — a resources folder without the
-Windows tools, tables in the per-table layout, and a fake VPX that logs how it was called, so a
-launch can be checked without a cabinet.

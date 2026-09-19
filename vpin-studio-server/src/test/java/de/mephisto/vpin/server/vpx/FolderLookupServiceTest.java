@@ -47,19 +47,19 @@ public class FolderLookupServiceTest {
     assertThat(result.getName()).isEqualTo("myrom");
   }
 
-  // ---- getAltColorFolder ----
+  // ---- getAltColorFolders ----
 
   @Test
-  void getAltColorFolder_legacyLayout_usesVPinMameAltColorFolder() {
+  void getAltColorFolders_legacyLayout_usesVPinMameAltColorFolderForAllTypes() {
     GameEmulator emulator = legacyEmulator();
     File altColorRoot = tempDir.resolve("altcolor").toFile();
     when(vPinMameService.getAltColorFolder()).thenReturn(altColorRoot);
     Game game = mockGame(emulator);
 
-    File result = folderLookupService.getAltColorFolder(game, "myrom");
-
-    assertThat(result.getParentFile()).isEqualTo(altColorRoot);
-    assertThat(result.getName()).isEqualTo("myrom");
+    File expected = new File(altColorRoot, "myrom");
+    assertThat(folderLookupService.getSerumFolder(game, "myrom")).isEqualTo(expected);
+    assertThat(folderLookupService.getVniFolder(game, "myrom")).isEqualTo(expected);
+    assertThat(folderLookupService.getAltColorFolders(game, "myrom")).containsExactly(expected);
   }
 
   // ---- getNvRamFolder ----
@@ -265,6 +265,21 @@ public class FolderLookupServiceTest {
     assertThat(folderLookupService.getUserFolder(game)).isEqualTo(new File(tableFolder, "user"));
     // the core scripts ship with VPX
     assertThat(folderLookupService.getScriptsFolder(game)).isEqualTo(new File(installFolder, "scripts"));
+    verifyNoInteractions(vPinMameService);
+  }
+
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void standaloneLayout_colorizationIsSplitIntoSerumAndVniFolders() {
+    File tableFolder = tempDir.resolve("Twister (1996)").toFile();
+    Game game = mockGame(mock(GameEmulator.class));
+    when(game.getGameFolder()).thenReturn(tableFolder);
+
+    // VPX 10.8.1 reads serum/<rom> and vni/<rom> next to the table
+    assertThat(folderLookupService.getSerumFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "serum/twst_405"));
+    assertThat(folderLookupService.getVniFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "vni/twst_405"));
+    assertThat(folderLookupService.getAltColorFolders(game, "twst_405"))
+        .containsExactly(new File(tableFolder, "serum/twst_405"), new File(tableFolder, "vni/twst_405"));
     verifyNoInteractions(vPinMameService);
   }
 

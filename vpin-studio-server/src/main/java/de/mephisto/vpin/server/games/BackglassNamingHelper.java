@@ -32,11 +32,23 @@ public class BackglassNamingHelper {
   }
 
   public static String getBackglassFileName(@NonNull Game game) {
-    String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + AssetType.DIRECTB2S.name().toLowerCase();
+    String suffix = "." + AssetType.DIRECTB2S.name().toLowerCase();
+    String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + suffix;
     if (game.isZenGame()) {
       B2SMapping backglassName = findBackglassName(game);
       if (backglassName != null) {
         return backglassName.getDirectb2s();
+      }
+      return fileName;
+    }
+
+    // VPX 10.8.1 looks for the backglass named after the table file first, then named after the table's folder
+    File gameFile = game.getGameFile();
+    File folder = gameFile != null ? gameFile.getParentFile() : null;
+    if (folder != null && !folder.getName().isEmpty() && !new File(folder, fileName).exists()) {
+      String folderFileName = folder.getName() + suffix;
+      if (new File(folder, folderFileName).exists()) {
+        return folderFileName;
       }
     }
     return fileName;

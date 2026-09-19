@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -76,15 +77,41 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "altsound/" + subfolder);
   }
 
+  /**
+   * The folder of the Serum files (.cRZ, .cROMc). VPX 10.8.1 reads them from serum/&lt;rom&gt; next to the table.
+   */
   @NonNull
-  public File getAltColorFolder(@NonNull Game game, String subfolder) {
-    GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
-      File folder = vPinMameService.getAltColorFolder();
-      return new File(folder, subfolder);
+  public File getSerumFolder(@NonNull Game game, String subfolder) {
+    if (isPreferLegacyFileStructure(game.getEmulator())) {
+      return getLegacyAltColorFolder(subfolder);
     }
+    return new File(game.getGameFolder(), "serum/" + subfolder);
+  }
 
-    return new File(game.getGameFolder(), "altcolor/" + subfolder);//TODO wrong for serum
+  /**
+   * The folder of the VNI, PAL and PAC files. VPX 10.8.1 reads them from vni/&lt;rom&gt; next to the table.
+   */
+  @NonNull
+  public File getVniFolder(@NonNull Game game, String subfolder) {
+    if (isPreferLegacyFileStructure(game.getEmulator())) {
+      return getLegacyAltColorFolder(subfolder);
+    }
+    return new File(game.getGameFolder(), "vni/" + subfolder);
+  }
+
+  /**
+   * All folders that may hold the colorization of a ROM: one folder in the legacy layout,
+   * the Serum and the VNI folder next to the table otherwise.
+   */
+  @NonNull
+  public List<File> getAltColorFolders(@NonNull Game game, String subfolder) {
+    File serum = getSerumFolder(game, subfolder);
+    File vni = getVniFolder(game, subfolder);
+    return serum.equals(vni) ? List.of(serum) : List.of(serum, vni);
+  }
+
+  private File getLegacyAltColorFolder(String subfolder) {
+    return new File(vPinMameService.getAltColorFolder(), subfolder);
   }
 
   @NonNull
