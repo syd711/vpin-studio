@@ -213,6 +213,7 @@ public class TableDeleteController implements Initializable, DialogController {
     resCheckbox.managedProperty().bindBidirectional(resCheckbox.visibleProperty());
     vbsCheckbox.managedProperty().bindBidirectional(vbsCheckbox.visibleProperty());
     vpxFileCheckbox.managedProperty().bindBidirectional(vpxFileCheckbox.visibleProperty());
+    frontendSelectionField.managedProperty().bindBidirectional(frontendSelectionField.visibleProperty());
 
     this.frontendSelectionField.setVisible(!Features.IS_STANDALONE);
     this.pupPackCheckbox.setVisible(Features.PUPPACKS_ENABLED);
