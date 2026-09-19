@@ -148,7 +148,9 @@ public class AltSoundService implements InitializingBean {
   }
 
   public JobDescriptor installAltSound(@NonNull Game game, @NonNull String rom, @NonNull File archive, @Nullable String archivePath) {
-    File altSoundFolder = folderLookupService.getAltSoundFolder(game, rom);
+    // must match getAltSoundFolder(Game): the folder is named after the alias, while the ROM keeps the VPinMAME options
+    String folderName = !StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : rom;
+    File altSoundFolder = folderLookupService.getAltSoundFolder(game, folderName);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
       return JobDescriptorFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
     }
