@@ -97,8 +97,9 @@ Enable it with `systemctl --user enable --now vpin-studio-server`.
 
 ### Without a display
 
-Pass `-Djava.awt.headless=true` to the script. The server then runs without the overlay and pause
-menu, which is enough to manage the tables.
+The server detects this from `DISPLAY` / `WAYLAND_DISPLAY` and starts headless by itself, without
+the overlay and pause menu, which is enough to manage the tables. Pass `-Djava.awt.headless=true`
+to force it, for instance when the server starts before the session and `DISPLAY` is already set.
 
 ## Things to know
 
@@ -125,3 +126,8 @@ mvn -pl vpin-studio-server -am -Plinux package -DskipTests
 
 The jar is written to `vpin-studio-server/target/vpin-studio-server.jar`. The `linux` profile skips
 the Windows launcher and packages the Linux JavaFX libraries.
+
+To build and run without installing a JDK, [vpin-studio-devenv](https://github.com/sfrazer/vpin-studio-devenv)
+has a container image with the Zulu FX JDK and a sandbox cabinet — a resources folder without the
+Windows tools, tables in the per-table layout, and a fake VPX that logs how it was called, so a
+launch can be checked without a cabinet.
