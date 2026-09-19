@@ -52,8 +52,7 @@
 }, {
   "name" : "maps/main.zip",
   "url" : "https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip",
-  "length" : 896662,
-  "crc32" : "#93FDD90A",
+  "length" : 821760,
   "archiveFolder" : "pinball-memory-maps-main",
   "emptyParentFolder" : true
 }, {
@@ -217,20 +216,20 @@
   "crc32" : "#733FAD36"
 }, {
   "name" : "pinemhi/romfind.ini",
-  "length" : 116736,
-  "crc32" : "#EA830E2C"
+  "length" : 119722,
+  "crc32" : "#DA59EDFF"
 }, {
   "name" : "pinemhi/showboard.exe",
   "length" : 890880,
   "crc32" : "#7A69B370"
 }, {
   "name" : "themes/README.txt",
-  "length" : 307,
-  "crc32" : "#94AE4565"
+  "length" : 311,
+  "crc32" : "#BAC39EB8"
 }, {
   "name" : "themes/notifications/README.md",
-  "length" : 1860,
-  "crc32" : "#47003E5C"
+  "length" : 2121,
+  "crc32" : "#9B45B7CA"
 }, {
   "name" : "themes/notifications/default/logo.png",
   "length" : 402907,
@@ -241,8 +240,8 @@
   "crc32" : "#8F17C7C4"
 }, {
   "name" : "themes/pause-menu/README.md",
-  "length" : 2502,
-  "crc32" : "#8824E520"
+  "length" : 2791,
+  "crc32" : "#AA0EC56B"
 }, {
   "name" : "themes/pause-menu/default/blue.png",
   "length" : 344762,

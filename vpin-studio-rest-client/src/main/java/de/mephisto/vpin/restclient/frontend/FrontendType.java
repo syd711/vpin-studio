@@ -24,6 +24,7 @@ public enum FrontendType {
       features.STATISTICS_ENABLED &= false;
       features.BACKUPS_ENABLED &= true;
       features.CONTROLS_ENABLED &= false;
+      features.OVERLAY_ENABLED &= false;
       features.RATINGS &= false;
       features.COMPETITIONS_ENABLED &= false;
       features.EMULATORS_ENABLED &= false;

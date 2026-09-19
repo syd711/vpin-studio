@@ -61,6 +61,9 @@ public class FeaturesInfo {
   /** Whether controls are supported by the frontend */
   public boolean CONTROLS_ENABLED = true;
 
+  /** Whether the overlay preferences are available */
+  public boolean OVERLAY_ENABLED = true;
+
   public boolean FIELDS_STANDARD = true;
   public boolean FIELDS_EXTENDED = true;
 

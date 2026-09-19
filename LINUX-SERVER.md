@@ -28,7 +28,9 @@ it skips one.
 | PinUP Popper, PinballX, PinballY | Windows frontends |
 | Server self-update, restart, tray icon, idle shutdown | Windows launchers |
 
-A feature can be switched back on with `system.featuresOn` in `resources/system.properties`.
+A feature can be switched back on with `system.featuresOn` in `resources/system-linux.properties`.
+The pause menu and overlay preferences are hidden in Standalone mode, so the template enables them with
+`system.featuresOn=CONTROLS_ENABLED,OVERLAY_ENABLED`.
 
 ## Table layout
 

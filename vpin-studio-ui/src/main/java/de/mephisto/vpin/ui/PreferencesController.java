@@ -546,7 +546,7 @@ public class PreferencesController extends SettingsSceneController implements In
     pinballYSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballY));
 
     notificationsButton.setVisible(!Features.IS_STANDALONE && Features.NOTIFICATIONS_ENABLED);
-    overlayBtn.setVisible(!Features.IS_STANDALONE);
+    overlayBtn.setVisible(Features.OVERLAY_ENABLED);
 
     pauseMenuBtn.setVisible(Features.CONTROLS_ENABLED);
     highscore_cardsBtn.setVisible(!Features.IS_STANDALONE);
