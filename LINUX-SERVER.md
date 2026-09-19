@@ -88,6 +88,10 @@ VPX 10.8.1 still runs legacy installations, but discourages them. Use the per-ta
 - **Old `VPReg.stg` files.** VPX 10.8.1 writes `<table folder>/user/VPReg.stg`, but the server reads
   `<installationDir>/User/VPReg.stg` first (also `user/`). A file left over from an older install can shadow
   the table's own one; delete it if highscores look stale.
+- **Uploads need a table in the per-table layout.** The ROM, nvram and cfg upload dialogs ask for a table instead
+  of an emulator and install into `<table folder>/pinmame/{roms,nvram,cfg}`. Music goes to `<table folder>/music/`, which
+  the server creates if it is missing. With the legacy layout, these uploads still go to `VPinMAME/` and the emulator
+  is selected as before.
 - The server does not use `cache/`, `medias/`, `pupvideos/` or the `.info` files.
 
 ## Installation

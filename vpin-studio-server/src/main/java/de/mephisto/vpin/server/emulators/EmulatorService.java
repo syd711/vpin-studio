@@ -19,6 +19,7 @@ import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -176,6 +177,8 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
       if (mameFolder.exists()) {
         emulator.setMameDirectory(mameFolder.getAbsolutePath());
       }
+
+      emulator.setPerTableFileStructure(emulator.isVpxEmulator() && !FolderLookupService.isPreferLegacyFileStructure(emulator, OSUtil.isWindows()));
 
       if (emulator.isVpxEmulator()) {
         // mind that popper may set a specific romDirectory

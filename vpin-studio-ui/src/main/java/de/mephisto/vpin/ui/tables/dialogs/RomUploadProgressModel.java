@@ -19,17 +19,19 @@ public class RomUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final int emuId;
+  private final int gameId;
   private double percentage = 0;
 
-  public RomUploadProgressModel(String title, List<File> files, int emuId) {
+  public RomUploadProgressModel(String title, List<File> files, int emuId, int gameId) {
     super(files, title);
     this.emuId = emuId;
+    this.gameId = gameId;
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getMameService().uploadRom(emuId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getMameService().uploadRom(emuId, gameId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / getMax());
       });

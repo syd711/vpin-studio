@@ -113,12 +113,12 @@ public class UploadsButtonController implements Initializable {
 
   @FXML
   public void onRomsUpload() {
-    TableDialogs.onRomUploads(emulator, null, null);
+    TableDialogs.onRomUploads(emulator, getSelection(), null, null);
   }
 
   @FXML
   public void onCfgUpload() {
-    TableDialogs.openCfgUploads(null, null);
+    TableDialogs.openCfgUploads(getSelection(), null, null);
   }
 
   @FXML
@@ -131,7 +131,7 @@ public class UploadsButtonController implements Initializable {
 
   @FXML
   public void onNvRamUpload() {
-    TableDialogs.openNvRamUploads(null, null);
+    TableDialogs.openNvRamUploads(getSelection(), null, null);
   }
 
 

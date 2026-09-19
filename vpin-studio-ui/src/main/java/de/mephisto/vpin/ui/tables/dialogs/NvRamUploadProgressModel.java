@@ -18,17 +18,19 @@ public class NvRamUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final int emuId;
+  private final int gameId;
   private double percentage = 0;
 
-  public NvRamUploadProgressModel(String title, List<File> files, int emuId) {
+  public NvRamUploadProgressModel(String title, List<File> files, int emuId, int gameId) {
     super(files, title);
     this.emuId = emuId;
+    this.gameId = gameId;
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getMameService().uploadNvRam(emuId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getMameService().uploadNvRam(emuId, gameId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / getMax());
       });

@@ -119,9 +119,17 @@ public class TableDialogs {
   }
 
   public static void openCfgUploads(File file, Runnable finalizer) {
+    openCfgUploads(null, file, finalizer);
+  }
+
+  /**
+   * @param game preselects the table, needed if the server keeps the cfg files next to each table
+   */
+  public static void openCfgUploads(@Nullable GameRepresentation game, File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", Messages.get("dialog.config_file_upload"));
     CfgUploadController controller = (CfgUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
+    controller.setSelectedGame(game);
     stage.showAndWait();
   }
 
@@ -156,9 +164,17 @@ public class TableDialogs {
   }
 
   public static void openNvRamUploads(File file, Runnable finalizer) {
+    openNvRamUploads(null, file, finalizer);
+  }
+
+  /**
+   * @param game preselects the table, needed if the server keeps the nvram files next to each table
+   */
+  public static void openNvRamUploads(@Nullable GameRepresentation game, File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", Messages.get("dialog.nvram_upload"));
     NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
+    controller.setSelectedGame(game);
     stage.showAndWait();
   }
 
@@ -171,11 +187,18 @@ public class TableDialogs {
 
   public static void onRomUploads(int emulatorId, File file, Runnable finalizer) {
     GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(emulatorId);
-    onRomUploads(gameEmulator, file, finalizer);
+    onRomUploads(gameEmulator, null, file, finalizer);
   }
 
   public static void onRomUploads(GameEmulatorRepresentation emulator, File file, Runnable finalizer) {
-    TableDialogs.openRomUploadDialog(emulator, file, () -> {
+    onRomUploads(emulator, null, file, finalizer);
+  }
+
+  /**
+   * @param game preselects the table, needed if the server keeps the ROMs next to each table
+   */
+  public static void onRomUploads(GameEmulatorRepresentation emulator, @Nullable GameRepresentation game, File file, Runnable finalizer) {
+    TableDialogs.openRomUploadDialog(emulator, game, file, () -> {
       EventManager.getInstance().notifyTablesChanged();
       Platform.runLater(() -> {
         if (finalizer != null) {
@@ -687,11 +710,12 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openRomUploadDialog(GameEmulatorRepresentation emulator, File file, Runnable finalizer) {
+  public static void openRomUploadDialog(GameEmulatorRepresentation emulator, @Nullable GameRepresentation game, File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", Messages.get("dialog.rom_upload"));
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     controller.setSelectedEmulator(emulator);
+    controller.setSelectedGame(game);
     stage.showAndWait();
   }
 

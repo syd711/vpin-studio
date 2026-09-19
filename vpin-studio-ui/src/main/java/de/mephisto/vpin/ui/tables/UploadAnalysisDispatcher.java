@@ -65,15 +65,16 @@ public class UploadAnalysisDispatcher {
                                        @NonNull UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(game != null ? game.getEmulatorId() : -1, file, finalizer);
+        GameEmulatorRepresentation emulator = game != null ? Studio.client.getEmulatorService().getGameEmulator(game.getEmulatorId()) : null;
+        TableDialogs.onRomUploads(emulator, game, file, finalizer);
         return;
       }
       case NV: {
-        TableDialogs.openNvRamUploads(file, finalizer);
+        TableDialogs.openNvRamUploads(game, file, finalizer);
         return;
       }
       case CFG: {
-        TableDialogs.openCfgUploads(file, finalizer);
+        TableDialogs.openCfgUploads(game, file, finalizer);
         return;
       }
       case FPL: {

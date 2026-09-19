@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.music;
 
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +17,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -255,5 +263,48 @@ public class MusicServiceTest {
 
     assertTrue(result);
     assertFalse(mp3.exists());
+  }
+
+  // ---- installMusic ----
+
+  @Test
+  void installMusic_perTableLayout_installsNextToTheTableAndCreatesTheFolder(@TempDir Path tempDir) throws IOException {
+    File bundle = musicBundle(tempDir);
+    File tableMusicFolder = tempDir.resolve("Twister/music").toFile();
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.isPerTableFileStructure()).thenReturn(true);
+    Game tableGame = mock(Game.class);
+    when(tableGame.getEmulator()).thenReturn(emulator);
+    when(folderLookupService.getMusicFolder(tableGame)).thenReturn(tableMusicFolder);
+
+    musicService.installMusic(bundle, tableGame, emulator, mock(UploaderAnalysis.class));
+
+    assertTrue(new File(tableMusicFolder, "theme.mp3").exists());
+    verify(folderLookupService, never()).getMusicFolder(any(GameEmulator.class));
+  }
+
+  @Test
+  void installMusic_legacyLayout_skipsMissingMusicFolder(@TempDir Path tempDir) throws IOException {
+    File bundle = musicBundle(tempDir);
+    File musicFolder = tempDir.resolve("Music").toFile();
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.isPerTableFileStructure()).thenReturn(false);
+    Game tableGame = mock(Game.class);
+    when(tableGame.getEmulator()).thenReturn(emulator);
+    when(folderLookupService.getMusicFolder(tableGame)).thenReturn(musicFolder);
+
+    musicService.installMusic(bundle, tableGame, emulator, mock(UploaderAnalysis.class));
+
+    assertFalse(musicFolder.exists());
+  }
+
+  private static File musicBundle(Path tempDir) throws IOException {
+    File bundle = tempDir.resolve("bundle.zip").toFile();
+    try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(bundle.toPath()))) {
+      out.putNextEntry(new ZipEntry("theme.mp3"));
+      out.write(new byte[]{1, 2, 3});
+      out.closeEntry();
+    }
+    return bundle;
   }
 }

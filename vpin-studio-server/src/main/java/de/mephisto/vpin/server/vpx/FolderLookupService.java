@@ -443,7 +443,7 @@ public class FolderLookupService {
    * Windows installs keep PinMAME files in the shared VPinMAME folder. A standalone install without that folder
    * keeps them next to each table, e.g. Tables/Twister/pinmame/roms, as VPX 10.8.1 does.
    */
-  static boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator, boolean windows) {
+  public static boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator, boolean windows) {
     return windows || emulator.getMameDirectory() != null;
   }
 }

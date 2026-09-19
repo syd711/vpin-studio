@@ -15,6 +15,11 @@ public class GameEmulatorRepresentation {
   private String gamesDirectory;
   private String mediaDirectory;
   private String romDirectory;
+  /**
+   * The server keeps roms, nvram and cfg files next to each table (Linux standalone installs without a
+   * VPinMAME folder). Uploads of these assets need a table then instead of an emulator.
+   */
+  private boolean perTableFileStructure;
   private int id = -1;
   private boolean enabled;
   private String keepDisplays;
@@ -52,6 +57,14 @@ public class GameEmulatorRepresentation {
 
   public void setGameExt(String gameExt) {
     this.gameExt = gameExt;
+  }
+
+  public boolean isPerTableFileStructure() {
+    return perTableFileStructure;
+  }
+
+  public void setPerTableFileStructure(boolean perTableFileStructure) {
+    this.perTableFileStructure = perTableFileStructure;
   }
 
   public boolean isEnabled() {

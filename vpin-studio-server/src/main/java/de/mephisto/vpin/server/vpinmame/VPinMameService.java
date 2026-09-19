@@ -261,12 +261,12 @@ public class VPinMameService implements InitializingBean {
   //--------------------------------
 
   public void installRom(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File romFolder = game != null ? folderLookupService.getRomFolder(game) : getRomsFolder();
+    File romFolder = game != null ? folderLookupService.getRomFolder(game) : getSharedFolder(emulator, getRomsFolder(), "roms");
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, romFolder);
   }
 
   public void installNvRam(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File nvramFolder = game != null ? folderLookupService.getNvRamFolder(game) : getNvRamFolder();
+    File nvramFolder = game != null ? folderLookupService.getNvRamFolder(game) : getSharedFolder(emulator, getNvRamFolder(), "nvram");
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
@@ -358,8 +358,22 @@ public class VPinMameService implements InitializingBean {
   }
 
   public void installCfg(UploadDescriptor uploadDescriptor, Game game, GameEmulator emulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File cfgFolder = game != null ? folderLookupService.getCfgFolder(game) : getCfgFolder();
+    File cfgFolder = game != null ? folderLookupService.getCfgFolder(game) : getSharedFolder(emulator, getCfgFolder(), "cfg");
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
+  }
+
+  /**
+   * Without a table, files can only go into the shared VPinMAME folder. The registry knows it on Windows, on Linux it is
+   * the VPinMAME folder of the installation. An installation without one keeps these files next to each table.
+   */
+  private File getSharedFolder(@Nullable GameEmulator emulator, @Nullable File registryFolder, String name) throws IOException {
+    if (registryFolder != null) {
+      return registryFolder;
+    }
+    if (emulator != null && !StringUtils.isEmpty(emulator.getMameDirectory())) {
+      return new File(emulator.getMameDirectory(), name);
+    }
+    throw new IOException("Cannot install into the \"" + name + "\" folder without a table, there is no shared VPinMAME folder. Select a table for this upload.");
   }
 
   private void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {

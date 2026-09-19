@@ -30,6 +30,11 @@ public class GameEmulator {
 
   private String mameDirectory;
   private String romDirectory;
+  /**
+   * PinMAME files (roms, nvram, cfg) live next to each table instead of in a shared VPinMAME folder,
+   * see FolderLookupService. Uploads of these assets need a table then, not an emulator.
+   */
+  private boolean perTableFileStructure;
 
   private String keepDisplays;
 
@@ -210,6 +215,14 @@ public class GameEmulator {
 
   public void setMameDirectory(String mameDirectory) {
     this.mameDirectory = mameDirectory;
+  }
+
+  public boolean isPerTableFileStructure() {
+    return perTableFileStructure;
+  }
+
+  public void setPerTableFileStructure(boolean perTableFileStructure) {
+    this.perTableFileStructure = perTableFileStructure;
   }
 
   public String getInstallationDirectory() {

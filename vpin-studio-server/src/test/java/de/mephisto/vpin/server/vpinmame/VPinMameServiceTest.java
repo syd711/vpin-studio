@@ -1,16 +1,24 @@
 package de.mephisto.vpin.server.vpinmame;
 
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -219,5 +227,56 @@ public class VPinMameServiceTest {
   @Test
   void mameRegFolderKey_hasExpectedValue() {
     assertEquals("SOFTWARE\\Freeware\\Visual PinMame\\", VPinMameService.MAME_REG_FOLDER_KEY);
+  }
+
+  // ---- install into the table folder or the shared VPinMAME folder ----
+
+  @Test
+  void installRom_withTable_installsNextToTheTable(@TempDir Path tempDir) throws IOException {
+    File romFolder = tempDir.resolve("Twister/pinmame/roms").toFile();
+    Game game = mock(Game.class);
+    when(folderLookupService.getRomFolder(game)).thenReturn(romFolder);
+
+    service.installRom(upload(tempDir, "twst_405.zip"), game, mock(GameEmulator.class), tempDir.resolve("twst_405.zip").toFile(), mock(UploaderAnalysis.class));
+
+    assertThat(new File(romFolder, "twst_405.zip")).exists();
+  }
+
+  @Test
+  void installRom_withoutTableInPerTableLayout_failsInsteadOfWritingIntoTheWorkingDirectory(@TempDir Path tempDir) throws IOException {
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameDirectory()).thenReturn(null);
+
+    assertThrows(IOException.class, () ->
+        service.installRom(upload(tempDir, "twst_405.zip"), null, emulator, tempDir.resolve("twst_405.zip").toFile(), mock(UploaderAnalysis.class)));
+
+    assertThat(new File("twst_405.zip")).doesNotExist();
+  }
+
+  @Test
+  void installNvRam_withoutTableInLegacyLayout_usesTheVPinMameFolder(@TempDir Path tempDir) throws IOException {
+    Path mameFolder = tempDir.resolve("VPinMAME");
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameDirectory()).thenReturn(mameFolder.toString());
+
+    service.installNvRam(upload(tempDir, "twst_405.nv"), null, emulator, tempDir.resolve("twst_405.nv").toFile(), mock(UploaderAnalysis.class));
+
+    assertThat(mameFolder.resolve("nvram/twst_405.nv")).exists();
+  }
+
+  @Test
+  void installCfg_withoutTableInPerTableLayout_fails(@TempDir Path tempDir) throws IOException {
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameDirectory()).thenReturn("");
+
+    assertThrows(IOException.class, () ->
+        service.installCfg(upload(tempDir, "twst_405.cfg"), null, emulator, tempDir.resolve("twst_405.cfg").toFile(), mock(UploaderAnalysis.class)));
+  }
+
+  private static UploadDescriptor upload(Path tempDir, String name) throws IOException {
+    Files.writeString(tempDir.resolve(name), "content");
+    UploadDescriptor descriptor = new UploadDescriptor();
+    descriptor.setOriginalUploadFileName(name);
+    return descriptor;
   }
 }
