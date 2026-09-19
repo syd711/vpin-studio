@@ -393,6 +393,14 @@ public class GameMediaService extends MediaService {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
+    String tableFileName = uploadDescriptor.getOriginalUploadFileName();
+    for (String archiveSuffix : PackageUtil.ARCHIVE_SUFFIXES) {
+      if (FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(archiveSuffix)) {
+        tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
+        break;
+      }
+    }
+
     File tablesFolder = gameEmulator.getGamesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
       LOG.info("Using folder based import.");
@@ -402,15 +410,12 @@ public class GameMediaService extends MediaService {
       }
       tablesFolder = new File(tablesFolder, subFolderName);
     }
-    File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadFileName());
-
-    for (String archiveSuffix : PackageUtil.ARCHIVE_SUFFIXES) {
-      if (FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(archiveSuffix)) {
-        targetVPXFile = new File(tablesFolder, analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName()));
-        break;
-      }
+    else if (gameEmulator.isPerTableFileStructure()) {
+      // without the legacy file structure, the table files live next to the table, so it always needs its own folder
+      LOG.info("Using folder based import, the emulator does not use the legacy file structure.");
+      tablesFolder = new File(tablesFolder, FilenameUtils.getBaseName(tableFileName));
     }
-    targetVPXFile = FileUtils.uniqueFile(targetVPXFile);
+    File targetVPXFile = FileUtils.uniqueFile(new File(tablesFolder, tableFileName));
 
     LOG.info("Resolve target VPX: {}", targetVPXFile.getAbsolutePath());
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, targetVPXFile);
@@ -499,9 +504,15 @@ public class GameMediaService extends MediaService {
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
     File targetSubFolder = null;
     String fileName = target.getName();
-    if (uploadDescriptor.isFolderBasedImport()) {
+    // without the legacy file structure, the clone always needs its own folder
+    boolean folderBased = uploadDescriptor.isFolderBasedImport() || gameEmulator.isPerTableFileStructure();
+    if (folderBased) {
+      String subFolderName = uploadDescriptor.isFolderBasedImport() ? uploadDescriptor.getSubfolderName() : null;
+      if (StringUtils.isEmpty(subFolderName)) {
+        subFolderName = FilenameUtils.getBaseName(target.getName());
+      }
       //use the parents parent so that we are back inside the tables folder
-      targetSubFolder = new File(gameEmulator.getGamesFolder(), uploadDescriptor.getSubfolderName());
+      targetSubFolder = new File(gameEmulator.getGamesFolder(), subFolderName);
       targetSubFolder = FileUtils.uniqueFolder(targetSubFolder);
       targetSubFolder.mkdirs();
       target = new File(targetSubFolder, target.getName());

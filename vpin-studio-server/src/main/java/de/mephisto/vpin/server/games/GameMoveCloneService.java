@@ -154,7 +154,7 @@ public class GameMoveCloneService {
     //carry over ROM/NVRAM, ALT sound/color, DMD package and music assets, see method javadoc
     copyRomAndNvRam(original, importedGame);
     copyFolderIfPresent(altSoundService.getAltSoundFolder(original), altSoundService.getAltSoundFolder(importedGame), "ALT sound package");
-    copyFolderIfPresent(altColorService.getAltColorFolder(original), altColorService.getAltColorFolder(importedGame), "ALT color package");
+    altColorService.copyAltColor(original, importedGame);
     copyDmdPackage(original, importedGame);
     copyMusic(original, importedGame);
 

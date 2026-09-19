@@ -156,6 +156,44 @@ public class AltColorService implements InitializingBean {
     return serum ? folderLookupService.getSerumFolder(game, folder.getName()) : folderLookupService.getVniFolder(game, folder.getName());
   }
 
+  /**
+   * Copies the colorization of a game, including its backups, to the folders of another game. The files are
+   * distributed by type, since the target may keep the Serum and the VNI files apart while the source does not.
+   */
+  public void copyAltColor(@NonNull Game original, @NonNull Game target) {
+    for (File source : getAltColorFolders(original)) {
+      copyAltColorFiles(source, target, false);
+      copyAltColorFiles(new File(source, "backups"), target, true);
+    }
+  }
+
+  private void copyAltColorFiles(@NonNull File source, @NonNull Game target, boolean backups) {
+    File[] files = source.listFiles(File::isFile);
+    if (files == null) {
+      return;
+    }
+
+    for (File file : files) {
+      File folder = getAltColorFolder(target, FilenameUtils.getExtension(file.getName()));
+      if (folder == null) {
+        continue;
+      }
+
+      File targetFile = new File(backups ? new File(folder, "backups") : folder, file.getName());
+      if (targetFile.getAbsoluteFile().equals(file.getAbsoluteFile())) {
+        continue;
+      }
+
+      try {
+        FileUtils.copyFile(file, targetFile);
+        LOG.info("Copied ALT color file \"{}\" to \"{}\"", file.getAbsolutePath(), targetFile.getAbsolutePath());
+      }
+      catch (IOException e) {
+        LOG.error("Failed to copy ALT color file \"{}\": {}", file.getAbsolutePath(), e.getMessage(), e);
+      }
+    }
+  }
+
   public AltColor getAltColor(@NonNull Game game) {
     AltColor altColor = new AltColor();
 
