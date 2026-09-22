@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameService;
@@ -35,7 +36,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WOVPCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, PreferenceChangedListener {
@@ -187,7 +190,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     PinballTable pinballTable = challenge.getPinballTable();
     PinballTableVersion pinballTableVersion = challenge.getPinballTableVersion();
     String vpsVersion = pinballTableVersion != null ? pinballTableVersion.getExternalId() : null;
-    List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), vpsVersion);
+    List<Game> gameMatches = findMatchingGame(pinballTable, vpsVersion);
     if (gameMatches.isEmpty()) {
       LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
       addIssue(competition, "No matching game found for weekly challenge \"" + getModeName(challenge) + "\".");
@@ -196,7 +199,7 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     }
     else {
       for (Game gameMatch : gameMatches) {
-        LOG.info("Found matching wovp game for {}: {} / {} / {}", challenge.getName(), gameMatch.getGameDisplayName(), gameMatch.getExtTableId(), gameMatch.getExtTableVersionId());
+        LOG.info("Found matching wovp game for {}: {} / {} / {} / {}", challenge.getName(), gameMatch.getGameDisplayName(), gameMatch.getExtTableId(), gameMatch.getExtTableVersionId(), gameMatch.getModified());
       }
 
       Game game = gameMatches.getFirst();
@@ -217,6 +220,17 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
 
     competitionService.save(competition);
     LOG.info("Saved {}", competition);
+  }
+
+  private List<Game> findMatchingGame(PinballTable pinballTable, String vpsVersion) {
+    List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), vpsVersion);
+    List<Game> filteredMatches = gameMatches.stream().filter(g -> {
+      TableDetails tableDetails = frontendService.getTableDetails(g.getId());
+      return tableDetails.getStatus() > 0;
+    }).collect(Collectors.toList());
+
+    filteredMatches.sort((o1, o2) -> o2.getModified().compareTo(o1.getModified()));
+    return filteredMatches;
   }
 
   private static void addIssue(@NonNull Competition competition, @NonNull String msg) {

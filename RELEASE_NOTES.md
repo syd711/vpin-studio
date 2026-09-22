@@ -3,6 +3,7 @@
 ### Changes
 
 - **Theming**: Added theming support for the pause menu and notifications. For both components a proper documentation with sample files have been added (https://github.com/syd711/vpin-studio/wiki/Theming).
+- **WOVP Competitions**: Disabled tables are ignored now during the synchronization process with the WOVP server. Also, newer table files of the same version are preferred now.
 
 ---
 
