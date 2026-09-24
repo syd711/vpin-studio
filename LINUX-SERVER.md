@@ -26,7 +26,7 @@ it skips one.
 | PinVol, system volume | PinVol, nircmd |
 | `DmdDevice.ini` | dmdext |
 | PinUP Popper, PinballX, PinballY | Windows frontends |
-| Server self-update, restart, tray icon, idle shutdown | Windows launchers |
+| Server restart, tray icon, idle shutdown | Windows launchers |
 
 A feature can be switched back on with `system.featuresOn` in `resources/system-linux.properties`.
 The pause menu and overlay preferences are hidden in Standalone mode, so the template enables them with

@@ -53,6 +53,7 @@
   "name" : "maps/main.zip",
   "url" : "https://github.com/tomlogic/pinmame-nvram-maps/archive/refs/heads/main.zip",
   "length" : 896662,
+  "crc32" : "#93FDD90A",
   "archiveFolder" : "pinball-memory-maps-main",
   "emptyParentFolder" : true
 }, {
