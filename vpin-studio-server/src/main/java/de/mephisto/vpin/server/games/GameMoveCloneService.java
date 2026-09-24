@@ -114,8 +114,8 @@ public class GameMoveCloneService {
       targetSubFolder.mkdirs();
       target = new File(targetSubFolder, sourceFile.getName());
     }
-    else if (relativeName.contains("\\")) {
-      String subFolderName = relativeName.substring(0, relativeName.lastIndexOf("\\"));
+    else if (FileUtils.lastSeparatorIndex(relativeName) >= 0) {
+      String subFolderName = relativeName.substring(0, FileUtils.lastSeparatorIndex(relativeName));
       targetSubFolder = FileUtils.uniqueFolder(new File(targetEmulator.getGamesFolder(), subFolderName));
       targetSubFolder.mkdirs();
       target = new File(targetSubFolder, sourceFile.getName());
@@ -134,7 +134,7 @@ public class GameMoveCloneService {
 
     Game importedGame = gameService.scanGame(returningGameId, true);
 
-    String targetFileName = targetSubFolder != null ? targetSubFolder.getName() + "\\" + target.getName() : target.getName();
+    String targetFileName = targetSubFolder != null ? FileUtils.joinGameFileName(targetSubFolder.getName(), target.getName()) : target.getName();
     TableDetails clonedTableDetails = gameMediaService.getTableDetails(returningGameId);
     clonedTableDetails.setEmulatorId(targetEmulator.getId());
     clonedTableDetails.setGameFileName(targetFileName);
@@ -154,7 +154,7 @@ public class GameMoveCloneService {
     //carry over ROM/NVRAM, ALT sound/color, DMD package and music assets, see method javadoc
     copyRomAndNvRam(original, importedGame);
     copyFolderIfPresent(altSoundService.getAltSoundFolder(original), altSoundService.getAltSoundFolder(importedGame), "ALT sound package");
-    copyFolderIfPresent(altColorService.getAltColorFolder(original), altColorService.getAltColorFolder(importedGame), "ALT color package");
+    altColorService.copyAltColor(original, importedGame);
     copyDmdPackage(original, importedGame);
     copyMusic(original, importedGame);
 

@@ -3,7 +3,9 @@ package de.mephisto.vpin.server;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,8 +47,30 @@ public class VPinStudioServer extends SpringBootServletInitializer {
 
     // Start Spring Boot application first
     SpringApplicationBuilder builder = new SpringApplicationBuilder(VPinStudioServer.class);
-    builder.headless(false);
+    builder.headless(!isDisplayAvailable());
     builder.run(args);
+  }
+
+  /**
+   * The server uses AWT and JavaFX for the overlay, so it runs non-headless whenever there is a display.
+   * Forcing that without one makes AWT fail with an AWTError instead, which stops the server from starting,
+   * e.g. on a Linux box with no X server or when it is started before the session is up.
+   */
+  static boolean isDisplayAvailable() {
+    return isDisplayAvailable(System.getProperty("java.awt.headless"), OSUtil.isWindows() || OSUtil.isMac(),
+        System.getenv("DISPLAY"), System.getenv("WAYLAND_DISPLAY"));
+  }
+
+  static boolean isDisplayAvailable(@Nullable String headlessProperty, boolean windowsOrMac,
+                                    @Nullable String display, @Nullable String waylandDisplay) {
+    if (headlessProperty != null) {
+      // set explicitly, e.g. -Djava.awt.headless=true: keep it
+      return !Boolean.parseBoolean(headlessProperty);
+    }
+    if (windowsOrMac) {
+      return true;
+    }
+    return StringUtils.isNotEmpty(display) || StringUtils.isNotEmpty(waylandDisplay);
   }
 
   @Bean
@@ -61,7 +85,8 @@ public class VPinStudioServer extends SpringBootServletInitializer {
 
   private static void runDelayCheck() {
     try {
-      File propertiesFile = new File(SystemInfo.RESOURCES + "system.properties");
+      String propertiesName = OSUtil.isLinux() ? SystemInfo.LINUX_SYSTEM_PROPERTIES_NAME : SystemInfo.DEFAULT_SYSTEM_PROPERTIES_NAME;
+      File propertiesFile = new File(SystemInfo.RESOURCES + propertiesName + ".properties");
       PropertiesStore store = PropertiesStore.create(propertiesFile);
       String delay = store.get("startup.delay");
       if (!StringUtils.isEmpty(delay)) {

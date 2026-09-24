@@ -44,7 +44,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="preference-description" text="%tables.cfg_upload.the_selected_cfg_files_will_be_uploaded_into" />
+                  <Label fx:id="descriptionLabel" styleClass="preference-description" text="%tables.cfg_upload.the_selected_cfg_files_will_be_uploaded_into" />
                </children>
             </VBox>
          </top>
@@ -77,8 +77,10 @@
                      </children>
                   </HBox>
                   <Label styleClass="default-text" text="%tables.cfg_upload.config_file" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%cards.highscore_cards.emulator" />
+                  <Label fx:id="emulatorLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%cards.highscore_cards.emulator" />
                   <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
+                  <Label fx:id="tableComboLabel" managed="false" styleClass="default-text" text="%tables.base_upload.table" visible="false" />
+                  <ComboBox fx:id="tableCombo" managed="false" prefHeight="30.0" prefWidth="310.0" visible="false" GridPane.columnIndex="1" />
                   <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />

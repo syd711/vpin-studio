@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.jobs.JobQueue;
@@ -31,7 +32,9 @@ public class ShutdownThread extends Thread {
       try {
         Thread.sleep(60 * 1000);
 
-        boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.getInstance().isVisible();
+        // no ServerFX instance when running headless or when JavaFX failed to start
+        boolean uiRunning = ServerFX.getInstance() != null
+            && (ServerFX.getInstance().isOverlayVisible() || PauseMenu.getInstance().isVisible());
         if (uiRunning) {
           LOG.info("Shutdown reset, because UI is visible.");
           idleMinutes = 0;
@@ -79,6 +82,10 @@ public class ShutdownThread extends Thread {
   }
 
   public static void shutdownSystem() {
+    if (!OSUtil.isWindows()) {
+      LOG.warn("System shutdown is only supported on Windows, skipped.");
+      return;
+    }
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("shutdown", "-s"));
       executor.executeCommand();

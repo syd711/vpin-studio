@@ -80,8 +80,12 @@ public class SystemCommandExecutor {
     this(commandInformation, true);
   }
 
+  /**
+   * @param prependCmd run the command through "cmd.exe /c". Ignored outside Windows, where there is no cmd.exe
+   *                   and the command is executed directly.
+   */
   public SystemCommandExecutor(final List<String> commandInformation, boolean prependCmd) {
-    this.prependCmd = prependCmd;
+    this.prependCmd = prependCmd && OSUtil.isWindows();
     if (commandInformation == null) {
       throw new NullPointerException("The commandInformation is required.");
     }

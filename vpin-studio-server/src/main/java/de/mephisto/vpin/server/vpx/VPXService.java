@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.commons.utils.WinRegistry;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
@@ -29,6 +30,8 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @Service
 public class VPXService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPXService.class);
+
+  private static final String VPX_INI = "VPinballX.ini";
 
   @Autowired
   private SystemService systemService;
@@ -64,8 +67,29 @@ public class VPXService implements InitializingBean {
   }
 
   public File getVPXFile() {
-    String userhome = System.getProperty("user.home");
-    return new File(userhome, "AppData/Roaming/VPinballX/VPinballX.ini");
+    if (!OSUtil.isWindows() && systemService.getStandaloneConfigFile() != null) {
+      return systemService.getStandaloneConfigFile();
+    }
+    return defaultIniFile(OSUtil.isWindows(), OSUtil.isMac(), new File(System.getProperty("user.home")));
+  }
+
+  /**
+   * Standalone builds keep their settings in the SDL preference folder, in a subfolder per minor version,
+   * e.g. ~/.local/share/VPinballX/10.8/VPinballX.ini. Older builds wrote the ini into the preference folder itself.
+   */
+  static File defaultIniFile(boolean windows, boolean mac, File userHome) {
+    if (windows) {
+      return new File(userHome, "AppData/Roaming/VPinballX/VPinballX.ini");
+    }
+    File prefFolder = mac ? new File(userHome, "Library/Application Support/VPinballX") : new File(userHome, ".local/share/VPinballX");
+    File[] versionFolders = prefFolder.listFiles(f -> f.isDirectory() && f.getName().matches("\\d+\\.\\d+") && new File(f, VPX_INI).exists());
+    if (versionFolders != null && versionFolders.length > 0) {
+      File newest = Collections.max(Arrays.asList(versionFolders), Comparator
+          .comparingInt((File f) -> Integer.parseInt(f.getName().split("\\.")[0]))
+          .thenComparingInt(f -> Integer.parseInt(f.getName().split("\\.")[1])));
+      return new File(newest, VPX_INI);
+    }
+    return new File(prefFolder, VPX_INI);
   }
 
   public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
@@ -247,18 +271,24 @@ public class VPXService implements InitializingBean {
 
   public boolean play(@Nullable Game game, @Nullable String altExe, @Nullable String option) {
     if (game != null) {
-      if ("cameraMode".equals(option)) {
-        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-PovEdit");
-      }
-      else if ("primary".equals(option)) {
-        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Primary", "-Play");
-      }
-      else {
-        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
-      }
-
+      return vpxCommandLineService.execute(game, altExe, launchParameters(option, OSUtil.isWindows()));
     }
     return false;
+  }
+
+  /**
+   * Standalone builds have no editor window, so they do not know -Minimized (nor -Primary)
+   * and exit with "Invalid Parameter" when they get one.
+   */
+  static String[] launchParameters(@Nullable String option, boolean windows) {
+    String command = "cameraMode".equals(option) ? "-PovEdit" : "-Play";
+    if (!windows) {
+      return new String[]{command};
+    }
+    if ("primary".equals(option)) {
+      return new String[]{"-Minimized", "-Primary", command};
+    }
+    return new String[]{"-Minimized", command};
   }
 
   public boolean waitForPlayer() {

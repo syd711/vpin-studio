@@ -5,6 +5,10 @@ public class VPinStudioException extends Exception {
     super(e);
   }
 
+  public VPinStudioException(String msg) {
+    super(msg);
+  }
+
   public VPinStudioException(String msg, Exception e) {
     super(msg, e);
   }

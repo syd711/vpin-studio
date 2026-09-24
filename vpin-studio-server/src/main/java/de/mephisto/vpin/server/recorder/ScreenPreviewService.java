@@ -21,9 +21,12 @@ public class ScreenPreviewService implements InitializingBean {
 
   static {
     try {
-      robot = new Robot();
+      if (!GraphicsEnvironment.isHeadless()) {
+        robot = new Robot();
+      }
     }
-    catch (AWTException e) {
+    catch (Throwable e) {
+      // an unreachable display throws an AWTError rather than an AWTException
       LOG.error("Failed to create robot: {}", e.getMessage());
     }
   }

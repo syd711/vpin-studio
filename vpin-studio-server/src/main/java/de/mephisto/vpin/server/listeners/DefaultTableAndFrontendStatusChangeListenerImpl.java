@@ -114,7 +114,8 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
             if (cardSettings.isNotificationOnPopperScreen()) {
               pupPlayerDisplay = vpinScreenService.getScreenDisplay(screen);
             }
-            ServerFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
+            FrontendPlayerDisplay display = pupPlayerDisplay;
+            ServerFX.ifAvailable(fx -> fx.showHighscoreCard(cardSettings, display, defaultMediaItem.getMimeType(), defaultMediaItem.getFile()));
           });
         }
       }

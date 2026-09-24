@@ -105,11 +105,14 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
       finally {
         //this will kill the emulators too
         frontend.killFrontend();
-        gameRecorder.finalizeRecordings();
+        if (gameRecorder != null) {
+          finalizeRecordings(game);
+        }
         recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
     LOG.info("Recordings for {} games finished.", recordingDataSummary.size());
+    reportFailedRecordings(jobDescriptor);
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 

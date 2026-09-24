@@ -47,6 +47,9 @@ public class CabinetSettingsPreferencesController implements Initializable {
   private CheckBox stickyKeysCheckbox;
 
   @FXML
+  private Label stickyKeysDescriptionLabel;
+
+  @FXML
   private Spinner<Integer> idleSpinner;
 
   @FXML
@@ -123,6 +126,11 @@ public class CabinetSettingsPreferencesController implements Initializable {
       int value1 = Integer.parseInt(String.valueOf(t1));
       client.getPreferenceService().setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
     }, 800));
+
+    stickyKeysCheckbox.managedProperty().bindBidirectional(stickyKeysCheckbox.visibleProperty());
+    stickyKeysDescriptionLabel.managedProperty().bindBidirectional(stickyKeysDescriptionLabel.visibleProperty());
+    stickyKeysCheckbox.setVisible(isServerWindows());
+    stickyKeysDescriptionLabel.setVisible(isServerWindows());
 
     stickyKeysCheckbox.setSelected(!serverSettings.isStickyKeysEnabled());
     stickyKeysCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

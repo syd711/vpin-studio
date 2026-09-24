@@ -53,7 +53,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                        <VBox GridPane.rowIndex="1">
+                        <VBox fx:id="monitorSection" GridPane.rowIndex="1">
                            <children>
                               <CheckBox fx:id="monitorCheckbox" mnemonicParsing="false" text="%pref.highscores.enable_highscore_monitor_that_monitors_all_highscore_files" textFill="WHITE">
                                  <font>

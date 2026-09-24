@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import de.mephisto.vpin.server.util.ServerMessages;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,6 +33,9 @@ public class FrontendRecorderJob implements Job {
 
   // currently recording game
   GameRecorder gameRecorder;
+
+  // "<game>: <screen>" entries of recordings that produced no video
+  final List<String> failedRecordings = new ArrayList<>();
 
   // Resolved eagerly in the constructor, which always runs on the HTTP request thread.
   // execute() runs later on the async job-worker thread, where RequestContextHolder is empty.
@@ -131,12 +135,13 @@ public class FrontendRecorderJob implements Job {
       finally {
         frontend.endFrontendRecording();
         if (gameRecorder != null) {
-          gameRecorder.finalizeRecordings();
+          finalizeRecordings(game);
         }
         recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
     LOG.info("Recordings for {} games finished.", recordingDataSummary.size());
+    reportFailedRecordings(jobDescriptor);
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 
@@ -155,6 +160,22 @@ public class FrontendRecorderJob implements Job {
   protected void updateSingleProgress(JobDescriptor jobDescriptor, RecordingDataSummary recordingDataSummary, double progress) {
     if (recordingDataSummary.size() == 1) {
       jobDescriptor.setProgress(progress / 100d);
+    }
+  }
+
+  void finalizeRecordings(Game game) {
+    for (String screen : gameRecorder.finalizeRecordings()) {
+      failedRecordings.add(game.getGameDisplayName() + ": " + screen);
+    }
+  }
+
+  /**
+   * Set once all games are processed, as an error finishes the job descriptor and would stop the recording loop.
+   */
+  void reportFailedRecordings(JobDescriptor jobDescriptor) {
+    if (!failedRecordings.isEmpty()) {
+      jobDescriptor.setError("Recording failed for " + String.join(", ", failedRecordings) + ".");
+      jobDescriptor.setErrorHint("ffmpeg produced no video, existing media has been kept. Check the server logs for the ffmpeg output.");
     }
   }
 

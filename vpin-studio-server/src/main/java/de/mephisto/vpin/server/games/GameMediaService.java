@@ -45,6 +45,7 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -59,8 +60,12 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.time.OffsetDateTime;
 
 @Service
@@ -355,8 +360,9 @@ public class GameMediaService extends MediaService {
     //if the VPX file is inside a subfolder, we have to prepend the folder name
     String name = target.getName();
     String oldName = tableDetails.getGameFileName();
-    if (oldName.contains("\\")) {
-      name = oldName.substring(0, oldName.lastIndexOf("\\") + 1) + target.getName();
+    int separatorIndex = FileUtils.lastSeparatorIndex(oldName);
+    if (separatorIndex >= 0) {
+      name = oldName.substring(0, separatorIndex + 1) + target.getName();
     }
 
     LOG.info("Updated database filename to \"{}\"", name);
@@ -392,6 +398,14 @@ public class GameMediaService extends MediaService {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
+    String tableFileName = uploadDescriptor.getOriginalUploadFileName();
+    for (String archiveSuffix : PackageUtil.ARCHIVE_SUFFIXES) {
+      if (FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(archiveSuffix)) {
+        tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
+        break;
+      }
+    }
+
     File tablesFolder = gameEmulator.getGamesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
       LOG.info("Using folder based import.");
@@ -401,15 +415,12 @@ public class GameMediaService extends MediaService {
       }
       tablesFolder = new File(tablesFolder, subFolderName);
     }
-    File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadFileName());
-
-    for (String archiveSuffix : PackageUtil.ARCHIVE_SUFFIXES) {
-      if (FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(archiveSuffix)) {
-        targetVPXFile = new File(tablesFolder, analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName()));
-        break;
-      }
+    else if (gameEmulator.isPerTableFileStructure()) {
+      // without the legacy file structure, the table files live next to the table, so it always needs its own folder
+      LOG.info("Using folder based import, the emulator does not use the legacy file structure.");
+      tablesFolder = new File(tablesFolder, FilenameUtils.getBaseName(tableFileName));
     }
-    targetVPXFile = FileUtils.uniqueFile(targetVPXFile);
+    File targetVPXFile = FileUtils.uniqueFile(new File(tablesFolder, tableFileName));
 
     LOG.info("Resolve target VPX: {}", targetVPXFile.getAbsolutePath());
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, targetVPXFile);
@@ -498,13 +509,19 @@ public class GameMediaService extends MediaService {
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
     File targetSubFolder = null;
     String fileName = target.getName();
-    if (uploadDescriptor.isFolderBasedImport()) {
+    // without the legacy file structure, the clone always needs its own folder
+    boolean folderBased = uploadDescriptor.isFolderBasedImport() || gameEmulator.isPerTableFileStructure();
+    if (folderBased) {
+      String subFolderName = uploadDescriptor.isFolderBasedImport() ? uploadDescriptor.getSubfolderName() : null;
+      if (StringUtils.isEmpty(subFolderName)) {
+        subFolderName = FilenameUtils.getBaseName(target.getName());
+      }
       //use the parents parent so that we are back inside the tables folder
-      targetSubFolder = new File(gameEmulator.getGamesFolder(), uploadDescriptor.getSubfolderName());
+      targetSubFolder = new File(gameEmulator.getGamesFolder(), subFolderName);
       targetSubFolder = FileUtils.uniqueFolder(targetSubFolder);
       targetSubFolder.mkdirs();
       target = new File(targetSubFolder, target.getName());
-      fileName = targetSubFolder.getName() + "\\" + target.getName();
+      fileName = FileUtils.joinGameFileName(targetSubFolder.getName(), target.getName());
 
       LOG.info("Clone of {} is created into subfolder \"{}\"", existingVPXFile.getName(), targetSubFolder.getAbsolutePath());
     }
@@ -675,226 +692,290 @@ public class GameMediaService extends MediaService {
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
     LOG.info("************* Game Deletion ************");
-    boolean success = false;
-    try {
-      List<Integer> gameIds = descriptor.getGameIds();
-      success = true;
+    boolean success = true;
 
-      for (Integer gameId : gameIds) {
+    //collected here, so that the folder is judged when all tables of the folder have been processed
+    Map<File, GameEmulator> tableFolders = new LinkedHashMap<>();
+
+    for (Integer gameId : descriptor.getGameIds()) {
+      try {
         Game game = gameService.getGame(gameId);
         if (game == null) {
-          return false;
+          LOG.warn("Game {} not found, its deletion has been skipped", gameId);
+          success = false;
+          continue;
         }
 
-        GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
-
-        if (descriptor.isDeleteHighscores()) {
-          highscoreService.deleteHighscore(game);
-        }
-
-        if (descriptor.isDeleteTable()) {
-          if (!SystemUtil.deleteFileOrFolder(game.getGameFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteDirectB2s()) {
-          if (!defaultPictureService.deleteAllPictures(game)) {
-            success = false;
-          }
-          if (!SystemUtil.deleteFileOrFolder(game.getDirectB2SFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteIni()) {
-          if (!SystemUtil.deleteFileOrFolder(game.getIniFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteBAMCfg()) {
-          File BAMCfgFile = game.getBAMCfgFile();
-          if (!SystemUtil.deleteFileOrFolder(BAMCfgFile)) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteRes()) {
-          if (!SystemUtil.deleteFileOrFolder(game.getResFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteVbs()) {
-          if (!SystemUtil.deleteFileOrFolder(game.getVBSFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeletePov()) {
-          if (!SystemUtil.deleteFileOrFolder(game.getPOVFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeletePupPack()) {
-          if (!pupPacksService.delete(game)) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeletePinVol()) {
-          pinVolService.delete(game);
-        }
-
-        if (descriptor.isDeleteDMDs()) {
-          DMDPackage dmdPackage = dmdService.getDMDPackage(game);
-          if (dmdPackage != null) {
-            if (!dmdService.delete(game)) {
-              success = false;
-            }
-          }
-        }
-
-        if (descriptor.isDeleteAlias() && game.isVpxGame()) {
-          if (!VPinMameRomAliasService.deleteAlias(gameEmulator, game.getRomAlias())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteAltSound()) {
-          if (!altSoundService.delete(game)) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteAltColor()) {
-          if (!altColorService.delete(game)) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteB2STableSettings()) {
-          //Only relevant for tables that are located in a separate folder
-          File b2STableSettingsFile = game.getB2STableSettingsFile();
-          if (b2STableSettingsFile != null && b2STableSettingsFile.exists()) {
-            if (!SystemUtil.deleteFileOrFolder(b2STableSettingsFile)) {
-              success = false;
-            }
-          }
-
-          //Delete the regular entry
-          if (!backglassService.deleteB2STableSettings(game)) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteDMDDeviceIni()) {
-          if (!vPinMameService.deleteDMDDeviceIniEntry(game)) {
-            success = false;
-          }
-        }
-
-        //cfg files belong to MAME
-        if (descriptor.isDeleteCfg() && game.isVpxGame()) {
-          if (!vPinMameService.deleteCfg(game)) {
-            success = false;
-          }
-
-          if (!StringUtils.isEmpty(game.getRom())) {
-            if (!vPinMameService.deleteOptions(game.getRom())) {
-              success = false;
-            }
-          }
-        }
-
-        if (descriptor.isDeleteRom()) {
-          if (!StringUtils.isEmpty(game.getRom())) {
-            if (!vPinMameService.deleteRom(game)) {
-              success = false;
-            }
-          }
-        }
-
-        if (descriptor.isDeleteMusic() && game.isVpxGame()) {
-          if (!musicService.delete(game)) {
-            success = false;
-          }
-        }
-
-        assetService.deleteDefaultBackground(game.getId());
-
-        if (descriptor.isDeleteFromFrontend()) {
-          GameDetails byPupId = gameDetailsRepositoryService.findByPupId(game.getId());
-          if (byPupId != null) {
-            gameDetailsRepositoryService.delete(byPupId);
-          }
-
-          highscoreService.deleteScores(game.getId(), true);
-
-          Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
-          byId.ifPresent(asset -> assetRepository.delete(asset));
-
-          if (!frontendService.deleteGame(gameId)) {
-            success = false;
-          }
-
-          if (!descriptor.isKeepAssets()) {
-            //only delete the assets, if there is no other game with the same "Game Name".
-            List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
-                .stream().filter(g -> g.getId() != game.getId())
-                .toList();
-            List<Game> duplicateGameNameTables = allOtherTables
-                .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
-                .toList();
-
-            if (duplicateGameNameTables.isEmpty()) {
-              LOG.info("Deleting screen assets for \"{}\"", game.getGameDisplayName());
-              VPinScreen[] values = VPinScreen.values();
-              for (VPinScreen originalScreenValue : values) {
-                List<FrontendMediaItem> frontendMediaItem = frontendService.getMediaItems(game, originalScreenValue);
-                for (FrontendMediaItem mediaItem : frontendMediaItem) {
-                  File mediaFile = mediaItem.getFile();
-
-                  if (originalScreenValue.equals(VPinScreen.Wheel)) {
-                    new WheelAugmenter(mediaFile).deAugment();
-                    new WheelIconDelete(mediaFile).delete();
-                  }
-
-                  if (mediaFile.exists() && !SystemUtil.deleteFileOrFolder(mediaFile)) {
-                    success = false;
-                    LOG.warn("Failed to delete media asset \"{}\" for \"{}\"", mediaFile.getAbsolutePath(), game.getGameDisplayName());
-                  }
-                }
-              }
-            }
-            else {
-              LOG.info("Deletion of assets has been skipped, because there are {} tables with the same GameName \"{}\"", duplicateGameNameTables.size(), game.getGameName());
-            }
-          }
-
-          LOG.info("Deleted \"{}\" from frontend.", game.getGameDisplayName());
-          gameLifecycleService.notifyGameDeleted(game.getId());
-        }
-
-        //delete the game folder if it is empty
-        File gameFolder = game.getGameFile().getParentFile();
-        if (gameFolder.exists() && !gameFolder.equals(game.getEmulator().getGamesFolder())) {
-          String[] list = gameFolder.list();
-          if (list == null || list.length == 0) {
-            if (SystemUtil.deleteFileOrFolder(gameFolder)) {
-              LOG.info("Deleted table folder {}", gameFolder.getAbsolutePath());
-            }
-          }
-        }
+        tableFolders.put(game.getGameFile().getParentFile(), game.getEmulator());
+        success &= deleteGameData(descriptor, game);
+      }
+      catch (Exception e) {
+        LOG.error("Deletion of game {} failed: {}", gameId, e.getMessage(), e);
+        success = false;
       }
     }
-    catch (Exception e) {
-      LOG.error("Game deletion failed: {}", e.getMessage(), e);
+
+    for (Map.Entry<File, GameEmulator> entry : tableFolders.entrySet()) {
+      try {
+        success &= deleteTableFolder(entry.getKey(), entry.getValue(), descriptor.isDeleteTableFolder());
+      }
+      catch (Exception e) {
+        LOG.error("Deletion of table folder \"{}\" failed: {}", entry.getKey(), e.getMessage(), e);
+        success = false;
+      }
     }
+
     LOG.info("*********** /Game Deletion End **********");
     return success;
+  }
+
+  /**
+   * Every step runs on its own, a step that fails does not skip the steps after it.
+   *
+   * @return true if all steps succeeded
+   */
+  private boolean deleteGameData(@NonNull DeleteDescriptor descriptor, @NonNull Game game) {
+    boolean success = true;
+
+    if (descriptor.isDeleteHighscores()) {
+      success &= step(game, "highscores", () -> {
+        highscoreService.deleteHighscore(game);
+        return true;
+      });
+    }
+
+    if (descriptor.isDeleteTable()) {
+      success &= step(game, "table file", () -> SystemUtil.deleteFileOrFolder(game.getGameFile()));
+    }
+
+    if (descriptor.isDeleteDirectB2s()) {
+      success &= step(game, "default pictures", () -> defaultPictureService.deleteAllPictures(game));
+      success &= step(game, "directb2s file", () -> SystemUtil.deleteFileOrFolder(game.getDirectB2SFile()));
+    }
+
+    if (descriptor.isDeleteIni()) {
+      success &= step(game, "ini file", () -> SystemUtil.deleteFileOrFolder(game.getIniFile()));
+    }
+
+    if (descriptor.isDeleteBAMCfg()) {
+      success &= step(game, "BAM cfg file", () -> SystemUtil.deleteFileOrFolder(game.getBAMCfgFile()));
+    }
+
+    if (descriptor.isDeleteRes()) {
+      success &= step(game, "res file", () -> SystemUtil.deleteFileOrFolder(game.getResFile()));
+    }
+
+    if (descriptor.isDeleteVbs()) {
+      success &= step(game, "vbs file", () -> SystemUtil.deleteFileOrFolder(game.getVBSFile()));
+    }
+
+    if (descriptor.isDeletePov()) {
+      success &= step(game, "pov file", () -> SystemUtil.deleteFileOrFolder(game.getPOVFile()));
+    }
+
+    if (descriptor.isDeletePupPack()) {
+      success &= step(game, "PUP pack", () -> pupPacksService.delete(game));
+    }
+
+    if (descriptor.isDeletePinVol()) {
+      success &= step(game, "PinVol", () -> {
+        pinVolService.delete(game);
+        return true;
+      });
+    }
+
+    if (descriptor.isDeleteDMDs()) {
+      success &= step(game, "DMD package", () -> {
+        DMDPackage dmdPackage = dmdService.getDMDPackage(game);
+        return dmdPackage == null || dmdService.delete(game);
+      });
+    }
+
+    if (descriptor.isDeleteAlias() && game.isVpxGame()) {
+      success &= step(game, "ROM alias", () -> VPinMameRomAliasService.deleteAlias(emulatorService.getGameEmulator(game.getEmulatorId()), game.getRomAlias()));
+    }
+
+    if (descriptor.isDeleteAltSound()) {
+      success &= step(game, "ALTSound", () -> altSoundService.delete(game));
+    }
+
+    if (descriptor.isDeleteAltColor()) {
+      success &= step(game, "ALT color", () -> altColorService.delete(game));
+    }
+
+    if (descriptor.isDeleteB2STableSettings()) {
+      //Only relevant for tables that are located in a separate folder
+      success &= step(game, "B2STableSettings file", () -> {
+        File b2STableSettingsFile = game.getB2STableSettingsFile();
+        return b2STableSettingsFile == null || !b2STableSettingsFile.exists() || SystemUtil.deleteFileOrFolder(b2STableSettingsFile);
+      });
+
+      //Delete the regular entry
+      success &= step(game, "B2STableSettings entry", () -> backglassService.deleteB2STableSettings(game));
+    }
+
+    if (descriptor.isDeleteDMDDeviceIni()) {
+      success &= step(game, "DMDDevice.ini entry", () -> vPinMameService.deleteDMDDeviceIniEntry(game));
+    }
+
+    //cfg files belong to MAME
+    if (descriptor.isDeleteCfg() && game.isVpxGame()) {
+      success &= step(game, "MAME cfg file", () -> vPinMameService.deleteCfg(game));
+
+      if (!StringUtils.isEmpty(game.getRom())) {
+        success &= step(game, "MAME options", () -> vPinMameService.deleteOptions(game.getRom()));
+      }
+    }
+
+    if (descriptor.isDeleteRom() && !StringUtils.isEmpty(game.getRom())) {
+      success &= step(game, "ROM", () -> vPinMameService.deleteRom(game));
+    }
+
+    if (descriptor.isDeleteMusic() && game.isVpxGame()) {
+      success &= step(game, "music", () -> musicService.delete(game));
+    }
+
+    success &= step(game, "default background", () -> {
+      assetService.deleteDefaultBackground(game.getId());
+      return true;
+    });
+
+    if (descriptor.isDeleteFromFrontend()) {
+      success &= deleteFromFrontend(descriptor, game);
+    }
+
+    return success;
+  }
+
+  private boolean deleteFromFrontend(@NonNull DeleteDescriptor descriptor, @NonNull Game game) {
+    int gameId = game.getId();
+    boolean success = true;
+
+    success &= step(game, "game details", () -> {
+      GameDetails byPupId = gameDetailsRepositoryService.findByPupId(gameId);
+      if (byPupId != null) {
+        gameDetailsRepositoryService.delete(byPupId);
+      }
+      return true;
+    });
+
+    success &= step(game, "scores", () -> {
+      highscoreService.deleteScores(gameId, true);
+      return true;
+    });
+
+    success &= step(game, "assets entry", () -> {
+      Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
+      byId.ifPresent(asset -> assetRepository.delete(asset));
+      return true;
+    });
+
+    success &= step(game, "frontend entry", () -> frontendService.deleteGame(gameId));
+
+    if (!descriptor.isKeepAssets()) {
+      success &= step(game, "screen assets", () -> deleteScreenAssets(game));
+    }
+
+    LOG.info("Deleted \"{}\" from frontend.", game.getGameDisplayName());
+    success &= step(game, "deletion notification", () -> {
+      gameLifecycleService.notifyGameDeleted(gameId);
+      return true;
+    });
+    return success;
+  }
+
+  private boolean deleteScreenAssets(@NonNull Game game) {
+    //only delete the assets, if there is no other game with the same "Game Name".
+    List<Game> duplicateGameNameTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
+        .stream().filter(g -> g.getId() != game.getId())
+        .filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
+        .toList();
+    if (!duplicateGameNameTables.isEmpty()) {
+      LOG.info("Deletion of assets has been skipped, because there are {} tables with the same GameName \"{}\"", duplicateGameNameTables.size(), game.getGameName());
+      return true;
+    }
+
+    LOG.info("Deleting screen assets for \"{}\"", game.getGameDisplayName());
+    boolean success = true;
+    for (VPinScreen screen : VPinScreen.values()) {
+      success &= step(game, "media assets of screen " + screen, () -> {
+        boolean screenSuccess = true;
+        for (FrontendMediaItem mediaItem : frontendService.getMediaItems(game, screen)) {
+          screenSuccess &= step(game, "media asset of screen " + screen, () -> {
+            File mediaFile = mediaItem.getFile();
+            if (screen.equals(VPinScreen.Wheel)) {
+              new WheelAugmenter(mediaFile).deAugment();
+              new WheelIconDelete(mediaFile).delete();
+            }
+            return !mediaFile.exists() || SystemUtil.deleteFileOrFolder(mediaFile);
+          });
+        }
+        return screenSuccess;
+      });
+    }
+    return success;
+  }
+
+  private boolean step(@NonNull Game game, String name, BooleanSupplier action) {
+    try {
+      boolean result = action.getAsBoolean();
+      if (!result) {
+        LOG.warn("Deletion step \"{}\" was not successful for \"{}\"", name, game.getGameDisplayName());
+      }
+      return result;
+    }
+    catch (Exception e) {
+      LOG.error("Deletion step \"{}\" failed for \"{}\": {}", name, game.getGameDisplayName(), e.getMessage(), e);
+      return false;
+    }
+  }
+
+  /**
+   * Deletes the folder of a table that has been deleted. An empty folder is always removed.
+   * With the per table file structure, the folder also holds the ROM, NVRAM, config, music and so on,
+   * so it is removed with all its content if nothing of it should be kept.
+   * The games folder itself and folders that still hold another table are never removed.
+   *
+   * @return false if the folder should have been deleted, but that failed
+   */
+  private boolean deleteTableFolder(@Nullable File tableFolder, @Nullable GameEmulator emulator, boolean deleteContent) {
+    if (tableFolder == null || emulator == null || !tableFolder.exists()) {
+      return true;
+    }
+
+    File gamesFolder = emulator.getGamesFolder();
+    if (tableFolder.equals(gamesFolder)) {
+      return true;
+    }
+
+    String[] content = tableFolder.list();
+    boolean empty = content == null || content.length == 0;
+    if (!empty) {
+      if (!deleteContent || !emulator.isPerTableFileStructure()) {
+        return true;
+      }
+
+      Path games = gamesFolder.toPath().toAbsolutePath().normalize();
+      Path folder = tableFolder.toPath().toAbsolutePath().normalize();
+      if (!folder.startsWith(games) || folder.equals(games)) {
+        LOG.warn("Skipped deletion of \"{}\", it is not a subfolder of the games folder \"{}\"", tableFolder.getAbsolutePath(), gamesFolder.getAbsolutePath());
+        return true;
+      }
+
+      String gameExt = StringUtils.defaultIfEmpty(emulator.getGameExt(), "vpx");
+      File[] otherTables = tableFolder.listFiles((dir, name) -> FilenameUtils.isExtension(name.toLowerCase(), gameExt.toLowerCase()));
+      if (otherTables != null && otherTables.length > 0) {
+        LOG.info("Kept table folder \"{}\", it still contains {} table file(s)", tableFolder.getAbsolutePath(), otherTables.length);
+        return true;
+      }
+    }
+
+    if (SystemUtil.deleteFileOrFolder(tableFolder)) {
+      LOG.info("Deleted table folder {}", tableFolder.getAbsolutePath());
+      return true;
+    }
+    LOG.warn("Failed to delete table folder {}", tableFolder.getAbsolutePath());
+    return false;
   }
 
   //--------------------------------------

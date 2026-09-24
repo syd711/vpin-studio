@@ -110,7 +110,13 @@ public class BackglassService implements InitializingBean {
       String baseName = FilenameUtils.removeExtension(directB2SFilename).trim();
       DirectB2S b2s = cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
       if (b2s == null) {
-        b2s = reloadDirectB2SAndVersions(game.getEmulator(), game.getGameFileName());
+        String reloadFileName = game.getGameFileName();
+        if (!game.isZenGame()) {
+          // the backglass may be named after the table's folder, so look for the name it really has
+          String relativeFolder = new File(reloadFileName).getParent();
+          reloadFileName = (relativeFolder == null ? "" : relativeFolder + File.separatorChar) + directB2SFilename;
+        }
+        b2s = reloadDirectB2SAndVersions(game.getEmulator(), reloadFileName);
       }
       if (b2s != null) {
         if (b2s.isEnabled()) {

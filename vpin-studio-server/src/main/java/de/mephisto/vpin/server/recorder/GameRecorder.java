@@ -198,24 +198,33 @@ public class GameRecorder {
     return tempFile;
   }
 
-  public void finalizeRecordings() {
+  /**
+   * Moves the recordings into the media folders.
+   *
+   * @return the names of the screens whose recording failed
+   */
+  public List<String> finalizeRecordings() {
+    List<String> failedScreens = new ArrayList<>();
     for (RecordingResult recordingResult : recordingResults) {
-      finalizeGameRecorder(recordingResult);
+      if (!finalizeGameRecorder(recordingResult)) {
+        failedScreens.add(recordingResult.getScreen().name());
+      }
     }
+    return failedScreens;
   }
 
-  private void finalizeGameRecorder(@NonNull RecordingResult result) {
+  private boolean finalizeGameRecorder(@NonNull RecordingResult result) {
     VPinScreen screen = result.getScreen();
     File recordingTempFile = result.getRecordingTempFile();
     if (!recordingTempFile.exists()) {
       LOG.info("GameRecorder finalization cancelled, recording temp file does not exist.");
-      return;
+      return true;
     }
 
     if (recordingTempFile.length() == 0) {
       LOG.error("GameRecorder finalization cancelled for screen {}, recording failed and produced an empty file, keeping existing media untouched. Error log: {}", screen.name(), result.getErrorLog());
       recordingTempFile.delete();
-      return;
+      return false;
     }
 
     RecordingWriteMode recordingWriteMode = result.getRecordingScreenOptions().getRecordMode();
@@ -276,6 +285,7 @@ public class GameRecorder {
     else {
       LOG.warn("Failed to delete temporary recording file {}", recordingTempFile.getAbsolutePath());
     }
+    return true;
   }
 
   private void copyRecordingToTarget(Game game, VPinScreen screen, File recordingTempFile, File target) throws IOException {

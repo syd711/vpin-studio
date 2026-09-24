@@ -4,14 +4,9 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import org.jetbrains.annotations.Nullable;
 
 public class ROMUploadController extends BaseUploadController {
-
-  @FXML
-  private Label descriptionLabel;
 
   public ROMUploadController() {
     super(AssetType.ROM, true, true, "zip");
@@ -19,7 +14,7 @@ public class ROMUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new RomUploadProgressModel("ROM Upload", getSelections(), getSelectedEmulatorId());
+    return new RomUploadProgressModel("ROM Upload", getSelections(), getSelectedEmulatorId(), getSelectedGameId());
   }
 
   @Override

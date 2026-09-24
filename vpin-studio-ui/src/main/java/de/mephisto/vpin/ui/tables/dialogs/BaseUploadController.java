@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
@@ -17,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -54,7 +57,28 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   @FXML
   protected ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
+  @FXML
+  private Label emulatorLabel;
+
+  /**
+   * Only in the dialogs of assets that live next to the table when the server uses the per-table layout,
+   * where the table has to be selected instead of the emulator.
+   */
+  @FXML
+  private Label tableComboLabel;
+
+  @FXML
+  private ComboBox<GameRepresentation> tableCombo;
+
+  @FXML
+  protected Label descriptionLabel;
+
   protected GameEmulatorRepresentation emulator;
+
+  /**
+   * The upload needs a table since the selected emulator keeps the assets next to each table.
+   */
+  private boolean tableRequired;
 
   private List<File> selection;
 
@@ -158,7 +182,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     this.uploadBtn.setDisable(true);
 
     if (useEmulators) {
-      this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
+      this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1) || !isTableSelected()));
 
       refreshEmulators();
     }
@@ -181,8 +205,60 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     emulatorCombo.setValue(emulator);
     emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
       emulator = t1;
+      refreshTableSelection();
       refreshSelection(null);
     });
+
+    if (tableCombo != null) {
+      tableCombo.valueProperty().addListener((observableValue, game, t1) -> {
+        if (selection != null && !selection.isEmpty() && !StringUtils.isEmpty(fileNameField.getText()) && !fileNameField.isDisabled()) {
+          uploadBtn.setDisable(!isTableSelected());
+        }
+      });
+    }
+    refreshTableSelection();
+  }
+
+  /**
+   * Servers that keep PinMAME files next to each table (see LINUX-SERVER.md) have no shared folder per emulator,
+   * so the emulator is not relevant for the upload anymore, the table has to be selected.
+   */
+  private void refreshTableSelection() {
+    boolean perTable = emulator != null && emulator.isPerTableFileStructure();
+    tableRequired = perTable && tableCombo != null;
+
+    // with more than one emulator, the emulator still filters the tables
+    boolean emulatorRelevant = !perTable || emulatorCombo.getItems().size() > 1;
+    setShown(emulatorLabel, emulatorRelevant);
+    setShown(emulatorCombo, emulatorRelevant);
+    setShown(tableComboLabel, tableRequired);
+    setShown(tableCombo, tableRequired);
+
+    if (tableRequired) {
+      List<GameRepresentation> games = Studio.client.getGameService().getGamesByEmulator(emulator.getId());
+      tableCombo.setItems(FXCollections.observableList(games.stream()
+          .sorted(Comparator.comparing(g -> String.valueOf(g.getGameDisplayName()), String.CASE_INSENSITIVE_ORDER))
+          .collect(Collectors.toList())));
+      tableCombo.setValue(null);
+    }
+
+    if (perTable && descriptionLabel != null) {
+      descriptionLabel.setText(Messages.get("tables.base_upload.per_table_target"));
+    }
+  }
+
+  private static void setShown(@Nullable Node node, boolean shown) {
+    if (node != null) {
+      node.setVisible(shown);
+      node.setManaged(shown);
+    }
+  }
+
+  /**
+   * False if the upload needs a table and none was selected yet.
+   */
+  private boolean isTableSelected() {
+    return !tableRequired || tableCombo.getValue() != null;
   }
 
   protected boolean isFpOnly() {
@@ -215,6 +291,27 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   public int getSelectedEmulatorId() {
     return emulator != null ? emulator.getId() : -1;
+  }
+
+  /**
+   * The table the assets are installed into, -1 if the emulator does not keep the assets next to each table.
+   */
+  public int getSelectedGameId() {
+    GameRepresentation game = tableRequired ? tableCombo.getValue() : null;
+    return game != null ? game.getId() : -1;
+  }
+
+  /**
+   * Preselects the table, e.g. the one that is selected in the table overview.
+   */
+  public void setSelectedGame(@Nullable GameRepresentation game) {
+    if (game == null || tableCombo == null) {
+      return;
+    }
+    if (emulator == null || emulator.getId() != game.getEmulatorId()) {
+      setSelectedEmulator(Studio.client.getEmulatorService().getGameEmulator(game.getEmulatorId()));
+    }
+    tableCombo.getItems().stream().filter(g -> g.getId() == game.getId()).findFirst().ifPresent(tableCombo::setValue);
   }
 
   public File getSelection() {
@@ -289,7 +386,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
           getSelection().getAbsolutePath();
 
       this.fileNameField.setText(collect);
-      this.uploadBtn.setDisable(false);
+      this.uploadBtn.setDisable(!isTableSelected());
     }
     else {
       WidgetFactory.showAlert(stage, Messages.get("dialog.invalid") + assetType.toString(), analysis);

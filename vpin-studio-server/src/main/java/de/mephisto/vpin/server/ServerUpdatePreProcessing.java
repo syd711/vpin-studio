@@ -11,6 +11,7 @@ import java.util.zip.CRC32;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.io.FileUtils;
@@ -69,7 +70,7 @@ public class ServerUpdatePreProcessing {
 
                 LOG.info("Finished resource updates check, took {}ms.", System.currentTimeMillis() - start);
             }
-            catch (Exception e) {
+            catch (Throwable e) {
                 LOG.error("Server update failed: {}", e.getMessage(), e);
             }
         }).start();
@@ -112,6 +113,11 @@ public class ServerUpdatePreProcessing {
                         LOG.error("Failed to clean up file: {}", localFile.getAbsolutePath());
                     }
                 }
+                continue;
+            }
+
+            if (!OSUtil.isWindows() && isWindowsOnly(entry)) {
+                LOG.info("[SKIPPED] {} is only used on Windows", entry.getName());
                 continue;
             }
 
@@ -182,6 +188,10 @@ public class ServerUpdatePreProcessing {
     }
 
     private void runScriptCheck() {
+        if (!OSUtil.isWindows()) {
+            // the scripts are Windows batch files, used by the frontend launch configurations
+            return;
+        }
         try {
             File scriptFolder = new File(RESOURCES, "scripts/");
             scriptFolder.mkdirs();
@@ -213,9 +223,23 @@ public class ServerUpdatePreProcessing {
             SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
             LOG.info("7z initialized.");
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             LOG.error("Failed to initialize sevenzip: {}", e.getMessage());
         }
+    }
+
+    private static final List<String> WINDOWS_ONLY_EXTENSIONS = Arrays.asList("exe", "dll", "pdb", "vbs", "bat");
+    private static final List<String> WINDOWS_ONLY_FOLDERS = Arrays.asList("DOFTest/", "pinemhi/", "jvm/", "puppacktweaker/");
+
+    /**
+     * Manifest entries for Windows tools, which are useless on other platforms.
+     */
+    static boolean isWindowsOnly(ServerUpdateFileEntry entry) {
+        String name = StringUtils.defaultString(entry.getName());
+        if (WINDOWS_ONLY_EXTENSIONS.contains(FilenameUtils.getExtension(name).toLowerCase())) {
+            return true;
+        }
+        return WINDOWS_ONLY_FOLDERS.stream().anyMatch(folder -> Strings.CI.startsWith(name, folder));
     }
 
     public static NVRamsInfo synchronizeNVRams(boolean deleteAll) {

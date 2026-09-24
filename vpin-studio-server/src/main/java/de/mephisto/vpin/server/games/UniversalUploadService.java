@@ -254,7 +254,14 @@ public class UniversalUploadService {
 
     switch (assetType) {
       case ALT_SOUND: {
-        if (game != null && (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null)) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
+          // in contrast to the shared ROM folder, the ALT sound is stored next to the table, so a table is required
+          if (game == null) {
+            LOG.error("Failed to install ALT sound bundle, no table found for id {}.", uploadDescriptor.getGameId());
+            uploadDescriptor.setError("The ALT sound is installed next to the table, select a table for this upload.");
+            break;
+          }
+
           String rom = game.getRom();
           if (StringUtils.isEmpty(rom)) {
             rom = game.getScannedRom();
@@ -276,19 +283,22 @@ public class UniversalUploadService {
       }
       case ALT_COLOR: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null) {
+          // the ALT color folders are resolved per table, see FolderLookupService, so a table is required
+          if (game == null) {
+            LOG.error("Failed to install ALT color bundle, no table found for id {}.", uploadDescriptor.getGameId());
+            uploadDescriptor.setError("The ALT color is installed next to the table, select a table for this upload.");
+            break;
+          }
+
           String suffix = FilenameUtils.getExtension(tempFile.getName());
           if (PackageUtil.isSupportedArchive(suffix)) {
             altColorService.installAltColorFromArchive(analysis, game, tempFile);
-            if (game != null) {
-              gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-            }
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
             break;
           }
-          if (game != null) {
-            JobDescriptor jobExecutionResult = altColorService.installAltColorFromFile(game, tempFile);
-            uploadDescriptor.setError(jobExecutionResult.getError());
-            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-          }
+          JobDescriptor jobExecutionResult = altColorService.installAltColorFromFile(game, tempFile);
+          uploadDescriptor.setError(jobExecutionResult.getError());
+          gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
         }
         break;
       }

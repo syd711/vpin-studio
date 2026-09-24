@@ -89,9 +89,12 @@ public class VPinMameResource {
 
 
   @PostMapping("/upload/rom/{emuId}")
-  public UploadDescriptor uploadRom(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
+  public UploadDescriptor uploadRom(@PathVariable("emuId") int emuId,
+                                    @RequestParam(value = "objectId", required = false, defaultValue = "-1") int gameId,
+                                    @RequestParam(value = "file", required = false) MultipartFile file) {
     UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emuId);
+    descriptor.setGameId(gameId);
 
     try {
       descriptor.upload();
@@ -108,9 +111,12 @@ public class VPinMameResource {
 
 
   @PostMapping("/upload/cfg/{emuId}")
-  public UploadDescriptor uploadCfg(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
+  public UploadDescriptor uploadCfg(@PathVariable("emuId") int emuId,
+                                    @RequestParam(value = "objectId", required = false, defaultValue = "-1") int gameId,
+                                    @RequestParam(value = "file", required = false) MultipartFile file) {
     UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emuId);
+    descriptor.setGameId(gameId);
 
     try {
       descriptor.upload();
@@ -127,9 +133,12 @@ public class VPinMameResource {
 
 
   @PostMapping("/upload/nvram/{emuId}")
-  public UploadDescriptor uploadNvRam(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
+  public UploadDescriptor uploadNvRam(@PathVariable("emuId") int emuId,
+                                    @RequestParam(value = "objectId", required = false, defaultValue = "-1") int gameId,
+                                    @RequestParam(value = "file", required = false) MultipartFile file) {
     UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emuId);
+    descriptor.setGameId(gameId);
 
     try {
       descriptor.upload();

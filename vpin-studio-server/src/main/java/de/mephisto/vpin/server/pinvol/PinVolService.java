@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.pinvol;
 import de.mephisto.vpin.commons.utils.FileChangeListener;
 import de.mephisto.vpin.commons.utils.FileMonitoringThread;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
@@ -393,18 +394,23 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    setSystemVolume();
     this.enabled = preferencesService.getPreferences().getPinVolAutoStartEnabled();
 
-    new Thread(() -> {
-      if (enabled) {
-        startPinVol();
-        LOG.info("Auto-started PinVol");
-        boolean pinVolFound = systemService.isProcessRunning("PinVol");
-        LOG.info("Found PinVol.exe process: {}", pinVolFound);
-      }
-      setInitialMute();
-    }, "pinvol-autostart").start();
+    if (!OSUtil.isWindows()) {
+      LOG.info("PinVol is only available on Windows, skipped volume initialization.");
+    }
+    else {
+      setSystemVolume();
+      new Thread(() -> {
+        if (enabled) {
+          startPinVol();
+          LOG.info("Auto-started PinVol");
+          boolean pinVolFound = systemService.isProcessRunning("PinVol");
+          LOG.info("Found PinVol.exe process: {}", pinVolFound);
+        }
+        setInitialMute();
+      }, "pinvol-autostart").start();
+    }
 
     loadIni();
     initListener();

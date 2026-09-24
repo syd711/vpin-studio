@@ -40,12 +40,17 @@ public class MusicService {
   }
 
   public void installMusic(@NonNull File out, @Nullable Game game, @Nullable GameEmulator gameEmulator, @NonNull UploaderAnalysis analysis) throws IOException {
+    // the table decides where the music goes: next to it in the per-table layout, the shared folder otherwise
     File musicFolder = null;
-    if (gameEmulator != null) {
-      musicFolder = folderLookupService.getMusicFolder(gameEmulator);
-    }
-    if (musicFolder == null && game != null) {
+    if (game != null) {
       musicFolder = folderLookupService.getMusicFolder(game);
+      if (musicFolder != null && game.getEmulator().isPerTableFileStructure()) {
+        // VPX does not create the folder next to the table
+        musicFolder.mkdirs();
+      }
+    }
+    if (musicFolder == null && gameEmulator != null) {
+      musicFolder = folderLookupService.getMusicFolder(gameEmulator);
     }
 
     if (musicFolder == null || !musicFolder.exists()) {

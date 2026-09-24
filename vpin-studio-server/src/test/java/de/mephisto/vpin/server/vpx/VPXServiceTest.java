@@ -1,11 +1,14 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
@@ -54,13 +57,18 @@ public class VPXServiceTest {
 
   /**
    * Points VPXService#getVPXFile() at a copy of the given ini file by redirecting
-   * "user.home" into the temp dir, mirroring the real AppData/Roaming/VPinballX layout.
+   * "user.home" into the temp dir, mirroring the real layout of the platform:
+   * AppData/Roaming/VPinballX on Windows, the 10.8 preference folder elsewhere.
    */
   private File installIni(File source) throws IOException {
     originalUserHome = System.getProperty("user.home");
     System.setProperty("user.home", tempDir.toString());
 
     File target = tempDir.resolve("AppData/Roaming/VPinballX/VPinballX.ini").toFile();
+    if (!OSUtil.isWindows()) {
+      File prefFolder = VPXService.defaultIniFile(false, OSUtil.isMac(), tempDir.toFile()).getParentFile();
+      target = new File(prefFolder, "10.8/VPinballX.ini");
+    }
     target.getParentFile().mkdirs();
     Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
     return target;
@@ -73,6 +81,48 @@ public class VPXServiceTest {
     File file = service.getVPXFile();
     assertThat(file.getName()).isEqualTo("VPinballX.ini");
     assertThat(file.getAbsolutePath()).contains("VPinballX");
+  }
+
+  @Test
+  void defaultIniFile_windows_usesAppData() {
+    File file = VPXService.defaultIniFile(true, false, tempDir.toFile());
+    assertThat(file).isEqualTo(tempDir.resolve("AppData/Roaming/VPinballX/VPinballX.ini").toFile());
+  }
+
+  @Test
+  void defaultIniFile_linux_usesNewestVersionFolderWithAnIni() throws IOException {
+    Path prefFolder = tempDir.resolve(".local/share/VPinballX");
+    for (String version : new String[]{"10.8", "10.10", "10.9"}) {
+      Files.createDirectories(prefFolder.resolve(version));
+      Files.createFile(prefFolder.resolve(version).resolve("VPinballX.ini"));
+    }
+    // a newer version folder without an ini is ignored
+    Files.createDirectories(prefFolder.resolve("10.11"));
+
+    File file = VPXService.defaultIniFile(false, false, tempDir.toFile());
+
+    assertThat(file).isEqualTo(prefFolder.resolve("10.10/VPinballX.ini").toFile());
+  }
+
+  @Test
+  void defaultIniFile_linuxWithoutVersionFolder_usesPreferenceFolder() {
+    File file = VPXService.defaultIniFile(false, false, tempDir.toFile());
+    assertThat(file).isEqualTo(tempDir.resolve(".local/share/VPinballX/VPinballX.ini").toFile());
+  }
+
+  @Test
+  void defaultIniFile_mac_usesApplicationSupport() {
+    File file = VPXService.defaultIniFile(false, true, tempDir.toFile());
+    assertThat(file).isEqualTo(tempDir.resolve("Library/Application Support/VPinballX/VPinballX.ini").toFile());
+  }
+
+  @Test
+  @DisabledOnOs(OS.WINDOWS)
+  void getVPXFile_configuredStandaloneConfigFile_isUsed() {
+    File configured = tempDir.resolve("custom.ini").toFile();
+    when(systemService.getStandaloneConfigFile()).thenReturn(configured);
+
+    assertThat(service.getVPXFile()).isEqualTo(configured);
   }
 
   // ---- isForceDisableB2S ----
@@ -187,36 +237,29 @@ public class VPXServiceTest {
   }
 
   @Test
-  void play_cameraMode_executesWithPovEdit() {
+  void launchParameters_windows() {
+    assertThat(VPXService.launchParameters("cameraMode", true)).containsExactly("-Minimized", "-PovEdit");
+    assertThat(VPXService.launchParameters("primary", true)).containsExactly("-Minimized", "-Primary", "-Play");
+    assertThat(VPXService.launchParameters(null, true)).containsExactly("-Minimized", "-Play");
+  }
+
+  @Test
+  void launchParameters_standalone_hasNoEditorOptions() {
+    assertThat(VPXService.launchParameters("cameraMode", false)).containsExactly("-PovEdit");
+    assertThat(VPXService.launchParameters("primary", false)).containsExactly("-Play");
+    assertThat(VPXService.launchParameters(null, false)).containsExactly("-Play");
+  }
+
+  @Test
+  void play_delegatesWithPlatformParameters() {
     Game game = mock(Game.class);
-    when(vpxCommandLineService.execute(game, null, "-Minimized", "-PovEdit")).thenReturn(true);
+    String[] expected = VPXService.launchParameters("cameraMode", OSUtil.isWindows());
+    when(vpxCommandLineService.execute(game, null, expected)).thenReturn(true);
 
     boolean result = service.play(game, null, "cameraMode");
 
     assertThat(result).isTrue();
-    verify(vpxCommandLineService).execute(game, null, "-Minimized", "-PovEdit");
-  }
-
-  @Test
-  void play_primaryMode_executesWithPrimaryPlay() {
-    Game game = mock(Game.class);
-    when(vpxCommandLineService.execute(game, null, "-Minimized", "-Primary", "-Play")).thenReturn(true);
-
-    boolean result = service.play(game, null, "primary");
-
-    assertThat(result).isTrue();
-    verify(vpxCommandLineService).execute(game, null, "-Minimized", "-Primary", "-Play");
-  }
-
-  @Test
-  void play_defaultMode_executesWithPlay() {
-    Game game = mock(Game.class);
-    when(vpxCommandLineService.execute(game, null, "-Minimized", "-Play")).thenReturn(true);
-
-    boolean result = service.play(game, null, null);
-
-    assertThat(result).isTrue();
-    verify(vpxCommandLineService).execute(game, null, "-Minimized", "-Play");
+    verify(vpxCommandLineService).execute(game, null, expected);
   }
 
   // ---- delete ----

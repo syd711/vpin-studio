@@ -475,7 +475,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       game = getGameByFilename(emuId, tableFile.getName());
       if (game == null && tableFile.getParentFile() != null) {
         LOG.warn("No game found with name \"{}\" for emulator with id \"{}\" and games folder \"{}\"", table, emuId, matchingEmulator.getGamesDirectory());
-        game = getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+        game = getGameByFilename(emuId, de.mephisto.vpin.restclient.util.FileUtils.joinGameFileName(tableFile.getParentFile().getName(), tableFile.getName()));
       }
 
       if (game != null) {

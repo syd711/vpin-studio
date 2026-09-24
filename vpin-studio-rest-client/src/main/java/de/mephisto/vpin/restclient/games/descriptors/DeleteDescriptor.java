@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.games.descriptors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -203,5 +205,16 @@ public class DeleteDescriptor {
 
   public void setDeleteAltSound(boolean deleteAltSound) {
     this.deleteAltSound = deleteAltSound;
+  }
+
+  /**
+   * True if nothing that is stored inside the table folder is kept. With the per table file structure,
+   * the folder holds the table, ROM, NVRAM, config, music, altsound, colorization, DMD and highscore files,
+   * so the whole folder can go. The frontend entry, the PUP pack and the shared settings live elsewhere.
+   */
+  @JsonIgnore
+  public boolean isDeleteTableFolder() {
+    return deleteTable && deleteDirectB2s && deleteIni && deleteVbs && deletePov && deleteRes
+        && deleteRom && deleteCfg && deleteHighscores && deleteMusic && deleteAltSound && deleteAltColor && deleteDMDs;
   }
 }

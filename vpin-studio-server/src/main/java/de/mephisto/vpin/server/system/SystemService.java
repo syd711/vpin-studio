@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.system;
 
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
@@ -13,7 +11,9 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
+import de.mephisto.vpin.restclient.system.OperatingSystem;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -85,7 +85,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         robot = new Robot();
       }
     }
-    catch (AWTException e) {
+    catch (Throwable e) {
+      // an unreachable display throws an AWTError rather than an AWTException
       LOG.error("Failed to create robot: {}", e.getMessage());
     }
   }
@@ -97,6 +98,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private File standaloneInstallationFolder;
   private File standaloneConfigFile;
   private File standaloneTablesFolder;
+  private String standaloneExecutable;
 
   private File backglassServerFolder;
   private File vpxInstallationFolder;
@@ -122,14 +124,28 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public File resolveVpxExe() {
     File vpxExe = super.resolveVpxExe();
     if ((vpxExe == null || !vpxExe.exists()) && getVpxFolder() != null) {
-      vpxExe = new File(getVpxFolder(), "VPinballX.exe");
+      vpxExe = new File(getVpxFolder(), OSUtil.isWindows() ? "VPinballX.exe" : "VPinballX_BGFX");
     }
     return vpxExe;
   }
 
   private void initBaseFolders() throws VPinStudioException {
     try {
-      PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
+      // On Linux, always use system-linux.properties instead of system.properties, unless a
+      // test profile already selected a different name (system-test, system-pinballX, ...).
+      String propertiesName = systemProperties;
+      boolean linuxDefaultProfile = OSUtil.isLinux() && DEFAULT_SYSTEM_PROPERTIES_NAME.equals(systemProperties);
+      if (linuxDefaultProfile) {
+        propertiesName = LINUX_SYSTEM_PROPERTIES_NAME;
+        LOG.info("Running on Linux, using {}.properties", propertiesName);
+      }
+
+      File propertiesFile = new File(RESOURCES, propertiesName.endsWith(".properties") ? propertiesName : propertiesName + ".properties");
+      PropertiesStore store = PropertiesStore.create(propertiesFile);
+
+      if (linuxDefaultProfile) {
+        validateLinuxProperties(store, propertiesFile);
+      }
 
       // Determination of the installed Frontend
       //Standalone Folder
@@ -142,6 +158,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
         if (store.containsNonEmptyKey(STANDALONE_TABLES_DIR)) {
           this.standaloneTablesFolder = new File(store.get(STANDALONE_TABLES_DIR));
+        }
+        if (store.containsNonEmptyKey(STANDALONE_EXECUTABLE)) {
+          this.standaloneExecutable = store.get(STANDALONE_EXECUTABLE);
         }
       }
 
@@ -170,8 +189,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         this.vpxInstallationFolder = new File(store.get(VPX_INSTALLATION_DIR));
       }
 
+      // Popper, PinballX and PinballY are all Windows-only frontends, so they can never actually
+      // run on a non-Windows server (this also protects against the FrontendType.Popper default
+      // when no frontend-specific installation directory has been configured at all)
+      if (!OSUtil.isWindows() && !frontendType.equals(FrontendType.Standalone)) {
+        LOG.warn("Frontend type {} is not supported on non-Windows systems, falling back to {}.", frontendType, FrontendType.Standalone);
+        frontendType = FrontendType.Standalone;
+      }
+
       // now that frontend is determined, activate or deactivate features
       frontendType.apply(Features);
+      if (!OSUtil.isWindows()) {
+        Features.disableWindowsOnlyFeatures();
+      }
       // Possibly override features from system
       apply(Features, store.get(SYSTEM_FEATURES_ON), true);
       apply(Features, store.get(SYSTEM_FEATURES_OFF), false);
@@ -199,10 +229,66 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
       }
     }
+    catch (LinuxConfigurationException e) {
+      throw e;
+    }
     catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
+    }
+  }
+
+  /**
+   * The server on Linux only supports Standalone mode. Rather than start half-configured when
+   * resources/system-linux.properties is missing or one of its values does not resolve to an
+   * existing file or folder, collect every problem and stop the server with a single message.
+   */
+  private void validateLinuxProperties(@NonNull PropertiesStore store, @NonNull File propertiesFile) throws LinuxConfigurationException {
+    List<String> errors = new ArrayList<>();
+
+    if (!propertiesFile.exists()) {
+      errors.add("the file does not exist. Create it, starting from the template resources/system-linux.properties (see LINUX-SERVER.md).");
+    }
+    else if (!store.containsNonEmptyKey(STANDALONE_INSTALLATION_DIR)) {
+      errors.add(STANDALONE_INSTALLATION_DIR + " is required and must point to the VPX standalone installation folder.");
+    }
+    else {
+      File installDir = new File(store.get(STANDALONE_INSTALLATION_DIR));
+      if (!installDir.isDirectory()) {
+        errors.add(STANDALONE_INSTALLATION_DIR + " (\"" + store.get(STANDALONE_INSTALLATION_DIR) + "\") does not exist or is not a directory.");
+      }
+
+      if (store.containsNonEmptyKey(STANDALONE_EXECUTABLE)) {
+        String configured = store.get(STANDALONE_EXECUTABLE);
+        File exe = new File(configured);
+        if (!exe.isAbsolute()) {
+          exe = new File(installDir, configured);
+        }
+        if (!exe.isFile()) {
+          errors.add(STANDALONE_EXECUTABLE + " (\"" + configured + "\") does not resolve to an existing file.");
+        }
+      }
+
+      if (store.containsNonEmptyKey(STANDALONE_TABLES_DIR)) {
+        File tablesDir = new File(store.get(STANDALONE_TABLES_DIR));
+        if (!tablesDir.isDirectory()) {
+          errors.add(STANDALONE_TABLES_DIR + " (\"" + store.get(STANDALONE_TABLES_DIR) + "\") does not exist or is not a directory.");
+        }
+      }
+
+      if (store.containsNonEmptyKey(STANDALONE_CONFIG_FILE)) {
+        File configFile = new File(store.get(STANDALONE_CONFIG_FILE));
+        File parent = configFile.getParentFile();
+        if (parent == null || !parent.isDirectory()) {
+          errors.add(STANDALONE_CONFIG_FILE + " (\"" + store.get(STANDALONE_CONFIG_FILE) + "\") is not in an existing folder.");
+        }
+      }
+    }
+
+    if (!errors.isEmpty()) {
+      String msg = "Invalid Linux server configuration in " + propertiesFile.getAbsolutePath() + ":\n  - " + String.join("\n  - ", errors);
+      throw new LinuxConfigurationException(msg);
     }
   }
 
@@ -331,6 +417,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return standaloneTablesFolder;
   }
 
+  @Nullable
+  public String getStandaloneExecutable() {
+    return standaloneExecutable;
+  }
+
   public int getServerPort() {
     return port;
   }
@@ -392,6 +483,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return VersionUtil.getVersion();
   }
 
+  public OperatingSystem getOperatingSystem() {
+    if (OSUtil.isWindows()) {
+      return OperatingSystem.WINDOWS;
+    }
+    if (OSUtil.isMac()) {
+      return OperatingSystem.MAC;
+    }
+    if (OSUtil.isLinux()) {
+      return OperatingSystem.LINUX;
+    }
+    return OperatingSystem.UNKNOWN;
+  }
+
   public List<String> getCompetitionBadges() {
     File folder = new File(RESOURCES, COMPETITION_BADGES);
     File[] files = folder.listFiles((dir, name) -> name.endsWith("png"));
@@ -439,8 +543,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public boolean isWindowOpened(String name) {
-    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    return windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), name));
+    return WindowsUtil.isWindowOpened(name);
   }
 
   public static void main(String[] args) {
@@ -846,6 +949,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
       initBaseFolders();
       logSystemInfo();
+    }
+    catch (LinuxConfigurationException e) {
+      LOG.error("----------------------------------------------");
+      LOG.error(e.getMessage());
+      LOG.error("Stopping the server.");
+      LOG.error("==============================================");
+      this.shutdown();
+      return;
     }
     catch (Exception e) {
       LOG.error("Failed to initialize system service: {}", e.getMessage(), e);

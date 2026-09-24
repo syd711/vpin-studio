@@ -202,22 +202,22 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     Platform.runLater(() -> {
       LOG.info("Toggle overlay visibility, was visible: {}", !overlayVisible);
       SLOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
-      ServerFX.getInstance().showOverlay(overlayVisible);
+      ServerFX.ifAvailable(fx -> fx.showOverlay(overlayVisible));
     });
   }
 
   private void onTogglePauseMenu() {
     LOG.info("Toggle pause menu show");
     SLOG.info("Toggle pause menu show");
-    ServerFX.getInstance().togglePauseMenu();
+    ServerFX.ifAvailable(fx -> fx.togglePauseMenu());
   }
 
   private void onPauseMenuEvent() {
     if (emulatorRunning) {
-      ServerFX.getInstance().togglePauseMenu();
+      ServerFX.ifAvailable(fx -> fx.togglePauseMenu());
     }
     else {
-      ServerFX.getInstance().exitPauseMenu();
+      ServerFX.ifAvailable(fx -> fx.exitPauseMenu());
     }
   }
 
@@ -302,7 +302,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
           //ignore
         }
         this.overlayVisible = true;
-        ServerFX.getInstance().showOverlay(overlayVisible);
+        ServerFX.ifAvailable(fx -> fx.showOverlay(overlayVisible));
       }
     });
   }
@@ -318,7 +318,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
     emulatorRunning = systemService.isPinballEmulatorRunning();
     frontendIsRunning = true;
     if (!emulatorRunning) {
-      ServerFX.getInstance().exitPauseMenu();
+      ServerFX.ifAvailable(fx -> fx.exitPauseMenu());
     }
   }
 
@@ -326,7 +326,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
   public void frontendExited() {
     emulatorRunning = false;
     frontendIsRunning = false;
-    ServerFX.getInstance().exitPauseMenu();
+    ServerFX.ifAvailable(fx -> fx.exitPauseMenu());
   }
 
   @Override
@@ -374,20 +374,24 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
         try {
           Thread.currentThread().setName("JavaFX App Thread Launcher");
           ServerFX.main(new String[]{});
-        } catch (Exception e) {
+        } catch (Throwable e) {
+          // e.g. missing JavaFX natives for this platform: release the waiting startup thread
           LOG.error("Failed to start JavaFX Application: {}", e.getMessage(), e);
+          ServerFX.latch.countDown();
         }
       }).start();
 
       LOG.info("Waiting for JavaFX initialization...");
-      ServerFX.waitForOverlay();
+      boolean overlayAvailable = ServerFX.waitForOverlay();
       LOG.info("JavaFX initialization completed.");
 
       new VPinStudioServerTray();
       LOG.info("Application tray created.");
 
-      ServerFX.getInstance().setOverlayTitle(
-          frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
+      if (overlayAvailable) {
+        ServerFX.getInstance().setOverlayTitle(
+            frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
+      }
       LOG.info("Finished initialization of OverlayWindowFX");
     }
 

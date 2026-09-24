@@ -125,13 +125,13 @@ public class PinVolSettingsController implements Initializable {
         this.stage = stage;
         this.games = games;
 
-        if (!showSystemVolume) {
+        if (!showSystemVolume || !Studio.isServerWindows()) {
             systemVolumeRoot.setVisible(false);
             tableLabel.setVisible(false);
         }
 
         tableSettingsBox.setVisible(!games.isEmpty());
-        systemVolumeLabel.setVisible(!games.isEmpty());
+        systemVolumeLabel.setVisible(!games.isEmpty() && Studio.isServerWindows());
         saveBtn.setVisible(games.isEmpty());
 
         if (games.size() == 1) {

@@ -59,12 +59,15 @@ public class VPinMameServiceClient extends VPinStudioClientService {
     return false;
   }
 
-  public UploadDescriptor uploadRom(int emuId, File file, FileUploadProgressListener listener) throws Exception {
+  /**
+   * @param gameId the table to install into, required for emulators that keep these files next to each table, else -1
+   */
+  public UploadDescriptor uploadRom(int emuId, int gameId, File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/rom/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.TABLE, listener);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, gameId, null, AssetType.TABLE, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
@@ -75,12 +78,15 @@ public class VPinMameServiceClient extends VPinStudioClientService {
     }
   }
 
-  public UploadDescriptor uploadCfg(int emuId, File file, FileUploadProgressListener listener) throws Exception {
+  /**
+   * @param gameId the table to install into, required for emulators that keep these files next to each table, else -1
+   */
+  public UploadDescriptor uploadCfg(int emuId, int gameId, File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/cfg/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.CFG, listener);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, gameId, null, AssetType.CFG, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
@@ -91,12 +97,15 @@ public class VPinMameServiceClient extends VPinStudioClientService {
     }
   }
 
-  public UploadDescriptor uploadNvRam(int emuId, File file, FileUploadProgressListener listener) throws Exception {
+  /**
+   * @param gameId the table to install into, required for emulators that keep these files next to each table, else -1
+   */
+  public UploadDescriptor uploadNvRam(int emuId, int gameId, File file, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "mame/upload/nvram/" + emuId;
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("emuId", emuId);
-      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, -1, null, AssetType.NV, listener);
+      HttpEntity<MultiValueMap<String, Object>> upload = createUpload(map, file, gameId, null, AssetType.NV, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();

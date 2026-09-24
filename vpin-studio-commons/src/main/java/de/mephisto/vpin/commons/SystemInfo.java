@@ -25,11 +25,18 @@ public class SystemInfo {
   public final static String STANDALONE_INSTALLATION_DIR = "visualPinball.installationDir";
   public final static String STANDALONE_CONFIG_FILE = "visualPinball.configFile";
   public final static String STANDALONE_TABLES_DIR = "visualPinball.tablesFolder";
+  /** Optional launcher for standalone VPX, absolute or relative to the installation dir, e.g. a wrapper script */
+  public final static String STANDALONE_EXECUTABLE = "visualPinball.executable";
 
   public final static String B2SSERVER_INSTALLATION_DIR = "B2SServer.installationDir";
 
   public final static String SYSTEM_FEATURES_ON = "system.featuresOn";
   public final static String SYSTEM_FEATURES_OFF = "system.featuresOff";
+
+  /** The default value of the {@code system.properties} Spring property, i.e. no profile-specific override. */
+  public final static String DEFAULT_SYSTEM_PROPERTIES_NAME = "system";
+  /** On Linux, {@link #DEFAULT_SYSTEM_PROPERTIES_NAME} is always resolved to this file instead. */
+  public final static String LINUX_SYSTEM_PROPERTIES_NAME = "system-linux";
 
 
   public final static String DOT_NET = "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP";

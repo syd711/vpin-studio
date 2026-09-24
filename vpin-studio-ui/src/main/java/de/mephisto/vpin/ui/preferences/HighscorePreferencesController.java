@@ -11,10 +11,12 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
@@ -25,6 +27,9 @@ public class HighscorePreferencesController implements Initializable {
 
   @FXML
   private CheckBox monitorCheckbox;
+
+  @FXML
+  private VBox monitorSection;
 
   @FXML
   private void onNvRamReset() {
@@ -43,6 +48,9 @@ public class HighscorePreferencesController implements Initializable {
       client.getPreferenceService().setPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED, t1);
     });
 
+
+    monitorSection.managedProperty().bindBidirectional(monitorSection.visibleProperty());
+    monitorSection.setVisible(Features.HIGHSCORE_MONITORING);
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     monitorCheckbox.setSelected(serverSettings.isHighscoreMonitorEnabled());
