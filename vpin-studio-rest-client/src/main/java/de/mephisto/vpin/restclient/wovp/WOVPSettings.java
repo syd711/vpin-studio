@@ -54,6 +54,43 @@ public class WOVPSettings extends JsonSettings {
   }
 
   @JsonIgnore
+  public void setApiKey(int index, String apiKey) {
+    switch (index) {
+      case 1 -> setApiKey1(apiKey);
+      case 2 -> setApiKey2(apiKey);
+      case 3 -> setApiKey3(apiKey);
+      case 4 -> setApiKey4(apiKey);
+      case 5 -> setApiKey5(apiKey);
+      default -> throw new UnsupportedOperationException("No valid user id set.");
+    }
+  }
+
+  @JsonIgnore
+  public void setApiKeyEnabled(int index, boolean enabled) {
+    switch (index) {
+      case 1 -> setApiKey1Enabled(enabled);
+      case 2 -> setApiKey2Enabled(enabled);
+      case 3 -> setApiKey3Enabled(enabled);
+      case 4 -> setApiKey4Enabled(enabled);
+      case 5 -> setApiKey5Enabled(enabled);
+      default -> throw new UnsupportedOperationException("No valid user id set.");
+    }
+  }
+
+  /**
+   * Swaps the API keys, including their enabled state, of two slots (1-5).
+   */
+  @JsonIgnore
+  public void swapApiKeys(int index1, int index2) {
+    String apiKey = getApiKey(index1);
+    boolean enabled = isApiKeyEnabled(index1);
+    setApiKey(index1, getApiKey(index2));
+    setApiKeyEnabled(index1, isApiKeyEnabled(index2));
+    setApiKey(index2, apiKey);
+    setApiKeyEnabled(index2, enabled);
+  }
+
+  @JsonIgnore
   public String getAnyApiKey() {
     int index = 1;
     while (index <= 5) {

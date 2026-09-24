@@ -28,6 +28,7 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -77,6 +78,28 @@ public class WOVPPreferencesController implements Initializable {
   private TextField apiKeyText5;
 
   @FXML
+  private Button upBtn1;
+  @FXML
+  private Button upBtn2;
+  @FXML
+  private Button upBtn3;
+  @FXML
+  private Button upBtn4;
+  @FXML
+  private Button upBtn5;
+
+  @FXML
+  private Button downBtn1;
+  @FXML
+  private Button downBtn2;
+  @FXML
+  private Button downBtn3;
+  @FXML
+  private Button downBtn4;
+  @FXML
+  private Button downBtn5;
+
+  @FXML
   private CheckBox subscriptionCheckbox;
 
   @FXML
@@ -97,6 +120,69 @@ public class WOVPPreferencesController implements Initializable {
 
 
   private WOVPSettings wovpSettings;
+
+  private TextField[] apiKeyTexts;
+  private CheckBox[] enabledCheckboxes;
+  private Button[] upButtons;
+  private Button[] downButtons;
+
+  /**
+   * Set while the fields are populated from the settings, so that the listeners do not write them back.
+   */
+  private boolean updatingKeys = false;
+
+  @FXML
+  private void onMoveUp(ActionEvent event) {
+    moveApiKey(indexOf(upButtons, event.getSource()), -1);
+  }
+
+  @FXML
+  private void onMoveDown(ActionEvent event) {
+    moveApiKey(indexOf(downButtons, event.getSource()), 1);
+  }
+
+  private static int indexOf(Button[] buttons, Object source) {
+    return Arrays.asList(buttons).indexOf(source);
+  }
+
+  /**
+   * Swaps the API key (and its enabled state) at the given slot with its neighbour.
+   * The order of the keys defines the order of the players in the pause menu.
+   */
+  private void moveApiKey(int index, int offset) {
+    int target = index + offset;
+    if (index < 0 || target < 0 || target >= apiKeyTexts.length) {
+      return;
+    }
+
+    // the settings use 1-based slots
+    wovpSettings.swapApiKeys(index + 1, target + 1);
+    try {
+      client.getPreferenceService().setJsonPreference(wovpSettings);
+      PreferencesController.markDirty(PreferenceType.competitionSettings);
+    }
+    catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
+    }
+    refreshApiKeys();
+  }
+
+  private void refreshApiKeys() {
+    updatingKeys = true;
+    try {
+      for (int i = 0; i < apiKeyTexts.length; i++) {
+        boolean enabled = wovpSettings.isApiKeyEnabled(i + 1);
+        apiKeyTexts[i].setText(wovpSettings.getApiKey(i + 1));
+        apiKeyTexts[i].setDisable(!enabled);
+        enabledCheckboxes[i].setSelected(enabled);
+        upButtons[i].setDisable(i == 0);
+        downButtons[i].setDisable(i == apiKeyTexts.length - 1);
+      }
+    }
+    finally {
+      updatingKeys = false;
+    }
+  }
 
   @FXML
   private void onClearCache() {
@@ -204,111 +290,40 @@ public class WOVPPreferencesController implements Initializable {
       }
     });
 
-    apiKeyText1.setText(wovpSettings.getApiKey1());
-    apiKeyText1.textProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("apiKeyText", () -> {
-        try {
-          wovpSettings.setApiKey1(t1);
-          client.getPreferenceService().setJsonPreference(wovpSettings);
-          PreferencesController.markDirty(PreferenceType.competitionSettings);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
-        }
-      }, 100);
-    });
-    apiKeyText2.setText(wovpSettings.getApiKey2());
-    apiKeyText2.textProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("apiKeyText", () -> {
-        try {
-          wovpSettings.setApiKey2(t1);
-          client.getPreferenceService().setJsonPreference(wovpSettings);
-          PreferencesController.markDirty(PreferenceType.competitionSettings);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
-        }
-      }, 100);
-    });
-    apiKeyText3.setText(wovpSettings.getApiKey3());
-    apiKeyText3.textProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("apiKeyText", () -> {
-        try {
-          wovpSettings.setApiKey3(t1);
-          client.getPreferenceService().setJsonPreference(wovpSettings);
-          PreferencesController.markDirty(PreferenceType.competitionSettings);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
-        }
-      }, 100);
-    });
-    apiKeyText4.setText(wovpSettings.getApiKey4());
-    apiKeyText4.textProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("apiKeyText", () -> {
-        try {
-          wovpSettings.setApiKey4(t1);
-          client.getPreferenceService().setJsonPreference(wovpSettings);
-          PreferencesController.markDirty(PreferenceType.competitionSettings);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
-        }
-      }, 100);
-    });
-    apiKeyText5.setText(wovpSettings.getApiKey5());
-    apiKeyText5.textProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("apiKeyText", () -> {
-        try {
-          wovpSettings.setApiKey5(t1);
-          client.getPreferenceService().setJsonPreference(wovpSettings);
-          PreferencesController.markDirty(PreferenceType.competitionSettings);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
-        }
-      }, 100);
-    });
+    apiKeyTexts = new TextField[]{apiKeyText1, apiKeyText2, apiKeyText3, apiKeyText4, apiKeyText5};
+    enabledCheckboxes = new CheckBox[]{enabledCheckbox1, enabledCheckbox2, enabledCheckbox3, enabledCheckbox4, enabledCheckbox5};
+    upButtons = new Button[]{upBtn1, upBtn2, upBtn3, upBtn4, upBtn5};
+    downButtons = new Button[]{downBtn1, downBtn2, downBtn3, downBtn4, downBtn5};
 
-    enabledCheckbox1.setSelected(wovpSettings.isApiKey1Enabled());
-    apiKeyText1.setDisable(!wovpSettings.isApiKey1Enabled());
-    enabledCheckbox1.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      wovpSettings.setApiKey1Enabled(newValue);
-      apiKeyText1.setDisable(!newValue);
-      client.getPreferenceService().setJsonPreference(wovpSettings);
-    });
+    refreshApiKeys();
+    for (int i = 0; i < apiKeyTexts.length; i++) {
+      final int slot = i + 1;
+      final TextField apiKeyText = apiKeyTexts[i];
+      apiKeyText.textProperty().addListener((observableValue, oldValue, newValue) -> {
+        if (updatingKeys) {
+          return;
+        }
+        debouncer.debounce("apiKeyText" + slot, () -> {
+          try {
+            wovpSettings.setApiKey(slot, newValue);
+            client.getPreferenceService().setJsonPreference(wovpSettings);
+            PreferencesController.markDirty(PreferenceType.competitionSettings);
+          }
+          catch (Exception e) {
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
+          }
+        }, 100);
+      });
 
-    enabledCheckbox2.setSelected(wovpSettings.isApiKey2Enabled());
-    apiKeyText2.setDisable(!wovpSettings.isApiKey2Enabled());
-    enabledCheckbox2.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      wovpSettings.setApiKey2Enabled(newValue);
-      apiKeyText2.setDisable(!newValue);
-      client.getPreferenceService().setJsonPreference(wovpSettings);
-    });
-
-    enabledCheckbox3.setSelected(wovpSettings.isApiKey3Enabled());
-    apiKeyText3.setDisable(!wovpSettings.isApiKey3Enabled());
-    enabledCheckbox3.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      wovpSettings.setApiKey3Enabled(newValue);
-      apiKeyText3.setDisable(!newValue);
-      client.getPreferenceService().setJsonPreference(wovpSettings);
-    });
-
-    enabledCheckbox4.setSelected(wovpSettings.isApiKey4Enabled());
-    apiKeyText4.setDisable(!wovpSettings.isApiKey4Enabled());
-    enabledCheckbox4.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      wovpSettings.setApiKey4Enabled(newValue);
-      apiKeyText4.setDisable(!newValue);
-      client.getPreferenceService().setJsonPreference(wovpSettings);
-    });
-
-    enabledCheckbox5.setSelected(wovpSettings.isApiKey5Enabled());
-    apiKeyText5.setDisable(!wovpSettings.isApiKey5Enabled());
-    enabledCheckbox5.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      wovpSettings.setApiKey5Enabled(newValue);
-      apiKeyText5.setDisable(!newValue);
-      client.getPreferenceService().setJsonPreference(wovpSettings);
-    });
+      enabledCheckboxes[i].selectedProperty().addListener((observable, oldValue, newValue) -> {
+        if (updatingKeys) {
+          return;
+        }
+        wovpSettings.setApiKeyEnabled(slot, newValue);
+        apiKeyText.setDisable(!newValue);
+        client.getPreferenceService().setJsonPreference(wovpSettings);
+      });
+    }
 
 
     List<String> suggestions = client.getTaggingService().getTags();

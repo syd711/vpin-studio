@@ -370,6 +370,8 @@ public class WovpMenuItemController implements Initializable {
 
   public void reset() {
     screenshotImage = null;
+    //reload the players on next open, the API key order may have changed
+    players = null;
   }
 
   private Pane getPlaceholder() {
