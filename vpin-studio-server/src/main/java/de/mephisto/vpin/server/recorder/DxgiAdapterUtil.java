@@ -9,6 +9,7 @@ import com.sun.jna.ptr.PointerByReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class DxgiAdapterUtil {
    *   IUnknown     : 0=QueryInterface, 1=AddRef, 2=Release
    *   IDXGIObject  : 3=SetPrivateData, 4=SetPrivateDataInterface, 5=GetPrivateData, 6=GetParent
    *   IDXGIFactory : 7=EnumAdapters, 8=MakeWindowAssociation, 9=GetWindowAssociation, ...
-   *   IDXGIAdapter : 7=EnumOutputs,  8=CheckInterfaceSupport,  9=GetDesc
+   *   IDXGIAdapter : 7=EnumOutputs,  8=GetDesc,  9=CheckInterfaceSupport
    */
   public static List<AdapterInfo> getAdaptersViaDxgi() {
     List<AdapterInfo> result = new ArrayList<>();
@@ -151,8 +152,8 @@ public class DxgiAdapterUtil {
         try {
           Memory desc = new Memory(ADAPTER_DESC_SIZE);
           desc.clear();
-          // IDXGIAdapter::GetDesc at vtable slot 9
-          int descHr = vtableCall(pAdapter, 9, desc);
+          // IDXGIAdapter::GetDesc at vtable slot 8
+          int descHr = vtableCall(pAdapter, 8, desc);
           if (descHr == 0) {
             String name = desc.getWideString(0);
             long vramMb = desc.getLong(DEDICATED_VRAM_OFFSET) / (1024L * 1024L);
@@ -175,6 +176,119 @@ public class DxgiAdapterUtil {
       }
     }
     return result;
+  }
+
+  // DXGI_OUTPUT_DESC layout (x64):
+  //   WCHAR DeviceName[32]    = 64 bytes @ offset  0
+  //   RECT  DesktopCoordinates= 16 bytes @ offset 64 (left, top, right, bottom)
+  //   BOOL  AttachedToDesktop =  4 bytes @ offset 80
+  //   DXGI_MODE_ROTATION      =  4 bytes @ offset 84
+  //   HMONITOR Monitor        =  8 bytes @ offset 88
+  //   Total: 96 bytes
+  private static final int OUTPUT_DESC_SIZE = 96;
+  private static final int DESKTOP_COORDINATES_OFFSET = 64;
+  private static final int ATTACHED_TO_DESKTOP_OFFSET = 80;
+
+  public static class OutputInfo {
+    public final int adapterIndex;
+    public final int outputIndex;
+    public final String deviceName;
+    public final Rectangle bounds;
+
+    OutputInfo(int adapterIndex, int outputIndex, String deviceName, Rectangle bounds) {
+      this.adapterIndex = adapterIndex;
+      this.outputIndex = outputIndex;
+      this.deviceName = deviceName;
+      this.bounds = bounds;
+    }
+
+    @Override
+    public String toString() {
+      return "[adapter " + adapterIndex + ", output " + outputIndex + "] " + deviceName + " " + bounds.x + "," + bounds.y + " " + bounds.width + "x" + bounds.height;
+    }
+  }
+
+  /**
+   * Enumerates the desktop-attached outputs (monitors) of all adapters via DXGI.
+   * The adapter/output indexes are exactly the ones ffmpeg's -init_hw_device d3d11va:N
+   * and ddagrab=output_idx=M expect, which is not necessarily the order of Java's GraphicsDevices.
+   * IDXGIOutput vtable: 0-2=IUnknown, 3-6=IDXGIObject, 7=GetDesc
+   */
+  public static List<OutputInfo> getOutputsViaDxgi() {
+    List<OutputInfo> result = new ArrayList<>();
+    Pointer pFactory = null;
+    try {
+      NativeLibrary dxgi = NativeLibrary.getInstance("dxgi");
+      Function createFactory = dxgi.getFunction("CreateDXGIFactory");
+
+      Memory iid = new Memory(16);
+      iid.write(0, IID_IDXGI_FACTORY, 0, 16);
+
+      PointerByReference ppFactory = new PointerByReference();
+      int hr = createFactory.invokeInt(new Object[]{iid, ppFactory});
+      if (hr != 0) {
+        LOG.warn("CreateDXGIFactory failed: HRESULT=0x{}", Integer.toHexString(hr));
+        return result;
+      }
+      pFactory = ppFactory.getValue();
+
+      for (int a = 0; ; a++) {
+        PointerByReference ppAdapter = new PointerByReference();
+        if (vtableCall(pFactory, 7, a, ppAdapter) != 0) break;
+
+        Pointer pAdapter = ppAdapter.getValue();
+        try {
+          for (int o = 0; ; o++) {
+            PointerByReference ppOutput = new PointerByReference();
+            // IDXGIAdapter::EnumOutputs at vtable slot 7
+            if (vtableCall(pAdapter, 7, o, ppOutput) != 0) break;
+
+            Pointer pOutput = ppOutput.getValue();
+            try {
+              Memory desc = new Memory(OUTPUT_DESC_SIZE);
+              desc.clear();
+              // IDXGIOutput::GetDesc at vtable slot 7
+              if (vtableCall(pOutput, 7, desc) == 0 && desc.getInt(ATTACHED_TO_DESKTOP_OFFSET) != 0) {
+                int left = desc.getInt(DESKTOP_COORDINATES_OFFSET);
+                int top = desc.getInt(DESKTOP_COORDINATES_OFFSET + 4);
+                int right = desc.getInt(DESKTOP_COORDINATES_OFFSET + 8);
+                int bottom = desc.getInt(DESKTOP_COORDINATES_OFFSET + 12);
+                result.add(new OutputInfo(a, o, desc.getWideString(0), new Rectangle(left, top, right - left, bottom - top)));
+              }
+            }
+            finally {
+              vtableCall(pOutput, 2);
+            }
+          }
+        }
+        finally {
+          vtableCall(pAdapter, 2);
+        }
+      }
+    }
+    catch (Throwable e) {
+      LOG.error("DXGI output enumeration failed: {}", e.getMessage(), e);
+    }
+    finally {
+      if (pFactory != null) {
+        vtableCall(pFactory, 2);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Returns the DXGI output whose desktop area contains the given point, or null if none does.
+   */
+  public static OutputInfo resolveOutput(int x, int y) {
+    List<OutputInfo> outputs = getOutputsViaDxgi();
+    for (OutputInfo output : outputs) {
+      if (output.bounds.contains(x, y)) {
+        return output;
+      }
+    }
+    LOG.warn("No DXGI output found containing {},{}, available outputs: {}", x, y, outputs);
+    return null;
   }
 
   private static volatile Boolean nvidiaGpuPresent;
@@ -235,5 +349,7 @@ public class DxgiAdapterUtil {
 
   public static void main(String[] args) {
     System.out.println(getAdaptersViaWMI());
+    System.out.println(getAdaptersViaDxgi());
+    System.out.println(getOutputsViaDxgi());
   }
 }

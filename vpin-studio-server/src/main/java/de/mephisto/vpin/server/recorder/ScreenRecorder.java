@@ -97,8 +97,9 @@ public class ScreenRecorder {
 
       long duration = options.getRecordingDuration();
 
-      String command = getDefaultCommand(options);
-      if (options.isExpertSettingsEnabled() && options.getCustomFfmpegCommand() != null) {
+      boolean customCommand = options.isExpertSettingsEnabled() && options.getCustomFfmpegCommand() != null;
+      String command = getDefaultCommand(options, options.isOpenGlCommand());
+      if (customCommand) {
         command = options.getCustomFfmpegCommand();
       }
 
@@ -108,6 +109,16 @@ public class ScreenRecorder {
       }
 
       executeCommand(formattedCommand, result, start);
+
+      // ddagrab (desktop duplication) can fail right away, e.g. when the output is lost to an exclusive fullscreen
+      // window or the monitor is attached to another adapter. The playfield is skipped here, because it is the screen
+      // rendered by the GL emulator itself and gdigrab would only produce a black video that replaces existing media.
+      if (options.isOpenGlCommand() && !customCommand && !cancelled && temporaryTarget.length() == 0
+          && !VPinScreen.PlayField.equals(recordingScreen.getScreen())) {
+        LOG.warn("{} produced an empty file with the desktop duplication command, retrying with gdigrab. ffmpeg error log: {}", this, result.getErrorLog());
+        String fallbackCommand = formatCommand(getDefaultCommand(options, false), width, height, x, y, duration);
+        executeCommand(fallbackCommand, result, start);
+      }
     }
     catch (Exception e) {
       LOG.error("Screen recording failed: {}", e.getMessage(), e);
@@ -124,9 +135,9 @@ public class ScreenRecorder {
     return bounds;
   }
 
-  private String getDefaultCommand(RecordingScreenOptions options) {
+  private String getDefaultCommand(RecordingScreenOptions options, boolean openGl) {
     String command;
-    if (options.isOpenGlCommand()) {
+    if (openGl) {
       command = Ffmpeg.OPEN_GL_COMMAND;
     }
     else if (options.isNvencCommand()) {
@@ -164,10 +175,20 @@ public class ScreenRecorder {
   }
 
   private String formatOpenGlCommand(String cmd, int width, int height, int x, int y, long duration) {
+    int adapterIdx = 0;
     int outputIdx = 0;
     int relX = x;
     int relY = y;
-    if (cmd.contains("[output_idx]")) {
+    // resolve via DXGI, as the order of Java's GraphicsDevices doesn't have to match the DXGI adapter/output order ffmpeg uses
+    DxgiAdapterUtil.OutputInfo output = DxgiAdapterUtil.resolveOutput(x, y);
+    if (output != null) {
+      adapterIdx = output.adapterIndex;
+      outputIdx = output.outputIndex;
+      relX = x - output.bounds.x;
+      relY = y - output.bounds.y;
+      LOG.info("{} resolved DXGI output {}", this, output);
+    }
+    else if (cmd.contains("[output_idx]")) {
       GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
       for (int i = 0; i < screens.length; i++) {
         Rectangle bounds = screens[i].getDefaultConfiguration().getBounds();
@@ -187,7 +208,7 @@ public class ScreenRecorder {
     command = command.replace("[duration]", String.valueOf(duration));
     command = command.replace("[width]", String.valueOf(width));
     command = command.replace("[height]", String.valueOf(height));
-    command = command.replace("[adapter_idx]", "0");
+    command = command.replace("[adapter_idx]", String.valueOf(adapterIdx));
     return command;
   }
 
