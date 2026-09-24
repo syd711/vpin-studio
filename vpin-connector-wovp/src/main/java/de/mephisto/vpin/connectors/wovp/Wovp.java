@@ -45,7 +45,7 @@ public class Wovp {
   public static final String VALIDATION_URL = URL + "validate-apikey";
   public static final String CHALLENGES_URL = URL + "challenges/search";
 
-  private static Map<String, WovpPlayer> players = new HashMap<>();
+  private static Map<String, WovpPlayer> players = new LinkedHashMap<>();
 
   static {
     objectMapper = JsonMapper.builder()

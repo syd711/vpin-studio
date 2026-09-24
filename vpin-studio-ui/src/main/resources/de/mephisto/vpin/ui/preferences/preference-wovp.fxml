@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -14,6 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.WOVPPreferencesController">
    <center>
@@ -73,6 +75,7 @@
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" />
                             <ColumnConstraints hgrow="SOMETIMES" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -162,6 +165,106 @@
                                        </font>
                                     </Button>
                                     <CheckBox fx:id="enabledCheckbox5" mnemonicParsing="false" styleClass="default-text" text="%pref.webhook_set.enabled" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                 <children>
+                                    <Button fx:id="upBtn1" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_up" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="downBtn1" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_down" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                 <children>
+                                    <Button fx:id="upBtn2" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_up" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="downBtn2" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_down" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                 <children>
+                                    <Button fx:id="upBtn3" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_up" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="downBtn3" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_down" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                 <children>
+                                    <Button fx:id="upBtn4" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_up" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="downBtn4" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_down" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                 <children>
+                                    <Button fx:id="upBtn5" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-up" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_up" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="downBtn5" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="bi-arrow-down" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%pref.wovp.move_api_key_down" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
                               </HBox>
                               <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">

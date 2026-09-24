@@ -679,7 +679,7 @@ public class Studio extends Application {
 
       if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
         Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.exit_and_launch") + ": " + frontend.getName(), Messages.get("dialog.exit_and_launch") + frontend.getName(), Messages.get("dialog.exit"), Messages.get("dialog.select_the_checkbox_below_if_you_do"), null, Messages.get("dialog.do_not_show_again"), false);
+        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.exit_and_launch", frontend.getName()), Messages.get("dialog.exit_and_launch", frontend.getName()), Messages.get("dialog.exit"), Messages.get("dialog.select_the_checkbox_below_if_you_do"), null, Messages.get("dialog.do_not_show_again"), false);
         if (confirmationResult.isCancelClicked()) {
           return false;
         }

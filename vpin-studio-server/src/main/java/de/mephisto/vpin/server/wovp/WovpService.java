@@ -36,7 +36,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -237,7 +239,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
 
   public boolean isScoreSubmitEnabled() {
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-    List<WovpPlayer> players = Wovp.getPlayers();
+    List<WovpPlayer> players = getPlayers();
     if (!players.isEmpty()) {
       ScoreSubmit scoreSubmit = submitScore(players.getFirst(), null, true);
       return scoreSubmit.getErrorMessage() == null;
@@ -253,8 +255,18 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     return wovpCompetitionSynchronizer.synchronizeWovp(wovpSettings.getAnyApiKey(), forceReload);
   }
 
+  /**
+   * Returns the validated players in the order of their API keys.
+   */
   public List<WovpPlayer> getPlayers() {
-    return Wovp.getPlayers();
+    List<String> apiKeys = wovpSettings.getApiKeys();
+    List<WovpPlayer> players = new ArrayList<>(Wovp.getPlayers());
+    //players of unknown keys are sorted to the end, the sort is stable
+    players.sort(Comparator.comparingInt(p -> {
+      int index = apiKeys.indexOf(p.getApiKey());
+      return index >= 0 ? index : Integer.MAX_VALUE;
+    }));
+    return players;
   }
 
   @Override

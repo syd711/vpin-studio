@@ -45,6 +45,8 @@ import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
@@ -106,6 +108,18 @@ public class MenuController implements Initializable {
 
   @FXML
   private StackPane footerStack;
+
+  @FXML
+  private ImageView screenBackgroundImageView;
+
+  @FXML
+  private ImageView footerImageView;
+
+  @FXML
+  private ImageView baseSelectorImageView;
+
+  @FXML
+  private ImageView bluePanelImageView;
 
   private int selectionIndex = 0;
 
@@ -561,6 +575,7 @@ public class MenuController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     rowImage.setFitWidth(PauseMenuUIDefaults.getScreenWidth());
+    applyPauseMenuTheme();
 
     try {
       String resource = "menu-custom-view.fxml";
@@ -572,6 +587,37 @@ public class MenuController implements Initializable {
     }
     catch (IOException e) {
       LOG.error("Failed to init custom controller: " + e.getMessage(), e);
+    }
+  }
+
+  private void applyPauseMenuTheme() {
+    try {
+      File themeFolder = new File("./resources/themes/pause-menu");
+      if (!themeFolder.exists()) {
+        return;
+      }
+
+      applyThemeImage(themeFolder, "row.png", rowImage);
+      applyThemeImage(themeFolder, "screen.png", screenBackgroundImageView);
+      applyThemeImage(themeFolder, "footer.png", footerImageView);
+      applyThemeImage(themeFolder, "wheel.png", wheelImage);
+
+      File blue = new File(themeFolder, "blue.png");
+      if (blue.exists()) {
+        Image image = new Image(new FileInputStream(blue));
+        baseSelectorImageView.setImage(image);
+        bluePanelImageView.setImage(image);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to theme pause menu: " + e.getMessage(), e);
+    }
+  }
+
+  private void applyThemeImage(File themeFolder, String filename, ImageView imageView) throws Exception {
+    File file = new File(themeFolder, filename);
+    if (file.exists()) {
+      imageView.setImage(new Image(new FileInputStream(file)));
     }
   }
 }
