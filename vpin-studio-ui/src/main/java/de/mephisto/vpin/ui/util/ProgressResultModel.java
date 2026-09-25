@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
@@ -24,17 +25,31 @@ public class ProgressResultModel {
   }
 
   public void setProgress(double progress) {
-    if (this.progressBar.isVisible()) {
-      this.progressBar.setProgress(progress);
-    }
+    runOnFxThread(() -> {
+      if (this.progressBar.isVisible()) {
+        this.progressBar.setProgress(progress);
+      }
+    });
   }
 
   public void setStatusMessage(String msg) {
-    this.statusLabel.setText(msg);
+    runOnFxThread(() -> this.statusLabel.setText(msg));
   }
 
   public void setIndeterminate() {
-    this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+    runOnFxThread(() -> this.progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS));
+  }
+
+  /**
+   * Progress callbacks may be invoked from background threads, e.g. upload streams.
+   */
+  private static void runOnFxThread(Runnable runnable) {
+    if (Platform.isFxApplicationThread()) {
+      runnable.run();
+    }
+    else {
+      Platform.runLater(runnable);
+    }
   }
 
   public void addProcessed() {

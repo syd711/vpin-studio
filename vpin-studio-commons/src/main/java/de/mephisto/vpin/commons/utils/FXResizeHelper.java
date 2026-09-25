@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.utils;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
@@ -14,9 +15,6 @@ import java.util.HashMap;
 /**
  * Adds drag-to-move and edge-drag-to-resize behavior to an undecorated (StageStyle.TRANSPARENT)
  * JavaFX Stage.
- *
- * @author Simon Reinisch
- * @version 0.0.2
  */
 public class FXResizeHelper {
 
@@ -25,6 +23,10 @@ public class FXResizeHelper {
   private final Scene SCENE;
   private final int TR;
   private final int TM;
+  // distance (px) between the Scene's edges and the window's actual visible border, e.g. the
+  // padding a dialog reserves around its content for a drop shadow; edge/drag hit-zones below
+  // are measured from the visible border, not the raw Scene edge, so they stay aligned with it
+  private final int MARGIN;
 
   private double mPresSceneX, mPresSceneY;
   private double mPresScreeX, mPresScreeY;
@@ -33,15 +35,33 @@ public class FXResizeHelper {
   private double mWidthStore, mHeightStore, mXStore, mYStore;
   private boolean verticalOnly;
 
+  // the resize/drag mode chosen at MOUSE_PRESSED; stays fixed until the button is released
+  private Cursor activeCursor = Cursor.DEFAULT;
+
   private Object userData;
+
+  // tracks how the stage's geometry was last set, so keyboard/mouse maximize, snap, and
+  // restore actions agree on where "restore" should return the stage to
+  private enum WindowState { NORMAL, MAXIMIZED }
+
+  private WindowState windowState = WindowState.NORMAL;
 
 
   public static void install(Stage stage, int dt, int rt) {
-    new FXResizeHelper(stage, dt, rt, false);
+    new FXResizeHelper(stage, dt, rt, false, 0);
   }
 
   public static void install(Stage stage, int dt, int rt, boolean verticalOnly) {
-    new FXResizeHelper(stage, dt, rt, verticalOnly);
+    new FXResizeHelper(stage, dt, rt, verticalOnly, 0);
+  }
+
+  /**
+   * Same as {@link #install(Stage, int, int)}, but for a Scene whose root reserves {@code margin}
+   * px of padding around the visible window content (e.g. for a drop shadow), so edge/drag
+   * hit-zones are measured from the visible border instead of the raw Scene edge.
+   */
+  public static void install(Stage stage, int dt, int rt, int margin) {
+    new FXResizeHelper(stage, dt, rt, false, margin);
   }
 
   /**
@@ -51,11 +71,13 @@ public class FXResizeHelper {
    * @param stage - The JavaFX Stage.
    * @param dt    - The area (in px) where the user can drag the window.
    * @param rt    - The area (in px) where the user can resize the window.
+   * @param margin - px of padding between the Scene's edges and the visible window border.
    */
-  private FXResizeHelper(Stage stage, int dt, int rt, boolean verticalOnly) {
+  private FXResizeHelper(Stage stage, int dt, int rt, boolean verticalOnly, int margin) {
     this.verticalOnly = verticalOnly;
     this.TR = rt;
     this.TM = dt + rt;
+    this.MARGIN = margin;
     this.STAGE = stage;
     this.SCENE = stage.getScene();
 
@@ -123,12 +145,10 @@ public class FXResizeHelper {
       if (height > 0) {
         STAGE.setHeight(height);
       }
+      windowState = WindowState.NORMAL;
     }
     else {
-      mXStore = STAGE.getX();
-      mYStore = STAGE.getY();
-      mWidthStore = STAGE.getWidth();
-      mHeightStore = STAGE.getHeight();
+      storeNormalGeometry();
 
       if (screen.equals(Screen.getPrimary())) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -151,8 +171,52 @@ public class FXResizeHelper {
       if (screen.getVisualBounds().getHeight() > 0) {
         STAGE.setHeight(screen.getVisualBounds().getHeight());
       }
+      windowState = WindowState.MAXIMIZED;
     }
     return !mIsMaximized;
+  }
+
+  /**
+   * Maximizes the stage to fill the current screen's visual bounds, mirroring the OS Win+Up
+   * shortcut. No-op if already maximized.
+   */
+  public void maximize() {
+    if (windowState == WindowState.MAXIMIZED) {
+      return;
+    }
+    storeNormalGeometry();
+
+    Rectangle2D bounds = getScreen(STAGE).getVisualBounds();
+    STAGE.setX(bounds.getMinX());
+    STAGE.setY(bounds.getMinY());
+    STAGE.setWidth(bounds.getWidth());
+    STAGE.setHeight(bounds.getHeight());
+    windowState = WindowState.MAXIMIZED;
+  }
+
+  /**
+   * Mirrors the OS Win+Down shortcut: restores a maximized/snapped stage to its previous bounds,
+   * or minimizes it if it's already at its normal (non-maximized, non-snapped) size.
+   */
+  public void restoreOrMinimize() {
+    if (windowState == WindowState.NORMAL) {
+      minimize();
+      return;
+    }
+    STAGE.setX(mXStore);
+    STAGE.setY(mYStore);
+    STAGE.setWidth(mWidthStore);
+    STAGE.setHeight(mHeightStore);
+    windowState = WindowState.NORMAL;
+  }
+
+  private void storeNormalGeometry() {
+    if (windowState == WindowState.NORMAL) {
+      mXStore = STAGE.getX();
+      mYStore = STAGE.getY();
+      mWidthStore = STAGE.getWidth();
+      mHeightStore = STAGE.getHeight();
+    }
   }
 
   private void createListener() {
@@ -251,6 +315,11 @@ public class FXResizeHelper {
     // gesture is captured before a descendant control - e.g. a ToolBar, which is known to
     // swallow MOUSE_PRESSED/MOUSE_DRAGGED even over its empty background - can consume it first.
     SCENE.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+      // Decide the gesture from the press position, not SCENE.getCursor(): the scene cursor is
+      // only refreshed on MOUSE_MOVED and can be stale (e.g. a SplitPane divider sets its own
+      // cursor on its node), which used to resize the window while dragging an inner splitter.
+      activeCursor = event.isPrimaryButtonDown() ? cursorAt(event.getSceneX(), event.getSceneY()) : Cursor.DEFAULT;
+
       mPresSceneX = event.getSceneX();
       mPresSceneY = event.getSceneY();
 
@@ -262,52 +331,18 @@ public class FXResizeHelper {
     });
 
     SCENE.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
-      EventHandler<MouseEvent> handler = LISTENER.get(SCENE.getCursor());
+      EventHandler<MouseEvent> handler = LISTENER.get(activeCursor);
       if (handler != null) {
+        // a manual move/resize makes the geometry user-defined again, so a later restore
+        // shouldn't jump back to a stale maximized/snapped position
+        windowState = WindowState.NORMAL;
         handler.handle(event);
       }
     });
 
-    SCENE.setOnMouseMoved(event -> {
-      double sx = event.getSceneX();
-      double sy = event.getSceneY();
+    SCENE.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> activeCursor = Cursor.DEFAULT);
 
-      boolean l_trigger = sx > 0 && sx < TR;
-      boolean r_trigger = sx < SCENE.getWidth() && sx > SCENE.getWidth() - TR;
-      boolean u_trigger = sy < SCENE.getHeight() && sy > SCENE.getHeight() - TR;
-      boolean d_trigger = sy > 0 && sy < TR;
-
-      if (l_trigger && d_trigger && !verticalOnly) {
-        fireAction(Cursor.NW_RESIZE);
-      }
-      else if (l_trigger && u_trigger && !verticalOnly) {
-        fireAction(Cursor.SW_RESIZE);
-      }
-      else if (r_trigger && d_trigger && !verticalOnly) {
-        fireAction(Cursor.NE_RESIZE);
-      }
-      else if (r_trigger && u_trigger && !verticalOnly) {
-        fireAction(Cursor.SE_RESIZE);
-      }
-      else if (l_trigger && !verticalOnly) {
-        fireAction(Cursor.W_RESIZE);
-      }
-      else if (r_trigger && !verticalOnly) {
-        fireAction(Cursor.E_RESIZE);
-      }
-      else if (d_trigger) {
-        fireAction(Cursor.N_RESIZE);
-      }
-      else if (sy < TM && !u_trigger) {
-        fireAction(Cursor.OPEN_HAND);
-      }
-      else if (u_trigger) {
-        fireAction(Cursor.S_RESIZE);
-      }
-      else {
-        fireAction(Cursor.DEFAULT);
-      }
-    });
+    SCENE.setOnMouseMoved(event -> fireAction(cursorAt(event.getSceneX(), event.getSceneY())));
 
     // Once the pointer leaves the window, no further MOUSE_MOVED events arrive on this scene,
     // so a cursor set while hovering the drag/resize zones (e.g. OPEN_HAND) would otherwise stay
@@ -317,6 +352,51 @@ public class FXResizeHelper {
         fireAction(Cursor.DEFAULT);
       }
     });
+  }
+
+  /**
+   * Maps a Scene position to the resize/drag cursor of the hit-zone it falls into
+   * ({@link Cursor#DEFAULT} if it is in none).
+   */
+  private Cursor cursorAt(double sx, double sy) {
+    double left = MARGIN;
+    double top = MARGIN;
+    double right = SCENE.getWidth() - MARGIN;
+    double bottom = SCENE.getHeight() - MARGIN;
+
+    boolean l_trigger = sx > left - TR && sx < left + TR;
+    boolean r_trigger = sx < right + TR && sx > right - TR;
+    boolean u_trigger = sy < bottom + TR && sy > bottom - TR;
+    boolean d_trigger = sy > top - TR && sy < top + TR;
+
+    if (l_trigger && d_trigger && !verticalOnly) {
+      return Cursor.NW_RESIZE;
+    }
+    else if (l_trigger && u_trigger && !verticalOnly) {
+      return Cursor.SW_RESIZE;
+    }
+    else if (r_trigger && d_trigger && !verticalOnly) {
+      return Cursor.NE_RESIZE;
+    }
+    else if (r_trigger && u_trigger && !verticalOnly) {
+      return Cursor.SE_RESIZE;
+    }
+    else if (l_trigger && !verticalOnly) {
+      return Cursor.W_RESIZE;
+    }
+    else if (r_trigger && !verticalOnly) {
+      return Cursor.E_RESIZE;
+    }
+    else if (d_trigger) {
+      return Cursor.N_RESIZE;
+    }
+    else if (sy < top + TM && !u_trigger) {
+      return Cursor.OPEN_HAND;
+    }
+    else if (u_trigger) {
+      return Cursor.S_RESIZE;
+    }
+    return Cursor.DEFAULT;
   }
 
   private void fireAction(Cursor c) {
