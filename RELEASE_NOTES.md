@@ -5,6 +5,8 @@
 - **Highscore Cards**: Added "Topper" for target screen selection.
 - **Studio Client**: Fixed Remote OS resolving.
 
+**For those who had updated to 5.4.0 with remote connection issues: Just download the VPin-Studio.zip from the release artifacts and replace the one on your remote PC. You should be able to connect again then.**
+
 ---
 
 ## Release Notes 5.4.0
