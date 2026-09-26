@@ -97,7 +97,7 @@ public class CardGenerationPreferencesController implements Initializable {
     ObservableList<String> screenNames = FXCollections.observableList(new ArrayList<>());
     if (frontendType.equals(FrontendType.Popper)) {
       menuPupPack = client.getPupPackService().getMenuPupPack();
-      screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name());
+      screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name(), VPinScreen.Topper.name());
     }
     // for other frontends supporting medias (pinballX and pinballY)
     else if (Features.MEDIA_ENABLED) {

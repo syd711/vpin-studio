@@ -1,3 +1,12 @@
+## Release Notes 5.4.1
+
+### Changes
+
+- **Highscore Cards**: Added "Topper" for target screen selection.
+- **Studio Client**: Fixed Remote OS resolving.
+
+---
+
 ## Release Notes 5.4.0
 
 ### Changes

@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.OperatingSystem;
+import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.restclient.textedit.TextEditorFile;
 import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -172,51 +173,66 @@ public class Studio extends Application {
 
     // offload connection logic so the splash screen can actually render
     new Thread(() -> {
-      if (splashController != null) {
-        splashController.setStatus(Messages.get("studio.splash.connecting_to_last_server"));
-      }
-
-      //replace the OverlayFX client with the Studio one
-      Studio.client = new VPinStudioClient("localhost");
-      if (splashController != null) {
-        splashController.setStatus(Messages.get("studio.splash.checking_localhost"));
-      }
-      Studio.Features = client.getSystemService().getFeatures();
-      Studio.ServerOS = client.getSystemService().getSystemId().getOperatingSystem();
-      ServerFX.client = Studio.client;
-
-      String version = client.getSystemService().getVersion();
-      if (!StringUtils.isEmpty(version)) {
-        Platform.runLater(() -> loadStudio(stage, Studio.client));
-      }
-      else {
+      try {
         if (splashController != null) {
-          splashController.setStatus(Messages.get("studio.splash.checking_connections"));
+          splashController.setStatus(Messages.get("studio.splash.connecting_to_last_server"));
         }
 
-        ConnectionProperties connectionProperties = new ConnectionProperties();
-        List<ConnectionEntry> connections = connectionProperties.getConnections();
-        if (!connections.isEmpty()) {
-          for (ConnectionEntry connection : connections) {
-            if (splashController != null) {
-              splashController.setStatus(Messages.get("studio.splash.checking_connection", connection.getName()));
-            }
-            Studio.client = new VPinStudioClient(connection.getIp());
-            version = client.getSystemService().getVersion();
-            if (!StringUtils.isEmpty(version)) {
-              //moved this inside because we are using the version to check connection. It was slowing this process down
-              Studio.Features = client.getSystemService().getFeatures();
-              Studio.ServerOS = client.getSystemService().getSystemId().getOperatingSystem();
-              final VPinStudioClient foundClient = Studio.client;
-              Platform.runLater(() -> loadStudio(stage, foundClient));
-              return;
-            }
+        //replace the OverlayFX client with the Studio one
+        Studio.client = new VPinStudioClient("localhost");
+        if (splashController != null) {
+          splashController.setStatus(Messages.get("studio.splash.checking_localhost"));
+        }
+        Studio.Features = client.getSystemService().getFeatures();
+        Studio.ServerOS = resolveServerOS(client);
+        ServerFX.client = Studio.client;
 
+        String version = client.getSystemService().getVersion();
+        if (!StringUtils.isEmpty(version)) {
+          Platform.runLater(() -> loadStudio(stage, Studio.client));
+        }
+        else {
+          if (splashController != null) {
+            splashController.setStatus(Messages.get("studio.splash.checking_connections"));
           }
+
+          ConnectionProperties connectionProperties = new ConnectionProperties();
+          List<ConnectionEntry> connections = connectionProperties.getConnections();
+          if (!connections.isEmpty()) {
+            for (ConnectionEntry connection : connections) {
+              if (splashController != null) {
+                splashController.setStatus(Messages.get("studio.splash.checking_connection", connection.getName()));
+              }
+              Studio.client = new VPinStudioClient(connection.getIp());
+              version = client.getSystemService().getVersion();
+              if (!StringUtils.isEmpty(version)) {
+                //moved this inside because we are using the version to check connection. It was slowing this process down
+                Studio.Features = client.getSystemService().getFeatures();
+                Studio.ServerOS = resolveServerOS(client);
+                final VPinStudioClient foundClient = Studio.client;
+                Platform.runLater(() -> loadStudio(stage, foundClient));
+                return;
+              }
+
+            }
+          }
+          Platform.runLater(() -> loadLauncher(stage));
         }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to initialize server connection: " + e.getMessage(), e);
         Platform.runLater(() -> loadLauncher(stage));
       }
     }, "Studio Connection Initializer").start();
+  }
+
+  private static OperatingSystem resolveServerOS(VPinStudioClient c) {
+    SystemId systemId = c.getSystemService().getSystemId();
+    // legacy or unreachable servers provide no system id, these are Windows systems
+    if (systemId == null || systemId.getOperatingSystem() == null) {
+      return OperatingSystem.WINDOWS;
+    }
+    return systemId.getOperatingSystem();
   }
 
   /**
@@ -330,7 +346,7 @@ public class Studio extends Application {
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
       Studio.Features = client.getSystemService().getFeatures();
-      Studio.ServerOS = client.getSystemService().getSystemId().getOperatingSystem();
+      Studio.ServerOS = resolveServerOS(client);
       ServerFX.client = Studio.client;
 
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
