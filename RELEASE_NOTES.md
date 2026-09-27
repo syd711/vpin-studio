@@ -1,3 +1,11 @@
+## Release Notes 5.4.2
+
+### Changes
+
+- **Media Recorder**: Added option to disabled NVIDIA hardware acceleration support.
+
+---
+
 ## Release Notes 5.4.1
 
 ### Changes

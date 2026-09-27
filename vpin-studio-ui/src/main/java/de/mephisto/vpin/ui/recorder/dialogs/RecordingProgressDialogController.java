@@ -81,6 +81,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private RadioButton frontendRecordingRadio;
 
   @FXML
+  private CheckBox disableNvidiaDetectionCheckbox;
+
+  @FXML
   private CheckBox customLauncherCheckbox;
 
   @FXML
@@ -357,6 +360,15 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         else {
           emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
         }
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
+
+    disableNvidiaDetectionCheckbox.setSelected(!settings.isNvencEnabled());
+    disableNvidiaDetectionCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        settings.setNvencEnabled(!newValue);
         client.getPreferenceService().setJsonPreference(settings);
       }
     });

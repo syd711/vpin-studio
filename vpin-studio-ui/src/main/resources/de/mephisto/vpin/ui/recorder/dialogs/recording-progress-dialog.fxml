@@ -143,6 +143,23 @@
                   </VBox>
                </children>
             </HBox>
+            <VBox fx:id="recordingPreferencesPanel" spacing="6.0">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+               <children>
+                  <Label styleClass="default-headline" text="%recorder.recording_progress_dialog.recording_preferences" />
+                  <CheckBox fx:id="disableNvidiaDetectionCheckbox" mnemonicParsing="false" styleClass="default-text" text="%recorder.recording_progress_dialog.disable_nvidia_detection">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="%recorder.recording_progress_dialog.disable_nvidia_detection_description" textFill="WHITE" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
             <VBox fx:id="recordingProgressPanel" layoutX="22.0" layoutY="88.0" spacing="6.0">
                <children>
                   <Label styleClass="default-headline" text="%recorder.recording_progress_dialog.recording_progress">
