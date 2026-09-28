@@ -3,6 +3,7 @@
 ### Changes
 
 - **Media Recorder**: Added option to disabled NVIDIA hardware acceleration support.
+- **Highscore Cards**: Invalidated PinUP Popper display cache before showing highscore cards on table launches to ensure the correct display location is used.
 
 ---
 

@@ -112,6 +112,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
           Platform.runLater(() -> {
             FrontendPlayerDisplay pupPlayerDisplay = null;
             if (cardSettings.isNotificationOnPopperScreen()) {
+              frontendService.getFrontendPlayerDisplays(true);
               pupPlayerDisplay = vpinScreenService.getScreenDisplay(screen);
             }
             FrontendPlayerDisplay display = pupPlayerDisplay;
