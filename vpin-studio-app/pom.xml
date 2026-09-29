@@ -271,6 +271,7 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
                             <headerType>gui</headerType>
                             <icon>${project.basedir}/src/main/resources/de/mephisto/vpin/app/logo.ico</icon>
                             <outfile>target/VPin-Studio-App.exe</outfile>

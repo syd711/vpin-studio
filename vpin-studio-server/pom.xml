@@ -31,6 +31,7 @@
         <twelvemonkeys.version>3.13.1</twelvemonkeys.version>
 
 
+
         <!-- Plugin versions -->
         <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
 
@@ -788,6 +789,19 @@
             <id>linux</id>
             <properties>
                 <server.javafx.platform>linux</server.javafx.platform>
+                <launch4j.skip>true</launch4j.skip>
+            </properties>
+        </profile>
+
+        <!-- Skip launch4j on MacBuild -->
+        <profile>
+            <id>macos-skips-launch4j</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
                 <launch4j.skip>true</launch4j.skip>
             </properties>
         </profile>
