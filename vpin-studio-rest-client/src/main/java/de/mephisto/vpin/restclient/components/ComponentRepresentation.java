@@ -21,6 +21,8 @@ public class ComponentRepresentation {
 
   private String targetFolder;
 
+  private String targetFolderOverride;
+
   private String url;
 
   public boolean isInstalled() {
@@ -103,6 +105,14 @@ public class ComponentRepresentation {
 
   public void setTargetFolder(String targetFolder) {
     this.targetFolder = targetFolder;
+  }
+
+  public String getTargetFolderOverride() {
+    return targetFolderOverride;
+  }
+
+  public void setTargetFolderOverride(String targetFolderOverride) {
+    this.targetFolderOverride = targetFolderOverride;
   }
 
   public boolean isVersionDiff() {

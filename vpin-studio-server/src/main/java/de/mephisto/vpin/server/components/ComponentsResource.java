@@ -15,6 +15,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -50,6 +51,11 @@ public class ComponentsResource {
   @PutMapping("/ignoreversion/{type}/{version}")
   public boolean ignoreVersion(@PathVariable("type") ComponentType type, @PathVariable("version") String version) {
     return componentService.ignoreVersion(type, version);
+  }
+
+  @PutMapping("/targetfolder/{type}")
+  public boolean setTargetFolder(@PathVariable("type") ComponentType type, @RequestBody Map<String, String> body) {
+    return componentService.setTargetFolder(type, body.get("targetFolder"));
   }
 
   @PostMapping("/check/{forceDownload}")
@@ -106,9 +112,11 @@ public class ComponentsResource {
     representation.setExclusions(componentFacade.getExcludedFilenames());
     representation.setInstalled(componentFacade.isInstalled());
 
+    representation.setTargetFolderOverride(component.getTargetFolder());
+
     try {
       representation.setLastModified(componentFacade.getModificationDate());
-      File targetFolder = componentFacade.getTargetFolder();
+      File targetFolder = componentService.getEffectiveTargetFolder(componentType);
       if (targetFolder != null) {
         representation.setTargetFolder(targetFolder.getAbsolutePath());
       }

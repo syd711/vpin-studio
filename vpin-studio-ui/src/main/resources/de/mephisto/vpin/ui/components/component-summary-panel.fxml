@@ -112,6 +112,7 @@
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="60.0" valignment="TOP" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -130,26 +131,48 @@
                   <font>
                      <Font size="14.0" />
                   </font>
+                  <tooltip>
+                     <Tooltip prefWidth="300.0" text="%components.component_summary_panel.if_no_folder_is_selected_the_default_resolving" wrapText="true" />
+                  </tooltip>
+               </Button>
+               <Button fx:id="folderResetBtn" mnemonicParsing="false" onAction="#onFolderReset" text="%components.component_summary_panel.reset_target_folder">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-undo-variant" iconSize="18" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_reset_the_target_folder_to" wrapText="true" />
+                  </tooltip>
                </Button>
             </children>
             </HBox>
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets top="3.0" />
+               </GridPane.margin>
+               <children>
+                  <Label maxWidth="500.0" styleClass="default-text" text="%components.component_summary_panel.folder_description" wrapText="true" />
+               </children>
+            </VBox>
 
-            <Label styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="1" />
-            <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Label styleClass="default-text" text="%backups.backups_sidebar.last_modified" GridPane.rowIndex="2" />
+            <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
 
-            <Label styleClass="default-text" text="%components.component_summary_panel.last_check" GridPane.rowIndex="2" />
-            <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+            <Label styleClass="default-text" text="%components.component_summary_panel.last_check" GridPane.rowIndex="3" />
+            <Label fx:id="lastCheckLabel" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
 
-            <Label styleClass="default-text" text="%components.component_short_summary_panel.github_url" GridPane.rowIndex="3" />
-            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <Label styleClass="default-text" text="%components.component_short_summary_panel.github_url" GridPane.rowIndex="4" />
+            <Hyperlink fx:id="githubLink" onAction="#onHyperlink" text="-" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="-5.0" />
                </GridPane.margin>

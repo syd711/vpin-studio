@@ -2,7 +2,11 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
+import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.server.components.Component;
+import de.mephisto.vpin.server.components.ComponentRepository;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -24,6 +28,9 @@ public class VpxComponent implements ComponentFacade {
   @Autowired
   protected SystemService systemService;
 
+  @Autowired
+  private ComponentRepository componentRepository;
+
   @NonNull
   @Override
   public String[] getDiffList() {
@@ -44,17 +51,41 @@ public class VpxComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    return systemService.resolveVpx64InstallFolder();
+    File override = resolveOverrideFolder();
+    return override != null ? override : systemService.resolveVpx64InstallFolder();
   }
 
   @Nullable
   @Override
   public OffsetDateTime getModificationDate() {
+    File override = resolveOverrideFolder();
+    if (override != null) {
+      File exe = new File(override, "VPinballX64.exe");
+      if (!exe.exists()) {
+        exe = new File(override, "VPinballX.exe");
+      }
+      return exe.exists() ? OffsetDateTime.ofInstant(Instant.ofEpochMilli(exe.lastModified()), ZoneId.systemDefault()) : null;
+    }
+
     File setupExe = systemService.resolveVpx64Exe();
     if (setupExe != null && setupExe.exists()) {
       return OffsetDateTime.ofInstant(Instant.ofEpochMilli(setupExe.lastModified()), ZoneId.systemDefault());
     }
     return null;
+  }
+
+  /**
+   * A user-configured override (System Manager > Visual Pinball > target folder) always wins over the
+   * Windows file-association-based auto-detection, which finds nothing for a portable or custom install.
+   */
+  @Nullable
+  private File resolveOverrideFolder() {
+    return componentRepository.findByType(ComponentType.vpinball)
+        .map(Component::getTargetFolder)
+        .filter(dir -> !StringUtils.isEmpty(dir))
+        .map(File::new)
+        .filter(File::exists)
+        .orElse(null);
   }
 
   @NonNull

@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -85,6 +86,64 @@ public class ComponentServiceTest {
     service.setVersion(ComponentType.vpinball, "");
 
     assertNull(component.getInstalledVersion());
+  }
+
+  // ---- setTargetFolder ----
+
+  @Test
+  void setTargetFolder_persistsOverride_whenComponentFound() {
+    Component component = componentWithType(ComponentType.vpinmame);
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.of(component));
+
+    boolean result = service.setTargetFolder(ComponentType.vpinmame, "C:/MTCPincab/VisualPinball/VPinMAME");
+
+    assertTrue(result);
+    assertEquals("C:/MTCPincab/VisualPinball/VPinMAME", component.getTargetFolder());
+    verify(componentRepository).saveAndFlush(component);
+  }
+
+  @Test
+  void setTargetFolder_clearsOverride_whenEmptyProvided() {
+    Component component = componentWithType(ComponentType.vpinmame);
+    component.setTargetFolder("C:/old/override");
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.of(component));
+
+    service.setTargetFolder(ComponentType.vpinmame, "");
+
+    assertNull(component.getTargetFolder());
+  }
+
+  @Test
+  void setTargetFolder_returnsFalse_whenComponentNotFound() {
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.empty());
+
+    assertFalse(service.setTargetFolder(ComponentType.vpinmame, "C:/somewhere"));
+  }
+
+  // ---- getEffectiveTargetFolder ----
+
+  @Test
+  void getEffectiveTargetFolder_prefersOverride_whenSet() {
+    Component component = componentWithType(ComponentType.vpinmame);
+    component.setTargetFolder("C:/MTCPincab/VisualPinball/VPinMAME");
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.of(component));
+
+    File result = service.getEffectiveTargetFolder(ComponentType.vpinmame);
+
+    assertEquals(new File("C:/MTCPincab/VisualPinball/VPinMAME"), result);
+    verifyNoInteractions(vPinMAMEComponent);
+  }
+
+  @Test
+  void getEffectiveTargetFolder_fallsBackToFacade_whenNoOverride() {
+    Component component = componentWithType(ComponentType.vpinmame);
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.of(component));
+    File autoDetected = new File("C:/vPinball/VisualPinball/VPinMAME");
+    when(vPinMAMEComponent.getTargetFolder()).thenReturn(autoDetected);
+
+    File result = service.getEffectiveTargetFolder(ComponentType.vpinmame);
+
+    assertEquals(autoDetected, result);
   }
 
   // ---- ignoreVersion ----

@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -50,13 +51,32 @@ public class FolderLookupServiceTest {
   // ---- getAltColorFolders ----
 
   @Test
-  void getAltColorFolders_legacyLayout_usesVPinMameAltColorFolderForAllTypes() {
+  void getAltColorFolders_legacyLayout_usesEmulatorMameFolderWhenConfigured() {
+    // the emulator's own VPinMAME folder (derived from its configured installation directory) takes
+    // precedence, since it is correct even when Windows has no file association to auto-detect it from
     GameEmulator emulator = legacyEmulator();
-    File altColorRoot = tempDir.resolve("altcolor").toFile();
-    when(vPinMameService.getAltColorFolder()).thenReturn(altColorRoot);
+    File mameFolder = tempDir.resolve("VPinMAME").toFile();
+    when(emulator.getMameFolder()).thenReturn(mameFolder);
     Game game = mockGame(emulator);
 
-    File expected = new File(altColorRoot, "myrom");
+    File expected = new File(new File(mameFolder, "altcolor"), "myrom");
+    assertThat(folderLookupService.getSerumFolder(game, "myrom")).isEqualTo(expected);
+    assertThat(folderLookupService.getVniFolder(game, "myrom")).isEqualTo(expected);
+    assertThat(folderLookupService.getAltColorFolders(game, "myrom")).containsExactly(expected);
+    verifyNoInteractions(vPinMameService);
+  }
+
+  @Test
+  @EnabledOnOs(OS.WINDOWS)
+  void getAltColorFolders_legacyLayout_fallsBackToVPinMameFolderWhenEmulatorMameDirectoryUnset() {
+    // on Windows without a configured emulator mame directory, fall back to the auto-detected VPinMAME folder
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameDirectory()).thenReturn(null);
+    File altColorRoot = tempDir.resolve("VPinMAME").toFile();
+    when(vPinMameService.getMameFolder()).thenReturn(altColorRoot);
+    Game game = mockGame(emulator);
+
+    File expected = new File(new File(altColorRoot, "altcolor"), "myrom");
     assertThat(folderLookupService.getSerumFolder(game, "myrom")).isEqualTo(expected);
     assertThat(folderLookupService.getVniFolder(game, "myrom")).isEqualTo(expected);
     assertThat(folderLookupService.getAltColorFolders(game, "myrom")).containsExactly(expected);

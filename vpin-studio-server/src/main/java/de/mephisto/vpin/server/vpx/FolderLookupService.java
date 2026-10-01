@@ -83,7 +83,7 @@ public class FolderLookupService {
   @NonNull
   public File getSerumFolder(@NonNull Game game, String subfolder) {
     if (isPreferLegacyFileStructure(game.getEmulator())) {
-      return getLegacyAltColorFolder(subfolder);
+      return getLegacyAltColorFolder(game.getEmulator(), subfolder);
     }
     return new File(game.getGameFolder(), "serum/" + subfolder);
   }
@@ -94,7 +94,7 @@ public class FolderLookupService {
   @NonNull
   public File getVniFolder(@NonNull Game game, String subfolder) {
     if (isPreferLegacyFileStructure(game.getEmulator())) {
-      return getLegacyAltColorFolder(subfolder);
+      return getLegacyAltColorFolder(game.getEmulator(), subfolder);
     }
     return new File(game.getGameFolder(), "vni/" + subfolder);
   }
@@ -110,8 +110,14 @@ public class FolderLookupService {
     return serum.equals(vni) ? List.of(serum) : List.of(serum, vni);
   }
 
-  private File getLegacyAltColorFolder(String subfolder) {
-    return new File(vPinMameService.getAltColorFolder(), subfolder);
+  /**
+   * The shared VPinMAME folder is preferably the one derived from the emulator's own installation directory
+   * (as configured in the frontend), since that reflects the table's actual VPinMAME folder even when Windows
+   * has no ".vpx" file association to detect it from, e.g. for a portable or non-default installation.
+   */
+  private File getLegacyAltColorFolder(@NonNull GameEmulator emulator, String subfolder) {
+    File mameFolder = !StringUtils.isEmpty(emulator.getMameDirectory()) ? emulator.getMameFolder() : vPinMameService.getMameFolder();
+    return new File(new File(mameFolder, "altcolor"), subfolder);
   }
 
   @NonNull

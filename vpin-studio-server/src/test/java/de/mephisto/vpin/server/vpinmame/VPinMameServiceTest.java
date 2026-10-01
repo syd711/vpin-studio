@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.vpinmame;
 
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
+import de.mephisto.vpin.server.components.Component;
+import de.mephisto.vpin.server.components.ComponentRepository;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
@@ -33,6 +37,12 @@ public class VPinMameServiceTest {
 
   @Mock
   private FolderLookupService folderLookupService;
+
+  @Mock
+  private EmulatorService emulatorService;
+
+  @Mock
+  private ComponentRepository componentRepository;
 
   @InjectMocks
   private VPinMameService service;
@@ -139,6 +149,30 @@ public class VPinMameServiceTest {
   // ---- getMameFolder ----
 
   @Test
+  void getMameFolder_prefersConfiguredOverride(@TempDir Path tempDir) throws IOException {
+    File overrideFolder = tempDir.resolve("MyVPinMAME").toFile();
+    Files.createDirectories(overrideFolder.toPath());
+    Component component = new Component();
+    component.setTargetFolder(overrideFolder.getAbsolutePath());
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.of(component));
+
+    File result = service.getMameFolder();
+
+    assertEquals(overrideFolder, result);
+    verifyNoInteractions(systemService, emulatorService);
+  }
+
+  @Test
+  void getMameFolder_ignoresOverride_whenItDoesNotExist() {
+    Component component = new Component();
+    component.setTargetFolder("C:/does/not/exist");
+    when(componentRepository.findByType(ComponentType.vpinmame)).thenReturn(Optional.of(component));
+    when(systemService.resolveVpx64InstallFolder()).thenReturn(null);
+
+    assertNull(service.getMameFolder());
+  }
+
+  @Test
   void getMameFolder_returnsNull_whenVpxFolderIsNull() {
     when(systemService.resolveVpx64InstallFolder()).thenReturn(null);
 
@@ -156,6 +190,33 @@ public class VPinMameServiceTest {
     assertNotNull(result);
     assertEquals("VPinMAME", result.getName());
     assertEquals(vpxFolder, result.getParentFile());
+  }
+
+  @Test
+  void getMameFolder_fallsBackToConfiguredEmulator_whenNoFileAssociationAndVpxFolderMissing(@TempDir Path tempDir) throws IOException {
+    // no ".vpx" file association: resolveVpx64InstallFolder() falls back to a hardcoded default that does not exist
+    when(systemService.resolveVpx64InstallFolder()).thenReturn(new File("C:/does/not/exist"));
+
+    File mameFolder = tempDir.resolve("VPinMAME").toFile();
+    Files.createDirectories(mameFolder.toPath());
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameDirectory()).thenReturn(mameFolder.getAbsolutePath());
+    when(emulatorService.getVpxGameEmulators()).thenReturn(List.of(emulator));
+
+    File result = service.getMameFolder();
+
+    assertEquals(mameFolder, result);
+  }
+
+  @Test
+  void getMameFolder_ignoresConfiguredEmulator_whenItsMameDirectoryDoesNotExist() {
+    when(systemService.resolveVpx64InstallFolder()).thenReturn(null);
+
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameDirectory()).thenReturn("C:/does/not/exist");
+    when(emulatorService.getVpxGameEmulators()).thenReturn(List.of(emulator));
+
+    assertNull(service.getMameFolder());
   }
 
   // ---- getNvRamFolder / getCfgFolder / getRomsFolder ----

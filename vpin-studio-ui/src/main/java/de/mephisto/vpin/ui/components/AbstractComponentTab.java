@@ -56,14 +56,9 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected ComponentSummaryController componentSummaryController;
 
   protected void refresh() {
-    String savedTargetFolder = component.getTargetFolder();
     JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(getComponentType()))
         .thenAcceptLater(comp -> {
           component = comp;
-          // set the target folder the user may have changed
-          if (!component.isInstalled()) {
-            component.setTargetFolder(savedTargetFolder);
-          }
 
           componentSummaryController.refreshComponent(component);
           componentUpdateController.refreshComponent(component);

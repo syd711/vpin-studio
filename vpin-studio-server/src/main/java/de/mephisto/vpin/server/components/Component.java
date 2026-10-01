@@ -25,6 +25,19 @@ public class Component {
 
   private String latestReleaseVersion;
 
+  /**
+   * A user-configured override of the installation folder, used instead of auto-detection when set.
+   */
+  private String targetFolder;
+
+  public String getTargetFolder() {
+    return targetFolder;
+  }
+
+  public void setTargetFolder(String targetFolder) {
+    this.targetFolder = targetFolder;
+  }
+
   public String getLatestReleaseVersion() {
     return latestReleaseVersion;
   }

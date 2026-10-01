@@ -51,6 +51,9 @@ public class ComponentSummaryController implements Initializable {
   private Button folderBtn;
 
   @FXML
+  private Button folderResetBtn;
+
+  @FXML
   private Label lastModifiedLabel;
 
   @FXML
@@ -113,8 +116,24 @@ public class ComponentSummaryController implements Initializable {
     chooser.setTitle("Select Target Folder");
     File targetFolder = chooser.showOpenDialog(Studio.stage);
     if (targetFolder != null && targetFolder.exists()) {
-      folderLabel.setText(targetFolder.getAbsolutePath());
-      component.setTargetFolder(targetFolder.getAbsolutePath());
+      try {
+        client.getComponentService().setTargetFolder(component.getType(), targetFolder.getAbsolutePath());
+        EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_apply_version") + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  public void onFolderReset() {
+    try {
+      client.getComponentService().setTargetFolder(component.getType(), null);
+      EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
+    }
+    catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_apply_version") + e.getMessage());
     }
   }
 
@@ -133,7 +152,8 @@ public class ComponentSummaryController implements Initializable {
     lastCheckLabel.setText("?");
     lastModifiedLabel.setText("?");
     folderLabel.setText("-");
-    folderBtn.setVisible(false);
+    folderBtn.setVisible(true);
+    folderResetBtn.setVisible(false);
 
     if (component != null) {
       setVersionBtn.setVisible(component.isInstalled());
@@ -155,7 +175,8 @@ public class ComponentSummaryController implements Initializable {
       lastModifiedLabel.setText(component.getLastModified() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(component.getLastModified()) : "?");
 
       folderLabel.setText(component.getTargetFolder() != null ? component.getTargetFolder() : "?");
-      folderBtn.setVisible(!component.isInstalled());
+      folderBtn.setVisible(true);
+      folderResetBtn.setVisible(!StringUtils.isEmpty(component.getTargetFolderOverride()));
 
       githubLink.setText(component.getUrl());
     }
@@ -166,5 +187,6 @@ public class ComponentSummaryController implements Initializable {
     this.ignoreBtn.setVisible(false);
 
     this.folderBtn.managedProperty().bind(folderBtn.visibleProperty());
+    this.folderResetBtn.managedProperty().bind(folderResetBtn.visibleProperty());
   }
 }

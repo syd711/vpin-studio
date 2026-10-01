@@ -4,6 +4,11 @@
 
 - **Media Recorder**: Added option to disabled NVIDIA hardware acceleration support.
 - **Highscore Cards**: Invalidated PinUP Popper display cache before showing highscore cards on table launches to ensure the correct display location is used.
+- **System Manager**: The target folder of components (e.g. Visual Pinball, VPinMAME) can now be set at any time, also for installed components, and is persisted on the server. A new "Reset" button restores the automatically detected folder.
+- **Visual Pinball / VPinMAME**: A configured target folder is now respected for version checks, modification date and the VPinMAME folder resolution. This fixes portable or non-default installations, where no ".vpx" file association exists to detect the folder from.
+- **VPinMAME**: If no VPinMAME folder can be detected, the folder configured for a VPX emulator in the frontend is used as fallback.
+- **Serum / VNI**: The legacy "altcolor" folder is now resolved from the table emulator's VPinMAME folder.
+- **MacOS**: Changes to allow Mac build on a Rosetta free machine.
 
 ---
 

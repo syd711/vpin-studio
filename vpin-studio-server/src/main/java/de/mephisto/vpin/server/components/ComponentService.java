@@ -93,6 +93,30 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
+  public boolean setTargetFolder(@NonNull ComponentType type, @Nullable String targetFolder) {
+    Optional<Component> byType = componentRepository.findByType(type);
+    if (byType.isPresent()) {
+      Component component = byType.get();
+      component.setTargetFolder(StringUtils.isEmpty(targetFolder) ? null : targetFolder);
+      componentRepository.saveAndFlush(component);
+      LOG.info("Set target folder override for {}: {}", type, targetFolder);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * The folder to use for this component: the user-configured override when set, else the auto-detected one.
+   */
+  @Nullable
+  public File getEffectiveTargetFolder(@NonNull ComponentType type) {
+    Component component = getComponent(type);
+    if (!StringUtils.isEmpty(component.getTargetFolder())) {
+      return new File(component.getTargetFolder());
+    }
+    return getComponentFacade(type).getTargetFolder();
+  }
+
   public boolean ignoreVersion(@NonNull ComponentType type, @NonNull String version) {
     Optional<Component> byType = componentRepository.findByType(type);
     if (byType.isPresent()) {

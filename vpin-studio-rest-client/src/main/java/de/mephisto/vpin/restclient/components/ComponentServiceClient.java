@@ -9,6 +9,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*********************************************************************************************************************
  * Components
@@ -34,6 +35,12 @@ public class ComponentServiceClient extends VPinStudioClientService {
 
   public boolean ignoreVersion(ComponentType type, String version) throws Exception {
     return getRestClient().put(API + "components/ignoreversion/" + type.name() + "/" + version, new HashMap<>(), Boolean.class);
+  }
+
+  public boolean setTargetFolder(ComponentType type, String targetFolder) throws Exception {
+    Map<String, Object> body = new HashMap<>();
+    body.put("targetFolder", targetFolder);
+    return getRestClient().put(API + "components/targetfolder/" + type.name(), body, Boolean.class);
   }
 
   public ComponentActionLogRepresentation install(ComponentInstallation installation) throws Exception {

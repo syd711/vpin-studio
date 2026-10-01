@@ -8,7 +8,11 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
+import de.mephisto.vpin.server.components.Component;
+import de.mephisto.vpin.server.components.ComponentRepository;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
@@ -64,6 +68,14 @@ public class VPinMameService implements InitializingBean {
   @Lazy
   @Autowired
   private FolderLookupService folderLookupService;
+
+  @Lazy
+  @Autowired
+  private EmulatorService emulatorService;
+
+  @Lazy
+  @Autowired
+  private ComponentRepository componentRepository;
 
   private File mameFolder;
 
@@ -406,12 +418,52 @@ public class VPinMameService implements InitializingBean {
 
   public File getMameFolder() {
     if (mameFolder == null) {
-      File vpxFolder = systemService.resolveVpx64InstallFolder();
-      if (vpxFolder != null && vpxFolder.exists()) {
-        mameFolder = new File(vpxFolder, "VPinMAME");
+      // a user-configured override (System Manager > VPinMAME > target folder) always wins
+      File overrideFolder = resolveOverrideMameFolder();
+      if (overrideFolder != null) {
+        mameFolder = overrideFolder;
+      }
+      else {
+        File vpxFolder = systemService.resolveVpx64InstallFolder();
+        if (vpxFolder != null && vpxFolder.exists()) {
+          mameFolder = new File(vpxFolder, "VPinMAME");
+        }
+
+        if (mameFolder == null || !mameFolder.exists()) {
+          // Windows has no ".vpx" file association to detect a portable or non-default install from;
+          // fall back to the VPinMAME folder of a VPX emulator configured in the frontend instead.
+          File configuredMameFolder = resolveConfiguredMameFolder();
+          if (configuredMameFolder != null) {
+            mameFolder = configuredMameFolder;
+          }
+        }
       }
     }
     return mameFolder;
+  }
+
+  @Nullable
+  private File resolveOverrideMameFolder() {
+    return componentRepository.findByType(ComponentType.vpinmame)
+        .map(Component::getTargetFolder)
+        .filter(dir -> !StringUtils.isEmpty(dir))
+        .map(File::new)
+        .filter(File::exists)
+        .orElse(null);
+  }
+
+  @Nullable
+  private File resolveConfiguredMameFolder() {
+    for (GameEmulator emulator : emulatorService.getVpxGameEmulators()) {
+      String dir = emulator.getMameDirectory();
+      if (!StringUtils.isEmpty(dir)) {
+        File folder = new File(dir);
+        if (folder.exists()) {
+          return folder;
+        }
+      }
+    }
+    return null;
   }
 
   public static final String NVRAM_DIRECTORY = "nvram_directory";

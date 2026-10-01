@@ -1,15 +1,22 @@
 package de.mephisto.vpin.server.components.facades;
 
+import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.server.components.Component;
+import de.mephisto.vpin.server.components.ComponentRepository;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,6 +26,9 @@ public class VpxComponentTest {
 
   @Mock
   private SystemService systemService;
+
+  @Mock
+  private ComponentRepository componentRepository;
 
   @InjectMocks
   private VpxComponent component;
@@ -82,6 +92,36 @@ public class VpxComponentTest {
 
     assertNotNull(result);
     assertEquals(1000L, result.toInstant().toEpochMilli());
+  }
+
+  @Test
+  void getTargetFolder_prefersOverride(@TempDir Path tempDir) throws Exception {
+    File overrideFolder = tempDir.resolve("MyVisualPinball").toFile();
+    Files.createDirectories(overrideFolder.toPath());
+    Component c = new Component();
+    c.setTargetFolder(overrideFolder.getAbsolutePath());
+    when(componentRepository.findByType(ComponentType.vpinball)).thenReturn(Optional.of(c));
+
+    File result = component.getTargetFolder();
+
+    assertEquals(overrideFolder, result);
+    verifyNoInteractions(systemService);
+  }
+
+  @Test
+  void getModificationDate_findsExeInOverrideFolder(@TempDir Path tempDir) throws Exception {
+    File overrideFolder = tempDir.resolve("MyVisualPinball").toFile();
+    Files.createDirectories(overrideFolder.toPath());
+    File exe = new File(overrideFolder, "VPinballX64.exe");
+    Files.writeString(exe.toPath(), "x");
+    Component c = new Component();
+    c.setTargetFolder(overrideFolder.getAbsolutePath());
+    when(componentRepository.findByType(ComponentType.vpinball)).thenReturn(Optional.of(c));
+
+    OffsetDateTime result = component.getModificationDate();
+
+    assertNotNull(result);
+    verifyNoInteractions(systemService);
   }
 
   @Test
