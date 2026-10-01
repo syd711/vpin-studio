@@ -221,6 +221,21 @@
 
     </build>
 
+    <profiles>
+        <profile>
+            <id>macos-skip</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <macOSBuild>true</macOSBuild>
+            </properties>
+        </profile>
+    </profiles>
+
+
     <repositories>
         <repository>
             <id>gitlab-maven</id>
