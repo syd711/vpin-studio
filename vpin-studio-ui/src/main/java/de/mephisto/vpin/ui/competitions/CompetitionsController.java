@@ -55,6 +55,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class CompetitionsController implements Initializable, StudioFXController, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
+  private final static double SCORE_SCROLL_OFFSET = 200;
 
   @FXML
   private BorderPane root;
@@ -467,26 +468,27 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void focusMyScore() {
-    JFXFuture.supplyAsync(() -> {
-      List<Node> children = scoreBox.getChildren();
-      Optional<Node> myScorePanel = children.stream().filter(s -> ((CompetitionScore) s.getUserData()).isMyScore()).findFirst();
-      if (myScorePanel.isPresent()) {
-        int myScoreIndex = scoreBox.getChildren().indexOf(myScorePanel.get());
-        double height = ((Pane) myScorePanel.get()).getHeight();
-        if (height == 0) {
-          Platform.runLater(() -> {
-            focusMyScore();
-          });
-        }
-        return (int) (myScoreIndex * height);
+    // wait for the layout pass, so that the score rows have their final bounds
+    Platform.runLater(() -> {
+      Optional<Node> myScorePanel = scoreBox.getChildren().stream()
+        .filter(s -> s.getUserData() instanceof CompetitionScore && ((CompetitionScore) s.getUserData()).isMyScore())
+        .findFirst();
+      if (myScorePanel.isEmpty()) {
+        return;
       }
-      return 0;
-    }).thenAcceptLater(scroll -> {
-      if (scroll > 0) {
-        Platform.runLater(() -> {
-          dashboardScrollPane.setVvalue(scroll);
-        });
+
+      dashboardScrollPane.applyCss();
+      dashboardScrollPane.layout();
+
+      double contentHeight = scoreBox.getBoundsInLocal().getHeight();
+      double viewportHeight = dashboardScrollPane.getViewportBounds().getHeight();
+      double scrollableHeight = contentHeight - viewportHeight;
+      if (scrollableHeight <= 0) {
+        return;
       }
+
+      double targetY = Math.max(0, myScorePanel.get().getBoundsInParent().getMinY() - SCORE_SCROLL_OFFSET);
+      dashboardScrollPane.setVvalue(Math.min(1, targetY / scrollableHeight));
     });
   }
 

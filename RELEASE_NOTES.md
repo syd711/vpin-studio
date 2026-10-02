@@ -8,6 +8,7 @@
 - **Visual Pinball / VPinMAME**: A configured target folder is now respected for version checks, modification date and the VPinMAME folder resolution. This fixes portable or non-default installations, where no ".vpx" file association exists to detect the folder from.
 - **VPinMAME**: If no VPinMAME folder can be detected, the folder configured for a VPX emulator in the frontend is used as fallback.
 - **Serum / VNI**: The legacy "altcolor" folder is now resolved from the table emulator's VPinMAME folder.
+- **WOVP Challanges**: The dashboard highscore list (outliner on the right) now scrolls automatically to the position of your score.
 - **MacOS**: Changes to allow Mac build on a Rosetta free machine.
 
 ---

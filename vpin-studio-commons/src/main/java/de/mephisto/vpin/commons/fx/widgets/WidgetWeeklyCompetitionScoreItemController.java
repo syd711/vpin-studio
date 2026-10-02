@@ -70,6 +70,8 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
 
   private boolean compactMode = false;
 
+  private CompetitionScore score;
+
   // Add a public no-args constructor
   public WidgetWeeklyCompetitionScoreItemController() {
   }
@@ -87,6 +89,8 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
   }
 
   public void setData(CompetitionScore score) {
+    this.score = score;
+
     if (compactMode) {
       root.setPadding(new Insets(6, 6, 6, 6));
       Font posFont = Font.font("System", FontPosture.findByName("regular"), 16);
@@ -223,6 +227,10 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
       return getFlagBackground(score);
     }
     return bufferedImage;
+  }
+
+  public boolean isMyScore() {
+    return this.score != null && this.score.isMyScore();
   }
 
   public void setCompact() {
