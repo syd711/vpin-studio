@@ -11,6 +11,7 @@
 - **WOVP Challanges**: The dashboard highscore list (outliner on the right) now scrolls automatically to the position of your score.
 - **MacOS**: Changes to allow Mac build on a Rosetta free machine.
 - **Drop-In Folder**: Fixed issue when moving files after installation into the wrong directory.
+- **Uploader**: Improved robustness when uploading and installing huge PUP pack files.
 
 ---
 

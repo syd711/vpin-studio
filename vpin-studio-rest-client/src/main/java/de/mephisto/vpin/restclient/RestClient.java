@@ -6,7 +6,10 @@ import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper; // Using JsonMapper for Jackson 3
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -68,6 +71,14 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
         HttpClientBuilder.create().build());
+    // Table post-processing can run for many minutes on the server, so it must not hit the default read timeout
+    clientHttpRequestFactory.setHttpContextFactory((method, uri) -> {
+      HttpClientContext context = HttpClientContext.create();
+      if (uri.getPath() != null && uri.getPath().endsWith("games/process")) {
+        context.setRequestConfig(RequestConfig.custom().setResponseTimeout(Timeout.DISABLED).build());
+      }
+      return context;
+    });
     restTemplate = new RestTemplate(clientHttpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 
