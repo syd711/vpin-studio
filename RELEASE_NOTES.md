@@ -2,14 +2,15 @@
 
 ### Changes
 
-- **Media Recorder**: Added option to disabled NVIDIA hardware acceleration support.
+- **Media Recorder**: Added option to disable NVIDIA hardware acceleration support.
 - **Highscore Cards**: Invalidated PinUP Popper display cache before showing highscore cards on table launches to ensure the correct display location is used.
-- **System Manager**: The target folder of components (e.g. Visual Pinball, VPinMAME) can now be set at any time, also for installed components, and is persisted on the server. A new "Reset" button restores the automatically detected folder.
+- **System Manager**: The target folder of components (e.g. Visual Pinball, VPinMAME) can now be set at any time, also for installed components, and is persisted on the server. A new "Reset" button restores the automatically detected folder. Note that using this settings shouldn't be required. Usually the Studio detect or derive these folders somehow, but especially for VPX setting the folder might be required if your installation differs "too much" from the default.
 - **Visual Pinball / VPinMAME**: A configured target folder is now respected for version checks, modification date and the VPinMAME folder resolution. This fixes portable or non-default installations, where no ".vpx" file association exists to detect the folder from.
 - **VPinMAME**: If no VPinMAME folder can be detected, the folder configured for a VPX emulator in the frontend is used as fallback.
 - **Serum / VNI**: The legacy "altcolor" folder is now resolved from the table emulator's VPinMAME folder.
 - **WOVP Challanges**: The dashboard highscore list (outliner on the right) now scrolls automatically to the position of your score.
 - **MacOS**: Changes to allow Mac build on a Rosetta free machine.
+- **Drop-In Folder**: Fixed issue when moving files after installation into the wrong directory.
 
 ---
 

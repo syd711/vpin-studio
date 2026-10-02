@@ -6,8 +6,11 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.PackageUtil;
+import org.apache.commons.io.FilenameUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -63,6 +66,11 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   private FolderMonitoringThread dropinsMonitor;
 
   private GameRepresentation gameSelection;
+
+  private final Object pendingMoveLock = new Object();
+  private int uploadedGameId = -1;
+  private File pendingMove;
+  private File pendingMoveTarget;
   private ListView<File> fileListView;
 
   private boolean enabled = false;
@@ -273,7 +281,52 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     }
   }
 
+  private static boolean isTableFile(File file) {
+    String ext = FilenameUtils.getExtension(file.getName()).toLowerCase();
+    return ext.equals("vpx") || ext.equals("vpt") || ext.equals("fpt") || PackageUtil.isSupportedArchive(ext);
+  }
+
+  private void moveToGameFolder(File file, File targetRoot, int gameId) {
+    GameRepresentation game = client.getGameService().getGame(gameId);
+    Platform.runLater(() -> {
+      if (game != null) {
+        moveFile(file, targetRoot, game.getGameDisplayName());
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_game_selected"), Messages.get("dialog.no_game_selected_so_cannot_determine_target"));
+      }
+    });
+  }
+
+  /**
+   * The upload event and the install finalizer are executed on different threads,
+   * whichever arrives last triggers the move.
+   */
+  @Override
+  public void tableUploaded(UploadDescriptor uploadDescriptor) {
+    if (uploadDescriptor == null || uploadDescriptor.getGameId() <= 0) {
+      return;
+    }
+    synchronized (pendingMoveLock) {
+      if (pendingMove != null) {
+        File file = pendingMove;
+        File target = pendingMoveTarget;
+        pendingMove = null;
+        pendingMoveTarget = null;
+        moveToGameFolder(file, target, uploadDescriptor.getGameId());
+      }
+      else {
+        uploadedGameId = uploadDescriptor.getGameId();
+      }
+    }
+  }
+
   public void install(File file) {
+    synchronized (pendingMoveLock) {
+      uploadedGameId = -1;
+      pendingMove = null;
+      pendingMoveTarget = null;
+    }
     UploadAnalysisDispatcher.dispatch(file, gameSelection, () -> {
 
       JFXFuture
@@ -289,8 +342,23 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
                 break;
               }
               case UISettings.DROP_IN_POSTACTION_MOVETOTABLEFOLDER: {
-                if (gameSelection != null) {
-                  moveFile(file, new File(uiSettings.getDropinPostTargetFolder()), gameSelection.getGameDisplayName());
+                File targetRoot = new File(uiSettings.getDropinPostTargetFolder());
+                if (isTableFile(file)) {
+                  // a table upload creates a new game, use that one instead of the current selection
+                  synchronized (pendingMoveLock) {
+                    if (uploadedGameId > 0) {
+                      int gameId = uploadedGameId;
+                      uploadedGameId = -1;
+                      moveToGameFolder(file, targetRoot, gameId);
+                    }
+                    else {
+                      pendingMove = file;
+                      pendingMoveTarget = targetRoot;
+                    }
+                  }
+                }
+                else if (gameSelection != null) {
+                  moveFile(file, targetRoot, gameSelection.getGameDisplayName());
                 }
                 else {
                   WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_game_selected"), Messages.get("dialog.no_game_selected_so_cannot_determine_target"));
