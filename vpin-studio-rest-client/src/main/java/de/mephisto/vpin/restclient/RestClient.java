@@ -74,8 +74,11 @@ public class RestClient implements ClientHttpRequestInterceptor {
     // Table post-processing can run for many minutes on the server, so it must not hit the default read timeout
     clientHttpRequestFactory.setHttpContextFactory((method, uri) -> {
       HttpClientContext context = HttpClientContext.create();
-      if (uri.getPath() != null && uri.getPath().endsWith("games/process")) {
+      if (uri.getPath() != null && (uri.getPath().endsWith("games/process") || uri.getPath().contains("download"))) {
         context.setRequestConfig(RequestConfig.custom().setResponseTimeout(Timeout.DISABLED).build());
+      }
+      else {
+//        context.setRequestConfig(RequestConfig.custom().setResponseTimeout(Timeout.ofSeconds(60)).build());
       }
       return context;
     });

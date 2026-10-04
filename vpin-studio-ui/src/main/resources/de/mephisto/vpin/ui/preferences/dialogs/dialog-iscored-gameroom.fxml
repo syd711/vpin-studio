@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -265,6 +266,8 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <Label layoutX="10.0" layoutY="117.0" text="%pref.iscored_gameroom.table_badges" textFill="WHITE" wrapText="true" GridPane.rowIndex="3">
@@ -367,6 +370,31 @@
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.this_will_automatically_create_and_delete_iscored_competitio" wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Label text="%pref.iscored_gameroom.sync_interval" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets top="3.0" />
+                                       </padding>
+                                    </Label>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <children>
+                                          <Spinner fx:id="syncIntervalSpinner" disable="true" editable="true" prefWidth="100.0" />
+                                          <Label styleClass="default-text" text="%pref.iscored_gameroom.sync_interval_unit" />
+                                          <Label textFill="WHITE" wrapText="true">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="%pref.iscored_gameroom.sync_interval_help" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>

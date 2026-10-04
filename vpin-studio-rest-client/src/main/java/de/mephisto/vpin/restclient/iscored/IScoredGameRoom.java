@@ -10,6 +10,18 @@ public class IScoredGameRoom {
   private boolean ignoreHidden = true;
   private String tags;
   private String badge;
+  /**
+   * Interval in minutes for the scheduled synchronization, 0 disables the scheduling.
+   */
+  private int syncIntervalMinutes = 0;
+
+  public int getSyncIntervalMinutes() {
+    return syncIntervalMinutes;
+  }
+
+  public void setSyncIntervalMinutes(int syncIntervalMinutes) {
+    this.syncIntervalMinutes = syncIntervalMinutes;
+  }
 
   public String getTags() {
     return tags;

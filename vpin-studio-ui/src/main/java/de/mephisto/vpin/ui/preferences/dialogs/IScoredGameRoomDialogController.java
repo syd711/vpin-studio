@@ -55,6 +55,9 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private CheckBox ignoreHiddenCheckbox;
 
   @FXML
+  private Spinner<Integer> syncIntervalSpinner;
+
+  @FXML
   private CheckBox resetCheckbox;
 
   @FXML
@@ -223,6 +226,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private void setDisabled(boolean error) {
     resetCheckbox.setDisable(error);
     synchronizationCheckbox.setDisable(error);
+    syncIntervalSpinner.setDisable(error);
   }
 
   @FXML
@@ -240,6 +244,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     gameRoom.setScoreReset(resetCheckbox.isSelected());
     gameRoom.setSynchronize(synchronizationCheckbox.isSelected());
     gameRoom.setIgnoreHidden(ignoreHiddenCheckbox.isSelected());
+    gameRoom.setSyncIntervalMinutes(syncIntervalSpinner.getValue() != null ? syncIntervalSpinner.getValue() : 0);
     gameRoom.setBadge(badgeCombo.getValue());
     gameRoom.setTags(TaggingUtil.join(tagField.getTags()));
 
@@ -276,6 +281,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
 
     this.resetCheckbox.setSelected(gameRoom.isScoreReset());
     this.synchronizationCheckbox.setSelected(gameRoom.isSynchronize());
+    this.syncIntervalSpinner.getValueFactory().setValue(gameRoom.getSyncIntervalMinutes());
 
     saveBtn.setDisable(StringUtils.isEmpty(gameRoom.getUrl()));
 
@@ -288,6 +294,13 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     saveBtn.setDisable(true);
+
+    syncIntervalSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1440, 0, 5));
+    syncIntervalSpinner.focusedProperty().addListener((obs, oldValue, focused) -> {
+      if (!focused) {
+        syncIntervalSpinner.increment(0); // commits the typed text
+      }
+    });
 
     setDisabled(true);
 

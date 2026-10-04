@@ -1,3 +1,11 @@
+## Release Notes 5.4.3
+
+### Changes 
+
+- **iScored**: Add scheduling option in the game room dialog to configure the synchronization. Since the synchronization is only executed on startup or manually, that allows to refresh your iScored competition in a fix interval. Note that the synchronization is delayed until no emulator is running.  It keeps retrying every minute until the emulator has closed, then runs the sync.
+
+---
+
 ## Release Notes 5.4.2
 
 ### Changes

@@ -9,33 +9,45 @@ import de.mephisto.vpin.connectors.iscored.IScoredResult;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ServerMessages;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
-public class IScoredService implements PreferenceChangedListener, InitializingBean {
+public class IScoredService implements PreferenceChangedListener, InitializingBean, DisposableBean {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredService.class);
 
   @Autowired
@@ -50,7 +62,28 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private IScoredCompetitionSynchronizer iScoredCompetitionSynchronizer;
+
   private NotificationSettings notificationSettings;
+
+  private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+    Thread thread = new Thread(r, "iScored Sync Scheduler");
+    thread.setDaemon(true);
+    return thread;
+  });
+
+  /**
+   * game room uuid -> scheduled synchronization
+   */
+  private final Map<String, ScheduledFuture<?>> scheduledSyncs = new HashMap<>();
+
+  /**
+   * uuids of game rooms whose synchronization is postponed because an emulator is running
+   */
+  private final Set<String> postponedSyncs = new HashSet<>();
+
+  private static final int EMULATOR_RETRY_SECONDS = 60;
 
   public boolean deleteGameRoom(String gameRoomId) throws Exception {
     IScoredSettings settings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
@@ -107,12 +140,78 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
     if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
       notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
     }
+    else if (propertyName.equals(PreferenceNames.ISCORED_SETTINGS)) {
+      rescheduleSynchronization();
+    }
+  }
+
+  /**
+   * (Re-)creates the periodic synchronization jobs, one for each game room with a configured interval.
+   */
+  private synchronized void rescheduleSynchronization() {
+    scheduledSyncs.values().forEach(f -> f.cancel(false));
+    scheduledSyncs.clear();
+
+    IScoredSettings settings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    if (settings == null || !settings.isEnabled()) {
+      return;
+    }
+
+    for (IScoredGameRoom gameRoom : settings.getGameRooms()) {
+      int interval = gameRoom.getSyncIntervalMinutes();
+      if (!gameRoom.isSynchronize() || interval <= 0) {
+        continue;
+      }
+
+      String uuid = gameRoom.getUuid();
+      scheduledSyncs.put(uuid, scheduler.scheduleWithFixedDelay(() -> runScheduledSync(uuid), interval, interval, TimeUnit.MINUTES));
+      LOG.info("Scheduled iScored synchronization of {} every {} minutes", gameRoom.getUrl(), interval);
+    }
+  }
+
+  private void runScheduledSync(String gameRoomUuid) {
+    try {
+      // never synchronize while a game is played, retry until the emulator has been closed
+      if (SystemService.isPinballEmulatorRunning()) {
+        synchronized (postponedSyncs) {
+          if (postponedSyncs.add(gameRoomUuid)) {
+            LOG.info("Postponing iScored synchronization, an emulator is running.");
+            scheduler.schedule(() -> {
+              synchronized (postponedSyncs) {
+                postponedSyncs.remove(gameRoomUuid);
+              }
+              runScheduledSync(gameRoomUuid);
+            }, EMULATOR_RETRY_SECONDS, TimeUnit.SECONDS);
+          }
+        }
+        return;
+      }
+
+      // always resolve the current settings, the game room may have been changed or removed
+      IScoredSettings settings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      Optional<IScoredGameRoom> room = settings.getGameRooms().stream().filter(g -> g.getUuid().equals(gameRoomUuid)).findFirst();
+      if (settings.isEnabled() && room.isPresent() && room.get().isSynchronize()) {
+        IScoredSyncModel model = new IScoredSyncModel();
+        model.setGameRoom(room.get());
+        model.setInvalidate(true);
+        iScoredCompetitionSynchronizer.synchronize(model);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Scheduled iScored synchronization failed: {}", e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void destroy() {
+    scheduler.shutdownNow();
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
+    rescheduleSynchronization();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }
