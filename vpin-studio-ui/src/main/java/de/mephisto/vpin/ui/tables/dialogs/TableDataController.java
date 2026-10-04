@@ -32,6 +32,7 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import de.mephisto.vpin.ui.util.VpsTableAutoCompleteMatcher;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -706,8 +707,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
 
     List<VpsTable> tables = client.getVpsService().getTables();
-    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, new VpsTableAutoCompleteMatcher(tables));
 
     tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
       @Override
@@ -1328,7 +1328,11 @@ public class TableDataController extends BasePrevNextController implements AutoC
   public void onChange(String value) {
     this.tableVersionsCombo.valueProperty().removeListener(this);
     List<VpsTable> tables = client.getVpsService().getTables();
-    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+    // the value is the VPS table id, as display names are not unique
+    Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getId().equals(value)).findFirst();
+    if (selectedEntry.isEmpty()) {
+      selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+    }
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
 

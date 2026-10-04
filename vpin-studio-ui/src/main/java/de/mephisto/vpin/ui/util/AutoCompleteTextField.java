@@ -18,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
@@ -33,6 +35,7 @@ public class AutoCompleteTextField {
   private final AutoCompleteTextFieldChangeListener listener;
   private final AutoCompleteMatcher matcher;
   private boolean changedEnabled = true;
+  private final Map<String, String> displayNames = new HashMap<>();
 
   private String defaultValue;
 
@@ -54,14 +57,15 @@ public class AutoCompleteTextField {
         if (e.getCode() == KeyCode.ENTER && e.getTarget().getClass().getSimpleName().startsWith("MenuItemContainer")) {
           try {
             String value = (String) PropertyUtils.getProperty(e.getTarget(), "id");
-            defaultValue = value;
+            String label = value != null ? displayNames.getOrDefault(value, value) : null;
+            defaultValue = label;
             entriesPopup.hide();
             entriesPopup.getItems().clear();
-            if (value == null) {
+            if (label == null) {
               textField.setText("");
             }
             else {
-              textField.setText(String.valueOf(value));
+              textField.setText(label);
             }
 
             listener.onChange(value);
@@ -142,6 +146,7 @@ public class AutoCompleteTextField {
    */
   private void populatePopup(List<AutoMatchModel> searchResult) {
     List<MenuItem> menuItems = new LinkedList<>();
+    displayNames.clear();
     // If you'd like more entries, modify this line.
     int maxEntries = 10;
     int count = Math.min(searchResult.size(), maxEntries);
@@ -151,6 +156,7 @@ public class AutoCompleteTextField {
 
       MenuItem item = new MenuItem("", entryLabel);
       item.setId(searchResult.get(i).getId());
+      displayNames.put(searchResult.get(i).getId(), result);
       entryLabel.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent e) {
@@ -208,10 +214,9 @@ public class AutoCompleteTextField {
           .thenAcceptLater(searchResult -> {
             if (searchResult.size() == 1) {
               AutoMatchModel match = searchResult.getFirst();
-              String value = match.getId();
-              defaultValue = value;
-              setText(value);
-              listener.onChange(value);
+              defaultValue = match.getDisplayName();
+              setText(match.getDisplayName());
+              listener.onChange(match.getId());
             }
             else if (searchResult.size() > 1) {
               populatePopup(searchResult);

@@ -257,7 +257,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
       this.tableVersionsCombo.valueProperty().removeListener(this);
       List<VpsTable> tables = client.getVpsService().getTables();
-      Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+      // the value is the VPS table id, as display names are not unique
+      Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getId().equals(value)).findFirst();
+      if (selectedEntry.isEmpty()) {
+        selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
+      }
       if (selectedEntry.isPresent()) {
         GameRepresentation gameRepresentation = this.games.getFirst();
         VpsTable vpsTable = selectedEntry.get();
@@ -671,8 +675,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
-    List<String> collect = new ArrayList<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, new VpsTableAutoCompleteMatcher(tables));
 
     this.ignoreUpdatesListener = new IgnoreUpdatesChangeListener();
 

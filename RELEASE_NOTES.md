@@ -3,6 +3,7 @@
 ### Changes 
 
 - **iScored**: Add scheduling option in the game room dialog to configure the synchronization. Since the synchronization is only executed on startup or manually, that allows to refresh your iScored competition in a fix interval. Note that the synchronization is delayed until no emulator is running.  It keeps retrying every minute until the emulator has closed, then runs the sync.
+- **VP-Spreadsheet Mapping**: Fixed issue selecting a matching with a duplicated VPS entry, like A-HA and Evel Knievel.
 
 ---
 
