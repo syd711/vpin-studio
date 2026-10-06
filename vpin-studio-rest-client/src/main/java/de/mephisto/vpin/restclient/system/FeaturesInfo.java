@@ -17,6 +17,8 @@ public class FeaturesInfo {
 
   public boolean DROP_IN_FOLDER = true;
   public boolean DMD_DEVICE_INI = true;
+  /** Whether VPinMAME keeps its options in the Windows registry */
+  public boolean VPINMAME_OPTIONS = true;
 
   public boolean RECORDER = true;
   public boolean RES_EDITOR = true;
@@ -86,7 +88,8 @@ public class FeaturesInfo {
   /**
    * Turns off the features that depend on Windows-only tools or APIs:
    * the recorder (ffmpeg gdigrab/ddagrab), PINemHi, the DOF tester (DirectOutput COM),
-   * DmdDevice.ini (dmdext) and the highscore monitor, which detects running tables by window title.
+   * DmdDevice.ini (dmdext), the highscore monitor, which detects running tables by window title,
+   * and the VPinMAME options, which live in the registry.
    */
   public void disableWindowsOnlyFeatures() {
     RECORDER = false;
@@ -94,5 +97,6 @@ public class FeaturesInfo {
     DOF_TESTER_ENABLED = false;
     DMD_DEVICE_INI = false;
     HIGHSCORE_MONITORING = false;
+    VPINMAME_OPTIONS = false;
   }
 }
