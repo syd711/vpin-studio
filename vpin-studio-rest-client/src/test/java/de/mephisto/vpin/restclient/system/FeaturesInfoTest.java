@@ -17,6 +17,7 @@ public class FeaturesInfoTest {
     assertFalse(features.DOF_TESTER_ENABLED);
     assertFalse(features.DMD_DEVICE_INI);
     assertFalse(features.HIGHSCORE_MONITORING);
+    assertFalse(features.VPINMAME_OPTIONS);
 
     // the pure java nvram parsers keep working on every platform
     assertTrue(features.NVRAM_PARSING_USE_JAVAMAPS);

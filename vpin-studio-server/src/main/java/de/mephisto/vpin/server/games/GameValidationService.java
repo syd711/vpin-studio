@@ -519,10 +519,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
     }
 
-    private List<ValidationState> validateForceStereo(Game game) {
+    public List<ValidationState> validateForceStereo(Game game) {
         List<ValidationState> result = new ArrayList<>();
 
-        if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom()) && !game.isAltSoundAvailable()) {
+        if (Features.VPINMAME_OPTIONS && isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom()) && !game.isAltSoundAvailable()) {
             VPinMameOptions gameOptions = vPinMameService.getOptions(game.getRom());
             VPinMameOptions options = vPinMameService.getOptions(VPinMameOptions.DEFAULT_KEY);
 
@@ -613,7 +613,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             }
         }
 
-        if (game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
+        // without the registry there are no VPinMAME options to check, standalone VPX colorizes through its plugins
+        if (Features.VPINMAME_OPTIONS && game.isVpxGame() && !StringUtils.isEmpty(game.getRom())) {
             VPinMameOptions gameOptions = vPinMameService.getOptions(game.getRom());
             if (gameOptions.isExistInRegistry()) {
                 if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
@@ -641,7 +642,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     public List<ValidationState> validateAltSound(Game game) {
         List<ValidationState> result = new ArrayList<>();
         if (game.isAltSoundAvailable()) {
-            if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+            if (Features.VPINMAME_OPTIONS && isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
                 if (altSoundService.getAltSoundMode(game) <= 0) {
                     result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
                 }
