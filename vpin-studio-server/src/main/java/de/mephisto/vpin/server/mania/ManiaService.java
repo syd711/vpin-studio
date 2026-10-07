@@ -405,7 +405,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   /**
-   * Pushes the list of all local VPX tables to VPin Mania
+   * Pushes the list of all local VPX and Future Pinball tables to VPin Mania
    */
   public boolean synchronizeTables() {
     try {
@@ -426,7 +426,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (maniaSettings.isSubmitTables()) {
         long start = System.currentTimeMillis();
-        List<Game> knownGames = gameService.getKnownGames(-1);
+        List<Game> knownGames = new ArrayList<>(gameService.getKnownGames(-1));
+        knownGames.addAll(gameService.getKnownFpGames(-1));
         List<InstalledTable> installedTables = new ArrayList<>();
         for (Game game : knownGames) {
           if (!StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
