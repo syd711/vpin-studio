@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -7,6 +8,7 @@ import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
@@ -23,6 +25,7 @@ import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
 import de.mephisto.vpin.server.vpx.VPXService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,9 +36,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -85,6 +90,11 @@ public class GameValidationServiceTest {
     setField("frontend", new Frontend());
     setField("validationSettings", new ValidationSettings());
     setField("ignoredValidationSettings", new IgnoredValidationSettings());
+  }
+
+  @AfterEach
+  void tearDown() {
+    Features.VPINMAME_OPTIONS = true;
   }
 
   private void setField(String name, Object value) throws Exception {
@@ -157,6 +167,82 @@ public class GameValidationServiceTest {
     List<ValidationState> result = service.validateAltSound(game);
 
     assertTrue(result.isEmpty());
+  }
+
+  // ---- VPinMAME options, which only exist in the Windows registry ----
+
+  private Game vpinMameGame() {
+    Game game = mock(Game.class);
+    lenient().when(game.getRom()).thenReturn("rom");
+    lenient().when(game.isVpxGame()).thenReturn(true);
+    lenient().when(game.getIgnoredValidations()).thenReturn(new ArrayList<>());
+    lenient().when(game.getAltColorType()).thenReturn(AltColorTypes.serum);
+
+    AltColor altColor = new AltColor();
+    altColor.setAltColorType(AltColorTypes.serum);
+    altColor.setFiles(List.of("rom.cRZ"));
+    lenient().when(altColorService.getAltColor(game)).thenReturn(altColor);
+
+    // what the registry yields without one: every option off
+    lenient().when(vPinMameService.getOptions(anyString())).thenReturn(new VPinMameOptions());
+    lenient().when(altSoundService.getAltSoundMode(game)).thenReturn(0);
+    return game;
+  }
+
+  private static boolean hasCode(List<ValidationState> states, int code) {
+    return states.stream().anyMatch(s -> s.getCode() == code);
+  }
+
+  @Test
+  void vpinMameOptionChecks_fire_whenOptionsAreOff() throws Exception {
+    setField("ignoredValidationSettings", noIgnoredValidations());
+    Game game = vpinMameGame();
+    when(game.isAltSoundAvailable()).thenReturn(true);
+
+    assertTrue(hasCode(service.validateAltSound(game), CODE_ALT_SOUND_NOT_ENABLED));
+    List<ValidationState> altColor = service.validateAltColor(game);
+    assertTrue(hasCode(altColor, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+    assertTrue(hasCode(altColor, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+
+    when(game.isAltSoundAvailable()).thenReturn(false);
+    assertTrue(hasCode(service.validateForceStereo(game), CODE_FORCE_STEREO));
+  }
+
+  @Test
+  void vpinMameOptionChecks_skipped_withoutRegistry() throws Exception {
+    setField("ignoredValidationSettings", noIgnoredValidations());
+    Features.VPINMAME_OPTIONS = false;
+    Game game = vpinMameGame();
+    when(game.isAltSoundAvailable()).thenReturn(true);
+
+    assertFalse(hasCode(service.validateAltSound(game), CODE_ALT_SOUND_NOT_ENABLED));
+    List<ValidationState> altColor = service.validateAltColor(game);
+    assertFalse(hasCode(altColor, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+    assertFalse(hasCode(altColor, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+
+    lenient().when(game.isAltSoundAvailable()).thenReturn(false);
+    assertFalse(hasCode(service.validateForceStereo(game), CODE_FORCE_STEREO));
+  }
+
+  @Test
+  void fileChecks_stillFire_withoutRegistry() throws Exception {
+    setField("ignoredValidationSettings", noIgnoredValidations());
+    Features.VPINMAME_OPTIONS = false;
+    Game game = vpinMameGame();
+    when(game.isAltSoundAvailable()).thenReturn(true);
+    AltSound altSound = mock(AltSound.class);
+    when(altSound.isMissingAudioFiles()).thenReturn(true);
+    when(altSoundService.getAltSound(game)).thenReturn(altSound);
+    altColorService.getAltColor(game).setFiles(new ArrayList<>());
+
+    assertTrue(hasCode(service.validateAltSound(game), CODE_ALT_SOUND_FILE_MISSING));
+    assertTrue(hasCode(service.validateAltColor(game), CODE_ALT_COLOR_FILES_MISSING));
+  }
+
+  private static IgnoredValidationSettings noIgnoredValidations() {
+    IgnoredValidationSettings settings = new IgnoredValidationSettings();
+    settings.setIgnoredValidators(new HashMap<>());
+    return settings;
   }
 
   // ---- validatePupPack ----
