@@ -3,8 +3,9 @@
 ### Changes 
 
 - **iScored**: Add scheduling option in the game room dialog to configure the synchronization. Since the synchronization is only executed on startup or manually, that allows to refresh your iScored competition in a fix interval. Note that the synchronization is delayed until no emulator is running.  It keeps retrying every minute until the emulator has closed, then runs the sync.
-- **VP-Spreadsheet Mapping**: Fixed issue selecting a matching with a duplicated VPS entry, like A-HA and Evel Knievel.
+- **VP-Spreadsheet Mapping**: Fixed issue selecting a table matching with a duplicated VPS entry, like A-HA and Evel Knievel which exist multiple times in the vp-spreadsheet.
 - **Future Pinball**: Fixed issue with the synchronization of highscores to VPin Mania. These are now available von vpin-mania.net too. You can use the highscore synchronization in the Mania settings to sync all of them again. Make sure they have a proper VP-spreadsheet mapping.
+- **VPin Mania**: Added search field in the web-frontend to search under "My Cab" for highscores.
 
 ---
 
