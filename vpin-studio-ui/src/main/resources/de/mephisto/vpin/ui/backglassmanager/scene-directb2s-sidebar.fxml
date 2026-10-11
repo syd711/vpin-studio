@@ -173,14 +173,21 @@
                                                                                 <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_dmd_image_and_save_it_on" wrapText="true" />
                                                                               </tooltip>
                                                                           </Button>
-                                                                          <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                          <SplitMenuButton fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                              <items>
+                                                                                  <MenuItem mnemonicParsing="false" onAction="#onDMDBulkImport" text="%backglass.bulk_import">
+                                                                                      <graphic>
+                                                                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-multiple" iconSize="14" />
+                                                                                      </graphic>
+                                                                                  </MenuItem>
+                                                                              </items>
                                                                               <graphic>
                                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
                                                                               </graphic>
                                                                               <tooltip>
                                                                                   <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_dmd_image_and_use_it_as" wrapText="true" />
                                                                               </tooltip>
-                                                                          </Button>
+                                                                          </SplitMenuButton>
                                                                           <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" textFill="WHITE" BorderPane.alignment="CENTER">
                                                                               <graphic>
                                                                                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="14" />

@@ -31,10 +31,12 @@ public class BackglassBulkImportProgressModel extends ProgressModel<BackglassBul
 
   private final List<BackglassBulkImportItem> items;
   private final Iterator<BackglassBulkImportItem> iterator;
+  private final BackglassBulkImportType type;
 
-  public BackglassBulkImportProgressModel(List<BackglassBulkImportItem> items) {
-    super(Messages.get("backglass.bulk_import.progress_title"));
+  public BackglassBulkImportProgressModel(List<BackglassBulkImportItem> items, BackglassBulkImportType type) {
+    super(Messages.get(type == BackglassBulkImportType.DMD ? "backglass.bulk_import.progress_title_dmd" : "backglass.bulk_import.progress_title"));
     this.items = items;
+    this.type = type;
     this.iterator = items.iterator();
   }
 
@@ -55,7 +57,7 @@ public class BackglassBulkImportProgressModel extends ProgressModel<BackglassBul
 
   @Override
   public String nextToString(BackglassBulkImportItem item) {
-    return Messages.get("backglass.bulk_import.extracting") + item.getDisplayName();
+    return Messages.get(type == BackglassBulkImportType.DMD ? "backglass.bulk_import.extracting_dmd" : "backglass.bulk_import.extracting") + " " + item.getDisplayName();
   }
 
   @Override
@@ -68,27 +70,29 @@ public class BackglassBulkImportProgressModel extends ProgressModel<BackglassBul
     File tmp = null;
     try {
       DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(item.getGameId());
-      if (data == null || !data.isBackgroundAvailable()) {
+      boolean dmd = type == BackglassBulkImportType.DMD;
+      if (data == null || !(dmd ? data.isDmdImageAvailable() : data.isBackgroundAvailable())) {
         progressResultModel.addSkipped();
         return;
       }
 
       BufferedImage image;
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sPreviewBackground(data, false)) {
+      try (InputStream in = dmd ? client.getBackglassServiceClient().getDirectB2sDmd(data) : client.getBackglassServiceClient().getDirectB2sPreviewBackground(data, false)) {
         image = ImageIO.read(in);
       }
       if (image == null) {
-        LOG.error("Cannot read backglass image of \"{}\"", item.getDisplayName());
+        LOG.error("Cannot read {} image of \"{}\"", type, item.getDisplayName());
         progressResultModel.addError();
         return;
       }
 
-      tmp = File.createTempFile("tmp_" + VPinScreen.BackGlass, ".png");
+      VPinScreen screen = type.getScreen();
+      tmp = File.createTempFile("tmp_" + screen, ".png");
       ImageIO.write(image, "png", tmp);
 
-      JobDescriptor result = client.getGameMediaService().uploadMedia(tmp, item.getGameId(), false, VPinScreen.BackGlass, false, null, percent -> {});
+      JobDescriptor result = client.getGameMediaService().uploadMedia(tmp, item.getGameId(), false, screen, false, null, percent -> {});
       if (!StringUtils.isEmpty(result.getError())) {
-        LOG.error("Backglass bulk import failed for \"{}\": {}", item.getDisplayName(), result.getError());
+        LOG.error("{} bulk import failed for \"{}\": {}", type, item.getDisplayName(), result.getError());
         progressResultModel.addError();
         return;
       }

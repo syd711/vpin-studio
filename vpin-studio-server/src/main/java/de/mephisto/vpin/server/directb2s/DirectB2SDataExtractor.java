@@ -51,6 +51,10 @@ public class DirectB2SDataExtractor extends DefaultHandler {
   }
 
   private String getRelativeDirectb2sFileName(File directB2S, String filename) {
+    // a filename that already carries its folder must not be prefixed a second time
+    if (filename == null || filename.indexOf('/') >= 0 || filename.indexOf('\\') >= 0) {
+      return filename;
+    }
     String path = directB2S.getAbsolutePath().replace('\\', '/');
     int tablesIdx = path.lastIndexOf("/Tables/");
     if (tablesIdx >= 0) {

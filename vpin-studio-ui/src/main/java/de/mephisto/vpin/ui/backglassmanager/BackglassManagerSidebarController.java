@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassBulkImportType;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
@@ -151,7 +152,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private Button downloadDMDBtn;
   @FXML
-  private Button useAsMediaDMDBtn;
+  private SplitMenuButton useAsMediaDMDBtn;
   @FXML
   private Button deleteDMDBtn;
 
@@ -339,7 +340,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private void onBackglassBulkImport() {
-    BackglassManagerDialogs.openBulkImport(getEmulatorId());
+    BackglassManagerDialogs.openBulkImport(getEmulatorId(), BackglassBulkImportType.BACKGLASS);
+  }
+
+  @FXML
+  private void onDMDBulkImport() {
+    BackglassManagerDialogs.openBulkImport(getEmulatorId(), BackglassBulkImportType.DMD);
   }
 
   @FXML

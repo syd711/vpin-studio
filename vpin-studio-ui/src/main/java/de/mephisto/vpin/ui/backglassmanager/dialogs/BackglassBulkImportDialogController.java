@@ -16,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -69,6 +71,20 @@ public class BackglassBulkImportDialogController implements Initializable, Dialo
   private int preselectedEmulatorId = -1;
 
   @FXML
+  private RadioButton backglassRadio;
+
+  @FXML
+  private RadioButton dmdRadio;
+
+  @FXML
+  private ToggleGroup importTypeGroup;
+
+  @FXML
+  private Label descriptionLabel;
+
+  private BackglassBulkImportType type = BackglassBulkImportType.BACKGLASS;
+
+  @FXML
   private void onCancelClick(ActionEvent e) {
     stage.close();
   }
@@ -79,7 +95,7 @@ public class BackglassBulkImportDialogController implements Initializable, Dialo
     if (selection.isEmpty()) {
       return;
     }
-    ProgressDialog.createProgressDialog(stage, new BackglassBulkImportProgressModel(selection));
+    ProgressDialog.createProgressDialog(stage, new BackglassBulkImportProgressModel(selection, type));
     stage.close();
   }
 
@@ -89,8 +105,8 @@ public class BackglassBulkImportDialogController implements Initializable, Dialo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label(Messages.get("backglass.bulk_import.no_tables")));
     tableView.setEditable(true);
+    updateTypeTexts();
 
     selectAllCheckbox = new CheckBox();
     selectAllCheckbox.getStyleClass().add("default-text");
@@ -129,6 +145,21 @@ public class BackglassBulkImportDialogController implements Initializable, Dialo
     columnDisplayName.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getDisplayName()));
     columnBackglass.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getBackglass().getName()));
 
+    importTypeGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
+      if (newValue == null) {
+        return;
+      }
+      BackglassBulkImportType selected = newValue == dmdRadio ? BackglassBulkImportType.DMD : BackglassBulkImportType.BACKGLASS;
+      if (selected != type) {
+        type = selected;
+        updateTypeTexts();
+        GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+        if (emulator != null) {
+          loadTables(emulator);
+        }
+      }
+    });
+
     importBtn.setDisable(true);
     emulatorCombo.setDisable(true);
     emulatorCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -149,9 +180,17 @@ public class BackglassBulkImportDialogController implements Initializable, Dialo
         });
   }
 
-  public void setData(Stage stage, int preselectedEmulatorId) {
+  public void setData(Stage stage, int preselectedEmulatorId, BackglassBulkImportType type) {
     this.stage = stage;
     this.preselectedEmulatorId = preselectedEmulatorId;
+    // selecting the radio triggers the table search if an emulator is already selected
+    (type == BackglassBulkImportType.DMD ? dmdRadio : backglassRadio).setSelected(true);
+  }
+
+  private void updateTypeTexts() {
+    boolean dmd = type == BackglassBulkImportType.DMD;
+    descriptionLabel.setText(Messages.get(dmd ? "backglass.bulk_import.description_dmd" : "backglass.bulk_import.description"));
+    tableView.setPlaceholder(new Label(Messages.get(dmd ? "backglass.bulk_import.no_tables_dmd" : "backglass.bulk_import.no_tables")));
   }
 
   private void updateSelectAllCheckbox() {
@@ -172,7 +211,7 @@ public class BackglassBulkImportDialogController implements Initializable, Dialo
       if (counter != loadCounter) {
         return;
       }
-      BackglassBulkImportSearchModel model = new BackglassBulkImportSearchModel(candidates);
+      BackglassBulkImportSearchModel model = new BackglassBulkImportSearchModel(candidates, type);
       ProgressDialog.createProgressDialog(stage, model);
       if (counter != loadCounter) {
         return; // another emulator has been selected while searching

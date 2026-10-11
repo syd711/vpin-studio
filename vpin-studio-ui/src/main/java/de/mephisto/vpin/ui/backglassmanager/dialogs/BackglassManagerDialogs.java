@@ -15,10 +15,10 @@ public class BackglassManagerDialogs {
     stage.showAndWait();
   }
 
-  public static void openBulkImport(int emulatorId) {
+  public static void openBulkImport(int emulatorId, BackglassBulkImportType type) {
     Stage stage = Dialogs.createStudioDialogStage(Studio.stage, BackglassBulkImportDialogController.class, "dialog-backglass-bulk-import.fxml", Messages.get("backglass.bulk_import"), null);
     BackglassBulkImportDialogController controller = (BackglassBulkImportDialogController) stage.getUserData();
-    controller.setData(stage, emulatorId);
+    controller.setData(stage, emulatorId, type);
 
     FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(600);
