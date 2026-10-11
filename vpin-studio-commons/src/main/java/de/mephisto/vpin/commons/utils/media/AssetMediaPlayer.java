@@ -14,6 +14,11 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
 
   protected MediaPlayer mediaPlayer;
 
+  /**
+   * Set once the media has been disposed, async callbacks (ready, error, retries) must then stop.
+   */
+  protected volatile boolean disposed = false;
+
   protected final java.util.List<MediaPlayerListener> listeners = new ArrayList<>();
 
   public AssetMediaPlayer() {
@@ -40,6 +45,7 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
   }
 
   public void disposeMedia() {
+    disposed = true;
     for (MediaPlayerListener listener : this.listeners) {
       listener.onDispose();
     }
@@ -80,6 +86,7 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
   }
 
   public void stopAndDispose() {
+    disposed = true;
     if (mediaPlayer != null) {
       mediaPlayer.stop();
       mediaPlayer.dispose();

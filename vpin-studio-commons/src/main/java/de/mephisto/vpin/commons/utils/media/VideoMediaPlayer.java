@@ -108,10 +108,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   public void renderVideo(@NonNull String url, @Nullable VPinScreen screen) {
     retryCount = 0;
+    disposed = false;
     renderVideoWithRetries(url, screen);
   }
 
   public void renderVideoWithRetries(@NonNull String url, @Nullable VPinScreen screen) {
+    if (disposed) {
+      return;
+    }
     setLoading();
 
     retryCount++;
@@ -120,16 +124,16 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         Thread.currentThread().setName("Video Player for " + url);
         Media media = new Media(url);
         LOG.info("Streaming media: " + url);
-        mediaPlayer = new MediaPlayer(media);
+        final MediaPlayer player = new MediaPlayer(media);
+        mediaPlayer = player;
 
-        mediaPlayer.setOnError(() -> {
-          LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
-//          try {
-//            Thread.sleep(100);
-//          }
-//          catch (InterruptedException e) {
-//            //ignore
-//          }
+        player.setOnError(() -> {
+          LOG.warn("Media player error: " + player.getError() + ", URL: " + player.getMedia().getSource());
+          // release the native resources of the failed player before retrying
+          disposeQuietly(player);
+          if (disposed) {
+            return;
+          }
 
           if (retryCount > 20 || !url.contains("api/v1")) { //TODO we do not want too much load on remote servers
             disposeMedia();
@@ -140,7 +144,11 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
           }
         });
 
-        mediaPlayer.setOnReady(() -> {
+        player.setOnReady(() -> {
+          if (disposed) {
+            disposeQuietly(player);
+            return;
+          }
           installMediaView(screen, media);
         });
       }
@@ -148,6 +156,15 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         LOG.error("Failed to play video: {}", e.getMessage());
       }
     }).start();
+  }
+
+  private void disposeQuietly(MediaPlayer player) {
+    try {
+      player.dispose();
+    }
+    catch (Exception e) {
+      LOG.info("Disposing failed media player: {}", e.getMessage());
+    }
   }
 
   private void installMediaView(VPinScreen screen, Media media) {

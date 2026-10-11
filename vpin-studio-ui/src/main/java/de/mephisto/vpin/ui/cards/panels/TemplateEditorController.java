@@ -192,6 +192,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   private AssetMediaPlayer assetMediaPlayer;
 
+  /** Last size of the card preview, used to size media players created before the first layout */
+  private double previewWidth = -1;
+  private double previewHeight = -1;
+
   private Optional<GameRepresentation> gameRepresentation;
   private TemplateComboChangeListener templateComboChangeListener;
 
@@ -718,6 +722,22 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  /**
+   * The media must always be fitted to the card preview, otherwise the native size of the media
+   * leaks into the layout of the preview.
+   */
+  private void applyPreviewSizeToMedia() {
+    if (assetMediaPlayer == null) {
+      return;
+    }
+    double w = previewWidth > 0 ? previewWidth : cardPreview.getWidth();
+    double h = previewHeight > 0 ? previewHeight : cardPreview.getHeight();
+    if (w > 0 && h > 0) {
+      assetMediaPlayer.setMediaViewSize(w, h);
+      assetMediaPlayer.requestLayout();
+    }
+  }
+
   private void refreshOverlayBackgroundPreview() {
     if (assetMediaPlayer != null) {
       assetMediaPlayer.disposeMedia();
@@ -734,9 +754,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
             if (defaultMediaItem != null) {
               assetMediaPlayer = WidgetFactory.createAssetMediaPlayer(client, defaultMediaItem, true, false);
               assetMediaPlayer.addListener(this);
-              if (cardPreview.getWidth() > 0 && cardPreview.getHeight() > 0) {
-                assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
-              }
+              applyPreviewSizeToMedia();
               previewOverlayPanel.setCenter(assetMediaPlayer);
 
               //images do not have a media player
@@ -762,9 +780,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
       p.setBackground(new Background(myBI));
       assetMediaPlayer.setCenter(p);
-      if (cardPreview.getWidth() > 0 && cardPreview.getHeight() > 0) {
-        assetMediaPlayer.setMediaViewSize(cardPreview.getWidth(), cardPreview.getHeight());
-      }
+      applyPreviewSizeToMedia();
 
       previewOverlayPanel.setCenter(assetMediaPlayer);
       previewOverlayPanel.setVisible(true);
@@ -826,6 +842,10 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         selectTab(newT);
       });
       selectTab(highscoreCardsTab);
+
+      // the overlay media must never influence the size of the preview stack
+      previewOverlayPanel.setMinSize(0, 0);
+      previewOverlayPanel.setPrefSize(0, 0);
 
       // Resize handlers
       previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
@@ -1031,9 +1051,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
         cardPreview.setClip(cliprect);
 
         // also resize the media within the preview
-        if (assetMediaPlayer != null) {
-          assetMediaPlayer.setMediaViewSize(newWidth, newHeight);
-        }
+        previewWidth = newWidth;
+        previewHeight = newHeight;
+        applyPreviewSizeToMedia();
       }
     }
     catch (Exception e) {
