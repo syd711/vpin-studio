@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane fx:id="root" prefHeight="600.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassBulkImportDialogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-resizeable-header.fxml" />
+   </top>
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <top>
+            <GridPane hgap="6.0" vgap="3.0" BorderPane.alignment="CENTER">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label styleClass="default-text" text="%backglass.bulk_import.emulator" />
+                  <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                  <Label styleClass="default-text" text="%backglass.bulk_import.description" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </GridPane>
+         </top>
+         <center>
+            <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
+               <columns>
+                  <TableColumn fx:id="columnSelected" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" sortable="false" style="-fx-alignment: CENTER;" />
+                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.bulk_import.column_display_name" />
+                  <TableColumn fx:id="columnBackglass" minWidth="100.0" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.backglass" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+               <BorderPane.margin>
+                  <Insets left="12.0" right="12.0" />
+               </BorderPane.margin>
+            </TableView>
+         </center>
+         <bottom>
+            <BorderPane BorderPane.alignment="CENTER">
+               <left>
+                  <Label fx:id="statusLabel" styleClass="default-text" text="" BorderPane.alignment="CENTER_LEFT" />
+               </left>
+               <right>
+                  <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%common.cancel" />
+                        <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImportClick" styleClass="submit-button" text="%backglass.bulk_import.import" />
+                     </children>
+                  </HBox>
+               </right>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </BorderPane>
+         </bottom>
+      </BorderPane>
+   </center>
+</BorderPane>

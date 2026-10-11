@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.models.*;
@@ -143,7 +144,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private Button downloadBackglassBtn;
   @FXML
-  private Button useAsMediaBackglassBtn;
+  private SplitMenuButton useAsMediaBackglassBtn;
 
   @FXML
   private Button uploadDMDBtn;
@@ -334,6 +335,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         LOG.error("Cannot download backglass and set as backglass media image for backglass " + tableData, ioe);
       }
     }
+  }
+
+  @FXML
+  private void onBackglassBulkImport() {
+    BackglassManagerDialogs.openBulkImport(getEmulatorId());
   }
 
   @FXML

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -538,7 +539,7 @@ public class BulkImporterController implements Initializable, DialogController {
     long noScreen = items.stream().filter(i -> i.gameProperty().get() != null && i.screenProperty().get() == null).count();
     summaryLabel.setText(Messages.get("bulk_importer.summary", items.size(), matched, selected)
         + (noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""));
-    importBtn.setDisable(selected == 0);
+    importBtn.setDisable(items.isEmpty() || !items.stream().allMatch(BulkImportItem::isImportable));
   }
 
   //---------------- bulk actions ------------------------------------------------------------------------------------
@@ -604,15 +605,13 @@ public class BulkImporterController implements Initializable, DialogController {
 
   @FXML
   private void onImport() {
-    List<BulkImportItem> selection = targets().stream().filter(BulkImportItem::isImportable).collect(Collectors.toList());
-    if (selection.isEmpty()) {
+    List<BulkImportItem> selection = new ArrayList<>(items);
+    if (selection.isEmpty() || !selection.stream().allMatch(BulkImportItem::isImportable)) {
       return;
     }
     long overwrites = selection.stream().filter(i -> !i.appendProperty().get()).count();
     if (overwrites > 0) {
-      Alert alert = new Alert(Alert.AlertType.CONFIRMATION, Messages.get("bulk_importer.confirm_overwrite", overwrites, selection.size()), ButtonType.OK, ButtonType.CANCEL);
-      alert.initOwner(getStage());
-      Optional<ButtonType> result = alert.showAndWait();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(getStage(), Messages.get("bulk_importer.confirm_overwrite", overwrites, selection.size()));
       if (result.isEmpty() || result.get() != ButtonType.OK) {
         return;
       }

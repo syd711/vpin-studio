@@ -100,13 +100,29 @@
          <children>
             <ToolBar prefHeight="40.0">
                <items>
-                  <Button fx:id="selectMatchedBtn" mnemonicParsing="false" onAction="#onSelectMatched" styleClass="default-button" text="%bulk_importer.select_matched" />
-                  <Button fx:id="selectNoneBtn" mnemonicParsing="false" onAction="#onSelectNone" styleClass="default-button" text="%bulk_importer.select_none" />
-                  <Button fx:id="clearMatchBtn" mnemonicParsing="false" onAction="#onClearMatch" styleClass="default-button" text="%bulk_importer.clear_match" />
-                  <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="default-button" text="%bulk_importer.remove">
+                  <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="default-button">
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                     </graphic>
                      <tooltip>
                         <Tooltip text="%bulk_importer.remove_tooltip" />
                      </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <Button fx:id="selectMatchedBtn" mnemonicParsing="false" onAction="#onSelectMatched" styleClass="default-button" text="%bulk_importer.select_matched">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="selectNoneBtn" mnemonicParsing="false" onAction="#onSelectNone" styleClass="default-button" text="%bulk_importer.select_none">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-select-off" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="clearMatchBtn" mnemonicParsing="false" onAction="#onClearMatch" styleClass="default-button" text="%bulk_importer.clear_match">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-off" iconSize="18" />
+                     </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
                   <CheckBox fx:id="previewCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.show_preview" />
