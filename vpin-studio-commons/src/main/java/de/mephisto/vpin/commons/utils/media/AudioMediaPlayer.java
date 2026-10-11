@@ -44,7 +44,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     mediaPlayer.setOnError(() -> {
       LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
 
-      if (retryCounter < 1) {
+      if (retryCounter < 1 && !isNonRecoverable(mediaPlayer.getError())) {
         retryCounter++;
         Platform.runLater(() -> {
           super.disposeMedia();
@@ -58,6 +58,8 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
         });
       }
       else {
+        // release the native resources of the failed player, no retry possible
+        super.disposeMedia();
         setCenter(getErrorLabel());
       }
     });

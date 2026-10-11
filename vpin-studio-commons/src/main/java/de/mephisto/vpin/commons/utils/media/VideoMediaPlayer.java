@@ -135,7 +135,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
             return;
           }
 
-          if (retryCount > 20 || !url.contains("api/v1")) { //TODO we do not want too much load on remote servers
+          if (retryCount > 20 || !url.contains("api/v1") || isNonRecoverable(player.getError())) { //TODO we do not want too much load on remote servers
             disposeMedia();
             setCenter(getErrorLabel());
           }

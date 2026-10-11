@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.utils.media;
 
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.scene.control.Label;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,19 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
     Label label = new Label("        " + Messages.get("media.asset_media_player.not_supported"));
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
     return label;
+  }
+
+  /**
+   * Playback errors that are caused by the local system (e.g. no audio device on Linux) and
+   * therefore never recover by retrying. Retrying only allocates further native players.
+   */
+  protected static boolean isNonRecoverable(MediaException error) {
+    if (error == null) {
+      return false;
+    }
+    String message = error.getMessage();
+    return error.getType() == MediaException.Type.PLAYBACK_HALTED
+        || (message != null && message.contains("audio device"));
   }
 
   public boolean hasMediaPlayer() {
