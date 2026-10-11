@@ -82,6 +82,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   public static final String MODAL_STATE_ID = "tableAssetManagerDialog";
   public static Stage INSTANCE = null;
+  /**
+   * Source id of the client-side drop-in folder, which is not known to the server
+   */
+  public static final String DROP_IN_SOURCE_ID = "dropin-folder";
 
   @FXML
   private BorderPane root;
@@ -603,8 +607,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         if (assetSourceComboBox.isVisible()) {
           source = assetSourceComboBox.getValue().getSource();
         }
-        TableAssetSearch assetSearch = searchMedia(source, screen, term);
-        ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
+        List<TableAsset> result = new ArrayList<>();
+        boolean dropInOnly = source != null && DROP_IN_SOURCE_ID.equals(source.getId());
+        if (!dropInOnly) {
+          result.addAll(searchMedia(source, screen, term).getResult());
+        }
+        // the drop-in folder is part of "All Asset Sources" and can be selected explicitly
+        if (source == null || dropInOnly) {
+          result.addAll(searchDropInFolder(term));
+        }
+        ObservableList<TableAsset> assets = FXCollections.observableList(result);
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
         serverAssetsList.refresh();
@@ -620,6 +632,56 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.enter_search_term")));
       serverAssetsList.refresh();
     });
+  }
+
+  /**
+   * @return the drop-in folder of the local UI settings, or null if it is not enabled, not configured or does not exist
+   */
+  @Nullable
+  private static File getDropInFolder() {
+    if (!LocalUISettings.getBoolean(LocalUISettings.DROP_IN_FOLDER_ENABLED)) {
+      return null;
+    }
+    String path = LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER);
+    if (StringUtils.isEmpty(path)) {
+      return null;
+    }
+    File folder = new File(path);
+    return folder.isDirectory() ? folder : null;
+  }
+
+  private static TableAssetSource createDropInAssetSource(@NonNull File folder) {
+    TableAssetSource source = new TableAssetSource();
+    source.setId(DROP_IN_SOURCE_ID);
+    source.setName("Drop-In Folder");
+    source.setLocation(folder.getAbsolutePath());
+    source.setEnabled(true);
+    source.setProvided(true);
+    return source;
+  }
+
+  private List<TableAsset> searchDropInFolder(@NonNull String term) {
+    File folder = getDropInFolder();
+    if (folder == null) {
+      return Collections.emptyList();
+    }
+
+    List<File> files = new ArrayList<>();
+    FileUtils.findFileRecursive(folder, Arrays.asList("png", "apng", "mov", "mp4", "mp3", "ogg", "mkv"), term, files);
+    return files.stream()
+        .filter(f -> !f.getName().contains("@2x"))
+        .map(f -> {
+          TableAsset asset = new TableAsset();
+          asset.setScreen(screen.getSegment());
+          asset.setMimeType(MimeTypeUtil.determineMimeType(FilenameUtils.getExtension(f.getName()).toLowerCase()));
+          asset.setUrl(f.toURI().toString());
+          asset.setSourceId(DROP_IN_SOURCE_ID);
+          asset.setName(f.getName());
+          asset.setAuthor("Drop-In Folder");
+          asset.setLength(f.length());
+          return asset;
+        })
+        .collect(Collectors.toList());
   }
 
   private TableAssetSearch searchMedia(TableAssetSource source, VPinScreen screen, String term) {
@@ -748,13 +810,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     List<TableAssetSource> assetSources = new ArrayList<>(client.getAssetSourcesService().getAssetSources());
-    assetSourceComboBox.setVisible(!assetSources.isEmpty());
-    if (!assetSources.isEmpty()) {
+    File dropInFolder = getDropInFolder();
+    assetSourceComboBox.setVisible(!assetSources.isEmpty() || dropInFolder != null);
+    if (!assetSources.isEmpty() || dropInFolder != null) {
       assetSources.addFirst( null);
 
       TableAssetSource defaultAssetSource = client.getAssetSourcesService().getDefaultAssetSource();
       if (defaultAssetSource != null) {
         assetSources.add(1, defaultAssetSource);
+      }
+      if (dropInFolder != null) {
+        assetSources.add(createDropInAssetSource(dropInFolder));
       }
     }
     List<AssetSourceModel> assetSourceModels = assetSources.stream().map(AssetSourceModel::new).collect(Collectors.toList());
@@ -767,7 +833,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     assetSourceComboBox.valueProperty().addListener(new ChangeListener<AssetSourceModel>() {
       @Override
       public void changed(ObservableValue<? extends AssetSourceModel> observable, AssetSourceModel oldValue, AssetSourceModel newValue) {
-        assetSourceBtn.setDisable(newValue == null || newValue.getSource() == null || newValue.getSource().isSystemSource());
+        assetSourceBtn.setDisable(newValue == null || newValue.getSource() == null || newValue.getSource().isSystemSource()
+            || DROP_IN_SOURCE_ID.equals(newValue.getSource().getId()));
         onSearch();
       }
     });

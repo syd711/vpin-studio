@@ -579,6 +579,14 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openBulkImporterDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(BulkImporterController.class, "dialog-bulk-importer.fxml", Messages.get("dialog.bulk_importer"));
+    FXResizeHelper.install(stage, 30, 6);
+    stage.setMinWidth(1024);
+    stage.setMinHeight(600);
+    stage.showAndWait();
+  }
+
   public static void openConverterDialog(List<GameRepresentation> selectedGames) {
     Stage stage = Dialogs.createStudioDialogStage(MediaConverterDialogController.class, "dialog-media-converter.fxml", Messages.get("dialog.media_conversion"));
     MediaConverterDialogController controller = (MediaConverterDialogController) stage.getUserData();

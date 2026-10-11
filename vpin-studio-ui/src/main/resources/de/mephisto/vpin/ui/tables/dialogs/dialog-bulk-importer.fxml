@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="560.0" minWidth="980.0" prefHeight="820.0" prefWidth="1380.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.BulkImporterController">
+   <top>
+      <VBox spacing="8.0" BorderPane.alignment="CENTER">
+         <children>
+            <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-resizeable-header.fxml" />
+            <VBox spacing="8.0">
+               <VBox.margin>
+                  <Insets left="12.0" right="12.0" top="6.0" />
+               </VBox.margin>
+               <children>
+                  <Label styleClass="preference-description" text="%bulk_importer.description" wrapText="true" />
+                  <GridPane hgap="12.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="NEVER" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="300.0" />
+                        <ColumnConstraints hgrow="NEVER" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="default-text" text="%bulk_importer.source_folder" />
+                        <TextField fx:id="sourceField" editable="false" prefWidth="420.0" promptText="%bulk_importer.source_prompt" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextField>
+                        <Button fx:id="browseBtn" mnemonicParsing="false" onAction="#onBrowse" styleClass="default-button" text="%bulk_importer.select_folder" GridPane.columnIndex="2" />
+                        <CheckBox fx:id="recursiveCheck" GridPane.halignment="LEFT" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.include_subfolders" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="%bulk_importer.match_by" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <ComboBox fx:id="matchModeCombo" />
+                              <CheckBox fx:id="detectScreenCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.detect_screen" />
+                           </children>
+                        </HBox>
+                        <Label styleClass="default-text" text="%bulk_importer.min_score" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Slider fx:id="scoreSlider" blockIncrement="0.05" majorTickUnit="0.1" max="1.0" min="0.2" prefWidth="130.0" value="0.6" />
+                              <Label fx:id="scoreLabel" minWidth="40.0" styleClass="default-text" text="60%" />
+                              <Label fx:id="scoreInfoLabel" prefHeight="40.0" prefWidth="18.0" wrapText="true">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="%bulk_importer.min_score_info" wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label styleClass="default-text" text="%bulk_importer.default_screen" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="defaultScreenCombo" GridPane.halignment="LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label styleClass="default-text" text="%bulk_importer.default_mode" GridPane.rowIndex="5" />
+                        <ComboBox fx:id="defaultModeCombo" GridPane.halignment="LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="6.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <children>
+            <ToolBar prefHeight="40.0">
+               <items>
+                  <Button fx:id="selectMatchedBtn" mnemonicParsing="false" onAction="#onSelectMatched" styleClass="default-button" text="%bulk_importer.select_matched" />
+                  <Button fx:id="selectNoneBtn" mnemonicParsing="false" onAction="#onSelectNone" styleClass="default-button" text="%bulk_importer.select_none" />
+                  <Button fx:id="clearMatchBtn" mnemonicParsing="false" onAction="#onClearMatch" styleClass="default-button" text="%bulk_importer.clear_match" />
+                  <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="default-button" text="%bulk_importer.remove">
+                     <tooltip>
+                        <Tooltip text="%bulk_importer.remove_tooltip" />
+                     </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefWidth="12.0" />
+                  <CheckBox fx:id="previewCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.show_preview" />
+                  <Label styleClass="default-text" text="%bulk_importer.preview_size">
+                     <padding>
+                        <Insets right="6.0" />
+                     </padding></Label>
+                  <ToggleButton fx:id="sizeSmallBtn" mnemonicParsing="false" selected="false">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="previewSizeGroup" />
+                     </toggleGroup>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-size-select-small" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%bulk_importer.size_small" />
+                     </tooltip>
+                  </ToggleButton>
+                  <ToggleButton fx:id="sizeMediumBtn" mnemonicParsing="false" selected="true" toggleGroup="$previewSizeGroup">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-size-select-large" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%bulk_importer.size_medium" />
+                     </tooltip>
+                  </ToggleButton>
+                  <ToggleButton fx:id="sizeLargeBtn" mnemonicParsing="false" selected="false" toggleGroup="$previewSizeGroup">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-size-select-actual" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%bulk_importer.size_large" />
+                     </tooltip>
+                  </ToggleButton>
+               </items>
+            </ToolBar>
+            <TableView fx:id="tableView" minHeight="120.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component" VBox.vgrow="ALWAYS">
+      <columns>
+         <TableColumn fx:id="columnPreview" style="-fx-alignment: CENTER;" prefWidth="120.0" resizable="false" sortable="false" text="%bulk_importer.column_preview" />
+         <TableColumn fx:id="columnFile" style="-fx-alignment: CENTER_LEFT;" prefWidth="330.0" text="%bulk_importer.column_file" />
+         <TableColumn fx:id="columnTable" style="-fx-alignment: CENTER_LEFT;" prefWidth="420.0" sortable="false" text="%bulk_importer.column_table" />
+         <TableColumn fx:id="columnScore" style="-fx-alignment: CENTER_LEFT;" prefWidth="120.0" text="%bulk_importer.column_match" />
+         <TableColumn fx:id="columnScreen" style="-fx-alignment: CENTER_LEFT;" prefWidth="150.0" sortable="false" text="%bulk_importer.column_screen" />
+         <TableColumn fx:id="columnMode" style="-fx-alignment: CENTER_LEFT;" prefWidth="150.0" sortable="false" text="%bulk_importer.column_mode" />
+      </columns>
+   </TableView>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="summaryLabel" styleClass="default-text" />
+            <HBox HBox.hgrow="ALWAYS" />
+            <Button fx:id="rematchBtn" mnemonicParsing="false" onAction="#onRematch" styleClass="default-button" text="%bulk_importer.rematch_all">
+               <HBox.margin>
+                  <Insets right="24.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
+            <Button fx:id="importBtn" disable="true" mnemonicParsing="false" onAction="#onImport" styleClass="submit-button" text="%bulk_importer.import" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>

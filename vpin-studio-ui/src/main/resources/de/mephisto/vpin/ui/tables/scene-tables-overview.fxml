@@ -318,7 +318,14 @@
                         <Tooltip text="%tables.tables_overview.asset_manager_view_ctrl_m" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                  <SplitMenuButton fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                     <items>
+                        <MenuItem fx:id="bulkImporterItem" mnemonicParsing="false" onAction="#onBulkImporter" text="%tables.tables_overview.bulk_importer">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-multiple-image" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                     </items>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                      </graphic>
@@ -328,7 +335,7 @@
                      <tooltip>
                         <Tooltip text="%tables.tables_overview.asset_manager_ctrl_i" />
                      </tooltip>
-                  </Button>
+                  </SplitMenuButton>
                   <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

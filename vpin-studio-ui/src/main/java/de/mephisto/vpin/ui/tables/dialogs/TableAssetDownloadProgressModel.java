@@ -12,7 +12,9 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -77,7 +79,15 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, TableAsset tableAsset) {
     try {
-      if (game != null) {
+      if (TableAssetManagerDialogController.DROP_IN_SOURCE_ID.equals(tableAsset.getSourceId())) {
+        // the drop-in folder is local to the client, so the file must be uploaded instead of downloaded by the server
+        File file = new File(URI.create(tableAsset.getUrl()));
+        boolean playlistMode = game == null;
+        int objectId = playlistMode ? playlist.getId() : game.getId();
+        VPinScreen loading = loadingScreenId != null ? loadingScreenId : VPinScreen.Loading;
+        client.getGameMediaService().uploadMedia(file, objectId, playlistMode, this.screen, append, loading, progressResultModel::setProgress);
+      }
+      else if (game != null) {
         client.getGameMediaService().downloadTableAsset(tableAsset, this.screen, this.game, append, loadingScreenId);
       }
       else {

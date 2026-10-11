@@ -258,7 +258,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private SplitMenuButton validateBtn;
 
   @FXML
-  private Button assetManagerBtn;
+  private SplitMenuButton assetManagerBtn;
 
   @FXML
   private Button deleteBtn;
@@ -357,6 +357,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   private void onConvert() {
     TableDialogs.openConverterDialog(getSelections());
+  }
+
+  @FXML
+  private void onBulkImporter() {
+    TableDialogs.openBulkImporterDialog();
   }
 
   @FXML
