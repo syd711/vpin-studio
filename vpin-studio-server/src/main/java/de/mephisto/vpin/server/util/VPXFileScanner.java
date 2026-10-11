@@ -58,6 +58,11 @@ public class VPXFileScanner {
       "(?:\"[^\"]*\"|\\w+)(?:\\s*[&+]\\s*(?:\"[^\"]*\"|\\w+))*",
       Pattern.CASE_INSENSITIVE);
 
+  // MusicDirectory = GetMusicFolder & "\Blood Machines OST"  (variable name contains "music" and "dir"/"folder"/"path")
+  private static final Pattern MUSIC_DIR_PATTERN = Pattern.compile(
+      "^\\s*(?:Dim\\s+)?\\w*music\\w*(?:dir|folder|path)\\w*\\s*=\\s*(?:[\\w.()]+\\s*&\\s*)?\"([^\"]+)\"\\s*(?:'.*)?$",
+      Pattern.CASE_INSENSITIVE);
+
   private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
   /**
@@ -217,8 +222,28 @@ public class VPXFileScanner {
     }
   }
 
+  /**
+   * Detects a music folder variable, e.g. MusicDirectory = GetMusicFolder & "\Blood Machines OST"
+   * so that following relative music filenames are resolved against that subfolder.
+   */
+  private static void lineSearchMusicSubFolder(ScanResult result, String line) {
+    Matcher matcher = MUSIC_DIR_PATTERN.matcher(line);
+    if (!matcher.matches()) {
+      return;
+    }
+    String folder = matcher.group(1).replace('\\', '/').replaceAll("/+", "/");
+    folder = StringUtils.strip(folder, "/ ");
+    if (!folder.isEmpty() && !folder.contains(":") && !folder.contains("..")) {
+      result.setMusicSubFolder(folder);
+    }
+  }
+
   private static void lineSearchMp3FileName(ScanResult result, String line) {
     if (!line.toLowerCase().contains(".mp3") && !line.toLowerCase().contains(".wav") && !line.toLowerCase().contains(".ogg")) {
+      return;
+    }
+    // script-coded PUP packs (e.g. Orbital) play their audio via PuPlayer, these files are not part of the music folder
+    if (Strings.CI.contains(line, "PuPlayer")) {
       return;
     }
     Matcher matcher = MP3_EXPRESSION_PATTERN.matcher(line);
@@ -238,7 +263,11 @@ public class VPXFileScanner {
         ) {
           continue;
         }
-        addAsset(result, filename.replaceAll("\\\\", "/"));
+        filename = filename.replaceAll("\\\\", "/");
+        if (result.getMusicSubFolder() != null && !filename.contains("/")) {
+          filename = result.getMusicSubFolder() + "/" + filename;
+        }
+        addAsset(result, filename);
       }
     }
   }
@@ -428,6 +457,7 @@ public class VPXFileScanner {
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
+      lineSearchMusicSubFolder(result, line);
       lineSearchMp3FileName(result, line);
       lineSearchControllerStop(result, line);
 

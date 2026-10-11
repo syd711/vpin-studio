@@ -24,6 +24,19 @@ public class ScanResult {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  /**
+   * Scan state only: music subfolder set by a script variable like MusicDirectory = GetMusicFolder & "\Folder"
+   */
+  private String musicSubFolder;
+
+  public String getMusicSubFolder() {
+    return musicSubFolder;
+  }
+
+  public void setMusicSubFolder(String musicSubFolder) {
+    this.musicSubFolder = musicSubFolder;
+  }
+
   private List<String> assets = new ArrayList<>();
   private List<String> scripts = new ArrayList<>();
 
