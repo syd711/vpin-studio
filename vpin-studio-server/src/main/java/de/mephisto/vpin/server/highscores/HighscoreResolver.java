@@ -344,6 +344,7 @@ public class HighscoreResolver implements InitializingBean {
         return null;
       }
 
+      LOG.info("Reading fpRAM file: {}", fpRamFile.getAbsolutePath());
       metadata.setFilename(fpRamFile.getCanonicalPath());
       metadata.setModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(fpRamFile.lastModified()), ZoneId.systemDefault()));
       metadata.setType(HighscoreType.FPRam);
