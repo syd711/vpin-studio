@@ -352,6 +352,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       return getEmulatorList();
     }).thenAcceptLater(emulators -> {
       emulatorCombo.setItems(FXCollections.observableList(emulators));
+      // preselect before registering the listener, otherwise the backglasses are reloaded on startup
+      // instead of lazily when the backglass view is activated
+      if (!emulators.isEmpty()) {
+        emulatorCombo.setValue(emulators.getFirst());
+      }
       emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
         @Override
         public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
@@ -361,10 +366,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           doReload();
         }
       });
-
-      if (!emulators.isEmpty()) {
-        emulatorCombo.setValue(emulators.getFirst());
-      }
     });
 
     // add the overlay for drag and drop

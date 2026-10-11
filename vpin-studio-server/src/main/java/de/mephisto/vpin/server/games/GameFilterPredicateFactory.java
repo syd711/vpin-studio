@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.CommentType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.vps.VpsChangeFilter;
@@ -9,6 +10,9 @@ import de.mephisto.vpin.server.backups.BackupService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -18,7 +22,10 @@ import java.util.function.Predicate;
  */
 public class GameFilterPredicateFactory {
 
-  public Predicate<Game> buildPredicate(String searchTerm, Playlist playlist, Integer emulatorId, FilterSettings filterSettings, VpsSettings vpsSettings, BackupService backupService) {
+  public Predicate<Game> buildPredicate(String searchTerm, Playlist playlist, Integer emulatorId, FilterSettings filterSettings, VpsSettings vpsSettings, BackupService backupService, Function<Integer, TableDetails> tableDetailsLoader) {
+    final Set<String> types = tokenize(filterSettings.getGameTypes());
+    final Set<String> manufacturers = tokenize(filterSettings.getManufacturers());
+
     return new Predicate<Game>() {
       @Override
       public boolean test(Game game) {
@@ -145,6 +152,10 @@ public class GameFilterPredicateFactory {
           }
         }
 
+        if (filterSettings.hasTableDetailsFilter() && !matchesTableDetails(tableDetailsLoader.apply(game.getId()), filterSettings, types, manufacturers)) {
+          return false;
+        }
+
         //--------------------------
 
         if (emulatorId != null && game.getEmulatorId() != emulatorId) {
@@ -167,5 +178,63 @@ public class GameFilterPredicateFactory {
         return true;
       }
     };
+  }
+
+  private static Set<String> tokenize(String csv) {
+    Set<String> result = new HashSet<>();
+    if (csv != null) {
+      for (String token : csv.split(",")) {
+        if (!token.isBlank()) {
+          result.add(token.trim().toLowerCase());
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Evaluates the metadata filters against the frontend's table details. Tables without details
+   * or without a value for a filtered field do not match, except for an excluding manufacturer filter.
+   */
+  private static boolean matchesTableDetails(TableDetails details, FilterSettings filterSettings, Set<String> types, Set<String> manufacturers) {
+    if (details == null) {
+      return false;
+    }
+
+    if (!types.isEmpty()) {
+      String type = details.getGameType();
+      if (type == null || !types.contains(type.trim().toLowerCase())) {
+        return false;
+      }
+    }
+
+    if (!manufacturers.isEmpty()) {
+      String manufacturer = details.getManufacturer();
+      boolean match = manufacturer != null && manufacturers.stream().anyMatch(m -> manufacturer.toLowerCase().contains(m));
+      if (match == filterSettings.isExcludeManufacturers()) {
+        return false;
+      }
+    }
+
+    if (filterSettings.getMinRating() > 0) {
+      Integer rating = details.getGameRating();
+      if (rating == null || rating < filterSettings.getMinRating()) {
+        return false;
+      }
+    }
+
+    if (filterSettings.getYearFrom() > 0 || filterSettings.getYearTo() > 0) {
+      Integer year = details.getGameYear();
+      if (year == null || year == 0) {
+        return false;
+      }
+      if (filterSettings.getYearFrom() > 0 && year < filterSettings.getYearFrom()) {
+        return false;
+      }
+      if (filterSettings.getYearTo() > 0 && year > filterSettings.getYearTo()) {
+        return false;
+      }
+    }
+    return true;
   }
 }

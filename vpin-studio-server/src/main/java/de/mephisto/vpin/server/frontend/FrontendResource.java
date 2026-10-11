@@ -200,8 +200,9 @@ public class FrontendResource {
   }
 
   @GetMapping("/tabledetails/automatch/{gameId}/{overwrite}")
-  public VpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
-    return gameMediaService.autoMatch(gameService.getGame(gameId), overwrite, false);
+  public VpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite,
+                            @RequestParam(value = "overwriteMetadata", defaultValue = "false") boolean overwriteMetadata) {
+    return gameMediaService.autoMatch(gameService.getGame(gameId), overwrite, false, overwriteMetadata);
   }
 
   @GetMapping("/tabledetails/automatchsimulate/{gameId}/{overwrite}")

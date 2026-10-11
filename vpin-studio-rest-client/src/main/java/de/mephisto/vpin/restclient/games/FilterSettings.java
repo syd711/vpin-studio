@@ -3,6 +3,8 @@ package de.mephisto.vpin.restclient.games;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,73 @@ public class FilterSettings extends JsonSettings {
   private List<String> tags = new ArrayList<>();
   private int gameStatus = -1;
   private CommentType noteType;
+  /** comma separated list of table types, matched case-insensitive against TableDetails#gameType */
+  private String gameTypes = "";
+  /** comma separated list of manufacturers, matched case-insensitive (contains) against TableDetails#manufacturer */
+  private String manufacturers = "";
+  private boolean excludeManufacturers;
+  /** 0 = not set */
+  private int minRating;
+  /** 0 = not set */
+  private int yearFrom;
+  /** 0 = not set */
+  private int yearTo;
+
+  public String getGameTypes() {
+    return gameTypes;
+  }
+
+  public void setGameTypes(String gameTypes) {
+    this.gameTypes = gameTypes == null ? "" : gameTypes;
+  }
+
+  public String getManufacturers() {
+    return manufacturers;
+  }
+
+  public void setManufacturers(String manufacturers) {
+    this.manufacturers = manufacturers == null ? "" : manufacturers;
+  }
+
+  public boolean isExcludeManufacturers() {
+    return excludeManufacturers;
+  }
+
+  public void setExcludeManufacturers(boolean excludeManufacturers) {
+    this.excludeManufacturers = excludeManufacturers;
+  }
+
+  public int getMinRating() {
+    return minRating;
+  }
+
+  public void setMinRating(int minRating) {
+    this.minRating = minRating;
+  }
+
+  public int getYearFrom() {
+    return yearFrom;
+  }
+
+  public void setYearFrom(int yearFrom) {
+    this.yearFrom = yearFrom;
+  }
+
+  public int getYearTo() {
+    return yearTo;
+  }
+
+  public void setYearTo(int yearTo) {
+    this.yearTo = yearTo;
+  }
+
+  /**
+   * True if any filter is set that needs the frontend's table details to be evaluated.
+   */
+  @JsonIgnore
+  public boolean hasTableDetailsFilter() {
+    return !gameTypes.isBlank() || !manufacturers.isBlank() || minRating > 0 || yearFrom > 0 || yearTo > 0;
+  }
 
   public List<String> getTags() {
     return tags;
@@ -248,6 +317,12 @@ public class FilterSettings extends JsonSettings {
     this.tags = new ArrayList<>();
     this.gameStatus = -1;
     this.noteType = null;
+    this.gameTypes = "";
+    this.manufacturers = "";
+    this.excludeManufacturers = false;
+    this.minRating = 0;
+    this.yearFrom = 0;
+    this.yearTo = 0;
   }
 
   public boolean isResetted(boolean vpxMode) {
@@ -274,7 +349,8 @@ public class FilterSettings extends JsonSettings {
           && !this.iScored
           && this.tags.isEmpty()
           && this.noteType == null
-          && this.gameStatus == -1;
+          && this.gameStatus == -1
+          && !hasTableDetailsFilter();
     }
 
     return !this.missingAssets
@@ -282,8 +358,8 @@ public class FilterSettings extends JsonSettings {
         && !this.isNotBackedUp
         && this.tags.isEmpty()
         && this.noteType == null
-        && this.gameStatus == -1;
-
+        && this.gameStatus == -1
+        && !hasTableDetailsFilter();
   }
 
   @Override

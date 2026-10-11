@@ -183,11 +183,15 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public VpsMatch autoMatch(int gameId, boolean overwrite, boolean simulate) {
+    return autoMatch(gameId, overwrite, simulate, false);
+  }
+
+  public VpsMatch autoMatch(int gameId, boolean overwrite, boolean simulate, boolean overwriteMetadata) {
     if (simulate) {
       return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatchsimulate/" + gameId + "/" + overwrite, VpsMatch.class);
     }
     else {
-      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite, VpsMatch.class);
+      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite + "?overwriteMetadata=" + overwriteMetadata, VpsMatch.class);
     }
   }
 

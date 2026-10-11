@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
    <children>
       <VBox>
          <children>
@@ -31,7 +32,7 @@
                      </children>
                      <BorderPane.margin>
                         <Insets top="7.0" />
-                     </BorderPane.margin>
+                     </BorderPane.margin>   
                   </HBox>
                </left>
                <right>
@@ -217,6 +218,45 @@
                      </VBox.margin>
                   </Label>
                   <ComboBox fx:id="commentsCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
+                  <VBox fx:id="metadataFilters" spacing="6.0">
+                     <children>
+                        <Label styleClass="default-title" text="%tables.tables_overview_filter.metadata_filters">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="default-text" text="%tables.tables_overview_filter.table_type" />
+                        <TextField fx:id="gameTypesField" promptText="%tables.tables_overview_filter.table_type_prompt">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></TextField>
+                        <Label styleClass="default-text" text="%tables.tables_overview_filter.manufacturer" />
+                        <TextField fx:id="manufacturersField" promptText="%tables.tables_overview_filter.manufacturer_prompt">
+                           <font>
+                              <Font size="14.0" />
+                           </font></TextField>
+                        <CheckBox fx:id="excludeManufacturersCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.exclude_manufacturer" />
+                        <Label styleClass="default-text" text="%tables.tables_overview_filter.min_rating" />
+                        <ComboBox fx:id="minRatingCombo" prefHeight="30.0" />
+                        <Label styleClass="default-text" text="%tables.tables_overview_filter.year_range" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <TextField fx:id="yearFromField" prefWidth="90.0" promptText="%tables.tables_overview_filter.year_from">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></TextField>
+                              <Label styleClass="default-text" text="–" />
+                              <TextField fx:id="yearToField" prefWidth="90.0" promptText="%tables.tables_overview_filter.year_to">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></TextField>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                   <HBox fx:id="notPlayedSettings" alignment="CENTER_LEFT" spacing="6.0" styleClass="default-text">
                      <children>
                         <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="%tables.tables_overview_filter.not_played_yet">

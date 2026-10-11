@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.util.tags.TagField;
 import org.jspecify.annotations.NonNull;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -25,7 +26,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import java.net.URL;
@@ -128,6 +131,27 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   @FXML
   private ComboBox<CommentType> commentsCombo;
 
+  @FXML
+  private Node metadataFilters;
+
+  @FXML
+  private TextField gameTypesField;
+
+  @FXML
+  private TextField manufacturersField;
+
+  @FXML
+  private CheckBox excludeManufacturersCheckBox;
+
+  @FXML
+  private ComboBox<Integer> minRatingCombo;
+
+  @FXML
+  private TextField yearFromField;
+
+  @FXML
+  private TextField yearToField;
+
   private TagField tagField;
 
   /**
@@ -211,6 +235,12 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       withResCheckBox.setSelected(filterSettings.isWithRes());
       withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
       withAliasCheckBox.setSelected(filterSettings.isWithAlias());
+      gameTypesField.setText("");
+      manufacturersField.setText("");
+      excludeManufacturersCheckBox.setSelected(false);
+      minRatingCombo.setValue(null);
+      yearFromField.setText("");
+      yearToField.setText("");
     }
     tagField.setTags(filterSettings.getTags());
   }
@@ -228,6 +258,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     notPlayedSettings.managedProperty().bindBidirectional(notPlayedSettings.visibleProperty());
     statusSettings.managedProperty().bindBidirectional(statusSettings.visibleProperty());
 
+    metadataFilters.managedProperty().bindBidirectional(metadataFilters.visibleProperty());
     withPupPackCheckBox.setVisible(Features.PUPPACKS_ENABLED);
     statusSettings.setVisible(!Features.IS_STANDALONE);
     notPlayedSettings.setVisible(Features.STATISTICS_ENABLED);
@@ -353,6 +384,8 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
+    loadMetadataFilters(filterSettings);
+
     List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses());
     statuses.addFirst( null);
     statusCombo.setItems(FXCollections.observableList(statuses));
@@ -442,6 +475,67 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.ISCORED_SETTINGS, null);
+  }
+
+  private void loadMetadataFilters(@NonNull FilterSettings filterSettings) {
+    gameTypesField.setText(filterSettings.getGameTypes());
+    bindDebounced(gameTypesField, text -> filterSettings.setGameTypes(text.trim()));
+
+    manufacturersField.setText(filterSettings.getManufacturers());
+    bindDebounced(manufacturersField, text -> filterSettings.setManufacturers(text.trim()));
+
+    excludeManufacturersCheckBox.setSelected(filterSettings.isExcludeManufacturers());
+    excludeManufacturersCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setExcludeManufacturers(newValue);
+      applyFilters();
+    });
+
+    // Popper's rating is 0-5, null means "any"
+    minRatingCombo.setItems(FXCollections.observableList(Arrays.asList(null, 1, 2, 3, 4, 5)));
+    minRatingCombo.setConverter(new StringConverter<Integer>() {
+      @Override
+      public String toString(Integer rating) {
+        return rating == null ? "" : "\u2605".repeat(rating) + " (" + rating + "+)";
+      }
+
+      @Override
+      public Integer fromString(String s) {
+        return minRatingCombo.getValue();
+      }
+    });
+    minRatingCombo.setValue(filterSettings.getMinRating() > 0 ? filterSettings.getMinRating() : null);
+    minRatingCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setMinRating(newValue == null ? 0 : newValue);
+      applyFilters();
+    });
+
+    yearFromField.setText(filterSettings.getYearFrom() > 0 ? String.valueOf(filterSettings.getYearFrom()) : "");
+    bindDebounced(yearFromField, text -> filterSettings.setYearFrom(parseYear(text)));
+    yearToField.setText(filterSettings.getYearTo() > 0 ? String.valueOf(filterSettings.getYearTo()) : "");
+    bindDebounced(yearToField, text -> filterSettings.setYearTo(parseYear(text)));
+  }
+
+  /**
+   * Text input triggers a server round-trip, so apply it only after the user stopped typing.
+   */
+  private void bindDebounced(TextField field, java.util.function.Consumer<String> setter) {
+    PauseTransition debounce = new PauseTransition(Duration.millis(400));
+    field.textProperty().addListener((observable, oldValue, newValue) -> {
+      debounce.setOnFinished(e -> {
+        setter.accept(newValue == null ? "" : newValue);
+        applyFilters();
+      });
+      debounce.playFromStart();
+    });
+  }
+
+  private static int parseYear(String text) {
+    try {
+      return Math.max(0, Integer.parseInt(text.trim()));
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 
   public TagField getTagField() {

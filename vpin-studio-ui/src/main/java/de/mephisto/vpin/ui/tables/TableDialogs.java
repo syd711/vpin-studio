@@ -610,22 +610,31 @@ public class TableDialogs {
   public static void openAutoMatchAll(List<GameRepresentation> games) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, Messages.get("dialog.auto_match_table_and_version_for_all") + games.size() + Messages.get("dialog.tables"),
-            Messages.get("common.cancel"), "Continue", Messages.get("dialog.the_table_and_display_name_is_used"), Messages.get("dialog.you_may_have_to_adept_the_result"), Messages.get("dialog.overwrite_existing_matchings"), false);
-        if (!result.isApplyClicked()) {
-          ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, result.isChecked(), false));
-          EventManager.getInstance().notifyTablesChanged();
-        }
+        onOpenAutoMatchAll(games);
       }
     }
     else {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, Messages.get("dialog.auto_match_table_and_version_for_all") + games.size() + Messages.get("dialog.tables"),
-          Messages.get("common.cancel"), "Continue", Messages.get("dialog.the_table_and_display_name_is_used"), Messages.get("dialog.you_may_have_to_adept_the_result"), Messages.get("dialog.overwrite_existing_matchings"), false);
-      if (!result.isApplyClicked()) {
-        ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, result.isChecked(), false));
-        EventManager.getInstance().notifyTablesChanged();
-      }
+      onOpenAutoMatchAll(games);
     }
+  }
+
+  private static void onOpenAutoMatchAll(List<GameRepresentation> games) {
+    String title = Messages.get("dialog.auto_match_table_and_version_for_all") + games.size() + Messages.get("dialog.tables");
+    String description = Messages.get("dialog.the_table_and_display_name_is_used");
+    String hint = Messages.get("dialog.you_may_have_to_adept_the_result");
+    AutoMatchDialogController controller = openAutoMatchDialog(title, description, hint, true);
+    if (controller.isConfirmed()) {
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, controller.isOverwriteMatchings(), false, controller.isOverwriteMetadata()));
+      EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
+  private static AutoMatchDialogController openAutoMatchDialog(String title, String description, String hint, boolean showOverwriteMatchings) {
+    Stage stage = Dialogs.createStudioDialogStage(AutoMatchDialogController.class, "dialog-auto-match.fxml", Messages.get("dialog.auto_match"));
+    AutoMatchDialogController controller = (AutoMatchDialogController) stage.getUserData();
+    controller.setData(title, description, hint, Messages.get("dialog.auto_match"), showOverwriteMatchings);
+    stage.showAndWait();
+    return controller;
   }
 
   public static boolean openAutoMatch(List<GameRepresentation> games) {
@@ -646,10 +655,9 @@ public class TableDialogs {
       title = Messages.get("dialog.auto_match_table_and_version_for") + "\"" + games.getFirst().getGameDisplayName() + "\"?";
     }
 
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
-        Messages.get("dialog.this_will_overwrite_the_existing_mapping"), Messages.get("dialog.this_action_will_overwrite_the_vps_table"), Messages.get("dialog.auto_match"));
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, true, false));
+    AutoMatchDialogController controller = openAutoMatchDialog(title, Messages.get("dialog.this_will_overwrite_the_existing_mapping"), Messages.get("dialog.this_action_will_overwrite_the_vps_table"), false);
+    if (controller.isConfirmed()) {
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, true, false, controller.isOverwriteMetadata()));
       return true;
     }
     return false;

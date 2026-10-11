@@ -19,12 +19,18 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
 
   private final boolean overwrite;
   private final boolean simulate;
+  private final boolean overwriteMetadata;
   private final Iterator<GameRepresentation> gameIterator;
 
   public TableVpsDataAutoMatchProgressModel(List<GameRepresentation> games, boolean overwrite, boolean simulate) {
+    this(games, overwrite, simulate, false);
+  }
+
+  public TableVpsDataAutoMatchProgressModel(List<GameRepresentation> games, boolean overwrite, boolean simulate, boolean overwriteMetadata) {
     super(Messages.get("dialog.auto_matching"));
     this.overwrite = overwrite;
     this.simulate = simulate;
+    this.overwriteMetadata = overwriteMetadata;
     this.games = games;
     this.gameIterator = games.iterator();
   }
@@ -66,7 +72,7 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      Studio.client.getFrontendService().autoMatch(game.getId(), overwrite, simulate);
+      Studio.client.getFrontendService().autoMatch(game.getId(), overwrite, simulate, overwriteMetadata);
       progressResultModel.addProcessed();
     }
     catch (Exception e) {

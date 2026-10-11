@@ -259,9 +259,20 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public TableDetails autoFill(Game game, TableDetails tableDetails, String vpsTableId, String vpsTableVersionId, boolean simulate) {
+    return autoFill(game, tableDetails, vpsTableId, vpsTableVersionId, simulate, false);
+  }
+
+  /**
+   * @param forceOverwrite if true, existing table metadata is overwritten regardless of the auto-fill settings
+   */
+  @NonNull
+  public TableDetails autoFill(Game game, TableDetails tableDetails, String vpsTableId, String vpsTableVersionId, boolean simulate, boolean forceOverwrite) {
     TableInfo tableInfo = vpxService.getTableInfo(game);
 
     AutoFillSettings autoFillSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class).getAutoFillSettings();
+    if (forceOverwrite) {
+      autoFillSettings.setOverwrite(true);
+    }
     boolean overwrite = autoFillSettings.isOverwrite();
 
     if (!StringUtils.isEmpty(vpsTableId)) {

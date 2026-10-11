@@ -144,6 +144,13 @@ public class GameMediaService extends MediaService {
    * moved from VpsService to break circular dependency.
    */
   public VpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
+    return autoMatch(game, overwrite, simulate, false);
+  }
+
+  /**
+   * @param overwriteMetadata if true, the table metadata is overwritten with the data of the matched VPS entry
+   */
+  public VpsMatch autoMatch(Game game, boolean overwrite, boolean simulate, boolean overwriteMetadata) {
     VpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
     if (vpsMatch != null && !simulate) {
       gameService.vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
@@ -152,6 +159,13 @@ public class GameMediaService extends MediaService {
       game.setExtTableVersionId(vpsMatch.getExtTableVersionId());
       if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {
         fixGameVersion(game.getId(), vpsMatch.getVersion(), false);
+      }
+
+      if (overwriteMetadata) {
+        TableDetails tableDetails = getTableDetails(game.getId());
+        if (tableDetails != null) {
+          frontendService.autoFill(game, tableDetails, vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId(), false, true);
+        }
       }
     }
     return vpsMatch;
