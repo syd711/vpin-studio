@@ -1,12 +1,16 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
@@ -46,13 +50,13 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
   public TableMediaFileDropEventHandler(TableOverviewController tablesController, VPinScreen screen, String... suffix) {
     this.tablesController = tablesController;
     this.screen = screen;
-    this.suffixes = Arrays.asList(suffix);
+    this.suffixes = Arrays.asList(AudioExtractionUtil.getAcceptedSuffixes(screen, suffix));
   }
 
   public TableMediaFileDropEventHandler(TableAssetManagerDialogController dialogController, VPinScreen screen, String... suffix) {
     this.dialogController = dialogController;
     this.screen = screen;
-    this.suffixes = Arrays.asList(suffix);
+    this.suffixes = Arrays.asList(AudioExtractionUtil.getAcceptedSuffixes(screen, suffix));
   }
 
   @Override
@@ -72,37 +76,71 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     }
 
     if (event.getDragboard().hasContent(DataFormat.URL) && !event.getDragboard().hasContent(DataFormat.FILES)) {
-      dropAsset(event);
+      FrontendMediaItemRepresentation media = (FrontendMediaItemRepresentation) event.getDragboard().getContent(DataFormat.URL);
+      boolean video = media != null && AudioExtractionUtil.isVideoSuffix(FilenameUtils.getExtension(media.getName()));
+      Platform.runLater(() -> {
+        if (!video || confirmAudioExtraction()) {
+          dropAsset(media);
+        }
+      });
     }
     else if (!files.isEmpty()) {
-      dropFiles(files);
+      boolean video = files.stream().anyMatch(f -> AudioExtractionUtil.isVideoSuffix(FilenameUtils.getExtension(f.getName())));
+      Platform.runLater(() -> {
+        if (!video || confirmAudioExtraction()) {
+          dropFiles(files);
+        }
+      });
     }
   }
 
-  private void dropAsset(DragEvent event) {
+  /**
+   * Videos dropped on an audio screen are converted to mp3 by the server, the user has to confirm that.
+   */
+  private boolean confirmAudioExtraction() {
+    if (!AudioExtractionUtil.isAudioScreen(screen)) {
+      return true;
+    }
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (uiSettings.isHideAudioExtractionInfo()) {
+      return true;
+    }
+
+    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, Messages.get("dialog.extract_audio_from_video"),
+        Messages.get("dialog.extract_audio"), Messages.get("dialog.extract_audio_from_video_text"), Messages.get("dialog.extract_audio_from_video_help"),
+        Messages.get("dialog.do_not_show_again"), false);
+    if (!confirmationResult.isOkClicked()) {
+      return false;
+    }
+
+    if (confirmationResult.isChecked()) {
+      uiSettings.setHideAudioExtractionInfo(true);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    }
+    return true;
+  }
+
+  private void dropAsset(FrontendMediaItemRepresentation media) {
     try {
-      FrontendMediaItemRepresentation media = (FrontendMediaItemRepresentation) event.getDragboard().getContent(DataFormat.URL);
-      Platform.runLater(() -> {
+      GameRepresentation game = null;
+      PlaylistRepresentation playlist = null;
+      if (this.tablesController != null) {
+        game = tablesController.getSelection();
+      }
+      else if (dialogController.isPlaylistMode()) {
+        playlist = dialogController.getPlaylist();
+      }
+      else {
+        game = dialogController.getGame();
+      }
 
-        GameRepresentation game = null;
-        PlaylistRepresentation playlist = null;
-        if (this.tablesController != null) {
-          game = tablesController.getSelection();
-        }
-        else if (dialogController.isPlaylistMode()) {
-          playlist = dialogController.getPlaylist();
-        }
-        else {
-          game = dialogController.getGame();
-        }
-
-        if (playlist != null) {
-          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
-        } else {
-          ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
-        }
-        refreshView();
-      });
+      if (playlist != null) {
+        ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
+      } else {
+        ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
+      }
+      refreshView();
     }
     catch (Exception e) {
       LOG.warn("Media drop failed: {}", e.getMessage());

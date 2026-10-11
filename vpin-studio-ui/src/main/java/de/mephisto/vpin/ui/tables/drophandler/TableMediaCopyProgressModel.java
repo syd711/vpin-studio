@@ -1,12 +1,17 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +77,10 @@ public class TableMediaCopyProgressModel extends ProgressModel<FrontendMediaItem
   @Override
   public void processNext(ProgressResultModel progressResultModel, FrontendMediaItemRepresentation media) {
     try {
-      client.getGameMediaService().copyMedia(objectId, playlistMode, media.getScreen(), media.getName(), targetScreen);
+      boolean copied = client.getGameMediaService().copyMedia(objectId, playlistMode, media.getScreen(), media.getName(), targetScreen);
+      if (!copied && AudioExtractionUtil.isAudioScreen(targetScreen) && AudioExtractionUtil.isVideoSuffix(FilenameUtils.getExtension(media.getName()))) {
+        Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.audio_extraction_failed", media.getName())));
+      }
     }
     catch (Exception e) {
       LOG.error("Copy failed: " + e.getMessage(), e);

@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.mania.ManiaSettingsController;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +37,7 @@ import static de.mephisto.vpin.ui.Studio.*;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class HeaderResizeableController implements Initializable {
+  private static final PseudoClass MAXIMIZED = PseudoClass.getPseudoClass("maximized");
   private final static Logger LOG = LoggerFactory.getLogger(HeaderResizeableController.class);
   private final Debouncer debouncer = new Debouncer();
 
@@ -154,6 +156,11 @@ public class HeaderResizeableController implements Initializable {
     FontIcon icon = WidgetFactory.createIcon(isMaximized ? "mdi2w-window-restore" : "mdi2w-window-maximize");
     icon.setIconSize(16);
     maximizeBtn.setGraphic(icon);
+
+    header.pseudoClassStateChanged(MAXIMIZED, isMaximized);
+    if (header.getScene() != null && header.getScene().getRoot() != null) {
+      header.getScene().getRoot().pseudoClassStateChanged(MAXIMIZED, isMaximized);
+    }
   }
 
   @FXML
@@ -198,8 +205,14 @@ public class HeaderResizeableController implements Initializable {
       if (stage != null) {
         stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
         stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-        stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-        stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+          refreshWindowMaximizedState(FXResizeHelper.isMaximized(stage));
+          onDragDone();
+        });
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+          refreshWindowMaximizedState(FXResizeHelper.isMaximized(stage));
+          onDragDone();
+        });
 
 
         header.setOnMouseMoved(new EventHandler<MouseEvent>() {

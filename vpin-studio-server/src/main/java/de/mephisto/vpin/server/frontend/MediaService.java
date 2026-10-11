@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.assets.AssetService;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
+import de.mephisto.vpin.server.converter.AudioExtractor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
@@ -93,8 +95,14 @@ public abstract class MediaService  {
       File mediaFile = getMediaFile(objectId, screen, name);
       if (mediaFile != null && mediaFile.exists()) {
         String extension = FilenameUtils.getExtension(name);
-        File targetFile = uniqueMediaAsset(objectId, target, extension, true);
-        FileUtil.copyFile(mediaFile, targetFile);
+        boolean extractAudio = AudioExtractionUtil.isAudioScreen(target) && AudioExtractionUtil.isVideoSuffix(extension);
+        File targetFile = uniqueMediaAsset(objectId, target, extractAudio ? "mp3" : extension, true);
+        if (extractAudio) {
+          AudioExtractor.extractMp3(mediaFile, targetFile);
+        }
+        else {
+          FileUtil.copyFile(mediaFile, targetFile);
+        }
         notifyGameScreenAssetsChanged(objectId, screen, targetFile);
         return true;
       }

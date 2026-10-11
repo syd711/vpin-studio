@@ -614,16 +614,18 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
         // the drop-in folder is part of "All Asset Sources" and can be selected explicitly
         if (source == null || dropInOnly) {
-          result.addAll(searchDropInFolder(term));
+          // the recursive folder scan may be slow, so keep it off the FX thread
+          serverAssetsList.setPlaceholder(new Label(Messages.get("dialog.search_assets_for", term)));
+          new Thread(() -> {
+            List<TableAsset> dropIn = searchDropInFolder(term);
+            Platform.runLater(() -> {
+              result.addAll(dropIn);
+              showSearchResult(result);
+            });
+          }, "Drop-In Folder Search").start();
+          return;
         }
-        ObservableList<TableAsset> assets = FXCollections.observableList(result);
-        serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
-        serverAssetsList.setItems(assets);
-        serverAssetsList.refresh();
-
-        if (assets.isEmpty()) {
-          serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.no_matching_assets_found")));
-        }
+        showSearchResult(result);
         return;
       }
 
@@ -632,6 +634,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.enter_search_term")));
       serverAssetsList.refresh();
     });
+  }
+
+  private void showSearchResult(List<TableAsset> result) {
+    ObservableList<TableAsset> assets = FXCollections.observableList(result);
+    serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
+    serverAssetsList.setItems(assets);
+    serverAssetsList.refresh();
+
+    if (assets.isEmpty()) {
+      serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.no_matching_assets_found")));
+    }
   }
 
   /**

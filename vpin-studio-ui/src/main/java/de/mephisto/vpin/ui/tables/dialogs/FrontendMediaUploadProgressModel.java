@@ -104,6 +104,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
     }
     catch (Exception e) {
       LOG.error("Media upload failed: " + e.getMessage(), e);
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.media_upload_failed", next.getName())));
     }
   }
 

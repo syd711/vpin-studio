@@ -208,6 +208,7 @@ public class ClientSettingsPreferencesController implements Initializable {
       uiSettings.setHideComponentWarning(false);
       uiSettings.setHideDismissConfirmations(false);
       uiSettings.setHideVPXStartInfo(false);
+      uiSettings.setHideAudioExtractionInfo(false);
       uiSettings.setHideRatingSyncInfo(false);
       uiSettings.setHideFrontendLaunchQuestion(false);
       uiSettings.setHideWheelIconGenerationConfirmation(false);

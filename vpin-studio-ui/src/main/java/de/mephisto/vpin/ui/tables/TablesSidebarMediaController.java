@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -205,7 +206,7 @@ public class TablesSidebarMediaController implements Initializable {
     this.tablesSidebarController = tablesSidebarController;
 
     for (TablesSidebarMediaItemPane pane : mediaRootPane.getMediaPanes()) {
-      FileDragEventHandler.install(mediaRootPane, pane, false, pane.getSuffixes())
+      FileDragEventHandler.install(mediaRootPane, pane, false, AudioExtractionUtil.getAcceptedSuffixes(pane.getScreen(), pane.getSuffixes()))
         .setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), pane.getScreen(), pane.getSuffixes()));
     }
   }

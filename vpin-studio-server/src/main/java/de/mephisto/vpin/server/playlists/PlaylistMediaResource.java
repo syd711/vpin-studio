@@ -10,6 +10,8 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
+import de.mephisto.vpin.server.converter.AudioExtractor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -114,13 +116,19 @@ public class PlaylistMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, suffix, append);
+      boolean extractAudio = AudioExtractionUtil.isAudioScreen(screen) && AudioExtractionUtil.isVideoSuffix(suffix);
+      File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, extractAudio ? "mp3" : suffix, append);
       if (out == null) {
         LOG.error("No playlist for media upload.");
         return JobDescriptorFactory.error("No playlist found for media upload.");
       }
       LOG.info("Uploading {}", out.getAbsolutePath());
-      UploadUtil.upload(file, out);
+      if (extractAudio) {
+        AudioExtractor.extractMp3(file, suffix, out);
+      }
+      else {
+        UploadUtil.upload(file, out);
+      }
 
       return JobDescriptorFactory.empty();
     }

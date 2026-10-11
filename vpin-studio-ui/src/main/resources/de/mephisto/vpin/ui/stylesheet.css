@@ -58,10 +58,20 @@
     -fx-background-radius: 6;
 }
 
+.root:maximized, .main:maximized {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
 .window-header {
     -fx-background-color: -fx-base-7;
     -fx-border-radius: 6px 6px 0 0;
     -fx-background-radius: 6px 6px 0 0;
+}
+
+.window-header:maximized {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
 }
 
 .dialog-header {

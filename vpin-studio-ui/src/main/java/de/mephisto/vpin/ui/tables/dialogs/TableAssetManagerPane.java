@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import javafx.geometry.Insets;
@@ -230,7 +231,7 @@ public class TableAssetManagerPane<P extends TableAssetManagerPane.MediaPane> ex
 
   public void installFileDragEventHandlers(TableAssetManagerDialogController controller, boolean embeddedMode) {
     for (MediaPane pane : allpanes) {
-      FileDragEventHandler.install(this, pane, false, pane.suffixes)
+      FileDragEventHandler.install(this, pane, false, AudioExtractionUtil.getAcceptedSuffixes(pane.screen, pane.suffixes))
         .setOnDragDropped(new TableMediaFileDropEventHandler(controller, pane.screen, pane.suffixes))
         .setEmbeddedMode(embeddedMode);
     }

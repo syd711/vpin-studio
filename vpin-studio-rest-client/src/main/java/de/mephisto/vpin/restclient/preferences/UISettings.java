@@ -18,6 +18,7 @@ public class UISettings extends JsonSettings {
 
   private boolean hideComponentWarning;
   private boolean hideVPXStartInfo;
+  private boolean hideAudioExtractionInfo;
   private boolean hideFrontendLaunchQuestion;
   private boolean hideWheelIconGenerationConfirmation;
 
@@ -652,6 +653,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideDismissConfirmations(boolean hideDismissConfirmations) {
     this.hideDismissConfirmations = hideDismissConfirmations;
+  }
+
+  public boolean isHideAudioExtractionInfo() {
+    return hideAudioExtractionInfo;
+  }
+
+  public void setHideAudioExtractionInfo(boolean hideAudioExtractionInfo) {
+    this.hideAudioExtractionInfo = hideAudioExtractionInfo;
   }
 
   public boolean isHideVPXStartInfo() {

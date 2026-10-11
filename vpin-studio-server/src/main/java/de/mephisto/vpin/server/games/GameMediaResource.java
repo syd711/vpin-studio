@@ -19,6 +19,8 @@ import de.mephisto.vpin.server.system.VidUtil;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.catalina.connector.ClientAbortException;
+import de.mephisto.vpin.restclient.util.AudioExtractionUtil;
+import de.mephisto.vpin.server.converter.AudioExtractor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -423,14 +425,20 @@ public class GameMediaResource {
       if ("webp".equalsIgnoreCase(suffix)) {
           suffix = "png";
       }
-      File out = gameMediaService.uniqueMediaAsset(gameId, screen, suffix, append);
+      boolean extractAudio = AudioExtractionUtil.isAudioScreen(screen) && AudioExtractionUtil.isVideoSuffix(suffix);
+      File out = gameMediaService.uniqueMediaAsset(gameId, screen, extractAudio ? "mp3" : suffix, append);
       if (out == null) {
         LOG.error("No game found for media upload.");
         return JobDescriptorFactory.error("No game found for media upload.");
       }
 
       LOG.info("Uploading {}", out.getAbsolutePath());
-      UploadUtil.upload(file,out);
+      if (extractAudio) {
+        AudioExtractor.extractMp3(file, suffix, out);
+      }
+      else {
+        UploadUtil.upload(file, out);
+      }
       out = CommonImageUtil.convertWebPToPngIfNeeded(out);
 
       if (vPinScreen != null) {
