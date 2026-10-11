@@ -434,7 +434,12 @@ public class GameMediaResource {
 
       LOG.info("Uploading {}", out.getAbsolutePath());
       if (extractAudio) {
-        AudioExtractor.extractMp3(file, suffix, out);
+        try {
+          AudioExtractor.extractMp3(file, suffix, out);
+        }
+        catch (Exception e) {
+          return JobDescriptorFactory.error(e.getMessage());
+        }
       }
       else {
         UploadUtil.upload(file, out);
