@@ -36,7 +36,7 @@ public class RomService {
         ScanResult scan = VPXFileScanner.scan(game.getGameFile(), scripts);
         if (!StringUtils.isEmpty(scan.getRom())) {
           ScoringDB scoringDatabase = systemService.getScoringDatabase();
-          Optional<ScoringDBMapping> first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getScannedRom() != null && mapping.getScannedRom().equals(scan.getRom())).findFirst();
+          Optional<ScoringDBMapping> first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getScannedRom() != null && mapping.getScannedRom().equals(scan.getRom()) && matchesGameFileName(mapping, game)).findFirst();
           if (first.isPresent()) {
             ScoringDBMapping scoringDBMapping = first.get();
             if (!StringUtils.isEmpty(scoringDBMapping.getScannedRom())) {
@@ -67,6 +67,13 @@ public class RomService {
     }
     LOG.info("Skipped reading of \"{}\" (emulator '{}'), only VPX tables can be scanned.", game.getGameDisplayName(), game.getEmulator());
     return new ScanResult();
+  }
+
+  private static boolean matchesGameFileName(ScoringDBMapping mapping, Game game) {
+    if (StringUtils.isEmpty(mapping.getGameFileName())) {
+      return true;
+    }
+    return game.getGameFileName() != null && game.getGameFileName().toLowerCase().contains(mapping.getGameFileName().toLowerCase());
   }
 
   private static void updateScanResult(ScoringDBMapping scoringDBMapping, ScanResult scan) {
