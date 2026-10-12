@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.models.*;
 import de.mephisto.vpin.ui.util.JFXHelper;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -30,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,6 +237,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
   private boolean saveEnabled;
+  private PauseTransition saveEnableDelay;
   private String latestSelection;
 
   // guards the directB2SCombo listener against programmatic (re-)population in refreshView
@@ -549,16 +552,18 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
 
   private void setSaveEnabled(boolean b) {
-    if (b) {
-      try {
-        Thread.sleep(DEBOUNCE_MS + 100);
-      }
-      catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+    // never block the FX thread here: re-enable saving after the pending debounced listeners have fired
+    if (saveEnableDelay != null) {
+      saveEnableDelay.stop();
     }
-
-    this.saveEnabled = b;
+    if (b) {
+      saveEnableDelay = new PauseTransition(Duration.millis(DEBOUNCE_MS + 100));
+      saveEnableDelay.setOnFinished(e -> this.saveEnabled = true);
+      saveEnableDelay.play();
+    }
+    else {
+      this.saveEnabled = false;
+    }
   }
 
   public void setGame(Optional<GameRepresentation> game) {
