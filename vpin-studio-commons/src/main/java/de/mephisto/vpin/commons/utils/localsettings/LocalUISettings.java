@@ -20,6 +20,7 @@ public class LocalUISettings {
   public static final String DROP_IN_FOLDER = "dropInFolder";
   public static final String DROP_IN_FOLDER_ENABLED = "dropInFolderEnabled";
   public static final String LANGUAGE = "language";
+  public static final String ASSET_MANAGER_DESELECTED_SOURCES = "assetManagerDeselectedSources";
 
   private static PropertiesStore store;
 

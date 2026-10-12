@@ -16,22 +16,25 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableAssetSearchProgressModel extends ProgressModel<String> {
+/**
+ * Searches the given term in each of the given asset sources, a null source searches all asset sources.
+ */
+public class TableAssetSearchProgressModel extends ProgressModel<TableAssetSource> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final Iterator<String> iterator;
+  private final Iterator<TableAssetSource> iterator;
   private final int gameId;
-  private final TableAssetSource source;
+  private final List<TableAssetSource> sources;
   private final VPinScreen screen;
-  private List<String> terms = new ArrayList<>();
+  private final String term;
 
-  public TableAssetSearchProgressModel(String title, int gameId, TableAssetSource source, VPinScreen screen, String term) {
+  public TableAssetSearchProgressModel(String title, int gameId, List<TableAssetSource> sources, VPinScreen screen, String term) {
     super(title);
     this.gameId = gameId;
-    this.source = source;
+    this.sources = new ArrayList<>(sources);
     this.screen = screen;
-    this.terms.add(term);
-    this.iterator = this.terms.iterator();
+    this.term = term;
+    this.iterator = this.sources.iterator();
   }
 
   @Override
@@ -41,26 +44,26 @@ public class TableAssetSearchProgressModel extends ProgressModel<String> {
 
   @Override
   public int getMax() {
-    return terms.size();
+    return sources.size();
   }
 
   @Override
-  public String getNext() {
+  public TableAssetSource getNext() {
     return iterator.next();
   }
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return sources.size() <= 1;
   }
 
   @Override
-  public String nextToString(String term) {
+  public String nextToString(TableAssetSource source) {
     return Messages.get("dialog.search_assets_for", term);
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, String term) {
+  public void processNext(ProgressResultModel progressResultModel, TableAssetSource source) {
     try {
       TableAssetSearch result = client.getGameMediaService().searchTableAsset(source, gameId, screen, term);
       progressResultModel.getResults().add(result);

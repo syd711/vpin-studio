@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-pinable-header.fxml" />
    </top>
@@ -91,7 +91,10 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <ComboBox fx:id="assetSourceComboBox" prefWidth="200" />
+                                    <MenuButton fx:id="assetSourceMenuButton" mnemonicParsing="false" prefWidth="200">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></MenuButton>
                                     <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit">
                                        <font>
                                           <Font size="14.0" />

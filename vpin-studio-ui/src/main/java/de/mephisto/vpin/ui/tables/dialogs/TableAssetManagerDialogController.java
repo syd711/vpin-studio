@@ -175,7 +175,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private ListView<TableAsset> serverAssetsList;
 
   @FXML
-  private ComboBox<AssetSourceModel> assetSourceComboBox;
+  private MenuButton assetSourceMenuButton;
+
+  private final List<AssetSourceModel> assetSourceModels = new ArrayList<>();
+  private boolean assetSourceSelectionChanged = false;
 
   @FXML
   private Button openDataManager;
@@ -279,9 +282,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onAssetSourceEdit(ActionEvent e) {
-    AssetSourceModel selectedItem = assetSourceComboBox.getSelectionModel().getSelectedItem();
-    if (selectedItem != null && selectedItem.getSource() != null) {
-      PreferencesDialogs.openMediaSource(selectedItem.getSource());
+    TableAssetSource editableSource = getEditableAssetSource();
+    if (editableSource != null) {
+      PreferencesDialogs.openMediaSource(editableSource);
     }
   }
 
@@ -602,18 +605,26 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onSearch() {
     Platform.runLater(() -> {
       String term = searchField.getText().trim();
-      if (!StringUtils.isEmpty(term)) {
-        TableAssetSource source = null;
-        if (assetSourceComboBox.isVisible()) {
-          source = assetSourceComboBox.getValue().getSource();
+      List<TableAssetSource> selectedSources = getSelectedAssetSources();
+      boolean noSourceSelected = assetSourceMenuButton.isVisible() && selectedSources.isEmpty();
+      if (!StringUtils.isEmpty(term) && !noSourceSelected) {
+        // a null source searches all server-side asset sources
+        List<TableAssetSource> serverSources = Collections.singletonList(null);
+        boolean searchDropIn = false;
+        if (assetSourceMenuButton.isVisible()) {
+          searchDropIn = selectedSources.stream().anyMatch(TableAssetManagerDialogController::isDropInSource);
+          List<TableAssetSource> selectedServerSources = selectedSources.stream().filter(s -> !isDropInSource(s)).collect(Collectors.toList());
+          long serverSourceCount = assetSourceModels.stream().filter(m -> !isDropInSource(m.getSource())).count();
+          if (selectedServerSources.size() < serverSourceCount) {
+            serverSources = selectedServerSources;
+          }
         }
+
         List<TableAsset> result = new ArrayList<>();
-        boolean dropInOnly = source != null && DROP_IN_SOURCE_ID.equals(source.getId());
-        if (!dropInOnly) {
-          result.addAll(searchMedia(source, screen, term).getResult());
+        if (!serverSources.isEmpty()) {
+          result.addAll(searchMedia(serverSources, screen, term));
         }
-        // the drop-in folder is part of "All Asset Sources" and can be selected explicitly
-        if (source == null || dropInOnly) {
+        if (searchDropIn) {
           // the recursive folder scan may be slow, so keep it off the FX thread
           serverAssetsList.setPlaceholder(new Label(Messages.get("dialog.search_assets_for", term)));
           new Thread(() -> {
@@ -631,7 +642,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
-      serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.enter_search_term")));
+      serverAssetsList.setPlaceholder(new Label(noSourceSelected ? Messages.get("tables.table_asset_manager_embedded.no_asset_source")
+          : Messages.get("tables.table_asset_manager.enter_search_term")));
       serverAssetsList.refresh();
     });
   }
@@ -697,20 +709,116 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         .collect(Collectors.toList());
   }
 
-  private TableAssetSearch searchMedia(TableAssetSource source, VPinScreen screen, String term) {
+  private List<TableAsset> searchMedia(List<TableAssetSource> sources, VPinScreen screen, String term) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
-        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), source, screen, term));
-    List<Object> results = progressDialog.getResults();
-    if (!results.isEmpty()) {
-      return (TableAssetSearch) results.getFirst();
+        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), sources, screen, term));
+    List<TableAsset> result = new ArrayList<>();
+    for (Object search : progressDialog.getResults()) {
+      result.addAll(((TableAssetSearch) search).getResult());
+    }
+    return result;
+  }
+
+  private static boolean isDropInSource(@Nullable TableAssetSource source) {
+    return source != null && DROP_IN_SOURCE_ID.equals(source.getId());
+  }
+
+  private List<TableAssetSource> getSelectedAssetSources() {
+    return assetSourceModels.stream().filter(AssetSourceModel::isSelected).map(AssetSourceModel::getSource).collect(Collectors.toList());
+  }
+
+  /**
+   * @return the selected asset source if it is the only selected one and can be configured, null otherwise
+   */
+  @Nullable
+  private TableAssetSource getEditableAssetSource() {
+    List<TableAssetSource> selectedSources = getSelectedAssetSources();
+    if (selectedSources.size() != 1) {
+      return null;
+    }
+    TableAssetSource source = selectedSources.getFirst();
+    return source.isSystemSource() || isDropInSource(source) ? null : source;
+  }
+
+  private void initAssetSourceMenu(List<TableAssetSource> assetSources) {
+    Set<String> deselectedIds = new HashSet<>(Arrays.asList(StringUtils.split(StringUtils.defaultString(LocalUISettings.getString(LocalUISettings.ASSET_MANAGER_DESELECTED_SOURCES)), ",")));
+
+    assetSourceModels.clear();
+    assetSourceMenuButton.getItems().clear();
+    for (TableAssetSource assetSource : assetSources) {
+      CheckBox checkBox = new CheckBox(assetSource.getName());
+      styleAssetSourceMenuEntry(checkBox);
+      checkBox.setSelected(!deselectedIds.contains(assetSource.getId()));
+      checkBox.selectedProperty().addListener((obs, oldValue, newValue) -> onAssetSourceSelectionChange());
+      assetSourceModels.add(new AssetSourceModel(assetSource, checkBox));
+
+      CustomMenuItem item = new CustomMenuItem(checkBox, false);
+      assetSourceMenuButton.getItems().add(item);
     }
 
-    TableAssetSearch empty = new TableAssetSearch();
-    empty.setResult(Collections.emptyList());
-    empty.setGameId(game.getId());
-    empty.setTerm(term);
-    empty.setScreen(screen);
-    return empty;
+    // custom menu items as well, so that all entries share the same font and height
+    Label selectAllLabel = new Label(Messages.get("tables.table_asset_manager_embedded.select_all_asset_sources"),
+        WidgetFactory.createIcon("mdi2c-checkbox-multiple-marked-outline"));
+    styleAssetSourceMenuEntry(selectAllLabel);
+    CustomMenuItem selectAllItem = new CustomMenuItem(selectAllLabel);
+    selectAllItem.setOnAction(e -> assetSourceModels.forEach(m -> m.setSelected(true)));
+
+    Label deselectAllLabel = new Label(Messages.get("tables.table_asset_manager_embedded.deselect_all_asset_sources"),
+        WidgetFactory.createIcon("mdi2c-checkbox-multiple-blank-outline"));
+    styleAssetSourceMenuEntry(deselectAllLabel);
+    CustomMenuItem deselectAllItem = new CustomMenuItem(deselectAllLabel);
+    deselectAllItem.setOnAction(e -> assetSourceModels.forEach(m -> m.setSelected(false)));
+
+    assetSourceMenuButton.getItems().addAll(new SeparatorMenuItem(), selectAllItem, deselectAllItem);
+
+    // search once the menu is closed, not on every checkbox click
+    assetSourceMenuButton.setOnHidden(e -> {
+      if (assetSourceSelectionChanged) {
+        assetSourceSelectionChanged = false;
+        onSearch();
+      }
+    });
+
+    refreshAssetSourceSelection();
+  }
+
+  private static void styleAssetSourceMenuEntry(Labeled entry) {
+    entry.getStyleClass().add("default-text");
+    entry.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
+    entry.setGraphicTextGap(8);
+    entry.setMinHeight(30);
+    entry.setPrefHeight(30);
+    entry.setMaxWidth(Double.MAX_VALUE);
+  }
+
+  private void onAssetSourceSelectionChange() {
+    assetSourceSelectionChanged = true;
+    String deselectedIds = assetSourceModels.stream()
+        .filter(m -> !m.isSelected() && m.getSource().getId() != null)
+        .map(m -> m.getSource().getId())
+        .collect(Collectors.joining(","));
+    LocalUISettings.saveProperty(LocalUISettings.ASSET_MANAGER_DESELECTED_SOURCES, deselectedIds);
+    refreshAssetSourceSelection();
+  }
+
+  private void refreshAssetSourceSelection() {
+    List<TableAssetSource> selectedSources = getSelectedAssetSources();
+    if (selectedSources.isEmpty()) {
+      assetSourceMenuButton.setText(Messages.get("tables.table_asset_manager_embedded.no_asset_source"));
+    }
+    else if (selectedSources.size() == assetSourceModels.size()) {
+      assetSourceMenuButton.setText(Messages.get("tables.table_asset_manager_embedded.all_asset_sources"));
+    }
+    else if (selectedSources.size() == 1) {
+      assetSourceMenuButton.setText(selectedSources.getFirst().getName());
+    }
+    else {
+      assetSourceMenuButton.setText(Messages.get("tables.table_asset_manager_embedded.n_asset_sources", selectedSources.size()));
+    }
+
+    boolean noSourceSelected = assetSourceMenuButton.isVisible() && selectedSources.isEmpty();
+    searchBtn.setDisable(noSourceSelected);
+    assetSourceBtn.setDisable(getEditableAssetSource() == null);
   }
 
   @FXML
@@ -813,7 +921,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     assetSearchBox.managedProperty().bindBidirectional(assetSearchBox.visibleProperty());
-    assetSourceComboBox.managedProperty().bindBidirectional(assetSourceComboBox.visibleProperty());
+    assetSourceMenuButton.managedProperty().bindBidirectional(assetSourceMenuButton.visibleProperty());
     setDefaultBtn.managedProperty().bindBidirectional(setDefaultBtn.visibleProperty());
     renameBtn.managedProperty().bindBidirectional(renameBtn.visibleProperty());
 
@@ -824,33 +932,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     List<TableAssetSource> assetSources = new ArrayList<>(client.getAssetSourcesService().getAssetSources());
     File dropInFolder = getDropInFolder();
-    assetSourceComboBox.setVisible(!assetSources.isEmpty() || dropInFolder != null);
+    assetSourceMenuButton.setVisible(!assetSources.isEmpty() || dropInFolder != null);
     if (!assetSources.isEmpty() || dropInFolder != null) {
-      assetSources.addFirst( null);
-
       TableAssetSource defaultAssetSource = client.getAssetSourcesService().getDefaultAssetSource();
       if (defaultAssetSource != null) {
-        assetSources.add(1, defaultAssetSource);
+        assetSources.addFirst(defaultAssetSource);
       }
       if (dropInFolder != null) {
         assetSources.add(createDropInAssetSource(dropInFolder));
       }
     }
-    List<AssetSourceModel> assetSourceModels = assetSources.stream().map(AssetSourceModel::new).collect(Collectors.toList());
-    assetSourceComboBox.setItems(FXCollections.observableList(assetSourceModels));
-    if (!assetSourceComboBox.getItems().isEmpty()) {
-      assetSourceComboBox.getSelectionModel().select(0);
-    }
-
-    assetSourceBtn.setDisable(true);
-    assetSourceComboBox.valueProperty().addListener(new ChangeListener<AssetSourceModel>() {
-      @Override
-      public void changed(ObservableValue<? extends AssetSourceModel> observable, AssetSourceModel oldValue, AssetSourceModel newValue) {
-        assetSourceBtn.setDisable(newValue == null || newValue.getSource() == null || newValue.getSource().isSystemSource()
-            || DROP_IN_SOURCE_ID.equals(newValue.getSource().getId()));
-        onSearch();
-      }
-    });
+    initAssetSourceMenu(assetSources);
 
     if (openDataManager != null) {
       openDataManager.managedProperty().bindBidirectional(openDataManager.visibleProperty());
@@ -1322,7 +1414,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     boolean mediaSearchSet = game != null && !StringUtils.isEmpty(game.getMediaSearch());
 //    searchField.setDisable(mediaSearchSet);
-//    assetSourceComboBox.setDisable(mediaSearchSet);
+//    assetSourceMenuButton.setDisable(mediaSearchSet);
 //    assetSourceBtn.setDisable(mediaSearchSet);
 //    clearCacheBtn.setDisable(mediaSearchSet);
 //    searchBtn.setDisable(mediaSearchSet);
@@ -1553,23 +1645,25 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.localStage = stage;
   }
 
-  class AssetSourceModel {
+  static class AssetSourceModel {
     private final TableAssetSource source;
+    private final CheckBox checkBox;
 
-    public AssetSourceModel(TableAssetSource source) {
+    public AssetSourceModel(@NonNull TableAssetSource source, @NonNull CheckBox checkBox) {
       this.source = source;
-    }
-
-    @Override
-    public String toString() {
-      if (source == null) {
-        return "All Asset Sources";
-      }
-      return source.getName();
+      this.checkBox = checkBox;
     }
 
     public TableAssetSource getSource() {
       return source;
+    }
+
+    public boolean isSelected() {
+      return checkBox.isSelected();
+    }
+
+    public void setSelected(boolean selected) {
+      checkBox.setSelected(selected);
     }
   }
 }
