@@ -21,6 +21,10 @@ public class IniUtil {
   }
 
   public static Boolean safeGetBoolean(SubnodeConfiguration conf, String key, Boolean defValue) {
-    return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getBoolean(key) : defValue;
+    // mind conf.getBoolean(key) returns a primitive, mixing it with defValue in a ternary would unbox a null defValue
+    if (conf != null && !conf.isEmpty() && conf.containsKey(key)) {
+      return conf.getBoolean(key);
+    }
+    return defValue;
   }
 }

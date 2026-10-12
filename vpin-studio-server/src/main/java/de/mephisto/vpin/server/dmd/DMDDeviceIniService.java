@@ -151,6 +151,7 @@ public class DMDDeviceIniService {
       iniConfiguration.setProperty(dmdStoreName + ".virtualdmd top", (int) dmdinfoZone.getY());
       iniConfiguration.setProperty(dmdStoreName + ".virtualdmd width", (int) dmdinfoZone.getWidth());
       iniConfiguration.setProperty(dmdStoreName + ".virtualdmd height", (int) dmdinfoZone.getHeight());
+      saveScalingOptions(iniConfiguration.getSection(dmdStoreName), dmdinfo);
     }
     else {
       // else update the global ones
@@ -161,6 +162,25 @@ public class DMDDeviceIniService {
     }
 
     return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
+  }
+
+  /**
+   * Writes the table specific scaling options, keys are only written when a value is set
+   */
+  private void saveScalingOptions(SubnodeConfiguration conf, DMDInfo dmdinfo) {
+    if (dmdinfo.getScaleToHd() != null) {
+      conf.setProperty("scaletohd", dmdinfo.getScaleToHd());
+    }
+    else {
+      conf.clearProperty("scaletohd");
+    }
+
+    if (!StringUtils.isEmpty(dmdinfo.getScalerMode())) {
+      conf.setProperty("scalermode", dmdinfo.getScalerMode());
+    }
+    else {
+      conf.clearProperty("scalermode");
+    }
   }
 
   public boolean saveAlphaNumericDMDInfoInIni(Game game, DMDInfo dmdinfo) {
@@ -235,7 +255,7 @@ public class DMDDeviceIniService {
     }
   }
 
-  public boolean saveDMDInfoInRegistry(Game game, DMDInfoZone dmdinfo) {
+  public boolean saveDMDInfoInRegistry(Game game, DMDInfo info, DMDInfoZone dmdinfo) {
     // clear any values in dmddevice that could overwrite registry values
     String rom = Objects.toString(game.getRomAlias(), game.getRom());
 
@@ -250,6 +270,8 @@ public class DMDDeviceIniService {
       if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
         conf.setProperty("virtualdmd enabled", true);
       }
+      // scaling options are not stored in registry, keep them in the rom section
+      saveScalingOptions(conf, info);
       saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
     }
 

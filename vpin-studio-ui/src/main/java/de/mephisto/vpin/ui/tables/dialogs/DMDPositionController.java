@@ -40,6 +40,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -61,6 +62,9 @@ public class DMDPositionController extends BasePrevNextController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final Debouncer debouncer = new Debouncer();
+
+  /** Combo value for scaling options that are not set */
+  private static final String SCALING_DEFAULT = "";
 
   private BaseTableController<?, ? extends BaseGameModel> baseMgrController;
 
@@ -112,6 +116,13 @@ public class DMDPositionController extends BasePrevNextController {
   private CheckBox disableBGScoreCheckbox;
   @FXML
   private Button resetToScoresBtn;
+
+  @FXML
+  private VBox scalingPane;
+  @FXML
+  private ComboBox<String> scaleToHdCombo;
+  @FXML
+  private ComboBox<String> scalerModeCombo;
 
   @FXML
   private HBox romPane;
@@ -513,6 +524,36 @@ public class DMDPositionController extends BasePrevNextController {
       setDialogDirty(true);
     });
 
+    // scaling options, the empty value means 'not set', so no entry is written in the dmddevice.ini
+    scaleToHdCombo.setItems(FXCollections.observableArrayList(SCALING_DEFAULT, "true", "false"));
+    scaleToHdCombo.setConverter(new StringConverter<>() {
+      @Override
+      public String toString(String value) {
+        return StringUtils.isEmpty(value) ? Messages.get("tables.dmd_position.scaling_default") :
+            Boolean.parseBoolean(value) ? Messages.get("tables.dmd_position.scaling_on") : Messages.get("tables.dmd_position.scaling_off");
+      }
+      @Override
+      public String fromString(String string) {
+        return null;
+      }
+    });
+    scaleToHdCombo.setValue(SCALING_DEFAULT);
+    scaleToHdCombo.valueProperty().addListener((obs, o, v) -> setDialogDirty(true));
+
+    scalerModeCombo.setItems(FXCollections.observableArrayList(SCALING_DEFAULT, "none", "doubler", "scale2x"));
+    scalerModeCombo.setConverter(new StringConverter<>() {
+      @Override
+      public String toString(String value) {
+        return StringUtils.isEmpty(value) ? Messages.get("tables.dmd_position.scaling_default") : value;
+      }
+      @Override
+      public String fromString(String string) {
+        return null;
+      }
+    });
+    scalerModeCombo.setValue(SCALING_DEFAULT);
+    scalerModeCombo.valueProperty().addListener((obs, o, v) -> setDialogDirty(true));
+
     // by default hide the noFullDMD Pane
     noFullDMDPane.setVisible(false);
 
@@ -617,6 +658,7 @@ public class DMDPositionController extends BasePrevNextController {
     DMDTypeCombo.setDisable(disabled);
     disablePane.setDisable(disabled);
     backglassScorePane.setDisable(disabled);
+    scalingPane.setDisable(disabled);
     //romPane.setDisable(disabled);
   } 
 
@@ -673,6 +715,13 @@ public class DMDPositionController extends BasePrevNextController {
     boolean isAlpha = DMDType.AlphaNumericDMD.equals(dmdinfo.getDMDType());
     backglassScorePane.setManaged(isAlpha);
     backglassScorePane.setVisible(isAlpha);
+
+    // scaling options are table specific dmddevice.ini settings, so only for the virtual DMD
+    boolean canScale = DMDType.VirtualDMD.equals(dmdinfo.getDMDType()) && dmdinfo.isSupportExtDmd();
+    scalingPane.setManaged(canScale);
+    scalingPane.setVisible(canScale);
+    scaleToHdCombo.setValue(dmdinfo.getScaleToHd() != null ? String.valueOf(dmdinfo.getScaleToHd()) : SCALING_DEFAULT);
+    scalerModeCombo.setValue(StringUtils.defaultIfEmpty(StringUtils.lowerCase(dmdinfo.getScalerMode()), SCALING_DEFAULT));
 
     // no local save if no rom
     if (storename != null) {
@@ -927,6 +976,10 @@ public class DMDPositionController extends BasePrevNextController {
     dmdinfo.setDisableViaIni(disableViaIniCheckbox.isSelected());
     dmdinfo.setDisableInVpinMame(disableViaMameCheckbox.isSelected());
     dmdinfo.setDisableBackglassScores(disableBGScoreCheckbox.isSelected());
+
+    String scaleToHd = scaleToHdCombo.getValue();
+    dmdinfo.setScaleToHd(StringUtils.isEmpty(scaleToHd) ? null : Boolean.valueOf(scaleToHd));
+    dmdinfo.setScalerMode(StringUtils.defaultIfEmpty(scalerModeCombo.getValue(), null));
 
     return dmdinfo;
   }

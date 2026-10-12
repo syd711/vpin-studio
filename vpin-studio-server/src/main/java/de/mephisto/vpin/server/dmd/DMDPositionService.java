@@ -267,6 +267,10 @@ public class DMDPositionService {
       main.setWidth(safeGet(conf, "virtualdmd width", safeGet(virtualdmdConf, "width")));
       main.setHeight(safeGet(conf, "virtualdmd height", safeGet(virtualdmdConf, "height")));
 
+      // scaling options, only the table specific ones, null when not set
+      info.setScaleToHd(safeGetBoolean(conf, "scaletohd", null));
+      info.setScalerMode(conf.containsKey("scalermode") ? conf.getString("scalermode") : null);
+
       // load alphanumeric scores if any
       int pos = 0;
       for (DMDInfoZone zone : alphaNumZones) {
@@ -475,7 +479,7 @@ public class DMDPositionService {
       if (dmdDeviceIni != null) {
         DMDInfoZone mainZone = getMainZone(dmdinfo);
         if (dmdDeviceIni.isUseRegistry()) {
-          return dmdDeviceIniService.saveDMDInfoInRegistry(game, mainZone);
+          return dmdDeviceIniService.saveDMDInfoInRegistry(game, dmdinfo, mainZone);
         }
         else {
           return dmdDeviceIniService.saveVirtualDMDInfoInIni(game, dmdinfo, mainZone, dmdinfo.isLocallySaved());

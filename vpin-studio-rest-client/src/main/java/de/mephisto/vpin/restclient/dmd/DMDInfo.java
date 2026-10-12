@@ -29,6 +29,11 @@ public class DMDInfo {
   private boolean disableInVpinMame;
   private boolean disableViaIni;
 
+  /** Per table 'scaletohd' flag of the dmddevice.ini, null when not set */
+  private Boolean scaleToHd;
+  /** Per table 'scalermode' of the dmddevice.ini (none, doubler, scale2x), null when not set */
+  private String scalerMode;
+
   private List<DMDInfoZone> zones = new ArrayList<>();
 
   //private boolean imageCentered;
@@ -147,6 +152,22 @@ public class DMDInfo {
 
   public void setDisableBackglassScores(boolean disableBackglassScore) {
     this.disableBackglassScores = disableBackglassScore;
+  }
+
+  public Boolean getScaleToHd() {
+    return scaleToHd;
+  }
+
+  public void setScaleToHd(Boolean scaleToHd) {
+    this.scaleToHd = scaleToHd;
+  }
+
+  public String getScalerMode() {
+    return scalerMode;
+  }
+
+  public void setScalerMode(String scalerMode) {
+    this.scalerMode = scalerMode;
   }
 
   //-----------------------
