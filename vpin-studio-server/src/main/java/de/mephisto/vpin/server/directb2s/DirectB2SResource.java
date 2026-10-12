@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2SFrameType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
+import de.mephisto.vpin.restclient.directb2s.ScreenResTarget;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -427,6 +428,11 @@ public class DirectB2SResource {
   public DirectB2sScreenRes getScreenRes(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName, @RequestParam(required = false) boolean tableOnly) {
     Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
     return backglassService.getScreenRes(emulatorId, fileName, game, tableOnly);
+  }
+
+  @PostMapping("/screenRes/bulkResize")
+  public int bulkResizeScreenRes(@JsonArg("emulatorId") int emulatorId, @JsonArg("target") String target, @JsonArg("width") int width, @JsonArg("height") int height, @JsonArg("dryRun") boolean dryRun) {
+    return backglassService.bulkResizeScreenRes(emulatorId, ScreenResTarget.valueOf(target), width, height, dryRun);
   }
 
   @GetMapping("/frame/{emuId}/{filename}")

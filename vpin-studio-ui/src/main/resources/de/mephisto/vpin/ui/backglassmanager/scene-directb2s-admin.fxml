@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -104,7 +106,14 @@
                </tooltip>
             </Button>
                 <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor" textFill="WHITE">
+                <SplitMenuButton fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor" textFill="WHITE">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onResBulkEdit" text="%backglass.directb2s_admin.res_bulk_edit">
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-screenshot" iconSize="14" />
+                            </graphic>
+                        </MenuItem>
+                    </items>
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -114,7 +123,7 @@
                     <tooltip>
                         <Tooltip text="%backglass.directb2s_admin.open_res_editor" />
                     </tooltip>
-                </Button>
+                </SplitMenuButton>
                 <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="%backglass.directb2s_admin.dmd_position" textFill="WHITE">
                     <font>
                         <Font size="14.0" />

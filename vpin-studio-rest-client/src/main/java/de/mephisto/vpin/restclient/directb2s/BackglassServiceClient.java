@@ -320,6 +320,22 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "directb2s/screenRes/save", screenres, ReturnMessage.class);
   }
 
+  /**
+   * Scales all table .res files of the emulator to the given resolution.
+   *
+   * @return the number of affected files
+   */
+  public int bulkResizeScreenRes(int emulatorId, ScreenResTarget target, int width, int height, boolean dryRun) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("target", target.name());
+    params.put("width", width);
+    params.put("height", height);
+    params.put("dryRun", dryRun);
+    Integer result = getRestClient().post(API + "directb2s/screenRes/bulkResize", params, Integer.class);
+    return result != null ? result : 0;
+  }
+
   public String uploadScreenResFrame(int emulatorId, String filename, File file) {
     return uploadFile(emulatorId, filename,
         "directb2s/screenRes/uploadFrame", file, String.class);

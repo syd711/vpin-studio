@@ -63,7 +63,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
 
   @FXML
-  private Button resBtn;
+  private SplitMenuButton resBtn;
 
   @FXML
   private Button uploadBtn;
@@ -192,6 +192,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     DirectB2S selection = getSelection();
     if (selection != null) {
       BackglassManagerDialogs.openResGenerator(selection.getEmulatorId(), selection.getFileName());
+    }
+  }
+
+  @FXML
+  private void onResBulkEdit(ActionEvent e) {
+    GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+    if (emulator != null && BackglassManagerDialogs.openResBulkEdit(emulator.getId())) {
+      reloadSelection();
     }
   }
 
@@ -549,7 +557,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     validationErrorText.setText("");
 
     this.dmdPositionBtn.setDisable(true);
-    this.resBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
     this.openBtn.setDisable(true);
     this.renameBtn.setDisable(true);

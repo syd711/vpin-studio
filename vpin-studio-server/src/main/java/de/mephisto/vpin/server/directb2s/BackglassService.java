@@ -1234,6 +1234,135 @@ public class BackglassService implements InitializingBean {
     }
   }
 
+  /**
+   * Converts the given screen of all table-dedicated .res files of the emulator to a new resolution.
+   * <ul>
+   *   <li>PLAYFIELD: the playfield size is set to the new resolution.</li>
+   *   <li>BACKGLASS: the backglass (or the framed background, if a frame is used) is scaled from its current
+   *   resolution to the new one, including the DMD, which is positioned relative to the backglass.</li>
+   *   <li>DMD: the DMD size and position are scaled from the current DMD size to the new one.</li>
+   * </ul>
+   * Files that already match the target resolution are left untouched, modified files are backed up as .res.bak.
+   *
+   * @param dryRun if true, nothing is written and only the affected files are counted
+   * @return the number of affected .res files
+   */
+  public int bulkResizeScreenRes(int emulatorId, ScreenResTarget target, int newWidth, int newHeight, boolean dryRun) {
+    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+    if (emulator == null || target == null || newWidth <= 0 || newHeight <= 0) {
+      return 0;
+    }
+
+    int affected = 0;
+    File gamesDirectory = new File(emulator.getGamesDirectory());
+    Collection<File> resFiles = org.apache.commons.io.FileUtils.listFiles(gamesDirectory, new String[]{"res"}, true);
+    for (File resFile : resFiles) {
+      File b2sFile = new File(resFile.getParentFile(), FilenameUtils.getBaseName(resFile.getName()) + ".directb2s");
+      if (!b2sFile.exists()) {
+        continue;
+      }
+
+      try {
+        List<String> lines = Files.readAllLines(resFile.toPath());
+        // indexes of the non-comment lines, they hold the values
+        List<Integer> valueLines = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
+          if (!lines.get(i).trim().startsWith("#")) {
+            valueLines.add(i);
+          }
+        }
+        if (valueLines.size() < 11) {
+          continue;
+        }
+
+        int currentWidth;
+        int currentHeight;
+        switch (target) {
+          case PLAYFIELD:
+            currentWidth = parseIntSafe(lines.get(valueLines.get(0)).trim());
+            currentHeight = parseIntSafe(lines.get(valueLines.get(1)).trim());
+            break;
+          case DMD:
+            currentWidth = parseIntSafe(lines.get(valueLines.get(7)).trim());
+            currentHeight = parseIntSafe(lines.get(valueLines.get(8)).trim());
+            break;
+          default:
+            currentWidth = parseIntSafe(lines.get(valueLines.get(2)).trim());
+            currentHeight = parseIntSafe(lines.get(valueLines.get(3)).trim());
+            if (valueLines.size() > 16) {
+              int bgWidth = parseIntSafe(lines.get(valueLines.get(14)).trim());
+              int bgHeight = parseIntSafe(lines.get(valueLines.get(15)).trim());
+              if (bgWidth > 0 && bgHeight > 0) {
+                currentWidth = bgWidth;
+                currentHeight = bgHeight;
+              }
+            }
+        }
+
+        if (currentWidth == newWidth && currentHeight == newHeight) {
+          continue;
+        }
+        // the playfield is set, the other screens are scaled and need a valid current size
+        if (!ScreenResTarget.PLAYFIELD.equals(target) && (currentWidth <= 0 || currentHeight <= 0)) {
+          continue;
+        }
+
+        affected++;
+        if (dryRun) {
+          continue;
+        }
+
+        if (ScreenResTarget.PLAYFIELD.equals(target)) {
+          lines.set(valueLines.get(0), Integer.toString(newWidth));
+          lines.set(valueLines.get(1), Integer.toString(newHeight));
+        }
+        else {
+          double scaleX = (double) newWidth / currentWidth;
+          double scaleY = (double) newHeight / currentHeight;
+
+          // value index -> true for x/width values, false for y/height values
+          Map<Integer, Boolean> scaled = new LinkedHashMap<>();
+          if (ScreenResTarget.BACKGLASS.equals(target)) {
+            scaled.put(2, true);
+            scaled.put(3, false);
+            scaled.put(5, true);
+            scaled.put(6, false);
+            scaled.put(12, true);
+            scaled.put(13, false);
+            scaled.put(14, true);
+            scaled.put(15, false);
+          }
+          // the DMD is positioned relative to the backglass and scales with it
+          scaled.put(7, true);
+          scaled.put(8, false);
+          scaled.put(9, true);
+          scaled.put(10, false);
+
+          for (Map.Entry<Integer, Boolean> entry : scaled.entrySet()) {
+            if (entry.getKey() >= valueLines.size()) {
+              continue;
+            }
+            int lineIndex = valueLines.get(entry.getKey());
+            String raw = lines.get(lineIndex).trim();
+            if (raw.isEmpty()) {
+              continue;
+            }
+            long value = Math.round(parseIntSafe(raw) * (entry.getValue() ? scaleX : scaleY));
+            lines.set(lineIndex, Long.toString(value));
+          }
+        }
+
+        Files.copy(resFile.toPath(), new File(resFile.getParentFile(), resFile.getName() + ".bak").toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        Files.write(resFile.toPath(), lines);
+        LOG.info("Converted {} of {} from {}x{} to {}x{}", target, resFile.getAbsolutePath(), currentWidth, currentHeight, newWidth, newHeight);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to scale screen res file {}: {}", resFile.getAbsolutePath(), e.getMessage(), e);
+      }
+    }
+    return affected;
+  }
+
   public String setScreenResFrame(int emulatorId, String b2sFilename, String screenName, InputStream is) throws IOException {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     File frameFolder = new File(emulator.getGamesDirectory(), "_Frames");
