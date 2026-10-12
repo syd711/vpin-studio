@@ -4,8 +4,10 @@ import de.mephisto.vpin.commons.StudioMediaPlayer;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -86,6 +88,32 @@ public class FrontendScreenController implements Initializable {
         root.setPadding(new Insets(image.getHeight() / 2 + image.getHeight() / 2 / 2, 0, 0, 0));
       }
     }
+
+    LOG.info("Centered asset layout: screen=" + screen.getWidth() + "x" + screen.getHeight()
+        + ", image=" + image.getWidth() + "x" + image.getHeight()
+        + ", assetRotation=" + asset.getRotation() + ", rootRotation=" + targetRotation
+        + ", padding=" + root.getPadding());
+
+    Platform.runLater(() -> {
+      try {
+        Bounds b = imageView.localToScreen(imageView.getBoundsInLocal());
+        if (b == null) {
+          LOG.info("Centered asset bounds: not available (image view not on screen)");
+          return;
+        }
+        double imgCenterX = b.getMinX() + b.getWidth() / 2;
+        double imgCenterY = b.getMinY() + b.getHeight() / 2;
+        double screenCenterX = screenStage.getX() + screenStage.getWidth() / 2;
+        double screenCenterY = screenStage.getY() + screenStage.getHeight() / 2;
+        LOG.info("Centered asset bounds: stage=(" + screenStage.getX() + "/" + screenStage.getY() + " "
+            + screenStage.getWidth() + "x" + screenStage.getHeight() + ")"
+            + ", image on screen=(" + b.getMinX() + "/" + b.getMinY() + " " + b.getWidth() + "x" + b.getHeight() + ")"
+            + ", center offset=(" + (imgCenterX - screenCenterX) + "/" + (imgCenterY - screenCenterY) + ")");
+      }
+      catch (Exception e) {
+        LOG.warn("Failed to log centered asset bounds: " + e.getMessage());
+      }
+    });
   }
 
   private void showOnDisplay(FrontendScreenAsset asset) throws IOException {
