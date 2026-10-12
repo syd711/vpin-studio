@@ -98,6 +98,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     templateBeanBinder.bindSpinner(rowSeparatorSpinner, "rowMargin", 0, 300);
     templateBeanBinder.bindCheckbox(renderRawHighscore, "rawScore");
     templateBeanBinder.bindCheckbox(renderNamesHighscore, "renderNames");
+    templateBeanBinder.bindCheckbox(renderFriendsHighscore, "renderFriends");
 
     renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       maxScoresSpinner.setDisable(t1);

@@ -41,6 +41,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private CardSettings cardSettings;
 
 
-  private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
+  private final Map<Integer, List<Score>> friendsScoreCache = new ConcurrentHashMap<>();
 
   public byte[] generateTableCardFile(Game game, CardTemplateType templateType) {
     CardTemplate template = cardTemplatesService.getTemplateForGame(game, templateType);
@@ -117,34 +118,40 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         highscoreService.getScoreSummary(serverId, game);
 
     if (template != null && template.isRenderFriends()) {
-      //add simply caching until a real card is generated, should be sufficient while editing
-      if (generatePreview) {
-        if (!scoreCache.containsKey(game.getId())) {
-          summary = getMergedScoreSummary(summary, game);
-          scoreCache.put(game.getId(), summary);
-        }
-        return scoreCache.get(game.getId());
-      }
-
-      scoreCache.clear();
-      summary = getMergedScoreSummary(summary, game);
+      summary.mergeScores(getFriendsScores(game, generatePreview));
     }
     return summary;
   }
 
   /**
-   * Returns a list of all scores for the given game
-   *
-   * @param game the game to retrieve the highscores for
-   * @return all highscores of the given player
+   * Returns the friends scores for the given game.
+   * Previews use a simple cache until a real card is generated, should be sufficient while editing.
    */
   @NonNull
-  public ScoreSummary getMergedScoreSummary(ScoreSummary summary, Game game) {
-    if (Features.MANIA_ENABLED) {
-      List<Score> externalScores = maniaService.getFriendsScoresFor(game);
-      summary.mergeScores(externalScores);
+  private List<Score> getFriendsScores(Game game, boolean useCache) {
+    if (!Features.MANIA_ENABLED || !Features.MANIA_SOCIAL_ENABLED) {
+      return Collections.emptyList();
     }
-    return summary;
+
+    if (useCache) {
+      List<Score> cached = friendsScoreCache.get(game.getId());
+      if (cached != null) {
+        return cached;
+      }
+    }
+    else {
+      friendsScoreCache.clear();
+    }
+
+    try {
+      List<Score> friendsScores = maniaService.getFriendsScoresFor(game);
+      friendsScoreCache.put(game.getId(), friendsScores);
+      return friendsScores;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to fetch friends scores for \"{}\": {}", game.getGameDisplayName(), e.getMessage(), e);
+      return Collections.emptyList();
+    }
   }
 
   private byte[] generatePreview(Game game, ScoreSummary summary, CardTemplate template) {
@@ -321,7 +328,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   public CardData getCardData(Game game, CardTemplate template, boolean withStreams) {
-    ScoreSummary summary = getScoreSummary(game, template, false);
+    ScoreSummary summary = getScoreSummary(game, template, true);
     return getCardData(game, summary, template, withStreams);
   }
 
@@ -385,7 +392,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       for (Score score : summary.getScores()) {
         try {
           String s = mapper.writeValueAsString(score);
-          scores.add(mapper.readValue(s, ScoreRepresentation.class));
+          ScoreRepresentation scoreRepresentation = mapper.readValue(s, ScoreRepresentation.class);
+          //the external flag is not serialized, so transfer it manually
+          scoreRepresentation.setExternal(score.isExternal());
+          scores.add(scoreRepresentation);
         }
         catch (Exception e) {
           LOG.error("cannot decode score %s", score.getFormattedScore(), e);

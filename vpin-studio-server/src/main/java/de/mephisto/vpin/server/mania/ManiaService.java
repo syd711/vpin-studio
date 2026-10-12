@@ -195,6 +195,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public boolean clearCache() {
     refreshDefaultCabinet();
+    this.contacts = null;
     this.getContacts();
     maniaServiceCache.clear();
     LOG.info("Invalidated Mania Caches");
@@ -242,7 +243,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public List<Score> getFriendsScoresFor(Game game) {
     List<Score> result = new ArrayList<>();
-    if (!Features.MANIA_ENABLED && !Features.MANIA_SOCIAL_ENABLED) {
+    if (!Features.MANIA_ENABLED || !Features.MANIA_SOCIAL_ENABLED) {
       return result;
     }
 

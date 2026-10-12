@@ -59,20 +59,6 @@
       "scoreLine": 2
     },
     {
-      "parser": "SinglePlayer",
-      "fileNames": [
-        "Champ.txt"
-      ],
-      "scoreLine": 5
-    },
-    {
-      "parser": "SinglePlayer",
-      "fileNames": [
-        "Dragonette.txt"
-      ],
-      "scoreLine": 6
-    },
-    {
       "parser": "TwoPlayers",
       "fileNames": [
         "Strip_JP_EM_1978.txt", "The_Fog_1979.txt"
@@ -389,31 +375,6 @@
     {
       "scannedRom": "Vulcaniv_1980",
       "rom": "Vulcan",
-      "tableName": "",
-      "textFile": ""
-    },
-    {
-      "scannedRom": "cardwhiz_1976",
-      "gameFileName": "Royal Flush",
-      "rom": "RoyalFlush",
-      "tableName": "",
-      "textFile": ""
-    },
-    {
-      "scannedRom": "spacewalk_1979",
-      "rom": "SpaceWalk",
-      "tableName": "",
-      "textFile": ""
-    },
-    {
-      "scannedRom": "startrek_1971",
-      "rom": "GStarTrek",
-      "tableName": "",
-      "textFile": ""
-    },
-    {
-      "scannedRom": "spanisheyes_1972",
-      "rom": "SpEyes",
       "tableName": "",
       "textFile": ""
     },
