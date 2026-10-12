@@ -69,6 +69,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public static final String LAUNCH_SCRIPT = "LaunchScript";
   public static final int DB_VERSION = 64;
   public static final String IS_FAV = "isFav";
+  private static final String DELETE_PLAYLIST_DETAILS_FOR_EMULATOR = "DELETE FROM PlayListDetails WHERE GameID IN (SELECT GameID FROM Games WHERE EMUID = ?)";
   public static final String POPPER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
   public static final String PIN_UP_MENU = "PinUpMenu";
   public String dbFilePath;
@@ -1408,6 +1409,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.close();
       LOG.info("Deleted emulator {}", emulatorId);
 
+      // must run before the games are deleted, otherwise orphaned (fav) playlist entries remain
+      PreparedStatement preparedStatementPlaylists = Objects.requireNonNull(connect).prepareStatement(DELETE_PLAYLIST_DETAILS_FOR_EMULATOR);
+      preparedStatementPlaylists.setInt(1, emulatorId);
+      preparedStatementPlaylists.executeUpdate();
+      preparedStatementPlaylists.close();
+      LOG.info("Deleted playlist entries of emulator {}", emulatorId);
 
       PreparedStatement preparedStatementGames = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Games WHERE EMUID = ?");
       preparedStatementGames.setInt(1, emulatorId);
@@ -1962,6 +1969,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public void deleteGames(int emuId) {
     Connection connect = this.connect();
     try {
+      PreparedStatement playlistStatement = Objects.requireNonNull(connect).prepareStatement(DELETE_PLAYLIST_DETAILS_FOR_EMULATOR);
+      playlistStatement.setInt(1, emuId);
+      playlistStatement.executeUpdate();
+      playlistStatement.close();
+
       Statement statement = Objects.requireNonNull(connect).createStatement();
       statement.execute("DELETE FROM Games WHERE EMUID = " + emuId);
       statement.close();
@@ -2160,6 +2172,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setSqlPlayList(sqlPlaylist);
 
     Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
+    // keep the raw PlayListDetails rows, the fav flags are evaluated by the frontend regardless of the SQL result
+    Collection<PlaylistGame> playlistDetails = playlistGameMap.values();
     if (sqlPlaylist) {
       playlistGameMap = updateSQLPlaylist(playlist, sql, playlistGameMap);
     }
@@ -2180,8 +2194,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
 
     if (globalFavsPlaylist != null && favsPlaylist != null) {
-      List<PlaylistGame> games = playlist.getGames();
-      for (PlaylistGame game : games) {
+      for (PlaylistGame game : playlistDetails) {
         if (game.isFav()) {
           favsPlaylist.getGames().add(game);
         }
