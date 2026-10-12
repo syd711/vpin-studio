@@ -37,9 +37,11 @@ import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -475,6 +477,24 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", Messages.get("dialog.dmd_position"));
     DMDPositionController controller = (DMDPositionController) stage.getUserData();
     controller.setGame(game, baseTableController);
+
+    FXResizeHelper.install(stage, 30, 6);
+    stage.setMinWidth(900);
+    stage.setMinHeight(600);
+    // the canvas and the sidebar scroll, so the layout min size guarantees header and buttons stay visible
+    stage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> {
+      Parent root = stage.getScene().getRoot();
+      stage.setMinWidth(Math.max(stage.getMinWidth(), root.minWidth(-1)));
+      stage.setMinHeight(Math.max(stage.getMinHeight(), root.minHeight(-1)));
+      // a persisted dialog size may be smaller than the minimum
+      if (stage.getWidth() < stage.getMinWidth()) {
+        stage.setWidth(stage.getMinWidth());
+      }
+      if (stage.getHeight() < stage.getMinHeight()) {
+        stage.setHeight(stage.getMinHeight());
+      }
+    });
+
     stage.showAndWait();
   }
 

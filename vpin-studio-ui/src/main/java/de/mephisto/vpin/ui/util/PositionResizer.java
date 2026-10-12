@@ -270,12 +270,36 @@ public class PositionResizer {
   public void setZoom(double zoom) {
     this.zoomX = zoom;
     this.zoomY = zoom;
+    refreshShapes();
   }
   public void setZoomX(double zoomX) {
     this.zoomX = zoomX;
+    refreshShapes();
   }
   public void setZoomY(double zoomY) {
     this.zoomY = zoomY;
+    refreshShapes();
+  }
+
+  /**
+   * Re-position the display elements from the box coordinates, to be called when the zoom changes
+   */
+  private void refreshShapes() {
+    int x = xProperty.get(), y = yProperty.get(), width = widthProperty.get(), height = heightProperty.get();
+    srFill.setX(x * zoomX);
+    srBnd.setX(x * zoomX);
+    srFill.setY(y * zoomY);
+    srBnd.setY(y * zoomY);
+    srFill.setWidth(width * zoomX);
+    srBnd.setWidth(width * zoomX);
+    srFill.setHeight(height * zoomY);
+    srBnd.setHeight(height * zoomY);
+    for (int i = 0; i <= 2; i++) {
+      for (int j = 0; j <= 2; j++) {
+        handles[i][j].setX((x + i * width / 2.0) * zoomX - i * handleSize2);
+        handles[i][j].setY((y + j * height / 2.0) * zoomY - j * handleSize2);
+      }
+    }
   }
 
   public Color getColor() {

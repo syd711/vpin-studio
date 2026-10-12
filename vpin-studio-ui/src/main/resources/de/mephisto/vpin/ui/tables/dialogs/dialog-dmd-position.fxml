@@ -6,9 +6,11 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -22,9 +24,9 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
+<BorderPane prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
    <top>
-      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-resizeable-header.fxml" />
    </top>
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
@@ -121,8 +123,52 @@
                      </children>
                   </StackPane>
 
-      <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
+                  <ToolBar>
+                     <items>
+                        <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify-minus" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%tables.dmd_position.zoom_out" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#onZoomIn" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify-plus" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%tables.dmd_position.zoom_in" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="zoomFitBtn" mnemonicParsing="false" onAction="#onZoomFit" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fit-to-page-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%tables.dmd_position.zoom_fit" />
+                           </tooltip>
+                        </Button>
+                        <Label fx:id="zoomLabel" styleClass="default-text" text="100%">
+                           <padding>
+                              <Insets left="6.0" />
+                           </padding>
+                        </Label>
+                     </items>
+                  </ToolBar>
+
+      <BorderPane fx:id="parentpane" VBox.vgrow="ALWAYS">
          <center>
+            <ScrollPane fx:id="canvasScrollPane" prefViewportHeight="770.0" prefViewportWidth="1026.0">
             <Pane fx:id="imagepane" styleClass="media-parent">
                <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
                </ImageView>
@@ -180,9 +226,14 @@
                   </children>
                </VBox>
             </Pane>
+            </ScrollPane>
          </center>
          <right>
-            <VBox prefWidth="280.0" BorderPane.alignment="TOP_LEFT">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="300.0" BorderPane.alignment="TOP_LEFT">
+               <BorderPane.margin>
+                  <Insets left="12.0" />
+               </BorderPane.margin>
+            <VBox prefWidth="280.0">
                <children>
                   <Label fx:id="tablePositionLabel" text="--">
                      <font>
@@ -456,11 +507,8 @@
                      </VBox.margin>
                   </GridPane>
                </children>
-
-               <BorderPane.margin>
-                  <Insets left="12.0" />
-               </BorderPane.margin>
             </VBox>
+            </ScrollPane>
          </right>
       </BorderPane>
 

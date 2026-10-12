@@ -30,11 +30,14 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -162,9 +165,14 @@ public class DMDPositionController extends BasePrevNextController {
   @FXML
   private BorderPane parentpane;
   @FXML
+  private ScrollPane canvasScrollPane;
+  @FXML
   private Pane imagepane;
 
-  private VPinScreen loadedVpinScreen; 
+  @FXML
+  private Label zoomLabel;
+
+  private VPinScreen loadedVpinScreen;
 
   private ProgressIndicator progressIndicator = new ProgressIndicator();
 
@@ -174,6 +182,20 @@ public class DMDPositionController extends BasePrevNextController {
   private double zoom = 1.0;
   /** The bounding box of the image */
   private BoundingBox bounds;
+
+  private static final double VIEW_SCALE_MIN = 0.25;
+  private static final double VIEW_SCALE_MAX = 6.0;
+  private static final double VIEW_SCALE_STEP = 1.25;
+
+  /** The size of the screen displayed in the canvas, in screen pixels */
+  private double screenWidth = 1024.0;
+  /** The size of the canvas when not zoomed, the screen fitted into 1024x768 */
+  private double baseFitWidth = 1024.0;
+  private double baseFitHeight = 768.0;
+  /** The user zoom factor applied on top of the base canvas size */
+  private double viewScale = 1.0;
+  /** When true, the canvas follows the size of the dialog */
+  private boolean fitToView = true;
 
   @FXML
   private VBox noFullDMDPane;
@@ -230,7 +252,7 @@ public class DMDPositionController extends BasePrevNextController {
    * Start the spinning indicator OR Stop spinning and display the image back
    */
   public void setWait(boolean on) {
-    parentpane.setCenter(on ? progressIndicator : imagepane);
+    parentpane.setCenter(on ? progressIndicator : canvasScrollPane);
   }
 
   private void clearGame() {
@@ -337,6 +359,62 @@ public class DMDPositionController extends BasePrevNextController {
         dragBox.centerHorizontally();
       }
     }
+  }
+
+  @FXML
+  private void onZoomIn() {
+    setViewScale(viewScale * VIEW_SCALE_STEP);
+  }
+
+  @FXML
+  private void onZoomOut() {
+    setViewScale(viewScale / VIEW_SCALE_STEP);
+  }
+
+  @FXML
+  private void onZoomFit() {
+    fitToView = true;
+    viewScale = computeFitScale();
+    applyViewScale();
+  }
+
+  private void setViewScale(double scale) {
+    fitToView = false;
+    viewScale = Math.clamp(scale, VIEW_SCALE_MIN, VIEW_SCALE_MAX);
+    applyViewScale();
+  }
+
+  /**
+   * The view scale so that the whole screen fits into the visible area of the canvas
+   */
+  private double computeFitScale() {
+    Bounds viewport = canvasScrollPane.getViewportBounds();
+    if (viewport.getWidth() <= 0 || viewport.getHeight() <= 0) {
+      // not laid out yet
+      return viewScale;
+    }
+    // keep a small margin so that no scrollbar is triggered by the border of the empty image
+    double scale = Math.min((viewport.getWidth() - 2) / baseFitWidth, (viewport.getHeight() - 2) / baseFitHeight);
+    return Math.clamp(scale, VIEW_SCALE_MIN, VIEW_SCALE_MAX);
+  }
+
+  /**
+   * Resize the canvas and re-project the drag boxes. Only the display changes,
+   * the positions of the boxes are kept in screen coordinates.
+   */
+  private void applyViewScale() {
+    double fitWidth = baseFitWidth * viewScale;
+    double fitHeight = baseFitHeight * viewScale;
+    this.zoom = fitWidth / screenWidth;
+
+    fullDMDImage.setFitWidth(fitWidth);
+    fullDMDImage.setFitHeight(fitHeight);
+    emptyImage.setWidth(fitWidth);
+    emptyImage.setHeight(fitHeight);
+    for (PositionResizer dragBox : dragBoxes) {
+      dragBox.setZoom(zoom);
+    }
+    zoomLabel.setText(Math.round(zoom * 100) + "%");
   }
 
   @FXML
@@ -460,6 +538,35 @@ public class DMDPositionController extends BasePrevNextController {
     emptyImage = new Rectangle();
     emptyImage.setFill(Color.grayRgb(30));
     emptyImage.setStroke(Color.BLACK);
+
+    // canvas zoom: follow the dialog size unless the user zoomed manually
+    canvasScrollPane.viewportBoundsProperty().addListener((obs, o, viewport) -> {
+      if (fitToView && viewport.getWidth() > 0 && viewport.getHeight() > 0) {
+        viewScale = computeFitScale();
+        applyViewScale();
+      }
+    });
+    canvasScrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
+      if (e.isControlDown() && e.getDeltaY() != 0) {
+        if (e.getDeltaY() > 0) {
+          onZoomIn();
+        }
+        else {
+          onZoomOut();
+        }
+        e.consume();
+      }
+    });
+    // the ScrollPane would consume arrows and page keys, give the drag boxes and prev/next navigation precedence
+    canvasScrollPane.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
+      KeyCode code = ke.getCode();
+      if (code.isArrowKey() || code == KeyCode.PAGE_UP || code == KeyCode.PAGE_DOWN) {
+        onKeyPressed(ke);
+        if (code == KeyCode.PAGE_UP || code == KeyCode.PAGE_DOWN) {
+          ke.consume();
+        }
+      }
+    });
 
     // create a toggle group 
     ToggleGroup tg = new ToggleGroup();
@@ -778,17 +885,16 @@ public class DMDPositionController extends BasePrevNextController {
     double screenWidth = onScreen != null? screenres.getScreenWidth(onScreen) : 1024.0;
     double screenHeight = onScreen != null? screenres.getScreenHeight(onScreen) : 768.0;
     boolean adjustWidth = screenWidth / screenHeight < 1024.0 / 768.0;
-    final double fitWidth = adjustWidth ? 768.0 * screenWidth / screenHeight : 1024.0;
-    final double fitHeight = adjustWidth ? 768.0 : 1024.0 * screenHeight / screenWidth;
+    this.screenWidth = screenWidth;
+    this.baseFitWidth = adjustWidth ? 768.0 * screenWidth / screenHeight : 1024.0;
+    this.baseFitHeight = adjustWidth ? 768.0 : 1024.0 * screenHeight / screenWidth;
 
     if (onScreen == null) {
       fullDMDImage.setImage(null);
-      // add an empty background to simulate an image 
+      // add an empty background to simulate an image
       imagepane.getChildren().remove(emptyImage);
-      emptyImage.setWidth(fitWidth);
-      emptyImage.setHeight(fitHeight);
       imagepane.getChildren().addFirst(emptyImage);
-      parentpane.setCenter(imagepane);
+      parentpane.setCenter(canvasScrollPane);
       loadedVpinScreen = null;
     }
     else if (forceRefresh || !onScreen.equals(loadedVpinScreen)) {
@@ -813,10 +919,8 @@ public class DMDPositionController extends BasePrevNextController {
         if (image == null || image.isError()) {
           fullDMDImage.setImage(null);
 
-          // add an empty background to simulate an image 
+          // add an empty background to simulate an image
           imagepane.getChildren().remove(emptyImage);
-          emptyImage.setWidth(fitWidth);
-          emptyImage.setHeight(fitHeight);
           imagepane.getChildren().addFirst(emptyImage);
 
           if (VPinScreen.Menu.equals(onScreen)) {
@@ -840,11 +944,10 @@ public class DMDPositionController extends BasePrevNextController {
           }
         }
         else {
-          fullDMDImage.setFitWidth(fitWidth);
-          fullDMDImage.setFitHeight(fitHeight);
+          // fit size already set by applyViewScale()
           fullDMDImage.setImage(image);
           //FIXME  fullDMDImage.setPreserveRatio(zone.isImageCentered());
-          LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
+          LOG.info("Image resized to {} x {}", fullDMDImage.getFitWidth(), fullDMDImage.getFitHeight());
 
           // allow direct interraction by key on dragboxes
           imagepane.requestFocus();
@@ -855,9 +958,15 @@ public class DMDPositionController extends BasePrevNextController {
       });
     }
 
-    // calculate our zoom
-      this.zoom = fitWidth / screenWidth;
-      this.bounds = new BoundingBox(0.0, 0.0, (fitWidth + 0.0) / zoom, fitHeight / zoom);
+    // the bounds are in screen coordinates, computed from the unscaled canvas so they do not depend on the view zoom
+    double baseZoom = baseFitWidth / screenWidth;
+    this.bounds = new BoundingBox(0.0, 0.0, baseFitWidth / baseZoom, baseFitHeight / baseZoom);
+
+    // calculate our zoom and size the canvas
+    if (fitToView) {
+      viewScale = computeFitScale();
+    }
+    applyViewScale();
   }
 
   private void loadDragBoxes(VPinScreen onScreen, boolean forceRefresh) {
