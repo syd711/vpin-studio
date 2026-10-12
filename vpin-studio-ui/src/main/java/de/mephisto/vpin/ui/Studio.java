@@ -608,7 +608,9 @@ public class Studio extends Application {
         }
         catch (IOException e) {
           LOG.error("Open failed: {}", e.getMessage());
+          return false;
         }
+        return true;
       }
       else {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
