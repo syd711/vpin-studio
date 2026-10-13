@@ -19,7 +19,7 @@
 
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/bulk-res-1.png?raw=true" width="400" />
 
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/bulk-res-2.png?raw=true" width="700" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/bulk-res-2.png?raw=true" width="500" />
 
 - **DMD Position**: 
   - Added the table specific "Scale to HD" and "Scaler Mode" settings of the `DmdDevice.ini`. When set to "Default", no entry is written and the global settings apply.
@@ -29,12 +29,12 @@
     
 - **Table Filter**: Added table metadata filters for table type, manufacturer (including an option to exclude manufacturers), minimum rating and year range.
 
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/table-filter.png?raw=true" width="400" />
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/table-filter.png?raw=true" width="250" />
 
 - **Auto-Match**: The auto-match dialogs have a new "Overwrite Metadata" option. When checked, the table metadata (e.g. year, manufacturer, type, theme, author, notes and tags) is overwritten with the data from the VP-Spreadsheet.
 - **Media / Audio Extraction**: Videos that are dropped or uploaded to an audio screen (e.g. "Audio" or "Audio Launch") are converted to MP3 now. Only the audio track is stored, not the video.
 
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/audio-extract.png?raw=true" width="400" />
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/audio-extract.png?raw=true" width="500" />
   
 - **Music Detection**: Improved the detection of music files referenced in table scripts. Music folders that are defined via script variables (e.g. `MusicDirectory = GetMusicFolder & "\Blood Machines OST"`) are resolved now, and audio files played via the PuPlayer of script-coded PUP packs are no longer reported as music files.
 - **Highscore Cards**: The "Render Friends" option of the score layer is stored with the template now. Friends scores from VPin Mania are cached for the preview and are shown as external scores on the card.
@@ -42,7 +42,7 @@
   - The asset source selection is a dropdown with checkboxes now, so you can search any combination of asset sources. The menu includes "Select All" and "Deselect All" entries, and the search button is disabled when no source is selected. All sources are selected by default and the selection is remembered.
   - The search in the drop-in folder runs in the background now, so the dialog no longer freezes for larger folders.
 
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/drop-in.png?raw=true" width="400" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/drop-in.png?raw=true" width="600" />
     
 - **Scoring Database**: ROM mappings can be restricted to specific table files now, so tables that share the same scanned ROM name can be mapped differently.
 
