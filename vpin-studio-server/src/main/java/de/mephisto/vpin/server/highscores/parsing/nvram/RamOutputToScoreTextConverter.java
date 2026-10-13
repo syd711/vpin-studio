@@ -89,6 +89,7 @@ public class RamOutputToScoreTextConverter {
           if (parser instanceof PinemhiRamParser) {
             List<String> raw = parser.getRaw(null, ramFile, locale);
             if (raw.isEmpty()) {
+              LOG.info("Parsing result is empty, no fpRAM support for {}", ramFile.getAbsolutePath());
               return null;
             }
 

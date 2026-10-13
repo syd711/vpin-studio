@@ -341,6 +341,18 @@ public class FolderLookupService {
     }
 
     File fpRamFolder = new File(game.getEmulator().getInstallationFolder(), "fpRAM");
+    if (!fpRamFolder.exists()) {
+      LOG.warn("Invalid fpRAM folder: {}", fpRamFolder);
+
+      File installationFolder = game.getEmulator().getInstallationFolder();
+      if (installationFolder.exists()) {
+        fpRamFolder = new File(game.getEmulator().getInstallationFolder().getParentFile(), "fpRAM");
+        if (!fpRamFolder.exists()) {
+          LOG.warn("Fallback fpRAM folder also not found: {}", fpRamFolder);
+          return null;
+        }
+      }
+    }
 
     String name = FilenameUtils.getBaseName(game.getGameFileName()) + ".fpRAM";
     File fpRamFile = new File(fpRamFolder, name);

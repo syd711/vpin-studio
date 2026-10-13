@@ -67,29 +67,34 @@ public class FrontendScreenController implements Initializable {
     Image image = new Image(url.openStream());
     LOG.info("Showing asset centered on playfield (" + image.getWidth() + "/" + image.getHeight() + ")");
 
+    // the monitor info is in physical pixels, the stage uses JavaFX logical units, so apply the Windows display scaling
+    double scaling = screen.getScaling() > 0 ? screen.getScaling() : 1;
+    double imageWidth = image.getWidth() / scaling;
+    double imageHeight = image.getHeight() / scaling;
+
     imageView.setImage(image);
     imageView.setPreserveRatio(true);
-    imageView.setFitWidth(image.getWidth());
-    imageView.setFitHeight(image.getHeight());
+    imageView.setFitWidth(imageWidth);
+    imageView.setFitHeight(imageHeight);
 
     Stage screenStage = asset.getScreenStage();
     screenStage.setX(0);
     screenStage.setY(0);
-    screenStage.setHeight(screen.getHeight());
-    screenStage.setWidth(screen.getWidth());
+    screenStage.setHeight(screen.getScaledHeight());
+    screenStage.setWidth(screen.getScaledWidth());
 
     int targetRotation = asset.getRotation() + (-90);
     root.setRotate(targetRotation);
     root.setPadding(new Insets(0, 0, 0, 0));
     if (targetRotation == -90 || targetRotation == 90) {
       //move the image a bit up for more distance to the wheel selector
-      root.setPadding(new Insets(0, 0, image.getHeight() / 2 + image.getHeight() / 2 / 2, 0));
+      root.setPadding(new Insets(0, 0, imageHeight / 2 + imageHeight / 2 / 2, 0));
       if (targetRotation == 90) {
-        root.setPadding(new Insets(image.getHeight() / 2 + image.getHeight() / 2 / 2, 0, 0, 0));
+        root.setPadding(new Insets(imageHeight / 2 + imageHeight / 2 / 2, 0, 0, 0));
       }
     }
 
-    LOG.info("Centered asset layout: screen=" + screen.getWidth() + "x" + screen.getHeight()
+    LOG.info("Centered asset layout: screen=" + screen.getWidth() + "x" + screen.getHeight() + " (scaling " + scaling + ")"
         + ", image=" + image.getWidth() + "x" + image.getHeight()
         + ", assetRotation=" + asset.getRotation() + ", rootRotation=" + targetRotation
         + ", padding=" + root.getPadding());
