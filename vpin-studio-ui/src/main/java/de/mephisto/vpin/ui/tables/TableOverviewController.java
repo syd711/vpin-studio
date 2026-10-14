@@ -709,7 +709,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        if (editorRootStack.getChildren().size() > 3) {
+        if (isEditorOpen(editorRootStack)) {
           return;
         }
 
@@ -736,7 +736,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        if (editorRootStack.getChildren().size() > 1) {
+        if (isEditorOpen(editorRootStack)) {
           return;
         }
 
@@ -1898,11 +1898,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     StackPane editorRootStack = tablesController.getEditorRootStack();
     List<Node> nodes = new ArrayList<>(editorRootStack.getChildren());
     for (Node node : nodes) {
-      if (node instanceof TabPane) {
-        continue;
+      if (node instanceof BorderPane) {
+        editorRootStack.getChildren().remove(node);
       }
-      editorRootStack.getChildren().remove(node);
     }
+  }
+
+  /**
+   * The stack always contains the tab pane and the overlay buttons, editors are added as BorderPane on top of them.
+   */
+  private boolean isEditorOpen(StackPane editorRootStack) {
+    return editorRootStack.getChildren().stream().anyMatch(node -> node instanceof BorderPane);
   }
 
   private String getIconColor(GameRepresentation value) {

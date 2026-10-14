@@ -1,7 +1,11 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.connectors.github.GithubRelease;
+import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
+import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundInfo;
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundOptions;
+import de.mephisto.vpin.restclient.altsound.Rom2AltSoundVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
@@ -29,11 +33,25 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Wraps rom2altsound (https://github.com/Le-Syl21/rom2altsound), which runs PinMAME on the ROM's sound board
@@ -46,8 +64,26 @@ public class Rom2AltSoundService {
   public static final String FOLDER_NAME = "rom2altsound";
   private static final String EXE_NAME = "rom2altsound.exe";
   private static final long CHECK_TIMEOUT_SECONDS = 60;
+  private static final long LATEST_RELEASE_CACHE_MILLIS = TimeUnit.HOURS.toMillis(1);
+  // the release asset of the command line program, the "gui" assets hold the original UI
+  private static final String RELEASE_ASSET = "windows-x86_64";
+  // the files of the release zip that are installed, the rest is ignored
+  private static final List<String> RELEASE_FILES = List.of(EXE_NAME, "README.md", "LICENSE");
 
   private final ObjectMapper objectMapper = JsonMapper.builder().build();
+
+  /**
+   * "rom2altsound roms" reports by ROM zip, the key is path, size and modification date of the zip
+   */
+  private final Map<String, JsonNode> romCheckCache = new ConcurrentHashMap<>();
+  private final AtomicInteger runningJobs = new AtomicInteger();
+
+  @Nullable
+  private volatile String installedVersion;
+  private volatile long installedVersionExeModified;
+  @Nullable
+  private volatile GithubRelease latestRelease;
+  private volatile long latestReleaseLoaded;
 
   @Autowired
   private AltSoundService altSoundService;
@@ -86,8 +122,8 @@ public class Rom2AltSoundService {
       info.setAltSoundExists(game.isAltSoundAvailable());
     }
 
-    if (!info.isAvailable()) {
-      info.setError("rom2altsound is not installed.");
+    if (!OSUtil.isWindows()) {
+      info.setError("rom2altsound is only supported on Windows.");
       return info;
     }
     if (StringUtils.isEmpty(game.getRom())) {
@@ -106,8 +142,19 @@ public class Rom2AltSoundService {
       return info;
     }
 
+    // checked after the ROM file, so that the file info is there without rom2altsound
+    if (!info.isAvailable()) {
+      info.setError("rom2altsound is not installed.");
+      return info;
+    }
+
     try {
-      JsonNode report = runRomCheck(romFile);
+      String cacheKey = romFile.getAbsolutePath().toLowerCase() + "|" + romFile.length() + "|" + romFile.lastModified();
+      JsonNode report = romCheckCache.get(cacheKey);
+      if (report == null) {
+        report = runRomCheck(romFile);
+        romCheckCache.put(cacheKey, report);
+      }
       applyRomCheck(info, report, game.getRom());
     }
     catch (Exception e) {
@@ -221,6 +268,194 @@ public class Rom2AltSoundService {
     jobService.offer(jobDescriptor);
     LOG.info("Offered rom2altsound job for ROM \"{}\", target folder {}", rom, altSoundFolder.getAbsolutePath());
     return jobDescriptor;
+  }
+
+  //------------------------------------------------- versions and installation
+
+  @NonNull
+  public Rom2AltSoundVersion getVersion(boolean refreshLatest) {
+    Rom2AltSoundVersion version = new Rom2AltSoundVersion();
+    version.setSupported(OSUtil.isWindows());
+    if (!version.isSupported()) {
+      version.setError("rom2altsound is only supported on Windows.");
+      return version;
+    }
+
+    version.setInstalled(isAvailable());
+    version.setInstalledVersion(getInstalledVersion());
+
+    try {
+      GithubRelease release = getLatestRelease(refreshLatest);
+      if (release != null) {
+        version.setLatestVersion(StringUtils.removeStart(release.getTag(), "v"));
+        version.setLatestReleaseUrl(release.getUrl());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read the latest rom2altsound release: {}", e.getMessage(), e);
+      version.setError("The latest release could not be read: " + e.getMessage());
+    }
+
+    version.setUpdateAvailable(version.getLatestVersion() != null
+        && (version.getInstalledVersion() == null || isNewer(version.getLatestVersion(), version.getInstalledVersion())));
+    return version;
+  }
+
+  /**
+   * Downloads the latest release from GitHub into the resources folder, for the first installation and for updates.
+   */
+  @NonNull
+  public synchronized Rom2AltSoundVersion install() throws Exception {
+    if (!OSUtil.isWindows()) {
+      throw new UnsupportedOperationException("rom2altsound is only supported on Windows.");
+    }
+    if (runningJobs.get() > 0) {
+      throw new IllegalStateException("rom2altsound is running, try again when the ALT sound generation has finished.");
+    }
+
+    GithubRelease release = getLatestRelease(true);
+    if (release == null) {
+      throw new IllegalStateException("No rom2altsound release found on " + Rom2AltSoundVersion.RELEASES_URL);
+    }
+    ReleaseArtifact artifact = release.getLatestArtifact();
+    if (artifact == null) {
+      throw new IllegalStateException("The rom2altsound release " + release.getTag() + " has no Windows download.");
+    }
+
+    File targetFolder = getExecutable().getParentFile();
+    if (!targetFolder.exists() && !targetFolder.mkdirs()) {
+      throw new IllegalStateException("Failed to create " + targetFolder.getAbsolutePath());
+    }
+
+    File zip = File.createTempFile("rom2altsound-", ".zip");
+    try {
+      LOG.info("Downloading rom2altsound {} from {}", release.getTag(), artifact.getUrl());
+      download(artifact.getUrl(), zip);
+      if (extract(zip, targetFolder) == 0 || !getExecutable().exists()) {
+        throw new IllegalStateException("The download did not contain " + EXE_NAME);
+      }
+      LOG.info("Installed rom2altsound {} into {}", release.getTag(), targetFolder.getAbsolutePath());
+    }
+    finally {
+      if (!zip.delete()) {
+        zip.deleteOnExit();
+      }
+    }
+
+    // a newer PinMAME may know more sets
+    romCheckCache.clear();
+    installedVersion = null;
+    return getVersion(false);
+  }
+
+  private void download(@NonNull String url, @NonNull File target) throws Exception {
+    HttpClient client = HttpClient.newBuilder()
+        .followRedirects(HttpClient.Redirect.NORMAL)
+        .connectTimeout(Duration.ofSeconds(20))
+        .build();
+    HttpRequest request = HttpRequest.newBuilder(URI.create(url)).header("User-Agent", "VPin-Studio").GET().build();
+    HttpResponse<Path> response = client.send(request, HttpResponse.BodyHandlers.ofFile(target.toPath()));
+    if (response.statusCode() != 200) {
+      throw new IllegalStateException("Download of " + url + " failed with HTTP " + response.statusCode());
+    }
+  }
+
+  private int extract(@NonNull File zip, @NonNull File targetFolder) throws Exception {
+    int count = 0;
+    try (ZipInputStream in = new ZipInputStream(Files.newInputStream(zip.toPath()))) {
+      ZipEntry entry;
+      while ((entry = in.getNextEntry()) != null) {
+        if (entry.isDirectory()) {
+          continue;
+        }
+        // only the known files, by their name, wherever they are in the zip
+        String name = new File(entry.getName()).getName();
+        if (!RELEASE_FILES.contains(name)) {
+          continue;
+        }
+        File tmp = new File(targetFolder, name + ".download");
+        Files.copy(in, tmp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(tmp.toPath(), new File(targetFolder, name).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        count++;
+      }
+    }
+    return count;
+  }
+
+  @Nullable
+  private GithubRelease getLatestRelease(boolean refresh) throws Exception {
+    if (refresh || latestRelease == null || System.currentTimeMillis() - latestReleaseLoaded > LATEST_RELEASE_CACHE_MILLIS) {
+      latestRelease = GithubReleaseFactory.loadRelease(Rom2AltSoundVersion.RELEASES_URL, List.of(RELEASE_ASSET), List.of("gui"));
+      latestReleaseLoaded = System.currentTimeMillis();
+    }
+    return latestRelease;
+  }
+
+  /**
+   * "0.2.6" from "rom2altsound 0.2.6" (--version), cached until the executable changes.
+   */
+  @Nullable
+  private String getInstalledVersion() {
+    if (!isAvailable()) {
+      return null;
+    }
+    File exe = getExecutable();
+    String version = installedVersion;
+    if (version != null && installedVersionExeModified == exe.lastModified()) {
+      return version;
+    }
+    try {
+      Process process = new ProcessBuilder(exe.getAbsolutePath(), "--version").redirectErrorStream(true).start();
+      String output;
+      try (InputStream in = process.getInputStream()) {
+        output = IOUtils.toString(in, StandardCharsets.UTF_8).trim();
+      }
+      if (!process.waitFor(CHECK_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+        process.destroyForcibly();
+        return null;
+      }
+      version = StringUtils.removeStart(StringUtils.removeStart(output, "rom2altsound").trim(), "v");
+      installedVersion = version;
+      installedVersionExeModified = exe.lastModified();
+      return version;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read the rom2altsound version: {}", e.getMessage(), e);
+      return null;
+    }
+  }
+
+  /**
+   * Compares dotted version numbers, e.g. 0.2.10 is newer than 0.2.6.
+   */
+  static boolean isNewer(@NonNull String latest, @NonNull String installed) {
+    String[] l = latest.split("[.-]");
+    String[] i = installed.split("[.-]");
+    for (int n = 0; n < Math.max(l.length, i.length); n++) {
+      int a = n < l.length ? parseVersionPart(l[n]) : 0;
+      int b = n < i.length ? parseVersionPart(i[n]) : 0;
+      if (a != b) {
+        return a > b;
+      }
+    }
+    return false;
+  }
+
+  private static int parseVersionPart(@NonNull String s) {
+    try {
+      return Integer.parseInt(s.replaceAll("\\D", ""));
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
+  }
+
+  void jobStarted() {
+    runningJobs.incrementAndGet();
+  }
+
+  void jobFinished() {
+    runningJobs.decrementAndGet();
   }
 
   /**

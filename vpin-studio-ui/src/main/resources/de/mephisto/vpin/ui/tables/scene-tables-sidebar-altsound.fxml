@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -161,6 +162,17 @@
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
+                  </Button>
+                  <Button fx:id="rom2AltSoundBtn" mnemonicParsing="false" onAction="#onRom2AltSound" text="%tables.tables_sidebar_altsound.create_from_rom" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-box-multiple-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%tables.tables_sidebar_altsound.create_from_rom_tooltip" />
+                     </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
                   <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">

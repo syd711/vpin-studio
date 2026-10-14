@@ -2,8 +2,16 @@ package de.mephisto.vpin.restclient.altsound;
 
 /**
  * Options for generating an ALT sound pack from a ROM with rom2altsound.
+ * The pack is always installed in the G-Sound format.
  */
 public class Rom2AltSoundOptions {
+  public static final String VOLUME_FACTORY = "factory";
+  public static final String VOLUME_REFERENCE = "reference";
+
+  public static final int DEFAULT_MAX_SECS = 120;
+  public static final int DEFAULT_LOOP_MAX_SECS = 240;
+  public static final int DEFAULT_INTRO_LOOP_SECS = 300;
+
   /**
    * replace an existing ALT sound pack of the game
    */
@@ -13,19 +21,47 @@ public class Rom2AltSoundOptions {
    */
   private boolean enableAltSound = true;
   /**
-   * "factory" (the game's own master volume) or "reference" (the loudest that does not clip)
+   * {@link #VOLUME_FACTORY} (the game's own master volume) or {@link #VOLUME_REFERENCE} (the loudest that does not clip)
    */
-  private String volume = "factory";
+  private String volume = VOLUME_FACTORY;
   /**
-   * commands playing the same audio share one file
+   * --max-secs: longest file of a sound that keeps playing and whose loop is not found
+   */
+  private int maxSecs = DEFAULT_MAX_SECS;
+  /**
+   * --loop-max-secs: how long a sound that keeps playing is recorded while looking for its loop, 0: no loop search
+   */
+  private int loopMaxSecs = DEFAULT_LOOP_MAX_SECS;
+  /**
+   * --intro-loop-secs: length of the file a loop with an intro of its own plays from, 0: the body alone
+   */
+  private int introLoopSecs = DEFAULT_INTRO_LOOP_SECS;
+  /**
+   * --merge-twins: commands playing the same audio share one file
    */
   private boolean mergeTwins;
   /**
-   * write DC-blocked audio (10 Hz high-pass) instead of the raw emulated samples
+   * --dc-block: write DC-blocked audio (10 Hz high-pass) instead of the raw emulated samples
    */
   private boolean dcBlock;
   /**
-   * stop after N commands, 0 for all; mainly for testing
+   * --no-factory: skip the factory settings boot
+   */
+  private boolean noFactory;
+  /**
+   * --check-ducking: DCS only, verify the music ducking after the extraction
+   */
+  private boolean checkDucking;
+  /**
+   * --no-chip-check: WPCS and System 11, skip the chips pass (faster, but no voice lines, ducking and stops)
+   */
+  private boolean noChipCheck;
+  /**
+   * --bsmt-hle: BSMT boards, use PinMAME's older BSMT2000 emulation
+   */
+  private boolean bsmtHle;
+  /**
+   * --limit: stop after N commands, 0 for all; mainly for testing
    */
   private int limit;
 
@@ -53,6 +89,30 @@ public class Rom2AltSoundOptions {
     this.volume = volume;
   }
 
+  public int getMaxSecs() {
+    return maxSecs;
+  }
+
+  public void setMaxSecs(int maxSecs) {
+    this.maxSecs = maxSecs;
+  }
+
+  public int getLoopMaxSecs() {
+    return loopMaxSecs;
+  }
+
+  public void setLoopMaxSecs(int loopMaxSecs) {
+    this.loopMaxSecs = loopMaxSecs;
+  }
+
+  public int getIntroLoopSecs() {
+    return introLoopSecs;
+  }
+
+  public void setIntroLoopSecs(int introLoopSecs) {
+    this.introLoopSecs = introLoopSecs;
+  }
+
   public boolean isMergeTwins() {
     return mergeTwins;
   }
@@ -67,6 +127,38 @@ public class Rom2AltSoundOptions {
 
   public void setDcBlock(boolean dcBlock) {
     this.dcBlock = dcBlock;
+  }
+
+  public boolean isNoFactory() {
+    return noFactory;
+  }
+
+  public void setNoFactory(boolean noFactory) {
+    this.noFactory = noFactory;
+  }
+
+  public boolean isCheckDucking() {
+    return checkDucking;
+  }
+
+  public void setCheckDucking(boolean checkDucking) {
+    this.checkDucking = checkDucking;
+  }
+
+  public boolean isNoChipCheck() {
+    return noChipCheck;
+  }
+
+  public void setNoChipCheck(boolean noChipCheck) {
+    this.noChipCheck = noChipCheck;
+  }
+
+  public boolean isBsmtHle() {
+    return bsmtHle;
+  }
+
+  public void setBsmtHle(boolean bsmtHle) {
+    this.bsmtHle = bsmtHle;
   }
 
   public int getLimit() {

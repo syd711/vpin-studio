@@ -23,7 +23,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.AltSoundEditorController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.editors.AltSoundEditorController">
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
          <children>
@@ -47,7 +47,7 @@
          <center>
             <StackPane styleClass="media-parent" BorderPane.alignment="CENTER">
                <children>
-                  <TableView fx:id="tableView" prefWidth="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
                       <TableColumn fx:id="columnId" prefWidth="75.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.id" />
                         <TableColumn fx:id="columnName" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%backups.backups.name" />

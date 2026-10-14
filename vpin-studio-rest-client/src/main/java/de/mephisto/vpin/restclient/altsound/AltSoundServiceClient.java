@@ -78,6 +78,17 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "rom2altsound/available", Boolean.class);
   }
 
+  public Rom2AltSoundVersion getRom2AltSoundVersion(boolean refresh) {
+    return getRestClient().get(API + "rom2altsound/version?refresh=" + refresh, Rom2AltSoundVersion.class);
+  }
+
+  /**
+   * Installs or updates rom2altsound with the latest GitHub release.
+   */
+  public Rom2AltSoundVersion installRom2AltSound() throws Exception {
+    return getRestClient().post(API + "rom2altsound/install", null, Rom2AltSoundVersion.class);
+  }
+
   public Rom2AltSoundInfo getRom2AltSoundInfo(int gameId) {
     return getRestClient().get(API + "rom2altsound/" + gameId, Rom2AltSoundInfo.class);
   }

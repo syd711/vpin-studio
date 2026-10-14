@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
+import de.mephisto.vpin.restclient.altsound.Rom2AltSoundVersion;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -502,6 +503,33 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", Messages.get("dialog.alt_sound_upload"));
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setData(stage, file, game, analysis, finalizer);
+    stage.showAndWait();
+  }
+
+  /**
+   * Creates an ALT sound pack from the table's ROM with rom2altsound, which is downloaded first when not installed yet.
+   */
+  public static void openRom2AltSoundDialog(GameRepresentation game) {
+    Rom2AltSoundVersion version = client.getAltSoundService().getRom2AltSoundVersion(false);
+    if (version == null || !version.isSupported()) {
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), version != null ? version.getError() : Messages.get("tables.rom2altsound.install_failed"));
+      return;
+    }
+    if (!version.isInstalled()) {
+      version = Rom2AltSoundDialogController.install(Studio.stage);
+      if (version == null) {
+        return;
+      }
+    }
+
+    Stage stage = Dialogs.createStudioDialogStage(Rom2AltSoundDialogController.class, "dialog-rom2altsound.fxml", Messages.get("dialog.rom2altsound"));
+    Rom2AltSoundDialogController controller = (Rom2AltSoundDialogController) stage.getUserData();
+    controller.setData(stage, game, version);
+
+    FXResizeHelper.install(stage, 30, 6);
+    stage.setMinWidth(600);
+    stage.setMinHeight(400);
+
     stage.showAndWait();
   }
 

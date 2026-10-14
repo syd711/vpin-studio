@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundOptions;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
@@ -35,6 +36,8 @@ public class Rom2AltSoundJob implements Job {
   private static final Pattern TOTAL_PATTERN = Pattern.compile("^(\\d+) command\\(s\\) to extract");
   // "  0x0002 Music: Launch Fanfare & Main Theme   44.39 s ..."
   private static final Pattern COMMAND_PATTERN = Pattern.compile("^ {2}0x[0-9A-Fa-f]+ ");
+  // "format = altsound" in the [format] section of altsound.ini
+  private static final Pattern FORMAT_PATTERN = Pattern.compile("(?m)^([ \\t]*format[ \\t]*=[ \\t]*)[^\\s;]+");
   private static final int ERROR_LINES = 10;
 
   // the share of the progress bar for the boot and the installation, the rest is the extraction
@@ -68,6 +71,7 @@ public class Rom2AltSoundJob implements Job {
   public void execute(JobDescriptor result) {
     File stagingFolder = null;
     long start = System.currentTimeMillis();
+    service.jobStarted();
     try {
       stagingFolder = Files.createTempDirectory("rom2altsound-").toFile();
       result.setStatus(ServerMessages.get("rom2altsound.status.booting", locale, rom));
@@ -99,6 +103,7 @@ public class Rom2AltSoundJob implements Job {
       result.setError("ALT sound generation failed: " + e.getMessage());
     }
     finally {
+      service.jobFinished();
       if (stagingFolder != null && !SystemUtil.deleteFileOrFolder(stagingFolder)) {
         LOG.warn("Failed to delete rom2altsound staging folder {}", stagingFolder.getAbsolutePath());
       }
@@ -175,12 +180,37 @@ public class Rom2AltSoundJob implements Job {
     cmd.add("1");
     cmd.add("--no-html");
     cmd.add("--volume");
-    cmd.add("reference".equalsIgnoreCase(options.getVolume()) ? "reference" : "factory");
+    cmd.add(Rom2AltSoundOptions.VOLUME_REFERENCE.equalsIgnoreCase(options.getVolume()) ? Rom2AltSoundOptions.VOLUME_REFERENCE : Rom2AltSoundOptions.VOLUME_FACTORY);
+    if (options.getMaxSecs() > 0) {
+      cmd.add("--max-secs");
+      cmd.add(String.valueOf(options.getMaxSecs()));
+    }
+    // 0 is a valid value for both: no loop search / no extended intro file
+    if (options.getLoopMaxSecs() >= 0) {
+      cmd.add("--loop-max-secs");
+      cmd.add(String.valueOf(options.getLoopMaxSecs()));
+    }
+    if (options.getIntroLoopSecs() >= 0) {
+      cmd.add("--intro-loop-secs");
+      cmd.add(String.valueOf(options.getIntroLoopSecs()));
+    }
     if (options.isMergeTwins()) {
       cmd.add("--merge-twins");
     }
     if (options.isDcBlock()) {
       cmd.add("--dc-block");
+    }
+    if (options.isNoFactory()) {
+      cmd.add("--no-factory");
+    }
+    if (options.isCheckDucking()) {
+      cmd.add("--check-ducking");
+    }
+    if (options.isNoChipCheck()) {
+      cmd.add("--no-chip-check");
+    }
+    if (options.isBsmtHle()) {
+      cmd.add("--bsmt-hle");
     }
     if (options.getLimit() > 0) {
       cmd.add("--limit");
@@ -201,6 +231,23 @@ public class Rom2AltSoundJob implements Job {
     }
     // the staging folder is a temp folder, likely on another drive, so copy instead of moving
     FileUtils.copyDirectory(packFolder, altSoundFolder);
+    switchToGSound(new File(altSoundFolder, "altsound.ini"));
+  }
+
+  /**
+   * rom2altsound writes altsound.csv and g-sound.csv and selects the former in altsound.ini; we always use G-Sound.
+   */
+  private void switchToGSound(@NonNull File ini) throws Exception {
+    if (!ini.exists()) {
+      throw new IllegalStateException("rom2altsound did not write " + ini.getAbsolutePath());
+    }
+    String content = FileUtils.readFileToString(ini, StandardCharsets.UTF_8);
+    String updated = FORMAT_PATTERN.matcher(content).replaceFirst("$1" + AltSoundFormats.gsound);
+    if (updated.equals(content)) {
+      LOG.warn("No [format] entry found in {}, the pack keeps its format.", ini.getAbsolutePath());
+      return;
+    }
+    FileUtils.writeStringToFile(ini, updated, StandardCharsets.UTF_8);
   }
 
   @Override

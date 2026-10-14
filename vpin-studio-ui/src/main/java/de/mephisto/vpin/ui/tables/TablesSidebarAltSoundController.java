@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
+import de.mephisto.vpin.restclient.altsound.Rom2AltSoundInfo;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -51,6 +52,9 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button rom2AltSoundBtn;
 
   @FXML
   private Label nameLabel;
@@ -105,6 +109,11 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onUpload() {
     TableDialogs.openAltSoundUploadDialog(this.game.orElse(null), null, null, null);
+  }
+
+  @FXML
+  private void onRom2AltSound() {
+    game.ifPresent(TableDialogs::openRom2AltSoundDialog);
   }
 
   @FXML
@@ -190,6 +199,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(g.isEmpty() || StringUtils.isEmpty(g.get().getRom()));
+    refreshRom2AltSoundButton(g);
     deleteBtn.setDisable(true);
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
@@ -243,6 +253,34 @@ public class TablesSidebarAltSoundController implements Initializable {
             }
           });
     }
+  }
+
+  /**
+   * Only enabled for tables with a ROM and without ALT sound, and when rom2altsound supports the ROM.
+   * When rom2altsound is not installed yet, the ROM can't be checked, the dialog installs it first and checks then.
+   */
+  private void refreshRom2AltSoundButton(Optional<GameRepresentation> g) {
+    rom2AltSoundBtn.setDisable(true);
+    if (g.isEmpty() || StringUtils.isEmpty(g.get().getRom()) || g.get().isAltSoundAvailable()) {
+      return;
+    }
+
+    int gameId = g.get().getId();
+    JFXFuture.supplyAsync(() -> {
+          Rom2AltSoundInfo info = Studio.client.getAltSoundService().getRom2AltSoundInfo(gameId);
+          if (info == null || info.isAltSoundExists()) {
+            return false;
+          }
+          // not installed: nothing is known about the ROM yet, only that its file is there
+          return info.isAvailable() ? info.isSupported() : info.isRomFileExists();
+        })
+        .thenAcceptLater(enabled -> {
+          // the selection may have changed meanwhile
+          if (this.game.isPresent() && this.game.get().getId() == gameId) {
+            rom2AltSoundBtn.setDisable(!enabled);
+          }
+        })
+        .onErrorLater(e -> LOG.error("Failed to check the ROM of game {} for rom2altsound: {}", gameId, e.getMessage()));
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
