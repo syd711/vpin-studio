@@ -45,6 +45,7 @@
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/drop-in.png?raw=true" width="600" />
     
 - **Scoring Database**: ROM mappings can be restricted to specific table files now, so tables that share the same scanned ROM name can be mapped differently.
+- **Table Export**: Added the column "pupPackInstalled" to the table export. It contains `true` if a PUP pack is installed for the table, `false` otherwise.
 
 ### Bugfixes
 

@@ -2,12 +2,15 @@ package de.mephisto.vpin.server.exporter;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
@@ -33,6 +36,14 @@ public class TableExporterService extends ExporterService {
 
   private final static String PARAM_IGNORE_LIST = "ignoreList";
 
+  private final static String COLUMN_PUP_PACK_INSTALLED = "pupPackInstalled";
+
+  @Autowired
+  private GameService gameService;
+
+  @Autowired
+  private PupPacksService pupPacksService;
+
   public String export(Map<String, String> customQuery) throws Exception {
     try {
       List<String> ignoredList = updateIgnoreList(customQuery);
@@ -50,6 +61,8 @@ public class TableExporterService extends ExporterService {
         }
       }
 
+      boolean exportPupPackInstalled = sources.contains(PARAM_SOURCE_STUDIO) && !ignoredList.contains(COLUMN_PUP_PACK_INSTALLED);
+
       List<String> frontendFieldHeaders = new ArrayList<>();
       if (sources.contains(PARAM_SOURCE_FRONTEND)) {
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(TableDetails.class);
@@ -64,13 +77,16 @@ public class TableExporterService extends ExporterService {
 
       StringBuilder builder = new StringBuilder();
       List<String> allHeaders = new ArrayList<>(studioFieldHeaders);
+      if (exportPupPackInstalled) {
+        allHeaders.add(COLUMN_PUP_PACK_INSTALLED);
+      }
       allHeaders.addAll(frontendFieldHeaders);
       final CSVPrinter printer = createPrinter(customQuery, allHeaders, builder);
 
       List<Integer> emulatorIds = getEmulatorIds(customQuery);
       List<Integer> gameIds = getGameIds(customQuery);
       for (Integer emulatorId : emulatorIds) {
-        List<Game> knownGames = frontendService.getGamesByEmulator(emulatorId);
+        List<Game> knownGames = gameService.getKnownGames(emulatorId);
         for (Game game : knownGames) {
           try {
             if (!gameIds.isEmpty() && !gameIds.contains(game.getId())) {
@@ -79,6 +95,9 @@ public class TableExporterService extends ExporterService {
 
             List<Object> records = new ArrayList<>();
             exportGame(game, studioFieldHeaders, records);
+            if (exportPupPackInstalled) {
+              records.add(String.valueOf(pupPacksService.hasPupPack(game)));
+            }
             exportTableDetails(game, frontendFieldHeaders, records);
 
             if (!records.isEmpty()) {
