@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.altsound;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
@@ -69,5 +70,19 @@ public class AltSoundServiceClient extends VPinStudioClientService {
 
   public String getAudioUrl(AltSound altSound, int gameId, String item) {
     return "altsound/stream/" + gameId + "/" + altSound.getName() + "/" + item;
+  }
+
+  //------------------------------------------------- rom2altsound
+
+  public boolean isRom2AltSoundAvailable() {
+    return getRestClient().get(API + "rom2altsound/available", Boolean.class);
+  }
+
+  public Rom2AltSoundInfo getRom2AltSoundInfo(int gameId) {
+    return getRestClient().get(API + "rom2altsound/" + gameId, Rom2AltSoundInfo.class);
+  }
+
+  public JobDescriptor generateAltSound(int gameId, Rom2AltSoundOptions options) throws Exception {
+    return getRestClient().post(API + "rom2altsound/" + gameId, options, JobDescriptor.class);
   }
 }
