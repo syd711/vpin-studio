@@ -26,6 +26,7 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
   private final List<BulkImportItem> items;
   private final Iterator<BulkImportItem> iterator;
   private final Set<Integer> touchedGames = new HashSet<>();
+  private int currentIndex = -1;
 
   public BulkImportProgressModel(List<BulkImportItem> items) {
     super(Messages.get("dialog.bulk_importer"));
@@ -40,6 +41,7 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
 
   @Override
   public BulkImportItem getNext() {
+    currentIndex++;
     return iterator.next();
   }
 
@@ -58,7 +60,7 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
     try {
       int gameId = item.gameProperty().get().getId();
       JobDescriptor result = Studio.client.getGameMediaService().uploadMedia(item.getFile(), gameId, false, item.screenProperty().get(),
-          item.appendProperty().get(), VPinScreen.Loading, percent -> progressResultModel.setProgress(percent));
+          item.appendProperty().get(), VPinScreen.Loading, percent -> progressResultModel.setProgress((currentIndex + percent) / items.size()));
       if (!StringUtils.isEmpty(result.getError())) {
         LOG.error("Bulk import of {} failed: {}", item.getFile().getName(), result.getError());
         Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError()));

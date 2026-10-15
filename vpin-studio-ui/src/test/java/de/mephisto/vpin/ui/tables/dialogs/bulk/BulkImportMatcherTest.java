@@ -47,6 +47,20 @@ public class BulkImportMatcherTest {
   }
 
   @Test
+  public void matchesByVpsTableId() {
+    tz.setExtTableId("fVjpuc-H");
+    BulkImportMatcher matcher = new BulkImportMatcher(Arrays.asList(addams, tz));
+    List<BulkImportMatcher.Match> byFile = matcher.suggest(new File("C:/in/fVjpuc-H.png"), new File("C:/in"), BulkImportMatcher.MatchMode.FILENAME, 3);
+    assertEquals(2, byFile.get(0).game.getId());
+    assertEquals("vps", byFile.get(0).source);
+    assertEquals(1.0, byFile.get(0).score);
+
+    List<BulkImportMatcher.Match> byFolder = matcher.suggest(new File("C:/in/fVjpuc-H/wheel.png"), new File("C:/in"), BulkImportMatcher.MatchMode.FOLDER, 3);
+    assertEquals(2, byFolder.get(0).game.getId());
+    assertEquals("vps", byFolder.get(0).source);
+  }
+
+  @Test
   public void detectsScreen() {
     assertEquals(VPinScreen.BackGlass, BulkImportMatcher.detectScreen("Addams_Backglass"));
     assertEquals(VPinScreen.GameHelp, BulkImportMatcher.detectScreen("AddamsFamilyInstructions"));

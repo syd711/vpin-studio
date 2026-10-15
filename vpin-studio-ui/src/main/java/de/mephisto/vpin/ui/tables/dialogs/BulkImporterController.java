@@ -106,6 +106,8 @@ public class BulkImporterController implements Initializable, DialogController {
   private Button importBtn;
   @FXML
   private Button removeBtn;
+  @FXML
+  private Button removeUnmatchedBtn;
 
   private final ObservableList<BulkImportItem> items = FXCollections.observableArrayList(
       item -> new javafx.beans.Observable[]{item.gameProperty(), item.screenProperty()});
@@ -544,6 +546,7 @@ public class BulkImporterController implements Initializable, DialogController {
     summaryLabel.setText(Messages.get("bulk_importer.summary", items.size(), matched, selected)
         + (noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""));
     importBtn.setDisable(items.isEmpty() || !items.stream().allMatch(BulkImportItem::isImportable));
+    removeUnmatchedBtn.setDisable(matched == items.size());
   }
 
   //---------------- bulk actions ------------------------------------------------------------------------------------
@@ -589,6 +592,12 @@ public class BulkImporterController implements Initializable, DialogController {
     if (!items.isEmpty()) {
       tableView.getSelectionModel().select(Math.min(index, items.size() - 1));
     }
+    updateSummary();
+  }
+
+  @FXML
+  private void onRemoveUnmatched() {
+    items.removeIf(i -> i.gameProperty().get() == null);
     updateSummary();
   }
 

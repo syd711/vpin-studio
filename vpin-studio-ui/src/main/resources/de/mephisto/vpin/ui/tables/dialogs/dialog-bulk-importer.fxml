@@ -108,6 +108,14 @@
                         <Tooltip text="%bulk_importer.remove_tooltip" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="removeUnmatchedBtn" mnemonicParsing="false" onAction="#onRemoveUnmatched" styleClass="default-button" text="%bulk_importer.remove_unmatched">
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%bulk_importer.remove_unmatched_tooltip" />
+                     </tooltip>
+                  </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
                   <Button fx:id="selectMatchedBtn" mnemonicParsing="false" onAction="#onSelectMatched" styleClass="default-button" text="%bulk_importer.select_matched">
                      <graphic>

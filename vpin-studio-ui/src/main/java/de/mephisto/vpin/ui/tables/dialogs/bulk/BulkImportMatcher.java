@@ -147,19 +147,31 @@ public class BulkImportMatcher {
   public List<Match> suggest(File file, @Nullable File root, MatchMode mode, int limit) {
     Set<String> fileTokens = new LinkedHashSet<>();
     Set<String> folderTokens = new LinkedHashSet<>();
+    String fileName = null;
+    String folderName = null;
     if (mode != MatchMode.FOLDER) {
-      fileTokens.addAll(tokenize(FilenameUtils.getBaseName(file.getName())));
+      fileName = FilenameUtils.getBaseName(file.getName());
+      fileTokens.addAll(tokenize(fileName));
     }
     if (mode != MatchMode.FILENAME) {
       File parent = file.getParentFile();
       // only folders below the chosen root carry table information
       if (parent != null && (root == null || !parent.equals(root))) {
-        folderTokens.addAll(tokenize(parent.getName()));
+        folderName = parent.getName();
+        folderTokens.addAll(tokenize(folderName));
       }
     }
 
     List<Match> matches = new ArrayList<>();
     for (GameRepresentation game : games) {
+      // a name equal to the VPS table id is an exact match
+      String vpsTableId = game.getExtTableId();
+      if (StringUtils.isNotBlank(vpsTableId)
+          && (vpsTableId.equalsIgnoreCase(StringUtils.trim(fileName)) || vpsTableId.equalsIgnoreCase(StringUtils.trim(folderName)))) {
+        matches.add(new Match(game, 1, "vps"));
+        continue;
+      }
+
       Set<String> gt = gameTokens.get(game);
       double fileScore = score(fileTokens, gt);
       double folderScore = score(folderTokens, gt);
