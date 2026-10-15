@@ -8,11 +8,11 @@ import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.*;
 import org.jspecify.annotations.NonNull;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
-import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -132,27 +129,50 @@ public class AltSoundResource {
     }
   }
 
-  @GetMapping("/stream/{gameId}/{name}/{filename}")
-  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("gameId") int gameId, @PathVariable("name") String altSoundName, @PathVariable("filename") String filename) throws IOException {
+  /**
+   * Streams an ALT sound sample, unsupported formats (e.g. ogg) are transcoded to mp3 so that the client can play them.
+   *
+   * @param filename the filename as stored in the ALT sound csv, relative to the ALT sound folder
+   */
+  @GetMapping("/stream/{gameId}")
+  public ResponseEntity<Resource> stream(@PathVariable("gameId") int gameId, @RequestParam("file") String filename) {
     Game game = gameService.getGame(gameId);
-    AltSound altSound = altSoundService.getAltSound(game, altSoundName);
-    File file = new File(altSound.getCsvFile().getParentFile(), filename);
-    if (file.exists()) {
-      FileInputStream in = new FileInputStream(file);
-      byte[] bytes = IOUtils.toByteArray(in);
-      ByteArrayResource bytesResource = new ByteArrayResource(bytes);
-      in.close();
+    if (game == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    try {
+      File file = altSoundService.getPlayableAudioFile(game, filename);
+      if (file == null) {
+        return ResponseEntity.notFound().build();
+      }
 
       HttpHeaders responseHeaders = new HttpHeaders();
-      responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
-      responseHeaders.set(CONTENT_TYPE, "audio/ogg");
+      responseHeaders.set(CONTENT_TYPE, getAudioMimeType(file));
       responseHeaders.set("Access-Control-Allow-Origin", "*");
       responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
       responseHeaders.set("Cache-Control", "public, max-age=3600");
-      return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+      return ResponseEntity.ok().headers(responseHeaders).body(new FileSystemResource(file));
     }
+    catch (Exception e) {
+      LOG.error("Failed to stream ALT sound file \"{}\": {}", filename, e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Failed to stream ALT sound file: " + e.getMessage());
+    }
+  }
 
-    return ResponseEntity.notFound().build();
+  private static String getAudioMimeType(@NonNull File file) {
+    switch (FilenameUtils.getExtension(file.getName()).toLowerCase()) {
+      case "wav":
+        return "audio/wav";
+      case "aif":
+      case "aiff":
+        return "audio/aiff";
+      case "m4a":
+      case "aac":
+        return "audio/mp4";
+      default:
+        return "audio/mpeg";
+    }
   }
 
   private AltSound getAltSound(@NonNull Game game) {

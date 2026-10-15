@@ -120,8 +120,7 @@
                       <TableColumn fx:id="columnType" prefWidth="140.0" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.type" />
                         <TableColumn fx:id="columnDuck" prefWidth="137.59996032714844" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.ducking_profile" />
                         <TableColumn fx:id="columnGain" prefWidth="65.5999755859375" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.gain" />
-                        <TableColumn fx:id="columnFilename" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%tables.editors.editor_altsound.filename" />
-                        <TableColumn fx:id="columnPlay" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound2.play" visible="false" />
+                        <TableColumn fx:id="columnFilename" prefWidth="340.0" style="-fx-alignment: CENTER_LEFT;" text="%tables.editors.editor_altsound.filename" />
                         <TableColumn fx:id="columnFilesize" prefWidth="91.2000732421875" style="-fx-alignment: CENTER;" text="%tables.editors.editor_altsound.filesize" />
                     </columns>
                   </TableView>

@@ -17,6 +17,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /*********************************************************************************************************************
  * Alt Sound
@@ -68,8 +70,11 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     }
   }
 
-  public String getAudioUrl(AltSound altSound, int gameId, String item) {
-    return "altsound/stream/" + gameId + "/" + altSound.getName() + "/" + item;
+  /**
+   * @param filename the filename as stored in the ALT sound csv, relative to the ALT sound folder
+   */
+  public String getAudioUrl(int gameId, String filename) {
+    return getRestClient().getBaseUrl() + API + "altsound/stream/" + gameId + "?file=" + URLEncoder.encode(filename, StandardCharsets.UTF_8);
   }
 
   //------------------------------------------------- rom2altsound

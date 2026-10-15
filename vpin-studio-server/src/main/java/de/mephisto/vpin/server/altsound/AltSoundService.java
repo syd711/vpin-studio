@@ -8,12 +8,14 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
+import de.mephisto.vpin.server.converter.AudioExtractor;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +56,11 @@ public class AltSoundService implements InitializingBean {
 
   @Autowired
   private FolderLookupService folderLookupService;
+
+  /**
+   * Audio formats that can be played by the JavaFX media player, everything else is transcoded to mp3.
+   */
+  private static final List<String> PLAYABLE_FORMATS = Arrays.asList("mp3", "wav", "aif", "aiff", "m4a", "aac");
 
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
@@ -215,11 +223,44 @@ public class AltSoundService implements InitializingBean {
   }
 
   /**
-   * Only used for streaming
+   * Returns the given ALT sound sample in a format playable by the JavaFX media player.
+   * Unsupported formats like ogg are transcoded to mp3 into a temp cache folder.
+   *
+   * @param filename the filename as stored in the ALT sound csv, relative to the ALT sound folder
    */
-  public AltSound getAltSound(Game game, String name) {
-    File folder = folderLookupService.getAltSoundFolder(game, name);
-    return AltSoundLoaderFactory.load(folder);
+  @Nullable
+  public File getPlayableAudioFile(@NonNull Game game, @NonNull String filename) throws Exception {
+    File altSoundFolder = getAltSoundFolder(game);
+    if (altSoundFolder == null) {
+      return null;
+    }
+
+    File audioFile = new File(altSoundFolder, filename.replace("\\", "/"));
+    if (!audioFile.getCanonicalPath().startsWith(altSoundFolder.getCanonicalPath() + File.separator)) {
+      LOG.warn("Rejected ALT sound file \"{}\", not located inside {}", filename, altSoundFolder.getAbsolutePath());
+      return null;
+    }
+    if (!audioFile.isFile()) {
+      return null;
+    }
+
+    String extension = FilenameUtils.getExtension(audioFile.getName()).toLowerCase();
+    if (PLAYABLE_FORMATS.contains(extension)) {
+      return audioFile;
+    }
+
+    File cacheFolder = new File(System.getProperty("java.io.tmpdir"), "vpin-studio-altsound");
+    if (!cacheFolder.exists() && !cacheFolder.mkdirs()) {
+      throw new IOException("Failed to create ALT sound cache folder " + cacheFolder.getAbsolutePath());
+    }
+    String key = Integer.toHexString(audioFile.getAbsolutePath().toLowerCase().hashCode()) + "_" + audioFile.lastModified();
+    File mp3File = new File(cacheFolder, key + ".mp3");
+    synchronized (this) {
+      if (!mp3File.exists()) {
+        AudioExtractor.extractMp3(audioFile, mp3File);
+      }
+    }
+    return mp3File;
   }
 
   @Override

@@ -19,12 +19,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Paint;
-import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -69,13 +70,10 @@ public class AltSound2EditorController implements Initializable {
   private TableColumn<AltSoundEntryModel, Number> columnGain;
 
   @FXML
-  private TableColumn<AltSoundEntryModel, String> columnFilename;
+  private TableColumn<AltSoundEntryModel, AltSoundEntryModel> columnFilename;
 
   @FXML
   private TableColumn<AltSoundEntryModel, String> columnFilesize;
-
-  @FXML
-  private TableColumn<AltSoundEntryModel, AltSoundEntryModel> columnPlay;
 
   @FXML
   private TextField searchText;
@@ -126,8 +124,12 @@ public class AltSound2EditorController implements Initializable {
   private ChangeListener<AltSound2DuckingProfile> duckingProfileComboChangeListener;
   private TablesController tablesController;
 
+  private MediaPlayer mediaPlayer;
+  private String playingFilename;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
+    stopPlayback();
     this.tablesController.getEditorRootStack().getChildren().remove(root);
   }
 
@@ -240,66 +242,43 @@ public class AltSound2EditorController implements Initializable {
     columnType.setCellValueFactory(cellData -> cellData.getValue().channel);
 
 
-    Callback<TableColumn<AltSoundEntryModel, AltSoundEntryModel>, TableCell<AltSoundEntryModel, AltSoundEntryModel>> cellFactory = new Callback<>() {
-      @Override
-      public TableCell call(final TableColumn<AltSoundEntryModel, AltSoundEntryModel> param) {
-        final TableCell<AltSoundEntryModel, AltSoundEntryModel> cell = new TableCell<>() {
-          final Button btn = new Button("");
-
-          @Override
-          public void updateItem(AltSoundEntryModel item, boolean empty) {
-            super.updateItem(item, empty);
-            FontIcon fontIcon = new FontIcon();
-            fontIcon.setIconSize(18);
-            fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-            fontIcon.setIconLiteral("bi-play");
-            btn.setGraphic(fontIcon);
-            btn.setDisable(item == null || item.size.get().equals("0"));
-            btn.setVisible(!empty);
-            setGraphic(btn);
-            btn.setOnAction(event -> {
-              fontIcon.setIconLiteral("bi-stop");
-
-              final String fileUrl = client.getAltSoundService().getAudioUrl(altSound, game.getId(), item.filename.get());
-              String url = client.getURL(fileUrl);
-
-              Media media = new Media(url);
-              MediaPlayer mediaPlayer = new MediaPlayer(media);
-              mediaPlayer.setAutoPlay(true);
-              mediaPlayer.setCycleCount(0);
-              mediaPlayer.setMute(false);
-              mediaPlayer.setOnError(() -> {
-                fontIcon.setIconLiteral("bi-play");
-                LOG.warn("Media player error for URL {}: {}", url, mediaPlayer.getError() + ", URL: " + url);
-                mediaPlayer.stop();
-                mediaPlayer.dispose();
-              });
-
-              mediaPlayer.setOnEndOfMedia(() -> {
-                fontIcon.setIconLiteral("bi-play");
-              });
-            });
-          }
-        };
-        return cell;
-      }
-    };
-
-    columnPlay.setCellFactory(cellFactory);
-    columnPlay.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
-
-
     columnDuck.setCellValueFactory(cellData -> cellData.getValue().duck);
     columnGain.setCellValueFactory(cellData -> cellData.getValue().gain);
     columnFilesize.setCellValueFactory(cellData -> cellData.getValue().size);
-    columnFilename.setCellValueFactory(cellData -> {
-      AltSoundEntryModel entry = cellData.getValue();
-      Label label = new Label(entry.filename.getValue());
+    columnFilename.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue()));
+    columnFilename.setCellFactory(param -> new TableCell<>() {
+      private final FontIcon playIcon = new FontIcon();
+      private final Button playBtn = new Button();
+      private final Label label = new Label();
+      private final HBox box = new HBox(6, playBtn, label);
 
-      if (entry.size.get().equals("0")) {
-        label.setStyle(ERROR_STYLE + "-fx-font-weight: bold;");
+      {
+        playIcon.setIconSize(14);
+        playIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+        playBtn.setGraphic(playIcon);
+        playBtn.getStyleClass().add("ghost-button-tiny");
+        box.setAlignment(Pos.CENTER_LEFT);
       }
-      return new SimpleObjectProperty(label);
+
+      @Override
+      protected void updateItem(AltSoundEntryModel item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setGraphic(null);
+          return;
+        }
+
+        String filename = item.filename.get();
+        boolean playing = filename != null && filename.equals(playingFilename);
+        playIcon.setIconLiteral(playing ? "bi-stop" : "bi-play");
+        playBtn.setTooltip(new Tooltip(playing ? Messages.get("tables.editors.editor_altsound.stop") : Messages.get("tables.editors.editor_altsound2.play")));
+        playBtn.setDisable(!item.exists.get());
+        playBtn.setOnAction(event -> togglePlayback(filename));
+
+        label.setText(filename);
+        label.setStyle(item.exists.get() ? null : ERROR_STYLE + "-fx-font-weight: bold;");
+        setGraphic(box);
+      }
     });
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -500,6 +479,52 @@ public class AltSound2EditorController implements Initializable {
 
     duckingProfileCombo.valueProperty().addListener(duckingProfileComboChangeListener);
     channelCombo.valueProperty().addListener(channelComboChangeListener);
+  }
+
+  private void togglePlayback(String filename) {
+    boolean wasPlaying = filename.equals(playingFilename);
+    stopPlayback();
+    if (wasPlaying) {
+      return;
+    }
+
+    String url = client.getAltSoundService().getAudioUrl(game.getId(), filename);
+    try {
+      Media media = new Media(url);
+      MediaPlayer player = new MediaPlayer(media);
+      player.setCycleCount(1);
+      player.setMute(false);
+      player.setOnError(() -> {
+        LOG.warn("Media player error: {}, URL: {}", player.getError(), url);
+        if (player == mediaPlayer) {
+          stopPlayback();
+        }
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), "Failed to play \"" + filename + "\": " + player.getError().getMessage());
+      });
+      player.setOnEndOfMedia(() -> {
+        if (player == mediaPlayer) {
+          stopPlayback();
+        }
+      });
+      player.setAutoPlay(true);
+
+      mediaPlayer = player;
+      playingFilename = filename;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to play ALT sound file {}: {}", url, e.getMessage(), e);
+    }
+    tableView.refresh();
+  }
+
+  private void stopPlayback() {
+    if (mediaPlayer != null) {
+      mediaPlayer.stop();
+      mediaPlayer.dispose();
+      mediaPlayer = null;
+    }
+    playingFilename = null;
+    tableView.refresh();
   }
 
   private static class AltSoundEntryModel {
