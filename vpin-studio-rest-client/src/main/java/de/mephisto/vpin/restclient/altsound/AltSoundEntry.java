@@ -2,11 +2,30 @@ package de.mephisto.vpin.restclient.altsound;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * ID,CHANNEL,DUCK,GAIN,LOOP,STOP,NAME,FNAME,GROUP,SHAKER,SERIAL,PRELOAD,STOPCMD
  * 0x0002,0,100,85,100,0,"normal_prelaunch","0x0002-normal_prelaunch.ogg",1,,,0,
  */
 public class AltSoundEntry {
+  public static final String ID = "ID";
+  public static final String CHANNEL = "CHANNEL";
+  public static final String DUCK = "DUCK";
+  public static final String GAIN = "GAIN";
+  public static final String LOOP = "LOOP";
+  public static final String STOP = "STOP";
+  public static final String NAME = "NAME";
+  public static final String FNAME = "FNAME";
+  public static final String GROUP = "GROUP";
+  public static final String SHAKER = "SHAKER";
+  public static final String SERIAL = "SERIAL";
+  public static final String PRELOAD = "PRELOAD";
+  public static final String STOPCMD = "STOPCMD";
+
+  public static final List<String> DEFAULT_HEADERS = List.of(ID, CHANNEL, DUCK, GAIN, LOOP, STOP, NAME, FNAME, GROUP, SHAKER, SERIAL, PRELOAD, STOPCMD);
+
   private String id;
   private String channel;
   private int duck;
@@ -144,50 +163,79 @@ public class AltSoundEntry {
   }
 
   public String toCSV(AltSound altSound) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("\"");
-    builder.append(this.id);
-    builder.append("\",");
-    builder.append(StringUtils.isEmpty(this.channel) ? "" : this.channel);
-    builder.append(",");
-    builder.append(this.duck);
-    builder.append(",");
-    builder.append(this.gain);
-    builder.append(",");
-    builder.append(this.loop);
-    builder.append(",");
-    builder.append(this.stop);
-    builder.append(",\"");
-    builder.append(this.name);
-    builder.append("\",\"");
-    builder.append(this.filename);
-    builder.append("\"");
-
-    if (altSound.getHeaders().contains("GROUP")) {
-      builder.append(",");
-      builder.append(this.group);
+    List<String> headers = altSound.getHeaders().isEmpty() ? DEFAULT_HEADERS : altSound.getHeaders();
+    List<String> values = new ArrayList<>();
+    for (String header : headers) {
+      values.add(getCSVValue(header));
     }
+    return String.join(",", values);
+  }
 
-    if (altSound.getHeaders().contains("SHAKER")) {
-      builder.append(",");
-      builder.append(this.shaker != null ? this.shaker : "");
+  /**
+   * The values are written in the column order of the CSV header, unknown columns are left empty.
+   */
+  private String getCSVValue(String header) {
+    switch (header.trim().toUpperCase()) {
+      case ID:
+        return quote(this.id);
+      case CHANNEL:
+        return StringUtils.defaultString(this.channel);
+      case DUCK:
+        return String.valueOf(this.duck);
+      case GAIN:
+        return String.valueOf(this.gain);
+      case LOOP:
+        return String.valueOf(this.loop);
+      case STOP:
+        return String.valueOf(this.stop);
+      case NAME:
+        return quote(this.name);
+      case FNAME:
+        return quote(this.filename);
+      case GROUP:
+        return String.valueOf(this.group);
+      case SHAKER:
+        return quoteIfRequired(this.shaker);
+      case SERIAL:
+        return quoteIfRequired(this.serial);
+      case PRELOAD:
+        return String.valueOf(this.preload);
+      case STOPCMD:
+        return quoteIfRequired(this.stopCmd);
+      default:
+        return "";
     }
+  }
 
-    if (altSound.getHeaders().contains("SERIAL")) {
-      builder.append(",");
-      builder.append(this.serial != null ? this.serial : "");
-    }
+  private static String quote(String value) {
+    return "\"" + StringUtils.defaultString(value).replace("\"", "\"\"") + "\"";
+  }
 
-    if (altSound.getHeaders().contains("PRELOAD")) {
-      builder.append(",");
-      builder.append(this.preload);
+  private static String quoteIfRequired(String value) {
+    if (value != null && (value.contains(",") || value.contains("\""))) {
+      return quote(value);
     }
+    return StringUtils.defaultString(value);
+  }
 
-    if (altSound.getHeaders().contains("STOPCMD")) {
-      builder.append(",");
-      builder.append(this.stopCmd != null ? this.stopCmd : "");
-    }
-    return builder.toString();
+  public AltSoundEntry copy() {
+    AltSoundEntry copy = new AltSoundEntry();
+    copy.id = this.id;
+    copy.channel = this.channel;
+    copy.duck = this.duck;
+    copy.gain = this.gain;
+    copy.loop = this.loop;
+    copy.stop = this.stop;
+    copy.name = this.name;
+    copy.filename = this.filename;
+    copy.group = this.group;
+    copy.shaker = this.shaker;
+    copy.serial = this.serial;
+    copy.preload = this.preload;
+    copy.stopCmd = this.stopCmd;
+    copy.exists = this.exists;
+    copy.size = this.size;
+    return copy;
   }
 
   public String toGSoundCSV(AltSound altSound) {

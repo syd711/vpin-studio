@@ -113,10 +113,17 @@ public class AltSoundEditorController implements Initializable {
   private ChangeListener<String> channelFieldChangeListener;
   private ChangeListener<Boolean> loopCheckboxChangeListener;
   private ChangeListener<Boolean> stopCheckboxChangeListener;
+  private ChangeListener<Number> duckVolumeChangeListener;
+  private ChangeListener<Number> gainVolumeChangeListener;
+  private List<AltSoundEntry> originalEntries;
   private TablesController tablesController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    // the ALT sound instance is shared with the sidebar, so unsaved changes are reverted
+    if (altSound != null && originalEntries != null) {
+      altSound.setEntries(originalEntries);
+    }
     this.tablesController.getEditorRootStack().getChildren().remove(root);
   }
 
@@ -124,6 +131,7 @@ public class AltSoundEditorController implements Initializable {
   private void onSaveClick(ActionEvent e) {
     try {
       Studio.client.getAltSoundService().saveAltSound(game.getId(), this.altSound);
+      this.originalEntries = copyEntries(altSound.getEntries());
       EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     } catch (Exception ex) {
       LOG.error(Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage(), ex);
@@ -181,26 +189,26 @@ public class AltSoundEditorController implements Initializable {
     tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<AltSoundEntryModel>) c -> refreshEditorForSelection());
 
     channelFieldChangeListener = (observable, oldValue, newValue) -> {
-      try {
-        int v = Integer.parseInt(newValue);
-        if (v > 256) {
-          channelField.setText(String.valueOf(oldValue));
+      String value = StringUtils.defaultString(newValue);
+      if (!value.isEmpty()) {
+        try {
+          int v = Integer.parseInt(value);
+          if (v > 256) {
+            throw new NumberFormatException("Channel out of range: " + v);
+          }
+          value = String.valueOf(v);
+        }
+        catch (NumberFormatException e) {
+          // the reset triggers this listener again with the previous valid value
+          channelField.setText(StringUtils.defaultString(oldValue));
           return;
         }
-        ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-        selectedItems.forEach(i -> i.channel.set(String.valueOf(v)));
-        tableView.refresh();
-      } catch (Exception e) {
-        String value = String.valueOf(oldValue);
-        if (String.valueOf(newValue).isEmpty()) {
-          value = "";
-        }
-
-        channelField.setText(value);
-        ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-        selectedItems.forEach(i -> i.channel.set(newValue));
-        tableView.refresh();
       }
+
+      String channel = value;
+      ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+      selectedItems.forEach(i -> i.channel.set(channel));
+      tableView.refresh();
     };
     channelField.textProperty().addListener(channelFieldChangeListener);
 
@@ -218,25 +226,27 @@ public class AltSoundEditorController implements Initializable {
     };
     stopCheckbox.selectedProperty().addListener(stopCheckboxChangeListener);
 
-    duckVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
+    duckVolumeChangeListener = (observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-      int value1 = ((Double) newValue).intValue();
+      int value1 = newValue.intValue();
       selectedItems.forEach(i -> {
         i.duck.set(value1);
       });
       duckLabel.setText(String.valueOf(value1));
       tableView.refresh();
-    });
+    };
+    duckVolume.valueProperty().addListener(duckVolumeChangeListener);
 
-    gainVolume.valueProperty().addListener((observable, oldValue, newValue) -> {
+    gainVolumeChangeListener = (observable, oldValue, newValue) -> {
       ObservableList<AltSoundEntryModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
-      int value1 = ((Double) newValue).intValue();
+      int value1 = newValue.intValue();
       selectedItems.forEach(i -> {
         i.gain.set(value1);
       });
       gainLabel.setText(String.valueOf(value1));
       tableView.refresh();
-    });
+    };
+    gainVolume.valueProperty().addListener(gainVolumeChangeListener);
 
     tableView.setPlaceholder(new Label("               " + Messages.get("tables.editors.altsound.no_matching_entries_found")));
   }
@@ -244,6 +254,7 @@ public class AltSoundEditorController implements Initializable {
   public void setAltSound(GameRepresentation game, AltSound altSound) {
     this.game = game;
     this.altSound = altSound;
+    this.originalEntries = copyEntries(altSound.getEntries());
 
     List<String> names = new ArrayList<>();
     names.add(null);
@@ -273,7 +284,7 @@ public class AltSoundEditorController implements Initializable {
     String nameFilter = this.nameFilterCombo.getValue();
     String filenameFiler = this.filenameFilterCombo.getValue();
     String loopedFilter = this.loopedFilterCombo.getValue();
-    String term = this.searchText.getText();
+    String term = StringUtils.defaultString(this.searchText.getText()).toLowerCase();
 
     for (AltSoundEntry entry : allEntries) {
       if (!StringUtils.isEmpty(term) && !entry.getFilename().toLowerCase().contains(term) && !entry.getName().toLowerCase().contains(term)) {
@@ -290,6 +301,9 @@ public class AltSoundEditorController implements Initializable {
 
       if (loopedFilter != null) {
         if (loopedFilter.equals("Yes") && entry.getLoop() != 100) {
+          continue;
+        }
+        if (loopedFilter.equals("No") && entry.getLoop() == 100) {
           continue;
         }
       }
@@ -310,6 +324,8 @@ public class AltSoundEditorController implements Initializable {
     channelField.textProperty().removeListener(channelFieldChangeListener);
     loopedCheckbox.selectedProperty().removeListener(loopCheckboxChangeListener);
     stopCheckbox.selectedProperty().removeListener(stopCheckboxChangeListener);
+    duckVolume.valueProperty().removeListener(duckVolumeChangeListener);
+    gainVolume.valueProperty().removeListener(gainVolumeChangeListener);
 
     gainVolume.setDisable(selectedItems.isEmpty());
     gainLabel.setDisable(selectedItems.isEmpty());
@@ -322,6 +338,9 @@ public class AltSoundEditorController implements Initializable {
 
     if (!selectedItems.isEmpty()) {
       AltSoundEntryModel altSoundEntryModel = selectedItems.getFirst();
+      // values above the default slider range must not be clamped
+      gainVolume.setMax(Math.max(100, altSoundEntryModel.gain.get()));
+      duckVolume.setMax(Math.max(100, altSoundEntryModel.duck.get()));
       gainVolume.valueProperty().set(altSoundEntryModel.gain.get());
       gainLabel.setText("" + altSoundEntryModel.gain.getValue());
       duckVolume.valueProperty().set(altSoundEntryModel.duck.get());
@@ -345,6 +364,16 @@ public class AltSoundEditorController implements Initializable {
     channelField.textProperty().addListener(channelFieldChangeListener);
     loopedCheckbox.selectedProperty().addListener(loopCheckboxChangeListener);
     stopCheckbox.selectedProperty().addListener(stopCheckboxChangeListener);
+    duckVolume.valueProperty().addListener(duckVolumeChangeListener);
+    gainVolume.valueProperty().addListener(gainVolumeChangeListener);
+  }
+
+  private static List<AltSoundEntry> copyEntries(List<AltSoundEntry> entries) {
+    List<AltSoundEntry> copy = new ArrayList<>();
+    for (AltSoundEntry entry : entries) {
+      copy.add(entry.copy());
+    }
+    return copy;
   }
 
   private static class AltSoundEntryModel {

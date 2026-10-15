@@ -250,7 +250,7 @@ public class AltSound {
   public String toCSV() {
     StringBuilder builder = new StringBuilder();
     builder.append("\"");
-    builder.append(String.join("\",\"", this.headers));
+    builder.append(String.join("\",\"", this.headers.isEmpty() ? AltSoundEntry.DEFAULT_HEADERS : this.headers));
     builder.append("\"");
     builder.append("\n");
 

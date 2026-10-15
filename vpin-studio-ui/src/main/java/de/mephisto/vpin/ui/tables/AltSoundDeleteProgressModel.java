@@ -57,6 +57,12 @@ public class AltSoundDeleteProgressModel extends ProgressModel<Integer> {
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
+    EventManager.getInstance().notifyTableChange(this.gameRepresentation.getId(), this.gameRepresentation.getRom());
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, Integer gameId) {
     try {
       Studio.client.getAltSoundService().delete(gameId);
