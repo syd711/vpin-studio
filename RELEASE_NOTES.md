@@ -4,6 +4,10 @@
 
 - **Rom-2-AltSound Support**: 
 
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/rom2altsound.png?raw=true" width="700" />
+
+- **G-Sound Editor**: Added various improvements and fixes to the g-sound bundle editor. Audio files from the bundle can now be played and renamed in the editor.
+
 - **Bulk Importer**: Added a new "Bulk Importer" to the table overview toolbar. Select or drop a folder of media files and they are matched to your tables by file name, folder name or both. The minimum match score is configurable, unmatched files can be assigned manually via a table search, and the target screen is detected from the file or folder name. Screen and import mode (overwrite/append) can be set per file or for all selected rows, followed by a single import run. The bulk importer can also be used from the Drop-In menu.
 
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/bulk-import-1.png?raw=true" width="400" />
