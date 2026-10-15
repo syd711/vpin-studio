@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -29,6 +30,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -120,12 +123,12 @@ public class AltSoundService implements InitializingBean {
     return null;
   }
 
-  public boolean save(@NonNull Game game, @NonNull AltSound altSound) {
+  public boolean save(@NonNull Game game, @NonNull AltSound altSound) throws Exception {
     File altSoundFolder = getAltSoundFolder(game);
     if (altSoundFolder != null) {
       altSoundBackupService.synchronizeBackup(altSoundFolder);
       if (game.isAltSoundAvailable()) {
-        if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
+        if (AltSoundFormats.gsound.equals(altSound.getFormat())) {
           new AltSound2Writer(altSoundFolder).write(altSound);
         }
         else {
@@ -137,6 +140,73 @@ public class AltSoundService implements InitializingBean {
       }
     }
     return false;
+  }
+
+  /**
+   * Renames an audio file of the ALT sound package and updates all CSV entries referencing it.
+   * The file extension must not change, the ALT sound processor relies on it.
+   *
+   * @param filename    the current filename as stored in the CSV, relative to the ALT sound folder
+   * @param newFilename the new filename, relative to the ALT sound folder
+   */
+  public void renameAudioFile(@NonNull Game game, @NonNull String filename, @NonNull String newFilename) throws Exception {
+    File altSoundFolder = getAltSoundFolder(game);
+    if (altSoundFolder == null || !altSoundFolder.exists()) {
+      throw new IllegalStateException("No ALT sound folder found for \"" + game.getGameDisplayName() + "\".");
+    }
+
+    File audioFile = resolveAudioFile(altSoundFolder, filename);
+    File target = resolveAudioFile(altSoundFolder, newFilename);
+    if (!audioFile.isFile()) {
+      throw new IllegalArgumentException("The audio file \"" + filename + "\" does not exist.");
+    }
+    if (!FilenameUtils.getExtension(audioFile.getName()).equalsIgnoreCase(FilenameUtils.getExtension(target.getName()))) {
+      throw new IllegalArgumentException("The file extension of \"" + filename + "\" must not be changed.");
+    }
+    // case-only renames point to the same file on Windows
+    boolean sameFile = audioFile.getCanonicalPath().equalsIgnoreCase(target.getCanonicalPath());
+    if (target.exists() && !sameFile) {
+      throw new IllegalArgumentException("The audio file \"" + newFilename + "\" already exists.");
+    }
+
+    AltSound altSound = AltSoundLoaderFactory.load(altSoundFolder);
+    if (altSound.getEntries().isEmpty()) {
+      throw new IllegalStateException("Failed to read the ALT sound CSV of \"" + game.getGameDisplayName() + "\".");
+    }
+
+    altSoundBackupService.synchronizeBackup(altSoundFolder);
+    Files.move(audioFile.toPath(), target.toPath());
+    LOG.info("Renamed ALT sound file \"{}\" to \"{}\"", audioFile.getAbsolutePath(), target.getName());
+
+    try {
+      for (AltSoundEntry entry : altSound.getEntries()) {
+        if (filename.equalsIgnoreCase(entry.getFilename())) {
+          entry.setFilename(newFilename);
+        }
+      }
+      // only the CSV is updated here, the ini settings may contain unsaved changes of the client
+      boolean gSound = AltSoundFormats.gsound.equals(altSound.getFormat());
+      File csvFile = new File(altSoundFolder, gSound ? "g-sound.csv" : "altsound.csv");
+      org.apache.commons.io.FileUtils.writeStringToFile(csvFile, gSound ? altSound.toGSoundCSV() : altSound.toCSV(), StandardCharsets.UTF_8);
+    }
+    catch (Exception e) {
+      // keep the CSV and the audio files in sync
+      Files.move(target.toPath(), audioFile.toPath());
+      throw e;
+    }
+
+    createAltSound(altSoundFolder);
+    gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
+  }
+
+  @NonNull
+  private static File resolveAudioFile(@NonNull File altSoundFolder, @NonNull String filename) throws IOException {
+    File file = new File(altSoundFolder, filename.replace("\\", "/"));
+    if (StringUtils.isBlank(FilenameUtils.getBaseName(file.getName()))
+        || !file.getCanonicalPath().startsWith(altSoundFolder.getCanonicalPath() + File.separator)) {
+      throw new IllegalArgumentException("Invalid ALT sound filename \"" + filename + "\".");
+    }
+    return file;
   }
 
   public void setAltSoundEnabled(@NonNull String rom, boolean b) {
@@ -235,11 +305,7 @@ public class AltSoundService implements InitializingBean {
       return null;
     }
 
-    File audioFile = new File(altSoundFolder, filename.replace("\\", "/"));
-    if (!audioFile.getCanonicalPath().startsWith(altSoundFolder.getCanonicalPath() + File.separator)) {
-      LOG.warn("Rejected ALT sound file \"{}\", not located inside {}", filename, altSoundFolder.getAbsolutePath());
-      return null;
-    }
+    File audioFile = resolveAudioFile(altSoundFolder, filename);
     if (!audioFile.isFile()) {
       return null;
     }

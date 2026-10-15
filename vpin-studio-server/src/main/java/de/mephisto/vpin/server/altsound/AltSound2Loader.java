@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -40,8 +41,8 @@ public class AltSound2Loader {
     altSound.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(gSoundCsv.lastModified()), ZoneId.systemDefault()));
 
     SubnodeConfiguration systemSection = iniConfiguration.getSection("system");
-    altSound.setRecordSoundCmds(systemSection.getBoolean("record_sound_cmds"));
-    altSound.setRomVolumeControl(systemSection.getBoolean("rom_volume_ctrl"));
+    altSound.setRecordSoundCmds(systemSection.getBoolean("record_sound_cmds", false));
+    altSound.setRomVolumeControl(systemSection.getBoolean("rom_volume_ctrl", false));
 
     if (systemSection.containsKey("cmd_skip_count")) {
       altSound.setCommandSkipCount(systemSection.getInt("cmd_skip_count"));
@@ -62,7 +63,7 @@ public class AltSound2Loader {
 
     long size = gSoundCsv.length();
     Map<String, String> audioFiles = new HashMap<>();
-    try (FileReader in = new FileReader(gSoundCsv)) {
+    try (FileReader in = new FileReader(gSoundCsv, StandardCharsets.UTF_8)) {
       CSVFormat format = CSVFormat.RFC4180.builder()
           .setIgnoreEmptyLines(true)
           .setQuoteMode(QuoteMode.NON_NUMERIC)
@@ -79,29 +80,25 @@ public class AltSound2Loader {
 
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
-        String s = record.get(4);
-        if (s == null) {
+        if (!record.isSet(4) || StringUtils.isEmpty(record.get(4))) {
           LOG.warn("Skipped invalid ALT Sound entry {}", record.toList());
           continue;
         }
-        File audioFile = new File(gSoundCsv.getParentFile(), s.replaceAll("\"", ""));
 
         AltSoundEntry entry = new AltSoundEntry();
         entry.setId(record.get(0));
         entry.setChannel(record.isSet(1) ? record.get(1) : "");
         entry.setGain(record.isSet(2) ? getInt(record.get(2)) : 0);
         entry.setDuck(record.isSet(3) ? getInt(record.get(3)) : 0);
-        entry.setFilename(record.isSet(4) ? record.get(4) : "");
+        entry.setFilename(record.get(4));
 
-        if (audioFile.exists()) {
+        File audioFile = new File(gSoundCsv.getParentFile(), entry.getFilename());
+        entry.setExists(audioFile.isFile());
+        if (entry.isExists()) {
           entry.setSize(audioFile.length());
-        }
-
-
-        File soundFile = new File(gSoundCsv.getParentFile(), entry.getFilename());
-        if (soundFile.exists()) {
-          audioFiles.put(entry.getFilename(), entry.getFilename());
-          size += soundFile.length();
+          if (audioFiles.put(entry.getFilename(), entry.getFilename()) == null) {
+            size += audioFile.length();
+          }
         }
         else {
           altSound.setMissingAudioFiles(true);
@@ -131,20 +128,21 @@ public class AltSound2Loader {
     AltSound2SampleType sampleType = AltSound2SampleType.valueOf(profileName.substring(0, profileName.indexOf("_")));
 
     SubnodeConfiguration section = iniConfiguration.getSection(profileName);
-    int index = 1;
-    String key = "ducking_profile" + index;
-    while (section.containsKey(key)) {
-      String profileValue = section.getString(key);
+    Iterator<String> keys = section.getKeys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      int id = AltSound2Writer.getDuckingProfileId(key);
+      if (id <= 0) {
+        continue;
+      }
+
       AltSound2DuckingProfile profile = new AltSound2DuckingProfile();
-      profile.setId(index);
+      profile.setId(id);
       profile.setType(sampleType);
-      profile.setValues(toDuckingProfileValues(profileValue));
-
+      profile.setValues(toDuckingProfileValues(section.getString(key)));
       profiles.add(profile);
-
-      index++;
-      key = "ducking_profile" + index;
     }
+    profiles.sort(Comparator.comparingInt(AltSound2DuckingProfile::getId));
 
     return profiles;
   }

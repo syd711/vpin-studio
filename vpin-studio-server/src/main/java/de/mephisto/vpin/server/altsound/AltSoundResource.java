@@ -22,11 +22,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(API_SEGMENT + "altsound")
@@ -82,6 +85,25 @@ public class AltSoundResource {
       return getAltSound(game);
     }
     return null;
+  }
+
+  @PostMapping("/rename/{id}")
+  public boolean rename(@PathVariable("id") int id, @RequestBody Map<String, String> values) {
+    Game game = gameService.getGame(id);
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game found for id " + id);
+    }
+    try {
+      altSoundService.renameAudioFile(game, values.get("filename"), values.get("newFilename"));
+      return true;
+    }
+    catch (IllegalArgumentException | IllegalStateException e) {
+      throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to rename ALT sound file: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Failed to rename ALT sound file: " + e.getMessage());
+    }
   }
 
   @GetMapping("/restore/{id}")

@@ -19,6 +19,7 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /*********************************************************************************************************************
  * Alt Sound
@@ -68,6 +69,13 @@ public class AltSoundServiceClient extends VPinStudioClientService {
       LOG.error("ALT sound upload failed: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  /**
+   * Renames an audio file of the ALT sound package, the CSV entries referencing it are updated by the server.
+   */
+  public boolean renameAudioFile(int gameId, String filename, String newFilename) throws Exception {
+    return getRestClient().post(API + "altsound/rename/" + gameId, Map.of("filename", filename, "newFilename", newFilename), Boolean.class);
   }
 
   /**

@@ -264,7 +264,7 @@ public class AltSound {
 
   public String toGSoundCSV() {
     StringBuilder builder = new StringBuilder();
-    builder.append(String.join(",", this.headers));
+    builder.append(this.headers.isEmpty() ? "ID,TYPE,GAIN,DUCKING_PROFILE,FNAME" : String.join(",", this.headers));
     builder.append("\n");
 
     for (AltSoundEntry entry : this.entries) {

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 public class AltSound2Test {
 
   @Test
-  public void testLoadSave() {
+  public void testLoadSave() throws Exception {
     AltSound altSound = AltSoundLoaderFactory.load(new File("../testsystem/vPinball/VisualPinball/VPinMAME/altsound/cftbl_l4"));
     assertNotNull(altSound);
 
