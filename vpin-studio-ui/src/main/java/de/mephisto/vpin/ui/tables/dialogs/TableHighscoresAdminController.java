@@ -57,7 +57,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
 
     HighscoreBackup selectedItem = backupList.getSelectionModel().getSelectedItem();
     if(selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.restore_selected_highscore_for_table") + game.getGameDisplayName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.restore_selected_highscore_for_table", game.getGameDisplayName()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           String rom = this.game.getRom();

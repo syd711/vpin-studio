@@ -2,9 +2,14 @@
 
 ### Changes 
 
-- **Rom-2-AltSound Support**: 
+- **Rom-2-AltSound Support**: Added support for [rom2altsound](https://github.com/Le-Syl21/rom2altsound), which plays every sound command of a ROM on PinMAME's emulated sound board and records each one to its own audio file. The result is a ready-to-use ALT sound pack in the G-Sound format. Use the new "Create from ROM…" button in the "ALT Sound" section of the table sidebar to generate a pack for tables that don't have an ALT sound yet.
+  - The dialog shows the installed and latest rom2altsound version. It can be installed or updated from there.
+  - The ROM is checked before the recording starts, and the dialog shows the detected game, sound board and target folder.
+  - Options: recording volume ("As the game sets it" or "As loud as possible"), the longest sound length, and whether ALT sound is enabled for the ROM after the installation.
+  - Advanced options: loop search and intro loop length, merging of twin sounds, DC blocking, skipping the factory settings boot, the DCS ducking check, skipping the chips pass (WPCS, System 11) and the older BSMT emulation (Data East, Sega, Whitestar).
+  - Recording all sounds of a ROM takes a few minutes and runs as a background job.
 
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/rom2altsound.png?raw=true" width="700" />
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/rom2altsound.png?raw=true" width="800" />
 
 - **G-Sound Editor**: Added various improvements and fixes to the g-sound bundle editor. Audio files from the bundle can now be played and renamed in the editor.
 

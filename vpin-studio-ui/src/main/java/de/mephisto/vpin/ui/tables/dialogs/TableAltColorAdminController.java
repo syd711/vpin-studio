@@ -50,7 +50,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
 
     String selectedItem = backupList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.restore_selected_highscore_for_table") + game.getGameDisplayName() + "\"?", Messages.get("dialog.the_existing_alt_color_file_s_will"));
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.restore_selected_alt_color_files_for_table", game.getGameDisplayName()), Messages.get("dialog.the_existing_alt_color_file_s_will"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getAltColorService().restore(game.getId(), selectedItem);

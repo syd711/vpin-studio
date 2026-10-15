@@ -134,6 +134,7 @@
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
                   <CheckBox fx:id="previewCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.show_preview" />
+                   <Separator orientation="VERTICAL" prefWidth="12.0" />
                   <Label styleClass="default-text" text="%bulk_importer.preview_size">
                      <padding>
                         <Insets right="6.0" />
