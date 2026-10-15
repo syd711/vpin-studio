@@ -1270,7 +1270,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       row.setAlignment(Pos.CENTER_RIGHT);
       row.setMinWidth(34);
 
-      if (iScoredSettings != null && iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
+      if (!value.getCompetitionTypes().isEmpty()) {
         Button compBtn = new Button();
         compBtn.getStyleClass().add("table-media-button");
         compBtn.setTooltip(new Tooltip(Messages.get("dialog.table_is_competed")));

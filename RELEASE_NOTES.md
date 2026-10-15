@@ -2,7 +2,9 @@
 
 ### Changes 
 
-- **Bulk Importer**: Added a new "Bulk Importer" to the table overview toolbar. Select or drop a folder of media files and they are matched to your tables by file name, folder name or both. The minimum match score is configurable, unmatched files can be assigned manually via a table search, and the target screen is detected from the file or folder name. Screen and import mode (overwrite/append) can be set per file or for all selected rows, followed by a single import run.
+- **Rom-2-AltSound Support**: 
+
+- **Bulk Importer**: Added a new "Bulk Importer" to the table overview toolbar. Select or drop a folder of media files and they are matched to your tables by file name, folder name or both. The minimum match score is configurable, unmatched files can be assigned manually via a table search, and the target screen is detected from the file or folder name. Screen and import mode (overwrite/append) can be set per file or for all selected rows, followed by a single import run. The bulk importer can also be used from the Drop-In menu.
 
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/bulk-import-1.png?raw=true" width="400" />
   
@@ -57,3 +59,4 @@
 - **Backglass Manager**: Fixed backglasses being reloaded on startup instead of lazily when the view is opened.
 - **Studio Client**: Fixed the window header styling when the window is maximized.
 - **Studio Client**: Fixed the wrong return value when opening files on Windows.
+- **Table Overview**: Fixed issue that the trophy icon was only shown when iScored was enabled. It is shown now if the table is competed in any competition type.

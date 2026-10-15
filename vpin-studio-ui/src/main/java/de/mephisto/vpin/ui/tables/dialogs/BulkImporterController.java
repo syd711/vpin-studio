@@ -444,6 +444,10 @@ public class BulkImporterController implements Initializable, DialogController {
     }
   }
 
+  public void setSourceFolder(File folder) {
+    loadFolder(folder);
+  }
+
   private void loadFolder(File folder) {
     if (folder == null || !folder.isDirectory()) {
       return;

@@ -628,7 +628,15 @@ public class TableDialogs {
   }
 
   public static void openBulkImporterDialog() {
+    openBulkImporterDialog(null);
+  }
+
+  public static void openBulkImporterDialog(@Nullable File sourceFolder) {
     Stage stage = Dialogs.createStudioDialogStage(BulkImporterController.class, "dialog-bulk-importer.fxml", Messages.get("dialog.bulk_importer"));
+    if (sourceFolder != null) {
+      BulkImporterController controller = (BulkImporterController) stage.getUserData();
+      controller.setSourceFolder(sourceFolder);
+    }
     FXResizeHelper.install(stage, 30, 6);
     stage.setMinWidth(1024);
     stage.setMinHeight(600);

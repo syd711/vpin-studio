@@ -14,6 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import javafx.application.Platform;
@@ -175,6 +176,19 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       }
     });
     box.getChildren().add(btn);
+
+    Button bulkImportBtn = new Button(Messages.get("dialog.bulk_importer"));
+    HBox.setMargin(bulkImportBtn, new Insets(3, 3, 3, 3));
+    bulkImportBtn.getStyleClass().add("default-text");
+    bulkImportBtn.setGraphic(WidgetFactory.createIcon("mdi2f-folder-multiple-image"));
+    bulkImportBtn.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        dropInsBtn.hide();
+        TableDialogs.openBulkImporterDialog(dropinsFolder);
+      }
+    });
+    box.getChildren().add(bulkImportBtn);
     box.getChildren().add(new Separator(Orientation.VERTICAL));
     box.getChildren().add(filter);
     box.getChildren().add(resetBtn);
