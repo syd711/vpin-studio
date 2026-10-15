@@ -121,6 +121,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_altsound_package_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new AltSoundDeleteProgressModel(this.game.get()));
+      this.onReload();
     }
   }
 

@@ -123,6 +123,31 @@ Several ROMs run two at a time by default (`--jobs` to change it); then each ROM
 goes to `rom2altsound.log` in its folder. A ROM that fails does not stop the others, and a
 recap is printed at the end.
 
+For a front end (VPin Studio...), `--progress json` writes every ROM's progress on stdout,
+one JSON object per line (JSON Lines), each line flushed and whole even with several ROMs
+at a time; everything else goes to stderr, and each ROM's log to its `rom2altsound.log`
+(also with `--jobs 1`):
+
+```
+{"rom":"afm_113b","stage":"start","out":"packs/afm_113b"}
+{"rom":"afm_113b","stage":"cold-boot"}
+{"rom":"afm_113b","stage":"boot"}
+{"rom":"afm_113b","stage":"record","pass":"main","done":42,"total":180,"id":"0x0042","name":""}
+{"rom":"afm_113b","stage":"pack"}
+{"rom":"afm_113b","stage":"done","status":"ok","written":176,"out":"packs/afm_113b","secs":312.5}
+{"stage":"all_done","ok":1,"failed":0,"not_applicable":0}
+```
+
+Every line but the last has the ROM's `rom` and every line a `stage`: `start` (its folder,
+`out`), `cold-boot` (the factory settings), `boot`, `sam` (Stern SAM's static decode),
+`record` (the command being recorded: `done` of `total` in its `pass`, which is `main`,
+then possibly `retry`, `volume-check`, `factory-offset`, `chips`, `duck-check`, `last`, each
+counted from 1), `pack`, and `done`, the ROM's last line: `status` is `ok`, `failed` (with
+`error`) or `not_applicable` (with `reason`), `written` the sound files written, `secs`
+how long it took, and `"skipped":true` when `--skip-done` found it done already. A stage
+may not come (no `cold-boot` with `--no-factory`); a ROM not found gets its `done` line
+alone. Read the keys you know and ignore the others: later versions may add some.
+
 To check a ROM folder first:
 
 ```
@@ -144,6 +169,26 @@ way, metadata only (names, sizes, checksums, counts), then the pages around it:
 rom2altsound catalog ~/vpinball/roms --out docs/catalog.json
 python3 docs/build_site.py
 ```
+
+With the manifests of extraction runs (`--manifests <dir>`), each entry also gets the
+loudness of its sounds at the game's factory volume and its coverage: see
+[the catalog](docs/catalog.md), which also gives the whole-catalog run.
+
+The same manifests also give PinMAME's sound command mode a list for every game measured:
+
+```
+rom2altsound sounds-dat --manifests ~/packs --names ~/names --out sounds.dat
+```
+
+writes PinMAME's own `sounds.dat` unchanged, then one section per game (its parent set's
+name; a clone only for what its parent's section does not give it) with one entry per
+command that produced a sound, in the bytes PinMAME's commander must send on that board
+(Williams WPC's single bytes as `00 xx`, the board's idle and release bytes included).
+The names are sounds.dat's own, else those of the names files given (the listening page's
+"Export names"), else the command and the sound's length (`Sound 2A (3.2 s)`,
+`Sound 2A (loop)`). Boards whose commands the commander cannot send (game-driven boards,
+Stern SAM, Pinball 2000, a few that need the data port) are left out, and counted. Put
+the file in PinMAME's folder in place of its `sounds.dat`.
 
 Then copy the ROM's folder next to your table, as `<table folder>/altsound/<rom>/` (for
 example `Tables/Attack from Mars/altsound/afm_113b/`), and turn on the AltSound plugin in
@@ -200,6 +245,29 @@ belong to a sound ROM, not to a game version: the file carries the sound ROM id 
 file, and a file made for other sound ROMs is refused (`--force`, or `--force-names` on
 an extraction, applies it anyway). `rom2altsound names afm_113b` alone prints the pack's
 names as a `names.csv`.
+
+#### Sharing your names
+
+Many sounds still have no name, and naming them is easier together. Here is how to help:
+
+1. Open the pack's `index.html` and play the sounds. When you know what one is (a voice
+   line, the multiball music, a ramp shot...), click ✎ on its row, type a short name and
+   press Enter. The browser remembers your names for this game.
+2. **Export names** saves your names to a `names.csv` file on your computer: keep it, put
+   it in your pack (see above) or give it to someone. **Import names** loads a
+   `names.csv` back into the page.
+3. **Send names** shares them: after you say yes in a confirmation window, the page sends
+   that same `names.csv` (the sound numbers and their names, for this game's sound ROM)
+   and nothing else: no personal information, no other file. The page tells you whether
+   it arrived; if it did not, use **Export names** and send the file another way (an
+   issue on GitHub, for example).
+
+Sending is never automatic: nothing leaves your computer until you click **Send names**
+and confirm. The names you send are given to the public domain (CC0), so anyone can use
+them. The goal is one shared naming of pinball sounds for everyone: the names that people
+agree on come back in later rom2altsound catalogs and in the sounds.dat published with it (offered to PinMAME). The button
+is greyed out when you have not named anything yet, or when the pack does not know its
+sound ROM id (rebuild it with a recent rom2altsound).
 
 **A/B test** (goodtwist's idea): copy the folder (`taf_l5` to `taf_l5-edit`), replace
 sounds in the copy, then type `../taf_l5-edit/` in the page's "Compare with folder" box
@@ -354,8 +422,9 @@ STOP 0, music (loops and "Music:" names) on the music channel, the rest polyphon
     the -56 takes a byte as two nibbles on four lines, which PinMAME's sound commander
     cannot send: rom2altsound puts the high nibble on the lines once the board has read
     the low one, from its own glue code (PinMAME is not changed). The stop is `1E` on the
-    -51 and `05` on the -56; after a reset these programs wait 7 s before they take a
-    command. Loops: Viking 3 of its 4 sounds that keep playing (exact, from the audio);
+    -51 (another entry on six of its programs: `1D` on Rolling Stones) and `05` on the
+    -56; after a reset these programs wait 7 s before they take a command. Loops:
+    Viking 3 of its 4 sounds that keep playing (exact, from the audio);
     its background hum, `1D`, never repeats. Xenon 1 of 2; its other one, `1A`, repeats in
     the sound processor every 2.6 s, but not in the audio (probably the AY-3-8910's noise,
     which is not part of the processor's state). Sounds that do not loop are cut at 2
@@ -399,9 +468,14 @@ STOP 0, music (loops and "Music:" names) on the music channel, the rest polyphon
     in attract mode and asked for each sound as its own code does; the stop is the game's
     own. Verified on the 15 Stern SB-300 programs (308 sounds, MOD sets included) and its
     Astro board tester, on the five Atari generation 1 games and the three generation 2
-    ones, and on Goofy Hoops (63 effects, 9 songs): every file from silence. The ids are
-    the game's internal sound ids (a script address, a sound number, a sequence address),
-    not commands; loops come from the audio only; the volume is the one the game plays
+    ones, and on Goofy Hoops (63 effects, 9 songs): every file from silence. The SB-300
+    with its speech board (Flight 2000, Free Fall, Lightning, Split Second, Catacomb,
+    Orbitor 1) the same way, its scripts saying their words (the game's speech switch,
+    off in PinMAME's default DIPs, set for each of them), and the speech ROM's other words
+    alone: 296 of 312 sounds on the six games. Tabart's L'Hexagone too, whose sound board
+    plays on the playfield switches it reads itself: its switches are closed one by one
+    (14 of 15 sounds). The ids are the game's internal sound ids (a script address, a
+    sound number, a sequence address, a speech word, a switch number), not commands; loops come from the audio only; the volume is the one the game plays
     at. **These packs do not play in VPinball**: no command reaches AltSound on these
     machines. They are a recording of the game's sounds, to listen to, measure and keep
     (see [game-driven boards](docs/families/common.md#game-driven-boards)).
@@ -754,6 +828,33 @@ Plusieurs ROM sont traitées deux à la fois par défaut (`--jobs` pour changer)
 de chacune va alors dans `rom2altsound.log`, dans son dossier. Une ROM qui échoue n'arrête
 pas les autres, et un récapitulatif s'affiche à la fin.
 
+Pour un autre programme (VPin Studio...), `--progress json` écrit l'avancement de chaque
+ROM sur la sortie standard, un objet JSON par ligne (JSON Lines), chaque ligne envoyée
+aussitôt et entière, même avec plusieurs ROM à la fois ; tout le reste va sur la sortie
+d'erreur, et le détail de chaque ROM dans son `rom2altsound.log` (aussi avec `--jobs 1`) :
+
+```
+{"rom":"afm_113b","stage":"start","out":"packs/afm_113b"}
+{"rom":"afm_113b","stage":"cold-boot"}
+{"rom":"afm_113b","stage":"boot"}
+{"rom":"afm_113b","stage":"record","pass":"main","done":42,"total":180,"id":"0x0042","name":""}
+{"rom":"afm_113b","stage":"pack"}
+{"rom":"afm_113b","stage":"done","status":"ok","written":176,"out":"packs/afm_113b","secs":312.5}
+{"stage":"all_done","ok":1,"failed":0,"not_applicable":0}
+```
+
+Chaque ligne sauf la dernière porte la ROM (`rom`), et toutes une étape (`stage`) :
+`start` (son dossier, `out`), `cold-boot` (les réglages d'usine), `boot`, `sam` (le
+décodage statique de Stern SAM), `record` (la commande en cours d'enregistrement : la
+`done`-ième sur `total` de sa passe, `pass`, qui vaut `main`, puis éventuellement `retry`,
+`volume-check`, `factory-offset`, `chips`, `duck-check`, `last`, chacune comptée à partir
+de 1), `pack`, et `done`, la dernière ligne de la ROM : `status` vaut `ok`, `failed` (avec
+`error`) ou `not_applicable` (avec `reason`), `written` est le nombre de fichiers son
+écrits, `secs` la durée, et `"skipped":true` dit que `--skip-done` l'a trouvée déjà faite.
+Une étape peut manquer (pas de `cold-boot` avec `--no-factory`) ; une ROM introuvable n'a
+que sa ligne `done`. Lisez les clés que vous connaissez et ignorez les autres : les
+versions suivantes pourront en ajouter.
+
 Pour vérifier d'abord un dossier de ROM :
 
 ```
@@ -777,6 +878,28 @@ nombres), puis les pages autour :
 rom2altsound catalog ~/vpinball/roms --out docs/catalog.json
 python3 docs/build_site.py
 ```
+
+Avec les manifestes de passes d'extraction (`--manifests <dossier>`), chaque entrée reçoit
+aussi le volume sonore de ses sons au volume d'usine du jeu et sa couverture : voir
+[le catalogue](docs/catalog.md) (en anglais), qui donne aussi la passe sur tout le catalogue.
+
+Les mêmes manifestes donnent aussi au mode « commandes son » de PinMAME une liste pour
+chaque jeu mesuré :
+
+```
+rom2altsound sounds-dat --manifests ~/packs --names ~/noms --out sounds.dat
+```
+
+écrit le `sounds.dat` de PinMAME tel quel, puis une section par jeu (au nom de son jeu
+parent ; un clone seulement pour ce que la section de son parent ne lui donne pas), avec
+une entrée par commande qui a produit un son, dans les octets que le commandeur de PinMAME
+doit envoyer à cette carte (les octets seuls du WPC de Williams en `00 xx`, octets de repos
+et de relâche compris). Les noms sont ceux du sounds.dat, sinon ceux des fichiers de noms
+donnés (l'« Export names » de la page d'écoute), sinon la commande et la durée du son
+(`Sound 2A (3.2 s)`, `Sound 2A (loop)`). Les cartes dont le commandeur ne peut pas envoyer
+les commandes (cartes pilotées par le jeu, Stern SAM, Pinball 2000, quelques-unes qui
+passent par le port de données) sont laissées de côté, et comptées. Mettez le fichier dans
+le dossier de PinMAME à la place de son `sounds.dat`.
 
 Copiez ensuite le dossier de la ROM à côté de votre table, en
 `<dossier de la table>/altsound/<rom>/` (par exemple
@@ -836,6 +959,31 @@ d'un jeu qui partagent leurs ROM son prennent le même fichier, et un fichier fa
 d'autres ROM son est refusé (`--force`, ou `--force-names` à l'extraction, l'applique
 quand même). `rom2altsound names afm_113b` seul affiche les noms du pack au format
 `names.csv`.
+
+#### Partager vos noms
+
+Beaucoup de sons n'ont toujours pas de nom, et c'est plus facile de les nommer à
+plusieurs. Voici comment aider :
+
+1. Ouvrez le `index.html` du pack et écoutez les sons. Quand vous reconnaissez l'un d'eux
+   (une phrase, la musique du multiball, un tir de rampe...), cliquez sur ✎ dans sa ligne,
+   tapez un nom court et appuyez sur Entrée. Le navigateur garde vos noms pour ce jeu.
+2. **Export names** enregistre vos noms dans un fichier `names.csv` sur votre ordinateur :
+   gardez-le, mettez-le dans votre pack (voir plus haut) ou donnez-le à quelqu'un.
+   **Import names** recharge un `names.csv` dans la page.
+3. **Send names** les partage : une fois que vous avez dit oui dans une fenêtre de
+   confirmation, la page envoie ce même `names.csv` (les numéros des sons et leurs noms,
+   pour la ROM son de ce jeu) et rien d'autre : aucune information personnelle, aucun
+   autre fichier. La page vous dit s'il est bien arrivé ; sinon, utilisez **Export names**
+   et envoyez le fichier autrement (une issue sur GitHub, par exemple).
+
+L'envoi n'est jamais automatique : rien ne quitte votre ordinateur tant que vous n'avez
+pas cliqué sur **Send names** et confirmé. Les noms envoyés sont versés dans le domaine
+public (CC0), chacun peut donc s'en servir. Le but : un seul nommage des sons de flipper,
+partagé par tous ; les noms sur lesquels on s'accorde reviennent dans les prochains
+catalogues de rom2altsound et dans le sounds.dat publié avec lui (proposé à PinMAME). Le bouton est grisé tant que
+vous n'avez rien nommé, ou quand le pack ne connaît pas l'id de sa ROM son (reconstruisez-le
+avec un rom2altsound récent).
 
 **Écoute A/B** (l'idée de goodtwist) : copiez le dossier (`taf_l5` en `taf_l5-edit`),
 remplacez des sons dans la copie, puis tapez `../taf_l5-edit/` dans la case « Compare with
@@ -1001,8 +1149,9 @@ reste joué en parallèle.
     la -56 prend un octet en deux moitiés sur quatre lignes, ce que le commandeur de sons
     de PinMAME ne sait pas envoyer : rom2altsound met la moitié haute sur les lignes dès
     que la carte a lu la basse, depuis son propre code de liaison (PinMAME n'est pas
-    modifié). L'arrêt est `1E` sur la -51 et `05` sur la -56 ; après une remise à zéro,
-    ces programmes attendent 7 s avant de prendre une commande. Boucles : Viking 3 de ses
+    modifié). L'arrêt est `1E` sur la -51 (une autre entrée sur six de ses programmes :
+    `1D` sur Rolling Stones) et `05` sur la -56 ; après une remise à zéro, ces programmes
+    attendent 7 s avant de prendre une commande. Boucles : Viking 3 de ses
     4 sons qui continuent (exactes, trouvées dans le son) ; son bourdonnement de fond,
     `1D`, ne se répète jamais. Xenon 1 sur 2 ; l'autre, `1A`, se répète dans le processeur
     son toutes les 2,6 s, mais pas dans le son (sans doute le bruit de l'AY-3-8910, qui ne
@@ -1053,8 +1202,15 @@ reste joué en parallèle.
     celui du jeu. Vérifié sur les 15 programmes Stern SB-300 (308 sons, jeux MOD compris)
     et son testeur de cartes Astro, sur les cinq jeux Atari de génération 1 et les trois
     de génération 2, et sur Goofy Hoops (63 effets, 9 musiques) : chaque fichier part du
-    silence. Les identifiants sont les identifiants de son internes du jeu (une adresse
-    de script, un numéro de son, une adresse de séquence), pas des commandes ; les boucles
+    silence. La SB-300 avec sa carte de voix (Flight 2000, Free Fall, Lightning, Split
+    Second, Catacomb, Orbitor 1) de la même façon, ses scripts disant leurs mots (le
+    commutateur de voix du jeu, coupé dans les DIP par défaut de PinMAME, est mis pour
+    chacun d'eux), et les autres mots de la ROM de voix seuls : 296 sons sur 312 sur les
+    six jeux. L'Hexagone de Tabart aussi, dont la carte son joue sur les contacts du
+    plateau qu'elle lit elle-même : ses contacts sont fermés un à un (14 sons sur 15). Les
+    identifiants sont les identifiants de son internes du jeu (une adresse de script, un
+    numéro de son, une adresse de séquence, un mot, un numéro de contact), pas des
+    commandes ; les boucles
     ne viennent que de l'audio ; le volume est celui auquel le jeu joue. **Ces packs ne se
     jouent pas dans VPinball** : aucune commande n'atteint AltSound sur ces machines. Ce
     sont des enregistrements des sons du jeu, à écouter, mesurer et conserver (voir

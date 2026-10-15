@@ -11,6 +11,9 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,12 +21,9 @@ import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -32,17 +32,25 @@ import java.util.regex.Pattern;
 public class Rom2AltSoundJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  // "575 command(s) to extract"
-  private static final Pattern TOTAL_PATTERN = Pattern.compile("^(\\d+) command\\(s\\) to extract");
-  // "  0x0002 Music: Launch Fanfare & Main Theme   44.39 s ..."
-  private static final Pattern COMMAND_PATTERN = Pattern.compile("^ {2}0x[0-9A-Fa-f]+ ");
   // "format = altsound" in the [format] section of altsound.ini
   private static final Pattern FORMAT_PATTERN = Pattern.compile("(?m)^([ \\t]*format[ \\t]*=[ \\t]*)[^\\s;]+");
   private static final int ERROR_LINES = 10;
 
-  // the share of the progress bar for the boot and the installation, the rest is the extraction
+  // with --progress json, the ROM's log is written into the pack folder, it is not installed
+  private static final String PACK_LOG_FILE = "rom2altsound.log";
+  // with --progress json, stdout only holds the JSON lines, the other messages go to stderr
+  private static final String STDERR_FILE = "rom2altsound-stderr.log";
+
+  private static final String STATUS_OK = "ok";
+  private static final String STATUS_NOT_APPLICABLE = "not_applicable";
+  private static final String PASS_MAIN = "main";
+
+  // the progress bar: the boot until 5%, the main recording pass until 80%, the check passes after it until 95%
   private static final double BOOT_PROGRESS = 0.05;
-  private static final double EXTRACT_PROGRESS = 0.9;
+  private static final double MAIN_PASS_END = 0.8;
+  private static final double CHECK_PASSES_END = 0.95;
+
+  private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder().build();
 
   private final Rom2AltSoundService service;
   private final int gameId;
@@ -55,6 +63,12 @@ public class Rom2AltSoundJob implements Job {
 
   @Nullable
   private volatile Process process;
+
+  // the current recording pass and its share of the progress bar
+  @Nullable
+  private String pass;
+  private double passStart;
+  private double passEnd;
 
   public Rom2AltSoundJob(@NonNull Rom2AltSoundService service, int gameId, @NonNull String rom, @NonNull File romFolder,
                          @NonNull File altSoundFolder, @NonNull Rom2AltSoundOptions options, @NonNull Locale locale) {
@@ -76,16 +90,36 @@ public class Rom2AltSoundJob implements Job {
       stagingFolder = Files.createTempDirectory("rom2altsound-").toFile();
       result.setStatus(ServerMessages.get("rom2altsound.status.booting", locale, rom));
 
-      int exitCode = runExtraction(result, stagingFolder);
+      JsonNode done = runExtraction(result, stagingFolder);
       if (result.isCancelled()) {
         LOG.info("rom2altsound job for \"{}\" cancelled.", rom);
         return;
       }
-      if (exitCode != 0) {
+      if (done == null) {
+        // the error is set already when rom2altsound failed without its "done" line
+        if (result.getError() == null) {
+          result.setError("rom2altsound reported no result for \"" + rom + "\".");
+        }
         return;
       }
 
       File packFolder = new File(stagingFolder, rom);
+      String status = text(done, "status");
+      if (STATUS_NOT_APPLICABLE.equals(status)) {
+        LOG.info("rom2altsound cannot make an ALT sound for \"{}\": {}", rom, text(done, "reason"));
+        result.setError("rom2altsound cannot make an ALT sound for \"" + rom + "\": " + text(done, "reason"));
+        return;
+      }
+      if (!STATUS_OK.equals(status)) {
+        logPackLog(packFolder);
+        result.setError("rom2altsound failed for \"" + rom + "\": " + text(done, "error"));
+        return;
+      }
+      if (done.path("written").asInt(0) == 0) {
+        logPackLog(packFolder);
+        result.setError("rom2altsound wrote no sound files for \"" + rom + "\".");
+        return;
+      }
       if (!new File(packFolder, "altsound.csv").exists()) {
         result.setError("rom2altsound did not write an ALT sound pack for \"" + rom + "\".");
         return;
@@ -110,13 +144,18 @@ public class Rom2AltSoundJob implements Job {
     }
   }
 
-  private int runExtraction(@NonNull JobDescriptor result, @NonNull File stagingFolder) throws Exception {
+  /**
+   * Runs rom2altsound and follows its JSON progress lines, returns the ROM's "done" line, null if there is none.
+   */
+  @Nullable
+  private JsonNode runExtraction(@NonNull JobDescriptor result, @NonNull File stagingFolder) throws Exception {
     List<String> cmd = buildCommand(stagingFolder);
     LOG.info("Executing {}", String.join(" ", cmd));
 
+    File stderrFile = new File(stagingFolder, STDERR_FILE);
     ProcessBuilder pb = new ProcessBuilder(cmd);
     pb.directory(stagingFolder);
-    pb.redirectErrorStream(true);
+    pb.redirectError(stderrFile);
     Process p = pb.start();
     this.process = p;
 
@@ -125,45 +164,127 @@ public class Rom2AltSoundJob implements Job {
       destroy(p);
     }
 
-    Deque<String> lastLines = new ArrayDeque<>();
-    int total = 0;
-    int done = 0;
+    JsonNode done = null;
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
       String line;
       while ((line = reader.readLine()) != null) {
         LOG.debug("[rom2altsound] {}", line);
-        if (!line.isBlank()) {
-          lastLines.addLast(line);
-          if (lastLines.size() > ERROR_LINES) {
-            lastLines.removeFirst();
-          }
-        }
-        if (result.isCancelled()) {
+        JsonNode event = parse(line);
+        if (event == null) {
           continue;
         }
-
-        Matcher totalMatcher = TOTAL_PATTERN.matcher(line);
-        if (totalMatcher.find()) {
-          total = Integer.parseInt(totalMatcher.group(1));
-          result.setProgress(BOOT_PROGRESS);
-          result.setStatus(ServerMessages.get("rom2altsound.status.extracting", locale, 0, total));
+        String stage = text(event, "stage");
+        if ("done".equals(stage) && rom.equalsIgnoreCase(text(event, "rom"))) {
+          done = event;
         }
-        else if (total > 0 && COMMAND_PATTERN.matcher(line).find()) {
-          done = Math.min(done + 1, total);
-          result.setProgress(BOOT_PROGRESS + EXTRACT_PROGRESS * done / total);
-          result.setStatus(ServerMessages.get("rom2altsound.status.extracting", locale, done, total));
+        if (!result.isCancelled()) {
+          onProgress(result, stage, event);
         }
       }
     }
 
     int exitCode = p.waitFor();
     this.process = null;
-    if (exitCode != 0 && !result.isCancelled()) {
-      String output = String.join("\n", lastLines);
-      LOG.error("rom2altsound for \"{}\" failed with exit code {}:\n{}", rom, exitCode, output);
+    if (done == null && exitCode != 0 && !result.isCancelled()) {
+      List<String> lastLines = tail(stderrFile);
+      LOG.error("rom2altsound for \"{}\" failed with exit code {}:\n{}", rom, exitCode, String.join("\n", lastLines));
       result.setError("rom2altsound failed with exit code " + exitCode + (lastLines.isEmpty() ? "" : ": " + lastLines.getLast()));
     }
-    return exitCode;
+    return done;
+  }
+
+  private void onProgress(@NonNull JobDescriptor result, @Nullable String stage, @NonNull JsonNode event) {
+    if (stage == null) {
+      return;
+    }
+    switch (stage) {
+      case "cold-boot" -> result.setStatus(ServerMessages.get("rom2altsound.status.factory", locale, rom));
+      case "boot" -> result.setStatus(ServerMessages.get("rom2altsound.status.booting", locale, rom));
+      case "sam" -> result.setStatus(ServerMessages.get("rom2altsound.status.decoding", locale, rom));
+      case "record" -> onRecord(result, event);
+      case "pack" -> {
+        result.setProgress(CHECK_PASSES_END);
+        result.setStatus(ServerMessages.get("rom2altsound.status.packing", locale));
+      }
+      default -> {
+        // "start", "done" and the stages of later versions
+      }
+    }
+  }
+
+  private void onRecord(@NonNull JobDescriptor result, @NonNull JsonNode event) {
+    String eventPass = text(event, "pass");
+    int total = event.path("total").asInt(0);
+    if (eventPass == null || total <= 0) {
+      return;
+    }
+
+    if (!eventPass.equals(pass)) {
+      pass = eventPass;
+      if (PASS_MAIN.equals(eventPass)) {
+        passStart = BOOT_PROGRESS;
+        passEnd = MAIN_PASS_END;
+      }
+      else {
+        // the number of check passes is not known up front, each one takes half of what is left
+        passStart = Math.max(result.getProgress(), MAIN_PASS_END);
+        passEnd = passStart + (CHECK_PASSES_END - passStart) / 2;
+      }
+    }
+
+    int done = Math.min(event.path("done").asInt(0), total);
+    result.setProgress(passStart + (passEnd - passStart) * done / total);
+    String key = switch (eventPass) {
+      case PASS_MAIN -> "rom2altsound.status.extracting";
+      case "retry" -> "rom2altsound.status.retrying";
+      default -> "rom2altsound.status.checking";
+    };
+    result.setStatus(ServerMessages.get(key, locale, done, total));
+  }
+
+  @Nullable
+  private static JsonNode parse(@NonNull String line) {
+    if (!line.startsWith("{")) {
+      return null;
+    }
+    try {
+      return OBJECT_MAPPER.readTree(line);
+    }
+    catch (Exception e) {
+      LOG.warn("Invalid rom2altsound progress line \"{}\": {}", line, e.getMessage());
+      return null;
+    }
+  }
+
+  @Nullable
+  private static String text(@NonNull JsonNode node, @NonNull String field) {
+    JsonNode value = node.path(field);
+    return value.isMissingNode() || value.isNull() ? null : value.asString();
+  }
+
+  /**
+   * The last non-blank lines of the file, empty if it cannot be read.
+   */
+  @NonNull
+  private static List<String> tail(@NonNull File file) {
+    if (!file.exists()) {
+      return List.of();
+    }
+    try {
+      List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8).stream().filter(l -> !l.isBlank()).toList();
+      return lines.subList(Math.max(0, lines.size() - ERROR_LINES), lines.size());
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to read {}: {}", file.getAbsolutePath(), e.getMessage());
+      return List.of();
+    }
+  }
+
+  private void logPackLog(@NonNull File packFolder) {
+    List<String> lastLines = tail(new File(packFolder, PACK_LOG_FILE));
+    if (!lastLines.isEmpty()) {
+      LOG.error("rom2altsound log of \"{}\":\n{}", rom, String.join("\n", lastLines));
+    }
   }
 
   @NonNull
@@ -179,6 +300,8 @@ public class Rom2AltSoundJob implements Job {
     cmd.add("--jobs");
     cmd.add("1");
     cmd.add("--no-html");
+    cmd.add("--progress");
+    cmd.add("json");
     cmd.add("--volume");
     cmd.add(Rom2AltSoundOptions.VOLUME_REFERENCE.equalsIgnoreCase(options.getVolume()) ? Rom2AltSoundOptions.VOLUME_REFERENCE : Rom2AltSoundOptions.VOLUME_FACTORY);
     if (options.getMaxSecs() > 0) {
@@ -230,7 +353,7 @@ public class Rom2AltSoundJob implements Job {
       throw new IllegalStateException("Failed to create ALT sound folder " + altSoundFolder.getAbsolutePath());
     }
     // the staging folder is a temp folder, likely on another drive, so copy instead of moving
-    FileUtils.copyDirectory(packFolder, altSoundFolder);
+    FileUtils.copyDirectory(packFolder, altSoundFolder, f -> !(f.isFile() && PACK_LOG_FILE.equals(f.getName())));
     switchToGSound(new File(altSoundFolder, "altsound.ini"));
   }
 
