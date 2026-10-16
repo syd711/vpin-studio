@@ -95,6 +95,14 @@
          <right>
             <HBox alignment="BASELINE_RIGHT" spacing="12.0" BorderPane.alignment="CENTER">
                <children>
+                  <Button fx:id="exportNamesBtn" mnemonicParsing="false" onAction="#onExportNames" styleClass="default-button" text="%tables.editors.editor_altsound2.export_names">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-export-variant" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%tables.editors.editor_altsound2.export_names_tooltip" />
+                     </tooltip>
+                  </Button>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%update_info.close">
                      <HBox.margin>
                         <Insets />

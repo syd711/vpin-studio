@@ -395,7 +395,7 @@ public class Rom2AltSoundService {
    * "0.2.6" from "rom2altsound 0.2.6" (--version), cached until the executable changes.
    */
   @Nullable
-  private String getInstalledVersion() {
+  String getInstalledVersion() {
     if (!isAvailable()) {
       return null;
     }

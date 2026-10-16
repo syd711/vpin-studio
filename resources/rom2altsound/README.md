@@ -209,11 +209,14 @@ afm_113b/
 ├── altsound.ini                format, and the ROM's volume control turned off
 ├── manifest.json               every measure: names, lengths, loudness, loops, twins...
 ├── index.html                  a page to listen to every sound in a browser (see below)
+├── replace/                    your own sound files, when you replace some (see below)
+├── replacements.csv            which sound plays which of your files, at which volume
 ├── cold-boot.json              how the factory boot went
 └── factory-nvram/afm_113b.nv   the factory settings the ROM was played with
 ```
 
-Every gain is 100: the files already carry the ROM's own levels.
+Every gain is 100: the files already carry the ROM's own levels (until you change one,
+see "Replacement sounds").
 
 **`index.html` lists every sound in a table, with play buttons**: open it straight from
 the folder (double-click, no server, no internet needed). One row per sound: its command,
@@ -276,6 +279,67 @@ between this folder's file (A) and the file of the same name in the other folder
 at the same position and without stopping; the `b` key does the same. The player shows
 which side is playing, and a sound that is not in the other folder is marked "missing
 in B".
+
+#### Replacement sounds
+
+The pack made from the ROM stays as it is: you replace its sounds one at a time with your
+own files, and you can always go back to the ROM's sound.
+
+1. In the page, click **⇄** on a row (or press `r`), then **Choose a file...**: a WAV,
+   OGG, MP3 or FLAC file. The page measures it the way rom2altsound measured the ROM's
+   sound (its loudness in LUFS and its peak) and sets its volume to the same loudness.
+2. **A** plays the ROM's sound, **B** yours at the volume it will have; **A/B** switches
+   between them at the same position, and **Loop** plays them looped (for a music that
+   loops in the game, your file plays again from its start to its end: listen to the join).
+3. Move **Volume** if you want it louder or quieter, then **Use it**. The row is marked
+   "replaced"; **Changed only** shows the sounds you changed. **⇄** without a file changes
+   only the volume of the ROM's sound (marked "volume 50%"), and **Back to the ROM's
+   sound** undoes it all.
+
+AltSound can only lower a sound (its GAIN goes from 0 to 100), never raise it. So a file
+quieter than the ROM's sound is first raised to its maximum (its peak at -1 dBTP) into a
+WAV copy, and GAIN lowers that copy to the right loudness: you keep room to make it louder
+later from the page. A file that is louder is used as it is, lowered by GAIN. If even at
+its maximum a file stays quieter than the ROM's sound, the page says so.
+
+Your files go in the pack's `replace/` folder (`replace/0x000A-<your file>`), and
+`replacements.csv` lists them: the sound, the file, its GAIN and the name of the file you
+picked. In `altsound.csv` and `g-sound.csv`, only the FNAME and GAIN of that sound's rows
+change (its copies under other ids included: the Whitestar `0xFDxx` rows, the System 11
+board 1 rows); the channels, ducking and types stay the ROM's. The ROM's files are never
+touched.
+
+**Saving.** A page opened from your disk is not allowed to write files, and rom2altsound
+does not run a server for it: the page has to keep working without the program, on any
+computer, from a copy of the folder. So:
+
+- **Chrome and Edge**: **Save in the pack folder...** asks you once for the pack's folder
+  (`altsound/taf_l5`). From then on every change is written there at once, the page
+  included (opened again, it shows your sounds).
+- **Firefox, Safari and the others** cannot be given a folder. The page keeps your changes
+  in the browser (your files too) and **Download changes** saves a
+  `taf_l5-replacements.zip`. Put it in the pack with the window program's **Apply page
+  changes...** button, or:
+
+  ```
+  rom2altsound replace altsound/taf_l5 --apply taf_l5-replacements.zip
+  ```
+
+The command line does the same without the page:
+
+```
+rom2altsound replace altsound/taf_l5 --id 0x000A --file jackpot.ogg --gain 70
+rom2altsound replace altsound/taf_l5 --id 0x0012 --gain 50      # the ROM's file, quieter
+rom2altsound replace altsound/taf_l5 --revert 0x000A            # or --revert-all
+rom2altsound replace altsound/taf_l5                            # after editing replacements.csv
+```
+
+Building the pack again (a new rom2altsound, a new PinMAME) keeps `replace/` and
+`replacements.csv` and applies them to the new pack; a sound the new pack no longer has is
+reported and kept in `replacements.csv`. AltSound plays WAV, MP3, FLAC and Ogg Vorbis, not
+Ogg Opus: the page saves an Opus file (and any other format the browser reads) as WAV. To
+share your replacements, share `replace/` and `replacements.csv`: they hold none of the
+ROM's sounds.
 
 **On DCS boards (Williams/Bally 1993-1999), the mix comes from the ROM itself.** Each DCS
 sound command is a small program that says which of the board's channels it plays on and
@@ -920,11 +984,14 @@ afm_113b/
 ├── altsound.ini                le format, et le contrôle du volume par la ROM désactivé
 ├── manifest.json               toutes les mesures : noms, durées, niveaux, boucles, jumeaux...
 ├── index.html                  une page pour écouter chaque son dans un navigateur (voir plus bas)
+├── replace/                    vos propres fichiers de sons, si vous en remplacez (voir plus bas)
+├── replacements.csv            quel son joue lequel de vos fichiers, à quel volume
 ├── cold-boot.json              le déroulé du démarrage en réglages d'usine
 └── factory-nvram/afm_113b.nv   les réglages d'usine avec lesquels la ROM a été jouée
 ```
 
-Tous les gains sont à 100 : les fichiers ont déjà les niveaux de la ROM.
+Tous les gains sont à 100 : les fichiers ont déjà les niveaux de la ROM (tant que vous
+n'en changez pas un, voir « Sons de remplacement »).
 
 **`index.html` liste chaque son dans un tableau, avec des boutons de lecture** : il s'ouvre
 directement depuis le dossier (double-clic, sans serveur ni internet). Une ligne par son :
@@ -991,6 +1058,70 @@ folder » de la page (elle s'en souvient). Chaque son reçoit un bouton **A/B** 
 passer le lecteur du fichier de ce dossier (A) au fichier du même nom dans l'autre (B), au
 même endroit et sans s'arrêter ; la touche `b` fait de même. Le lecteur montre quel côté
 joue, et un son absent de l'autre dossier est marqué « missing in B ».
+
+#### Sons de remplacement
+
+Le pack tiré de la ROM reste tel quel : vous remplacez ses sons un par un par vos propres
+fichiers, et vous pouvez toujours revenir au son de la ROM.
+
+1. Dans la page, cliquez sur **⇄** sur une ligne (ou appuyez sur `r`), puis sur **Choose a
+   file...** : un fichier WAV, OGG, MP3 ou FLAC. La page le mesure comme rom2altsound a
+   mesuré le son de la ROM (son niveau en LUFS et sa crête) et règle son volume sur le même
+   niveau.
+2. **A** joue le son de la ROM, **B** le vôtre au volume qu'il aura ; **A/B** passe de l'un
+   à l'autre au même endroit, et **Loop** les joue en boucle (pour une musique qui boucle
+   dans le jeu, votre fichier repart de son début une fois fini : écoutez le raccord).
+3. Réglez **Volume** si vous le voulez plus fort ou plus doux, puis **Use it**. La ligne est
+   marquée « replaced » ; **Changed only** montre les sons que vous avez changés. **⇄** sans
+   fichier change seulement le volume du son de la ROM (marqué « volume 50% »), et **Back to
+   the ROM's sound** annule tout.
+
+AltSound sait seulement baisser un son (son GAIN va de 0 à 100), jamais le monter. Un
+fichier plus faible que le son de la ROM est donc d'abord monté à son maximum (sa crête à
+-1 dBTP) dans une copie WAV, puis GAIN baisse cette copie au bon niveau : il vous reste de
+la marge pour le monter plus tard depuis la page. Un fichier plus fort est pris tel quel,
+baissé par GAIN. Si même à son maximum un fichier reste plus faible que le son de la ROM,
+la page le dit.
+
+Vos fichiers vont dans le dossier `replace/` du pack (`replace/0x000A-<votre fichier>`), et
+`replacements.csv` les liste : le son, le fichier, son GAIN et le nom du fichier que vous
+avez choisi. Dans `altsound.csv` et `g-sound.csv`, seuls FNAME et GAIN des lignes de ce son
+changent (y compris ses copies sous d'autres numéros : les lignes `0xFDxx` de Whitestar, les
+lignes de la carte 1 en System 11) ; les voies, le ducking et les types restent ceux de la
+ROM. Les fichiers de la ROM ne sont jamais modifiés.
+
+**Enregistrer.** Une page ouverte depuis votre disque n'a pas le droit d'écrire des
+fichiers, et rom2altsound ne lance pas de serveur pour elle : la page doit continuer de
+marcher sans le programme, sur n'importe quel ordinateur, depuis une copie du dossier.
+Donc :
+
+- **Chrome et Edge** : **Save in the pack folder...** vous demande une fois le dossier du
+  pack (`altsound/taf_l5`). Ensuite chaque changement y est écrit tout de suite, la page
+  comprise (rouverte, elle montre vos sons).
+- **Firefox, Safari et les autres** ne peuvent pas recevoir de dossier. La page garde vos
+  changements dans le navigateur (vos fichiers aussi) et **Download changes** enregistre un
+  `taf_l5-replacements.zip`. Mettez-le dans le pack avec le bouton **Appliquer les
+  changements de la page...** du programme à fenêtre, ou :
+
+  ```
+  rom2altsound replace altsound/taf_l5 --apply taf_l5-replacements.zip
+  ```
+
+La ligne de commande fait la même chose sans la page :
+
+```
+rom2altsound replace altsound/taf_l5 --id 0x000A --file jackpot.ogg --gain 70
+rom2altsound replace altsound/taf_l5 --id 0x0012 --gain 50      # le fichier de la ROM, plus doux
+rom2altsound replace altsound/taf_l5 --revert 0x000A            # ou --revert-all
+rom2altsound replace altsound/taf_l5                            # après avoir modifié replacements.csv
+```
+
+Reconstruire le pack (un nouveau rom2altsound, un nouveau PinMAME) garde `replace/` et
+`replacements.csv` et les applique au nouveau pack ; un son que le nouveau pack n'a plus est
+signalé et reste dans `replacements.csv`. AltSound joue le WAV, le MP3, le FLAC et l'Ogg
+Vorbis, pas l'Ogg Opus : la page enregistre un fichier Opus (et tout autre format que le
+navigateur sait lire) en WAV. Pour partager vos remplacements, partagez `replace/` et
+`replacements.csv` : ils ne contiennent aucun son de la ROM.
 
 **Sur les cartes DCS (Williams/Bally 1993-1999), le mixage vient de la ROM elle-même.**
 Chaque commande de son DCS est un petit programme qui dit sur quelle voie de la carte elle

@@ -109,4 +109,18 @@ public class AltSoundServiceClient extends VPinStudioClientService {
   public JobDescriptor generateAltSound(int gameId, Rom2AltSoundOptions options) throws Exception {
     return getRestClient().post(API + "rom2altsound/" + gameId, options, JobDescriptor.class);
   }
+
+  /**
+   * The sound names of the game's ALT sound that would be shared with the rom2altsound community naming.
+   */
+  public Rom2AltSoundNames getRom2AltSoundNames(int gameId) {
+    return getRestClient().get(API + "rom2altsound/" + gameId + "/names", Rom2AltSoundNames.class);
+  }
+
+  /**
+   * Uploads the sound names of the game's ALT sound to the rom2altsound community naming, names are shared as CC0.
+   */
+  public Rom2AltSoundNames uploadRom2AltSoundNames(int gameId) throws Exception {
+    return getRestClient().put(API + "rom2altsound/" + gameId + "/names", Map.of(), Rom2AltSoundNames.class);
+  }
 }

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
+import de.mephisto.vpin.restclient.altsound.Rom2AltSoundNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
@@ -117,6 +118,9 @@ public class AltSound2EditorController implements Initializable {
 
   @FXML
   private Button editFileBtn;
+
+  @FXML
+  private Button exportNamesBtn;
 
   @FXML
   private CheckBox romVolCtrlCheckbox;
@@ -236,6 +240,36 @@ public class AltSound2EditorController implements Initializable {
     } catch (Exception ex) {
       LOG.error(Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage(), ex);
       WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage());
+    }
+  }
+
+  /**
+   * Shares the sound names with the rom2altsound community naming, the names are taken from the audio filenames.
+   */
+  @FXML
+  private void onExportNames() {
+    try {
+      Rom2AltSoundNames names = client.getAltSoundService().getRom2AltSoundNames(game.getId());
+      if (!names.isExportable()) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("tables.editors.editor_altsound2.export_names_unavailable"), names.getError());
+        return;
+      }
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
+          Messages.get("tables.editors.editor_altsound2.export_names_confirm", names.getEntries().size(), names.getRom()),
+          Messages.get("tables.editors.editor_altsound2.export_names_help1"),
+          Messages.get("tables.editors.editor_altsound2.export_names_help2", names.getSoundRomId()),
+          Messages.get("tables.editors.editor_altsound2.export_names_btn"));
+      if (result.isEmpty() || !result.get().equals(ButtonType.OK)) {
+        return;
+      }
+
+      Rom2AltSoundNames uploaded = client.getAltSoundService().uploadRom2AltSoundNames(game.getId());
+      WidgetFactory.showInformation(Studio.stage, Messages.get("tables.editors.editor_altsound2.export_names_success", uploaded.getEntries().size()), null);
+    }
+    catch (Exception ex) {
+      LOG.error("Failed to share the sound names: {}", ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("tables.editors.editor_altsound2.export_names_failed"), ex.getMessage());
     }
   }
 

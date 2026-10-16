@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundInfo;
+import de.mephisto.vpin.restclient.altsound.Rom2AltSoundNames;
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundOptions;
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundVersion;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -28,6 +29,9 @@ public class Rom2AltSoundResource {
 
   @Autowired
   private Rom2AltSoundService rom2AltSoundService;
+
+  @Autowired
+  private Rom2AltSoundNamesService rom2AltSoundNamesService;
 
   @Autowired
   private GameService gameService;
@@ -64,6 +68,28 @@ public class Rom2AltSoundResource {
   @PostMapping("/{gameId}")
   public JobDescriptor generate(@PathVariable("gameId") int gameId, @RequestBody(required = false) Rom2AltSoundOptions options) {
     return rom2AltSoundService.generate(getGame(gameId), options != null ? options : new Rom2AltSoundOptions());
+  }
+
+  /**
+   * The sound names of the game's ALT sound that would be shared with the rom2altsound community naming.
+   */
+  @GetMapping("/{gameId}/names")
+  public Rom2AltSoundNames getNames(@PathVariable("gameId") int gameId) {
+    return rom2AltSoundNamesService.getNames(getGame(gameId));
+  }
+
+  /**
+   * Uploads the sound names of the game's ALT sound to the rom2altsound community naming.
+   */
+  @PutMapping("/{gameId}/names")
+  public Rom2AltSoundNames uploadNames(@PathVariable("gameId") int gameId) {
+    try {
+      return rom2AltSoundNamesService.upload(getGame(gameId));
+    }
+    catch (Exception e) {
+      LOG.error("Sound names upload failed: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Sound names upload failed: " + e.getMessage());
+    }
   }
 
   private Game getGame(int gameId) {
