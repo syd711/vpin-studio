@@ -575,16 +575,6 @@ public class BulkImporterController implements Initializable, DialogController {
   }
 
   @FXML
-  private void onSelectMatched() {
-    selectImportable();
-  }
-
-  @FXML
-  private void onSelectNone() {
-    tableView.getSelectionModel().clearSelection();
-  }
-
-  @FXML
   private void onRemove() {
     List<BulkImportItem> selection = targets();
     int index = tableView.getSelectionModel().getSelectedIndex();
@@ -598,16 +588,6 @@ public class BulkImporterController implements Initializable, DialogController {
   @FXML
   private void onRemoveUnmatched() {
     items.removeIf(i -> i.gameProperty().get() == null);
-    updateSummary();
-  }
-
-  @FXML
-  private void onClearMatch() {
-    for (BulkImportItem item : targets()) {
-      item.gameProperty().set(null);
-      item.matchSourceProperty().set("filename");
-    }
-    tableView.refresh();
     updateSummary();
   }
 
