@@ -81,6 +81,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
             </MenuItem>
+            <MenuItem fx:id="vbsItem" mnemonicParsing="false" onAction="#onVbsUpload" text="%tables.uploads_btn.upload_vbs_file">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
             <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="%tables.uploads_btn.upload_pup_pack">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />

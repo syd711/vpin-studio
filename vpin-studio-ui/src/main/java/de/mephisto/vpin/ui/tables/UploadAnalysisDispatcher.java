@@ -128,6 +128,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.directIniUpload(Studio.stage, game, file, finalizer);
         break;
       }
+      case VBS: {
+        TableDialogs.directVbsUpload(Studio.stage, game, file, finalizer);
+        break;
+      }
       case POV: {
         TableDialogs.directPovUpload(Studio.stage, game, file, finalizer);
         break;

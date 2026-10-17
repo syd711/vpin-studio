@@ -86,6 +86,9 @@ public class UploadsButtonController implements Initializable {
   @FXML
   private MenuItem resItem;
 
+  @FXML
+  private MenuItem vbsItem;
+
   private List<GameRepresentation> games = new ArrayList<>();
   private GameEmulatorRepresentation gameEmulator;
   private TablesController tablesController;
@@ -226,6 +229,14 @@ public class UploadsButtonController implements Initializable {
   }
 
   @FXML
+  public void onVbsUpload() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.directUpload(stage, AssetType.VBS, selectedItems.getFirst(), null);
+    }
+  }
+
+  @FXML
   public void onTableUpload() {
     openUploadDialogWithCheck(null);
   }
@@ -290,6 +301,7 @@ public class UploadsButtonController implements Initializable {
     povItem.setVisible(vpxEmulator);
     nvUploadMenuItem.setVisible(vpxEmulator);
     resItem.setVisible(vpxEmulator);
+    vbsItem.setVisible(vpxEmulator);
     mediaUploadItem.setVisible(vpxOrFpEmulator);
     musicUploadItem.setVisible(vpxEmulator);
     cfgUploadItem.setVisible(vpxEmulator);
@@ -312,6 +324,7 @@ public class UploadsButtonController implements Initializable {
     mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);
     resItem.setDisable(disable);
+    vbsItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
     iniUploadMenuItem.setDisable(disable);
     musicUploadItem.setDisable(disable);

@@ -77,7 +77,7 @@ public class TableDialogs {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle(Messages.get("dialog.select_media"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Files", MediaTypesSelector.getFileSelection(screen)));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.files"), MediaTypesSelector.getFileSelection(screen)));
 
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
@@ -252,7 +252,7 @@ public class TableDialogs {
     if (file != null && file.exists()) {
       String help2 = null;
       if (game.getDirectB2SPath() != null) {
-        help2 = "The existing directb2 file of this table will be overwritten.";
+        help2 = Messages.get("dialog.the_existing_directb2s_file_will_be_overwritten");
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_backglass_for") + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
@@ -271,7 +271,7 @@ public class TableDialogs {
     if (file != null && file.exists()) {
       String help2 = null;
       if (game.getDirectB2SPath() != null) {
-        help2 = "The existing .res file of this table will be overwritten.";
+        help2 = Messages.get("dialog.the_existing_res_file_will_be_overwritten");
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_res_file_for") + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
@@ -293,11 +293,32 @@ public class TableDialogs {
       Platform.runLater(() -> {
         String help2 = null;
         if (game.getIniPath() != null) {
-          help2 = "The existing .ini file of this table will be overwritten.";
+          help2 = Messages.get("dialog.the_existing_ini_file_will_be_overwritten");
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_ini_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), Messages.get("dialog.ini_upload"), file);
+          ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
+          if (/*resultModel.isSuccess() &&*/ finalizer != null) {
+            finalizer.run();
+          }
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directVbsUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String help2 = null;
+        if (game.getVbsPath() != null) {
+          help2 = Messages.get("dialog.the_existing_vbs_file_will_be_overwritten");
+        }
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_vbs_file_for") + game.getGameDisplayName() + "\"?", help2);
+        if (result.get().equals(ButtonType.OK)) {
+          VbsUploadProgressModel model = new VbsUploadProgressModel(game.getId(), Messages.get("dialog.vbs_upload"), file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
           if (/*resultModel.isSuccess() &&*/ finalizer != null) {
             finalizer.run();
@@ -332,7 +353,7 @@ public class TableDialogs {
       Platform.runLater(() -> {
         String help2 = null;
         if (game.getPovPath() != null) {
-          help2 = "The existing .pov file of this table will be overwritten.";
+          help2 = Messages.get("dialog.the_existing_pov_file_will_be_overwritten");
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_pov_file_for") + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {

@@ -46,7 +46,7 @@ public enum AssetType {
   CARD_ASSET;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, VPT, FPT, PAL, PAC, CROMC, CRZ, CFG, BAM_CFG, NV, FPL
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VBS, VNI, VPA, VPX, VPT, FPT, PAL, PAC, CROMC, CRZ, CFG, BAM_CFG, NV, FPL
   };
 
   public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
@@ -120,6 +120,7 @@ public enum AssetType {
           case RES -> "*.res";
           case POV -> "*.pov";
           case INI -> "*.ini";
+          case VBS -> "*.vbs";
           case DIRECTB2S -> "*.directb2s";
           case NV -> "*.nv";
           case ALT_SOUND -> "*.zip";

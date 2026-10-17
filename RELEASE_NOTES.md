@@ -57,6 +57,7 @@
     
 - **Scoring Database**: ROM mappings can be restricted to specific table files now, so tables that share the same scanned ROM name can be mapped differently.
 - **Table Export**: Added the column "pupPackInstalled" to the table export. It contains `true` if a PUP pack is installed for the table, `false` otherwise.
+- **VBS File Uploads**: Added option to upload .vbs files. These can be uploaded via the upload menu, context menu and via drag-and-drop on the workarea or from the drop-in folder menu.
 
 ### Bugfixes
 
@@ -69,3 +70,4 @@
 - **Studio Client**: Fixed the window header styling when the window is maximized.
 - **Studio Client**: Fixed the wrong return value when opening files on Windows.
 - **Table Overview**: Fixed issue that the trophy icon was only shown when iScored was enabled. It is shown now if the table is competed in any competition type.
+- **Localization**: Added missing localizations.

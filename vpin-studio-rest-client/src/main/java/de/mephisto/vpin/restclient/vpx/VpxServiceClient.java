@@ -35,6 +35,21 @@ public class VpxServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+
+  public UploadDescriptor uploadVbsFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "vpx/vbs/upload";
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.VBS, listener);
+      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
+      finalizeUpload(upload);
+      return exchange.getBody();
+    }
+    catch (Exception e) {
+      LOG.error("Vbs upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   public POVRepresentation getPOV(int gameId) {
     Map<String, Object> povData = getRestClient().get(API + "vpx/pov/" + gameId, Map.class);
     return new POVRepresentation(povData);

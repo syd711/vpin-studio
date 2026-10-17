@@ -194,4 +194,22 @@ public class VPXResource {
       descriptor.finalizeUpload();
     }
   }
+
+  @PostMapping("/vbs/upload")
+  public UploadDescriptor vbsUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                    @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = universalUploadService.create(file, gameId);
+    try {
+      descriptor.upload();
+      universalUploadService.importFileBasedAssets(descriptor, AssetType.VBS);
+      return descriptor;
+    }
+    catch (Exception e) {
+      LOG.error("vbs upload failed: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "vbs upload failed: " + e.getMessage());
+    }
+    finally {
+      descriptor.finalizeUpload();
+    }
+  }
 }
