@@ -1,11 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
@@ -23,6 +25,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +63,21 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private Label labelLastModified;
+
+  @FXML
+  private Label labelVbsTitle;
+
+  @FXML
+  private Label labelVbsFile;
+
+  @FXML
+  private HBox vbsSettingsBox;
+
+  @FXML
+  private RowConstraints vbsRow;
+
+  @FXML
+  private Button uploadVbsBtn;
 
   @FXML
   private SplitMenuButton editBtn;
@@ -211,6 +230,18 @@ public class TablesSidebarScriptDataController implements Initializable {
 
 
   @FXML
+  private void onVbsUpload() {
+    if (game.isPresent()) {
+      TableDialogs.directUpload(Studio.stage, AssetType.VBS, game.get(), null);
+    }
+  }
+
+  @FXML
+  private void onVbsSettings() {
+    PreferencesController.open("settings-server");
+  }
+
+  @FXML
   public void onEdit() {
     VBSManager.getInstance().edit(this.game);
   }
@@ -276,6 +307,16 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     tableInfo = null;
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
+
+    uploadVbsBtn.setVisible(g.isPresent() && g.get().getVbsPath() != null);
+
+    boolean vpxGame = g.isPresent() && client.getEmulatorService().isVpxGame(g.get());
+    labelVbsTitle.setVisible(vpxGame);
+    labelVbsFile.setVisible(vpxGame);
+    vbsSettingsBox.setVisible(vpxGame);
+    vbsRow.setMinHeight(vpxGame ? 10 : 0);
+    vbsRow.setPrefHeight(vpxGame ? 30 : 0);
+    labelVbsFile.setText(vpxGame && g.get().getVbsPath() != null ? new File(g.get().getVbsPath()).getName() : "-");
 
     boolean gameFileAvailable = g.isPresent() && g.get().getGameFilePath() != null;
     editBtn.setDisable(g.isEmpty() || !gameFileAvailable);
@@ -352,6 +393,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
+    uploadVbsBtn.managedProperty().bindBidirectional(uploadVbsBtn.visibleProperty());
   }
 
 }

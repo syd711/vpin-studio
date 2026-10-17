@@ -11,9 +11,9 @@
 
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/rom2altsound.png?raw=true" width="800" />
 
-- **G-Sound Editor**: Added various improvements and fixes to the g-sound bundle editor. Audio files from the bundle can now be played and renamed in the editor.
+- **G-Sound Editor**: Added various improvements and fixes to the g-sound bundle editor. Audio files from the bundle can now be played and renamed in the editor. There is also an option to submit the file name to the rom2altsound portal to use these names for future conversions.
 
-- **Bulk Importer**: Added a new "Bulk Importer" to the table overview toolbar. Select or drop a folder of media files and they are matched to your tables by file name, folder name or both. The minimum match score is configurable, unmatched files can be assigned manually via a table search, and the target screen is detected from the file or folder name. Screen and import mode (overwrite/append) can be set per file or for all selected rows, followed by a single import run. The bulk importer can also be used from the Drop-In menu.
+- **Bulk Importer**: Added a new "Bulk Importer" to the table overview toolbar. Select or drop a folder of media files, and they are matched to your tables by file name, folder name or both. The minimum match score is configurable, unmatched files can be assigned manually via a table search, and the target screen is detected from the file or folder name. Screen and import mode (overwrite/append) can be set per file or for all selected rows, followed by a single import run. The bulk importer can also be used from the Drop-In menu.
 
   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/bulk-import-1.png?raw=true" width="400" />
   
@@ -58,6 +58,13 @@
 - **Scoring Database**: ROM mappings can be restricted to specific table files now, so tables that share the same scanned ROM name can be mapped differently.
 - **Table Export**: Added the column "pupPackInstalled" to the table export. It contains `true` if a PUP pack is installed for the table, `false` otherwise.
 - **VBS File Uploads**: Added option to upload .vbs files. These can be uploaded via the upload menu, context menu and via drag-and-drop on the workarea or from the drop-in folder menu.
+- **Script Outliner**:
+  - The script outliner has an upload button now, where .vbs files can be uploaded.
+  - The table info contains an additional row about the .vbs file now, in case the user has not activated the .vbs file table column which is disabled by default.
+  - The .vbs info row has a preferences button which points to the server settings. Note that the Studio might delete the .vbs file after editing automatically. This setting can be changed there.
+
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/script.png?raw=true" width="500" />
+
 
 ### Bugfixes
 

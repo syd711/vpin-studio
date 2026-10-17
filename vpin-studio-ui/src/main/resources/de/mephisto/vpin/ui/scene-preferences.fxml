@@ -40,7 +40,7 @@
                                     <Tooltip text="%preferences.client_settings" />
                                  </tooltip>
                               </Button>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="%competitions.discord_competition_edit.server_settings">
+                              <Button id="settings-serverBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="%competitions.discord_competition_edit.server_settings">
                                  <tooltip>
                                     <Tooltip text="%competitions.discord_competition_edit.server_settings" />
                                  </tooltip>
