@@ -2,7 +2,7 @@
 
 ### Changes 
 
-- **Rom-2-AltSound Support**: Added support for [rom2altsound](https://github.com/Le-Syl21/rom2altsound), which plays every sound command of a ROM on PinMAME's emulated sound board and records each one to its own audio file. The result is a ready-to-use ALT sound pack in the G-Sound format. Use the new "Create from ROM…" button in the "ALT Sound" section of the table sidebar to generate a pack for tables that don't have an ALT sound yet.
+- **Rom-2-AltSound Support**: Added support for [rom2altsound](https://github.com/Le-Syl21/rom2altsound) (kudos to @Le-Syl21), which plays every sound command of a ROM on PinMAME's emulated sound board and records each one to its own audio file. The result is a ready-to-use ALT sound pack in the G-Sound format. Use the new "Create from ROM…" button in the "ALT Sound" section of the table sidebar to generate a pack for tables that don't have an ALT sound yet.
   - The dialog shows the installed and latest rom2altsound version. It can be installed or updated from there.
   - The ROM is checked before the recording starts, and the dialog shows the detected game, sound board and target folder.
   - Options: recording volume ("As the game sets it" or "As loud as possible"), the longest sound length, and whether ALT sound is enabled for the ROM after the installation.
@@ -77,4 +77,4 @@
 - **Studio Client**: Fixed the window header styling when the window is maximized.
 - **Studio Client**: Fixed the wrong return value when opening files on Windows.
 - **Table Overview**: Fixed issue that the trophy icon was only shown when iScored was enabled. It is shown now if the table is competed in any competition type.
-- **Localization**: Added missing localizations.
+- **Localization**: Added missing localizations, mostly in the table overview area.

@@ -119,6 +119,9 @@ https://www.nirsoft.net/utils/nircmd.html
 ### PupPackScreenTweaker
 https://github.com/matiou11/PupPackScreenTweaker
 
+### rom2altsound
+https://github.com/Le-Syl21/rom2altsound
+
 ### Sounds
 Sound Effect by <a href="https://pixabay.com/users/edr-1177074/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=8325">EdR</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=8325">Pixabay</a>
 
