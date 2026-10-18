@@ -111,9 +111,9 @@
          <center>
             <VBox>
                <children>
-                  <StackPane>
+                  <StackPane minHeight="-Infinity">
                      <children>
-                        <TabPane fx:id="tabPane">
+                        <TabPane fx:id="tabPane" minHeight="-Infinity">
                            <tabs>
                               <Tab fx:id="playfieldTab" closable="false" text="%pref.validators_screens.playfield" />
                               <Tab fx:id="backglassTab" closable="false" text="%backglass.directb2s_admin.backglass" />
@@ -123,7 +123,7 @@
                      </children>
                   </StackPane>
 
-                  <ToolBar>
+                  <ToolBar minHeight="-Infinity">
                      <items>
                         <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" textFill="WHITE">
                            <font>

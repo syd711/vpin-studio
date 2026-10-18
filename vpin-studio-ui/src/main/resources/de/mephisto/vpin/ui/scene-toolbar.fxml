@@ -55,7 +55,7 @@
                               <FontIcon iconColor="#898989" iconLiteral="mdi2c-circle-slice-8" iconSize="18" />
                            </graphic>
                         </ToggleButton>
-                        <ToggleButton fx:id="maintenanceBtn" maxWidth="150.0" mnemonicParsing="false" onAction="#onMaintenance" text="%toolbar.maintenance_mode">
+                        <ToggleButton fx:id="maintenanceBtn" mnemonicParsing="false" onAction="#onMaintenance" text="%toolbar.maintenance_mode">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -63,7 +63,7 @@
                               <Font size="14.0" />
                            </font>
                         </ToggleButton>
-                        <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="%toolbar.no_active_jobs">
+                        <MenuButton fx:id="jobBtn" mnemonicParsing="false" text="%toolbar.no_active_jobs">
                            <tooltip>
                               <Tooltip text="%toolbar.job_overview" />
                            </tooltip>
@@ -81,7 +81,7 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
-                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" prefWidth="160.0" text="%toolbar.drop_in_assets">
+                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" text="%toolbar.drop_in_assets">
                            <tooltip>
                               <Tooltip text="%toolbar.shows_the_available_assets_to_install" />
                            </tooltip>

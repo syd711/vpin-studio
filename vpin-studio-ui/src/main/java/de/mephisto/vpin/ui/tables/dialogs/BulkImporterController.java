@@ -546,7 +546,7 @@ public class BulkImporterController implements Initializable, DialogController {
     summaryLabel.setText(Messages.get("bulk_importer.summary", items.size(), matched, selected)
         + (noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""));
     importBtn.setDisable(items.isEmpty() || !items.stream().allMatch(BulkImportItem::isImportable));
-    removeUnmatchedBtn.setDisable(matched == items.size());
+    removeUnmatchedBtn.setDisable(matcher == null || matched == items.size());
   }
 
   //---------------- bulk actions ------------------------------------------------------------------------------------
