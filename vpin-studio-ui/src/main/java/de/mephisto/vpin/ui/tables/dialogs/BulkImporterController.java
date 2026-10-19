@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportItem;
@@ -59,6 +60,9 @@ public class BulkImporterController implements Initializable, DialogController {
   private static final int SUGGESTION_COUNT = 8;
   private static final String SOURCE_MANUAL = "manual";
   private static final int PREVIEW_CACHE_SIZE = 300;
+  private static final String MOVE_ENABLED = "bulkImporterMoveEnabled";
+  private static final String MOVE_TARGET = "bulkImporterMoveTarget";
+  private static final String MOVE_KEEP_STRUCTURE = "bulkImporterMoveKeepStructure";
 
   @FXML
   private TextField sourceField;
@@ -77,6 +81,18 @@ public class BulkImporterController implements Initializable, DialogController {
   @FXML
   private ComboBox<Boolean> defaultModeCombo;
   @FXML
+  private CheckBox moveCheck;
+  @FXML
+  private TextField moveTargetField;
+  @FXML
+  private Button moveTargetBtn;
+  @FXML
+  private RadioButton moveFlatRadio;
+  @FXML
+  private RadioButton moveKeepStructureRadio;
+  @FXML
+  private ToggleGroup moveStructureGroup;
+  @FXML
   private CheckBox previewCheck;
   @FXML
   private ToggleGroup previewSizeGroup;
@@ -88,6 +104,8 @@ public class BulkImporterController implements Initializable, DialogController {
   private ToggleButton sizeLargeBtn;
   @FXML
   private TableView<BulkImportItem> tableView;
+  @FXML
+  private TableColumn<BulkImportItem, BulkImportItem> columnSelect;
   @FXML
   private TableColumn<BulkImportItem, BulkImportItem> columnPreview;
   @FXML
@@ -111,7 +129,8 @@ public class BulkImporterController implements Initializable, DialogController {
   private Button removeUnmatchedBtn;
 
   private final ObservableList<BulkImportItem> items = FXCollections.observableArrayList(
-      item -> new javafx.beans.Observable[]{item.gameProperty(), item.screenProperty()});
+      item -> new javafx.beans.Observable[]{item.gameProperty(), item.screenProperty(), item.selectedProperty()});
+  private final CheckBox selectAllCheck = new CheckBox();
 
   private List<GameRepresentation> allGames = Collections.emptyList();
   private BulkImportMatcher matcher;
@@ -150,7 +169,7 @@ public class BulkImporterController implements Initializable, DialogController {
     StringConverter<VPinScreen> screenConverter = new StringConverter<>() {
       @Override
       public String toString(VPinScreen screen) {
-        return screen == null ? "" : screen.getSegment();
+        return screen == null ? "" : TableAssetManagerPane.getScreenLabel(screen, false);
       }
 
       @Override
@@ -160,7 +179,8 @@ public class BulkImporterController implements Initializable, DialogController {
     };
     List<VPinScreen> screens = new ArrayList<>();
     screens.add(null);
-    screens.addAll(Arrays.asList(VPinScreen.values()));
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
+    Arrays.stream(VPinScreen.values()).filter(supportedScreens::contains).forEach(screens::add);
     defaultScreenCombo.setItems(FXCollections.observableArrayList(screens));
     defaultScreenCombo.setConverter(screenConverter);
     defaultScreenCombo.valueProperty().addListener((obs, o, n) -> rematch(false, false));
@@ -206,6 +226,7 @@ public class BulkImporterController implements Initializable, DialogController {
     sizeMediumBtn.disableProperty().bind(previewCheck.selectedProperty().not());
     sizeLargeBtn.disableProperty().bind(previewCheck.selectedProperty().not());
 
+    initMoveSettings();
     initTable();
     applyPreviewSize();
 
@@ -246,6 +267,27 @@ public class BulkImporterController implements Initializable, DialogController {
     }, "bulk-importer-games").start();
   }
 
+  private void initMoveSettings() {
+    moveCheck.setSelected(Boolean.parseBoolean(LocalUISettings.getString(MOVE_ENABLED)));
+    moveTargetField.setText(StringUtils.defaultString(LocalUISettings.getString(MOVE_TARGET)));
+    boolean keepStructure = Boolean.parseBoolean(LocalUISettings.getString(MOVE_KEEP_STRUCTURE));
+    moveStructureGroup.selectToggle(keepStructure ? moveKeepStructureRadio : moveFlatRadio);
+
+    moveTargetField.disableProperty().bind(moveCheck.selectedProperty().not());
+    moveTargetBtn.disableProperty().bind(moveCheck.selectedProperty().not());
+    moveFlatRadio.disableProperty().bind(moveCheck.selectedProperty().not());
+    moveKeepStructureRadio.disableProperty().bind(moveCheck.selectedProperty().not());
+
+    moveCheck.selectedProperty().addListener((obs, o, n) -> LocalUISettings.saveProperty(MOVE_ENABLED, String.valueOf(n)));
+    moveStructureGroup.selectedToggleProperty().addListener((obs, old, toggle) -> {
+      if (toggle == null) {
+        old.setSelected(true); // one structure option is always active
+        return;
+      }
+      LocalUISettings.saveProperty(MOVE_KEEP_STRUCTURE, String.valueOf(toggle == moveKeepStructureRadio));
+    });
+  }
+
   private static StringConverter<Boolean> modeConverter() {
     return new StringConverter<>() {
       @Override
@@ -266,6 +308,58 @@ public class BulkImporterController implements Initializable, DialogController {
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     removeBtn.disableProperty().bind(javafx.beans.binding.Bindings.isEmpty(tableView.getSelectionModel().getSelectedItems()));
+
+    // import checkboxes, the header checkbox toggles all complete rows
+    selectAllCheck.setTooltip(new Tooltip(Messages.get("bulk_importer.select_all_tooltip")));
+    selectAllCheck.setOnAction(e -> {
+      boolean select = selectAllCheck.isSelected();
+      for (BulkImportItem item : items) {
+        if (item.isImportable()) {
+          item.selectedProperty().set(select);
+          item.setSelectionManual(true);
+        }
+      }
+      tableView.refresh();
+      updateSummary();
+    });
+    columnSelect.setGraphic(selectAllCheck);
+    columnSelect.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
+    columnSelect.setCellFactory(c -> new TableCell<>() {
+      private final CheckBox check = new CheckBox();
+
+      {
+        setAlignment(Pos.CENTER);
+        check.setOnAction(e -> {
+          BulkImportItem item = getItem();
+          if (item == null) {
+            return;
+          }
+          boolean select = check.isSelected();
+          for (BulkImportItem target : affectedRows(item)) {
+            if (target.isImportable()) {
+              target.selectedProperty().set(select);
+              target.setSelectionManual(true);
+            }
+          }
+          Platform.runLater(() -> {
+            tableView.refresh();
+            updateSummary();
+          });
+        });
+      }
+
+      @Override
+      protected void updateItem(BulkImportItem item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setGraphic(null);
+          return;
+        }
+        check.setSelected(item.isImported());
+        check.setDisable(!item.isImportable());
+        setGraphic(check);
+      }
+    });
     tableView.getSelectionModel().getSelectedItems().addListener((javafx.collections.ListChangeListener<BulkImportItem>) c -> {
       if (!updating) {
         updateSummary();
@@ -362,6 +456,7 @@ public class BulkImporterController implements Initializable, DialogController {
           for (BulkImportItem target : affectedRows(item)) {
             target.screenProperty().set(value);
             target.screenDetectedProperty().set(false);
+            updateImportSelection(target);
           }
           Platform.runLater(() -> {
             tableView.refresh();
@@ -474,6 +569,25 @@ public class BulkImporterController implements Initializable, DialogController {
     }
   }
 
+  @FXML
+  private void onMoveTargetBrowse() {
+    StudioFolderChooser chooser = new StudioFolderChooser();
+    chooser.setTitle(Messages.get("bulk_importer.move_target_select"));
+    File current = getMoveTarget();
+    if (current != null && current.isDirectory()) {
+      chooser.setInitialDirectory(current);
+    }
+    File folder = chooser.showOpenDialog(getStage());
+    if (folder != null) {
+      moveTargetField.setText(folder.getAbsolutePath());
+      LocalUISettings.saveProperty(MOVE_TARGET, folder.getAbsolutePath());
+    }
+  }
+
+  private File getMoveTarget() {
+    return StringUtils.isBlank(moveTargetField.getText()) ? null : new File(moveTargetField.getText());
+  }
+
   public void setSourceFolder(File folder) {
     // the progress dialog needs the importer dialog showing as its owner
     Platform.runLater(() -> loadFolder(folder));
@@ -557,9 +671,10 @@ public class BulkImporterController implements Initializable, DialogController {
         }
         if (force) {
           item.appendProperty().set(Boolean.TRUE.equals(defaultModeCombo.getValue()));
+          item.setSelectionManual(false);
         }
+        updateImportSelection(item);
       }
-      selectImportable();
     }
     finally {
       updating = false;
@@ -568,30 +683,37 @@ public class BulkImporterController implements Initializable, DialogController {
     updateSummary();
   }
 
+  /**
+   * Checks complete rows and unchecks incomplete ones, unless the user decided about the row.
+   */
+  private void updateImportSelection(BulkImportItem item) {
+    if (!item.isImportable()) {
+      item.selectedProperty().set(false);
+    }
+    else if (!item.isSelectionManual()) {
+      item.selectedProperty().set(true);
+    }
+  }
+
   private void updateSummary() {
     long matched = items.stream().filter(i -> i.gameProperty().get() != null).count();
-    long selected = tableView.getSelectionModel().getSelectedItems().stream().filter(BulkImportItem::isImportable).count();
+    long importable = items.stream().filter(BulkImportItem::isImportable).count();
+    long selected = items.stream().filter(BulkImportItem::isImported).count();
     long noScreen = items.stream().filter(i -> i.gameProperty().get() != null && i.screenProperty().get() == null).count();
     summaryLabel.setText(Messages.get("bulk_importer.summary", items.size(), matched, selected)
         + (noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""));
-    importBtn.setDisable(items.isEmpty() || !items.stream().allMatch(BulkImportItem::isImportable));
+    importBtn.setDisable(selected == 0);
     removeUnmatchedBtn.setDisable(matcher == null || matched == items.size());
+
+    selectAllCheck.setDisable(importable == 0);
+    selectAllCheck.setIndeterminate(selected > 0 && selected < importable);
+    selectAllCheck.setSelected(importable > 0 && selected == importable);
   }
 
   //---------------- bulk actions ------------------------------------------------------------------------------------
 
   private List<BulkImportItem> targets() {
     return new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
-  }
-
-  private void selectImportable() {
-    TableView.TableViewSelectionModel<BulkImportItem> model = tableView.getSelectionModel();
-    model.clearSelection();
-    for (int i = 0; i < items.size(); i++) {
-      if (items.get(i).isImportable()) {
-        model.select(i);
-      }
-    }
   }
 
   /**
@@ -627,10 +749,16 @@ public class BulkImporterController implements Initializable, DialogController {
 
   @FXML
   private void onImport() {
-    List<BulkImportItem> selection = new ArrayList<>(items);
-    if (selection.isEmpty() || !selection.stream().allMatch(BulkImportItem::isImportable)) {
+    List<BulkImportItem> selection = items.stream().filter(BulkImportItem::isImported).collect(Collectors.toList());
+    if (selection.isEmpty()) {
       return;
     }
+    File moveTarget = moveCheck.isSelected() ? getMoveTarget() : null;
+    if (moveCheck.isSelected() && moveTarget == null) {
+      WidgetFactory.showAlert(getStage(), Messages.get("bulk_importer.move_target_missing"));
+      return;
+    }
+    boolean keepStructure = moveKeepStructureRadio.isSelected();
     long overwrites = selection.stream().filter(i -> !i.appendProperty().get()).count();
     if (overwrites > 0) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(getStage(), Messages.get("bulk_importer.confirm_overwrite", overwrites, selection.size()));
@@ -640,7 +768,7 @@ public class BulkImporterController implements Initializable, DialogController {
     }
     Stage stage = getStage();
     stage.close();
-    Platform.runLater(() -> ProgressDialog.createProgressDialog(new BulkImportProgressModel(selection)));
+    Platform.runLater(() -> ProgressDialog.createProgressDialog(new BulkImportProgressModel(selection, moveTarget, keepStructure)));
   }
 
   private Stage getStage() {
@@ -719,6 +847,9 @@ public class BulkImporterController implements Initializable, DialogController {
       item.gameProperty().set(game);
       item.matchSourceProperty().set(SOURCE_MANUAL);
       item.scoreProperty().set(1.0);
+      // choosing a table means the file should be imported
+      item.setSelectionManual(false);
+      updateImportSelection(item);
       tableView.refresh();
       updateSummary();
     }

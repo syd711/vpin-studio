@@ -59,23 +59,45 @@ public class TableAssetManagerPane<P extends TableAssetManagerPane.MediaPane> ex
   }
 
   public void createPanes(MediaPaneItemFactory<P> factory, boolean embeddedMode) {
-    audioLaunch = factory.createPane(this, embeddedMode ? "Audio L." : "Audio Launch", VPinScreen.AudioLaunch, "mp3");
-    fullDmd = factory.createPane(this, embeddedMode ? "Full DMD" : "Apron/Full DMD", VPinScreen.Menu, "mp4", "png", "jpg");
-    gameInfo = factory.createPane(this, "Info / Flyer", VPinScreen.GameInfo, "mp4", "png", "jpg");
-    help = factory.createPane(this, "Help", VPinScreen.GameHelp, "mp4", "png", "jpg");
-    topper = factory.createPane(this, "Topper", VPinScreen.Topper, "mp4", "png", "jpg");
-    backglass = factory.createPane(this, "Backglass", VPinScreen.BackGlass, "mp4", "png", "jpg");
-    dmd = factory.createPane(this, "DMD", VPinScreen.DMD, "mp4", "png", "jpg");
-    playfield = factory.createPane(this, "Playfield", VPinScreen.PlayField, "mp4", "png", "jpg");
-    audio = factory.createPane(this, "Audio", VPinScreen.Audio, "mp3");
-    loading = factory.createPane(this, "Loading", VPinScreen.Loading, "mp4");
-    other2 = factory.createPane(this, "Other2", VPinScreen.Other2, "mp4", "png", "jpg");
-    wheel = factory.createPane(this, "Wheel", VPinScreen.Wheel, "apng", "png", "jpg", "webp");
-    logo = factory.createPane(this, "Logo", VPinScreen.Logo, "png", "jpg");
+    audioLaunch = factory.createPane(this, getScreenLabel(VPinScreen.AudioLaunch, embeddedMode), VPinScreen.AudioLaunch, "mp3");
+    fullDmd = factory.createPane(this, getScreenLabel(VPinScreen.Menu, embeddedMode), VPinScreen.Menu, "mp4", "png", "jpg");
+    gameInfo = factory.createPane(this, getScreenLabel(VPinScreen.GameInfo, embeddedMode), VPinScreen.GameInfo, "mp4", "png", "jpg");
+    help = factory.createPane(this, getScreenLabel(VPinScreen.GameHelp, embeddedMode), VPinScreen.GameHelp, "mp4", "png", "jpg");
+    topper = factory.createPane(this, getScreenLabel(VPinScreen.Topper, embeddedMode), VPinScreen.Topper, "mp4", "png", "jpg");
+    backglass = factory.createPane(this, getScreenLabel(VPinScreen.BackGlass, embeddedMode), VPinScreen.BackGlass, "mp4", "png", "jpg");
+    dmd = factory.createPane(this, getScreenLabel(VPinScreen.DMD, embeddedMode), VPinScreen.DMD, "mp4", "png", "jpg");
+    playfield = factory.createPane(this, getScreenLabel(VPinScreen.PlayField, embeddedMode), VPinScreen.PlayField, "mp4", "png", "jpg");
+    audio = factory.createPane(this, getScreenLabel(VPinScreen.Audio, embeddedMode), VPinScreen.Audio, "mp3");
+    loading = factory.createPane(this, getScreenLabel(VPinScreen.Loading, embeddedMode), VPinScreen.Loading, "mp4");
+    other2 = factory.createPane(this, getScreenLabel(VPinScreen.Other2, embeddedMode), VPinScreen.Other2, "mp4", "png", "jpg");
+    wheel = factory.createPane(this, getScreenLabel(VPinScreen.Wheel, embeddedMode), VPinScreen.Wheel, "apng", "png", "jpg", "webp");
+    logo = factory.createPane(this, getScreenLabel(VPinScreen.Logo, embeddedMode), VPinScreen.Logo, "png", "jpg");
 
     allpanes = Arrays.asList(
       audioLaunch, fullDmd, gameInfo, help, topper, backglass, dmd, playfield, audio, loading, other2, wheel, logo
     );
+  }
+
+  /**
+   * The readable name of a screen as shown in the asset manager.
+   */
+  public static String getScreenLabel(VPinScreen screen, boolean embeddedMode) {
+    switch (screen) {
+      case AudioLaunch:
+        return embeddedMode ? "Audio L." : "Audio Launch";
+      case Menu:
+        return embeddedMode ? "Full DMD" : "Apron/Full DMD";
+      case GameInfo:
+        return "Info / Flyer";
+      case GameHelp:
+        return "Help";
+      case BackGlass:
+        return "Backglass";
+      case PlayField:
+        return "Playfield";
+      default:
+        return screen.name();
+    }
   }
 
   public List<P> getMediaPanes() {

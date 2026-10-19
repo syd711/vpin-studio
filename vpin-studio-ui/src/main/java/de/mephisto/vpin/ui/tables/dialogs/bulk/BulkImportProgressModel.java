@@ -10,11 +10,15 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -26,12 +30,20 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
   private final List<BulkImportItem> items;
   private final Iterator<BulkImportItem> iterator;
   private final Set<Integer> touchedGames = new HashSet<>();
+  private final File moveTarget;
+  private final boolean keepStructure;
   private int currentIndex = -1;
 
-  public BulkImportProgressModel(List<BulkImportItem> items) {
+  /**
+   * @param moveTarget    folder the successfully imported files are moved to, null to leave them in place
+   * @param keepStructure true to recreate the subfolders of the source folder below the move target
+   */
+  public BulkImportProgressModel(List<BulkImportItem> items, File moveTarget, boolean keepStructure) {
     super(Messages.get("dialog.bulk_importer"));
     this.items = items;
     this.iterator = items.iterator();
+    this.moveTarget = moveTarget;
+    this.keepStructure = keepStructure;
   }
 
   @Override
@@ -68,11 +80,49 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
       else {
         touchedGames.add(gameId);
         progressResultModel.addProcessed();
+        // only files that have been imported are moved
+        if (moveTarget != null) {
+          moveFile(item);
+        }
       }
     }
     catch (Exception e) {
       LOG.error("Bulk import of {} failed: {}", item.getFile().getName(), e.getMessage(), e);
     }
+  }
+
+  private void moveFile(BulkImportItem item) {
+    File source = item.getFile();
+    File folder = moveTarget;
+    if (keepStructure) {
+      String parent = new File(item.getRelativePath()).getParent();
+      if (parent != null) {
+        folder = new File(moveTarget, parent);
+      }
+    }
+    try {
+      Files.createDirectories(folder.toPath());
+      File target = uniqueTarget(folder, source.getName());
+      Files.move(source.toPath(), target.toPath());
+      LOG.info("Moved imported file {} to {}", source.getAbsolutePath(), target.getAbsolutePath());
+    }
+    catch (IOException e) {
+      LOG.error("Failed to move imported file {} to {}: {}", source.getAbsolutePath(), folder.getAbsolutePath(), e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Files with the same name are not overwritten, a counter is added to the name instead.
+   */
+  private static File uniqueTarget(File folder, String name) {
+    File target = new File(folder, name);
+    String baseName = FilenameUtils.getBaseName(name);
+    String extension = FilenameUtils.getExtension(name);
+    int counter = 1;
+    while (target.exists()) {
+      target = new File(folder, baseName + " (" + counter++ + ")" + (extension.isEmpty() ? "" : "." + extension));
+    }
+    return target;
   }
 
   @Override

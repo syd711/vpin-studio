@@ -17,6 +17,8 @@ public class BulkImportItem {
   private final DoubleProperty score = new SimpleDoubleProperty(0);
   private final StringProperty matchSource = new SimpleStringProperty("");
   private final BooleanProperty screenDetected = new SimpleBooleanProperty(false);
+  private final BooleanProperty selected = new SimpleBooleanProperty(false);
+  private boolean selectionManual = false;
   private List<BulkImportMatcher.Match> suggestions = new ArrayList<>();
 
   public BulkImportItem(File file, File root) {
@@ -26,6 +28,13 @@ public class BulkImportItem {
 
   public File getFile() {
     return file;
+  }
+
+  /**
+   * The scanned source folder the file was found in.
+   */
+  public File getRoot() {
+    return root;
   }
 
   public String getRelativePath() {
@@ -73,5 +82,30 @@ public class BulkImportItem {
 
   public boolean isImportable() {
     return game.get() != null && screen.get() != null;
+  }
+
+  /**
+   * The import checkbox of the row.
+   */
+  public BooleanProperty selectedProperty() {
+    return selected;
+  }
+
+  /**
+   * True when the user changed the checkbox, the automatic matching does not change it then.
+   */
+  public boolean isSelectionManual() {
+    return selectionManual;
+  }
+
+  public void setSelectionManual(boolean selectionManual) {
+    this.selectionManual = selectionManual;
+  }
+
+  /**
+   * Checked and complete, so the file is imported.
+   */
+  public boolean isImported() {
+    return selected.get() && isImportable();
   }
 }

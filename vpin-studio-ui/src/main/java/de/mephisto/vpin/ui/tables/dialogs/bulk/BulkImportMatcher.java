@@ -36,11 +36,13 @@ public class BulkImportMatcher {
   private static final Pattern VERSION = Pattern.compile("^(v\\d+(\\.\\d+)*[a-z]?|\\d+(\\.\\d+)+[a-z]?|(19|20)\\d{2})$");
   private static final Pattern APOSTROPHE = Pattern.compile("['’`]");
   private static final Pattern BRACKETS = Pattern.compile("[(\\[][^)\\]]*[)\\]]");
+  // bracket parts of file names, including the copy number frontends append, e.g. "(Original 2026)01"
+  private static final Pattern FILE_BRACKETS = Pattern.compile("[(\\[][^)\\]]*[)\\]]\\d{0,2}");
   private static final Pattern CAMEL_CASE = Pattern.compile("(?<=\\p{Ll})(?=\\p{Lu})");
   private static final Set<String> NOISE = new HashSet<>(Arrays.asList(
       "the", "a", "an", "and", "of", "vpx", "vpw", "fp", "mod", "vr", "vpu", "vps", "table", "instruction", "instructions",
       "card", "cards", "help", "rules", "rule", "png", "jpg", "pdf", "mp4", "mp3", "wheel", "backglass", "dmd", "topper",
-      "playfield", "loading", "apron", "menu", "audio", "info", "bg", "pf", "b2s", "by", "sound"));
+      "playfield", "loading", "apron", "menu", "audio", "info", "bg", "pf", "b2s", "by", "sound", "original"));
   // noise words that are often written together with the table name, e.g. "aceofspeed" or "theaddamsfamily"
   private static final List<String> FILLERS = Arrays.asList("the", "and", "of", "an", "a");
   private static final int MIN_UNALIGNED_LENGTH = 4;
@@ -59,6 +61,7 @@ public class BulkImportMatcher {
     SCREEN_KEYWORDS.put("playfield", VPinScreen.PlayField);
     SCREEN_KEYWORDS.put("pf", VPinScreen.PlayField);
     SCREEN_KEYWORDS.put("loading", VPinScreen.Loading);
+    SCREEN_KEYWORDS.put("fulldmd", VPinScreen.Menu);
     SCREEN_KEYWORDS.put("apron", VPinScreen.Menu);
     SCREEN_KEYWORDS.put("menu", VPinScreen.Menu);
     SCREEN_KEYWORDS.put("help", VPinScreen.GameHelp);
@@ -76,6 +79,7 @@ public class BulkImportMatcher {
 
   private final List<GameRepresentation> games;
   private final Map<GameRepresentation, List<Set<String>>> gameTokens = new HashMap<>();
+  private final Map<GameRepresentation, List<Set<String>>> gameTitleTokens = new HashMap<>();
 
   public BulkImportMatcher(List<GameRepresentation> games) {
     this.games = games;
@@ -84,7 +88,13 @@ public class BulkImportMatcher {
       List<Set<String>> variants = new ArrayList<>();
       addVariant(variants, game.getGameDisplayName());
       addVariant(variants, FilenameUtils.getBaseName(game.getGameFileName()));
+      // the title alone, without author and version that usually follow the bracket part
+      List<Set<String>> titles = new ArrayList<>();
+      addVariant(titles, title(game.getGameDisplayName()));
+      addVariant(titles, title(FilenameUtils.getBaseName(game.getGameFileName())));
+      titles.stream().filter(t -> !variants.contains(t)).forEach(variants::add);
       gameTokens.put(game, variants);
+      gameTitleTokens.put(game, titles);
     }
   }
 
@@ -104,6 +114,27 @@ public class BulkImportMatcher {
     }
   }
 
+  /**
+   * The part of a table name in front of the first bracket, e.g. "Mass Effect" for
+   * "Mass Effect (Original 2026) Deadmanworking 1.0.5", or null if there is no such part.
+   */
+  @Nullable
+  private static String title(@Nullable String name) {
+    if (StringUtils.isEmpty(name)) {
+      return null;
+    }
+    int bracket = StringUtils.indexOfAny(name, '(', '[');
+    return bracket > 0 ? name.substring(0, bracket) : null;
+  }
+
+  /**
+   * Tokens of a file or folder name without bracket parts, they hold manufacturer and year only.
+   */
+  private static Set<String> nameTokens(String name) {
+    Set<String> tokens = tokenize(FILE_BRACKETS.matcher(name).replaceAll(" "));
+    return tokens.isEmpty() ? tokenize(name) : tokens;
+  }
+
   public static Set<String> tokenize(@Nullable String s) {
     Set<String> result = new LinkedHashSet<>();
     if (StringUtils.isEmpty(s)) {
@@ -112,7 +143,14 @@ public class BulkImportMatcher {
     // split camel case: "AddamsFamily" -> "Addams Family"
     // "Ted's" -> "teds"
     String prepared = CAMEL_CASE.matcher(APOSTROPHE.matcher(s).replaceAll("")).replaceAll(" ");
-    for (String t : NON_ALNUM.split(prepared.toLowerCase())) {
+    String[] words = NON_ALNUM.split(prepared.toLowerCase());
+    for (int i = 0; i < words.length; i++) {
+      String t = words[i];
+      // screen names written as two words, e.g. "BackGlass", are no part of the table name
+      if (i + 1 < words.length && SCREEN_KEYWORDS.containsKey(t + words[i + 1])) {
+        i++;
+        continue;
+      }
       if (t.isEmpty() || NOISE.contains(t) || VERSION.matcher(t).matches()) {
         continue;
       }
@@ -122,7 +160,8 @@ public class BulkImportMatcher {
   }
 
   /**
-   * Returns the screen implied by keywords in the name, or null.
+   * Returns the screen implied by keywords in the name, or null. Words are also tried joined with their successor,
+   * so camel case and separated spellings like "BackGlass", "Back Glass" or "AudioLaunch" are found.
    */
   @Nullable
   public static VPinScreen detectScreen(@Nullable String name) {
@@ -130,8 +169,15 @@ public class BulkImportMatcher {
       return null;
     }
     String prepared = CAMEL_CASE.matcher(name).replaceAll(" ");
-    for (String t : NON_ALNUM.split(prepared.toLowerCase())) {
-      VPinScreen screen = SCREEN_KEYWORDS.get(t);
+    String[] words = NON_ALNUM.split(prepared.toLowerCase());
+    for (int i = 0; i < words.length; i++) {
+      if (i + 1 < words.length) {
+        VPinScreen screen = SCREEN_KEYWORDS.get(words[i] + words[i + 1]);
+        if (screen != null) {
+          return screen;
+        }
+      }
+      VPinScreen screen = SCREEN_KEYWORDS.get(words[i]);
       if (screen != null) {
         return screen;
       }
@@ -170,18 +216,22 @@ public class BulkImportMatcher {
   public List<Match> suggest(File file, @Nullable File root, MatchMode mode, int limit) {
     Set<String> fileTokens = new LinkedHashSet<>();
     Set<String> folderTokens = new LinkedHashSet<>();
+    Set<String> fileTitleTokens = new LinkedHashSet<>();
+    Set<String> folderTitleTokens = new LinkedHashSet<>();
     String fileName = null;
     String folderName = null;
     if (mode != MatchMode.FOLDER) {
       fileName = FilenameUtils.getBaseName(file.getName());
-      fileTokens.addAll(tokenize(fileName));
+      fileTokens.addAll(nameTokens(fileName));
+      fileTitleTokens.addAll(tokenize(title(fileName)));
     }
     if (mode != MatchMode.FILENAME) {
       File parent = file.getParentFile();
       // only folders below the chosen root carry table information
       if (parent != null && (root == null || !parent.equals(root))) {
         folderName = parent.getName();
-        folderTokens.addAll(tokenize(folderName));
+        folderTokens.addAll(nameTokens(folderName));
+        folderTitleTokens.addAll(tokenize(title(folderName)));
       }
     }
 
@@ -195,12 +245,8 @@ public class BulkImportMatcher {
         continue;
       }
 
-      double fileScore = 0;
-      double folderScore = 0;
-      for (Set<String> gt : gameTokens.get(game)) {
-        fileScore = Math.max(fileScore, score(fileTokens, gt));
-        folderScore = Math.max(folderScore, score(folderTokens, gt));
-      }
+      double fileScore = score(game, fileTokens, fileTitleTokens);
+      double folderScore = score(game, folderTokens, folderTitleTokens);
       double best = Math.max(fileScore, folderScore);
       if (best <= 0) {
         continue;
@@ -210,6 +256,22 @@ public class BulkImportMatcher {
     }
     matches.sort((a, b) -> Double.compare(b.score, a.score));
     return matches.size() > limit ? new ArrayList<>(matches.subList(0, limit)) : matches;
+  }
+
+  /**
+   * Best score of the name against the table name variants. When both have a title in front of the bracket part,
+   * the titles must share a word, so a common author like "RobbyKingPin" alone does not match.
+   */
+  private double score(GameRepresentation game, Set<String> tokens, Set<String> titleTokens) {
+    List<Set<String>> titles = gameTitleTokens.get(game);
+    if (!titleTokens.isEmpty() && !titles.isEmpty() && titles.stream().allMatch(t -> score(titleTokens, t) == 0)) {
+      return 0;
+    }
+    double result = 0;
+    for (Set<String> gt : gameTokens.get(game)) {
+      result = Math.max(result, score(tokens, gt));
+    }
+    return result;
   }
 
   /**

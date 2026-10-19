@@ -120,5 +120,34 @@ public class BulkImportMatcherTest {
     assertNull(BulkImportMatcher.detectScreen("Addams Family"));
     assertEquals(VPinScreen.DMD, BulkImportMatcher.detectScreen(new File("C:/in/DMD/addams.png"), new File("C:/in")));
     assertEquals(VPinScreen.Audio, BulkImportMatcher.detectScreen(new File("C:/in/addams.mp3"), new File("C:/in")));
+    assertEquals(VPinScreen.BackGlass, BulkImportMatcher.detectScreen(new File("C:/in/BackGlass/Abra Ca Dabra (Gottlieb 1975).png"), new File("C:/in")));
+    assertEquals(VPinScreen.PlayField, BulkImportMatcher.detectScreen(new File("C:/in/PlayField/Attack from Mars 2.0.2.mp4"), new File("C:/in")));
+    assertEquals(VPinScreen.BackGlass, BulkImportMatcher.detectScreen("Back Glass"));
+    assertEquals(VPinScreen.AudioLaunch, BulkImportMatcher.detectScreen("AudioLaunch"));
+    assertEquals(VPinScreen.Menu, BulkImportMatcher.detectScreen("FullDMD"));
+    assertEquals(VPinScreen.Other2, BulkImportMatcher.detectScreen("GameSelect"));
+    assertTrue(BulkImportMatcher.tokenize("BackGlass").isEmpty());
+  }
+
+  @Test
+  public void ignoresAuthorAndBracketParts() {
+    GameRepresentation massEffect = game(3, "Mass Effect (Original 2026) Deadmanworking 1.0.5", "Mass Effect (Original 2026) Deadmanworking 1.0.5.vpx");
+    GameRepresentation thunderbirds = game(4, "Thunderbirds original 2022 v1.0.2", "Thunderbirds original 2022 v1.0.2.vpx");
+    GameRepresentation wpt = game(5, "World Poker Tour (Stern 2006) RobbyKingPin 2.4", "World Poker Tour (Stern 2006) RobbyKingPin 2.4.vpx");
+    BulkImportMatcher matcher = new BulkImportMatcher(Arrays.asList(massEffect, thunderbirds, wpt));
+    File root = new File("C:/in");
+
+    List<BulkImportMatcher.Match> result = matcher.suggest(new File("C:/in/Audio/Mass Effect (Original 2026).mp3"), root, BulkImportMatcher.MatchMode.FILENAME_AND_FOLDER, 3);
+    assertEquals(3, result.get(0).game.getId());
+    assertEquals(1, result.get(0).score, 0.001);
+
+    // copy number appended by the frontend
+    result = matcher.suggest(new File("C:/in/Wheel/Mass Effect (Original 2026)02.png"), root, BulkImportMatcher.MatchMode.FILENAME_AND_FOLDER, 3);
+    assertEquals(3, result.get(0).game.getId());
+    assertEquals(1, result.get(0).score, 0.001);
+
+    // the same author alone is no match
+    result = matcher.suggest(new File("C:/in/Wheel/24 (Stern 2009) RobbyKingPin 2.3.1.png"), root, BulkImportMatcher.MatchMode.FILENAME_AND_FOLDER, 3);
+    assertTrue(result.stream().noneMatch(m -> m.game.getId() == 5));
   }
 }
