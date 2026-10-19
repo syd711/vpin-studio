@@ -32,12 +32,18 @@ public class BulkImportMatcher {
   }
 
   private static final Pattern NON_ALNUM = Pattern.compile("[^\\p{L}\\p{N}]+");
-  private static final Pattern VERSION = Pattern.compile("^v?\\d+(\\.\\d+)*[a-z]?$");
+  // version numbers and years, plain numbers are kept as they are part of names like "F-14" or "Batman 66"
+  private static final Pattern VERSION = Pattern.compile("^(v\\d+(\\.\\d+)*[a-z]?|\\d+(\\.\\d+)+[a-z]?|(19|20)\\d{2})$");
+  private static final Pattern APOSTROPHE = Pattern.compile("['’`]");
+  private static final Pattern BRACKETS = Pattern.compile("[(\\[][^)\\]]*[)\\]]");
   private static final Pattern CAMEL_CASE = Pattern.compile("(?<=\\p{Ll})(?=\\p{Lu})");
   private static final Set<String> NOISE = new HashSet<>(Arrays.asList(
       "the", "a", "an", "and", "of", "vpx", "vpw", "fp", "mod", "vr", "vpu", "vps", "table", "instruction", "instructions",
       "card", "cards", "help", "rules", "rule", "png", "jpg", "pdf", "mp4", "mp3", "wheel", "backglass", "dmd", "topper",
       "playfield", "loading", "apron", "menu", "audio", "info", "bg", "pf", "b2s", "by", "sound"));
+  // noise words that are often written together with the table name, e.g. "aceofspeed" or "theaddamsfamily"
+  private static final List<String> FILLERS = Arrays.asList("the", "and", "of", "an", "a");
+  private static final int MIN_UNALIGNED_LENGTH = 4;
 
   private static final Map<String, VPinScreen> SCREEN_KEYWORDS = new LinkedHashMap<>();
 
@@ -69,16 +75,32 @@ public class BulkImportMatcher {
   }
 
   private final List<GameRepresentation> games;
-  private final Map<GameRepresentation, Set<String>> gameTokens = new HashMap<>();
+  private final Map<GameRepresentation, List<Set<String>>> gameTokens = new HashMap<>();
 
   public BulkImportMatcher(List<GameRepresentation> games) {
     this.games = games;
     for (GameRepresentation game : games) {
-      Set<String> tokens = new LinkedHashSet<>(tokenize(game.getGameDisplayName()));
-      if (tokens.size() < 2) {
-        tokens.addAll(tokenize(FilenameUtils.getBaseName(game.getGameFileName())));
-      }
-      gameTokens.put(game, tokens);
+      // the display name and the file name are matched separately, the better one counts
+      List<Set<String>> variants = new ArrayList<>();
+      addVariant(variants, game.getGameDisplayName());
+      addVariant(variants, FilenameUtils.getBaseName(game.getGameFileName()));
+      gameTokens.put(game, variants);
+    }
+  }
+
+  /**
+   * Adds the tokens of a table name without bracket parts like "(Williams 1992)", which only dilute the score.
+   */
+  private static void addVariant(List<Set<String>> variants, @Nullable String name) {
+    if (StringUtils.isEmpty(name)) {
+      return;
+    }
+    Set<String> tokens = tokenize(BRACKETS.matcher(name).replaceAll(" "));
+    if (tokens.isEmpty()) {
+      tokens = tokenize(name);
+    }
+    if (!tokens.isEmpty() && !variants.contains(tokens)) {
+      variants.add(tokens);
     }
   }
 
@@ -88,7 +110,8 @@ public class BulkImportMatcher {
       return result;
     }
     // split camel case: "AddamsFamily" -> "Addams Family"
-    String prepared = CAMEL_CASE.matcher(s).replaceAll(" ");
+    // "Ted's" -> "teds"
+    String prepared = CAMEL_CASE.matcher(APOSTROPHE.matcher(s).replaceAll("")).replaceAll(" ");
     for (String t : NON_ALNUM.split(prepared.toLowerCase())) {
       if (t.isEmpty() || NOISE.contains(t) || VERSION.matcher(t).matches()) {
         continue;
@@ -172,9 +195,12 @@ public class BulkImportMatcher {
         continue;
       }
 
-      Set<String> gt = gameTokens.get(game);
-      double fileScore = score(fileTokens, gt);
-      double folderScore = score(folderTokens, gt);
+      double fileScore = 0;
+      double folderScore = 0;
+      for (Set<String> gt : gameTokens.get(game)) {
+        fileScore = Math.max(fileScore, score(fileTokens, gt));
+        folderScore = Math.max(folderScore, score(folderTokens, gt));
+      }
       double best = Math.max(fileScore, folderScore);
       if (best <= 0) {
         continue;
@@ -187,27 +213,89 @@ public class BulkImportMatcher {
   }
 
   /**
-   * Symmetric token overlap: every table token should be found, and few file tokens should be left over.
-   * Tokens match when equal or when one is a prefix of the other (min length 4), e.g. "addams" / "addam".
+   * Symmetric overlap of the names: the share of the table name found in the file name, combined with the share of
+   * the file name explained by the table name. File words are split into table words, so names written together
+   * like "attackfrommars" match "Attack from Mars". The file words are also tried written together, for "fun_house"
+   * against "Funhouse".
    */
   static double score(Set<String> fileTokens, Set<String> gameTokens) {
     if (fileTokens.isEmpty() || gameTokens.isEmpty()) {
       return 0;
     }
-    int hits = 0;
-    for (String g : gameTokens) {
-      for (String f : fileTokens) {
-        if (g.equals(f) || (Math.min(g.length(), f.length()) >= 4 && (g.startsWith(f) || f.startsWith(g)))) {
-          hits++;
-          break;
+    double result = coverageScore(fileTokens, gameTokens);
+    if (fileTokens.size() > 1) {
+      result = Math.max(result, coverageScore(Collections.singleton(String.join("", fileTokens)), gameTokens));
+    }
+    return result;
+  }
+
+  private static double coverageScore(Set<String> fileTokens, Set<String> gameTokens) {
+    Map<String, Integer> credited = new HashMap<>();
+    int fileChars = 0;
+    int covered = 0;
+    for (String f : fileTokens) {
+      fileChars += f.length();
+      int p = 0;
+      while (p < f.length()) {
+        String token = longestTokenAt(f, p, gameTokens);
+        if (token != null) {
+          covered += token.length();
+          credited.merge(token, token.length(), Math::max);
+          p += token.length();
+          continue;
+        }
+
+        // abbreviated end of the word: "addam" for "addams"
+        String rest = f.substring(p);
+        if (rest.length() >= MIN_UNALIGNED_LENGTH) {
+          Optional<String> abbreviated = gameTokens.stream().filter(g -> g.startsWith(rest)).findFirst();
+          if (abbreviated.isPresent()) {
+            covered += rest.length();
+            credited.merge(abbreviated.get(), rest.length(), Math::max);
+            break;
+          }
+        }
+
+        String filler = longestTokenAt(f, p, FILLERS);
+        if (filler != null) {
+          covered += filler.length(); // explains the file name, but is no table word found
+          p += filler.length();
+          continue;
+        }
+
+        // nothing starts here, continue with the next longer table word inside the word
+        p = nextUnalignedMatch(f, p + 1, gameTokens);
+      }
+    }
+
+    if (credited.isEmpty()) {
+      return 0;
+    }
+    int gameChars = gameTokens.stream().mapToInt(String::length).sum();
+    double recall = (double) credited.values().stream().mapToInt(Integer::intValue).sum() / gameChars;
+    double precision = (double) covered / fileChars;
+    return 2 * recall * precision / (recall + precision);
+  }
+
+  @Nullable
+  private static String longestTokenAt(String word, int position, Collection<String> tokens) {
+    String best = null;
+    for (String t : tokens) {
+      if (word.startsWith(t, position) && (best == null || t.length() > best.length())) {
+        best = t;
+      }
+    }
+    return best;
+  }
+
+  private static int nextUnalignedMatch(String word, int from, Set<String> tokens) {
+    for (int p = from; p < word.length(); p++) {
+      for (String t : tokens) {
+        if (t.length() >= MIN_UNALIGNED_LENGTH && word.startsWith(t, p)) {
+          return p;
         }
       }
     }
-    if (hits == 0) {
-      return 0;
-    }
-    double recall = (double) hits / gameTokens.size();
-    double precision = (double) Math.min(hits, fileTokens.size()) / fileTokens.size();
-    return 2 * recall * precision / (recall + precision);
+    return word.length();
   }
 }

@@ -6,9 +6,11 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportItem;
+import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatchProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatcher;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatcher.MatchMode;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportProgressModel;
+import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportScanProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
@@ -40,10 +42,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -58,6 +58,7 @@ public class BulkImporterController implements Initializable, DialogController {
   private static final Set<String> AUDIO_EXT = Set.of("mp3", "wav", "ogg");
   private static final int SUGGESTION_COUNT = 8;
   private static final String SOURCE_MANUAL = "manual";
+  private static final int PREVIEW_CACHE_SIZE = 300;
 
   @FXML
   private TextField sourceField;
@@ -117,9 +118,17 @@ public class BulkImporterController implements Initializable, DialogController {
   private File sourceFolder;
   private int previewSize = 96;
   private boolean updating = false;
-  private int loadGeneration = 0;
+  private boolean scanning = false;
   private List<VPinScreen> screenOptions = Collections.emptyList();
   private StringConverter<VPinScreen> screenConverter;
+
+  // decoded previews, so scrolling does not load the images again
+  private final Map<File, Image> previewCache = new LinkedHashMap<>(16, 0.75f, true) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<File, Image> eldest) {
+      return size() > PREVIEW_CACHE_SIZE;
+    }
+  };
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -136,7 +145,7 @@ public class BulkImporterController implements Initializable, DialogController {
       }
     });
     matchModeCombo.setValue(MatchMode.FILENAME_AND_FOLDER);
-    matchModeCombo.valueProperty().addListener((obs, o, n) -> rematch(false));
+    matchModeCombo.valueProperty().addListener((obs, o, n) -> rematch(false, true));
 
     StringConverter<VPinScreen> screenConverter = new StringConverter<>() {
       @Override
@@ -154,7 +163,7 @@ public class BulkImporterController implements Initializable, DialogController {
     screens.addAll(Arrays.asList(VPinScreen.values()));
     defaultScreenCombo.setItems(FXCollections.observableArrayList(screens));
     defaultScreenCombo.setConverter(screenConverter);
-    defaultScreenCombo.valueProperty().addListener((obs, o, n) -> rematch(false));
+    defaultScreenCombo.valueProperty().addListener((obs, o, n) -> rematch(false, false));
     screenOptions = screens;
     this.screenConverter = screenConverter;
 
@@ -162,7 +171,7 @@ public class BulkImporterController implements Initializable, DialogController {
     defaultModeCombo.setConverter(modeConverter());
     defaultModeCombo.setValue(true);
 
-    detectScreenCheck.selectedProperty().addListener((obs, o, n) -> rematch(false));
+    detectScreenCheck.selectedProperty().addListener((obs, o, n) -> rematch(false, false));
     recursiveCheck.selectedProperty().addListener((obs, o, n) -> {
       if (sourceFolder != null) {
         loadFolder(sourceFolder);
@@ -171,12 +180,12 @@ public class BulkImporterController implements Initializable, DialogController {
     scoreSlider.valueProperty().addListener((obs, o, n) -> {
       scoreLabel.setText(Math.round(n.doubleValue() * 100) + "%");
       if (!scoreSlider.isValueChanging()) {
-        rematch(false);
+        rematch(false, false);
       }
     });
     scoreSlider.valueChangingProperty().addListener((obs, o, changing) -> {
       if (!changing) {
-        rematch(false);
+        rematch(false, false);
       }
     });
 
@@ -210,13 +219,19 @@ public class BulkImporterController implements Initializable, DialogController {
       List<File> files = e.getDragboard().getFiles();
       if (files != null && !files.isEmpty()) {
         File f = files.get(0);
-        loadFolder(f.isDirectory() ? f : f.getParentFile());
+        // finish the drop first, the modal scan dialog would otherwise block the drag source
+        Platform.runLater(() -> loadFolder(f.isDirectory() ? f : f.getParentFile()));
         e.setDropCompleted(true);
       }
       e.consume();
     });
 
-    items.addListener((javafx.collections.ListChangeListener<BulkImportItem>) c -> updateSummary());
+    // during a rematch the summary is updated once at the end instead of for every changed row
+    items.addListener((javafx.collections.ListChangeListener<BulkImportItem>) c -> {
+      if (!updating) {
+        updateSummary();
+      }
+    });
     new Thread(() -> {
       List<GameRepresentation> games = new ArrayList<>(client.getGameService().getVpxGamesCached());
       games.addAll(client.getGameService().getFPGamesCached());
@@ -225,7 +240,7 @@ public class BulkImporterController implements Initializable, DialogController {
         allGames = games;
         matcher = new BulkImportMatcher(games);
         if (sourceFolder != null) {
-          rematch(true);
+          rematch(true, true);
         }
       });
     }, "bulk-importer-games").start();
@@ -251,7 +266,11 @@ public class BulkImporterController implements Initializable, DialogController {
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     removeBtn.disableProperty().bind(javafx.beans.binding.Bindings.isEmpty(tableView.getSelectionModel().getSelectedItems()));
-    tableView.getSelectionModel().getSelectedItems().addListener((javafx.collections.ListChangeListener<BulkImportItem>) c -> updateSummary());
+    tableView.getSelectionModel().getSelectedItems().addListener((javafx.collections.ListChangeListener<BulkImportItem>) c -> {
+      if (!updating) {
+        updateSummary();
+      }
+    });
 
     columnPreview.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
     columnPreview.setCellFactory(c -> new TableCell<>() {
@@ -324,26 +343,20 @@ public class BulkImporterController implements Initializable, DialogController {
     });
 
     columnScreen.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
+    // the cells keep their controls, scrolling only updates the values
     columnScreen.setCellFactory(c -> new TableCell<>() {
+      private final ComboBox<VPinScreen> combo = new ComboBox<>(FXCollections.observableArrayList(screenOptions));
+      private final Tooltip tooltip = new Tooltip();
+
       {
         setAlignment(Pos.CENTER_LEFT);
-      }
-
-      @Override
-      protected void updateItem(BulkImportItem item, boolean empty) {
-        super.updateItem(item, empty);
-        if (empty || item == null) {
-          setGraphic(null);
-          return;
-        }
-        ComboBox<VPinScreen> combo = new ComboBox<>(FXCollections.observableArrayList(screenOptions));
         combo.setConverter(screenConverter);
-        combo.setValue(item.screenProperty().get());
         combo.setPromptText(Messages.get("bulk_importer.choose_screen"));
-        combo.setTooltip(new Tooltip(Messages.get(item.screenDetectedProperty().get() ? "bulk_importer.screen_detected" : "bulk_importer.screen_default")));
+        combo.setTooltip(tooltip);
         combo.setOnAction(e -> {
+          BulkImportItem item = getItem();
           VPinScreen value = combo.getValue();
-          if (value == item.screenProperty().get()) {
+          if (item == null || value == item.screenProperty().get()) {
             return; // programmatic refresh, nothing changed
           }
           for (BulkImportItem target : affectedRows(item)) {
@@ -355,14 +368,6 @@ public class BulkImporterController implements Initializable, DialogController {
             updateSummary();
           });
         });
-        setGraphic(combo);
-      }
-    });
-
-    columnMode.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
-    columnMode.setCellFactory(c -> new TableCell<>() {
-      {
-        setAlignment(Pos.CENTER_LEFT);
       }
 
       @Override
@@ -372,12 +377,23 @@ public class BulkImporterController implements Initializable, DialogController {
           setGraphic(null);
           return;
         }
-        ComboBox<Boolean> combo = new ComboBox<>(FXCollections.observableArrayList(false, true));
+        combo.setValue(item.screenProperty().get());
+        tooltip.setText(Messages.get(item.screenDetectedProperty().get() ? "bulk_importer.screen_detected" : "bulk_importer.screen_default"));
+        setGraphic(combo);
+      }
+    });
+
+    columnMode.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
+    columnMode.setCellFactory(c -> new TableCell<>() {
+      private final ComboBox<Boolean> combo = new ComboBox<>(FXCollections.observableArrayList(false, true));
+
+      {
+        setAlignment(Pos.CENTER_LEFT);
         combo.setConverter(modeConverter());
-        combo.setValue(item.appendProperty().get());
         combo.setOnAction(e -> {
+          BulkImportItem item = getItem();
           Boolean value = combo.getValue();
-          if (value == null || value == item.appendProperty().get()) {
+          if (item == null || value == null || value == item.appendProperty().get()) {
             return;
           }
           for (BulkImportItem target : affectedRows(item)) {
@@ -385,6 +401,16 @@ public class BulkImporterController implements Initializable, DialogController {
           }
           Platform.runLater(() -> tableView.refresh());
         });
+      }
+
+      @Override
+      protected void updateItem(BulkImportItem item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setGraphic(null);
+          return;
+        }
+        combo.setValue(item.appendProperty().get());
         setGraphic(combo);
       }
     });
@@ -397,8 +423,10 @@ public class BulkImporterController implements Initializable, DialogController {
     pane.setPrefSize(previewSize, previewSize);
     pane.setMaxSize(previewSize, previewSize);
     if (IMAGE_EXT.contains(ext)) {
-      // background loading, scaled down on decode so big files do not exhaust memory
-      Image image = new Image(file.toURI().toString(), previewSize * 2, previewSize * 2, true, true, true);
+      // background loading, scaled down on decode so big files do not exhaust memory;
+      // decoded once for the largest preview size so switching the size needs no reload
+      int decodeSize = (Integer) sizeLargeBtn.getUserData() * 2;
+      Image image = previewCache.computeIfAbsent(file, f -> new Image(f.toURI().toString(), decodeSize, decodeSize, true, true, true));
       ImageView view = new ImageView(image);
       view.setFitWidth(previewSize);
       view.setFitHeight(previewSize);
@@ -447,67 +475,68 @@ public class BulkImporterController implements Initializable, DialogController {
   }
 
   public void setSourceFolder(File folder) {
-    loadFolder(folder);
+    // the progress dialog needs the importer dialog showing as its owner
+    Platform.runLater(() -> loadFolder(folder));
   }
 
   private void loadFolder(File folder) {
     if (folder == null || !folder.isDirectory()) {
       return;
     }
+    Set<String> extensions = new HashSet<>(IMAGE_EXT);
+    extensions.addAll(VIDEO_EXT);
+    extensions.addAll(AUDIO_EXT);
+    BulkImportScanProgressModel model = new BulkImportScanProgressModel(folder, recursiveCheck.isSelected(), extensions,
+        matcher, matchModeCombo.getValue(), SUGGESTION_COUNT);
+    scanning = true;
+    try {
+      ProgressDialog.createProgressDialog(getStage(), model);
+    }
+    finally {
+      scanning = false;
+    }
+    if (model.isCancelled()) {
+      return; // keep the previous file list
+    }
     sourceFolder = folder;
     sourceField.setText(folder.getAbsolutePath());
-    boolean recursive = recursiveCheck.isSelected();
-    int generation = ++loadGeneration;
-    summaryLabel.setText(Messages.get("bulk_importer.scanning"));
-
-    new Thread(() -> {
-      List<BulkImportItem> found = new ArrayList<>();
-      try (Stream<java.nio.file.Path> walk = recursive ? Files.walk(folder.toPath()) : Files.list(folder.toPath())) {
-        walk.filter(Files::isRegularFile)
-            .map(java.nio.file.Path::toFile)
-            .filter(f -> {
-              String ext = FilenameUtils.getExtension(f.getName()).toLowerCase();
-              return IMAGE_EXT.contains(ext) || VIDEO_EXT.contains(ext) || AUDIO_EXT.contains(ext);
-            })
-            .sorted(Comparator.comparing(f -> f.getAbsolutePath().toLowerCase()))
-            .forEach(f -> found.add(new BulkImportItem(f, folder)));
-      }
-      catch (Exception e) {
-        LOG.error("Failed to scan folder {}: {}", folder, e.getMessage(), e);
-      }
-      Platform.runLater(() -> {
-        if (generation != loadGeneration) {
-          return; // a newer scan superseded this one
-        }
-        items.setAll(found);
-        rematch(true);
-      });
-    }, "bulk-importer-scan").start();
+    items.setAll(model.getItems());
+    // the games may have been loaded only while the folder was scanned
+    rematch(true, !model.isMatched());
   }
 
   @FXML
   private void onRematch() {
-    rematch(true);
+    rematch(true, true);
   }
 
   /**
    * Runs the matching for all items. Manually corrected rows are kept unless force is set.
+   * The table suggestions are recomputed in a progress dialog when recompute is set, otherwise the existing ones
+   * are applied with the current threshold and screen settings.
    */
-  private void rematch(boolean force) {
-    if (matcher == null || updating) {
+  private void rematch(boolean force, boolean recompute) {
+    if (matcher == null || updating || scanning) {
       return;
+    }
+    if (recompute) {
+      List<BulkImportItem> targets = items.stream()
+          .filter(i -> force || !SOURCE_MANUAL.equals(i.matchSourceProperty().get()))
+          .collect(Collectors.toList());
+      if (!targets.isEmpty()) {
+        ProgressDialog.createProgressDialog(getStage(),
+            new BulkImportMatchProgressModel(matcher, targets, sourceFolder, matchModeCombo.getValue(), SUGGESTION_COUNT));
+      }
     }
     updating = true;
     try {
-      MatchMode mode = matchModeCombo.getValue();
       double threshold = scoreSlider.getValue();
       boolean detect = detectScreenCheck.isSelected();
       VPinScreen defaultScreen = defaultScreenCombo.getValue();
       for (BulkImportItem item : items) {
         boolean manual = SOURCE_MANUAL.equals(item.matchSourceProperty().get());
         if (!manual || force) {
-          List<BulkImportMatcher.Match> suggestions = matcher.suggest(item.getFile(), sourceFolder, mode, SUGGESTION_COUNT);
-          item.setSuggestions(suggestions);
+          List<BulkImportMatcher.Match> suggestions = item.getSuggestions();
           if (!suggestions.isEmpty() && suggestions.get(0).score >= threshold) {
             BulkImportMatcher.Match best = suggestions.get(0);
             item.gameProperty().set(best.game);
@@ -628,30 +657,19 @@ public class BulkImporterController implements Initializable, DialogController {
    * Table match editor: suggestions in a combo box plus a button to search all tables.
    */
   private class TableMatchCell extends TableCell<BulkImportItem, BulkImportItem> {
+    private final ComboBox<GameRepresentation> combo = new ComboBox<>();
+    private final HBox box;
+    private boolean refreshing = false;
+
     TableMatchCell() {
       setAlignment(Pos.CENTER_LEFT);
-    }
-
-    @Override
-    protected void updateItem(BulkImportItem item, boolean empty) {
-      super.updateItem(item, empty);
-      if (empty || item == null) {
-        setGraphic(null);
-        return;
-      }
-      ComboBox<GameRepresentation> combo = new ComboBox<>();
       combo.setMaxWidth(Double.MAX_VALUE);
       combo.setPromptText(Messages.get("bulk_importer.no_match"));
-      LinkedHashSet<GameRepresentation> options = new LinkedHashSet<>();
-      if (item.gameProperty().get() != null) {
-        options.add(item.gameProperty().get());
-      }
-      item.getSuggestions().forEach(m -> options.add(m.game));
-      combo.setItems(FXCollections.observableArrayList(options));
-      combo.setValue(item.gameProperty().get());
       combo.setOnAction(e -> {
-        if (combo.getValue() != null && combo.getValue() != item.gameProperty().get()) {
-          assign(item, combo.getValue(), combo.getValue());
+        BulkImportItem item = getItem();
+        // replacing the options of a reused cell may select another table for a moment
+        if (!refreshing && item != null && combo.getValue() != null && combo.getValue() != item.gameProperty().get()) {
+          assign(item, combo.getValue());
         }
       });
 
@@ -662,19 +680,42 @@ public class BulkImporterController implements Initializable, DialogController {
       search.setGraphic(searchIcon);
       search.setTooltip(new Tooltip(Messages.get("bulk_importer.search_table")));
       search.setOnAction(e -> {
-        GameRepresentation game = chooseGame();
+        BulkImportItem item = getItem();
+        GameRepresentation game = item != null ? chooseGame() : null;
         if (game != null) {
-          assign(item, game, game);
+          assign(item, game);
         }
       });
 
-      HBox box = new HBox(4, combo, search);
+      box = new HBox(4, combo, search);
       box.setAlignment(Pos.CENTER_LEFT);
       HBox.setHgrow(combo, Priority.ALWAYS);
+    }
+
+    @Override
+    protected void updateItem(BulkImportItem item, boolean empty) {
+      super.updateItem(item, empty);
+      if (empty || item == null) {
+        setGraphic(null);
+        return;
+      }
+      LinkedHashSet<GameRepresentation> options = new LinkedHashSet<>();
+      if (item.gameProperty().get() != null) {
+        options.add(item.gameProperty().get());
+      }
+      item.getSuggestions().forEach(m -> options.add(m.game));
+      refreshing = true;
+      try {
+        combo.getItems().setAll(options);
+        combo.setValue(item.gameProperty().get());
+      }
+      finally {
+        refreshing = false;
+      }
       setGraphic(box);
     }
 
-    private void assign(BulkImportItem item, GameRepresentation game, Object ignored) {
+    private void assign(BulkImportItem item, GameRepresentation game) {
       item.gameProperty().set(game);
       item.matchSourceProperty().set(SOURCE_MANUAL);
       item.scoreProperty().set(1.0);
