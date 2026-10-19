@@ -2,7 +2,13 @@
 
 ### Changes
 
-
+- **Bulk Importer**: 
+  - Improved scrolling performance.
+  - Moved loading and matching into separate progress bars.
+  - Improved table matching.
+  - Fixed screen matching and screen naming.
+  - Changed selection mode and switched from row based selection to checkboxes so that items can be easier unselected now.
+  - Added backup options to move imported assets into another folder for a better progress tracking.
 
 ---
 
