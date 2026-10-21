@@ -840,7 +840,7 @@ public class TableDialogs {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         Messages.get("dialog.this_will_reset_the_dismissed_validations_for"), null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      title = Messages.get("dialog.re_validating") + selectedItems.size() + Messages.get("dialog.tables_2");
+      title = Messages.get("dialog.re_validating") + selectedItems.size() + " + " + Messages.get("dialog.tables_2");
       if (selectedItems.size() == 1) {
         title = Messages.get("dialog.re_validating_table") + selectedItems.getFirst().getGameDisplayName() + "\"";
       }
