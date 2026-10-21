@@ -21,7 +21,9 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /*********************************************************************************************************************
  * System
@@ -186,6 +188,14 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public NVRamsInfo resetNvRams() {
     return getRestClient().get(API + "system/resetnvrams", NVRamsInfo.class);
+  }
+
+  public List<String> getNvRamIndex() {
+    return Arrays.asList(getRestClient().get(API + "system/nvramindex", String[].class));
+  }
+
+  public boolean resetNvRam(String name) {
+    return getRestClient().get(API + "system/resetnvram/" + name, Boolean.class);
   }
 
   public void setMaintenanceMode(boolean maintenanceMode) {

@@ -245,35 +245,15 @@ public class ServerUpdatePreProcessing {
     public static NVRamsInfo synchronizeNVRams(boolean deleteAll) {
         NVRamsInfo info = new NVRamsInfo();
         try {
-            File nvRamIndex = new File(RESOURCES, "index.txt");
-            Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
-            if (!nvRamIndex.exists()) {
+            List<String> nvRams = getNVRamIndex();
+            if (nvRams == null) {
                 LOG.warn("Skipped nvram sync, download failed.");
                 return null;
             }
 
-            FileInputStream in = new FileInputStream(nvRamIndex);
-            List<String> nvRams = IOUtils.readLines(in, Charset.defaultCharset());
-            in.close();
-            nvRamIndex.delete();
-
-            File nvramFolder = new File(RESOURCES, "nvrams/");
-            if (!nvramFolder.exists()) {
-                nvramFolder.mkdirs();
-            }
-
             for (String nvRam : nvRams) {
-                File nvramFile = new File(nvramFolder, nvRam + ".nv");
-                if (nvramFile.exists() && deleteAll) {
-                    if (nvramFile.delete()) {
-                        LOG.info("Deleted {}", nvramFile.getAbsolutePath());
-                    }
-                }
-
-                if (!nvramFile.exists()) {
+                if (synchronizeNVRam(nvRam, deleteAll)) {
                     info.setCount(info.getCount() + 1);
-                    Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/" + nvramFile.getName() + "/" + nvramFile.getName(), nvramFile, true);
-                    LOG.info("Downloaded nvram file {}", nvramFile.getAbsolutePath());
                 }
             }
             LOG.info("Finished NVRam synchronization, there are currently {} resetted nvrams available.", nvRams.size());
@@ -283,6 +263,52 @@ public class ServerUpdatePreProcessing {
         }
 
         return info;
+    }
+
+    /**
+     * Downloads the list of available resetted nvram names, or {@code null} if the download failed.
+     */
+    public static List<String> getNVRamIndex() throws IOException {
+        File nvRamIndex = new File(RESOURCES, "index.txt");
+        Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
+        if (!nvRamIndex.exists()) {
+            return null;
+        }
+
+        List<String> nvRams;
+        try (FileInputStream in = new FileInputStream(nvRamIndex)) {
+            nvRams = IOUtils.readLines(in, Charset.defaultCharset());
+        }
+        nvRamIndex.delete();
+        nvRams.removeIf(StringUtils::isBlank);
+        return nvRams;
+    }
+
+    /**
+     * Downloads the resetted nvram file for the given name if not present yet.
+     *
+     * @param replace delete an existing file first, so that it is downloaded again
+     * @return true if the file was downloaded
+     */
+    public static boolean synchronizeNVRam(String nvRam, boolean replace) {
+        File nvramFolder = new File(RESOURCES, "nvrams/");
+        if (!nvramFolder.exists()) {
+            nvramFolder.mkdirs();
+        }
+
+        File nvramFile = new File(nvramFolder, nvRam + ".nv");
+        if (nvramFile.exists() && replace) {
+            if (nvramFile.delete()) {
+                LOG.info("Deleted {}", nvramFile.getAbsolutePath());
+            }
+        }
+
+        if (!nvramFile.exists()) {
+            Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/" + nvramFile.getName() + "/" + nvramFile.getName(), nvramFile, true);
+            LOG.info("Downloaded nvram file {}", nvramFile.getAbsolutePath());
+            return true;
+        }
+        return false;
     }
 
     //------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ public class HighscorePreferencesController implements Initializable {
   @FXML
   private void onNvRamReset() {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new NvRamDownloadProgressModel("NVRam Synchronization"));
-    if (!progressDialog.getResults().isEmpty()) {
+    if (!progressDialog.isCancelled() && !progressDialog.getResults().isEmpty()) {
       NVRamsInfo nvRamsInfo = (NVRamsInfo) progressDialog.getResults().getFirst();
       WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.nvram_reset"), Messages.get("dialog.resetted") + nvRamsInfo.getCount() + Messages.get("dialog.nvram_files"));
     }

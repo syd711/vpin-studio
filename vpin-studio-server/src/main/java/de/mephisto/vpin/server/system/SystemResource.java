@@ -224,6 +224,16 @@ public class SystemResource {
     return systemService.resetNvRams();
   }
 
+  @GetMapping("/nvramindex")
+  public List<String> getNvRamIndex() {
+    return systemService.getNvRamIndex();
+  }
+
+  @GetMapping("/resetnvram/{name}")
+  public boolean resetNvRam(@PathVariable("name") String name) {
+    return systemService.resetNvRam(name);
+  }
+
 
   @GetMapping("/scoringdb")
   public ScoringDB get() {

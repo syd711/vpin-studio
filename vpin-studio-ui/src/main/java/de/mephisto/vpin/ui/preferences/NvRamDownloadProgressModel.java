@@ -1,13 +1,11 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,17 +13,28 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class NvRamDownloadProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamDownloadProgressModel.class);
+
+  private List<String> nvRams;
   private Iterator<String> fileIterator;
+  private final NVRamsInfo nvRamsInfo = new NVRamsInfo();
 
   public NvRamDownloadProgressModel(String title) {
     super(title);
-    List<String> list = Arrays.asList(Messages.get("dialog.download_nv_ram_files"));
-    this.fileIterator = list.iterator();
+  }
+
+  /**
+   * The index is fetched lazily, so that it is loaded by the progress worker thread and not the FX thread.
+   */
+  private void loadIndex() {
+    if (nvRams == null) {
+      nvRams = client.getSystemService().getNvRamIndex();
+      fileIterator = nvRams.iterator();
+    }
   }
 
   @Override
   public int getMax() {
-    return 1;
+    return nvRams != null ? nvRams.size() : 1;
   }
 
   @Override
@@ -39,26 +48,27 @@ public class NvRamDownloadProgressModel extends ProgressModel<String> {
   }
 
   @Override
-  public boolean isIndeterminate() {
-    return true;
-  }
-
-  @Override
   public String nextToString(String next) {
-    return next;
+    return next + ".nv";
   }
 
   @Override
   public boolean hasNext() {
+    loadIndex();
     return fileIterator.hasNext();
   }
 
   public void processNext(ProgressResultModel progressResultModel, String item) {
     try {
-      NVRamsInfo nvRamsInfo = client.getSystemService().resetNvRams();
-      progressResultModel.getResults().add(nvRamsInfo);
-    } catch (Exception e) {
-      LOG.error("Logs download error: " + e.getMessage(), e);
+      if (client.getSystemService().resetNvRam(item)) {
+        nvRamsInfo.setCount(nvRamsInfo.getCount() + 1);
+      }
+      if (progressResultModel.getResults().isEmpty()) {
+        progressResultModel.getResults().add(nvRamsInfo);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("NVRam download error for {}: {}", item, e.getMessage(), e);
     }
   }
 }

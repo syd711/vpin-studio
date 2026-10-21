@@ -927,6 +927,25 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return ServerUpdatePreProcessing.synchronizeNVRams(true);
   }
 
+  public List<String> getNvRamIndex() {
+    try {
+      List<String> index = ServerUpdatePreProcessing.getNVRamIndex();
+      return index != null ? index : Collections.emptyList();
+    }
+    catch (IOException e) {
+      LOG.error("Failed to download nvram index: {}", e.getMessage(), e);
+      return Collections.emptyList();
+    }
+  }
+
+  public boolean resetNvRam(String nvRam) {
+    if (!nvRam.matches("[\\w.-]+") || nvRam.contains("..")) {
+      LOG.warn("Rejected invalid nvram name \"{}\"", nvRam);
+      return false;
+    }
+    return ServerUpdatePreProcessing.synchronizeNVRam(nvRam, true);
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
