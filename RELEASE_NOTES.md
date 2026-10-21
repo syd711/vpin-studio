@@ -4,6 +4,7 @@
 
 - **Highscore Backups**: The backups in the highscore backup dialog are now sorted by date, newest first.
 - **Bulk Importer**: Added the import mode "If Missing", which only imports a file if its screen has no media yet.
+- **ALT Sound**: Fixed detection of g-sound bundles.
 
 ---
 
