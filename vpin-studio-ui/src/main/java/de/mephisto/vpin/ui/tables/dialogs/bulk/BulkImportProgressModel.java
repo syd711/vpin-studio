@@ -71,8 +71,15 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
   public void processNext(ProgressResultModel progressResultModel, BulkImportItem item) {
     try {
       int gameId = item.gameProperty().get().getId();
-      JobDescriptor result = Studio.client.getGameMediaService().uploadMedia(item.getFile(), gameId, false, item.screenProperty().get(),
-          item.appendProperty().get(), VPinScreen.Loading, percent -> progressResultModel.setProgress((currentIndex + percent) / items.size()));
+      VPinScreen screen = item.screenProperty().get();
+      BulkImportMode mode = item.modeProperty().get();
+      // fetched for every file, so media imported earlier in the same run is taken into account
+      if (mode == BulkImportMode.IF_MISSING && !Studio.client.getGameMediaService().getGameMedia(gameId).getMediaItems(screen).isEmpty()) {
+        LOG.info("Skipped bulk import of {}, screen {} already has media", item.getFile().getName(), screen);
+        return;
+      }
+      JobDescriptor result = Studio.client.getGameMediaService().uploadMedia(item.getFile(), gameId, false, screen,
+          mode != BulkImportMode.OVERWRITE, VPinScreen.Loading, percent -> progressResultModel.setProgress((currentIndex + percent) / items.size()));
       if (!StringUtils.isEmpty(result.getError())) {
         LOG.error("Bulk import of {} failed: {}", item.getFile().getName(), result.getError());
         Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError()));

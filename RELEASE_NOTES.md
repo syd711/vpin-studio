@@ -1,3 +1,12 @@
+## Release Notes 5.5.2
+
+### Changes
+
+- **Highscore Backups**: The backups in the highscore backup dialog are now sorted by date, newest first.
+- **Bulk Importer**: Added the import mode "If Missing", which only imports a file if its screen has no media yet.
+
+---
+
 ## Release Notes 5.5.1
 
 ### Changes

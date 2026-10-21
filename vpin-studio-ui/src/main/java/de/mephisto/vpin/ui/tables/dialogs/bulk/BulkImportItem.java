@@ -13,7 +13,7 @@ public class BulkImportItem {
   private final File root;
   private final ObjectProperty<GameRepresentation> game = new SimpleObjectProperty<>();
   private final ObjectProperty<VPinScreen> screen = new SimpleObjectProperty<>();
-  private final BooleanProperty append = new SimpleBooleanProperty(false);
+  private final ObjectProperty<BulkImportMode> mode = new SimpleObjectProperty<>(BulkImportMode.OVERWRITE);
   private final DoubleProperty score = new SimpleDoubleProperty(0);
   private final StringProperty matchSource = new SimpleStringProperty("");
   private final BooleanProperty screenDetected = new SimpleBooleanProperty(false);
@@ -56,8 +56,8 @@ public class BulkImportItem {
     return screen;
   }
 
-  public BooleanProperty appendProperty() {
-    return append;
+  public ObjectProperty<BulkImportMode> modeProperty() {
+    return mode;
   }
 
   public DoubleProperty scoreProperty() {

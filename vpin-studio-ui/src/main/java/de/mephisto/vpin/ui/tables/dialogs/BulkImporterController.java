@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportItem;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatchProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatcher;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatcher.MatchMode;
+import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMode;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportScanProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -79,7 +80,7 @@ public class BulkImporterController implements Initializable, DialogController {
   @FXML
   private ComboBox<VPinScreen> defaultScreenCombo;
   @FXML
-  private ComboBox<Boolean> defaultModeCombo;
+  private ComboBox<BulkImportMode> defaultModeCombo;
   @FXML
   private CheckBox moveCheck;
   @FXML
@@ -187,9 +188,9 @@ public class BulkImporterController implements Initializable, DialogController {
     screenOptions = screens;
     this.screenConverter = screenConverter;
 
-    defaultModeCombo.setItems(FXCollections.observableArrayList(false, true));
+    defaultModeCombo.setItems(FXCollections.observableArrayList(BulkImportMode.values()));
     defaultModeCombo.setConverter(modeConverter());
-    defaultModeCombo.setValue(true);
+    defaultModeCombo.setValue(BulkImportMode.APPEND);
 
     detectScreenCheck.selectedProperty().addListener((obs, o, n) -> rematch(false, false));
     recursiveCheck.selectedProperty().addListener((obs, o, n) -> {
@@ -288,15 +289,15 @@ public class BulkImporterController implements Initializable, DialogController {
     });
   }
 
-  private static StringConverter<Boolean> modeConverter() {
+  private static StringConverter<BulkImportMode> modeConverter() {
     return new StringConverter<>() {
       @Override
-      public String toString(Boolean append) {
-        return append == null ? "" : Messages.get(append ? "bulk_importer.mode_append" : "bulk_importer.mode_overwrite");
+      public String toString(BulkImportMode mode) {
+        return mode == null ? "" : Messages.get(mode.getMessageKey());
       }
 
       @Override
-      public Boolean fromString(String string) {
+      public BulkImportMode fromString(String string) {
         return null;
       }
     };
@@ -480,19 +481,19 @@ public class BulkImporterController implements Initializable, DialogController {
 
     columnMode.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue()));
     columnMode.setCellFactory(c -> new TableCell<>() {
-      private final ComboBox<Boolean> combo = new ComboBox<>(FXCollections.observableArrayList(false, true));
+      private final ComboBox<BulkImportMode> combo = new ComboBox<>(FXCollections.observableArrayList(BulkImportMode.values()));
 
       {
         setAlignment(Pos.CENTER_LEFT);
         combo.setConverter(modeConverter());
         combo.setOnAction(e -> {
           BulkImportItem item = getItem();
-          Boolean value = combo.getValue();
-          if (item == null || value == null || value == item.appendProperty().get()) {
+          BulkImportMode value = combo.getValue();
+          if (item == null || value == null || value == item.modeProperty().get()) {
             return;
           }
           for (BulkImportItem target : affectedRows(item)) {
-            target.appendProperty().set(value);
+            target.modeProperty().set(value);
           }
           Platform.runLater(() -> tableView.refresh());
         });
@@ -505,7 +506,7 @@ public class BulkImporterController implements Initializable, DialogController {
           setGraphic(null);
           return;
         }
-        combo.setValue(item.appendProperty().get());
+        combo.setValue(item.modeProperty().get());
         setGraphic(combo);
       }
     });
@@ -670,7 +671,7 @@ public class BulkImporterController implements Initializable, DialogController {
           item.screenProperty().set(screen != null ? screen : defaultScreen);
         }
         if (force) {
-          item.appendProperty().set(Boolean.TRUE.equals(defaultModeCombo.getValue()));
+          item.modeProperty().set(defaultModeCombo.getValue() != null ? defaultModeCombo.getValue() : BulkImportMode.APPEND);
           item.setSelectionManual(false);
         }
         updateImportSelection(item);
@@ -759,7 +760,7 @@ public class BulkImporterController implements Initializable, DialogController {
       return;
     }
     boolean keepStructure = moveKeepStructureRadio.isSelected();
-    long overwrites = selection.stream().filter(i -> !i.appendProperty().get()).count();
+    long overwrites = selection.stream().filter(i -> i.modeProperty().get() == BulkImportMode.OVERWRITE).count();
     if (overwrites > 0) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(getStage(), Messages.get("bulk_importer.confirm_overwrite", overwrites, selection.size()));
       if (result.isEmpty() || result.get() != ButtonType.OK) {

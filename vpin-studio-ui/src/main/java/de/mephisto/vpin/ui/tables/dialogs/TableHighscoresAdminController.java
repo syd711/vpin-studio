@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -134,6 +135,8 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
 
   private void refresh() {
     List<HighscoreBackup> highscoreBackups = client.getHigscoreBackupService().get(game.getId());
+    // file names are timestamps (yyyy-MM-dd-HH-mm-ss), newest first
+    highscoreBackups.sort(Comparator.comparing(HighscoreBackup::getFilename, Comparator.nullsLast(Comparator.reverseOrder())));
     backupList.setItems(FXCollections.observableList(highscoreBackups));
     scoreLabel.setText("");
 
