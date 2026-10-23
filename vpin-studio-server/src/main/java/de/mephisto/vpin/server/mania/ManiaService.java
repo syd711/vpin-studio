@@ -100,6 +100,13 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
     List<Game> games = maniaServiceCache.getGamesByVpsId(vpsTableId);
     for (Game game : games) {
+      //the mania cache may hold an outdated status, so the status is re-checked
+      Game currentGame = gameService.getGame(game.getId());
+      if (currentGame == null || currentGame.isDisabled()) {
+        LOG.info("Skipped VPin Mania synchronization for \"{}\", the table is disabled.", game.getGameDisplayName());
+        continue;
+      }
+
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
         String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
         LOG.info(msg);
@@ -448,6 +455,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         knownGames.addAll(gameService.getKnownFpGames(-1));
         List<InstalledTable> installedTables = new ArrayList<>();
         for (Game game : knownGames) {
+          if (game.isDisabled()) {
+            continue;
+          }
           if (!StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
             InstalledTable installedTable = new InstalledTable();
             installedTable.setVpsTableId(game.getExtTableId());
@@ -536,7 +546,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (Features.MANIA_ENABLED) {
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       Game game = event.getGame();
-      if (maniaSettings.isSubmitPlayed() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+      if (maniaSettings.isSubmitPlayed() && !game.isDisabled() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
         refreshDefaultCabinet();
         Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
 

@@ -6,6 +6,8 @@
 - **Bulk Importer**: Added the import mode "If Missing", which only imports a file if its screen has no media yet.
 - **ALT Sound**: Fixed detection of g-sound bundles.
 - **Webhooks**: Added the webhook types "Table Launch" and "Table Exit" to webhook sets. They are called with the game id when a table is started or exited.
+- **Table Overview**: Enabling or disabling tables from the context menu now runs in a progress dialog, so large selections no longer block the UI.
+- **VPin Mania**: Disabled tables are no longer synchronized with VPin Mania. They are excluded from the installed tables list, and their highscores and played counts are not submitted.
 
 ---
 

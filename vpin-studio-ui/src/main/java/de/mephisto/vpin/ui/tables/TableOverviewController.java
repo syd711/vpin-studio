@@ -480,22 +480,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onTableStatusToggle() {
     List<GameRepresentation> selections = getSelections();
-    toggleTableStatus(selections);
-  }
-
-  private static void toggleTableStatus(List<GameRepresentation> games) {
-    for (GameRepresentation game : games) {
-      TableDetails detail = client.getFrontendService().getTableDetails(game.getId());
-      boolean isDisable = game.isDisabled();
-      detail.setStatus(isDisable ? 1 : 0);
-      try {
-        client.getFrontendService().saveTableDetails(detail, game.getId());
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
-      catch (Exception e) {
-        LOG.error("Cannot " + (isDisable ? "enable" : "disable") + " the game " + game.getGameFileName(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.the_table") + game.getGameDisplayName() + Messages.get("dialog.couldn_t_be") + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
-      }
+    if (!selections.isEmpty()) {
+      ProgressDialog.createProgressDialog(new TableStatusToggleProgressModel(selections));
     }
   }
 

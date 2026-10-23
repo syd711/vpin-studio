@@ -164,6 +164,9 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (!this.games.isEmpty()) {
       List<VpsTable> tables = new ArrayList<>();
       for (GameRepresentation gameRepresentation : this.games) {
+        if (gameRepresentation.isDisabled()) {
+          continue;
+        }
         VpsTable vpsTable = client.getVpsService().getTableById(gameRepresentation.getExtTableId());
         if (vpsTable != null) {
           tables.add(vpsTable);
@@ -333,6 +336,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.dataPane.setVisible(games.size() == 1);
 
     maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
+    maniaSyncBtn.setDisable(games.stream().allMatch(GameRepresentation::isDisabled));
 
     resetBtn.setVisible(false);
 //    maniaBtn.setVisible(false);
