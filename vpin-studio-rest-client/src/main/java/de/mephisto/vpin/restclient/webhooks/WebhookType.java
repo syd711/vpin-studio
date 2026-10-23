@@ -1,5 +1,5 @@
 package de.mephisto.vpin.restclient.webhooks;
 
 public enum WebhookType {
-  game, score, player, pause, unpause;
+  game, score, player, pause, unpause, launch, exit;
 }

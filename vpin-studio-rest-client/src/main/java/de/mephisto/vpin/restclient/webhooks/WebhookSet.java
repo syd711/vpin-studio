@@ -11,6 +11,8 @@ public class WebhookSet {
   private Webhook players = new Webhook();
   private Webhook pause = new Webhook();
   private Webhook unpause = new Webhook();
+  private Webhook launch = new Webhook();
+  private Webhook exit = new Webhook();
 
   public String getUuid() {
     return uuid;
@@ -34,6 +36,22 @@ public class WebhookSet {
 
   public void setUnpause(Webhook unpause) {
     this.unpause = unpause;
+  }
+
+  public Webhook getLaunch() {
+    return launch;
+  }
+
+  public void setLaunch(Webhook launch) {
+    this.launch = launch;
+  }
+
+  public Webhook getExit() {
+    return exit;
+  }
+
+  public void setExit(Webhook exit) {
+    this.exit = exit;
   }
 
   public Webhook getScores() {

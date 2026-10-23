@@ -3,9 +3,12 @@ package de.mephisto.vpin.server.webhooks;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.NetworkUtil;
 import de.mephisto.vpin.restclient.webhooks.*;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleListener;
 import de.mephisto.vpin.server.games.GameLifecycleService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -26,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class WebhooksService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, PlayerLifecycleListener, GameLifecycleListener {
+public class WebhooksService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, PlayerLifecycleListener, GameLifecycleListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(WebhooksService.class);
 
   @Autowired
@@ -37,6 +40,9 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   private WebhooksRestClient webhooksRestClient;
   private WebhookSettings webhookSettings;
@@ -76,6 +82,22 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     for (WebhookSet set : sets) {
       LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
       handleWebhookSet(set, set.getUnpause(), WebhookType.unpause, eventType, gameId);
+    }
+  }
+
+  public void notifyTableLaunchHooks(int gameId, @NonNull WebhookEventType eventType) {
+    List<WebhookSet> sets = webhookSettings.getSets();
+    for (WebhookSet set : sets) {
+      LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
+      handleWebhookSet(set, set.getLaunch(), WebhookType.launch, eventType, gameId);
+    }
+  }
+
+  public void notifyTableExitHooks(int gameId, @NonNull WebhookEventType eventType) {
+    List<WebhookSet> sets = webhookSettings.getSets();
+    for (WebhookSet set : sets) {
+      LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
+      handleWebhookSet(set, set.getExit(), WebhookType.exit, eventType, gameId);
     }
   }
 
@@ -186,6 +208,17 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   public void gameDeleted(int gameId) {
     notifyGameHooks(gameId, WebhookEventType.delete);
   }
+  //----------------------------------- Table Status Listener  ---------------------------------------------------------
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+    notifyTableLaunchHooks(event.getGame().getId(), WebhookEventType.update);
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    notifyTableExitHooks(event.getGame().getId(), WebhookEventType.update);
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -193,6 +226,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
 
     preferencesService.addChangeListener(this);
     gameLifecycleService.addGameLifecycleListener(this);
+    frontendStatusService.addTableStatusChangeListener(this);
     highscoreService.addHighscoreChangeListener(this);
 
     preferenceChanged(PreferenceNames.WEBHOOK_SETTINGS, null, null);

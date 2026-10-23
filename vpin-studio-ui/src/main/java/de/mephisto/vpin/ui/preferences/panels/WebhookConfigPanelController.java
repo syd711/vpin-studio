@@ -71,6 +71,16 @@ public class WebhookConfigPanelController implements Initializable {
         deleteCheckbox.setVisible(false);
         createCheckbox.setVisible(false);
         break;
+      case launch:
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.table_launch"));
+        deleteCheckbox.setVisible(false);
+        createCheckbox.setVisible(false);
+        break;
+      case exit:
+        titleLabel.setText(Messages.get("pref.webhook_config_panel.table_exit"));
+        deleteCheckbox.setVisible(false);
+        createCheckbox.setVisible(false);
+        break;
     }
   }
 

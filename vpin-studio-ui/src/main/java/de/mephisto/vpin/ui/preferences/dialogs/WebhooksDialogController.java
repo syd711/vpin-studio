@@ -98,6 +98,8 @@ public class WebhooksDialogController implements Initializable, DialogController
     addWebhookPanel(webhookSet.getPlayers(), WebhookType.player);
     addWebhookPanel(webhookSet.getPause(), WebhookType.pause);
     addWebhookPanel(webhookSet.getUnpause(), WebhookType.unpause);
+    addWebhookPanel(webhookSet.getLaunch(), WebhookType.launch);
+    addWebhookPanel(webhookSet.getExit(), WebhookType.exit);
 
     saveBtn.setDisable(StringUtils.isEmpty(webhookSet.getName()));
   }
