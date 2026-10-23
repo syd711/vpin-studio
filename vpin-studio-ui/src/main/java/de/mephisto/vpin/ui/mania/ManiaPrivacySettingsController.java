@@ -44,6 +44,9 @@ public class ManiaPrivacySettingsController implements Initializable {
   private CheckBox searchableCheckbox;
 
   @FXML
+  private CheckBox shareDiscordActivityCheckbox;
+
+  @FXML
   private CheckBox submitAllCheckbox;
 
   @FXML
@@ -128,6 +131,20 @@ public class ManiaPrivacySettingsController implements Initializable {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
           settings.setShowActiveGameStatus(newValue);
+          client.getPreferenceService().setJsonPreference(settings);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to save mania settings: " + e.getMessage(), e);
+        }
+      }
+    });
+
+    shareDiscordActivityCheckbox.setSelected(settings.isShareDiscordActivity());
+    shareDiscordActivityCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        try {
+          settings.setShareDiscordActivity(newValue);
           client.getPreferenceService().setJsonPreference(settings);
         }
         catch (Exception e) {

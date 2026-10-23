@@ -85,6 +85,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public ManiaTableSyncResult synchronizeHighscore(String vpsTableId) {
     ManiaTableSyncResult result = new ManiaTableSyncResult();
     result.setVpsTableId(vpsTableId);
+    if (!Features.MANIA_ENABLED) {
+      result.setError("VPin Mania is disabled.");
+      return result;
+    }
 
     VpsTable vpsTable = vpsService.getTableById(vpsTableId);
     if (vpsTable == null) {
@@ -194,6 +198,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   public boolean clearCache() {
+    if (!Features.MANIA_ENABLED) {
+      return false;
+    }
     refreshDefaultCabinet();
     this.contacts = null;
     this.getContacts();
@@ -219,8 +226,11 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   public boolean isOnDenyList(@NonNull Game game, @NonNull Score score) {
+    if (!Features.MANIA_ENABLED) {
+      return false;
+    }
     Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
-    if (Features.MANIA_ENABLED && cabinet != null) {
+    if (cabinet != null) {
       String vpsTableId = game.getExtTableId();
       if (!StringUtils.isEmpty(vpsTableId)) {
         List<DeniedScore> deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTableId);
@@ -300,7 +310,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
             cabinet.setStatus(new CabinetStatus());
           }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
-          cabinet.getStatus().setActiveGame(null);
+          applyActiveGame(cabinet.getStatus(), null, null);
           getClient().getCabinetClient().update(cabinet);
         }
         LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.offline);
@@ -319,7 +329,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
             cabinet.setStatus(new CabinetStatus());
           }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
-          cabinet.getStatus().setActiveGame(null);
+          applyActiveGame(cabinet.getStatus(), null, null);
           getClient().getCabinetClient().update(cabinet);
         }
         LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.online);
@@ -334,6 +344,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
    * Only register here or register players, do not sync because this is triggered by the UI.
    */
   public ManiaRegistration register(ManiaRegistration registration) {
+    if (!Features.MANIA_ENABLED) {
+      registration.setResult("VPin Mania is disabled.");
+      return registration;
+    }
     try {
       Asset avatarEntry = (Asset) preferencesService.getPreferenceValue(PreferenceNames.AVATAR);
       String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
@@ -409,10 +423,13 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
    * Pushes the list of all local VPX and Future Pinball tables to VPin Mania
    */
   public boolean synchronizeTables() {
+    if (!Features.MANIA_ENABLED) {
+      return false;
+    }
     try {
       refreshDefaultCabinet();
       Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
-      if (!Features.MANIA_ENABLED || cabinet == null) {
+      if (cabinet == null) {
         return false;
       }
 
@@ -484,12 +501,16 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void frontendLaunched() {
-    this.setOnline(maniaClient.getCabinetClient().getDefaultCabinetCached());
+    if (Features.MANIA_ENABLED) {
+      this.setOnline(maniaClient.getCabinetClient().getDefaultCabinetCached());
+    }
   }
 
   @Override
   public void frontendRestarted() {
-    this.setOnline(maniaClient.getCabinetClient().getDefaultCabinetCached());
+    if (Features.MANIA_ENABLED) {
+      this.setOnline(maniaClient.getCabinetClient().getDefaultCabinetCached());
+    }
   }
 
   @Override
@@ -501,7 +522,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
+    if (Features.MANIA_ENABLED && propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
       refreshDefaultCabinet();
@@ -524,7 +545,52 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           new Thread(() -> maniaClient.getVpsTableClient().updatePlayedCount(game.getExtTableId(), game.getExtTableVersionId())).start();
         }
       }
+
+      if (maniaSettings.isShowActiveGameStatus() || maniaSettings.isShareDiscordActivity()) {
+        updateActiveGame(game, maniaSettings);
+      }
     }
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    if (Features.MANIA_ENABLED) {
+      updateActiveGame(null, null);
+    }
+  }
+
+  private void updateActiveGame(@Nullable Game game, @Nullable ManiaSettings settings) {
+    new Thread(() -> {
+      Thread.currentThread().setName("Mania Active Game Updater");
+      try {
+        Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+        if (cabinet != null) {
+          if (cabinet.getStatus() == null) {
+            cabinet.setStatus(new CabinetStatus());
+          }
+          applyActiveGame(cabinet.getStatus(), game, settings);
+          getClient().getCabinetClient().update(cabinet);
+          LOG.info("Updated mania cabinet active game to \"{}\"", game != null ? game.getGameDisplayName() : null);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to update mania cabinet active game: {}", e.getMessage(), e);
+      }
+    }).start();
+  }
+
+  /**
+   * The table name is only shared with friends when the activity status is enabled,
+   * the Discord bot only posts the activity when the explicit Discord flag is set.
+   */
+  private static void applyActiveGame(@NonNull CabinetStatus status, @Nullable Game game, @Nullable ManiaSettings settings) {
+    boolean shareActiveGame = game != null && settings != null && settings.isShowActiveGameStatus();
+    boolean shareDiscordActivity = game != null && settings != null && settings.isShareDiscordActivity();
+    boolean shareVpsIds = shareActiveGame || shareDiscordActivity;
+    status.setActiveGame(shareActiveGame ? game.getGameDisplayName() : null);
+    status.setActiveGameVpsTableId(shareVpsIds ? game.getExtTableId() : null);
+    status.setActiveGameVpsVersionId(shareVpsIds ? game.getExtTableVersionId() : null);
+    status.setShareDiscordActivity(shareDiscordActivity);
   }
 
   //-------------------- GameDataChangedListener -----------------------------------------------------------------------
@@ -566,6 +632,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
 
   public boolean deleteCabinet() {
+    if (!Features.MANIA_ENABLED) {
+      return false;
+    }
     try {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       maniaSettings.setCabinetUuid(null);

@@ -118,8 +118,9 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
         case delete: {
           String url = webhook.getEndpoint();
           if (!url.endsWith("/")) {
-            url = url + "/" + entityId;
+            url = url + "/";
           }
+          url = url + entityId;
           webhooksRestClient.onDelete(url);
           break;
         }
@@ -154,7 +155,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
 
   public boolean delete(String uuid) throws Exception {
     try {
-      List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> s.getUuid().equals(uuid)).collect(Collectors.toList()));
+      List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> !s.getUuid().equals(uuid)).collect(Collectors.toList()));
       webhookSettings.setSets(collect);
       preferencesService.savePreference(webhookSettings);
       return true;

@@ -239,7 +239,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       visibilityCheckbox.setSelected(cabinet != null);
       visibilityCheckbox.setDisable(cabinet == null);
       String tournamentUserUuid = player.getManiaAccountUuid();
-      if (!StringUtils.isEmpty(tournamentUserUuid)) {
+      if (Features.MANIA_ENABLED && !StringUtils.isEmpty(tournamentUserUuid)) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
         this.vpinManiaPlayerCheckbox.setSelected(accountByUuid != null);
         if (accountByUuid != null) {

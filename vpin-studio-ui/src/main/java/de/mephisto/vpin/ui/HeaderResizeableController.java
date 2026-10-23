@@ -179,6 +179,7 @@ public class HeaderResizeableController implements Initializable {
     FRIENDS_BTN = maniaBtn;
 
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
+    maniaOpenBtn.managedProperty().bindBidirectional(maniaOpenBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
     maniaOpenBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
 

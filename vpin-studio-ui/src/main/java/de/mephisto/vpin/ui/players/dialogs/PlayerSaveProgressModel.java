@@ -92,7 +92,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       }
 
       player = client.getPlayerService().savePlayer(player);
-      client.getManiaService().clearCache();
+      if (Features.MANIA_ENABLED) {
+        client.getManiaService().clearCache();
+      }
       client.getDiscordService().clearCache();
       client.getImageCache().clearCache();
       client.getGameService().clearCache();

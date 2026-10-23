@@ -475,6 +475,8 @@ public class TablesSidebarHighscoresController implements Initializable {
     vpSaveEditBtn.managedProperty().bindBidirectional(vpSaveEditBtn.visibleProperty());
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaSyncBtn.managedProperty().bindBidirectional(maniaSyncBtn.visibleProperty());
+    maniaBtn.setVisible(Features.MANIA_ENABLED);
+    maniaSyncBtn.setVisible(Features.MANIA_ENABLED);
 
     Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMania = new ImageView(imageMania);

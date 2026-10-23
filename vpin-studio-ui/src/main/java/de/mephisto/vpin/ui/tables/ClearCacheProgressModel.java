@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 import org.slf4j.Logger;
@@ -101,7 +102,9 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
       long startTime = System.currentTimeMillis();
       switch (cache) {
         case "Mania":
-          client.getManiaService().clearCache();
+          if (Features.MANIA_ENABLED) {
+            client.getManiaService().clearCache();
+          }
           break;
         case "Hooks":
           client.getHooksService().clearCache();

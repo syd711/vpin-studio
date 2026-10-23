@@ -127,6 +127,18 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="%mania.mania_privacy_settings.other_people_can_search_for_your_cabinet_id" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%mania.mania_privacy_settings.discord_settings">
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="shareDiscordActivityCheckbox" mnemonicParsing="false" text="%mania.mania_privacy_settings.share_my_activity">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.the_table_you_are_playing_is_sent_to_vpin_mania" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="%mania.mania_privacy_settings.the_vpin_mania_discord_bot_posts_it_on" textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="%mania.mania_privacy_settings.players_privacy">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />

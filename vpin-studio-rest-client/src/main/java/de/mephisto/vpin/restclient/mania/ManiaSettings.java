@@ -13,6 +13,7 @@ public class ManiaSettings extends JsonSettings {
   private boolean submitTables = true;
   private boolean showOnlineStatus = true;
   private boolean showActiveGameStatus = true;
+  private boolean shareDiscordActivity = false;
 
   public String getCabinetUuid() {
     return cabinetUuid;
@@ -68,6 +69,14 @@ public class ManiaSettings extends JsonSettings {
 
   public void setShowActiveGameStatus(boolean showActiveGameStatus) {
     this.showActiveGameStatus = showActiveGameStatus;
+  }
+
+  public boolean isShareDiscordActivity() {
+    return shareDiscordActivity;
+  }
+
+  public void setShareDiscordActivity(boolean shareDiscordActivity) {
+    this.shareDiscordActivity = shareDiscordActivity;
   }
 
   public boolean isSubmitAllScores() {
