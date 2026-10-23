@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class ManiaAccountSettingsController implements Initializable {
+public class ManiaAccountSettingsController implements Initializable, ManiaSettingsPage {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaAccountSettingsController.class);
 
   @FXML
@@ -52,9 +52,13 @@ public class ManiaAccountSettingsController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     preferencesPanel.managedProperty().bindBidirectional(preferencesPanel.visibleProperty());
+    preferencesPanel.setVisible(false);
+  }
 
-    if (ManiaHelper.isRegistered()) {
-      Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
+  @Override
+  public void setData(ManiaSettingsData data) {
+    if (data.isRegistered()) {
+      Cabinet cabinet = data.getCabinet();
       if (cabinet != null) {
         idLabel.setText(cabinet.getUuid());
       }

@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.SettingsSceneController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -131,7 +132,9 @@ public class ManiaSettingsController extends SettingsSceneController implements 
     if (lastScreen != null) {
       loadScreen(lastScreen);
     }
-    menuItemsPanel.setVisible(ManiaHelper.isRegistered());
+    else {
+      menuItemsPanel.setVisible(ManiaHelper.isRegistered());
+    }
     TransitionUtil.createInFader(root, UIDefaults.FADER_DURATION).play();
   }
 
@@ -205,10 +208,19 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   private void loadScreen(String screen) {
     lastScreen = screen;
 
+    ManiaSettingsLoadProgressModel progressModel = new ManiaSettingsLoadProgressModel(screen);
+    ProgressDialog.createProgressDialog(progressModel);
+    ManiaSettingsData data = progressModel.getData();
+    menuItemsPanel.setVisible(data.isRegistered());
+
     try {
       FXMLLoader loader = new FXMLLoader(ManiaSettingsController.class.getResource(screen));
       loader.setResources(Messages.getBundle());
       Node node = loader.load();
+      Object controller = loader.getController();
+      if (controller instanceof ManiaSettingsPage) {
+        ((ManiaSettingsPage) controller).setData(data);
+      }
       preferencesMain.setCenter(node);
     }
     catch (Exception e) {

@@ -8,6 +8,8 @@
 - **Webhooks**: Added the webhook types "Table Launch" and "Table Exit" to webhook sets. They are called with the game id when a table is started or exited.
 - **Table Overview**: Enabling or disabling tables from the context menu now runs in a progress dialog, so large selections no longer block the UI.
 - **VPin Mania**: Disabled tables are no longer synchronized with VPin Mania. They are excluded from the installed tables list, and their highscores and played counts are not submitted.
+- **VPin Mania**: The VPin Mania settings pages now load their data in a progress dialog when they are opened, so switching between them no longer blocks the UI.
+- **VPin Mania**: Fixed the privacy settings of the cabinet registration. The "Submit Installed Tables" and "Submit Play Count" options were not applied, and highscores were always synchronized. The registration also has a new "Submit All Highscores" option.
 
 ---
 

@@ -362,6 +362,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       maniaSettings.setSubmitPlayed(registration.isSubmitPlayCount());
       maniaSettings.setSubmitRatings(registration.isSubmitRatings());
+      maniaSettings.setSubmitTables(registration.isSubmitTables());
+      maniaSettings.setSubmitAllScores(registration.isSubmitAllScores());
       maniaSettings.setApiKey(registration.getApiKey());
       preferencesService.savePreference(maniaSettings);
 

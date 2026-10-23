@@ -327,6 +327,9 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameRepresentation> gamesCached = new ArrayList<>(getVpxGamesCached());
     gamesCached.addAll(getFPGamesCached());
     for (GameRepresentation game : gamesCached) {
+      if (game.isDisabled()) {
+        continue;
+      }
       if (!StringUtils.isEmpty(game.getExtTableId()) && addedVpsIds.add(game.getExtTableId())) {
         VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
         if (tableById != null) {

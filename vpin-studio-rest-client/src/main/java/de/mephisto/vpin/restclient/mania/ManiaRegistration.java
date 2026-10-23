@@ -8,6 +8,7 @@ public class ManiaRegistration {
   private boolean submitRatings = false;
   private boolean submitPlayCount = false;
   private boolean submitTables = false;
+  private boolean submitAllScores = false;
   private String cabinetUuid = null;
   private String apiKey;
 
@@ -39,6 +40,14 @@ public class ManiaRegistration {
 
   public void setSubmitTables(boolean submitTables) {
     this.submitTables = submitTables;
+  }
+
+  public boolean isSubmitAllScores() {
+    return submitAllScores;
+  }
+
+  public void setSubmitAllScores(boolean submitAllScores) {
+    this.submitAllScores = submitAllScores;
   }
 
   public void setSubmitPlayCount(boolean submitPlayCount) {

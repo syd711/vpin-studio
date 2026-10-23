@@ -81,7 +81,7 @@ public class ManiaHelper {
         maniaClient.getRestClient().setApiKey(maniaSettings.getApiKey());
         Cabinet registeredCabinet = maniaClient.getCabinetClient().getDefaultCabinetCached(maniaSettings.getCabinetUuid());
         if (registeredCabinet != null) {
-          if (!registration.getPlayerIds().isEmpty()) {
+          if (registration.isSubmitAllScores() && !registration.getPlayerIds().isEmpty()) {
             runScoreSynchronization(false);
           }
           if (registration.isSubmitTables()) {

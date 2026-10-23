@@ -62,6 +62,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   private CheckBox synchronizeRatingsCheckbox;
 
   @FXML
+  private CheckBox synchronizeHighscoresCheckbox;
+
+  @FXML
   private ComboBox<CabinetModel> cabinets;
 
   private final List<CheckBox> playerCheckboxes = new ArrayList<>();
@@ -84,8 +87,9 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   private void onDialogSubmit(ActionEvent e) {
     maniaRegistration = new ManiaRegistration();
     maniaRegistration.setSubmitRatings(synchronizeRatingsCheckbox.isSelected());
-    maniaRegistration.setSubmitPlayCount(synchronizeRatingsCheckbox.isSelected());
+    maniaRegistration.setSubmitPlayCount(synchronizePlayCountCheckbox.isSelected());
     maniaRegistration.setSubmitTables(synchronizeTablesCheckbox.isSelected());
+    maniaRegistration.setSubmitAllScores(synchronizeHighscoresCheckbox.isSelected());
     maniaRegistration.setApiKey(this.apiKey);
 
     if (this.cabinets.getValue() != null) {
@@ -116,6 +120,8 @@ public class ManiaRegistrationDialogController implements DialogController, Init
     synchronizePlayCountCheckbox.setSelected(true);
     synchronizeTablesCheckbox.setDisable(true);
     synchronizeTablesCheckbox.setSelected(true);
+    synchronizeHighscoresCheckbox.setDisable(true);
+    synchronizeHighscoresCheckbox.setSelected(true);
 
     registrationCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
@@ -123,6 +129,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
         synchronizeRatingsCheckbox.setDisable(!newValue);
         synchronizePlayCountCheckbox.setDisable(!newValue);
         synchronizeTablesCheckbox.setDisable(!newValue);
+        synchronizeHighscoresCheckbox.setDisable(!newValue);
         okButton.setDisable(!newValue);
 
         for (CheckBox playerCheckbox : playerCheckboxes) {

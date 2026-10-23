@@ -31,7 +31,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
-public class ManiaPrivacySettingsController implements Initializable {
+public class ManiaPrivacySettingsController implements Initializable, ManiaSettingsPage {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaPrivacySettingsController.class);
 
   @FXML
@@ -88,16 +88,19 @@ public class ManiaPrivacySettingsController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    if (!ManiaHelper.isRegistered()) {
+    syncTablesBtn.setDisable(true);
+    syncScoresBtn.setDisable(true);
+  }
+
+  @Override
+  public void setData(ManiaSettingsData data) {
+    if (!data.isRegistered()) {
       HeaderResizeableController.toggleManiaView();
       return;
     }
 
-    settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-    Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
-
-    syncTablesBtn.setDisable(true);
-    syncScoresBtn.setDisable(true);
+    settings = data.getSettings();
+    Cabinet cabinet = data.getCabinet();
 
     if (cabinet == null) {
       return;
@@ -243,7 +246,7 @@ public class ManiaPrivacySettingsController implements Initializable {
       loader.setResources(Messages.getBundle());
       Pane node = loader.load();
       CabinetRowPanelController friendController = loader.getController();
-      friendController.setData(this, maniaClient.getCabinetClient().getDefaultCabinetCached());
+      friendController.setData(this, cabinet, data.getAccounts());
       playersBox.getChildren().add(node);
     }
     catch (Exception e) {

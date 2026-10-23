@@ -126,6 +126,22 @@
                         </Label>
                      </children>
                   </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <CheckBox fx:id="synchronizeHighscoresCheckbox" mnemonicParsing="false" styleClass="default-text" text="%mania.mania_privacy_settings.submit_all_highscores" />
+                        <Label textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="%mania.mania_privacy_settings.submit_your_highscores_to_rank_them_on_vpin" wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                   <VBox fx:id="playersRoot">
                      <children>
                         <Label styleClass="default-title" text="%mania.mania_registration.player_registration">

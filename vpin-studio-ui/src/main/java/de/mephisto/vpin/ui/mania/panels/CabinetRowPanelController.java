@@ -55,6 +55,7 @@ public class CabinetRowPanelController implements Initializable {
   private String displayName;
   private CabinetStatus status;
   private Cabinet cabinet;
+  private List<Account> preloadedAccounts;
 
   public void setData(CabinetContact contact) {
     this.cabinetUuid = contact.getUuid();
@@ -64,7 +65,8 @@ public class CabinetRowPanelController implements Initializable {
   }
 
 
-  public void setData(ManiaPrivacySettingsController privacySettingsController, Cabinet cabinet) {
+  public void setData(ManiaPrivacySettingsController privacySettingsController, Cabinet cabinet, List<Account> accounts) {
+    this.preloadedAccounts = accounts;
     this.cabinetUuid = cabinet.getUuid();
     this.status = cabinet.getStatus();
     this.displayName = cabinet.getDisplayName();
@@ -108,7 +110,7 @@ public class CabinetRowPanelController implements Initializable {
         }
 
         nameLabel.setText(displayName);
-        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(cabinet.getId(), cabinetUuid);
+        List<Account> accounts = preloadedAccounts != null ? preloadedAccounts : maniaClient.getCabinetClient().getAccounts(cabinet.getId(), cabinetUuid);
         playerList.setVisible(!accounts.isEmpty());
 
         for (Account account : accounts) {
