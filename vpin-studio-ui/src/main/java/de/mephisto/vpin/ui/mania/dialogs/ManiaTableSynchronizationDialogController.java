@@ -193,7 +193,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
 
     public String getScore() {
       if (result.getTableScore() != null) {
-        return ScoreFormatUtil.formatScore(result.getTableScore().getScore(), Locale.getDefault());
+        return ScoreFormatUtil.formatScore(result.getTableScore().getScore(), Locale.getDefault(Locale.Category.FORMAT));
       }
       return null;
     }

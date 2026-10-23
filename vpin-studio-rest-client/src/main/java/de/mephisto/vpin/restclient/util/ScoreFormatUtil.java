@@ -16,7 +16,7 @@ public class ScoreFormatUtil {
   private final static Map<Locale, DecimalFormat> formats = new HashMap<>();
 
   public static String formatScore(long score) {
-    return formatScore(score, Locale.getDefault());
+    return formatScore(score, Locale.getDefault(Locale.Category.FORMAT));
   }
 
   public static String formatScore(long score, Locale loc) {

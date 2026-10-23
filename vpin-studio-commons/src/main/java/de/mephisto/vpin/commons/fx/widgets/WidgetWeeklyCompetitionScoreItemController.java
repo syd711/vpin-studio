@@ -154,7 +154,7 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
 
     if (score.getScore() > 0) {
       long l = Double.valueOf(score.getScore()).longValue();
-      scoreLabel.setText(ScoreFormatUtil.formatScore(l, Locale.getDefault()));
+      scoreLabel.setText(ScoreFormatUtil.formatScore(l, Locale.getDefault(Locale.Category.FORMAT)));
     }
     else {
       scoreLabel.setVisible(false);

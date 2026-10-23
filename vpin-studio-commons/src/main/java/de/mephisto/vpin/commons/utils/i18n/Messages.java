@@ -28,6 +28,9 @@ public class Messages {
 
   private static final String BUNDLE_BASE = "de/mephisto/vpin/ui/messages/messages";
 
+  // the OS region settings, captured before we change the default locale, so dates and numbers keep their regional format
+  private static final Locale SYSTEM_FORMAT_LOCALE = Locale.getDefault(Locale.Category.FORMAT);
+
   private static ResourceBundle bundle;
   private static Locale currentLocale;
   private static String currentLanguageTag = LocalUISettings.getString(LocalUISettings.LANGUAGE);
@@ -53,6 +56,8 @@ public class Messages {
   public static void reload() {
     currentLocale = resolveLocale(currentLanguageTag);
     Locale.setDefault(currentLocale);
+    // only the UI language changes, date/number formatting must follow the OS region settings
+    Locale.setDefault(Locale.Category.FORMAT, SYSTEM_FORMAT_LOCALE);
     try {
       bundle = ResourceBundle.getBundle(BUNDLE_BASE, currentLocale);
       LOG.info("Loaded i18n messages bundle for locale: {}", currentLocale);
