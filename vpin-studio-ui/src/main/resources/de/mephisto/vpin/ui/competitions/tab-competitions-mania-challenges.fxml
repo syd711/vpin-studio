@@ -152,7 +152,7 @@
                                         <Label fx:id="participationWarningLabel" managed="false" styleClass="error-title" text="%competitions.competitions_mania.warning_participation_disabled" textFill="WHITE" visible="false" wrapText="true" />
                                     </children>
                                 </VBox>
-                                <Button mnemonicParsing="false" onAction="#onOpenSettings" text="%competitions.competitions_mania.open_settings" textFill="WHITE">
+                                <Button mnemonicParsing="false" onAction="#onOpenSettings" textFill="WHITE">
                                     <font>
                                         <Font size="14.0" />
                                     </font>

@@ -68,18 +68,22 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description" textFill="WHITE" />
                         <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description2" textFill="WHITE" />
-                        <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi-discord" iconSize="18" />
-                           </graphic>
+                        <VBox spacing="3.0">
+                           <children>
+                              <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi-discord" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                              <Label styleClass="preference-description" text="%mania.mania_discord_settings.add_bot_to_discord_server_description" textFill="WHITE" />
+                           </children>
                            <VBox.margin>
                               <Insets top="24.0" />
                            </VBox.margin>
-                        </Button>
-                        <Label styleClass="preference-description" text="%mania.mania_discord_settings.add_bot_to_discord_server_description" textFill="WHITE" />
+                        </VBox>
                      </children>
                   </VBox>
                </children>

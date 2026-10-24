@@ -104,12 +104,14 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       Game currentGame = gameService.getGame(game.getId());
       if (currentGame == null || currentGame.isDisabled()) {
         LOG.info("Skipped VPin Mania synchronization for \"{}\", the table is disabled.", game.getGameDisplayName());
+        SLOG.info("Skipped VPin Mania synchronization for \"" + game.getGameDisplayName() + "\", the table is disabled.");
         continue;
       }
 
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
         String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
         LOG.info(msg);
+        SLOG.info(msg);
         result.setError(msg);
         continue;
       }
@@ -125,6 +127,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   private List<ManiaTableSync> synchronizeHighscores(@NonNull Game game, @NonNull VpsTable vpsTable) {
     List<ManiaTableSync> result = new ArrayList<>();
     if (!maniaSettings.isSubmitAllScores()) {
+      SLOG.info("Skipped VPin Mania highscore submission for \"" + game.getGameDisplayName() + "\", score submission is disabled.");
       return result;
     }
 
@@ -178,6 +181,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
           LOG.info("Found score match to synchronize for {}: {}", playerInitials, score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
+          SLOG.info("Submitted VPin Mania score " + score + " for \"" + game.getGameDisplayName() + "\" (player \"" + playerInitials + "\").");
           tableSyncItem.setTableScore(submitted != null ? submitted : tableScore);
           tableSyncItem.setResult("Highscore for \"" + playerInitials + "\" successfully synchronized.");
           submittedInitials.add(playerInitials);
@@ -187,6 +191,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
       catch (Exception e) {
         LOG.error("Failed to submit mania highscore during sync: {}", e.getMessage(), e);
+        SLOG.error("Failed to submit VPin Mania score " + score + " for \"" + game.getGameDisplayName() + "\": " + e.getMessage());
       }
     }
 
