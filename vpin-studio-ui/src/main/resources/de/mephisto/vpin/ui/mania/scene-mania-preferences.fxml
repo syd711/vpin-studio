@@ -36,7 +36,8 @@
                               </VBox>
                               <VBox fx:id="menuItemsPanel">
                                  <children>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="%mania.mania_preferences.data_privacy_settings" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" fx:id="privacySettingsBtn" onAction="#onPrivacySettings" styleClass="preference-button" text="%mania.mania_preferences.data_privacy_settings" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" fx:id="discordSettingsBtn" onAction="#onDiscordSettings" styleClass="preference-button" text="%mania.mania_preferences.discord_settings" />
                                  </children>
                               </VBox>
                            </children>

@@ -28,6 +28,7 @@ public class ManiaSettingsLoadProgressModel extends ProgressModel<ManiaSettingsL
     registration("dialog.mania_settings_loading_registration"),
     cabinet("dialog.mania_settings_loading_cabinet"),
     accounts("dialog.mania_settings_loading_accounts"),
+    user("dialog.mania_settings_loading_user"),
     avatar("dialog.mania_settings_loading_avatar");
 
     private final String messageKey;
@@ -48,6 +49,9 @@ public class ManiaSettingsLoadProgressModel extends ProgressModel<ManiaSettingsL
     if ("mania-privacy-settings.fxml".equals(screen)) {
       steps.add(Step.accounts);
       steps.add(Step.avatar);
+    }
+    if ("mania-discord-settings.fxml".equals(screen)) {
+      steps.add(Step.user);
     }
     this.iterator = steps.iterator();
   }
@@ -105,6 +109,12 @@ public class ManiaSettingsLoadProgressModel extends ProgressModel<ManiaSettingsL
           Cabinet cabinet = data.getCabinet();
           if (cabinet != null) {
             data.setAccounts(maniaClient.getCabinetClient().getAccounts(cabinet.getId(), cabinet.getUuid()));
+          }
+          break;
+        }
+        case user: {
+          if (data.isRegistered()) {
+            data.setUser(maniaClient.getUserClient().getCurrentUser());
           }
           break;
         }

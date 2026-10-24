@@ -75,6 +75,11 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-calendar-week" />
                                     </graphic>
                                 </Tab>
+                                <Tab fx:id="maniaChallengesTab" closable="false" text="%competitions.competitions.mania_challenges">
+                                    <content>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                </Tab>
                             </tabs>
                         </TabPane>
                         <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">
@@ -290,7 +295,7 @@
                                     <top>
                                         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                             <items>
-                                                <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="external-component" text="%competitions.competitions.open_dashboard">
+                                                <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="external-component" text="%competitions.competitions.open_leaderboard">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>

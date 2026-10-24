@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.User;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class ManiaSettingsData {
   private ManiaSettings settings;
   private Cabinet cabinet;
   private List<Account> accounts;
+  private User user;
 
   public boolean isRegistered() {
     return registered;
@@ -45,5 +47,16 @@ public class ManiaSettingsData {
 
   public void setAccounts(List<Account> accounts) {
     this.accounts = accounts;
+  }
+
+  /**
+   * The VPin Mania user the cabinet belongs to, only loaded for the pages that require it.
+   */
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 }

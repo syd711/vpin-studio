@@ -81,6 +81,7 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   private static Node rootPane;
 
   private String lastScreen = "mania-account-settings.fxml";
+  private String lastScreenBtnId = null;
   private static boolean open = false;
   private static ManiaSettingsController INSTANCE = null;
 
@@ -92,6 +93,29 @@ public class ManiaSettingsController extends SettingsSceneController implements 
       LOG.error("Failed to navigate to: {}", id, e);
     }
   }
+
+  /**
+   * Opens the VPin Mania settings with the given screen, e.g. "mania-discord-settings.fxml".
+   * The btnId is the fx:id of the navigation button to select.
+   */
+  public static void open(String screen, String btnId) {
+    if (open) {
+      instance.load(screen, null, btnId);
+      return;
+    }
+    if (instance != null) {
+      instance.lastScreen = screen;
+      instance.lastScreenBtnId = btnId;
+    }
+    else {
+      pendingScreen = screen;
+      pendingScreenBtnId = btnId;
+    }
+    HeaderResizeableController.toggleManiaView();
+  }
+
+  private static String pendingScreen;
+  private static String pendingScreenBtnId;
 
   public static boolean toggle() {
     if (open) {
@@ -129,7 +153,17 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   private void onOpen() {
     switchNode(preferencesRoot);
     root.setOpacity(0);
-    if (lastScreen != null) {
+    if (pendingScreen != null) {
+      lastScreen = pendingScreen;
+      lastScreenBtnId = pendingScreenBtnId;
+      pendingScreen = null;
+      pendingScreenBtnId = null;
+    }
+    if (lastScreenBtnId != null) {
+      load(lastScreen, null, lastScreenBtnId);
+      lastScreenBtnId = null;
+    }
+    else if (lastScreen != null) {
       loadScreen(lastScreen);
     }
     else {
@@ -169,6 +203,11 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   @FXML
   private void onPrivacySettings(ActionEvent event) throws IOException {
     load("mania-privacy-settings.fxml", event);
+  }
+
+  @FXML
+  private void onDiscordSettings(ActionEvent event) throws IOException {
+    load("mania-discord-settings.fxml", event);
   }
 
   @FXML

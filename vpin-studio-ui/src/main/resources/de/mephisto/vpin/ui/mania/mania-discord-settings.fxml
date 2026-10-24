@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.ManiaDiscordSettingsController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0">
+               <children>
+                  <Label styleClass="preference-title" text="%mania.mania_discord_settings.title" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="%mania.mania_discord_settings.discord_settings">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="discordNotLinkedInfo" managed="false" styleClass="info-container" visible="false">
+                     <children>
+                        <Label text="%mania.mania_discord_settings.discord_not_linked" textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button mnemonicParsing="false" onAction="#onOpenManiaSettings" text="%mania.mania_discord_settings.open_vpin_mania_settings" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                           </graphic>
+                           <VBox.margin>
+                              <Insets top="8.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="discordSettingsBox" disable="true">
+                     <children>
+                        <CheckBox fx:id="shareDiscordActivityCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.share_my_activity">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.the_table_you_are_playing_is_sent_to_vpin_mania" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.the_vpin_mania_discord_bot_posts_it_on" textFill="WHITE" />
+                        <CheckBox fx:id="participateInDiscordChallengesCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.participate_in_discord_challenges">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description2" textFill="WHITE" />
+                        <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi-discord" iconSize="18" />
+                           </graphic>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Label styleClass="preference-description" text="%mania.mania_discord_settings.add_bot_to_discord_server_description" textFill="WHITE" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="subpanel-tabbed" />
+   </styleClass>
+</BorderPane>

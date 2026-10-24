@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
+import de.mephisto.vpin.ui.mania.ManiaSettingsController;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -77,6 +78,9 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @FXML
   private Tab weeklySubscriptionsTab;
+
+  @FXML
+  private Tab maniaChallengesTab;
 
   @FXML
   private Label createdAtLabel;
@@ -159,6 +163,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private TableSubscriptionsController tableSubscriptionsController;
   private IScoredSubscriptionsController iScoredSubscriptionsController;
   private WeeklySubscriptionsController weeklySubscriptionsController;
+  private ManiaChallengesController maniaChallengesController;
   private String lastDashboardUrl;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
@@ -177,6 +182,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     refreshView(tabPane.getSelectionModel().getSelectedItem());
     discordController.onViewActivated(options);
     tableSubscriptionsController.onViewActivated(options);
+    refreshManiaChallengesTab(options != null && CompetitionType.MANIA_CHALLENGE.equals(options.getModel()));
 
     if (options != null && options.getModel() != null) {
       if (options.getModel() instanceof CompetitionType) {
@@ -229,6 +235,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (selectedTab == weeklySubscriptionsTab) {
       PreferencesController.open("wovp");
+    }
+    else if (selectedTab == maniaChallengesTab) {
+      ManiaSettingsController.open("mania-discord-settings.fxml", "discordSettingsBtn");
     }
     else {
       PreferencesController.open("settings_client");
@@ -346,6 +355,12 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
       checkTitledPanes(CompetitionType.WEEKLY);
     }
+    else if (tab == maniaChallengesTab) {
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.mania_challenges")));
+      Optional<ManiaChallengesController.ManiaChallengeModel> selection = maniaChallengesController.getSelection();
+      updateSelection(selection.map(ManiaChallengesController.ManiaChallengeModel::getCompetition));
+      checkTitledPanes(CompetitionType.MANIA_CHALLENGE);
+    }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
     }
@@ -366,6 +381,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     if (tab == weeklySubscriptionsTab) {
       return weeklySubscriptionsController;
+    }
+    if (tab == maniaChallengesTab) {
+      return maniaChallengesController;
     }
     throw new UnsupportedOperationException("Failed to find controller for tab " + tab.getText());
   }
@@ -464,6 +482,17 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
         });
       }
+      else if (competition.getType().equals(CompetitionType.MANIA_CHALLENGE.name())) {
+        dashboardBtn.setDisable(competition.getUrl() == null);
+        Optional<ManiaChallengesController.ManiaChallengeModel> selection = maniaChallengesController.getSelection();
+        if (selection.isPresent()) {
+          ManiaChallengesController.ManiaChallengeModel model = selection.get();
+          String position = model.getChallenge().getPosition() != null ? String.valueOf(model.getChallenge().getPosition()) : "-";
+          dashboardStatusLabel.setText(Messages.get("competitions.competitions_mania.dashboard_summary",
+              model.getScoreText(), position, model.getChallenge().getParticipants(), model.getStatusText()));
+          dashboardStatusLabel.setVisible(true);
+        }
+      }
     }
   }
 
@@ -504,7 +533,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     if (competitionRepresentation.isPresent()) {
       String type = competitionRepresentation.get().getType();
-      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name()) || type.equals(CompetitionType.WEEKLY.name())) {
+      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name()) || type.equals(CompetitionType.WEEKLY.name()) || type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
         CompetitionRepresentation competition = competitionRepresentation.get();
         if (metaDataPane.isVisible() && !metaDataPane.isDisabled()) {
           uuidLabel.setText(competition.getUuid());
@@ -531,7 +560,10 @@ public class CompetitionsController implements Initializable, StudioFXController
 
           }
 
-          if (competition.getScoreLimit() == 0) {
+          if (type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
+            scoreLimitLabel.setText("-");
+          }
+          else if (competition.getScoreLimit() == 0) {
             scoreLimitLabel.setText(Messages.get("competitions.competitions.table_defaults"));
           }
           else {
@@ -539,7 +571,13 @@ public class CompetitionsController implements Initializable, StudioFXController
           }
 
 
-          createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getCreatedAt().atZone(ZoneId.systemDefault())));
+          if (competition.getCreatedAt() != null) {
+            createdAtLabel.setText(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getCreatedAt().atZone(ZoneId.systemDefault())));
+          }
+
+          if (type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
+            maniaChallengesController.getSelection().ifPresent(this::refreshManiaChallengeMetaData);
+          }
 
           //TODO mpf
           if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
@@ -595,11 +633,37 @@ public class CompetitionsController implements Initializable, StudioFXController
           if (competition.getStartDate() != null) {
             DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
             startLabel.setText(fmt.format(competition.getStartDate().atZone(ZoneId.systemDefault()).toLocalDate()));
-            endLabel.setText(fmt.format(competition.getEndDate().atZone(ZoneId.systemDefault()).toLocalDate()));
+            if (competition.getEndDate() != null) {
+              endLabel.setText(fmt.format(competition.getEndDate().atZone(ZoneId.systemDefault()).toLocalDate()));
+            }
+            else if (type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
+              endLabel.setText(Messages.get("competitions.competitions_mania.open_ended"));
+            }
           }
         }
       }
     }
+  }
+
+  private void refreshManiaChallengeMetaData(ManiaChallengesController.ManiaChallengeModel model) {
+    channelLabel.setText("#" + model.getChannelName());
+
+    Image image;
+    if (model.getServerIconUrl() == null) {
+      image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+    }
+    else {
+      image = new Image(client.getCachedUrlImage(model.getServerIconUrl()));
+    }
+    ImageView view = new ImageView(image);
+    view.setPreserveRatio(true);
+    view.setFitWidth(50);
+    view.setFitHeight(50);
+    CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
+
+    Label label = new Label(model.getServerName());
+    label.setStyle("-fx-font-size: 14px;");
+    serverBox.getChildren().addAll(view, label);
   }
 
   private void checkTitledPanes(CompetitionType competitionType) {
@@ -642,7 +706,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 
         break;
       }
-      case WEEKLY: {
+      case WEEKLY:
+      case MANIA_CHALLENGE: {
         competitionMembersPane.setDisable(true);
         competitionMembersPane.setExpanded(false);
         metaDataPane.setDisable(false);
@@ -699,6 +764,14 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.wovp_challenges")));
+      }
+    }
+    else if (tab == maniaChallengesTab) {
+      if (competitionRepresentation.isPresent()) {
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.mania_challenges"), competitionRepresentation.get().getName()));
+      }
+      else {
+        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.mania_challenges")));
       }
     }
     else {
@@ -819,6 +892,49 @@ public class CompetitionsController implements Initializable, StudioFXController
     catch (IOException e) {
       LOG.error("failed to load weekly: " + e.getMessage(), e);
     }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(ManiaChallengesController.class.getResource("tab-competitions-mania-challenges.fxml"));
+      loader.setResources(Messages.getBundle());
+      Parent parent = loader.load();
+      maniaChallengesController = loader.getController();
+      maniaChallengesController.setCompetitionsController(this);
+      maniaChallengesTab.setContent(parent);
+
+      Image image = new Image(Studio.class.getResourceAsStream("mania.png"));
+      ImageView view = new ImageView(image);
+      view.setFitWidth(18);
+      view.setFitHeight(18);
+      maniaChallengesTab.setGraphic(view);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load mania challenges: " + e.getMessage(), e);
+    }
+    // only shown once the VPin Mania registration and the Discord link of the user have been checked
+    tabPane.getTabs().remove(maniaChallengesTab);
+  }
+
+  /**
+   * Shows the VPin Mania challenges tab if the cabinet is registered to VPin Mania and the user account is linked to Discord.
+   * The Discord account is linked on the VPin Mania website, so this is checked again every time the view is activated.
+   */
+  private void refreshManiaChallengesTab(boolean select) {
+    JFXFuture.supplyAsync(ManiaChallengesController::isAvailable).thenAcceptLater(available -> {
+      if (available) {
+        if (!tabPane.getTabs().contains(maniaChallengesTab)) {
+          tabPane.getTabs().add(maniaChallengesTab);
+        }
+        if (select) {
+          tabPane.getSelectionModel().select(maniaChallengesTab);
+        }
+      }
+      else if (tabPane.getTabs().contains(maniaChallengesTab)) {
+        if (getSelectedTab() == maniaChallengesTab) {
+          tabPane.getSelectionModel().select(offlineTab);
+        }
+        tabPane.getTabs().remove(maniaChallengesTab);
+      }
+    });
   }
 
 
@@ -839,6 +955,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (selectedTab == weeklySubscriptionsTab) {
       return weeklySubscriptionsController;
     }
+    if (selectedTab == maniaChallengesTab) {
+      return maniaChallengesController;
+    }
     return null;
   }
 
@@ -852,6 +971,14 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @Override
   public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
+      Platform.runLater(() -> {
+        refreshManiaChallengesTab(false);
+        if (tabPane.getTabs().contains(maniaChallengesTab)) {
+          maniaChallengesController.doReload();
+        }
+      });
+    }
     if (PreferenceNames.ISCORED_SETTINGS.equals(key) || PreferenceNames.WOVP_SETTINGS.equals(key)) {
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
       WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
@@ -920,5 +1047,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
 
     client.getPreferenceService().addListener(this);
+    refreshManiaChallengesTab(false);
   }
 }

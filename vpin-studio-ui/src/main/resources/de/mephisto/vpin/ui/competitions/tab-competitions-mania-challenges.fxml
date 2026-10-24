@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.ManiaChallengesController">
+    <center>
+        <BorderPane BorderPane.alignment="CENTER">
+            <center>
+                <StackPane fx:id="tableStack">
+                    <children>
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                            <columns>
+                                <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="%competitions.competitions_iscored.your_table" />
+                                <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_mania.status" />
+                                <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="%competitions.competitions_iscored.virtual_pinball_spreadsheet_table" />
+                                <TableColumn fx:id="channelColumn" prefWidth="220.0" text="%competitions.competitions_mania.discord_channel" />
+                                <TableColumn fx:id="scoreColumn" prefWidth="180.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_mania.my_score" />
+                                <TableColumn fx:id="startDateColumn" prefWidth="160.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.start_date" />
+                                <TableColumn fx:id="endDateColumn" prefWidth="160.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.end_date" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </StackPane>
+            </center>
+            <top>
+                <VBox BorderPane.alignment="CENTER">
+                    <children>
+                <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%competitions.competitions_weekly.reload_and_invalidate_caches" />
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <StackPane alignment="CENTER_RIGHT">
+                            <children>
+                                <TextField fx:id="textfieldSearch" prefWidth="180.0" promptText="%competitions.competitions_weekly.challenge_search">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </TextField>
+                                <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                    <graphic>
+                                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </StackPane>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="eventLogBtn" mnemonicParsing="false" onAction="#onEventLog" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%competitions.competitions_iscored.open_event_log" />
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <MenuButton fx:id="participationBtn" mnemonicParsing="false" text="%competitions.competitions_mania.participation" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-cancel-outline" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%competitions.competitions_mania.participation_tooltip" />
+                            </tooltip>
+                            <items>
+                                <MenuItem fx:id="optOutChannelItem" mnemonicParsing="false" onAction="#onOptOutChannel" />
+                                <MenuItem fx:id="optOutServerItem" mnemonicParsing="false" onAction="#onOptOutServer" />
+                                <MenuItem fx:id="optInChannelItem" mnemonicParsing="false" onAction="#onOptInChannel" />
+                                <MenuItem fx:id="optInServerItem" mnemonicParsing="false" onAction="#onOptInServer" />
+                            </items>
+                        </MenuButton>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
+                            </tooltip>
+                        </Button>
+                    </items>
+                </ToolBar>
+                        <HBox fx:id="warningBox" alignment="CENTER_LEFT" managed="false" spacing="12.0" styleClass="error-container" visible="false">
+                            <children>
+                                <Label>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="bi-exclamation-triangle-fill" iconSize="24" />
+                                    </graphic>
+                                </Label>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label fx:id="submitScoresWarningLabel" managed="false" styleClass="error-title" text="%competitions.competitions_mania.warning_submit_scores_disabled" textFill="WHITE" visible="false" wrapText="true" />
+                                        <Label fx:id="participationWarningLabel" managed="false" styleClass="error-title" text="%competitions.competitions_mania.warning_participation_disabled" textFill="WHITE" visible="false" wrapText="true" />
+                                    </children>
+                                </VBox>
+                                <Button mnemonicParsing="false" onAction="#onOpenSettings" text="%competitions.competitions_mania.open_settings" textFill="WHITE">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="6.0" top="6.0" />
+                            </VBox.margin>
+                        </HBox>
+                    </children>
+                </VBox>
+            </top>
+            <bottom>
+                <BorderPane BorderPane.alignment="CENTER">
+                    <BorderPane.margin>
+                        <Insets bottom="6.0" />
+                    </BorderPane.margin>
+                </BorderPane>
+            </bottom>
+        </BorderPane>
+    </center>
+    <BorderPane.margin>
+        <Insets right="12.0" />
+    </BorderPane.margin>
+</BorderPane>
