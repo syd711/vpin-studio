@@ -70,6 +70,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     SQL_TEMPLATES.put("All kids-friendly tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%Kids%' ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All iScored competed tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%iscored%' ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All 'World Of Virtual Pinball' competed tables", "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%weekly%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("All 'VPin Mania' challenge tables", "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%mania_challenge%' ORDER BY GameDisplay");
   }
 
   @FXML
