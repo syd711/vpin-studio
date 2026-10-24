@@ -15,6 +15,9 @@ public class ManiaResource {
   @Autowired
   private ManiaService maniaService;
 
+  @Autowired
+  private ManiaChallengesService maniaChallengesService;
+
   @GetMapping("/config")
   public ManiaConfig getConfig() throws Exception {
     return maniaService.getConfig();
@@ -38,6 +41,11 @@ public class ManiaResource {
   @GetMapping("/synchronize/tables")
   public boolean synchronizeTables() {
     return maniaService.synchronizeTables();
+  }
+
+  @GetMapping("/synchronize/challenges")
+  public boolean synchronizeChallenges() {
+    return maniaChallengesService.synchronize(true);
   }
 
   @PostMapping("/register")

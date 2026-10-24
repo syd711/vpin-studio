@@ -36,6 +36,12 @@ public class ManiaDiscordSettingsController implements Initializable, ManiaSetti
   private CheckBox participateInDiscordChallengesCheckbox;
 
   @FXML
+  private CheckBox challengeBadgeCheckbox;
+
+  @FXML
+  private CheckBox challengeResetHighscoresCheckbox;
+
+  @FXML
   private VBox discordSettingsBox;
 
   @FXML
@@ -85,6 +91,30 @@ public class ManiaDiscordSettingsController implements Initializable, ManiaSetti
 
     participateInDiscordChallengesCheckbox.setSelected(user == null || user.isParticipatingInDiscordChallenges());
     participateInDiscordChallengesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> updateChallengeParticipation(newValue));
+
+    // resetting highscores is pointless if the user does not participate in any challenge
+    challengeResetHighscoresCheckbox.disableProperty().bind(participateInDiscordChallengesCheckbox.selectedProperty().not());
+    challengeResetHighscoresCheckbox.setSelected(settings.isChallengeResetHighscores());
+    challengeResetHighscoresCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      try {
+        settings.setChallengeResetHighscores(newValue);
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to save mania settings: " + e.getMessage(), e);
+      }
+    });
+
+    challengeBadgeCheckbox.setSelected(settings.isChallengeBadgeEnabled());
+    challengeBadgeCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      try {
+        settings.setChallengeBadgeEnabled(newValue);
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to save mania settings: " + e.getMessage(), e);
+      }
+    });
   }
 
   private void updateChallengeParticipation(boolean participate) {

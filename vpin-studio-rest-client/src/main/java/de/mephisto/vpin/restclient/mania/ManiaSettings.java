@@ -14,6 +14,24 @@ public class ManiaSettings extends JsonSettings {
   private boolean showOnlineStatus = true;
   private boolean showActiveGameStatus = true;
   private boolean shareDiscordActivity = false;
+  private boolean challengeBadgeEnabled = false;
+  private boolean challengeResetHighscores = false;
+
+  public boolean isChallengeResetHighscores() {
+    return challengeResetHighscores;
+  }
+
+  public void setChallengeResetHighscores(boolean challengeResetHighscores) {
+    this.challengeResetHighscores = challengeResetHighscores;
+  }
+
+  public boolean isChallengeBadgeEnabled() {
+    return challengeBadgeEnabled;
+  }
+
+  public void setChallengeBadgeEnabled(boolean challengeBadgeEnabled) {
+    this.challengeBadgeEnabled = challengeBadgeEnabled;
+  }
 
   public String getCabinetUuid() {
     return cabinetUuid;

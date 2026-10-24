@@ -68,6 +68,26 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description" textFill="WHITE" />
                         <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.participate_in_discord_challenges_description2" textFill="WHITE" />
+                        <CheckBox fx:id="challengeResetHighscoresCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.reset_challenge_highscores">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.reset_challenge_highscores_description" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.reset_challenge_highscores_description2" textFill="WHITE" />
+                        <CheckBox fx:id="challengeBadgeCheckbox" mnemonicParsing="false" text="%mania.mania_discord_settings.apply_challenge_badge">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.apply_challenge_badge_description" textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="%mania.mania_discord_settings.apply_challenge_badge_description2" textFill="WHITE" />
                         <VBox spacing="3.0">
                            <children>
                               <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" textFill="WHITE">

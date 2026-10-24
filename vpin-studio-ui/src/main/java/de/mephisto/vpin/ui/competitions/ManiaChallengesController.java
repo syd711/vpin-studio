@@ -261,17 +261,26 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
   @FXML
   public void onReload() {
     client.clearWheelCache();
-    doReload();
+    doReload(true);
   }
 
   public void doReload() {
+    doReload(false);
+  }
+
+  private void doReload(boolean synchronize) {
     tableView.setVisible(false);
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
     }
 
     ManiaChallengeModel selection = tableView.getSelectionModel().getSelectedItem();
-    JFXFuture.supplyAsync(this::loadChallenges)
+    JFXFuture.supplyAsync(() -> {
+          if (synchronize) {
+            synchronizeChallenges();
+          }
+          return loadChallenges();
+        })
         .thenAcceptLater(result -> {
           List<ManiaChallengeModel> models = result.models();
           this.challenges = models;
@@ -309,6 +318,18 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
     participationWarningLabel.setManaged(!participating);
     warningBox.setVisible(!submitAllScores || !participating);
     warningBox.setManaged(warningBox.isVisible());
+  }
+
+  /**
+   * Synchronizes the challenges with the competitions on the server, which updates the competition ids and badges of the tables.
+   */
+  private void synchronizeChallenges() {
+    try {
+      client.getManiaService().synchronizeChallenges();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to synchronize VPin Mania challenges: {}", e.getMessage(), e);
+    }
   }
 
   private ChallengesLoadResult loadChallenges() {
