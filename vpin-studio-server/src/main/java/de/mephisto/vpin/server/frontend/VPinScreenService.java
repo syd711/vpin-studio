@@ -449,10 +449,10 @@ public class VPinScreenService implements InitializingBean {
   }
 
   @Nullable
-  private static MonitorInfo getBackglassMonitor(@NonNull DirectB2sScreenRes screenres, List<MonitorInfo> monitors) {
+  static MonitorInfo getBackglassMonitor(@NonNull DirectB2sScreenRes screenres, List<MonitorInfo> monitors) {
     // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
     MonitorInfo monitor = null;
-    String backglassDisplay = screenres.getBackglassDisplay();
+    String backglassDisplay = StringUtils.trimToEmpty(screenres.getBackglassDisplay());
     if (backglassDisplay.startsWith("@")) {
       int xPos = Integer.parseInt(backglassDisplay.substring(1));
       for (MonitorInfo m : monitors) {
@@ -466,9 +466,19 @@ public class VPinScreenService implements InitializingBean {
       monitor = idx < monitors.size() ? monitors.get(idx) : null;
     }
     else {
+      // same as B2S: the number is the one of the Windows device name, which is not the enumeration index
+      String deviceName = "\\\\.\\DISPLAY" + backglassDisplay;
       for (MonitorInfo m : monitors) {
-        if (String.valueOf(m.getId()).equals(backglassDisplay)) {
+        if (deviceName.equalsIgnoreCase(m.getDeviceName())) {
           monitor = m;
+        }
+      }
+      // fallback when no device names are available, e.g. when JNA failed or on Linux
+      if (monitor == null) {
+        for (MonitorInfo m : monitors) {
+          if (String.valueOf(m.getId()).equals(backglassDisplay)) {
+            monitor = m;
+          }
         }
       }
     }
@@ -477,32 +487,7 @@ public class VPinScreenService implements InitializingBean {
 
   //TODO move dmdInfo and FrameRes to use vpinScreenService and remove that method
   public void addDeviceOffsets(DirectB2sScreenRes screenres) {
-    List<MonitorInfo> monitors = systemService.getMonitorInfos();
-
-    MonitorInfo monitor = null;
-
-    // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
-    String backglassDisplay = screenres.getBackglassDisplay();
-    if (backglassDisplay.startsWith("@")) {
-      int xPos = parseIntSafe(backglassDisplay);
-      for (MonitorInfo m : monitors) {
-        if (m.getX() == xPos) {
-          monitor = m;
-        }
-      }
-    }
-    else if (backglassDisplay.startsWith("=")) {
-      int idx = parseIntSafe(backglassDisplay.substring(1)) - 1;
-      monitor = idx < monitors.size() ? monitors.get(idx) : null;
-    }
-    else {
-      for (MonitorInfo m : monitors) {
-        if (m.getName().endsWith(backglassDisplay)) {
-          monitor = m;
-        }
-      }
-    }
-
+    MonitorInfo monitor = getBackglassMonitor(screenres, systemService.getMonitorInfos());
     if (monitor != null) {
       screenres.setBackglassDisplayX((int) monitor.getX());
       screenres.setBackglassDisplayY((int) monitor.getY());
@@ -525,7 +510,10 @@ public class VPinScreenService implements InitializingBean {
         DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
         if (screenres != null) {
           MonitorInfo backglassMonitor = getBackglassMonitor(screenres, MonitorInfoUtil.getMonitors());
-          LOG.info("Backglass Monitor: {}", backglassMonitor);
+          LOG.info("Backglass Monitor: {} (screenres.txt BackglassMonitor: \"{}\", device: {}, x: {})", backglassMonitor,
+              screenres.getBackglassDisplay(),
+              backglassMonitor != null ? backglassMonitor.getDeviceName() : null,
+              backglassMonitor != null ? backglassMonitor.getX() : null);
           LOG.info("------------------------------------------------------------------------------------------");
           for (FrontendPlayerDisplay frontendPlayerDisplay : displays) {
             LOG.info(frontendPlayerDisplay.toString());

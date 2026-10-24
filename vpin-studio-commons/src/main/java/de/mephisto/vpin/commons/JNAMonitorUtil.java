@@ -116,6 +116,7 @@ public class JNAMonitorUtil {
     monitor.setScaling(getMonitorDPI(hMonitor));
 
     monitor.setName(deviceName.trim());
+    monitor.setDeviceName(deviceName.trim());
     // index starts with 1
     monitor.setId(index);
 

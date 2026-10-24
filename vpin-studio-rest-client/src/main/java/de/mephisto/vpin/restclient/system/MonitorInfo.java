@@ -17,6 +17,8 @@ public class MonitorInfo {
   private double x;
   private double y;
   private String name;
+  /** Windows device name, e.g. \\.\DISPLAY3, as used by B2S to identify the backglass monitor */
+  private String deviceName;
   private double scaling;
   private double minY;
 
@@ -55,6 +57,14 @@ public class MonitorInfo {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDeviceName() {
+    return deviceName;
+  }
+
+  public void setDeviceName(String deviceName) {
+    this.deviceName = deviceName;
   }
 
   public double getX() {
@@ -138,9 +148,9 @@ public class MonitorInfo {
   @JsonIgnore
   public String toDetailsString() {
     if (primary) {
-      return "Monitor " + (id) + " (primary) [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY();
+      return "Monitor " + (id) + " (primary) [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY() + ", Device: " + deviceName;
     }
-    return "Monitor " + (id) + " [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY();
+    return "Monitor " + (id) + " [" + getWidth() + "x" + getHeight() + "] Scaled X: " + getScaledX() + ", Scaling: " + scaling + ", MinY: " +getMinY() + ", Device: " + deviceName;
   }
 
   @Override

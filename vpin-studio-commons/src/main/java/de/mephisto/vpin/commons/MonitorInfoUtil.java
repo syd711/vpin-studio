@@ -33,6 +33,7 @@ public class MonitorInfoUtil {
       }
       else {
         LOG.info("Using GDE Monitors");
+        assignDeviceNames(monitorsGde, monitorsJna);
         monitors.addAll(monitorsGde);
       }
     }
@@ -94,6 +95,22 @@ public class MonitorInfoUtil {
     // sort by xPosition
     monitors.sort((m1, m2) -> (int) (m1.getX() - m2.getX()));
     return monitors;
+  }
+
+  /**
+   * GDE does not expose the Windows device names (\\.\DISPLAYx) that B2S uses to identify the backglass monitor.
+   * Both lists are built from EnumDisplayMonitors, so the ids match and the names can be copied over from JNA.
+   */
+  static void assignDeviceNames(List<MonitorInfo> gdeMonitors, List<MonitorInfo> jnaMonitors) {
+    for (MonitorInfo gdeMonitor : gdeMonitors) {
+      for (MonitorInfo jnaMonitor : jnaMonitors) {
+        if (gdeMonitor.getId() == jnaMonitor.getId()
+            && gdeMonitor.getWidth() == jnaMonitor.getWidth() && gdeMonitor.getHeight() == jnaMonitor.getHeight()) {
+          gdeMonitor.setDeviceName(jnaMonitor.getDeviceName());
+          LOG.info("Assigned device name {} to {}", jnaMonitor.getDeviceName(), gdeMonitor);
+        }
+      }
+    }
   }
 
   private static MonitorInfo gdToMonitorInfo(GraphicsDevice gd, int index) {
