@@ -585,6 +585,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           if (cabinet.getStatus() == null) {
             cabinet.setStatus(new CabinetStatus());
           }
+          //a running table means the cabinet is online, it may have been switched offline when the frontend exited
+          if (game != null) {
+            cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          }
           applyActiveGame(cabinet.getStatus(), game, settings);
           getClient().getCabinetClient().update(cabinet);
           LOG.info("Updated mania cabinet active game to \"{}\"", game != null ? game.getGameDisplayName() : null);
