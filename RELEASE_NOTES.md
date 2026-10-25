@@ -10,6 +10,7 @@
 - **VPin Mania**: Disabled tables are no longer synchronized with VPin Mania. They are excluded from the installed tables list, and their highscores and played counts are not submitted.
 - **VPin Mania**: The VPin Mania settings pages now load their data in a progress dialog when they are opened, so switching between them no longer blocks the UI.
 - **VPin Mania**: Fixed the privacy settings of the cabinet registration. The "Submit Installed Tables" and "Submit Play Count" options were not applied, and highscores were always synchronized. The registration also has a new "Submit All Highscores" option.
+/cle- **Screens / DMD Position**: Fixed the backglass monitor lookup for screenres.txt files that set the backglass monitor by display number (e.g. "3"). The number is now matched against the Windows display name (\\.\DISPLAY3), the same way B2S does it, instead of the monitor enumeration order. On some systems, the screens overview showed the backglass and full DMD on the playfield monitor, the System Manager showed false position mismatch warnings, and "DMD Position" wrote wrong coordinates into the DmdDevice.ini. If you added the backglass monitor offset to the DMD position by hand to work around this, check your DMD positions again.
 
 ---
 

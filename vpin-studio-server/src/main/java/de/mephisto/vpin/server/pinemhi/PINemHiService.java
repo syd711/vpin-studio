@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,6 +31,7 @@ public class PINemHiService implements InitializingBean {
 
   private final static String PINEMHI_COMMAND = "PINemHi.exe";
   private final static String PINEMHI_INI = "pinemhi.ini";
+  private final static String PINEMHI_INI_TEMPLATE = "pinemhi.ini.template";
 
   // The cache File folder that has been adjusted in pinemHi ini file
   private static File vpPathAdjusted = null;
@@ -136,6 +138,43 @@ public class PINemHiService implements InitializingBean {
   }
 
   private static INIConfiguration loadIni(File ini) throws IOException, ConfigurationException {
+    if (!ini.exists() || ini.length() == 0) {
+      restoreIniFromTemplate(ini);
+    }
+    return readIni(ini);
+  }
+
+  /**
+   * Replaces a missing or empty pinemhi.ini with the template
+   * and rewrites the VP and FP paths with the last adjusted folders.
+   */
+  private static void restoreIniFromTemplate(File ini) throws IOException, ConfigurationException {
+    File template = new File(ini.getParentFile(), PINEMHI_INI_TEMPLATE);
+    if (!template.exists()) {
+      LOG.error("Cannot restore empty {}, template {} not found", ini.getAbsolutePath(), template.getAbsolutePath());
+      return;
+    }
+
+    FileUtils.copyFile(template, ini);
+    LOG.warn("{} was empty, restored from {}", ini.getAbsolutePath(), template.getName());
+
+    INIConfiguration iniConfiguration = readIni(ini);
+    if (vpPathAdjusted != null && vpPathAdjusted.exists()) {
+      iniConfiguration.getSection("paths").setProperty("VP", toPinemhiPath(vpPathAdjusted));
+      LOG.info("Restored VP path to {}", vpPathAdjusted.getAbsolutePath());
+    }
+    if (fpPathAdjusted != null && fpPathAdjusted.exists()) {
+      iniConfiguration.getSection("paths").setProperty("FP", toPinemhiPath(fpPathAdjusted));
+      LOG.info("Restored FP path to {}", fpPathAdjusted.getAbsolutePath());
+    }
+    saveIni(ini, iniConfiguration);
+  }
+
+  private static String toPinemhiPath(File folder) {
+    return folder.getAbsolutePath().replaceAll("\\\\", "/") + "/";
+  }
+
+  private static INIConfiguration readIni(File ini) throws IOException, ConfigurationException {
     INIConfiguration iniConfiguration = new INIConfiguration();
     iniConfiguration.setCommentLeadingCharsUsedInInput(";");
     iniConfiguration.setSeparatorUsedInOutput("=");
@@ -218,7 +257,7 @@ public class PINemHiService implements InitializingBean {
 
         if (forcePath || !emuPath.exists() || !emuPathString.endsWith("/")) {
           emuPath = new File(ramFolder.getAbsolutePath());
-          iniConfiguration.getSection("paths").setProperty(key, emuPath.getAbsolutePath().replaceAll("\\\\", "/") + "/");
+          iniConfiguration.getSection("paths").setProperty(key, toPinemhiPath(emuPath));
 
           saveIni(getPinemhiIni(), iniConfiguration);
           LOG.info("Changed {} path to {}", key, emuPath.getAbsolutePath());
