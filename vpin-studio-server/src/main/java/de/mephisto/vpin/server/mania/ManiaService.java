@@ -616,6 +616,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void gameDataChanged(@NonNull GameDataChangedEvent event) {
     if (Features.MANIA_ENABLED) {
       //do not sync for games updates as this may be an action for a lot of tables
+      //the VPS mapping may be stored in a frontend field, so the cache must be checked
+      invalidateCacheIfVpsMappingChanged(event.getGameId());
     }
   }
 
@@ -629,6 +631,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   @Override
   public void gameCreated(int gameId) {
     if (Features.MANIA_ENABLED) {
+      maniaServiceCache.clearGames();
       synchronizeTables();
     }
   }
@@ -637,16 +640,24 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void gameUpdated(int gameId) {
     if (Features.MANIA_ENABLED) {
       //do not sync for games updates as this may be an action for all tables
+      invalidateCacheIfVpsMappingChanged(gameId);
     }
   }
 
   @Override
   public void gameDeleted(int gameId) {
     if (Features.MANIA_ENABLED) {
+      maniaServiceCache.clearGames();
       synchronizeTables();
     }
   }
 
+  private void invalidateCacheIfVpsMappingChanged(int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      maniaServiceCache.invalidateIfVpsMappingChanged(game);
+    }
+  }
 
   public boolean deleteCabinet() {
     if (!Features.MANIA_ENABLED) {
