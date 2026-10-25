@@ -24,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -133,5 +134,49 @@ public class ManiaChallengeCompetitionSynchronizerTest {
 
     verify(competitionService).delete(5L);
     verify(competitionService, never()).save(any());
+  }
+
+  @Test
+  void runFinishedChallengesCheck_skipsRemoteCall_whenNoCompetitions() {
+    when(competitionService.getManiaChallengeCompetitions()).thenReturn(Collections.emptyList());
+
+    synchronizer.runFinishedChallengesCheck();
+
+    verifyNoInteractions(maniaService);
+    verify(competitionService, never()).delete(anyLong());
+  }
+
+  @Test
+  void runFinishedChallengesCheck_deletesOnlyCompetitionsOfFinishedChallenges() {
+    buildSettings(true, false);
+    mockChallengeClient(challenge(1, DiscordChallenge.STATUS_RUNNING), challenge(2, DiscordChallenge.STATUS_FINISHED));
+    Competition running = new Competition();
+    running.setId(5L);
+    running.setUuid("1");
+    Competition finished = new Competition();
+    finished.setId(6L);
+    finished.setUuid("2");
+    when(competitionService.getManiaChallengeCompetitions()).thenReturn(List.of(running, finished));
+
+    synchronizer.runFinishedChallengesCheck();
+
+    verify(competitionService).delete(6L);
+    verify(competitionService, never()).delete(5L);
+    verify(competitionService, never()).save(any());
+  }
+
+  @Test
+  void runFinishedChallengesCheck_deletesExpiredCompetition_whenNotRegistered() {
+    buildSettings(false, false);
+    when(maniaService.getClient()).thenReturn(mock(VPinManiaClient.class));
+    Competition expired = new Competition();
+    expired.setId(5L);
+    expired.setUuid("1");
+    expired.setEndDate(Instant.now().minusSeconds(60));
+    when(competitionService.getManiaChallengeCompetitions()).thenReturn(List.of(expired));
+
+    synchronizer.runFinishedChallengesCheck();
+
+    verify(competitionService).delete(5L);
   }
 }

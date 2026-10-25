@@ -10,7 +10,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.Instant;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
@@ -24,8 +28,13 @@ public class ManiaChallengesService implements InitializingBean, PreferenceChang
   @Autowired
   private PreferencesService preferencesService;
 
+  private static final Duration FINISHED_CHECK_INTERVAL = Duration.ofMinutes(5);
+
   @Autowired
   private ManiaChallengeCompetitionSynchronizer maniaChallengeCompetitionSynchronizer;
+
+  @Autowired
+  private ThreadPoolTaskScheduler scheduler;
 
   public boolean synchronize(boolean forceReload) {
     return maniaChallengeCompetitionSynchronizer.synchronizeChallenges(forceReload);
@@ -56,6 +65,9 @@ public class ManiaChallengesService implements InitializingBean, PreferenceChang
         Thread.currentThread().setName("VPin Mania Challenges Synchronizer");
         synchronize(false);
       }).start();
+
+      //remove the competitions of challenges that have been finished in the meantime
+      scheduler.scheduleAtFixedRate(maniaChallengeCompetitionSynchronizer::runFinishedChallengesCheck, Instant.now().plus(FINISHED_CHECK_INTERVAL), FINISHED_CHECK_INTERVAL);
     }
   }
 }

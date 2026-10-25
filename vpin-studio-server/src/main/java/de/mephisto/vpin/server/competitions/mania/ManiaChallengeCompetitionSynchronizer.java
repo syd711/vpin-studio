@@ -29,6 +29,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,11 +85,7 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
       if (Features.MANIA_ENABLED && maniaClient != null && !StringUtils.isEmpty(maniaSettings.getApiKey()) && !StringUtils.isEmpty(maniaSettings.getCabinetUuid())) {
         DiscordChallengesResponse response = maniaClient.getDiscordChallengeClient().getChallenges();
         if (response != null) {
-          boolean participating = isParticipating(maniaClient);
-          List<DiscordChallenge> challenges = response.getChallenges().stream()
-              .filter(c -> participating && c.isRunning() && !isOptedOut(c, response.getOptOuts()))
-              .collect(Collectors.toList());
-
+          List<DiscordChallenge> challenges = getActiveChallenges(maniaClient, response);
           List<Competition> challengeCompetitions = competitionService.getManiaChallengeCompetitions();
           for (DiscordChallenge challenge : challenges) {
             LOG.info("------------------------------> Sync of {}", challenge.getTableName());
@@ -108,6 +105,55 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
       LOG.info("------------------------------- /MANIA CHALLENGES SYNC ----------------------------------------------");
     }
     return false;
+  }
+
+  /**
+   * Lightweight periodic check that only deletes the competitions of challenges that have been finished, canceled
+   * or have passed their end date. The remote challenges are only fetched if there are challenge competitions at all.
+   */
+  public synchronized void runFinishedChallengesCheck() {
+    try {
+      List<Competition> challengeCompetitions = competitionService.getManiaChallengeCompetitions();
+      if (challengeCompetitions.isEmpty()) {
+        return;
+      }
+
+      List<String> activeChallengeIds = null;
+      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      VPinManiaClient maniaClient = maniaService.getClient();
+      if (Features.MANIA_ENABLED && maniaClient != null && !StringUtils.isEmpty(maniaSettings.getApiKey()) && !StringUtils.isEmpty(maniaSettings.getCabinetUuid())) {
+        DiscordChallengesResponse response = maniaClient.getDiscordChallengeClient().getChallenges();
+        if (response != null) {
+          activeChallengeIds = getActiveChallenges(maniaClient, response).stream().map(c -> String.valueOf(c.getId())).toList();
+        }
+      }
+
+      boolean deleted = false;
+      Instant now = Instant.now();
+      for (Competition challengeCompetition : challengeCompetitions) {
+        boolean expired = challengeCompetition.getEndDate() != null && !challengeCompetition.getEndDate().isAfter(now);
+        boolean finished = activeChallengeIds != null && !activeChallengeIds.contains(challengeCompetition.getUuid());
+        if (expired || finished) {
+          LOG.info("Removing finished VPin Mania challenge competition \"{}\"", challengeCompetition.getName());
+          competitionService.delete(challengeCompetition.getId());
+          deleted = true;
+        }
+      }
+
+      if (deleted) {
+        runGameCleanupCheck();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to run VPin Mania finished challenges check: {}", e.getMessage(), e);
+    }
+  }
+
+  private List<DiscordChallenge> getActiveChallenges(@NonNull VPinManiaClient maniaClient, @NonNull DiscordChallengesResponse response) {
+    boolean participating = isParticipating(maniaClient);
+    return response.getChallenges().stream()
+        .filter(c -> participating && c.isRunning() && !isOptedOut(c, response.getOptOuts()))
+        .collect(Collectors.toList());
   }
 
   /**
