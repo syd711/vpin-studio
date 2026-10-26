@@ -165,7 +165,7 @@ public class PlaylistMediaResource {
   public boolean doPut(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @RequestBody Map<String, String> data) throws Exception {
     try {
       if (data.containsKey("fullscreen")) {
-        return playlistMediaService.toFullscreenMedia(playlistId, screen);
+        return playlistMediaService.toFullscreenMedia(playlistId, screen, Boolean.parseBoolean(data.get("amd")));
       }
       if (data.containsKey("blank")) {
         return playlistMediaService.addBlank(playlistId, screen);

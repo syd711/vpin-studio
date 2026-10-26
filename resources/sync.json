@@ -175,6 +175,10 @@
   "length" : 9852691,
   "crc32" : "#B6F53800"
 }, {
+  "name" : "blank-loading.mov",
+  "length" : 1950953,
+  "crc32" : "#D7A2DB8A"
+}, {
   "name" : "jvm/jinput-dx8_64.dll",
   "destination" : "win32/java/bin/jinput-dx8_64.dll",
   "length" : 142336,

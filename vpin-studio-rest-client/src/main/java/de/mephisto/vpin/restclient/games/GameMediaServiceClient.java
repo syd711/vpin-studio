@@ -103,9 +103,10 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + getSegment(playlistMode) + "/media/" + objectId + "/" + screen, params, Boolean.class);
   }
 
-  public boolean toFullScreen(int objectId, boolean playlistMode, VPinScreen screen) {
+  public boolean toFullScreen(int objectId, boolean playlistMode, VPinScreen screen, boolean amd) {
     Map<String, Object> values = new HashMap<>();
     values.put("fullscreen", "true");
+    values.put("amd", String.valueOf(amd));
     return getRestClient().put(API + getSegment(playlistMode) + "/media/" + objectId + "/" + screen, values);
   }
 

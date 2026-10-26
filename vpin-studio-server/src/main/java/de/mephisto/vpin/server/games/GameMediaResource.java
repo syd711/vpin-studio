@@ -491,7 +491,7 @@ public class GameMediaResource {
   public boolean doPut(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @RequestBody Map<String, String> data) throws Exception {
     try {
       if (data.containsKey("fullscreen")) {
-        return gameMediaService.toFullscreenMedia(gameId, screen);
+        return gameMediaService.toFullscreenMedia(gameId, screen, Boolean.parseBoolean(data.get("amd")));
       }
       if (data.containsKey("blank")) {
         return gameMediaService.addBlank(gameId, screen);

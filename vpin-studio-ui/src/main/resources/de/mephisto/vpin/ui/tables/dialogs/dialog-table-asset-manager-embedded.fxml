@@ -293,6 +293,17 @@
                               <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.adds_a_blank_media_so_that_the_selected" wrapText="true" />
                            </tooltip>
                         </Button>
+                        <Button fx:id="addToPlaylistAmdBtn" mnemonicParsing="false" onAction="#onPlaylistAddAmd" text="AMD" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.adds_a_transparent_blank_mov" wrapText="true" />
+                           </tooltip>
+                        </Button>
                         <Separator layoutX="267.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                         <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " textFill="WHITE">
                            <font>
