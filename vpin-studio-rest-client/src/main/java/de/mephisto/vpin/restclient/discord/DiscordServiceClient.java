@@ -88,4 +88,12 @@ public class DiscordServiceClient extends VPinStudioClientService {
   public boolean checkCompetition(CompetitionRepresentation selectedItem) {
     return getRestClient().get(API + "discord/competition/check/" + selectedItem.getId(), Boolean.class);
   }
+
+  public DiscordClientStatus getDiscordClientStatus() {
+    return getRestClient().get(API + "discord/client/status", DiscordClientStatus.class);
+  }
+
+  public boolean launchDiscordClient() {
+    return getRestClient().get(API + "discord/client/launch", Boolean.class);
+  }
 }

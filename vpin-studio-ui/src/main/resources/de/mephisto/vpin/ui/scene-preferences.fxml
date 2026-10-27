@@ -199,6 +199,11 @@
                                     <Tooltip text="%pref.discord_faq.bot_faq" />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="discord_clientBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onDiscordClient" styleClass="preference-button" text="%pref.discord_client.client_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.discord_client.client_settings" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="%pref.backglass.3rd_party_preferences">
                                  <font>
                                     <Font size="13.0" />

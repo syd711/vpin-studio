@@ -435,6 +435,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onDiscordClient(ActionEvent event) throws IOException {
+    load("preference-discord_client.fxml", event);
+  }
+
+  @FXML
   private void onDiscordBotFaq(ActionEvent event) throws IOException {
     load("preference-discord_faq.fxml", event);
   }

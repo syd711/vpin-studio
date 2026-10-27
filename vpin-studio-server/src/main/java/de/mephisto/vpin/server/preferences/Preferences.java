@@ -99,6 +99,8 @@ public class Preferences {
 
   private String dofTesterSettings;
 
+  private String discordClientSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -127,6 +129,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getDiscordClientSettings() {
+    return discordClientSettings;
+  }
+
+  public void setDiscordClientSettings(String discordClientSettings) {
+    this.discordClientSettings = discordClientSettings;
+  }
 
   public String getDofTesterSettings() {
     return dofTesterSettings;

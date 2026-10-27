@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.discord.DiscordClientSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.doftester.DOFTesterSettings;
@@ -68,6 +69,7 @@ public interface PreferenceNames {
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
+  String DISCORD_CLIENT_SETTINGS = "discordClientSettings";
   String MANIA_SETTINGS = "maniaSettings";
   String TAGGING_SETTINGS = "taggingSettings";
 
@@ -121,6 +123,7 @@ public interface PreferenceNames {
       case PreferenceNames.VPXZ_SETTINGS -> VPXZSettings.class;
       case PreferenceNames.VR_SETTINGS -> VRSettings.class;
       case PreferenceNames.DOF_TESTER_SETTINGS -> DOFTesterSettings.class;
+      case PreferenceNames.DISCORD_CLIENT_SETTINGS -> DiscordClientSettings.class;
       default -> throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
     };
   }

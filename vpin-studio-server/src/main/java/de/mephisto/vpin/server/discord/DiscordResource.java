@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.discord;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
+import de.mephisto.vpin.restclient.discord.DiscordClientStatus;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.server.players.Player;
@@ -25,6 +26,19 @@ public class DiscordResource {
 
   @Autowired
   private DiscordCompetitionService discordCompetitionService;
+
+  @Autowired
+  private DiscordClientService discordClientService;
+
+  @GetMapping("/client/status")
+  public DiscordClientStatus getClientStatus() {
+    return discordClientService.getStatus();
+  }
+
+  @GetMapping("/client/launch")
+  public boolean launchClient() {
+    return discordClientService.launchMinimized();
+  }
 
   @GetMapping("/status/{serverId}")
   public DiscordBotStatus getStatus(@PathVariable("serverId") long serverId) {

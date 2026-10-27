@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DiscordClientPreferencesController">
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <Label styleClass="preference-title" text="%pref.discord_bot.discord_integration" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-subtitle" text="%pref.discord_client.client_settings" wrapText="true" />
+            <Label styleClass="preference-description" text="%pref.discord_client.description" textFill="WHITE" wrapText="true" />
+            <Label styleClass="preference-description" text="%pref.discord_client.discord_must_be_installed" textFill="WHITE" wrapText="true">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
+            <HBox fx:id="installedInfo" alignment="CENTER_LEFT" spacing="6.0" styleClass="info-container">
+               <children>
+                  <FontIcon iconColor="#66FF66" iconLiteral="mdi2c-check-circle-outline" iconSize="18" />
+                  <Label fx:id="installedLabel" styleClass="default-text" text="-" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="notInstalledInfo" alignment="CENTER_LEFT" spacing="6.0" styleClass="info-container">
+               <children>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2a-alert-circle-outline" iconSize="18" />
+                  <Label styleClass="default-text" text="%pref.discord_client.discord_is_not_installed" wrapText="true" />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </HBox>
+            <CheckBox fx:id="launchOnStartupCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.discord_client.launch_on_startup" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label styleClass="checkbox-description" text="%pref.discord_client.launch_on_startup_description" textFill="WHITE" wrapText="true" />
+            <CheckBox fx:id="statusUpdateCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.discord_client.status_update" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label styleClass="checkbox-description" text="%pref.discord_client.status_update_description" textFill="WHITE" wrapText="true" />
+            <HBox spacing="6.0">
+               <children>
+                  <Button fx:id="launchBtn" mnemonicParsing="false" onAction="#onLaunch" text="%pref.discord_client.launch_discord" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+      </VBox>
+
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
