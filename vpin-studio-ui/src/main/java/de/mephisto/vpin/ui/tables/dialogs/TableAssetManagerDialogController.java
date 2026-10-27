@@ -121,10 +121,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private ToolBar installedAssetsToolbar;
 
   @FXML
-  private Button addToPlaylistBtn;
-
-  @FXML
-  private Button addToPlaylistAmdBtn;
+  private MenuButton addToPlaylistBtn;
 
   @FXML
   private Button viewBtn;
@@ -1035,7 +1032,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
     this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
-    this.addToPlaylistAmdBtn.managedProperty().bindBidirectional(this.addToPlaylistAmdBtn.visibleProperty());
     this.addAudioBlank.managedProperty().bindBidirectional(this.addAudioBlank.visibleProperty());
 
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
@@ -1054,7 +1050,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.downloadAssetBtn.setDisable(true);
     this.addAudioBlank.setVisible(false);
     this.addToPlaylistBtn.setVisible(false);
-    this.addToPlaylistAmdBtn.setVisible(false);
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
@@ -1557,7 +1552,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       this.addToPlaylistBtn.setVisible(screen.equals(VPinScreen.Loading));
-      this.addToPlaylistAmdBtn.setVisible(screen.equals(VPinScreen.Loading));
       this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
 
 
@@ -1576,13 +1570,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         boolean convertable = items.size() == 1 && !items.getFirst().getName().contains("(SCREEN");
         this.addToPlaylistBtn.setDisable(!convertable);
-        this.addToPlaylistAmdBtn.setDisable(!convertable);
       }
       else {
         assetList.setItems(FXCollections.emptyObservableList());
         assetList.refresh();
         addToPlaylistBtn.setDisable(true);
-        addToPlaylistAmdBtn.setDisable(true);
 
         serverAssetsList.setItems(FXCollections.emptyObservableList());
         serverAssetsList.setPlaceholder(new Label(Messages.get("tables.table_asset_manager.press_search_button_2")));

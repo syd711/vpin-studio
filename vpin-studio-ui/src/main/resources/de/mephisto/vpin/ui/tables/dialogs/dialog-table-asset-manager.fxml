@@ -290,7 +290,7 @@
                                        </tooltip>
                                     </Button>
                                     <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                    <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" textFill="WHITE">
+                                    <MenuButton fx:id="addToPlaylistBtn" mnemonicParsing="false" text=" " textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -300,18 +300,11 @@
                                        <tooltip>
                                           <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.adds_a_blank_media_so_that_the_selected" wrapText="true" />
                                        </tooltip>
-                                    </Button>
-                                    <Button fx:id="addToPlaylistAmdBtn" mnemonicParsing="false" onAction="#onPlaylistAddAmd" text="AMD" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="350.0" text="%tables.table_asset_manager_embedded.adds_a_transparent_blank_mov" wrapText="true" />
-                                       </tooltip>
-                                    </Button>
+                                       <items>
+                                          <MenuItem mnemonicParsing="false" onAction="#onPlaylistAdd" text="%tables.table_asset_manager_embedded.add_blank_video" />
+                                          <MenuItem mnemonicParsing="false" onAction="#onPlaylistAddAmd" text="%tables.table_asset_manager_embedded.add_blank_video_amd" />
+                                       </items>
+                                    </MenuButton>
                                     <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />

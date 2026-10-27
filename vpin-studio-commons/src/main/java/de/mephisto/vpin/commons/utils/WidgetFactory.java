@@ -651,13 +651,14 @@ public class WidgetFactory {
   }
 
   public static Stage createDialogStage(String stateId, FXMLLoader fxmlLoader, Stage owner, String title, String modalStateId) {
-    Parent root = null;
+    Parent root;
 
     try {
       root = fxmlLoader.load();
     }
     catch (IOException e) {
       LOG.error("Error loading: " + e.getMessage(), e);
+      throw new IllegalStateException("Failed to load dialog '" + title + "': " + e.getMessage(), e);
     }
 
     DialogController controller = fxmlLoader.getController();
