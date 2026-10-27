@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.discord.DiscordClientSettings;
 import de.mephisto.vpin.restclient.discord.DiscordClientStatus;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
@@ -36,7 +37,7 @@ import java.util.concurrent.Executors;
  * and publishes the active table as Discord rich presence.
  */
 @Service
-public class DiscordClientService implements InitializingBean, PreferenceChangedListener, TableStatusChangeListener {
+public class DiscordClientService implements InitializingBean, PreferenceChangedListener, TableStatusChangeListener, FrontendStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordClientService.class);
 
   /**
@@ -267,6 +268,24 @@ public class DiscordClientService implements InitializingBean, PreferenceChanged
     updateRichPresence(null);
   }
 
+  //-------------------- FrontendStatusChangeListener ------------------------------------------------------------------
+
+  @Override
+  public void frontendLaunched() {
+    //ignore
+  }
+
+  @Override
+  public void frontendExited() {
+    // no table exit event is fired when the frontend is killed
+    updateRichPresence(null);
+  }
+
+  @Override
+  public void frontendRestarted() {
+    updateRichPresence(null);
+  }
+
   //-------------------- PreferenceChangedListener ---------------------------------------------------------------------
 
   @Override
@@ -291,6 +310,7 @@ public class DiscordClientService implements InitializingBean, PreferenceChanged
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.DISCORD_CLIENT_SETTINGS, null, null);
       frontendStatusService.addTableStatusChangeListener(this);
+      frontendStatusService.addFrontendStatusChangeListener(this);
 
       if (settings.isLaunchOnStartup()) {
         if (!OSUtil.isWindows()) {

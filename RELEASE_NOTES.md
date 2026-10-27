@@ -3,7 +3,7 @@
 ### Changes
 
 - **Discord Client Settings**: Added the new preferences page "Discord Client Settings" to the "Discord Integration" section. It shows whether the Discord desktop client is installed on the cabinet. Discord can be launched minimized together with the VPin Studio Server, and the table that is currently played can be shown as your Discord status, including the VPin Mania wheel icon of the table. Both options require the Discord desktop client to be installed on the cabinet.##  
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/discord-status.png?raw=true" width="400" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/discord-status.png?raw=true" width="200" />
 
 - **Highscore Backups**: The backups in the highscore backup dialog are now sorted by date, newest first.
 - **Bulk Importer**: Added the import mode "If Missing", which only imports a file if its screen has no media yet.
