@@ -138,6 +138,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
 
   private AutoCompleteTextField autoCompleteNameField;
+  private VpsTableAutoCompleteMatcher vpsTableMatcher;
 
   private ValidationState validationState;
 
@@ -234,6 +235,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
     List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
+    vpsTableMatcher.setTables(tables);
   }
 
   public void setGames(List<GameRepresentation> games) {
@@ -675,7 +677,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, new VpsTableAutoCompleteMatcher(tables));
+    vpsTableMatcher = new VpsTableAutoCompleteMatcher(tables);
+    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, vpsTableMatcher);
 
     this.ignoreUpdatesListener = new IgnoreUpdatesChangeListener();
 

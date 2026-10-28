@@ -14,9 +14,13 @@ import java.util.stream.Collectors;
  */
 public class VpsTableAutoCompleteMatcher implements AutoCompleteMatcher {
 
-  private final List<AutoMatchModel> models;
+  private volatile List<AutoMatchModel> models;
 
   public VpsTableAutoCompleteMatcher(List<VpsTable> tables) {
+    setTables(tables);
+  }
+
+  public void setTables(List<VpsTable> tables) {
     Set<String> seen = new HashSet<>();
     Set<String> duplicates = new HashSet<>();
     for (VpsTable table : tables) {
