@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.tagging.TaggingSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
@@ -124,6 +125,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   @FXML
   private Pane tagsFilter;
+
+  @FXML
+  private CheckBox todoTagsCheckBox;
 
   @FXML
   private ComboBox<TableStatus> statusCombo;
@@ -467,11 +471,23 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       public void onChanged(Change<? extends String> c) {
         ObservableList<? extends String> list = c.getList();
         filterSettings.setTags(new ArrayList<>(list));
+        refreshTodoTagsCheckBox();
         applyFilters();
       }
     });
     tagsFilter.getChildren().add(tagField);
     tagField.setTags(filterSettings.getTags());
+
+    refreshTodoTagsCheckBox();
+    todoTagsCheckBox.setOnAction(e -> {
+      List<String> todoTags = getPauseMenuTodoTags();
+      List<String> tags = tagField.getTags();
+      tags.removeAll(todoTags);
+      if (todoTagsCheckBox.isSelected()) {
+        tags.addAll(todoTags);
+      }
+      tagField.setTags(tags);
+    });
 
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.ISCORED_SETTINGS, null);
@@ -538,6 +554,18 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     }
   }
 
+  private List<String> getPauseMenuTodoTags() {
+    TaggingSettings taggingSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.TAGGING_SETTINGS, TaggingSettings.class);
+    return taggingSettings.getPauseMenuTags();
+  }
+
+  private void refreshTodoTagsCheckBox() {
+    if (tagField != null) {
+      List<String> todoTags = getPauseMenuTodoTags();
+      todoTagsCheckBox.setSelected(!todoTags.isEmpty() && tagField.getTags().containsAll(todoTags));
+    }
+  }
+
   public TagField getTagField() {
     return tagField;
   }
@@ -561,6 +589,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     else if (PreferenceNames.TAGGING_SETTINGS.equals(key)) {
       List<String> initialTags = client.getTaggingService().getTags();
       tagField.setSuggestions(initialTags);
+      refreshTodoTagsCheckBox();
     }
   }
 

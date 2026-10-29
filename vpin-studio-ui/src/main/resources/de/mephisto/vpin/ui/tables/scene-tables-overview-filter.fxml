@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="300.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableFilterController">
    <children>
       <VBox>
          <children>
@@ -191,6 +191,14 @@
                      </VBox.margin>
                   </Label>
                   <VBox fx:id="tagsFilter" spacing="6.0" />
+                  <CheckBox fx:id="todoTagsCheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.tables_overview_filter.todo_tags">
+                     <tooltip>
+                        <Tooltip text="%tables.tables_overview_filter.todo_tags.tooltip" />
+                     </tooltip>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </CheckBox>
                   <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="%tables.tables_overview_filter.data_filters">
                      <VBox.margin>
                         <Insets top="24.0" />

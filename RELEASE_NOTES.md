@@ -9,6 +9,7 @@
 - **Bulk Importer**: Added the import mode "If Missing", which only imports a file if its screen has no media yet.
 - **Webhooks**: Added the webhook types "Table Launch" and "Table Exit" to webhook sets. They are called with the game id when a table is started or exited.
 - **Table Overview**: Enabling or disabling tables from the context menu now runs in a progress dialog, so large selections no longer block the UI.
+- **Table Overview**: Added the checkbox "Pause Menu Todo Tags" below the tag input of the table filter. It adds all tags that are used for the pause menu todo list to the filter, and unchecking it removes them again.
 - **VPin Mania**: Disabled tables are no longer synchronized with VPin Mania. They are excluded from the installed tables list, and their highscores and played counts are not submitted.
 - **VPin Mania**: The VPin Mania settings pages now load their data in a progress dialog when they are opened, so switching between them no longer blocks the UI.
 - **Table Asset Manager**: The full screen button of the "Loading" screen is now a menu button with the new entry "Add Transparent Blank Video (AMD)". AMD graphics cards do not show the transparency of the default blank video, so the loading video was not played transparent. The new entry works like the existing "Add Blank Video" entry, but adds a transparent .mov blank (kudos to the VPU author of the "AMD Blank Tarc for Loading Screens") instead of the .mp4 blank. The file is downloaded into the server's resources folder with the update.
