@@ -79,18 +79,37 @@ public class DirectB2S {
   }
 
   public void addVersion(String fileName) {
-    this.fileName = FileUtils.fromUniqueFile(fileName);
+    String mainFileName = FileUtils.fromUniqueFile(fileName);
 
     // make sure main file is always the first version
-    boolean main = Strings.CI.equals(this.fileName, fileName);
+    boolean main = Strings.CI.equals(mainFileName, fileName);
     if (main) {
-      this.versions.addFirst(fileName);
+      // versions may mix .directb2s and .B2SPro files, when both main files exist, the .B2SPro one is the active one
+      if (!enabled || BackglassFileType.isB2SPro(fileName)) {
+        this.fileName = mainFileName;
+        this.versions.addFirst(fileName);
+      }
+      else {
+        this.versions.add(1, fileName);
+      }
     }
     else {
+      if (!enabled) {
+        this.fileName = mainFileName;
+      }
       this.versions.add(fileName);
     }
     // backglass is enabled if it contains a main one
     this.enabled |= main;
+  }
+
+  /**
+   * @return the type of the active backglass file
+   */
+  @JsonIgnore
+  public BackglassFileType getFileType() {
+    BackglassFileType type = BackglassFileType.fromFileName(fileName);
+    return type != null ? type : BackglassFileType.DIRECTB2S;
   }
 
   public void clearVersions() {

@@ -333,7 +333,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
         File folder = new File(emulatorRepresentation.getGamesDirectory());
         String backglassName = FilenameUtils.getBaseName(g.getGameFileName()) + ".directb2s";
-        File file = new File(folder, backglassName);
+        // the active backglass may be a .B2SPro file
+        File file = g.getDirectB2SPath() != null ? new File(g.getDirectB2SPath()) : new File(folder, backglassName);
         SystemUtil.openFile(file);
       }
     }

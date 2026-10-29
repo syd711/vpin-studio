@@ -37,7 +37,7 @@ public class Directb2sUploadController extends BaseUploadController {
   private Label gameLabel;
 
   public Directb2sUploadController() {
-    super(AssetType.DIRECTB2S, false, false, "zip", "7z", "rar", "directb2s");
+    super(AssetType.DIRECTB2S, false, false, "zip", "7z", "rar", "directb2s", "B2SPro");
   }
 
   private GameRepresentation game;

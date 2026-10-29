@@ -406,6 +406,15 @@ public class UploaderAnalysisTest {
   // ---------------------------------------------------------------------
 
   @Test
+  public void testB2SProIsBackglass() {
+    UploaderAnalysis analysis = newAnalysis("MyGame/table.B2SPro");
+    assertTrue(analysis.isBackglass());
+    assertNull(analysis.validateAssetTypeInArchive(AssetType.DIRECTB2S));
+    assertEquals(List.of("table.B2SPro"), analysis.getFileNamesForAssetType(AssetType.DIRECTB2S));
+    assertEquals(AssetType.DIRECTB2S, AssetType.fromExtension(null, "b2spro"));
+  }
+
+  @Test
   public void testIsBackglassAndIsRes() {
     UploaderAnalysis analysis = newAnalysis("MyGame/table.directb2s", "MyGame/table.res");
     assertTrue(analysis.isBackglass());

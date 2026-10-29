@@ -45,6 +45,50 @@ public class BackglassNamingHelperTest {
     assertThat(BackglassNamingHelper.getBackglassFile(game)).isEqualTo(new File(folder, "Twister v1.1.directb2s"));
   }
 
+  @Test
+  void b2sProBackglassIsFound() throws Exception {
+    File folder = tempDir.resolve("Twister (1996)").toFile();
+    Game game = tableInFolder(folder, "Twister v1.1.vpx");
+    create(folder, "Twister v1.1.B2SPro");
+
+    assertThat(BackglassNamingHelper.getBackglassFileName(game)).isEqualTo("Twister v1.1.B2SPro");
+    assertThat(BackglassNamingHelper.getBackglassFile(game)).isEqualTo(new File(folder, "Twister v1.1.B2SPro"));
+  }
+
+  @Test
+  void b2sProBackglassIsPreferredOverDirectB2S() throws Exception {
+    File folder = tempDir.resolve("Twister (1996)").toFile();
+    Game game = tableInFolder(folder, "Twister v1.1.vpx");
+    create(folder, "Twister v1.1.directb2s");
+    create(folder, "Twister v1.1.B2SPro");
+
+    assertThat(BackglassNamingHelper.getBackglassFileName(game)).isEqualTo("Twister v1.1.B2SPro");
+    assertThat(BackglassNamingHelper.getSiblingBackglassFiles(new File(folder, "Twister v1.1.B2SPro")))
+        .containsExactly(new File(folder, "Twister v1.1.directb2s"));
+  }
+
+  @Test
+  void b2sProBackglassNamedAfterFolderIsFoundAsFallback() throws Exception {
+    File folder = tempDir.resolve("Twister (1996)").toFile();
+    Game game = tableInFolder(folder, "Twister v1.1.vpx");
+    create(folder, "Twister (1996).B2SPro");
+
+    assertThat(BackglassNamingHelper.getBackglassFileName(game)).isEqualTo("Twister (1996).B2SPro");
+  }
+
+  @Test
+  void uniqueBackglassFileChecksAllTypes() throws Exception {
+    File folder = tempDir.resolve("Twister (1996)").toFile();
+    folder.mkdirs();
+    create(folder, "Twister.directb2s");
+    create(folder, "Twister (1).B2SPro");
+
+    assertThat(BackglassNamingHelper.uniqueBackglassFile(new File(folder, "Twister.B2SPro")))
+        .isEqualTo(new File(folder, "Twister (2).B2SPro"));
+    assertThat(BackglassNamingHelper.uniqueBackglassFile(new File(folder, "Other.B2SPro")))
+        .isEqualTo(new File(folder, "Other.B2SPro"));
+  }
+
   private Game tableInFolder(File folder, String tableFileName) {
     folder.mkdirs();
     Game game = mock(Game.class);

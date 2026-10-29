@@ -29,6 +29,7 @@ import de.mephisto.vpin.restclient.preferences.VPXZSettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -1036,18 +1037,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
         int nbVersions = value.getDirectB2SVersions().size();
-        FontIcon icon = null;
-        if (nbVersions > 9) {
-          icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", getIconColor(value));
-          //icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-circle-outline", 24, getIconColor(value));
-        }
-        else if (nbVersions > 1) {
-          icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", getIconColor(value));
-          //icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-circle-outline", 24, getIconColor(value));
-        }
-        else {
-          icon = WidgetFactory.createEditIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
-        }
+        // the icon depends on the backglass type (.directb2s or .B2SPro) and the number of versions
+        String iconLiteral = BackglassManagerControllerUtils.getBackglassIconLiteral(value.getDirectB2SPath(), nbVersions);
+        FontIcon icon = nbVersions > 1 ?
+            WidgetFactory.createIcon(iconLiteral, getIconColor(value)) :
+            WidgetFactory.createIcon(iconLiteral, value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
 
         Button button = new Button();
         icon.setIconSize(22);
@@ -1064,7 +1058,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           button.setTooltip(new Tooltip(Messages.get("dialog.new_backglass_version_available")));
         }
         else {
-          button.setTooltip(new Tooltip(value.getDirectB2SPath()));
+          button.setTooltip(new Tooltip(BackglassManagerControllerUtils.getBackglassTypeLabel(value.getDirectB2SPath()) + "\n" + value.getDirectB2SPath()));
         }
 
         return button;

@@ -49,7 +49,7 @@ public class FileSelectorDragEventHandler implements EventHandler<DragEvent> {
         }
 
         String extension = FilenameUtils.getExtension(file.getName());
-        if (!suffixes.contains(extension)) {
+        if (suffixes.stream().noneMatch(suffix -> suffix.equalsIgnoreCase(extension))) {
           return;
         }
       }

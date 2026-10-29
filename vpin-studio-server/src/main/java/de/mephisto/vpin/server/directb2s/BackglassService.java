@@ -587,16 +587,18 @@ public class BackglassService implements InitializingBean {
 
   private void loadBackglassForFolder(GameEmulator gameEmulator, File tablesFolder) {
     Path tablesPath = tablesFolder.toPath();
-    IOFileFilter filter = new SuffixFileFilter(new String[]{"directb2s"}, IOCase.INSENSITIVE);
+    IOFileFilter filter = new SuffixFileFilter(BackglassFileType.extensions(), IOCase.INSENSITIVE);
     Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
-    DirectB2S currentDirectB2S = null;
     while (iter.hasNext()) {
       File file = iter.next();
       String fileName = tablesPath.relativize(file.toPath()).toString();
       String mainName = FileUtils.fromUniqueFile(fileName);
 
+      // versions of a backglass are grouped by base name, so .directb2s and .B2SPro files end in the same entry
+      String key = gameEmulator.getId() + "@" + FileUtils.baseUniqueFile(fileName).replaceAll("\\\\", "/");
+      DirectB2S currentDirectB2S = cacheDirectB2SVersion.get(key);
       // new backglass detected
-      if (currentDirectB2S == null || !currentDirectB2S.getFileName().equals(mainName)) {
+      if (currentDirectB2S == null) {
         currentDirectB2S = new DirectB2S();
         currentDirectB2S.setEmulatorId(gameEmulator.getId());
         addGameInfo(currentDirectB2S, gameEmulator, FilenameUtils.removeExtension(mainName));
@@ -604,7 +606,7 @@ public class BackglassService implements InitializingBean {
         // add in cache
         setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
       }
-      currentDirectB2S.addVersion(tablesPath.relativize(file.toPath()).toString());
+      currentDirectB2S.addVersion(fileName);
     }
   }
 
@@ -703,7 +705,7 @@ public class BackglassService implements InitializingBean {
     // now iterate over files
     for (String n : fileNames) {
       // skip non backglass files
-      if (n.toLowerCase().endsWith(".directb2s")) {
+      if (BackglassFileType.isBackglassFile(n)) {
         String uniqueName = relativeFolder + FileUtils.baseUniqueFile(n);
         // version found
         if (uniqueName.equalsIgnoreCase(mainBaseName)) {
@@ -804,6 +806,12 @@ public class BackglassService implements InitializingBean {
         throw new RuntimeException("Cannot rename " + b2sFile + ", operation ignored");
       }
     }
+
+    // a main backglass of the other type (.directb2s vs .B2SPro) would remain active, so make it a version
+    File mainFile = new File(emulator.getGamesDirectory(), mainFileName);
+    for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(mainFile)) {
+      disableMainFile(emulatorId, sibling);
+    }
     return reloadDirectB2SAndVersions(emulator, mainFileName);
   }
 
@@ -811,6 +819,16 @@ public class BackglassService implements InitializingBean {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     String mainFileName = FileUtils.fromUniqueFile(fileName);
     File mainFile = new File(emulator.getGamesDirectory(), mainFileName);
+    // disable the main files of all backglass types
+    List<File> mainFiles = new ArrayList<>(BackglassNamingHelper.getSiblingBackglassFiles(mainFile));
+    mainFiles.add(mainFile);
+    for (File file : mainFiles) {
+      disableMainFile(emulatorId, file);
+    }
+    return reloadDirectB2SAndVersions(emulator, fileName);
+  }
+
+  private void disableMainFile(int emulatorId, File mainFile) {
     if (mainFile.exists()) {
       File target = FileUtils.uniqueFile(mainFile);
       if (!mainFile.renameTo(target)) {
@@ -818,7 +836,6 @@ public class BackglassService implements InitializingBean {
       }
       cacheRemove(emulatorId, mainFile);
     }
-    return reloadDirectB2SAndVersions(emulator, fileName);
   }
 
   public boolean deleteBackglass(int emulatorId, String filename) {
@@ -1109,7 +1126,7 @@ public class BackglassService implements InitializingBean {
 
     // if already a table file exists, replace it
     File screenresFile = Strings.CI.contains(templateName, FilenameUtils.getBaseName(screenres.getB2SFileName())) ?
-        new File(templateName) : new File(emulator.getGamesDirectory(), Strings.CI.replace(screenres.getB2SFileName(), ".directb2s", ".res"));
+        new File(templateName) : new File(emulator.getGamesDirectory(), FilenameUtils.removeExtension(screenres.getB2SFileName()) + ".res");
 
     if (!screenresFile.exists() || screenresFile.delete()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(screenresFile))) {
@@ -1257,8 +1274,7 @@ public class BackglassService implements InitializingBean {
     File gamesDirectory = new File(emulator.getGamesDirectory());
     Collection<File> resFiles = org.apache.commons.io.FileUtils.listFiles(gamesDirectory, new String[]{"res"}, true);
     for (File resFile : resFiles) {
-      File b2sFile = new File(resFile.getParentFile(), FilenameUtils.getBaseName(resFile.getName()) + ".directb2s");
-      if (!b2sFile.exists()) {
+      if (BackglassNamingHelper.findExistingBackglassFileName(resFile.getParentFile(), FilenameUtils.getBaseName(resFile.getName())) == null) {
         continue;
       }
 

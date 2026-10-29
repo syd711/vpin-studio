@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.games.descriptors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -123,6 +124,9 @@ public class UploadDescriptor {
 
   public boolean isFileAsset(AssetType assetType) {
     String suffix = FilenameUtils.getExtension(originalUploadedFileName);
+    if (AssetType.DIRECTB2S.equals(assetType)) {
+      return BackglassFileType.isBackglassExtension(suffix);
+    }
     return suffix.equalsIgnoreCase(assetType.name().toLowerCase());
   }
 

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.models;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -257,7 +258,9 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   private boolean resolveTableFileAssets(List<AssetType> tableAssetTypes) {
     String extension = FilenameUtils.getExtension(getName());
     for (AssetType tableAssetType : tableAssetTypes) {
-      if (extension.equalsIgnoreCase(tableAssetType.name())) {
+      // .B2SPro files are backglasses too
+      boolean backglass = AssetType.DIRECTB2S.equals(tableAssetType) && BackglassFileType.isBackglassExtension(extension);
+      if (extension.equalsIgnoreCase(tableAssetType.name()) || backglass) {
         targetDisplayName = emulator.getGamesDirectory();
         assetType = tableAssetType;
         return true;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import org.apache.commons.io.FilenameUtils;
 
@@ -16,7 +17,7 @@ public class BackglassManagerDragDropHandler extends BaseDragDropHandler {
 
   BackglassManagerController controller;
 
-  private final List<String> suffixes = Arrays.asList(PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z, "directb2s");
+  private final List<String> suffixes = Arrays.asList(PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z);
 
   public BackglassManagerDragDropHandler(BackglassManagerController controller, TableView<?> directb2sList, StackPane tableStack) {
     super(directb2sList, tableStack, true);
@@ -27,7 +28,7 @@ public class BackglassManagerDragDropHandler extends BaseDragDropHandler {
   @Override
   protected boolean acceptFile(File file) {
     String extension = FilenameUtils.getExtension(file.getName());
-    return suffixes.contains(extension);
+    return suffixes.contains(extension.toLowerCase()) || BackglassFileType.isBackglassExtension(extension);
   }
 
   @Override

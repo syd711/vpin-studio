@@ -35,6 +35,7 @@ import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -491,7 +492,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     activateCheckbox.setSelected(false);
     String selectedVersion = getSelectedVersion();
     if (selectedVersion != null && game.isPresent() && game.get().getDirectB2SPath() != null) {
-      boolean selected = FileUtils.baseNameMatches(selectedVersion, game.get().getDirectB2SPath());
+      // compare full names, a .directb2s and a .B2SPro version may share the same base name
+      boolean selected = new File(selectedVersion).getName().equalsIgnoreCase(new File(game.get().getDirectB2SPath()).getName());
       activateCheckbox.setSelected(selected);
     }
     noneActiveInfo.setVisible(!activateCheckbox.isSelected());

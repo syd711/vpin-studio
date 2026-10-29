@@ -44,7 +44,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -655,7 +657,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     activateCheckbox.setDisable(directb2s == null || directb2s.getGameId() <= 0);
     String selectedVersion = getSelectedVersion();
     if (selectedVersion != null && directb2s != null) {
-      boolean selected = FileUtils.baseNameMatches(selectedVersion, directb2s.getFileName());
+      // compare full names, a .directb2s and a .B2SPro version may share the same base name
+      boolean selected = directb2s.isEnabled() && Strings.CI.equals(FilenameUtils.getName(selectedVersion), FilenameUtils.getName(directb2s.getFileName()));
       activateCheckbox.setSelected(selected);
     }
     activateCheckbox.selectedProperty().addListener(activationChangeListener);

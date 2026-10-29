@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import net.lingala.zip4j.ZipFile;
@@ -494,6 +495,9 @@ public class UploaderAnalysis {
       if (fileName.toLowerCase().endsWith("." + assetType.name().toLowerCase())) {
         result.add(fileName);
       }
+      else if (AssetType.DIRECTB2S.equals(assetType) && BackglassFileType.isBackglassFile(fileName)) {
+        result.add(fileName);
+      }
     }
     return result;
   }
@@ -539,10 +543,10 @@ public class UploaderAnalysis {
         yield "This archive does not not contain a .fpt file.";
       }
       case DIRECTB2S -> {
-        if (hasFileWithSuffix("directb2s")) {
+        if (isBackglass()) {
           yield null;
         }
-        yield "This archive does not not contain a .directb2s file.";
+        yield "This archive does not not contain a .directb2s or .B2SPro file.";
       }
       case RES -> {
         if (hasFileWithSuffix("res")) {
@@ -685,7 +689,7 @@ public class UploaderAnalysis {
       result.add(AssetType.CROMC);
     }
 
-    if (hasFileWithSuffix("directb2s")) {
+    if (isBackglass()) {
       result.add(AssetType.DIRECTB2S);
     }
 
@@ -930,7 +934,12 @@ public class UploaderAnalysis {
   }
 
   public boolean isBackglass() {
-    return hasFileWithSuffix("directb2s");
+    for (String extension : BackglassFileType.extensions()) {
+      if (hasFileWithSuffix(extension)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean isRes() {

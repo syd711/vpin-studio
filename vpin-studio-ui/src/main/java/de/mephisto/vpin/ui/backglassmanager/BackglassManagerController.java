@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -224,8 +225,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         }
 
         try {
-          if (!newName.endsWith(".directb2s")) {
-            newName = newName + ".directb2s";
+          if (!BackglassFileType.isBackglassFile(newName)) {
+            newName = newName + "." + FilenameUtils.getExtension(selection.getFileName());
           }
           DirectB2S b2s = client.getBackglassServiceClient().renameBackglass(selection.getEmulatorId(), selection.getFileName(), newName);
           if (b2s != null) {
@@ -431,6 +432,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
+      // the file icon shows the backglass type (.directb2s or .B2SPro)
+      FontIcon typeIcon = WidgetFactory.createIcon(BackglassManagerControllerUtils.getBackglassIconLiteral(value.getFileName(), 1), getIconColor(value));
+      typeIcon.setIconSize(18);
+      label.setGraphic(typeIcon);
+      label.setTooltip(new Tooltip(BackglassManagerControllerUtils.getBackglassTypeLabel(value.getFileName())));
       return label;
     }, this, true);
 
@@ -447,14 +453,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureColumn(numberDirectB2SColumn, (value, model) -> {
       int nbVersions = value.getVersions().size();
-      String iconname = null;
-      if (nbVersions > 9) {
-        iconname = "mdi2n-numeric-9-plus-box-multiple-outline";
-      }
-      else if (nbVersions > 1) {
-        iconname = "mdi2n-numeric-" + nbVersions + "-box-multiple-outline";
-      }
-      if (iconname != null) {
+      if (nbVersions > 1) {
+        String iconname = BackglassManagerControllerUtils.getBackglassIconLiteral(value.getFileName(), nbVersions);
         return WidgetFactory.createIcon(iconname, value.isEnabled() ? null : WidgetFactory.DISABLED_COLOR);
       }
       else {

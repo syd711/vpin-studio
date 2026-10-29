@@ -58,7 +58,7 @@ public class MimeTypeUtil {
       else if (suffix.endsWith("avi")) {
         mimeType = "video/avi";
       }
-      else if (suffix.endsWith("directb2s")) {
+      else if (suffix.endsWith("directb2s") || suffix.endsWith("b2spro")) {
         mimeType = "text/xml";
       }
       else {

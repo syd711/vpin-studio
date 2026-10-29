@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -201,11 +202,11 @@ public class UniversalUploadService {
         for (String fileNameForAssetType : fileNameForAssetTypes) {
           File temporaryAssetArchiveFile = writeTableFilenameBasedEntry(uploadDescriptor, fileNameForAssetType);
           uploadDescriptor.getTempFiles().add(temporaryAssetArchiveFile);
-          copyGameFileAsset(temporaryAssetArchiveFile, game, assetType, uploadDescriptor.getUploadType());
+          copyGameFileAsset(temporaryAssetArchiveFile, game, assetType, uploadDescriptor.getUploadType(), fileNameForAssetType);
         }
       }
       else if (uploadDescriptor.isFileAsset(assetType)) {
-        copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, uploadDescriptor.getUploadType());
+        copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, uploadDescriptor.getUploadType(), uploadDescriptor.getOriginalUploadFileName());
       }
     }
     catch (Exception e) {
@@ -419,20 +420,38 @@ public class UniversalUploadService {
     }
   }
 
-  private void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
+  private void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType, @Nullable String sourceFileName) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.getExtension();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
 
+    boolean isBackglass = false;
     if (AssetType.DIRECTB2S.equals(assetType) && game.getEmulator().isZenEmulator()) {
       gameAssetFile = dofLinxService.getBackglassFile(game);
     }
     else if (AssetType.DIRECTB2S.equals(assetType)) {
+      isBackglass = true;
       gameAssetFile = BackglassNamingHelper.getBackglassFile(game);
+      // keep the type of the uploaded backglass, .directb2s or .B2SPro
+      BackglassFileType fileType = BackglassFileType.fromFileName(sourceFileName);
+      if (fileType != null) {
+        gameAssetFile = new File(gameAssetFile.getParentFile(), FilenameUtils.getBaseName(gameAssetFile.getName()) + fileType.getSuffix());
+      }
     }
 
     if (UploadType.uploadAndAppend.equals(uploadType)) {
-      gameAssetFile = FileUtils.uniqueFile(gameAssetFile);
+      gameAssetFile = isBackglass ? BackglassNamingHelper.uniqueBackglassFile(gameAssetFile) : FileUtils.uniqueFile(gameAssetFile);
       LOG.info("Creating unique game asset file {}", gameAssetFile.getAbsolutePath());
+    }
+    else if (isBackglass) {
+      // the uploaded backglass replaces the existing one, whatever its type is
+      for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(gameAssetFile)) {
+        if (sibling.delete()) {
+          LOG.info("Deleted replaced backglass \"{}\"", sibling.getAbsolutePath());
+        }
+        else {
+          LOG.error("Failed to delete replaced backglass {}", sibling.getAbsolutePath());
+        }
+      }
     }
 
     boolean replaced = false;

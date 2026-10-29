@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.assets;
 
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
@@ -53,6 +54,10 @@ public enum AssetType {
     try {
       if (extension.equalsIgnoreCase("7z")) {
         return SEVENZIP;
+      }
+      // .B2SPro files are handled like .directb2s files
+      if (BackglassFileType.isBackglassExtension(extension)) {
+        return DIRECTB2S;
       }
 
       //correction to BAM config
@@ -112,6 +117,9 @@ public enum AssetType {
   }
 
   public String[] installableExtension() {
+    if (this == DIRECTB2S) {
+      return ArrayUtils.addAll(BackglassFileType.patterns(), "*.zip", "*.rar", "*.7z");
+    }
     return new String[]{defaultExtension(), "*.zip", "*.rar", "*.7z"};
   }
 

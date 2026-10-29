@@ -226,6 +226,10 @@ public class GameMediaService extends MediaService {
           }
 
           if (game.getDirectB2SFile().exists()) {
+            // rename the backglass of the other type (.directb2s vs .B2SPro) too
+            for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(game.getDirectB2SFile())) {
+              de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(sibling, name);
+            }
             de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
           }
 
@@ -764,6 +768,9 @@ public class GameMediaService extends MediaService {
 
     if (descriptor.isDeleteDirectB2s()) {
       success &= step(game, "default pictures", () -> defaultPictureService.deleteAllPictures(game));
+      for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(game.getDirectB2SFile())) {
+        success &= step(game, "backglass file", () -> SystemUtil.deleteFileOrFolder(sibling));
+      }
       success &= step(game, "directb2s file", () -> SystemUtil.deleteFileOrFolder(game.getDirectB2SFile()));
     }
 

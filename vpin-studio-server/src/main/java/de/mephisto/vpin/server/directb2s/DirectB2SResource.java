@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.JsonArg;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
@@ -24,7 +25,6 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class DirectB2SResource {
 
   @PostMapping("/gameId")
   public Integer getGameId(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
-    String basefileName = Strings.CI.removeEnd(fileName, ".directb2s");
+    String basefileName = BackglassFileType.isBackglassFile(fileName) ? FilenameUtils.removeExtension(fileName) : fileName;
     Game game = frontedService.getGameByBaseFilename(emulatorId, basefileName);
     return game != null ? game.getId() : -1;
   }
