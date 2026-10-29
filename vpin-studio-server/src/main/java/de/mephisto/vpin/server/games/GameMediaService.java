@@ -225,12 +225,18 @@ public class GameMediaService extends MediaService {
             de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getGameFile(), name);
           }
 
-          if (game.getDirectB2SFile().exists()) {
+          File directB2SFile = game.getDirectB2SFile();
+          if (directB2SFile.exists()) {
             // rename the backglass of the other type (.directb2s vs .B2SPro) too
-            for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(game.getDirectB2SFile())) {
+            for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(directB2SFile)) {
               de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(sibling, name);
             }
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(directB2SFile, name);
+
+            // update the backglass cache, the backglass versions of the game are resolved from it
+            String relativeFolder = FilenameUtils.getPath(game.getGameFileName());
+            backglassService.removeDirectB2SAndVersions(game.getEmulatorId(), relativeFolder + directB2SFile.getName());
+            backglassService.getDirectB2SAndVersions(game.getEmulatorId(), relativeFolder + name + "." + FilenameUtils.getExtension(directB2SFile.getName()));
           }
 
           if (game.getPOVFile().exists()) {

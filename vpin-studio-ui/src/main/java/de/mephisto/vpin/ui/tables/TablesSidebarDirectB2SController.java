@@ -625,6 +625,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     if (g.isPresent() && directb2sAvailable) {
       Platform.runLater(() -> {
+        // a previously queued refresh may already have reset the flag, block the combo listener again
+        refreshing = true;
         List<String> versions = g.get().getDirectB2SVersions();
         if (versions.size() > 1) {
           directB2SCombo.setVisible(true);
