@@ -212,6 +212,8 @@ public class ClientSettingsPreferencesController implements Initializable {
       uiSettings.setHideRatingSyncInfo(false);
       uiSettings.setHideFrontendLaunchQuestion(false);
       uiSettings.setHideWheelIconGenerationConfirmation(false);
+      uiSettings.setHideLoadingBlankVideoConfirmation(false);
+      uiSettings.setAlwaysAddLoadingBlankVideo(false);
 
       client.getPreferenceService().setJsonPreference(uiSettings);
     }

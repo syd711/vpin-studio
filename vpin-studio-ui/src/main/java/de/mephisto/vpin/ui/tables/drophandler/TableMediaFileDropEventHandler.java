@@ -30,9 +30,11 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -135,10 +137,14 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         game = dialogController.getGame();
       }
 
+      Map<String, OffsetDateTime> snapshot = dialogController != null ? dialogController.getMediaSnapshot(screen) : null;
       if (playlist != null) {
         ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
       } else {
         ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
+      }
+      if (snapshot != null) {
+        dialogController.checkFullscreenLoadingVideo(screen, snapshot);
       }
       refreshView();
     }
@@ -211,6 +217,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         }
       }
 
+      Map<String, OffsetDateTime> snapshot = dialogController != null ? dialogController.getMediaSnapshot(screen) : null;
       if (playlist != null) {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
             "Media Upload", draggedCopies, screen, append);
@@ -220,6 +227,9 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
             "Media Upload", draggedCopies, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
+      }
+      if (snapshot != null) {
+        dialogController.checkFullscreenLoadingVideo(screen, snapshot);
       }
 
       refreshView();

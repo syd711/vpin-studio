@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -15,6 +16,8 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.ui.Studio;
@@ -71,6 +74,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -359,9 +363,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onAudioBlank() {
+    addBlankMedia(screen);
+  }
+
+  private void addBlankMedia(VPinScreen blankScreen) {
     JFXFuture.supplyAsync(() -> {
           int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-          return client.getGameMediaService().addBlank(objectId, isPlaylistMode(), screen);
+          return client.getGameMediaService().addBlank(objectId, isPlaylistMode(), blankScreen);
         })
         .thenAcceptLater(status -> {
           if (isGameMode()) {
@@ -372,6 +380,96 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         .onErrorLater(e -> {
           WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.adding_blank_media_failed") + e.getMessage());
         });
+  }
+
+  /**
+   * Returns the modification dates of the media items of the given screen, used to detect newly added media afterwards.
+   */
+  public Map<String, OffsetDateTime> getMediaSnapshot(VPinScreen mediaScreen) {
+    Map<String, OffsetDateTime> snapshot = new HashMap<>();
+    if (frontendMedia != null) {
+      for (FrontendMediaItemRepresentation item : frontendMedia.getMediaItems(mediaScreen)) {
+        snapshot.put(item.getName(), item.getModificationDate());
+      }
+    }
+    return snapshot;
+  }
+
+  /**
+   * Popper plays a landscape loading video in fullscreen, so a blank video has to be added after it.
+   */
+  public void checkFullscreenLoadingVideo(VPinScreen mediaScreen, Map<String, OffsetDateTime> snapshot) {
+    if (!VPinScreen.Loading.equals(mediaScreen) || !client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+      return;
+    }
+    if (this.game == null && this.playlist == null) {
+      return;
+    }
+
+    try {
+      int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+      FrontendMediaRepresentation media = client.getGameMediaService().getMedia(objectId, isPlaylistMode());
+      boolean landscapeVideoAdded = media.getMediaItems(mediaScreen).stream()
+          .filter(item -> MimeTypeUtil.isVideo(item.getMimeType()))
+          .filter(item -> !snapshot.containsKey(item.getName()) || !Objects.equals(snapshot.get(item.getName()), item.getModificationDate()))
+          .anyMatch(item -> isLandscapeVideo(objectId, mediaScreen, item));
+      if (!landscapeVideoAdded) {
+        return;
+      }
+
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      if (uiSettings.isAlwaysAddLoadingBlankVideo()) {
+        addBlankMedia(mediaScreen);
+        return;
+      }
+      if (uiSettings.isHideLoadingBlankVideoConfirmation()) {
+        return;
+      }
+
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckboxAndCancel(localStage, Messages.get("dialog.fullscreen_loading_video"),
+          Messages.get("dialog.add_blank"), Messages.get("dialog.always_add_blank"),
+          Messages.get("dialog.fullscreen_loading_video_text"), Messages.get("dialog.fullscreen_loading_video_help"),
+          Messages.get("dialog.do_not_show_again"), false);
+
+      if (confirmationResult.isApplyClicked()) {
+        uiSettings.setAlwaysAddLoadingBlankVideo(true);
+        client.getPreferenceService().setJsonPreference(uiSettings);
+      }
+      else if (confirmationResult.isChecked()) {
+        uiSettings.setHideLoadingBlankVideoConfirmation(true);
+        client.getPreferenceService().setJsonPreference(uiSettings);
+      }
+
+      if (confirmationResult.isOkClicked() || confirmationResult.isApplyClicked()) {
+        addBlankMedia(mediaScreen);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Fullscreen loading video check failed: {}", e.getMessage(), e);
+    }
+  }
+
+  private boolean isLandscapeVideo(int objectId, VPinScreen mediaScreen, FrontendMediaItemRepresentation item) {
+    AssetMetaData metadata = client.getGameMediaService().getMetadata(objectId, isPlaylistMode(), mediaScreen, item.getName());
+    if (metadata == null) {
+      return false;
+    }
+    int width = toInt(metadata.getData().get("Width"));
+    int height = toInt(metadata.getData().get("Height"));
+    return width > 0 && height > 0 && width > height;
+  }
+
+  private static int toInt(Object value) {
+    if (value instanceof Number) {
+      return ((Number) value).intValue();
+    }
+    if (value != null) {
+      String digits = value.toString().replaceAll("[^0-9].*$", "").trim();
+      if (!digits.isEmpty()) {
+        return Integer.parseInt(digits);
+      }
+    }
+    return 0;
   }
 
   @FXML
@@ -452,12 +550,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onMediaUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    if (isPlaylistMode()) {
-      TableDialogs.directAssetUpload(stage, playlist, screen);
-    }
-    else {
-      TableDialogs.directAssetUpload(stage, game, screen);
-    }
+    VPinScreen uploadScreen = screen;
+    Map<String, OffsetDateTime> snapshot = getMediaSnapshot(uploadScreen);
+    int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+    TableDialogs.directAssetUpload(stage, objectId, isPlaylistMode(), uploadScreen, () -> {
+      checkFullscreenLoadingVideo(uploadScreen, snapshot);
+      refreshTableMediaView();
+    });
     refreshTableMediaView();
   }
 
@@ -904,12 +1003,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     }
 
+    Map<String, OffsetDateTime> snapshot = getMediaSnapshot(screen);
     if (isPlaylistMode()) {
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, playlist, tableAsset, append));
     }
     else {
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append, loadingScreenId));
     }
+    checkFullscreenLoadingVideo(screen, snapshot);
 
     if (isGameMode()) {
       EventManager.getInstance().notifyTableChange(game.getId(), null);

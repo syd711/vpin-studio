@@ -74,6 +74,10 @@ public class TableDialogs {
   }
 
   public static void directAssetUpload(Stage stage, int id, boolean playlistMode, VPinScreen screen) {
+    directAssetUpload(stage, id, playlistMode, screen, null);
+  }
+
+  public static void directAssetUpload(Stage stage, int id, boolean playlistMode, VPinScreen screen, @Nullable Runnable onUploadFinished) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle(Messages.get("dialog.select_media"));
     fileChooser.getExtensionFilters().addAll(
@@ -109,6 +113,10 @@ public class TableDialogs {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(id, playlistMode,
             Messages.get("dialog.media_upload"), files, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
+
+        if (onUploadFinished != null) {
+          onUploadFinished.run();
+        }
       });
     }
   }

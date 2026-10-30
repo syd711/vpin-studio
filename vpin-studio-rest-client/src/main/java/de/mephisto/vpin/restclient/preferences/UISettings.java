@@ -21,6 +21,8 @@ public class UISettings extends JsonSettings {
   private boolean hideAudioExtractionInfo;
   private boolean hideFrontendLaunchQuestion;
   private boolean hideWheelIconGenerationConfirmation;
+  private boolean hideLoadingBlankVideoConfirmation;
+  private boolean alwaysAddLoadingBlankVideo;
 
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
@@ -225,6 +227,22 @@ public class UISettings extends JsonSettings {
 
   public void setHideFrontendLaunchQuestion(boolean hideFrontendLaunchQuestion) {
     this.hideFrontendLaunchQuestion = hideFrontendLaunchQuestion;
+  }
+
+  public boolean isHideLoadingBlankVideoConfirmation() {
+    return hideLoadingBlankVideoConfirmation;
+  }
+
+  public void setHideLoadingBlankVideoConfirmation(boolean hideLoadingBlankVideoConfirmation) {
+    this.hideLoadingBlankVideoConfirmation = hideLoadingBlankVideoConfirmation;
+  }
+
+  public boolean isAlwaysAddLoadingBlankVideo() {
+    return alwaysAddLoadingBlankVideo;
+  }
+
+  public void setAlwaysAddLoadingBlankVideo(boolean alwaysAddLoadingBlankVideo) {
+    this.alwaysAddLoadingBlankVideo = alwaysAddLoadingBlankVideo;
   }
 
   public boolean isHideWheelIconGenerationConfirmation() {
