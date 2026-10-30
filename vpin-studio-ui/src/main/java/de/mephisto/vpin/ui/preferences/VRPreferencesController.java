@@ -54,6 +54,11 @@ public class VRPreferencesController implements Initializable {
   }
 
   @FXML
+  private void onDocumentationLink() {
+    Studio.browse("https://github.com/syd711/vpin-studio/wiki/VR-Support");
+  }
+
+  @FXML
   private void onDMDDeviceIniUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DMDDevice.ini File");
