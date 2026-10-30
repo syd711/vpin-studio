@@ -47,6 +47,16 @@ public class VPXCommandLineService implements ApplicationContextAware {
       vpxExe = new File(emulator.getInstallationFolder(), altLaunchExe);
     }
 
+    if (!vpxExe.exists()) {
+      File defaultExe = emulator.getExe();
+      if (defaultExe == null || !defaultExe.exists()) {
+        LOG.error("Cannot launch \"{}\": VPX executable {} not found.", game.getGameDisplayName(), vpxExe.getAbsolutePath());
+        return false;
+      }
+      LOG.warn("VPX executable {} not found, falling back to emulator default {}", vpxExe.getAbsolutePath(), defaultExe.getAbsolutePath());
+      vpxExe = defaultExe;
+    }
+
     try {
       List<String> strings = new ArrayList<>();
       strings.add(vpxExe.getAbsolutePath());

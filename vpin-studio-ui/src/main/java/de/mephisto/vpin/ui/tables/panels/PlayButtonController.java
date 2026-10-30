@@ -93,7 +93,8 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
 
       String exeName = gameEmulator != null ? gameEmulator.getExeName() : null;
       if (!StringUtils.isEmpty(exeName)) {
-        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.emulator_default"), false, exeName, null));
+        // no altExe: the server resolves the default exe at launch time, so a cached exe name can't go stale here
+        items.add(new LaunchConfiguration(Messages.get("tables.play_btn.emulator_default"), false, null, null));
       }
 
       if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {

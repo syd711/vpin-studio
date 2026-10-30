@@ -106,7 +106,7 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
         });
       }
       else if (column.equals(tableOverviewController.columnINI)) {
-        comp = Comparator.comparing(o -> o.getGame().getIniPath() != null);
+        comp = Comparator.comparing(o -> (o.getGame().getIniPath() != null ? 1 : 0) + (o.getGame().getVrIniPath() != null ? 1 : 0));
       }
       else if (column.equals(tableOverviewController.columnHSType)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getHighscoreType()));

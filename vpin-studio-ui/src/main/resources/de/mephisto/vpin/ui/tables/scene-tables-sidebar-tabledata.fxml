@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -46,6 +47,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
                             <RowConstraints vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
@@ -166,6 +168,21 @@
                                     </Button>
                                  </children>
                               </HBox>
+                              <Label fx:id="activeIniTitleLabel" text="%tables.tables_sidebar_tabledata.active_ini" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="activeIniLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ToggleButton fx:id="activeIniToggleBtn" mnemonicParsing="false" onAction="#onActiveIniToggle" styleClass="custom-toggle-button" text="VR" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar_tabledata.active_ini_toggle" />
+                                 </tooltip>
+                              </ToggleButton>
                            </children>
                         </GridPane>
                      </children>

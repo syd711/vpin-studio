@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
 
 /*********************************************************************************************************************
  * VR
@@ -38,6 +39,14 @@ public class VRServiceClient extends VPinStudioClientService {
 
   public boolean createTableVRIni(int gameId) {
     return getRestClient().post(API + "vr/tableini/" + gameId, null, Boolean.class);
+  }
+
+  public boolean isTableVRIniActive(int gameId) {
+    return getRestClient().get(API + "vr/tableini/" + gameId + "/active", Boolean.class);
+  }
+
+  public boolean toggleTableVRIni(int gameId) {
+    return getRestClient().put(API + "vr/tableini/" + gameId + "/toggle", new HashMap<>(), Boolean.class);
   }
 
   public boolean deleteTableVRIni(int gameId) {

@@ -61,6 +61,24 @@ public class VRResource {
     return vrService.createTableVRIni(game);
   }
 
+  @GetMapping("/tableini/{gameId}/active")
+  public boolean isTableVRIniActive(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
+    }
+    return vrService.isTableIniSwapped(game);
+  }
+
+  @PutMapping("/tableini/{gameId}/toggle")
+  public boolean toggleTableVRIni(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
+    }
+    return vrService.toggleTableIni(game);
+  }
+
   @DeleteMapping("/tableini/{gameId}")
   public boolean deleteTableVRIni(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);

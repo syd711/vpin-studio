@@ -245,6 +245,12 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Button vrIniFileEditBtn;
   @FXML
   private Button vrIniFileDeleteBtn;
+  @FXML
+  private Label activeIniTitleLabel;
+  @FXML
+  private Label activeIniLabel;
+  @FXML
+  private ToggleButton activeIniToggleBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -330,6 +336,29 @@ public class TablesSidebarTableDetailsController implements Initializable {
     vrIniFileButtons.setVisible(visible);
   }
 
+  private void setActiveIniRowVisible(boolean visible) {
+    activeIniTitleLabel.setVisible(visible);
+    activeIniLabel.setVisible(visible);
+    activeIniToggleBtn.setVisible(visible);
+  }
+
+  private void refreshActiveIni(boolean vrIniActive) {
+    activeIniToggleBtn.setSelected(vrIniActive);
+    activeIniLabel.setText(Messages.get(vrIniActive ? "tables.tables_sidebar_tabledata.active_ini_vr" : "tables.tables_sidebar_tabledata.active_ini_desktop"));
+  }
+
+  @FXML
+  private void onActiveIniToggle() {
+    if (game.isPresent()) {
+      GameRepresentation gameRepresentation = game.get();
+      boolean vrIniActive = client.getVRService().toggleTableVRIni(gameRepresentation.getId());
+      if (vrIniActive != activeIniToggleBtn.isSelected()) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.vr_ini_toggle_failed"));
+      }
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
+    }
+  }
+
   @FXML
   private void onVrIniCreate() {
     if (game.isPresent()) {
@@ -346,7 +375,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
     if (game.isPresent()) {
       try {
         GameRepresentation gameRepresentation = game.get();
-        String path = gameRepresentation.getVrIniPath();
+        String path = activeIniToggleBtn.isSelected() ? gameRepresentation.getIniPath() : gameRepresentation.getVrIniPath();
         Studio.editGameFile(gameRepresentation, path);
       }
       catch (Exception e) {
@@ -501,10 +530,15 @@ public class TablesSidebarTableDetailsController implements Initializable {
       this.povFileEditBtn.setDisable(game.getPovPath() == null);
       VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
       setVrIniRowVisible(vrSettings.isEnabled());
-      this.vrIniFileLabel.setText(StringUtils.defaultIfEmpty(game.getVrIniPath(), "-"));
-      this.vrIniFileCreateBtn.setDisable(game.getVrIniPath() != null);
-      this.vrIniFileDeleteBtn.setDisable(game.getVrIniPath() == null);
-      this.vrIniFileEditBtn.setDisable(game.getVrIniPath() == null);
+      //while the VR ini is active, it is located at the table ini path
+      boolean vrIniActive = vrSettings.isEnabled() && client.getVRService().isTableVRIniActive(game.getId());
+      String vrIniPath = vrIniActive ? game.getIniPath() : game.getVrIniPath();
+      this.vrIniFileLabel.setText(StringUtils.defaultIfEmpty(vrIniPath, "-"));
+      this.vrIniFileCreateBtn.setDisable(vrIniActive || vrIniPath != null);
+      this.vrIniFileDeleteBtn.setDisable(vrIniActive || vrIniPath == null);
+      this.vrIniFileEditBtn.setDisable(vrIniPath == null);
+      setActiveIniRowVisible(vrSettings.isEnabled() && vrIniPath != null);
+      refreshActiveIni(vrIniActive);
     }
     else {
       autoFillBtn.setVisible(false);
@@ -538,6 +572,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       this.iniFileLabel.setText("-");
       this.povFileLabel.setText("-");
       this.vrIniFileLabel.setText("-");
+      setActiveIniRowVisible(false);
     }
 
     JFXFuture.supplyAsync(() -> {
@@ -677,6 +712,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
     vrIniFileTitleLabel.managedProperty().bindBidirectional(vrIniFileTitleLabel.visibleProperty());
     vrIniFileLabel.managedProperty().bindBidirectional(vrIniFileLabel.visibleProperty());
     vrIniFileButtons.managedProperty().bindBidirectional(vrIniFileButtons.visibleProperty());
+    activeIniTitleLabel.managedProperty().bindBidirectional(activeIniTitleLabel.visibleProperty());
+    activeIniLabel.managedProperty().bindBidirectional(activeIniLabel.visibleProperty());
+    activeIniToggleBtn.managedProperty().bindBidirectional(activeIniToggleBtn.visibleProperty());
 
     popperRuntimeFields.setVisible(Features.FIELDS_EXTENDED);
 

@@ -1594,12 +1594,19 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       String launchScript = rs.getString("LaunchScript");
       if (StringUtils.isNotEmpty(launchScript)) {
         Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
-        Matcher m = pattern.matcher(launchScript);
-        while (m.find()) {
-          String key = m.group(1);
-          String value = m.group(2);
-          if (key != null && key.equals("VPXEXE") && value != null) {
-            exeName = value.trim() + ".exe";
+        for (String line : launchScript.split("\\R")) {
+          String trimmed = line.trim();
+          // skip commented out lines, e.g. "rem SET VPXEXE=VPinballX_GL64.exe"
+          if (StringUtils.startsWithIgnoreCase(trimmed, "rem ") || trimmed.startsWith("::")) {
+            continue;
+          }
+          Matcher m = pattern.matcher(trimmed);
+          while (m.find()) {
+            String key = m.group(1);
+            String value = m.group(2);
+            if (key != null && key.equals("VPXEXE") && value != null) {
+              exeName = value.trim() + ".exe";
+            }
           }
         }
       }

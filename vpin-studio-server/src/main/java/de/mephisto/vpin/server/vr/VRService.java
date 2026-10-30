@@ -336,6 +336,30 @@ public class VRService implements InitializingBean, PreferenceChangedListener, E
     return tableIniSwapper.isSwapped(game.getIniFile());
   }
 
+  /**
+   * Manually switches the table ini between the desktop and the VR variant.
+   *
+   * @return true if the VR ini is active afterwards
+   */
+  public boolean toggleTableIni(@NonNull Game game) {
+    File iniFile = game.getIniFile();
+    GameStatus status = frontendStatusService.getGameStatus();
+    if (status != null && status.isActive() && status.getGameId() == game.getId()) {
+      LOG.warn("Cannot switch the ini of \"{}\", the table is currently running.", game.getGameDisplayName());
+      return tableIniSwapper.isSwapped(iniFile);
+    }
+
+    if (tableIniSwapper.isSwapped(iniFile)) {
+      LOG.info("Switching to the desktop ini for \"{}\"", game.getGameDisplayName());
+      tableIniSwapper.swapOut(iniFile);
+    }
+    else {
+      LOG.info("Switching to the VR ini for \"{}\"", game.getGameDisplayName());
+      tableIniSwapper.swapIn(iniFile);
+    }
+    return tableIniSwapper.isSwapped(iniFile);
+  }
+
   public boolean deleteTableVRIni(@NonNull Game game) {
     File vrIniFile = game.getVRIniFile();
     if (tableIniSwapper.isSwapped(game.getIniFile())) {

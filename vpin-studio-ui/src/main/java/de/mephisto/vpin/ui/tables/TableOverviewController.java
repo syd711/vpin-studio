@@ -1096,30 +1096,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnINI, (value, model) -> {
-      if (value.getIniPath() != null) {
-        Button compBtn = new Button();
-        compBtn.getStyleClass().add("table-media-button");
-        compBtn.setTooltip(new Tooltip(Messages.get("dialog.edit_named", value.getIniPath())));
-        FontIcon cmpIcon = WidgetFactory.createEditIcon(null);
-        cmpIcon.setIconSize(22);
-        compBtn.setGraphic(cmpIcon);
-        compBtn.setOnAction(new EventHandler<ActionEvent>() {
-          @Override
-          public void handle(ActionEvent event) {
-            try {
-              GameRepresentation gameRepresentation = value;
-              String iniPath = gameRepresentation.getIniPath();
-              Studio.editGameFile(gameRepresentation, iniPath);
-            }
-            catch (Exception e) {
-              LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
-            }
-          }
-        });
-        return compBtn;
+      if (value.getIniPath() == null && value.getVrIniPath() == null) {
+        return null;
       }
-      return null;
+      HBox box = new HBox(2);
+      box.setAlignment(Pos.CENTER);
+      if (value.getIniPath() != null) {
+        box.getChildren().add(createIniButton(value, value.getIniPath(), "mdi2d-desktop-classic"));
+      }
+      if (value.getVrIniPath() != null) {
+        box.getChildren().add(createIniButton(value, value.getVrIniPath(), "mdi2v-virtual-reality"));
+      }
+      return box;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRES, (value, model) -> {
@@ -1634,6 +1622,25 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 //    }
     playlistIcon.setTooltip(tooltip);
     return tooltip;
+  }
+
+  private Button createIniButton(GameRepresentation game, String iniPath, String iconLiteral) {
+    Button iniBtn = new Button();
+    iniBtn.getStyleClass().add("table-media-button");
+    iniBtn.setTooltip(new Tooltip(Messages.get("dialog.edit_named", iniPath)));
+    FontIcon iniIcon = WidgetFactory.createIcon(iconLiteral, game.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+    iniIcon.setIconSize(22);
+    iniBtn.setGraphic(iniIcon);
+    iniBtn.setOnAction(event -> {
+      try {
+        Studio.editGameFile(game, iniPath);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
+      }
+    });
+    return iniBtn;
   }
 
   private void setGameRating(GameRepresentation game, int rating) {

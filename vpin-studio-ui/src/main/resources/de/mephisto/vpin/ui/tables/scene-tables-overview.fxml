@@ -40,7 +40,7 @@
                                  <TableColumn fx:id="columnRating" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="%tables.tables_overview.rating" />
                                  <TableColumn fx:id="columnPUPPack" minWidth="57.5999755859375" prefWidth="85.0" style="-fx-alignment: CENTER;" text="%backups.backup_restore.pup_pack" />
                                  <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.backglass" />
-                                 <TableColumn fx:id="columnINI" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backups.backups.ini" />
+                                 <TableColumn fx:id="columnINI" minWidth="70.0" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backups.backups.ini" />
                                  <TableColumn fx:id="columnRES" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
                                  <TableColumn fx:id="columnVBS" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backups.backups.vbs" />
                                  <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="%backups.backups.pov" />
