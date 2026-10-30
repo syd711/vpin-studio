@@ -242,6 +242,11 @@ public class BackupsSidebarController implements Initializable, StudioFXControll
         nvramLabel.setText(applyValue(nvramLabel, packageInfo.getNvRam()));
         resLabel.setText(applyValue(resLabel, packageInfo.getRes()));
         iniLabel.setText(applyValue(iniLabel, packageInfo.getIni()));
+        if (packageInfo.getVrIni() != null) {
+          String iniText = packageInfo.getIni() != null ? iniLabel.getText() + ", " : "";
+          iniLabel.setText(iniText + packageInfo.getVrIni());
+          iniLabel.setTooltip(new Tooltip(iniLabel.getText()));
+        }
         vbsLabel.setText(applyValue(vbsLabel, packageInfo.getVbs()));
         popperLabel.setText(applyValue(popperLabel, packageInfo.getPopperMedia()));
         dmdLabel.setText(applyValue(dmdLabel, packageInfo.getDmd()));

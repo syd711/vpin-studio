@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.vr;
 
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.vr.VRFilesInfo;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import java.io.File;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(API_SEGMENT + "vr")
@@ -22,6 +25,9 @@ public class VRResource {
 
   @Autowired
   private VRService vrService;
+
+  @Autowired
+  private GameService gameService;
 
   @GetMapping("toggle")
   public boolean toggleVR() {
@@ -44,6 +50,24 @@ public class VRResource {
   public GameEmulatorScript saveVrLaunchScript(@PathVariable("emulatorId") int emulatorId,
                                                @RequestBody GameEmulatorScript script) {
     return vrService.saveVRLaunchScript(emulatorId, script);
+  }
+
+  @PostMapping("/tableini/{gameId}")
+  public boolean createTableVRIni(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
+    }
+    return vrService.createTableVRIni(game);
+  }
+
+  @DeleteMapping("/tableini/{gameId}")
+  public boolean deleteTableVRIni(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
+    }
+    return vrService.deleteTableVRIni(game);
   }
 
   @PostMapping("/files/{emulatorId}")

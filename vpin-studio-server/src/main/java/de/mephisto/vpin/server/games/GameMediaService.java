@@ -44,6 +44,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vr.VRTableIniSwapper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -249,6 +250,11 @@ public class GameMediaService extends MediaService {
 
           if (game.getIniFile().exists()) {
             de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getIniFile(), name);
+          }
+
+          //renameToBaseName() would turn "<table>.vr.ini" into "<name>.ini"
+          if (game.getVRIniFile().exists()) {
+            de.mephisto.vpin.restclient.util.FileUtils.rename(game.getVRIniFile(), VRTableIniSwapper.getVRIniFile(new File(game.getGameFolder(), name + ".ini")));
           }
 
           if (game.getBAMCfgFile().exists()) {
@@ -585,6 +591,7 @@ public class GameMediaService extends MediaService {
       FileUtils.cloneFile(original.getPOVFile(), targetSubFolder, target.getName());
       FileUtils.cloneFile(original.getIniFile(), targetSubFolder, target.getName());
       FileUtils.cloneFile(original.getResFile(), targetSubFolder, target.getName());
+      cloneVRIniFile(original, target);
 
       if (uploadDescriptor.isAutoFill()) {
         autoMatch(importedGame, true, false);
@@ -602,6 +609,20 @@ public class GameMediaService extends MediaService {
 
     //update the game id to the new table
     uploadDescriptor.setGameId(returningGameId);
+  }
+
+  /**
+   * Copies the VR ini of the original table next to the given target table file.
+   * FileUtils.cloneFile() can't be used, it would turn "&lt;table&gt;.vr.ini" into "&lt;target&gt;.ini".
+   */
+  public void cloneVRIniFile(Game original, File targetGameFile) throws IOException {
+    File vrIniFile = original.getVRIniFile();
+    if (vrIniFile.exists()) {
+      File targetIniFile = new File(targetGameFile.getParentFile(), FilenameUtils.getBaseName(targetGameFile.getName()) + ".ini");
+      File clone = VRTableIniSwapper.getVRIniFile(targetIniFile);
+      org.apache.commons.io.FileUtils.copyFile(vrIniFile, clone);
+      LOG.info("Cloned VR ini {} → {}", vrIniFile.getAbsolutePath(), clone.getAbsolutePath());
+    }
   }
 
   public void cloneGameMedia(Game original, Game clone) {
@@ -782,6 +803,7 @@ public class GameMediaService extends MediaService {
 
     if (descriptor.isDeleteIni()) {
       success &= step(game, "ini file", () -> SystemUtil.deleteFileOrFolder(game.getIniFile()));
+      success &= step(game, "VR ini file", () -> SystemUtil.deleteFileOrFolder(game.getVRIniFile()));
     }
 
     if (descriptor.isDeleteBAMCfg()) {

@@ -8,13 +8,17 @@
 - **Highscore Backups**: The backups in the highscore backup dialog are now sorted by date, newest first.
 - **Bulk Importer**: Added the import mode "If Missing", which only imports a file if its screen has no media yet.
 - **Webhooks**: Added the webhook types "Table Launch" and "Table Exit" to webhook sets. They are called with the game id when a table is started or exited.
-- **Table Overview**: Enabling or disabling tables from the context menu now runs in a progress dialog, so large selections no longer block the UI.
-- **Table Overview**: Added the checkbox "Pause Menu Todo Tags" below the tag input of the table filter. It adds all tags that are used for the pause menu todo list to the filter, and unchecking it removes them again.
-- **VPin Mania**: Disabled tables are no longer synchronized with VPin Mania. They are excluded from the installed tables list, and their highscores and played counts are not submitted.
-- **VPin Mania**: The VPin Mania settings pages now load their data in a progress dialog when they are opened, so switching between them no longer blocks the UI.
+- **Table Overview**: 
+  - Enabling or disabling tables from the context menu now runs in a progress dialog, so large selections no longer block the UI.
+  - Added the checkbox "Pause Menu Todo Tags" below the tag input of the table filter. It adds all tags that are used for the pause menu todo list to the filter, and unchecking it removes them again.
+  - The backglass column of the table overview and the Backglass Manager now use different icons for .directb2s and .B2SPro files. The tooltip shows the backglass type.
+- **VPin Mania**: 
+  - Disabled tables are no longer synchronized with VPin Mania. They are excluded from the installed tables list, and their highscores and played counts are not submitted.
+  - The VPin Mania settings pages now load their data in a progress dialog when they are opened, so switching between them no longer blocks the UI.
 - **Table Asset Manager**: The full screen button of the "Loading" screen is now a menu button with the new entry "Add Transparent Blank Video (AMD)". AMD graphics cards do not show the transparency of the default blank video, so the loading video was not played transparent. The new entry works like the existing "Add Blank Video" entry, but adds a transparent .mov blank (kudos to the VPU author of the "AMD Blank Tarc for Loading Screens") instead of the .mp4 blank. The file is downloaded into the server's resources folder with the update.
 - **Backglasses**: Added support for .B2SPro backglass files. They are handled like .directb2s files: they can be uploaded (also from archives), are shown in all backglass views and can be edited like .directb2s files. Elements and attributes that are specific to the .B2SPro format are kept when the file is saved. When a table has both a .directb2s and a .B2SPro file, the .B2SPro file is used. Both file types are listed as versions of the same backglass, and setting one as default or disabling the backglass applies to both types. Uploading a backglass in replace mode removes the backglass of the other type. Renaming or deleting a table also renames or deletes its .B2SPro file.
-- **Table Overview / Backglass Manager**: The backglass column of the table overview and the Backglass Manager now use different icons for .directb2s and .B2SPro files. The tooltip shows the backglass type.
+- **VR Support**: Tables can now have their own VR .ini file. When VR support is enabled, the table data section of the table sidebar has the new entry "VR .ini File". It creates "TABLENAME.vr.ini" as a copy of the table's .ini file. While VR mode is on, this file is used instead of the regular .ini file when the table is played, and VPX changes made during VR sessions are kept in it. The VR .ini file is handled together with its table (rename, clone, move, delete, backup).
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/vr.png?raw=true" width="500" />
 
 ### Bugfixes
 

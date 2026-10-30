@@ -44,6 +44,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -412,8 +413,10 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     BaseLoadingColumn.configureColumn(iniColumn, (value, model) -> {
       if (value.getPackageInfo() != null) {
         BackupFileInfo ini = value.getPackageInfo().getIni();
-        if (ini != null) {
-          return WidgetFactory.createCheckboxIcon("#FFFFFF", ini.toString());
+        BackupFileInfo vrIni = value.getPackageInfo().getVrIni();
+        if (ini != null || vrIni != null) {
+          String tooltip = Stream.of(ini, vrIni).filter(Objects::nonNull).map(BackupFileInfo::toString).collect(Collectors.joining(", "));
+          return WidgetFactory.createCheckboxIcon("#FFFFFF", tooltip);
         }
       }
       return new Label("");

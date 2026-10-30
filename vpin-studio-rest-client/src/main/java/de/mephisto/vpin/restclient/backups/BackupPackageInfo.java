@@ -16,6 +16,7 @@ public class BackupPackageInfo {
   private BackupFileInfo popperMedia;
   private BackupFileInfo pov;
   private BackupFileInfo ini;
+  private BackupFileInfo vrIni;
   private BackupFileInfo cfg;
   private BackupFileInfo music;
   private BackupFileInfo altSound;
@@ -107,6 +108,14 @@ public class BackupPackageInfo {
     this.ini = ini;
   }
 
+  public BackupFileInfo getVrIni() {
+    return vrIni;
+  }
+
+  public void setVrIni(BackupFileInfo vrIni) {
+    this.vrIni = vrIni;
+  }
+
   public BackupFileInfo getMusic() {
     return music;
   }
@@ -175,11 +184,11 @@ public class BackupPackageInfo {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     BackupPackageInfo that = (BackupPackageInfo) o;
-    return Objects.equals(directb2s, that.directb2s) && Objects.equals(pupPack, that.pupPack) && Objects.equals(rom, that.rom) && Objects.equals(nvRam, that.nvRam) && Objects.equals(res, that.res) && Objects.equals(vbs, that.vbs) && Objects.equals(popperMedia, that.popperMedia) && Objects.equals(pov, that.pov) && Objects.equals(ini, that.ini) && Objects.equals(cfg, that.cfg) && Objects.equals(music, that.music) && Objects.equals(altSound, that.altSound) && Objects.equals(altColor, that.altColor) && Objects.equals(highscore, that.highscore) && Objects.equals(dmd, that.dmd) && Objects.equals(vpx, that.vpx) && Objects.equals(mameData, that.mameData) && Objects.equals(thumbnail, that.thumbnail);
+    return Objects.equals(directb2s, that.directb2s) && Objects.equals(pupPack, that.pupPack) && Objects.equals(rom, that.rom) && Objects.equals(nvRam, that.nvRam) && Objects.equals(res, that.res) && Objects.equals(vbs, that.vbs) && Objects.equals(popperMedia, that.popperMedia) && Objects.equals(pov, that.pov) && Objects.equals(ini, that.ini) && Objects.equals(vrIni, that.vrIni) && Objects.equals(cfg, that.cfg) && Objects.equals(music, that.music) && Objects.equals(altSound, that.altSound) && Objects.equals(altColor, that.altColor) && Objects.equals(highscore, that.highscore) && Objects.equals(dmd, that.dmd) && Objects.equals(vpx, that.vpx) && Objects.equals(mameData, that.mameData) && Objects.equals(thumbnail, that.thumbnail);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(directb2s, pupPack, rom, nvRam, res, vbs, popperMedia, pov, ini, cfg, music, altSound, altColor, highscore, dmd, vpx, mameData, thumbnail);
+    return Objects.hash(directb2s, pupPack, rom, nvRam, res, vbs, popperMedia, pov, ini, vrIni, cfg, music, altSound, altColor, highscore, dmd, vpx, mameData, thumbnail);
   }
 }

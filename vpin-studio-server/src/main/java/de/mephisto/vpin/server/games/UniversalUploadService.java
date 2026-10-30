@@ -33,6 +33,7 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vr.VRTableIniSwapper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.lingala.zip4j.ZipFile;
@@ -436,6 +437,10 @@ public class UniversalUploadService {
       if (fileType != null) {
         gameAssetFile = new File(gameAssetFile.getParentFile(), FilenameUtils.getBaseName(gameAssetFile.getName()) + fileType.getSuffix());
       }
+    }
+    else if (AssetType.INI.equals(assetType) && sourceFileName != null && sourceFileName.toLowerCase().endsWith(VRTableIniSwapper.VR_INI_SUFFIX)) {
+      // the VR ini of the table, e.g. from a backup, must not replace the table ini
+      gameAssetFile = game.getVRIniFile();
     }
 
     if (UploadType.uploadAndAppend.equals(uploadType)) {

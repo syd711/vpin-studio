@@ -34,6 +34,8 @@ import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.PngFrameCapture;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
+import de.mephisto.vpin.server.vr.VRService;
+import de.mephisto.vpin.server.vr.VRTableIniSwapper;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -105,6 +107,9 @@ public class VpaService implements InitializingBean {
   private DMDDeviceIniService dmdDeviceIniService;
 
   @Autowired
+  private VRService vrService;
+
+  @Autowired
   private VPinMameService vPinMameService;
 
   @Autowired
@@ -169,10 +174,24 @@ public class VpaService implements InitializingBean {
       }
     }
 
+    //while the table is played in VR, the VR ini is in place of the table ini and the desktop ini is parked
     File iniFile = game.getIniFile();
+    File vrIniFile = game.getVRIniFile();
+    if (vrService.isTableIniSwapped(game)) {
+      iniFile = VRTableIniSwapper.getParkedDesktopIniFile(game.getIniFile());
+      vrIniFile = game.getIniFile();
+    }
+
     if (backupSettings.isIni() && iniFile.exists()) {
       packageInfo.setIni(BackupFileInfoFactory.create(iniFile));
-      if (!zipFile(jobDescriptor, iniFile, iniFile.getName(), zipOut)) {
+      if (!zipFile(jobDescriptor, iniFile, game.getIniFile().getName(), zipOut)) {
+        return;
+      }
+    }
+
+    if (backupSettings.isIni() && vrIniFile.exists()) {
+      packageInfo.setVrIni(BackupFileInfoFactory.create(vrIniFile));
+      if (!zipFile(jobDescriptor, vrIniFile, game.getVRIniFile().getName(), zipOut)) {
         return;
       }
     }

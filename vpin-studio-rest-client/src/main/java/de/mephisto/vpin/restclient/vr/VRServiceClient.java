@@ -36,6 +36,14 @@ public class VRServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vr/files/" + emulatorId, VRFilesInfo.class);
   }
 
+  public boolean createTableVRIni(int gameId) {
+    return getRestClient().post(API + "vr/tableini/" + gameId, null, Boolean.class);
+  }
+
+  public boolean deleteTableVRIni(int gameId) {
+    return getRestClient().delete(API + "vr/tableini/" + gameId);
+  }
+
   public GameEmulatorScript saveVrEmulatorLaunchScript(int emulatorId, GameEmulatorScript script) {
     try {
       return getRestClient().post(API + "vr/save/" + emulatorId, script, GameEmulatorScript.class);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -20,9 +21,19 @@ import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -102,5 +113,57 @@ public class UniversalUploadServiceTest {
 
     verifyNoInteractions(vpsService);
     assertThat(descriptor.getOriginalUploadFileName()).isEqualTo("regular_file.zip");
+  }
+
+  @Test
+  void importFileBasedAssets_vrIniFile_isCopiedToVrIni(@TempDir Path tempDir) throws Exception {
+    Game game = game(tempDir);
+    Files.writeString(game.getIniFile().toPath(), "desktop");
+    File upload = tempDir.resolve("upload.tmp").toFile();
+    Files.writeString(upload.toPath(), "vr");
+
+    UploadDescriptor descriptor = new UploadDescriptor();
+    descriptor.setGameId(1);
+    descriptor.setOriginalUploadFileName("Table.vr.ini");
+    descriptor.setTempFilename(upload.getAbsolutePath());
+
+    universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
+
+    assertThat(Files.readString(game.getIniFile().toPath())).isEqualTo("desktop");
+    assertThat(Files.readString(game.getVRIniFile().toPath())).isEqualTo("vr");
+  }
+
+  @Test
+  void importFileBasedAssets_archiveWithIniAndVrIni_restoresBoth(@TempDir Path tempDir) throws Exception {
+    Game game = game(tempDir);
+    File archive = tempDir.resolve("backup.zip").toFile();
+    try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(archive))) {
+      zip.putNextEntry(new ZipEntry("Table.vr.ini"));
+      zip.write("vr".getBytes(StandardCharsets.UTF_8));
+      zip.closeEntry();
+      zip.putNextEntry(new ZipEntry("Table.ini"));
+      zip.write("desktop".getBytes(StandardCharsets.UTF_8));
+      zip.closeEntry();
+    }
+
+    UploadDescriptor descriptor = new UploadDescriptor();
+    descriptor.setGameId(1);
+    descriptor.setOriginalUploadFileName("backup.zip");
+    descriptor.setTempFilename(archive.getAbsolutePath());
+
+    universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
+
+    assertThat(Files.readString(game.getIniFile().toPath())).isEqualTo("desktop");
+    assertThat(Files.readString(game.getVRIniFile().toPath())).isEqualTo("vr");
+  }
+
+  private Game game(Path tempDir) throws IOException {
+    File gameFile = tempDir.resolve("Table.vpx").toFile();
+    Files.writeString(gameFile.toPath(), "");
+    Game game = new Game();
+    game.setGameFile(gameFile);
+    game.setGameFileName(gameFile.getName());
+    when(gameService.getGame(1)).thenReturn(game);
+    return game;
   }
 }

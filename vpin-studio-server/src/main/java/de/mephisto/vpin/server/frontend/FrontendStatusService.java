@@ -118,6 +118,26 @@ public class FrontendStatusService implements InitializingBean {
     }
   }
 
+  /**
+   * Notifies all listeners synchronously that the given table is about to be launched.
+   */
+  public void notifyTableLaunching(@NonNull Game game) {
+    if (!eventsEnabled) {
+      LOG.info("Skipping table launching event, because the event handling is disabled");
+      return;
+    }
+
+    for (TableStatusChangeListener listener : this.tableStatusChangeListeners) {
+      try {
+        listener.tableLaunching(game);
+      }
+      catch (Exception e) {
+        LOG.error("Listener {} failed to prepare the launch of \"{}\": {}",
+            listener.getClass().getSimpleName(), game.getGameDisplayName(), e.getMessage(), e);
+      }
+    }
+  }
+
   public boolean terminate() {
     boolean b = frontendService.killFrontend();
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
@@ -192,6 +212,9 @@ public class FrontendStatusService implements InitializingBean {
       LOG.info("Skipped launch event, since the game has been marked as active already.");
       return false;
     }
+
+    //runs before the frontend receives the response and starts the emulator
+    notifyTableLaunching(game);
 
     new Thread(() -> {
       Thread.currentThread().setName("Game Launch Thread");

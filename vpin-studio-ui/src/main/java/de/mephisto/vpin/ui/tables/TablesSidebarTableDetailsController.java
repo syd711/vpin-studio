@@ -2,12 +2,14 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.VRSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
@@ -26,6 +28,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
@@ -230,6 +233,18 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Button iniFileEditBtn;
   @FXML
   private Button povFileEditBtn;
+  @FXML
+  private Label vrIniFileTitleLabel;
+  @FXML
+  private Label vrIniFileLabel;
+  @FXML
+  private HBox vrIniFileButtons;
+  @FXML
+  private Button vrIniFileCreateBtn;
+  @FXML
+  private Button vrIniFileEditBtn;
+  @FXML
+  private Button vrIniFileDeleteBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -305,6 +320,49 @@ public class TablesSidebarTableDetailsController implements Initializable {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_ini_for_table") + this.game.get().getGameDisplayName() + "'?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getIniService().delete(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+    }
+  }
+
+  private void setVrIniRowVisible(boolean visible) {
+    vrIniFileTitleLabel.setVisible(visible);
+    vrIniFileLabel.setVisible(visible);
+    vrIniFileButtons.setVisible(visible);
+  }
+
+  @FXML
+  private void onVrIniCreate() {
+    if (game.isPresent()) {
+      GameRepresentation gameRepresentation = game.get();
+      if (!client.getVRService().createTableVRIni(gameRepresentation.getId())) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.vr_ini_in_use"));
+      }
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
+    }
+  }
+
+  @FXML
+  private void onVrIniEdit() {
+    if (game.isPresent()) {
+      try {
+        GameRepresentation gameRepresentation = game.get();
+        String path = gameRepresentation.getVrIniPath();
+        Studio.editGameFile(gameRepresentation, path);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open VR .ini file: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
+      }
+    }
+  }
+
+  @FXML
+  private void onVrIniDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_vr_ini_for_table") + this.game.get().getGameDisplayName() + "'?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      if (!client.getVRService().deleteTableVRIni(this.game.get().getId())) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.vr_ini_in_use"));
+      }
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     }
   }
@@ -441,6 +499,12 @@ public class TablesSidebarTableDetailsController implements Initializable {
       this.povFileLabel.setText(StringUtils.defaultIfEmpty(game.getPovPath(), "-"));
       this.povFileDeleteBtn.setDisable(game.getPovPath() == null);
       this.povFileEditBtn.setDisable(game.getPovPath() == null);
+      VRSettings vrSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VR_SETTINGS, VRSettings.class);
+      setVrIniRowVisible(vrSettings.isEnabled());
+      this.vrIniFileLabel.setText(StringUtils.defaultIfEmpty(game.getVrIniPath(), "-"));
+      this.vrIniFileCreateBtn.setDisable(game.getVrIniPath() != null);
+      this.vrIniFileDeleteBtn.setDisable(game.getVrIniPath() == null);
+      this.vrIniFileEditBtn.setDisable(game.getVrIniPath() == null);
     }
     else {
       autoFillBtn.setVisible(false);
@@ -466,9 +530,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
       this.iniFileUploadBtn.setDisable(true);
       this.iniFileEditBtn.setDisable(true);
 
+      this.vrIniFileCreateBtn.setDisable(true);
+      this.vrIniFileDeleteBtn.setDisable(true);
+      this.vrIniFileEditBtn.setDisable(true);
+
       this.resFileLabel.setText("-");
       this.iniFileLabel.setText("-");
       this.povFileLabel.setText("-");
+      this.vrIniFileLabel.setText("-");
     }
 
     JFXFuture.supplyAsync(() -> {
@@ -605,6 +674,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
     popperRuntimeFields.managedProperty().bindBidirectional(popperRuntimeFields.visibleProperty());
     gameMetaDataFields.managedProperty().bindBidirectional(gameMetaDataFields.visibleProperty());
+    vrIniFileTitleLabel.managedProperty().bindBidirectional(vrIniFileTitleLabel.visibleProperty());
+    vrIniFileLabel.managedProperty().bindBidirectional(vrIniFileLabel.visibleProperty());
+    vrIniFileButtons.managedProperty().bindBidirectional(vrIniFileButtons.visibleProperty());
 
     popperRuntimeFields.setVisible(Features.FIELDS_EXTENDED);
 

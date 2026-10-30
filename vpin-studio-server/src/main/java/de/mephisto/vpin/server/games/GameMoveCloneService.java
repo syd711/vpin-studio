@@ -150,6 +150,7 @@ public class GameMoveCloneService {
     FileUtils.cloneFile(original.getPOVFile(), targetParent, target.getName());
     FileUtils.cloneFile(original.getIniFile(), targetParent, target.getName());
     FileUtils.cloneFile(original.getResFile(), targetParent, target.getName());
+    gameMediaService.cloneVRIniFile(original, target);
 
     //carry over ROM/NVRAM, ALT sound/color, DMD package and music assets, see method javadoc
     copyRomAndNvRam(original, importedGame);

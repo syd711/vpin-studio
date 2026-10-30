@@ -10,6 +10,7 @@
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -45,6 +46,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="%tables.tables_sidebar_tabledata.ini_file" textFill="WHITE">
@@ -128,6 +130,38 @@
                                     <Button fx:id="povFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPovDelete" textFill="#ff3333">
                                        <graphic>
                                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="16" text="󰧧" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Label fx:id="vrIniFileTitleLabel" text="%tables.tables_sidebar_tabledata.vr_ini_file" textFill="WHITE" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="vrIniFileLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox fx:id="vrIniFileButtons" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                 <children>
+                                    <Button fx:id="vrIniFileCreateBtn" mnemonicParsing="false" onAction="#onVrIniCreate">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%tables.tables_sidebar_tabledata.vr_ini_create" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="vrIniFileEditBtn" mnemonicParsing="false" onAction="#onVrIniEdit">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="16" />
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="vrIniFileDeleteBtn" mnemonicParsing="false" onAction="#onVrIniDelete" textFill="#ff3333">
+                                       <graphic>
+                                          <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="16" />
                                        </graphic>
                                     </Button>
                                  </children>

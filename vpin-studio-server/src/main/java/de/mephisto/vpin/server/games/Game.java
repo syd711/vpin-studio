@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.vr.VRTableIniSwapper;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -512,6 +513,15 @@ public class Game {
     return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
 
+  /**
+   * The VR variant of the table ini, swapped in place of the table ini when the table is launched in VR mode.
+   */
+  @NonNull
+  @JsonIgnore
+  public File getVRIniFile() {
+    return VRTableIniSwapper.getVRIniFile(getIniFile());
+  }
+
   @NonNull
   @JsonIgnore
   public File getVBSFile() {
@@ -558,6 +568,13 @@ public class Game {
   public String getIniPath() {
     if (this.getIniFile().exists()) {
       return this.getIniFile().getAbsolutePath();
+    }
+    return null;
+  }
+
+  public String getVrIniPath() {
+    if (this.getVRIniFile().exists()) {
+      return this.getVRIniFile().getAbsolutePath();
     }
     return null;
   }

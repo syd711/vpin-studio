@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FuturePinballService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -58,6 +59,9 @@ public class GamesResource {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private FuturePinballService futurePinballService;
@@ -145,6 +149,8 @@ public class GamesResource {
       if (game.isVpxGame()) {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
+        //no game launch event is sent for this launch, so let the listeners prepare the table directly
+        frontendStatusService.notifyTableLaunching(game);
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
           WindowsUtil.focusWindowAsync("Visual Pinball Player");

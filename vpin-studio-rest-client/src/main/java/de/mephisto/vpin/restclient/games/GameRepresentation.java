@@ -87,6 +87,7 @@ public class GameRepresentation {
   private String gameFilePath;
   private String povPath;
   private String iniPath;
+  private String vrIniPath;
   private String resPath;
   private String vbsPath;
   private boolean altSoundAvailable;
@@ -238,6 +239,14 @@ public class GameRepresentation {
 
   public void setIniPath(String iniPath) {
     this.iniPath = iniPath;
+  }
+
+  public String getVrIniPath() {
+    return vrIniPath;
+  }
+
+  public void setVrIniPath(String vrIniPath) {
+    this.vrIniPath = vrIniPath;
   }
 
   public String getResPath() {
