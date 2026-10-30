@@ -1,5 +1,9 @@
 ## Release Notes 5.6.1
 
+### Changes
+
+- **Table Asset Manager**: Adding a landscape video to the PinUP Popper "Loading" screen now offers to add a blank video too, the same as "Add Blank Video": the video gets the "(SCREEN3)" playfield assignment and the blank video becomes the default loading video. Choose "Always Add Blank" to do this automatically, or "Do not show again" to hide the dialog. Both can be reset with "Restore Hidden Dialogs" in the client settings.
+
 
 
 ---

@@ -363,13 +363,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onAudioBlank() {
-    addBlankMedia(screen);
-  }
-
-  private void addBlankMedia(VPinScreen blankScreen) {
     JFXFuture.supplyAsync(() -> {
           int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-          return client.getGameMediaService().addBlank(objectId, isPlaylistMode(), blankScreen);
+          return client.getGameMediaService().addBlank(objectId, isPlaylistMode(), screen);
         })
         .thenAcceptLater(status -> {
           if (isGameMode()) {
@@ -409,8 +405,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     try {
       int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
       FrontendMediaRepresentation media = client.getGameMediaService().getMedia(objectId, isPlaylistMode());
-      boolean landscapeVideoAdded = media.getMediaItems(mediaScreen).stream()
+      List<FrontendMediaItemRepresentation> mediaItems = media.getMediaItems(mediaScreen);
+      if (mediaItems.size() != 1) {
+        return;
+      }
+      boolean landscapeVideoAdded = mediaItems.stream()
           .filter(item -> MimeTypeUtil.isVideo(item.getMimeType()))
+          .filter(item -> !item.getName().contains("(SCREEN"))
           .filter(item -> !snapshot.containsKey(item.getName()) || !Objects.equals(snapshot.get(item.getName()), item.getModificationDate()))
           .anyMatch(item -> isLandscapeVideo(objectId, mediaScreen, item));
       if (!landscapeVideoAdded) {
@@ -419,7 +420,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isAlwaysAddLoadingBlankVideo()) {
-        addBlankMedia(mediaScreen);
+        toFullScreen(mediaScreen, false);
         return;
       }
       if (uiSettings.isHideLoadingBlankVideoConfirmation()) {
@@ -441,7 +442,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       if (confirmationResult.isOkClicked() || confirmationResult.isApplyClicked()) {
-        addBlankMedia(mediaScreen);
+        toFullScreen(mediaScreen, false);
       }
     }
     catch (Exception e) {
@@ -523,17 +524,21 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void toFullScreen(boolean amd) {
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      try {
-        int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-        if (!client.getGameMediaService().toFullScreen(objectId, isPlaylistMode(), screen, amd)) {
-          WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed"));
-        }
-      }
-      catch (Exception e) {
-        WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed") + e.getMessage());
-      }
-      refreshTableMediaView();
+      toFullScreen(screen, amd);
     }
+  }
+
+  private void toFullScreen(VPinScreen mediaScreen, boolean amd) {
+    try {
+      int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+      if (!client.getGameMediaService().toFullScreen(objectId, isPlaylistMode(), mediaScreen, amd)) {
+        WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed"));
+      }
+    }
+    catch (Exception e) {
+      WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed") + e.getMessage());
+    }
+    refreshTableMediaView();
   }
 
   @FXML
