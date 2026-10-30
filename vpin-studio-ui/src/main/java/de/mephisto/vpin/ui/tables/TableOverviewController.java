@@ -906,6 +906,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
 
       emulatorBtn.setDisable(newSelection == null || newSelection.getId() <= -1);
+      if (newSelection != null && uploadsButtonController != null) {
+        uploadsButtonController.updateVisibility(newSelection);
+      }
       this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
     });
   }
