@@ -83,10 +83,10 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       if (activeTableId >= 0) {
         Game lastGamePlayed = gameService.getGame(activeTableId);
         if (lastGamePlayed != null && lastGamePlayed.getId() != game.getId()) {
-          highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
+          highscoreService.scanScore(lastGamePlayed, EventOrigin.TABLE_EXIT_EVENT);
         }
-        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId(), false);
       }
+      preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId(), false);
     }
     catch (Exception e) {
       LOG.info("Failed to refresh game: {}", e.getMessage(), e);

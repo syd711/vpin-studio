@@ -553,7 +553,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (Features.MANIA_ENABLED) {
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       Game game = event.getGame();
-      if (maniaSettings.isSubmitPlayed() && !game.isDisabled() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+      //launches from the Studio are mostly test runs, so they are not counted as plays
+      boolean studioLaunch = TableStatusChangedOrigin.ORIGIN_STUDIO.equals(event.getOrigin());
+      if (!studioLaunch && maniaSettings.isSubmitPlayed() && !game.isDisabled() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
         refreshDefaultCabinet();
         Cabinet cabinet = maniaClient.getCabinetClient().getDefaultCabinetCached();
 

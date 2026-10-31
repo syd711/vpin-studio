@@ -24,10 +24,41 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+import java.util.function.LongSupplier;
 
 @Service
 public class FrontendStatusService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
+
+  /**
+   * Polling interval of the emulator process check for tables launched from the Studio.
+   */
+  final static int STUDIO_LAUNCH_POLL_INTERVAL_SECONDS = 3;
+  /**
+   * Maximum time to wait for the emulator to show up after a Studio launch (Steam games may take a while).
+   */
+  final static long STUDIO_LAUNCH_STARTUP_TIMEOUT_MS = 90_000;
+  /**
+   * Number of consecutive negative checks before the table is considered as exited,
+   * e.g. to survive the FPLoader → Future Pinball handover or a recreated VPX player window.
+   */
+  final static int STUDIO_LAUNCH_REQUIRED_MISSES = 2;
+
+  //non-final and package-private so that tests can replace the process check, the clock and the scheduler
+  BooleanSupplier emulatorRunningCheck = SystemService::isPinballEmulatorRunning;
+  LongSupplier clock = System::currentTimeMillis;
+  ScheduledExecutorService studioLaunchScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+    Thread thread = new Thread(r, "Studio Launch Monitor");
+    thread.setDaemon(true);
+    return thread;
+  });
+  private ScheduledFuture<?> studioLaunchMonitor;
+  private StudioLaunchMonitor activeStudioLaunchMonitor;
 
   private final List<TableStatusChangeListener> tableStatusChangeListeners = new ArrayList<>();
   private final List<FrontendStatusChangeListener> frontendStatusChangeListeners = new ArrayList<>();
@@ -152,6 +183,9 @@ public class FrontendStatusService implements InitializingBean {
       return;
     }
 
+    //the frontend has taken over again
+    stopStudioLaunchMonitor();
+
     HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
     if (highscoreEventLog != null) {
       gameService.saveEventLog(highscoreEventLog);
@@ -213,6 +247,9 @@ public class FrontendStatusService implements InitializingBean {
       return false;
     }
 
+    //the frontend has taken over again
+    stopStudioLaunchMonitor();
+
     //runs before the frontend receives the response and starts the emulator
     notifyTableLaunching(game);
 
@@ -236,20 +273,121 @@ public class FrontendStatusService implements InitializingBean {
       return false;
     }
 
-    return onGameExit(game);
+    return onGameExit(game, TableStatusChangedOrigin.ORIGIN_POPPER);
   }
 
-  private boolean onGameExit(@NonNull Game game) {
+  /**
+   * Fires the table launch event for a table that has been launched from the Studio and starts monitoring
+   * the emulator processes, so that the table exit event is fired once no emulator is running anymore.
+   * The frontend is not involved in this case, so it won't send any launch or exit events.
+   */
+  public void notifyStudioLaunch(@NonNull Game game) {
+    if (!eventsEnabled) {
+      LOG.info("Skipping Studio launch event, because the event handling is disabled");
+      return;
+    }
+
+    LOG.info("Received Studio launch event for \"{}\"", game.getGameDisplayName());
+    startStudioLaunchMonitor(game);
+
+    new Thread(() -> {
+      Thread.currentThread().setName("Studio Game Launch Thread");
+      notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_STUDIO);
+    }).start();
+  }
+
+  private synchronized void startStudioLaunchMonitor(@NonNull Game game) {
+    stopStudioLaunchMonitor();
+    StudioLaunchMonitor monitor = new StudioLaunchMonitor(game);
+    activeStudioLaunchMonitor = monitor;
+    studioLaunchMonitor = studioLaunchScheduler.scheduleWithFixedDelay(monitor, STUDIO_LAUNCH_POLL_INTERVAL_SECONDS, STUDIO_LAUNCH_POLL_INTERVAL_SECONDS, TimeUnit.SECONDS);
+  }
+
+  /**
+   * The monitor of the current Studio launch, if any. Visible for testing.
+   */
+  @Nullable
+  synchronized Runnable getActiveStudioLaunchMonitor() {
+    return activeStudioLaunchMonitor;
+  }
+
+  private synchronized void stopStudioLaunchMonitor() {
+    if (studioLaunchMonitor != null) {
+      studioLaunchMonitor.cancel(false);
+      studioLaunchMonitor = null;
+      activeStudioLaunchMonitor = null;
+      LOG.info("Stopped emulator monitoring of the last Studio launch.");
+    }
+  }
+
+  private synchronized void finishStudioLaunchMonitor(@NonNull StudioLaunchMonitor monitor) {
+    //the monitor may have been replaced by a newer launch in the meantime
+    if (activeStudioLaunchMonitor == monitor) {
+      studioLaunchMonitor.cancel(false);
+      studioLaunchMonitor = null;
+      activeStudioLaunchMonitor = null;
+      onGameExit(monitor.game, TableStatusChangedOrigin.ORIGIN_STUDIO);
+    }
+  }
+
+  /**
+   * Polls the emulator processes: first waits for the emulator to be started, then waits for it to be gone.
+   */
+  private class StudioLaunchMonitor implements Runnable {
+    private final Game game;
+    private final long startedAt = clock.getAsLong();
+    private boolean emulatorDetected = false;
+    private int misses = 0;
+
+    StudioLaunchMonitor(@NonNull Game game) {
+      this.game = game;
+    }
+
+    @Override
+    public void run() {
+      try {
+        boolean running = emulatorRunningCheck.getAsBoolean();
+        if (!emulatorDetected) {
+          if (running) {
+            emulatorDetected = true;
+            LOG.info("Emulator for Studio launch of \"{}\" detected, waiting for its exit.", game.getGameDisplayName());
+          }
+          else if (clock.getAsLong() - startedAt > STUDIO_LAUNCH_STARTUP_TIMEOUT_MS) {
+            LOG.warn("No emulator detected {}ms after the Studio launch of \"{}\", firing table exit.", STUDIO_LAUNCH_STARTUP_TIMEOUT_MS, game.getGameDisplayName());
+            finishStudioLaunchMonitor(this);
+          }
+          return;
+        }
+
+        if (running) {
+          misses = 0;
+          return;
+        }
+
+        misses++;
+        if (misses >= STUDIO_LAUNCH_REQUIRED_MISSES) {
+          LOG.info("No emulator running anymore, Studio launched table \"{}\" has been exited.", game.getGameDisplayName());
+          finishStudioLaunchMonitor(this);
+        }
+      }
+      catch (Exception e) {
+        //an exception would cancel the scheduled task silently
+        LOG.error("Studio launch monitoring failed for \"{}\": {}", game.getGameDisplayName(), e.getMessage(), e);
+      }
+    }
+  }
+
+  private boolean onGameExit(@NonNull Game game, @NonNull TableStatusChangedOrigin origin) {
     new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
       SLOG.initLog(game.getId());
       if (!gameStatusService.getStatus().isActive()) {
-        LOG.info("Skipped exit event, since t11he no game is currently running.");
+        LOG.info("Skipped exit event, since no game is currently running.");
         SLOG.info("Skipped event processing, since the no game is currently running.");
         return;
       }
 
-      notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
+      notifyTableStatusChange(game, false, origin);
       HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
       if (highscoreEventLog != null) {
         gameService.saveEventLog(highscoreEventLog);

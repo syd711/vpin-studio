@@ -5,10 +5,18 @@
 - **Table Asset Manager**: Adding a landscape video to the PinUP Popper "Loading" screen now offers to also add a blank video, like "Add Blank Video" does. Choose "Always Add Blank" to do this automatically, or "Do not show again" to hide the dialog. Both can be reset with "Restore Hidden Dialogs" in the client settings.
 - **Bulk Importer**: Added the "Emulator" filter to the import settings, so media can now be imported for the tables of all emulators. When an emulator is selected, files are only matched to its tables. The selection is remembered for the next import.
 - **Backglasses / Media Recorder**: The emulator filters now work like the one of the "All Tables" tab, including the "All VPX Tables" entry, which is selected by default when more than one VPX emulator is set up. The emulator selection of the "All Tables", "Backglasses" and "Media Recorder" tabs is now remembered when the client is restarted. 
+- **Table Launch from the Studio**: Tables launched from the VPin Studio are now handled like tables launched from the frontend. Before, only PinUP Popper reported table starts and exits. The server now checks every few seconds whether the emulator is still running, and the table counts as exited once the emulator is closed. This means for tables launched from the Studio:
+  - The Discord status and the VPin Mania "playing now" status show the table while it is played.
+  - The "Table Launch" and "Table Exit" webhooks are called.
+  - After the table is exited, its highscore is scanned, the highscore card is updated and the iScored game rooms are synchronized.
+  - The VPin Mania play count is **not** increased, since launches from the Studio are mostly test runs.
+  - Launches in camera mode are not handled like this, since they are not actual plays.
 
 ### Bugfixes
 
 - **Media Recorder**: Fixed new tables being added to the table list of the "Media Recorder" tab even when they belonged to a different emulator than the selected one.
+- **VR Support**: Fixed the regular .ini file of a table launched from the Studio in VR mode only being restored when the next table was launched. It is now restored when the table is exited.
+- **Highscores**: Fixed the highscore of the previously played table not being rescanned when the next table is launched. The table that was just being launched was scanned instead. This rescan catches highscores of tables that were exited without an exit event, e.g. because the cabinet was switched off.
 
 
 
