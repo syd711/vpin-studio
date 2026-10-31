@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
@@ -248,26 +247,10 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         setCompetition(competition);
         root.setVisible(true);
         if (competition != null) {
-          if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-            DiscordServer discordServer = ServerFX.client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
-            if (discordServer != null) {
-              titleLabel.setText(Messages.get("widgets.widget_competition.discord", discordServer.getName()));
-            }
-            else {
-              titleLabel.setText(Messages.get("widgets.widget_competition.discord_invalid_server_id"));
-            }
-          }
-          else {
-            titleLabel.setText(Messages.get("widgets.widget_competition.offline", competition.getName()));
-          }
+          titleLabel.setText(Messages.get("widgets.widget_competition.offline", competition.getName()));
         }
         else {
-          if (competitionType.equals(CompetitionType.DISCORD)) {
-            titleLabel.setText(Messages.get("widgets.widget_competition.no_discord_competition_found"));
-          }
-          else {
-            titleLabel.setText(Messages.get("widgets.widget_competition.no_offline_competition_found"));
-          }
+          titleLabel.setText(Messages.get("widgets.widget_competition.no_offline_competition_found"));
         }
         viewStack.getChildren().remove(loadingOverlay);
       });

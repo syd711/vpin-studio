@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.listeners;
 
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.competitions.CompetitionService;
-import de.mephisto.vpin.server.discord.DiscordCompetitionService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -10,7 +8,6 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,10 +30,6 @@ public class HighscoreChangeListenerImplTest {
   private CompetitionService competitionService;
   @Mock
   private DiscordService discordService;
-  @Mock
-  private PreferencesService preferencesService;
-  @Mock
-  private DiscordCompetitionService discordCompetitionService;
   @Mock
   private HighscoreParsingService highscoreParsingService;
 
@@ -97,28 +90,14 @@ public class HighscoreChangeListenerImplTest {
     verify(discordService, never()).sendDefaultHighscoreMessage(any());
   }
 
-  @Test
-  void highscoreChanged_updatesSubscriptionChannels_forEachSubscription() {
-    setupCommonStubs();
-    HighscoreChangeEvent event = buildEvent(true, false, "");
-
-    listener.highscoreChanged(event);
-
-    verify(competitionService).getSubscriptions(any());
-  }
-
   // --- helpers ---
 
   private void setupCommonStubs() {
-    when(preferencesService.getPreferenceValue(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS))
-        .thenReturn(false);
-    when(competitionService.getSubscriptions(any())).thenReturn(Collections.emptyList());
     when(competitionService.getCompetitionForGame(anyInt())).thenReturn(Collections.emptyList());
   }
 
   private HighscoreChangeEvent buildEvent(boolean initialScore, boolean eventReplay, String raw) {
     Game game = mock(Game.class);
-    when(game.getRom()).thenReturn("rom1");
     when(game.getId()).thenReturn(1);
     Score newScore = new Score(Instant.now(), 1, "AAA", null, "raw", 1000000L, 1);
     Score oldScore = new Score(Instant.now(), 1, "???", null, "raw", 0L, 2);

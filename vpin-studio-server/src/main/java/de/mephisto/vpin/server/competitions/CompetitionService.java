@@ -3,13 +3,11 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
-import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import org.jspecify.annotations.NonNull;
@@ -41,13 +39,7 @@ public class CompetitionService implements InitializingBean {
   private HighscoreService highscoreService;
 
   @Autowired
-  private HighscoreParsingService highscoreParser;
-
-  @Autowired
   private PlayerService playerService;
-
-  @Autowired
-  private DiscordService discordService;
 
   @Autowired
   private ThreadPoolTaskScheduler scheduler;
@@ -71,13 +63,6 @@ public class CompetitionService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
-  public List<Competition> getDiscordCompetitions() {
-    return competitionsRepository
-        .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
-        .stream().map(c -> competitionValidator.validate(c))
-        .collect(Collectors.toList());
-  }
-
   public List<Competition> getWeeklyCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.WEEKLY.name())
@@ -92,30 +77,8 @@ public class CompetitionService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
-  public List<Competition> getSubscriptions() {
-    return competitionsRepository
-        .findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name())
-        .stream().map(c -> competitionValidator.validate(c))
-        .collect(Collectors.toList());
-  }
-
   public List<Competition> getIScoredSubscriptions() {
     return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name());
-  }
-
-  public List<Competition> getSubscriptions(String rom) {
-    return competitionsRepository
-        .findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom)
-        .stream().map(c -> competitionValidator.validate(c))
-        .collect(Collectors.toList());
-  }
-
-  public List<Player> getDiscordCompetitionPlayers(long competitionId) {
-    Competition competition = this.getCompetition(competitionId);
-    if (competition != null) {
-      return discordService.getCompetitionPlayers(competition.getDiscordServerId(), competition.getDiscordChannelId());
-    }
-    return Collections.emptyList();
   }
 
   public Competition getCompetition(long id) {
@@ -153,15 +116,6 @@ public class CompetitionService implements InitializingBean {
       long serverId = competition.getDiscordServerId();
         return highscoreService.getScoresBetween(game, start, end, serverId);
     }
-    else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      long serverId = competition.getDiscordServerId();
-      long channelId = competition.getDiscordChannelId();
-      ScoreSummary highscore = discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
-      ScoreList scoreList = new ScoreList();
-      scoreList.setLatestScore(highscore);
-      scoreList.setScores(Collections.singletonList(highscore));
-      return scoreList;
-    }
 
     return null;
   }
@@ -170,12 +124,6 @@ public class CompetitionService implements InitializingBean {
   public ScoreSummary getCompetitionScore(long competitionId) {
     Competition competition = getCompetition(competitionId);
     long serverId = competition.getDiscordServerId();
-    long channelId = competition.getDiscordChannelId();
-
-    String type = competition.getType();
-    if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
-      return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
-    }
 
     return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
@@ -202,7 +150,7 @@ public class CompetitionService implements InitializingBean {
    * Important: finish competitions first as we have to "release" the channel topic for the next one.
    */
   public void runCompetitionsFinishedAndStartedCheck() {
-    //check all competitions for their finish state, this includes Discord ones, since the date can't be changed
+    //check all competitions for their finish state
     List<Competition> openCompetitions = getCompetitionToBeFinished();
     if (!openCompetitions.isEmpty()) {
       LOG.info("Running automated competition status check, found {} candidates.", openCompetitions.size());
@@ -222,26 +170,6 @@ public class CompetitionService implements InitializingBean {
         competitionsRepository.saveAndFlush(activeCompetition);
 
         competitionLifecycleService.notifyCompetitionStarted(activeCompetition);
-      }
-
-      if (activeCompetition.isActive() && activeCompetition.isStarted() && activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
-        long serverId = activeCompetition.getDiscordServerId();
-        long channelId = activeCompetition.getDiscordChannelId();
-        boolean active = discordService.isCompetitionActive(serverId, channelId, activeCompetition.getUuid());
-        if (!active) {
-          LOG.info("Found active competition {}, trying to resolve winner data.", activeCompetition);
-          ScoreSummary competitionScore = getCompetitionsFinalScore(activeCompetition);
-          if (competitionScore.getScores().isEmpty()) {
-            activeCompetition.setWinnerInitials("???");
-          }
-          else {
-            Score score = competitionScore.getScores().getFirst();
-            String initials = StringUtils.hasText(score.getPlayerInitials()) ? score.getPlayerInitials() : "???";
-            activeCompetition.setWinnerInitials(initials);
-          }
-          competitionsRepository.saveAndFlush(activeCompetition);
-          LOG.info("Finished {}, winner is '{}'", activeCompetition, activeCompetition.getWinnerInitials());
-        }
       }
     }
   }
@@ -270,9 +198,6 @@ public class CompetitionService implements InitializingBean {
     Player player = null;
     if (finishedCompetition.getType().equals(CompetitionType.OFFLINE.name())) {
       player = playerService.getPlayerForInitials(finishedCompetition.getDiscordServerId(), finishedCompetition.getWinnerInitials());
-    }
-    else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      player = discordService.getPlayerByInitials(finishedCompetition.getDiscordServerId(), finishedCompetition.getWinnerInitials());
     }
 
     competitionLifecycleService.notifyCompetitionFinished(finishedCompetition, player, competitionScore);
@@ -338,9 +263,6 @@ public class CompetitionService implements InitializingBean {
   @NonNull
   private ScoreSummary getCompetitionsFinalScore(@NonNull Competition competition) {
     long serverId = competition.getDiscordServerId();
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
-    }
     Game game = gameService.getGame(competition.getGameId());
     if (game == null) {
       return new ScoreSummary();
@@ -348,8 +270,29 @@ public class CompetitionService implements InitializingBean {
     return highscoreService.getScoreSummary(serverId, game);
   }
 
+  /**
+   * The competition types "DISCORD" and "SUBSCRIPTION" have been removed.
+   * Existing competitions of these types are deleted, since they can't be mapped onto a {@link CompetitionType} anymore.
+   */
+  private void deleteRemovedCompetitionTypes() {
+    for (String removedType : List.of("DISCORD", "SUBSCRIPTION")) {
+      try {
+        List<Competition> competitions = competitionsRepository.findByTypeOrderByEndDateDesc(removedType);
+        for (Competition competition : competitions) {
+          assetService.deleteCompetitionBackground(competition.getGameId());
+          competitionsRepository.deleteById(competition.getId());
+          LOG.info("Deleted competition \"{}\" of removed type {}", competition.getName(), removedType);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to delete competitions of removed type {}: {}", removedType, e.getMessage(), e);
+      }
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
+    deleteRemovedCompetitionTypes();
     try {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");

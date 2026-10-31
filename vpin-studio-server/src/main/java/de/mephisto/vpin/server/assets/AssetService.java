@@ -237,12 +237,6 @@ public class AssetService {
   }
 
 
-  public byte[] getSubscriptionCard(@NonNull Competition competition, @NonNull Game game) {
-    Asset asset = getCompetitionBackground(competition.getGameId());
-    File wheelFile = frontendService.getWheelImage(game);
-    return AssetFactory.createSubscriptionCard(asset, game, wheelFile, competition);
-  }
-
   public byte[] getCompetitionStartedCard(@NonNull Competition competition, @NonNull Game game) {
     Asset asset = getCompetitionBackground(competition.getGameId());
     File wheelFile = frontendService.getWheelImage(game);
