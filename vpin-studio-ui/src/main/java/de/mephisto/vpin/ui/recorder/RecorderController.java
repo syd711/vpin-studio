@@ -67,6 +67,8 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 public class RecorderController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderController.class);
+
+  private static final String EMULATOR_SELECTION = "recorderEmulatorSelection";
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
 
@@ -341,25 +343,20 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getGameEmulatorsUncached());
-    List<GameEmulatorRepresentation> filtered = emulators.stream()
-        .filter(e -> e.isEnabled())
-        .filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId())))
-        .sorted(Comparator.comparing(GameEmulatorRepresentation::getName))
-        .collect(Collectors.toList());
+    List<GameEmulatorRepresentation> filtered = client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings);
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
 
     if (selectedEmu == null) {
-      this.emulatorCombo.getSelectionModel().selectFirst();
+      this.emulatorCombo.getSelectionModel().select(TableOverviewController.getInitialEmulatorSelection(filtered, EMULATOR_SELECTION));
     }
     else {
       int selectedId = selectedEmu.getId();
       filtered.stream().filter(e -> e.getId() == selectedId).findFirst()
           .ifPresentOrElse(
               e -> this.emulatorCombo.getSelectionModel().select(e),
-              () -> this.emulatorCombo.getSelectionModel().selectFirst());
+              () -> this.emulatorCombo.getSelectionModel().select(TableOverviewController.getInitialEmulatorSelection(filtered, EMULATOR_SELECTION)));
     }
 
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
@@ -786,7 +783,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       else {
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
+        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || (value.getId() == ALL_VPX_ID && client.getEmulatorService().isVpxGame(refreshedGame)))) {
           models.addFirst( new GameRepresentationModel(refreshedGame));
         }
       }
@@ -824,6 +821,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
       LOG.info("Emulator selection changed to {}", newValue);
+      TableOverviewController.saveEmulatorSelection(EMULATOR_SELECTION, newValue);
       selection.clear();
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {

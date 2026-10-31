@@ -10,6 +10,8 @@ import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
@@ -17,6 +19,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.validation.BackglassValidationTexts;
@@ -60,6 +63,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
+
+  private static final String EMULATOR_SELECTION = "backglassesEmulatorSelection";
   public static Debouncer debouncer = new Debouncer();
 
 
@@ -138,7 +143,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onEmulatorManager() {
     GameEmulatorRepresentation emu = emulatorCombo.getSelectionModel().getSelectedItem();
-    if (emu != null) {
+    if (emu != null && emu.getId() != TableOverviewController.ALL_VPX_ID) {
       NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
     }
   }
@@ -199,7 +204,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onResBulkEdit(ActionEvent e) {
     GameEmulatorRepresentation emulator = emulatorCombo.getValue();
-    if (emulator != null && BackglassManagerDialogs.openResBulkEdit(emulator.getId())) {
+    if (emulator != null && emulator.getId() != TableOverviewController.ALL_VPX_ID && BackglassManagerDialogs.openResBulkEdit(emulator.getId())) {
       reloadSelection();
     }
   }
@@ -290,11 +295,19 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     refreshEmulators();
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getBackglasses()).thenAcceptLater(data -> {
-      if (emulatorCombo.getValue() == null) {
+      GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+      if (emulator == null) {
         setItems(data);
       }
+      else if (emulator.getId() == TableOverviewController.ALL_VPX_ID) {
+        Set<Integer> vpxEmulatorIds = emulatorCombo.getItems().stream()
+            .filter(e -> e.isVpxEmulator() && e.getId() != TableOverviewController.ALL_VPX_ID)
+            .map(GameEmulatorRepresentation::getId)
+            .collect(Collectors.toSet());
+        setItems(data.stream().filter(d -> vpxEmulatorIds.contains(d.getEmulatorId())).collect(Collectors.toList()));
+      }
       else {
-        setItems(data.stream().filter(d -> d.getEmulatorId() == emulatorCombo.getValue().getId()).collect(Collectors.toList()));
+        setItems(data.stream().filter(d -> d.getEmulatorId() == emulator.getId()).collect(Collectors.toList()));
       }
       endReload();
     });
@@ -311,20 +324,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     JFXFuture.supplyAsync(() -> {
       return getEmulatorList();
     }).thenAcceptLater(emulators -> {
-      List<GameEmulatorRepresentation> pl = new ArrayList<>(emulators);
-      pl.addFirst(null);
-      emulatorCombo.setItems(FXCollections.observableList(pl));
+      emulatorCombo.setItems(FXCollections.observableList(emulators));
 
-      if (selected != null) {
-        selectItem(emulatorCombo, p -> p.getId() == selected.getId());
-      }
+      Optional<GameEmulatorRepresentation> previous = selected != null ? emulators.stream().filter(e -> e.getId() == selected.getId()).findFirst() : Optional.empty();
+      emulatorCombo.setValue(previous.orElseGet(() -> TableOverviewController.getInitialEmulatorSelection(emulators, EMULATOR_SELECTION)));
       this.emulatorCombo.setDisable(false);
     });
   }
 
   private List<GameEmulatorRepresentation> getEmulatorList() {
-    List<GameEmulatorRepresentation> validatedGameEmulators = client.getEmulatorService().getValidatedGameEmulators();
-    return validatedGameEmulators.stream().filter(e -> e.isVpxEmulator() || e.isFpEmulator() || e.isFxEmulator()).collect(Collectors.toList());
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings);
+    return emulators.stream().filter(e -> e.isVpxEmulator() || e.isFpEmulator() || e.isFxEmulator()).collect(Collectors.toList());
   }
 
   @Override
@@ -363,15 +374,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       emulatorCombo.setItems(FXCollections.observableList(emulators));
       // preselect before registering the listener, otherwise the backglasses are reloaded on startup
       // instead of lazily when the backglass view is activated
-      if (!emulators.isEmpty()) {
-        emulatorCombo.setValue(emulators.getFirst());
-      }
+      emulatorCombo.setValue(TableOverviewController.getInitialEmulatorSelection(emulators, EMULATOR_SELECTION));
       emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
         @Override
         public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
           if (emulatorCombo.isDisabled()) {
             return;
           }
+          TableOverviewController.saveEmulatorSelection(EMULATOR_SELECTION, newValue);
           doReload();
         }
       });

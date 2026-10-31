@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -101,6 +102,51 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static final int ALL_VPX_ID = -10;
+
+  private static final String EMULATOR_SELECTION = "tablesEmulatorSelection";
+
+  /**
+   * Returns the initial value for the emulator combos of the tables tabs:
+   * the emulator persisted for the given key, if it still exists, otherwise "All VPX Tables" if available
+   * (more than one VPX emulator), otherwise the emulator persisted by the "All Tables" view, falling back to the first entry.
+   */
+  public static GameEmulatorRepresentation getInitialEmulatorSelection(List<GameEmulatorRepresentation> emulators, String selectionKey) {
+    if (emulators.isEmpty()) {
+      return null;
+    }
+    Optional<GameEmulatorRepresentation> saved = findPersistedEmulator(emulators, selectionKey);
+    if (saved.isPresent()) {
+      return saved.get();
+    }
+    Optional<GameEmulatorRepresentation> allVpx = emulators.stream().filter(e -> e != null && e.getId() == ALL_VPX_ID).findFirst();
+    if (allVpx.isPresent()) {
+      return allVpx.get();
+    }
+    return findPersistedEmulator(emulators, EMULATOR_SELECTION).orElse(emulators.getFirst());
+  }
+
+  public static void saveEmulatorSelection(String selectionKey, GameEmulatorRepresentation emulator) {
+    if (emulator != null) {
+      LocalUISettings.saveProperty(selectionKey, String.valueOf(emulator.getId()));
+    }
+  }
+
+  /**
+   * The persisted emulator may have been deleted or ignored in the meantime, so it is only returned when it is still part of the list.
+   */
+  private static Optional<GameEmulatorRepresentation> findPersistedEmulator(List<GameEmulatorRepresentation> emulators, String selectionKey) {
+    String savedId = LocalUISettings.getString(selectionKey);
+    if (!StringUtils.isEmpty(savedId)) {
+      try {
+        int id = Integer.parseInt(savedId);
+        return emulators.stream().filter(e -> e != null && e.getId() == id).findFirst();
+      }
+      catch (NumberFormatException e) {
+        LOG.warn("Invalid persisted emulator selection '{}' for '{}'", savedId, selectionKey);
+      }
+    }
+    return Optional.empty();
+  }
 
   @FXML
   private Separator deleteSeparator;
@@ -901,7 +947,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       GameEmulatorRepresentation newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
       if (newSelection == null) {
-        this.emulatorCombo.getSelectionModel().selectFirst();
+        this.emulatorCombo.getSelectionModel().select(getInitialEmulatorSelection(filtered, EMULATOR_SELECTION));
         newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
       }
 
@@ -2329,6 +2375,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      saveEmulatorSelection(EMULATOR_SELECTION, newValue);
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {
         reloadConsumers.add(selection -> {
