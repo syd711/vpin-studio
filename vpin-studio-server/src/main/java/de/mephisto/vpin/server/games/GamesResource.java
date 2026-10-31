@@ -149,10 +149,14 @@ public class GamesResource {
       if (game.isVpxGame()) {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
-        //no game launch event is sent for this launch, so let the listeners prepare the table directly
+        //the frontend is not involved in this launch, so let the listeners prepare the table directly
         frontendStatusService.notifyTableLaunching(game);
         if (vpxService.play(game, altExe, option)) {
           gameStatusService.setActiveStatus(id);
+          //the camera mode is no actual play
+          if (!"cameraMode".equals(option)) {
+            frontendStatusService.notifyStudioLaunch(game);
+          }
           WindowsUtil.focusWindowAsync("Visual Pinball Player");
           return true;
         }
@@ -160,24 +164,30 @@ public class GamesResource {
       else if (game.isFpGame()) {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
+        frontendStatusService.notifyTableLaunching(game);
         if (futurePinballService.play(game, altExe)) {
           gameStatusService.setActiveStatus(id);
+          frontendStatusService.notifyStudioLaunch(game);
           return true;
         }
       }
       else if (game.isZenGame() || game.isZaccariaGame()) {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
+        frontendStatusService.notifyTableLaunching(game);
         if (steamService.play(game)) {
           gameStatusService.setActiveStatus(id);
+          frontendStatusService.notifyStudioLaunch(game);
           return true;
         }
       }
       else if (game.isMameGame()) {
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
+        frontendStatusService.notifyTableLaunching(game);
         if (mameService.play(game)) {
           gameStatusService.setActiveStatus(id);
+          frontendStatusService.notifyStudioLaunch(game);
           return true;
         }
       }
