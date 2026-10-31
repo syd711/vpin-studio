@@ -13,6 +13,5 @@
       </Label>
       <fx:include fx:id="players" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-player-rank.fxml" translateX="0" translateY="-578.0" />
       <fx:include fx:id="offlineCompetition" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-competition.fxml" translateX="0" translateY="36.0" />
-      <fx:include fx:id="discordCompetition" prefWidth="1060.0" scaleX="1.0" scaleY="1.0" source="widgets/widget-competition.fxml" translateX="0" translateY="648.0" />
    </children>
 </StackPane>

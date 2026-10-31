@@ -7,7 +7,6 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.PlayerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,8 +32,6 @@ public class DiscordBotResponseServiceTest {
   private PlayerService playerService;
   @Mock
   private DiscordService discordService;
-  @Mock
-  private HighscoreParsingService highscoreParser;
 
   @InjectMocks
   private DiscordBotResponseService service;

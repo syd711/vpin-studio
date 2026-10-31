@@ -15,6 +15,5 @@
       <fx:include fx:id="latestScores" prefHeight="1060.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-latest-scores.fxml" translateX="-578.0" translateY="-760.0" />
 
       <fx:include fx:id="offlineCompetition" prefWidth="1370.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-competition.fxml" translateX="0.0" translateY="510.0" />
-      <fx:include fx:id="discordCompetition" prefWidth="1370.0" scaleX="1.5" scaleY="1.5" source="widgets/widget-competition.fxml" translateX="0.0" translateY="1440.0" />
    </children>
 </StackPane>

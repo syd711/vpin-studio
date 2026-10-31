@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
 import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.wovp.WovpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,11 +36,6 @@ public class CompetitionResource {
     return competitionService.getOfflineCompetitions();
   }
 
-  @GetMapping("/discord")
-  public List<Competition> getDiscordCompetitions() {
-    return competitionService.getDiscordCompetitions();
-  }
-
   @GetMapping("/weekly")
   public List<Competition> getWeeklyCompetitions() {
     return competitionService.getWeeklyCompetitions();
@@ -66,11 +60,6 @@ public class CompetitionResource {
   public ScoreSubmit submitScore(@RequestBody ScoreSubmit scoreSubmit) {
     WovpPlayer player = wovpService.getPlayer(scoreSubmit.getPlayerId());
     return wovpService.submitScore(player, scoreSubmit.getMessage(), scoreSubmit.isSimulate());
-  }
-
-  @GetMapping("/subscriptions")
-  public List<Competition> getSubscriptions() {
-    return competitionService.getSubscriptions();
   }
 
   @GetMapping("/iscored")
@@ -110,11 +99,6 @@ public class CompetitionResource {
   @GetMapping("/finished/{limit}")
   public List<Competition> getFinishedCompetitions(@PathVariable("limit") int limit) {
     return competitionService.getFinishedCompetitions(limit);
-  }
-
-  @GetMapping("/players/{id}")
-  public List<Player> getCompetitionPlayers(@PathVariable("id") long id) {
-    return competitionService.getDiscordCompetitionPlayers(id);
   }
 
   @GetMapping("/{type}/active")

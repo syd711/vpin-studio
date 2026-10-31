@@ -302,10 +302,6 @@ public class Competition {
       return false;
     }
 
-    if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
-      return true;
-    }
-
     if (getType().equals(CompetitionType.ISCORED.name())) {
       return true;
     }

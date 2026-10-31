@@ -147,10 +147,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
     if (competition == null) {
-      if (competitionType.equals(CompetitionType.DISCORD)) {
-        emptylabel.setText(Messages.get("widgets.widget_competition_summary.online_empty_text"));
-      }
-      else if (competitionType.equals(CompetitionType.OFFLINE)) {
+      if (competitionType.equals(CompetitionType.OFFLINE)) {
         emptylabel.setText(Messages.get("widgets.widget_competition_summary.offline_empty_text"));
       }
       else if (competitionType.equals(CompetitionType.ISCORED)) {
@@ -288,11 +285,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
             }
           }
 
-          if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-            durationLabel.setText(Messages.get("widgets.widget_competition_summary.table_subscription"));
-            tableNameLabel.setText(Messages.get("widgets.widget_competition_summary.top_scores"));
-          }
-          else if (competitionType.equals(CompetitionType.ISCORED)) {
+          if (competitionType.equals(CompetitionType.ISCORED)) {
             durationLabel.setText(Messages.get("widgets.widget_competition_summary.iscored_subscription"));
             tableNameLabel.setText(Messages.get("widgets.widget_competition_summary.top_scores"));
           }

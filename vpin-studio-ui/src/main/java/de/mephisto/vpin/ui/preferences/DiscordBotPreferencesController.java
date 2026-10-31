@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -55,16 +54,10 @@ public class DiscordBotPreferencesController implements Initializable {
   private ComboBox<DiscordChannel> tableUpdatesCombo;
 
   @FXML
-  private ComboBox<DiscordCategory> categoryCombo;
-
-  @FXML
   private VBox allowListPane;
 
   @FXML
   private CheckBox commandsEnabledCheckbox;
-
-  @FXML
-  private CheckBox dynamicSubscriptions;
 
   @FXML
   private Button selectUsersBtn;
@@ -93,14 +86,7 @@ public class DiscordBotPreferencesController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.issues_detected"), Messages.get("dialog.there_have_been_issues_detected_with_you"), status.getError());
       }
       else {
-        if (!status.isCanManageCategories()) {
-          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.the_bot_configuration_is_valid_but_your"), Messages.get("dialog.discord_allows_a_maximum_of_50_channels") +
-              Messages.get("dialog.with_the_channel_permission_the_bot_can"));
-        }
-        else {
-          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.no_issues_found"));
-        }
-
+        WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.no_issues_found"));
       }
       validateBtn.setDisable(false);
     });
@@ -148,7 +134,6 @@ public class DiscordBotPreferencesController implements Initializable {
 
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
-    categoryCombo.setDisable(true);
     tableUpdatesCombo.setDisable(true);
     resetBtn.setDisable(true);
 
@@ -205,24 +190,6 @@ public class DiscordBotPreferencesController implements Initializable {
       }
     });
 
-    categoryCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue != null) {
-        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, newValue.getId());
-      }
-      else {
-        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CATEGORY_ID, "");
-      }
-    });
-
-    PreferenceEntryRepresentation dynamicSubscriptionsPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS);
-    dynamicSubscriptions.setSelected(dynamicSubscriptionsPreference.getBooleanValue());
-    dynamicSubscriptions.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, t1);
-      }
-    });
-
     refreshAllowList();
   }
 
@@ -253,7 +220,6 @@ public class DiscordBotPreferencesController implements Initializable {
 
     PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_GUILD_ID);
     PreferenceEntryRepresentation defaultChannelPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
-    PreferenceEntryRepresentation categoryPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
     PreferenceEntryRepresentation updatesPreference = client.getPreferenceService().getPreference(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID);
 
     botNameLabel.setText("-");
@@ -276,7 +242,6 @@ public class DiscordBotPreferencesController implements Initializable {
       if (discordServer != null) {
         channelCombo.setDisable(false);
         tableUpdatesCombo.setDisable(false);
-        categoryCombo.setDisable(false);
 
         serverCombo.setValue(discordServer);
 
@@ -307,19 +272,6 @@ public class DiscordBotPreferencesController implements Initializable {
             }
           }
         }
-
-        List<DiscordCategory> discordCategories = discordServer.getCategories();
-        categoryCombo.setItems(FXCollections.observableArrayList(discordCategories));
-        long categoryId = categoryPreference.getLongValue();
-        if (categoryId > 0) {
-          Optional<DiscordCategory> first = discordCategories.stream().filter(category -> category.getId() == categoryId).findFirst();
-          if (first.isPresent()) {
-            DiscordCategory existingValue = categoryCombo.getValue();
-            if (existingValue == null || !first.get().equals(existingValue)) {
-              first.ifPresent(category -> categoryCombo.setValue(category));
-            }
-          }
-        }
       }
     }
   }
@@ -335,8 +287,6 @@ public class DiscordBotPreferencesController implements Initializable {
     this.channelCombo.setValue(null);
     this.tableUpdatesCombo.setDisable(true);
     this.tableUpdatesCombo.setValue(null);
-    this.categoryCombo.setDisable(true);
-    this.categoryCombo.setValue(null);
     this.validateBtn.setDisable(true);
   }
 }
