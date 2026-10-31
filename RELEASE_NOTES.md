@@ -3,7 +3,7 @@
 ### Changes
 
 - **Table Asset Manager**: Adding a landscape video to the PinUP Popper "Loading" screen now offers to add a blank video too, the same as "Add Blank Video": the video gets the "(SCREEN3)" playfield assignment and the blank video becomes the default loading video. Choose "Always Add Blank" to do this automatically, or "Do not show again" to hide the dialog. Both can be reset with "Restore Hidden Dialogs" in the client settings.
-- **Bulk Importer**: Added the emulator filter "Emulator" to the import settings. When an emulator is selected, files are only matched to tables of this emulator, and the table search only shows these tables. The media is imported into the media folders of the emulator the matched table belongs to. The selection is remembered for the next import.
+- **Bulk Importer**: Added the emulator filter "Emulator" to the import settings. It lists all active emulators, so media can now be imported for the tables of all emulators, not only Visual Pinball and Future Pinball. When an emulator is selected, files are only matched to tables of this emulator, and the table search only shows these tables. The media is imported into the media folders of the emulator the matched table belongs to. The selection is remembered for the next import.
 
 
 

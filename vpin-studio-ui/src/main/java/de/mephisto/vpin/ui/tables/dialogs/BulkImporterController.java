@@ -4,7 +4,9 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportItem;
@@ -137,7 +139,7 @@ public class BulkImporterController implements Initializable, DialogController {
       item -> new javafx.beans.Observable[]{item.gameProperty(), item.screenProperty(), item.selectedProperty()});
   private final CheckBox selectAllCheck = new CheckBox();
 
-  // all VPX and FP tables, allGames holds the ones of the selected emulator
+  // tables of all active emulators, allGames holds the ones of the selected emulator
   private List<GameRepresentation> loadedGames = Collections.emptyList();
   private List<GameRepresentation> allGames = Collections.emptyList();
   private BulkImportMatcher matcher;
@@ -274,10 +276,13 @@ public class BulkImporterController implements Initializable, DialogController {
     emulatorCombo.setDisable(true);
 
     new Thread(() -> {
-      List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getVpxGameEmulators());
-      emulators.addAll(client.getEmulatorService().getFpGameEmulators());
-      List<GameRepresentation> games = new ArrayList<>(client.getGameService().getVpxGamesCached());
-      games.addAll(client.getGameService().getFPGamesCached());
+      // enabled emulators that are not hidden in the UI settings
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getFilteredEmulatorsWithoutAllVpx(uiSettings);
+      List<GameRepresentation> games = new ArrayList<>();
+      for (GameEmulatorRepresentation emulator : emulators) {
+        games.addAll(client.getGameService().getGamesByEmulator(emulator.getId()));
+      }
       games.sort(Comparator.comparing(g -> StringUtils.defaultString(g.getGameDisplayName()).toLowerCase()));
       Platform.runLater(() -> {
         loadedGames = games;
