@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportItem;
@@ -64,11 +65,14 @@ public class BulkImporterController implements Initializable, DialogController {
   private static final String MOVE_ENABLED = "bulkImporterMoveEnabled";
   private static final String MOVE_TARGET = "bulkImporterMoveTarget";
   private static final String MOVE_KEEP_STRUCTURE = "bulkImporterMoveKeepStructure";
+  private static final String EMULATOR_ID = "bulkImporterEmulatorId";
 
   @FXML
   private TextField sourceField;
   @FXML
   private CheckBox recursiveCheck;
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
   @FXML
   private ComboBox<MatchMode> matchModeCombo;
   @FXML
@@ -133,6 +137,8 @@ public class BulkImporterController implements Initializable, DialogController {
       item -> new javafx.beans.Observable[]{item.gameProperty(), item.screenProperty(), item.selectedProperty()});
   private final CheckBox selectAllCheck = new CheckBox();
 
+  // all VPX and FP tables, allGames holds the ones of the selected emulator
+  private List<GameRepresentation> loadedGames = Collections.emptyList();
   private List<GameRepresentation> allGames = Collections.emptyList();
   private BulkImportMatcher matcher;
   private File sourceFolder;
@@ -254,18 +260,73 @@ public class BulkImporterController implements Initializable, DialogController {
         updateSummary();
       }
     });
+    emulatorCombo.setConverter(new StringConverter<>() {
+      @Override
+      public String toString(GameEmulatorRepresentation emulator) {
+        return emulator == null ? Messages.get("bulk_importer.emulator_all") : emulator.getName();
+      }
+
+      @Override
+      public GameEmulatorRepresentation fromString(String string) {
+        return null;
+      }
+    });
+    emulatorCombo.setDisable(true);
+
     new Thread(() -> {
+      List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getVpxGameEmulators());
+      emulators.addAll(client.getEmulatorService().getFpGameEmulators());
       List<GameRepresentation> games = new ArrayList<>(client.getGameService().getVpxGamesCached());
       games.addAll(client.getGameService().getFPGamesCached());
       games.sort(Comparator.comparing(g -> StringUtils.defaultString(g.getGameDisplayName()).toLowerCase()));
       Platform.runLater(() -> {
-        allGames = games;
-        matcher = new BulkImportMatcher(games);
+        loadedGames = games;
+        initEmulatorFilter(emulators);
+        applyEmulatorFilter();
         if (sourceFolder != null) {
           rematch(true, true);
         }
       });
     }, "bulk-importer-games").start();
+  }
+
+  private void initEmulatorFilter(List<GameEmulatorRepresentation> emulators) {
+    List<GameEmulatorRepresentation> options = new ArrayList<>();
+    options.add(null);
+    options.addAll(emulators);
+    emulatorCombo.setItems(FXCollections.observableArrayList(options));
+
+    String savedId = LocalUISettings.getString(EMULATOR_ID);
+    GameEmulatorRepresentation selection = emulators.stream()
+        .filter(e -> String.valueOf(e.getId()).equals(savedId))
+        .findFirst().orElse(null);
+    emulatorCombo.setValue(selection);
+    // there is nothing to choose with a single emulator
+    emulatorCombo.setDisable(emulators.size() <= 1);
+
+    emulatorCombo.valueProperty().addListener((obs, o, n) -> {
+      LocalUISettings.saveProperty(EMULATOR_ID, n == null ? "" : String.valueOf(n.getId()));
+      applyEmulatorFilter();
+      // manually assigned tables of other emulators are dropped and matched again
+      Set<Integer> gameIds = allGames.stream().map(GameRepresentation::getId).collect(Collectors.toSet());
+      for (BulkImportItem item : items) {
+        GameRepresentation game = item.gameProperty().get();
+        if (game != null && !gameIds.contains(game.getId()) && SOURCE_MANUAL.equals(item.matchSourceProperty().get())) {
+          item.matchSourceProperty().set(null);
+        }
+      }
+      rematch(false, true);
+    });
+  }
+
+  /**
+   * Restricts the tables used for matching and for the table search to the selected emulator.
+   */
+  private void applyEmulatorFilter() {
+    GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+    allGames = emulator == null ? loadedGames
+        : loadedGames.stream().filter(g -> g.getEmulatorId() == emulator.getId()).collect(Collectors.toList());
+    matcher = new BulkImportMatcher(allGames);
   }
 
   private void initMoveSettings() {

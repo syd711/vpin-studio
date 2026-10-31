@@ -433,11 +433,11 @@ public class DMDPositionController extends BasePrevNextController {
   }
 
   private void updateDMDImage(File selection) {
-    String baseName = FilenameUtils.getBaseName(game.getGameFileName());
     File folder = new File(game.getGameFileName()).getParentFile();
-    // keep the type of the active backglass, .directb2s or .B2SPro
-    String suffix = game.getDirectB2SPath() != null ? "." + FilenameUtils.getExtension(game.getDirectB2SPath()) : ".directb2s";
-    String directB2SFilename = new File(folder, baseName + suffix).toString();
+    // use the name of the active backglass, it may be named after the table's folder and be a .directb2s or a .B2SPro
+    String b2sName = game.getDirectB2SPath() != null ? new File(game.getDirectB2SPath()).getName() :
+        FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
+    String directB2SFilename = new File(folder, b2sName).toString();
     BackglassManagerControllerUtils.updateDMDImage(game.getEmulatorId(), directB2SFilename, game, selection);
     loadImage(loadedVpinScreen, true);
   }

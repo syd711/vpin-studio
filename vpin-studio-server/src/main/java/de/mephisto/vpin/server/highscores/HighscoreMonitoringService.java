@@ -72,9 +72,6 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   @Autowired
   private HighscoreService highscoreService;
 
-  @Autowired
-  private GameStatusService gameStatusService;
-
   private final Debouncer debouncer = new Debouncer();
 
   /**

@@ -44,15 +44,22 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="%bulk_importer.source_folder" />
-                        <TextField fx:id="sourceField" editable="false" prefWidth="420.0" promptText="%bulk_importer.source_prompt" GridPane.columnIndex="1">
+                        <Label styleClass="default-text" text="%bulk_importer.emulator" />
+                        <ComboBox fx:id="emulatorCombo" GridPane.columnIndex="1" GridPane.halignment="LEFT">
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="%bulk_importer.emulator_tooltip" wrapText="true" />
+                           </tooltip>
+                        </ComboBox>
+                        <Label styleClass="default-text" text="%bulk_importer.source_folder" GridPane.rowIndex="1" />
+                        <TextField fx:id="sourceField" editable="false" prefWidth="420.0" promptText="%bulk_importer.source_prompt" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font></TextField>
-                        <Button fx:id="browseBtn" mnemonicParsing="false" onAction="#onBrowse" styleClass="default-button" text="%bulk_importer.select_folder" GridPane.columnIndex="2" />
-                        <CheckBox fx:id="recursiveCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.include_subfolders" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <Button fx:id="browseBtn" mnemonicParsing="false" onAction="#onBrowse" styleClass="default-button" text="%bulk_importer.select_folder" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="recursiveCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.include_subfolders" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="12.0" />
@@ -75,12 +82,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
+                              <Label layoutX="10.0" layoutY="49.0" styleClass="default-title" text="%bulk_importer.title_matcher_settings" GridPane.columnSpan="2" />
                               <Label styleClass="default-text" text="%bulk_importer.match_by" GridPane.rowIndex="1" />
                               <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <ComboBox fx:id="matchModeCombo" />
                                  </children>
                               </HBox>
+                              <CheckBox fx:id="detectScreenCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.detect_screen" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label styleClass="default-text" text="%bulk_importer.min_score" GridPane.rowIndex="3" />
                               <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <children>
@@ -103,8 +112,6 @@
                               <ComboBox fx:id="defaultScreenCombo" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
                               <Label styleClass="default-text" text="%bulk_importer.default_mode" GridPane.rowIndex="5" />
                               <ComboBox fx:id="defaultModeCombo" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
-                              <CheckBox fx:id="detectScreenCheck" mnemonicParsing="false" selected="true" styleClass="default-text" text="%bulk_importer.detect_screen" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label layoutX="10.0" layoutY="49.0" styleClass="default-title" text="%bulk_importer.title_matcher_settings" GridPane.columnSpan="2" />
                            </children>
                         </GridPane>
                         <GridPane fx:id="moveSettingsGrid" hgap="12.0" vgap="3.0">

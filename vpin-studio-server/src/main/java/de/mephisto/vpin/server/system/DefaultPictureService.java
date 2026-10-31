@@ -128,8 +128,8 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
     else {
       if (game.getDirectB2SFile().exists()) {
         try {
-          String b2sFilename = FilenameUtils.removeExtension(game.getGameFileName()) + "." + FilenameUtils.getExtension(game.getDirectB2SFile().getName());
-          String data = backglassService.getBackgroundBase64(game.getEmulatorId(), b2sFilename);
+          // the backglass may be named after the table's folder, so use the file really used by the game
+          String data = backglassService.getBackgroundBase64(game);
           DirectB2SImageExporter.export(target, data);
         }
         catch (VPinStudioException e) {

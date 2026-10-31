@@ -81,6 +81,17 @@ public class BackglassService implements InitializingBean {
 
   private final Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
 
+  /**
+   * Background and DMD base64 images of the most recently parsed backglasses, kept small as images are big
+   */
+  private static final int IMAGES_CACHE_SIZE = 2;
+  private final Map<String, String[]> cacheImagesBase64 = Collections.synchronizedMap(new LinkedHashMap<>(IMAGES_CACHE_SIZE + 1, 0.75f, true) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, String[]> eldest) {
+      return size() > IMAGES_CACHE_SIZE;
+    }
+  });
+
   private DirectB2ServerSettings serverSettings;
 
   private Map<String, DirectB2STableSettings> cacheB2STableSettings = new ConcurrentHashMap<>();
@@ -90,6 +101,7 @@ public class BackglassService implements InitializingBean {
     reloadDirectB2SAndVersions();
     reloadTableSettings();
     cacheDirectB2SData.clear();
+    cacheImagesBase64.clear();
     return true;
   }
 
@@ -157,6 +169,8 @@ public class BackglassService implements InitializingBean {
     }
 
     cacheAdd(emulatorId, directB2SFile, data);
+    // keep the images as previews are usually requested right after the data
+    imagesCacheAdd(directB2SFile, extractor);
     return data;
   }
 
@@ -217,9 +231,19 @@ public class BackglassService implements InitializingBean {
   public String getBackgroundBase64(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
     if (b2sFile != null && b2sFile.exists()) {
-      DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-      extractor.extractData(b2sFile, emuId, filename);
-      return extractor.getBackgroundBase64();
+      return getImagesBase64(b2sFile, emuId, filename)[0];
+    }
+    return null;
+  }
+
+  /**
+   * Background of the backglass actually used by the game, whatever its name and type
+   */
+  @Nullable
+  public String getBackgroundBase64(@NonNull Game game) {
+    File b2sFile = game.getDirectB2SFile();
+    if (b2sFile.exists()) {
+      return getImagesBase64(b2sFile, game.getEmulatorId(), b2sFile.getName())[0];
     }
     return null;
   }
@@ -228,11 +252,23 @@ public class BackglassService implements InitializingBean {
   public String getDmdBase64(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
     if (b2sFile != null && b2sFile.exists()) {
-      DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-      extractor.extractData(b2sFile, emuId, filename);
-      return extractor.getDmdBase64();
+      return getImagesBase64(b2sFile, emuId, filename)[1];
     }
     return null;
+  }
+
+  /**
+   * Returns the background and DMD base64 images, parsing the file only when not recently done.
+   * Backglasses, especially .B2SPro ones, can be 30MB+ so a full parse per preview is expensive.
+   */
+  private String[] getImagesBase64(@NonNull File b2sFile, int emuId, String filename) {
+    String[] images = cacheImagesBase64.get(imagesCacheKey(b2sFile));
+    if (images == null) {
+      DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
+      extractor.extractData(b2sFile, emuId, filename);
+      images = imagesCacheAdd(b2sFile, extractor);
+    }
+    return images;
   }
 
   public boolean setDmdImage(int emuId, String filename, String file, String dmdBase64) {
@@ -262,6 +298,8 @@ public class BackglassService implements InitializingBean {
         try {
           DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
           updater.upddateScoresDisplayState(directB2SFile, state, false);
+          // clean cache
+          cacheRemove(game.getEmulatorId(), directB2SFile);
         }
         catch (Exception e) {
           LOG.error("Error while updating {}", directB2SFileName, e);
@@ -1543,7 +1581,7 @@ public class BackglassService implements InitializingBean {
   }
 
   public byte[] getPreviewDmd(DirectB2SData tableData, @Nullable Game game) {
-    if (tableData != null && tableData.isBackgroundAvailable()) {
+    if (tableData != null && tableData.isDmdImageAvailable()) {
       String base64 = getDmdBase64(tableData.getEmulatorId(), tableData.getFilename());
       if (base64 != null) {
         return Base64.getMimeDecoder().decode(sanitizeBase64(base64));
@@ -1559,6 +1597,19 @@ public class BackglassService implements InitializingBean {
 
   private void cacheRemove(int emulatorId, File b2sFile) {
     cacheDirectB2SData.remove(emulatorId + "|" + b2sFile.getPath());
+  }
+
+  private String[] imagesCacheAdd(File b2sFile, DirectB2SDataExtractor extractor) {
+    String[] images = new String[]{extractor.getBackgroundBase64(), extractor.getDmdBase64()};
+    cacheImagesBase64.put(imagesCacheKey(b2sFile), images);
+    return images;
+  }
+
+  /**
+   * size and date are part of the key, so any rewrite of the file, by studio or not, invalidates the entry
+   */
+  private String imagesCacheKey(File b2sFile) {
+    return b2sFile.getAbsolutePath() + "|" + b2sFile.length() + "|" + b2sFile.lastModified();
   }
 
 
