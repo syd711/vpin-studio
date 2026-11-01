@@ -114,7 +114,6 @@ public class VpsTableColumn extends HBox {
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         if (disabled) {
           updateIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-          ;
         }
         label.setGraphic(updateIcon);
 
