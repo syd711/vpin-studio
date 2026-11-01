@@ -833,9 +833,41 @@ public class BulkImporterController implements Initializable, DialogController {
         return;
       }
     }
+    logImportParameters(selection, moveTarget, keepStructure, overwrites);
     Stage stage = getStage();
     stage.close();
     Platform.runLater(() -> ProgressDialog.createProgressDialog(new BulkImportProgressModel(selection, moveTarget, keepStructure)));
+  }
+
+  private void logImportParameters(List<BulkImportItem> selection, File moveTarget, boolean keepStructure, long overwrites) {
+    GameEmulatorRepresentation emulator = emulatorCombo.getValue();
+    LOG.info("Bulk import started: sourceFolder=\"{}\", recursive={}, emulator={}, matchMode={}, minScore={}%, "
+            + "detectScreen={}, defaultScreen={}, defaultMode={}, moveFiles={}, moveTarget=\"{}\", keepStructure={}, "
+            + "files={}/{}, overwrites={}",
+        sourceFolder != null ? sourceFolder.getAbsolutePath() : null,
+        recursiveCheck.isSelected(),
+        emulator != null ? emulator.getName() + " (" + emulator.getId() + ")" : "all",
+        matchModeCombo.getValue(),
+        Math.round(scoreSlider.getValue() * 100),
+        detectScreenCheck.isSelected(),
+        defaultScreenCombo.getValue(),
+        defaultModeCombo.getValue(),
+        moveCheck.isSelected(),
+        moveTarget != null ? moveTarget.getAbsolutePath() : null,
+        keepStructure,
+        selection.size(), items.size(),
+        overwrites);
+    for (BulkImportItem item : selection) {
+      GameRepresentation game = item.gameProperty().get();
+      LOG.debug("Bulk import item: file=\"{}\", game=\"{}\" ({}), screen={}, mode={}, match={}, score={}%",
+          item.getFile().getAbsolutePath(),
+          game != null ? game.getGameDisplayName() : null,
+          game != null ? game.getId() : null,
+          item.screenProperty().get(),
+          item.modeProperty().get(),
+          item.matchSourceProperty().get(),
+          Math.round(item.scoreProperty().get() * 100));
+    }
   }
 
   private Stage getStage() {

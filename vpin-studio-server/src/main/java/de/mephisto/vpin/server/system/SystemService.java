@@ -579,7 +579,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("zaccaria")) {
-          LOG.info("Found active zaccaria process: {}", fileName);
+          LOG.debug("Found active zaccaria process: {}", fileName);
           return true;
         }
       }
@@ -593,7 +593,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("pinballfx") || fileName.toLowerCase().contains("pinball fx") || fileName.toLowerCase().contains("pinballm")) {
-          LOG.info("Found active Zen process: {}", fileName);
+          LOG.debug("Found active Zen process: {}", fileName);
           return true;
         }
       }
@@ -607,7 +607,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         String cmdName = p.info().command().get();
         String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("mame")) {
-          LOG.info("Found active MAME process: {}", fileName);
+          LOG.debug("Found active MAME process: {}", fileName);
           return true;
         }
       }
@@ -642,7 +642,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         //FP tables are launched via BAM's FPLoader.exe by default (see FPCommandLineService/EmulatorFactory),
         //not "Future Pinball.exe", so both process names must be matched to reliably detect an active table.
         if (fileName.toLowerCase().contains("future pinball") || fileName.toLowerCase().contains("fploader")) {
-          LOG.info("Found active FP process: {}", fileName);
+          LOG.debug("Found active FP process: {}", fileName);
           return true;
         }
       }
