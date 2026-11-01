@@ -974,7 +974,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (status != null) {
         if (status.getLastActiveId() == value.getId() || status.getGameId() == value.getId()) {
           label.setStyle("-fx-text-fill: " + WidgetFactory.OK_COLOR + ";-fx-font-weight: bold;");
-          tooltip += "\nThis is the last played game.";
+          tooltip += "\n" + Messages.get("dialog.last_played_game");
         }
       }
       if (value.getGameFilePath() != null) {
@@ -999,7 +999,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Frontend frontend = client.getFrontendService().getFrontendCached();
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        String ttText = "The table version in [Frontend] is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" + "Update the table, correct the selected VPS table or fix the version in the \"Table Data\" section.";
+        String ttText = Messages.get("dialog.table_version_update_hint", value.getVersion(), value.getExtVersion());
         ttText = FrontendUtil.replaceName(ttText, frontend);
         Tooltip tt = new Tooltip(ttText);
         tt.setWrapText(true);
@@ -1050,10 +1050,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       Label label = new Label(labelValue);
       if (!StringUtils.isEmpty(value.getRomAlias())) {
-        StringBuilder builder = new StringBuilder("This ROM is aliased and uses the ROM \"" + value.getRom() + "\"");
+        StringBuilder builder = new StringBuilder(Messages.get("dialog.rom_aliased_hint", value.getRom()));
         List<GameRepresentation> sharedGames = getData().stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != value.getId()).collect(Collectors.toList());
         if (!sharedGames.isEmpty()) {
-          builder.append("\n\nThe following tables share the same ROM:\n");
+          builder.append("\n\n" + Messages.get("dialog.tables_share_same_rom") + "\n");
           for (GameRepresentation sharedGame : sharedGames) {
             builder.append("- " + sharedGame.getGameDisplayName());
           }
@@ -1075,7 +1075,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnHSType, (value, model) -> {
       HighscoreType type = value.getHighscoreType();
-      String hsType = HighscoreType.EM.equals(type) ? "Text" : type != null ? type.name() : null;
+      String hsType = HighscoreType.EM.equals(type) ? Messages.get("dialog.highscore_type_text") : type != null ? type.name() : null;
       Label label = new Label(hsType);
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
@@ -1113,7 +1113,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return button;
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("A new backglass version or an update for the existing one is available");
+        return WidgetFactory.createUpdateIcon(Messages.get("dialog.new_backglass_version_available"));
       }
       return null;
     }, this, true);
@@ -1126,17 +1126,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
         if (model.getGame().isIgnoreUpdates()) {
-          return WidgetFactory.createCheckAndIgnoredIcon("Updates for this table are ignored.");
+          return WidgetFactory.createCheckAndIgnoredIcon(Messages.get("dialog.updates_for_this_table_are_ignored"));
         }
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("A new POV file or an update for the existing one is available");
+          return WidgetFactory.createCheckAndUpdateIcon(Messages.get("dialog.new_pov_version_available"));
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPovPath());
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("A new POV file or an update for the existing one is available");
+        return WidgetFactory.createUpdateIcon(Messages.get("dialog.new_pov_version_available"));
       }
       return null;
     }, this, true);
@@ -1220,17 +1220,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
         if (model.getGame().isIgnoreUpdates()) {
-          return WidgetFactory.createCheckAndIgnoredIcon("Updates for this table are ignored.");
+          return WidgetFactory.createCheckAndIgnoredIcon(Messages.get("dialog.updates_for_this_table_are_ignored"));
         }
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
+          return WidgetFactory.createCheckAndUpdateIcon(Messages.get("dialog.new_altsound_version_available"));
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
+        return WidgetFactory.createUpdateIcon(Messages.get("dialog.new_altsound_version_available"));
       }
       return null;
     }, this, true);
@@ -1252,13 +1252,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
         if (hasUpdate) {
           //add update icon
-          label.setGraphic(WidgetFactory.createUpdateIcon("A new ALT color or an update for the existing one is available"));
+          label.setGraphic(WidgetFactory.createUpdateIcon(Messages.get("dialog.new_altcolor_version_available")));
         }
         return label;
       }
       else if (hasUpdate) {
         //We don't have a type, so just show the update.
-        return WidgetFactory.createUpdateIcon("A new ALT color or an update for the existing one is available");
+        return WidgetFactory.createUpdateIcon(Messages.get("dialog.new_altcolor_version_available"));
       }
       return null;
     }, this, true);
@@ -1267,17 +1267,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackName() != null) {
         if (model.getGame().isIgnoreUpdates()) {
-          return WidgetFactory.createCheckAndIgnoredIcon("Updates for this table are ignored.");
+          return WidgetFactory.createCheckAndIgnoredIcon(Messages.get("dialog.updates_for_this_table_are_ignored"));
         }
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("A new PUP pack or an update for the existing one is available");
+          return WidgetFactory.createCheckAndUpdateIcon(Messages.get("dialog.new_puppack_version_available"));
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackName());
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("A new PUP pack or an update for the existing one is available");
+        return WidgetFactory.createUpdateIcon(Messages.get("dialog.new_puppack_version_available"));
       }
       return null;
     }, this, true);
@@ -1388,20 +1388,20 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         }
 
         StringBuilder tt = new StringBuilder();
-        tt.append("Primary Volume:\t");
+        tt.append(Messages.get("tables.pinvol_settings.primary_volume") + "\t");
         tt.append(entry.getPrimaryVolume());
         tt.append("\n");
-        tt.append("Secondary Volume:\t");
+        tt.append(Messages.get("tables.pinvol_settings.secondary_volume") + "\t");
         tt.append(entry.getSecondaryVolume());
         tt.append("\n");
         if (entry.getSsfBassVolume() > 0 || entry.getSsfFrontVolume() > 0 || entry.getSsfRearVolume() > 0) {
-          tt.append("Bass Volume:\t\t");
+          tt.append(Messages.get("dialog.bass_volume") + "\t\t");
           tt.append(entry.getSsfBassVolume());
           tt.append("\n");
-          tt.append("Rear Volume:\t\t");
+          tt.append(Messages.get("dialog.rear_volume") + "\t\t");
           tt.append(entry.getSsfRearVolume());
           tt.append("\n");
-          tt.append("Front Volume:\t\t");
+          tt.append(Messages.get("dialog.front_volume") + "\t\t");
           tt.append(entry.getSsfFrontVolume());
 
         }
@@ -1720,34 +1720,34 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     //TODO this whole calculation has be be moved into the FrontendMedia entity.
     if (defaultMediaItem != null) {
       String mimeType = defaultMediaItem.getMimeType();
-      tt.append("Name:\t ");
+      tt.append(Messages.get("dialog.asset_status_name") + "\t ");
       tt.append(defaultMediaItem.getName());
       tt.append("\n");
       if (mimeType.contains("audio")) {
-        tt.append("Type:\t Audio\n");
+        tt.append(Messages.get("dialog.asset_status_type") + "\t " + Messages.get("dialog.asset_status_type_audio") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-music-note-beamed");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-          tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
+          tt.append(Messages.get("dialog.asset_status_should_have_type", config.getMedia().getDisplayName()) + "\n");
         }
 
         btn.setGraphic(icon);
       }
       else if (mimeType.contains("image")) {
-        tt.append("Type:\t Picture\n");
+        tt.append(Messages.get("dialog.asset_status_type") + "\t " + Messages.get("dialog.asset_status_type_picture") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-card-image");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-          tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
+          tt.append(Messages.get("dialog.asset_status_should_have_type", config.getMedia().getDisplayName()) + "\n");
         }
         btn.setGraphic(icon);
       }
       else if (mimeType.contains("video")) {
-        tt.append("Type:\t Video\n");
+        tt.append(Messages.get("dialog.asset_status_type") + "\t " + Messages.get("dialog.asset_status_type_video") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-film");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-          tt.append("This asset should have the type \"" + config.getMedia().getDisplayName() + "\".\n");
+          tt.append(Messages.get("dialog.asset_status_should_have_type", config.getMedia().getDisplayName()) + "\n");
         }
         btn.setGraphic(icon);
       }
@@ -1755,7 +1755,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
       if (!ignored && config.getOption().equals(ValidatorOption.empty)) {
         fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-        tt.append("This asset should remain empty.\n");
+        tt.append(Messages.get("dialog.asset_status_should_remain_empty") + "\n");
       }
 
     }
@@ -1774,21 +1774,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
 
       FontIcon fontIcon = (FontIcon) btn.getGraphic();
-      tt.append("Preferred Asset Type: " + config.getMedia().getDisplayName() + "\n");
-      tt.append("No asset selected.\n");
+      tt.append(Messages.get("dialog.asset_status_preferred_type", config.getMedia().getDisplayName()) + "\n");
+      tt.append(Messages.get("dialog.asset_status_no_asset_selected") + "\n");
 
       if (!ignored) {
         if (config.getOption().equals(ValidatorOption.empty)) {
           fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
-          tt.append("This asset should remain empty.\n");
+          tt.append(Messages.get("dialog.asset_status_should_remain_empty") + "\n");
         }
         else if (config.getOption().equals(ValidatorOption.optional)) {
           fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
-          tt.append("This asset is optional.\n");
+          tt.append(Messages.get("dialog.asset_status_optional") + "\n");
         }
         else if (config.getOption().equals(ValidatorOption.mandatory)) {
           fontIcon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-          tt.append("This asset is mandatory.\n");
+          tt.append(Messages.get("dialog.asset_status_mandatory") + "\n");
         }
       }
     }
