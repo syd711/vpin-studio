@@ -24,7 +24,7 @@ public class UniversalUploadUtil {
   public static Optional<UploadDescriptor> upload(File selection, int gameId, UploadType uploadType, int emulatorId) {
     Optional<UploadDescriptor> result = Optional.empty();
     try {
-      GameMediaUploadProgressModel model = new GameMediaUploadProgressModel("Game Media Upload", selection, gameId, uploadType, emulatorId);
+      GameMediaUploadProgressModel model = new GameMediaUploadProgressModel(Messages.get("dialog.upload_game_media"), selection, gameId, uploadType, emulatorId);
       ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
 
       List<Object> results = uploadResultModel.getResults();
@@ -32,7 +32,7 @@ public class UniversalUploadUtil {
         final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.getFirst();
         if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.upload_failed") + uploadDescriptor.getError());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.upload_failed", String.valueOf(uploadDescriptor.getError())));
           });
           return result;
         }
@@ -42,7 +42,7 @@ public class UniversalUploadUtil {
     }
     catch (Exception e) {
       LOG.error("Upload failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_game_media_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_game_media_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("msg.error", e.getMessage()));
     }
     return result;
   }
@@ -55,7 +55,7 @@ public class UniversalUploadUtil {
         UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().getFirst();
         if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error") + uploadedAndImportedDescriptor.getError());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error", String.valueOf(uploadedAndImportedDescriptor.getError())));
           });
           return result;
         }
@@ -66,7 +66,7 @@ public class UniversalUploadUtil {
     catch (Exception e) {
       LOG.error("Upload post processing failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.post_processing_failed_2"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.post_processing_failed_2"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("msg.error", e.getMessage()));
       });
     }
     return result;

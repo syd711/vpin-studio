@@ -118,7 +118,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_altsound_package_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_altsound_package_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new AltSoundDeleteProgressModel(this.game.get()));
       this.onReload();
@@ -139,7 +139,7 @@ public class TablesSidebarAltSoundController implements Initializable {
         tablesSidebarController.getTableOverviewController().showAltSound2Editor(this.game.get(), altSound);
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.unknown_alt_sound_format") + altSound.getFormat() + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.unknown_alt_sound_format", String.valueOf(altSound.getFormat())));
       }
     }
   }
@@ -235,7 +235,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
               long filesize = altSound.getFilesize();
               if (filesize == -1) {
-                formatLabel.setText(altSound.getFormat() + " (not played yet)");
+                formatLabel.setText(Messages.get("dialog.altsound_format_not_played", altSound.getFormat()));
               }
               else {
                 bundleSizeLabel.setText(FileUtils.readableFileSize(altSound.getFilesize()));

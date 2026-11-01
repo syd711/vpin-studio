@@ -216,10 +216,10 @@ public class CardGenerationPreferencesController implements Initializable {
         String msg = null;
         if (fn != null) {
           if (!fn.isActive()) {
-            msg = "The screen has not been activated in PinUP Popper.";
+            msg = Messages.get("dialog.screen_not_activated_popper");
           }
           else if (fn.getCtrlKey() <= 0 && fn.getJoyCode() <= 0) {
-            msg = "The screen is not bound to any key in PinUP Popper.";
+            msg = Messages.get("dialog.screen_not_bound_popper");
           }
         }
 
@@ -250,7 +250,7 @@ public class CardGenerationPreferencesController implements Initializable {
   class ResolutionChangeListener implements ChangeListener<String> {
     @Override
     public void changed(ObservableValue observable, String oldValue, String newValue) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.change_highscore_card_size"), Messages.get("dialog.change_the_default_highscore_card_size_to") + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.change_highscore_card_size"), Messages.get("msg.change_the_default_highscore_card_size_to", String.valueOf(newValue)), Messages.get("dialog.card_size_change_hint"), Messages.get("dialog.change_resolution"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         cardSettings.setCardResolution(CardResolution.valueOfString(newValue));
         client.getPreferenceService().setJsonPreference(cardSettings);

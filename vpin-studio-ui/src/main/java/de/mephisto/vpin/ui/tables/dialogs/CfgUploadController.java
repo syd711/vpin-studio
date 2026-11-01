@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 
@@ -11,6 +12,6 @@ public class CfgUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new CfgUploadProgressModel("Config File Upload", getSelections(), getSelectedEmulatorId(), getSelectedGameId());
+    return new CfgUploadProgressModel(Messages.get("dialog.upload_cfg"), getSelections(), getSelectedEmulatorId(), getSelectedGameId());
   }
 }

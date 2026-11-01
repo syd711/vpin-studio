@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.io.File;
 
 import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
@@ -34,12 +35,12 @@ public class BackglassManagerControllerUtils {
   }
 
     public static void updateDMDImage(int emulatorId, String b2sFileName, GameRepresentation game, File selection) {
-    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", emulatorId, b2sFileName, selection));
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel(Messages.get("dialog.set_dmd_image"), emulatorId, b2sFileName, selection));
     notifyChange(emulatorId, b2sFileName, game);
   }
 
   public static void deleteDMDImage(int emulatorId, String b2sFileName, GameRepresentation game) {
-    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", emulatorId, b2sFileName, null));
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel(Messages.get("dialog.delete_dmd_image"), emulatorId, b2sFileName, null));
     notifyChange(emulatorId, b2sFileName, game);
   }
 

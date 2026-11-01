@@ -84,7 +84,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     placeholderPane.managedProperty().bindBidirectional(placeholderPane.visibleProperty());
-    showPlaceholder("Select a VPX table to view its script options.", false);
+    showPlaceholder(Messages.get("dialog.script_options_select_vpx"), false);
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
@@ -104,7 +104,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
     currentGameId = gameId;
 
     if (gameId < 0) {
-      Platform.runLater(() -> showPlaceholder("Select a VPX table to view its script options.", false));
+      Platform.runLater(() -> showPlaceholder(Messages.get("dialog.script_options_select_vpx"), false));
       return;
     }
 
@@ -126,7 +126,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
     resetButton.setDisable(true);
     optionsVBox.getChildren().clear();
 
-    showPlaceholder("Loading script options…", true);
+    showPlaceholder(Messages.get("dialog.script_options_loading"), true);
 
     JFXFuture.supplyAsync(() -> {
       boolean ok = client.getScriptOptionsService().resetOptions(currentGameId);
@@ -160,7 +160,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
   private void loadOptionsAsync(int gameId) {
     this.optionsVBox.isVisible();
     Platform.runLater(() -> {
-      showPlaceholder("Loading script options…", true);
+      showPlaceholder(Messages.get("dialog.script_options_loading"), true);
       JFXFuture.supplyAsync(() -> {
         List<TableScriptOption> options = Collections.emptyList();
         try {
@@ -189,8 +189,7 @@ public class TableDataTabScriptOptionsController implements Initializable {
     optionsVBox.getChildren().clear();
 /* Changed to not reference Table1. Fringe cases might have older tables with added options that don't use the Table1 format */
     if (options.isEmpty()) {
-      showPlaceholder("No Option declarations found in this table's script.\n"
-          + "Options become available when the script uses VPX 10.8 Option() calls.", false);
+      showPlaceholder(Messages.get("dialog.script_options_none_found"), false);
       resetButton.setDisable(true);
       return;
     }

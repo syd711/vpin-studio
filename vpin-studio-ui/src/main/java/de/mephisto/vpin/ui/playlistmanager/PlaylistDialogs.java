@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -23,7 +24,7 @@ public class PlaylistDialogs {
   }
 
   private static void openPlaylistManagerChecked(TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
-    Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", "Playlist Manager", "playlistManager");
+    Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", Messages.get("dialog.playlist_manager"), "playlistManager");
     PlaylistManagerController controller = (PlaylistManagerController) stage.getUserData();
 
     FXResizeHelper.install(stage, 30, 6);
@@ -35,14 +36,14 @@ public class PlaylistDialogs {
   }
 
   public static void openCreatePlaylistDialog(PlaylistManagerController playlistManagerController) {
-    Stage stage = Dialogs.createStudioDialogStage(NewPlaylistController.class, "dialog-new-playlist.fxml", "New Playlist");
+    Stage stage = Dialogs.createStudioDialogStage(NewPlaylistController.class, "dialog-new-playlist.fxml", Messages.get("dialog.new_playlist"));
     NewPlaylistController controller = (NewPlaylistController) stage.getUserData();
     controller.setData(playlistManagerController);
     stage.showAndWait();
   }
 
   public static void openPlaylistTemplateDialog(PlaylistTableController playlistTableController, PlaylistRepresentation playlist) {
-    Stage stage = Dialogs.createStudioDialogStage(PlaylistTemplatesController.class, "dialog-playlist-templates.fxml", "Playlist Templates");
+    Stage stage = Dialogs.createStudioDialogStage(PlaylistTemplatesController.class, "dialog-playlist-templates.fxml", Messages.get("dialog.playlist_templates"));
     PlaylistTemplatesController controller = (PlaylistTemplatesController) stage.getUserData();
     controller.setData(playlistTableController, stage, playlist);
     stage.showAndWait();

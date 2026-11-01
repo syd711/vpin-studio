@@ -228,7 +228,7 @@ public class PinVolSettingsController implements Initializable {
             dirty.set(false);
         } catch (Exception e) {
             LOG.error("Failed to save pinvol update: {}", e.getMessage(), e);
-            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinvol_update") + e.getMessage());
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_pinvol_update", e.getMessage()));
             return false;
         }
 

@@ -257,7 +257,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
         && existingCompetition.getDiscordServerId() == this.competition.getDiscordServerId()
         && existingCompetition.getDiscordChannelId() == this.competition.getDiscordChannelId()) {
         validationTitle.setText(Messages.get("competitions.discord_competition_edit.overlapping_competition_found"));
-        validationDescription.setText(Messages.get("competitions.discord_competition_edit.the_competition", existingCompetition.getName()) + Messages.get("competitions.discord_competition_edit.overlaps_with_this_competition_for_the_given_channel"));
+        validationDescription.setText(Messages.get("msg.the_competition_overlaps_with_this_competition_for", existingCompetition.getName()));
         return;
       }
 
@@ -278,7 +278,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       if (active && !this.competition.getUuid().equals(discordCompetitionData.getUuid())) {
         if (discordCompetitionData.isOverlappingWith(startSelection, endSelection)) {
           validationTitle.setText(Messages.get("competitions.discord_competition_edit.active_competition_found"));
-          validationDescription.setText(Messages.get("competitions.discord_competition_edit.the_selected_channel_is_already_running_the_competition") + discordCompetitionData.getName() + Messages.get("competitions.discord_competition_edit.for_this_time_span"));
+          validationDescription.setText(Messages.get("msg.the_selected_channel_is_already_running_the", discordCompetitionData.getName()));
           return;
         }
       }

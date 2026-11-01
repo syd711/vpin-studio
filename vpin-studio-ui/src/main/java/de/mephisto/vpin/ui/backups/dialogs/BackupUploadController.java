@@ -66,7 +66,7 @@ public class BackupUploadController implements Initializable, DialogController {
         });
 
         BackupSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        BackupUploadProgressModel model = new BackupUploadProgressModel("Backup Upload", selectedItem.getId(), selection);
+        BackupUploadProgressModel model = new BackupUploadProgressModel(Messages.get("dialog.upload_backup"), selectedItem.getId(), selection);
         ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
 
         // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
@@ -77,7 +77,7 @@ public class BackupUploadController implements Initializable, DialogController {
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, Messages.get("dialog.uploading_archive_failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("dialog.uploading_archive_failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("msg.error", e.getMessage()));
       }
     }
   }
@@ -88,9 +88,9 @@ public class BackupUploadController implements Initializable, DialogController {
 
     List<String> filters = Arrays.asList("*.vpa");
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Archives");
+    fileChooser.setTitle(Messages.get("dialog.select_archives"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Visual Pinball Archive", filters));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_vp_archive"), filters));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {

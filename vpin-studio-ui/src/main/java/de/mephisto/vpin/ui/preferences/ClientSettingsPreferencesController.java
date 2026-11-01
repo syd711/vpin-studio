@@ -222,7 +222,7 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private void onDropInFolderSelection() {
     StudioFolderChooser chooser = new StudioFolderChooser();
-    chooser.setTitle("Select Drop-In Folder");
+    chooser.setTitle(Messages.get("dialog.select_dropin_folder"));
     File targetFolder = chooser.showOpenDialog(stage);
 
     if (targetFolder != null && targetFolder.exists()) {
@@ -234,7 +234,7 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private void onDropInMoveTargetFolderSelection() {
     StudioFolderChooser chooser = new StudioFolderChooser();
-    chooser.setTitle("Select Target Folder");
+    chooser.setTitle(Messages.get("dialog.select_target_folder"));
     File targetFolder = chooser.showOpenDialog(stage);
     if (targetFolder != null && targetFolder.exists()) {
       dropInMoveTargetTextField.setText(targetFolder.getAbsolutePath());

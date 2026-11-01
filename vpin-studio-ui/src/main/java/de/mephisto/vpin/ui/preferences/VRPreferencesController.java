@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -61,14 +62,14 @@ public class VRPreferencesController implements Initializable {
   @FXML
   private void onDMDDeviceIniUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select DMDDevice.ini File");
+    fileChooser.setTitle(Messages.get("dialog.select_dmddevice_ini"));
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter(".ini", "DMDDevice.ini"));
 
     File file = fileChooser.showOpenDialog(Studio.stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(new VRFileUploadProgressModel("Uploading " + file.getName(), file, emulatorCombo.getValue().getId()));
+        ProgressDialog.createProgressDialog(new VRFileUploadProgressModel(Messages.get("dialog.uploading_file", file.getName()), file, emulatorCombo.getValue().getId()));
         refreshFiles(emulatorCombo.getValue());
       });
     }
@@ -77,14 +78,14 @@ public class VRPreferencesController implements Initializable {
   @FXML
   private void onVPinballXIniUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select VPinballX.ini File");
+    fileChooser.setTitle(Messages.get("dialog.select_vpinballx_ini"));
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter(".ini", "VPinballX.ini"));
 
     File file = fileChooser.showOpenDialog(Studio.stage);
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(new VRFileUploadProgressModel("Uploading " + file.getName(), file, emulatorCombo.getValue().getId()));
+        ProgressDialog.createProgressDialog(new VRFileUploadProgressModel(Messages.get("dialog.uploading_file", file.getName()), file, emulatorCombo.getValue().getId()));
         refreshFiles(emulatorCombo.getValue());
       });
     }

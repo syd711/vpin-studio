@@ -286,7 +286,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_ini_file", e.getMessage()));
       }
     }
   }
@@ -301,7 +301,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open .res file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_res_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_res_file", e.getMessage()));
       }
     }
   }
@@ -316,14 +316,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open .pov file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_pov_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_pov_file", e.getMessage()));
       }
     }
   }
 
   @FXML
   private void onIniDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_ini_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_ini_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getIniService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
@@ -380,14 +380,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to open VR .ini file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_ini_file", e.getMessage()));
       }
     }
   }
 
   @FXML
   private void onVrIniDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_vr_ini_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_vr_ini_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       if (!client.getVRService().deleteTableVRIni(this.game.get().getId())) {
         WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.vr_ini_in_use"));
@@ -398,7 +398,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onResDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_res_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_res_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getResService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
@@ -407,7 +407,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onPovDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_pov_file_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_pov_file_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getVpxService().deletePOV(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
@@ -421,9 +421,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
       GameRepresentation gameRepresentation = game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.auto_fix_table_version"),
-          FrontendUtil.replaceName(Messages.get("dialog.this_overwrites_the_existing_frontend_table_version")
-              + gameRepresentation.getVersion() + Messages.get("dialog.with_the_vps_table_version") +
-              gameRepresentation.getExtVersion() + "\".", frontend),
+          FrontendUtil.replaceName(Messages.get("msg.this_overwrites_the_existing_frontend_table_version", gameRepresentation.getVersion(), gameRepresentation.getExtVersion()), frontend),
           Messages.get("dialog.the_table_update_indicator_won_t_be"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
@@ -431,8 +429,8 @@ public class TablesSidebarTableDetailsController implements Initializable {
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
         }
         catch (Exception ex) {
-          LOG.error(Messages.get("dialog.error_fixing_version") + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_fixing_version") + ex.getMessage());
+          LOG.error("Error fixing version: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_fixing_version", ex.getMessage()));
         }
       }
     }
@@ -515,7 +513,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       gameFileName.setText(StringUtils.defaultIfEmpty(game.getGameFileName(), "-"));
       gameDisplayName.setText(StringUtils.defaultIfEmpty(game.getGameDisplayName(), "-"));
       // will be overriden by tableDetails status
-      status.setText(game.isDisabled() ? "Disabled" : "Enabled");
+      status.setText(game.isDisabled() ? Messages.get("dialog.option_disabled") : Messages.get("dialog.option_enabled"));
       notes.setText(StringUtils.defaultIfEmpty(game.getComment(), ""));
       romName.setText(StringUtils.defaultIfEmpty(game.getRom(), "-"));
 

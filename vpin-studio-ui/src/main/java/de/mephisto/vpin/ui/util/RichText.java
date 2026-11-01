@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -219,13 +220,13 @@ public class RichText {
     private MenuItem fold, unfold;
 
     public DefaultContextMenu() {
-      fold = new MenuItem("Fold selected text");
+      fold = new MenuItem(Messages.get("dialog.fold_selected_text"));
       fold.setOnAction(AE -> {
         hide();
         fold();
       });
 
-      unfold = new MenuItem("Unfold from cursor");
+      unfold = new MenuItem(Messages.get("dialog.unfold_from_cursor"));
       unfold.setOnAction(AE -> {
         hide();
         unfold();

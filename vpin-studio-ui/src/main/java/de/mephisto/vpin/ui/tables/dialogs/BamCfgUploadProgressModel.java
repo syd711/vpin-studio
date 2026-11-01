@@ -40,9 +40,9 @@ public class BamCfgUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.bam_cfg_upload_failed") + e.getMessage(), e);
+      LOG.error("BAM Cfg upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.bam_cfg_upload_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.bam_cfg_upload_failed", e.getMessage()));
       });
     }
   }

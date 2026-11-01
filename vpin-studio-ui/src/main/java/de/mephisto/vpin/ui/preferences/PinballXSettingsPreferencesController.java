@@ -82,7 +82,7 @@ public class PinballXSettingsPreferencesController implements Initializable {
       saveSettings();
     }, DEBOUNCE_MS));
 
-    gameExPasswordText.setPromptText("<enter password to change it>");
+    gameExPasswordText.setPromptText(Messages.get("dialog.enter_password_to_change"));
     gameExPasswordText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("gameExPasswordText", () -> {
       pinballXSettings.setGameExPassword(t1);
       saveSettings();
@@ -100,8 +100,8 @@ public class PinballXSettingsPreferencesController implements Initializable {
       client.getFrontendService().saveSettings(pinballXSettings);
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_update_frontend_settings") + e.getMessage(), e);
-      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_frontend_settings") + e.getMessage());
+      LOG.error("Failed to update frontend settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_update_frontend_settings", e.getMessage()));
     }
   }
 

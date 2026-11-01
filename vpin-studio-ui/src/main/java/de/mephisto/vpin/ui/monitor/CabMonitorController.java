@@ -84,7 +84,7 @@ public class CabMonitorController implements Initializable, DialogController {
   @FXML
   private void onScreenshot() {
     DirectoryChooser chooser = new DirectoryChooser();
-    chooser.setTitle("Select Target Folder");
+    chooser.setTitle(Messages.get("dialog.select_target_folder"));
 
     if (folder != null) {
       chooser.setInitialDirectory(folder);
@@ -93,10 +93,10 @@ public class CabMonitorController implements Initializable, DialogController {
 
     if (targetFolder != null && targetFolder.exists()) {
       this.folder = targetFolder;
-      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScreenshotsDownloadProgressModel("Download Screenshots", targetFolder));
+      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScreenshotsDownloadProgressModel(Messages.get("dialog.download_screenshots"), targetFolder));
       if (!resultModel.getResults().isEmpty()) {
         File target = (File) resultModel.getResults().getFirst();
-        WidgetFactory.showInformation(stage, Messages.get("dialog.screenshots_generated"), Messages.get("dialog.downloaded") + target.getAbsolutePath() + "\".");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.screenshots_generated"), Messages.get("msg.downloaded", target.getAbsolutePath()));
       }
     }
   }

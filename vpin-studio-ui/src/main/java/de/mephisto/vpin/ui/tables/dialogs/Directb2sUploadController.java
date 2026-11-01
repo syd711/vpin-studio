@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -46,7 +47,7 @@ public class Directb2sUploadController extends BaseUploadController {
   @Override
   protected UploadProgressModel createUploadModel() {
     boolean append = uploadAndAppendRadio.isSelected();
-    return new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", getSelection(), append);
+    return new DirectB2SUploadProgressModel(game.getId(), Messages.get("dialog.upload_directb2s"), getSelection(), append);
   }
 
   @Override

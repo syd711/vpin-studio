@@ -767,8 +767,7 @@ public class BulkImporterController implements Initializable, DialogController {
     long importable = items.stream().filter(BulkImportItem::isImportable).count();
     long selected = items.stream().filter(BulkImportItem::isImported).count();
     long noScreen = items.stream().filter(i -> i.gameProperty().get() != null && i.screenProperty().get() == null).count();
-    summaryLabel.setText(Messages.get("bulk_importer.summary", items.size(), matched, selected)
-        + (noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""));
+    summaryLabel.setText(Messages.get("msg.files_matched_selected_for_import", items.size(), matched, selected, String.valueOf((noScreen > 0 ? "  " + Messages.get("bulk_importer.summary_no_screen", noScreen) : ""))));
     importBtn.setDisable(selected == 0);
     removeUnmatchedBtn.setDisable(matcher == null || matched == items.size());
 

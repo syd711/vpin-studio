@@ -27,6 +27,7 @@ package de.mephisto.vpin.ui.util;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
@@ -204,7 +205,7 @@ public class FontSelectorDialog extends Dialog<Font> {
     private final ListView<String> fontListView = new ListView<>(filteredFontList);
     private final ListView<FontSelectorDialog.FontStyle> styleListView = new ListView<>(filteredStyleList);
     private final ListView<Double> sizeListView = new ListView<>(filteredSizeList);
-    private final Text sample = new Text("Sample Text: ABCabc123"); //$NON-NLS-1$
+    private final Text sample = new Text(Messages.get("dialog.font_sample_text")); //$NON-NLS-1$
 
     public FontPanel() {
       setHgap(HGAP);
@@ -233,7 +234,7 @@ public class FontSelectorDialog extends Dialog<Font> {
       getRowConstraints().addAll(r0, r1, r2, r3);
 
       // layout hello.dialog
-      add(new Label("Font"), 0, 0); //$NON-NLS-1$
+      add(new Label(Messages.get("dialog.font_label")), 0, 0); //$NON-NLS-1$
       //            fontSearch.setMinHeight(Control.USE_PREF_SIZE);
       //            add( fontSearch, 0, 1);
       add(fontListView, 0, 1);
@@ -269,13 +270,13 @@ public class FontSelectorDialog extends Dialog<Font> {
           refreshSample();
         }});
 
-      add( new Label("Style"), 1, 0); //$NON-NLS-1$
+      add( new Label(Messages.get("dialog.font_style")), 1, 0); //$NON-NLS-1$
       //            postureSearch.setMinHeight(Control.USE_PREF_SIZE);
       //            add( postureSearch, 1, 1);
       add(styleListView, 1, 1);
       styleListView.selectionModelProperty().get().selectedItemProperty().addListener(sampleRefreshListener);
 
-      add( new Label("Size"), 2, 0); //$NON-NLS-1$
+      add( new Label(Messages.get("dialog.font_size")), 2, 0); //$NON-NLS-1$
       //            sizeSearch.setMinHeight(Control.USE_PREF_SIZE);
       //            add( sizeSearch, 2, 1);
       add(sizeListView, 2, 1);

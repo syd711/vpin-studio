@@ -223,7 +223,7 @@ public class WOVPPreferencesController implements Initializable {
       if (!StringUtils.isEmpty(key)) {
         ApiKeyValidationResponse test = client.getWovpService().test(key);
         if (test != null && test.isSuccess()) {
-          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.api_key_validation_successful"), Messages.get("dialog.the_user") + test.getName() + Messages.get("dialog.has_been_authenticated"));
+          WidgetFactory.showInformation(Studio.stage, Messages.get("common.information"), Messages.get("dialog.api_key_validation_successful"), Messages.get("msg.the_user_has_been_authenticated", test.getName()));
         }
         else {
           WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.api_key_validation_failed"));

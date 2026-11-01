@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.alx.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -67,7 +68,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
 
     if (gameRepresentation != null) {
       Platform.runLater(() -> {
-        AlxDeleteGameStatsProgressModel deletingTableStatistics = new AlxDeleteGameStatsProgressModel("Deleting Table Statistic", gameRepresentation, deleteTime, deletePlays, deleteScores);
+        AlxDeleteGameStatsProgressModel deletingTableStatistics = new AlxDeleteGameStatsProgressModel(Messages.get("dialog.deleting_table_statistic"), gameRepresentation, deleteTime, deletePlays, deleteScores);
         ProgressDialog.createProgressDialog(deletingTableStatistics);
       });
     }
@@ -76,7 +77,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
       stage.close();
 
       Platform.runLater(() -> {
-        AlxDeleteStatsProgressModel deletingTableStatistics = new AlxDeleteStatsProgressModel("Deleting Table Statistics", emulatorId, deleteTime, deletePlays, deleteScores);
+        AlxDeleteStatsProgressModel deletingTableStatistics = new AlxDeleteStatsProgressModel(Messages.get("dialog.deleting_table_statistics"), emulatorId, deleteTime, deletePlays, deleteScores);
         ProgressDialog.createProgressDialog(deletingTableStatistics);
         EventManager.getInstance().notifyAlxUpdate(gameRepresentation);
       });
@@ -102,7 +103,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
 
     GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
     allTables.setId(-1);
-    allTables.setName("All Tables");
+    allTables.setName(Messages.get("tables.alx.alx_delete.all_tables"));
     filtered.addFirst( allTables);
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));

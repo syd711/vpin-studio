@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -75,7 +76,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
 
   @FXML
   private void onSynchronize(ActionEvent event) {
-    ProgressDialog.createProgressDialog(new VPXZSyncProgressModel("VPX Standalone File Synchronization"));
+    ProgressDialog.createProgressDialog(new VPXZSyncProgressModel(Messages.get("dialog.vpx_standalone_sync")));
     vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
     List<String> entries = new ArrayList<>(vpxStandaloneFiles);
     entries.addFirst( "");
@@ -115,7 +116,7 @@ public class TablesVPXZDialogController implements Initializable, DialogControll
 
     vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
     if (vpxStandaloneFiles.isEmpty()) {
-      ProgressDialog.createProgressDialog(new VPXZSyncProgressModel("VPX Standalone File Synchronization"));
+      ProgressDialog.createProgressDialog(new VPXZSyncProgressModel(Messages.get("dialog.vpx_standalone_sync")));
       vpxStandaloneFiles = client.getVpxzService().getVpxStandaloneFiles(false);
     }
 

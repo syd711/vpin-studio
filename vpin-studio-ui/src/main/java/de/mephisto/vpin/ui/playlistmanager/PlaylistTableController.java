@@ -87,9 +87,9 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
     if (playlist.isPresent()) {
       List<GameRepresentationModel> gameModels = this.tableView.getSelectionModel().getSelectedItems();
       List<GameRepresentation> games = gameModels.stream().map(model -> model.getBean()).collect(Collectors.toList());
-      String title = "Removing " + games.size() + " games from \"" + playlist.get().getName() + "\"";
+      String title = Messages.get("dialog.removing_games_from_playlist", games.size(), playlist.get().getName());
       if (games.size() == 1) {
-        title = "Removing \"" + games.getFirst().getGameDisplayName() + "\" from \"" + playlist.get().getName() + "\"";
+        title = Messages.get("dialog.removing_game_from_playlist", games.getFirst().getGameDisplayName(), playlist.get().getName());
       }
       ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist.get(), games, false));
 
@@ -126,7 +126,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       List<GameRepresentation> collect = games.stream().map(this::toGameModel).filter(Objects::nonNull).collect(Collectors.toList());
       setItems(filterItems(collect));
       tableView.refresh();
-      labelCount.setText(collect.size() + " tables");
+      labelCount.setText(Messages.get("dialog.tables_count", collect.size()));
       addBtn.setDisable(playlist.get().isSqlPlayList());
     });
   }
@@ -152,7 +152,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("media", "media", new PlaylistTableColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_media"), Messages.get("dialog.noun_media"), new PlaylistTableColumnSorter(this));
 
     emulatorsSeparator.managedProperty().bindBidirectional(emulatorsSeparator.visibleProperty());
     allEmulatorsCombo.managedProperty().bindBidirectional(allEmulatorsCombo.visibleProperty());

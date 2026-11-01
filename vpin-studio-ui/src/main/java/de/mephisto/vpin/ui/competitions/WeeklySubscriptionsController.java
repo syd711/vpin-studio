@@ -268,7 +268,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       if (vpsTable != null) {
         return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(value)));
       }
-      return new SimpleStringProperty("No matching VPS Table found.");
+      return new SimpleStringProperty(Messages.get("competitions.competitions_weekly.no_matching_vps_table_found_2"));
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
@@ -592,7 +592,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         return "KO";
       }
       if (competition.getMode().equals("monthly_contracts")) {
-        return "Monthly Contracts";
+        return Messages.get("dialog.competition_mode_monthly_contracts");
       }
       return StringUtils.capitalize(competition.getMode());
     }

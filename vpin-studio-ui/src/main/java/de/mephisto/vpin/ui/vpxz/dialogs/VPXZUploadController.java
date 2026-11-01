@@ -66,7 +66,7 @@ public class VPXZUploadController implements Initializable, DialogController {
         });
 
         VPXZSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        VPXZUploadProgressModel model = new VPXZUploadProgressModel(".vpxz File Upload", selectedItem.getId(), selection);
+        VPXZUploadProgressModel model = new VPXZUploadProgressModel(Messages.get("dialog.upload_vpxz"), selectedItem.getId(), selection);
         ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
 
         // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
@@ -76,7 +76,7 @@ public class VPXZUploadController implements Initializable, DialogController {
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, Messages.get("dialog.uploading_vpxz_failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("dialog.uploading_vpxz_failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("msg.error", e.getMessage()));
       }
     }
   }
@@ -87,9 +87,9 @@ public class VPXZUploadController implements Initializable, DialogController {
 
     List<String> filters = List.of("*." + VPXZType.VPXZ.name().toLowerCase());
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Files");
+    fileChooser.setTitle(Messages.get("dialog.select_files"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".vpxz File", filters));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_vpxz_file"), filters));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
     if (this.selection != null && !this.selection.isEmpty()) {

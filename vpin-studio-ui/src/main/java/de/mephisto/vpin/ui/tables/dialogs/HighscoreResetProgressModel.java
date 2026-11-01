@@ -71,9 +71,9 @@ public class HighscoreResetProgressModel extends ProgressModel<GameRepresentatio
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_reset_highscore") + e.getMessage(), e);
+      LOG.error("Failed to reset highscore: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_reset_highscore") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_reset_highscore", e.getMessage()));
       });
     }
   }

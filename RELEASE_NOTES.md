@@ -2,6 +2,7 @@
 
 ### Changes
 
+- **Localization**: Added a lot of missing translation, especially for tooltips and progress dialogs.
 
 
 ---

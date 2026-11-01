@@ -141,7 +141,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading") + assetType.toString() + Messages.get("dialog.failed"), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("msg.uploading_failed", assetType.toString()), Messages.get("dialog.please_check_the_log_file_for_details_2"), Messages.get("msg.error", e.getMessage()));
       }
     }
   }
@@ -152,7 +152,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
     this.uploadBtn.setDisable(true);
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select " + assetType.toString());
+    fileChooser.setTitle(Messages.get("dialog.select_asset_type", assetType.toString()));
 
     String[] extensions = new String[suffixes.length];
     for (int i = 0; i < suffixes.length; i++) {
@@ -389,7 +389,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       this.uploadBtn.setDisable(!isTableSelected());
     }
     else {
-      WidgetFactory.showAlert(stage, Messages.get("dialog.invalid") + assetType.toString(), analysis);
+      WidgetFactory.showAlert(stage, Messages.get("msg.invalid", assetType.toString()), analysis);
       this.fileNameField.setText("");
     }
     this.fileBtn.setDisable(false);

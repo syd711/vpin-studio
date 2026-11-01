@@ -67,8 +67,8 @@ public class TableValidateProgressModel extends ProgressModel<GameRepresentation
           EventManager.getInstance().notifyTableChange(game.getId(), null);
         }
       } catch (Exception e) {
-        LOG.error(Messages.get("dialog.table_validation_failed") + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.table_validation_failed") + e.getMessage());
+        LOG.error("Table validation failed: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.table_validation_failed", e.getMessage()));
       }
     } catch (Exception e) {
       LOG.error("Error validating table: " + e.getMessage(), e);

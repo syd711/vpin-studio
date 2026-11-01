@@ -233,9 +233,9 @@ public class ManiaPrivacySettingsController implements Initializable, ManiaSetti
       playersBox.getChildren().add(node);
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.error_loading_cabinet_player_data") + e.getMessage(), e);
+      LOG.error("Error loading cabinet player data: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_loading_cabinet_player_data") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_loading_cabinet_player_data", e.getMessage()));
       });
     }
   }

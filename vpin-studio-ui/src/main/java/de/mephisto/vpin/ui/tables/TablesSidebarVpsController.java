@@ -232,7 +232,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onUpdate() {
-    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel(Messages.get("dialog.download_vps_database"), Arrays.asList(new File("<vpsdb.json>"))));
     List<VpsTable> tables = client.getVpsService().getTables();
     refreshSheetData(tables);
     vpsTableMatcher.setTables(tables);
@@ -401,45 +401,45 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       return;
     }
     GameRepresentation game = games.getFirst();
-    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", game, VpsDiffTypes.tableNewVersionVPX, vpsTable, false, null);
+    TablesSidebarVpsController.addTablesSection(dataRoot, Messages.get("dialog.vps_section_table_version"), game, VpsDiffTypes.tableNewVersionVPX, vpsTable, false, null);
 
     vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
 
     if (!doFilter || game.getPupPackName() == null) {
-      addSection(dataRoot, "PUP Pack", game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsPUPPack(), null);
+      addSection(dataRoot, Messages.get("dialog.vps_section_pup_pack"), game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsPUPPack(), null);
     }
 
     if (!doFilter || game.getDirectB2SPath() == null) {
-      addSection(dataRoot, "Backglasses", game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsBackglass(), null);
+      addSection(dataRoot, Messages.get("dialog.vps_section_backglasses"), game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsBackglass(), null);
     }
 
     if (!doFilter || !game.isAltSoundAvailable()) {
-      addSection(dataRoot, "ALT Sound", game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsAltSound(), null);
+      addSection(dataRoot, Messages.get("dialog.vps_section_alt_sound"), game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsAltSound(), null);
     }
 
-    addSection(dataRoot, "ALT Color", game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsAltColor(), null);
+    addSection(dataRoot, Messages.get("dialog.vps_section_alt_color"), game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsAltColor(), null);
 
     if (!doFilter || !game.isRomExists()) {
       addSection(dataRoot, "ROM", game, VpsDiffTypes.rom, vpsTable.getRomFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsRom(), null);
     }
 
-    addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsSound(), null);
+    addSection(dataRoot, Messages.get("dialog.vps_section_sound"), game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsSound(), null);
 
     List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(VPinScreen.Topper);
     if (!doFilter || items.isEmpty()) {
-      addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsToppper(), null);
+      addSection(dataRoot, Messages.get("dialog.vps_section_topper"), game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsToppper(), null);
     }
 
     items = frontendMedia.getMediaItems(VPinScreen.Wheel);
     if (!doFilter || items.isEmpty()) {
-      addSection(dataRoot, "Wheel Art", game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsWheel(), null);
+      addSection(dataRoot, Messages.get("dialog.vps_section_wheel_art"), game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsWheel(), null);
     }
 
     if (!doFilter || game.getPovPath() == null) {
       addSection(dataRoot, "POV", game, VpsDiffTypes.pov, vpsTable.getPovFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsPOV(), null);
     }
 
-    addSection(dataRoot, "Tutorials", game, VpsDiffTypes.tutorial, vpsTable.getTutorialFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsTutorial(), null);
+    addSection(dataRoot, Messages.get("dialog.vps_section_tutorials"), game, VpsDiffTypes.tutorial, vpsTable.getTutorialFiles(), !vpsSettings.isHideVPSUpdates() && vpsSettings.isVpsTutorial(), null);
   }
 
   public static void addSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, List<? extends VpsAuthoredUrls> urls, boolean showUpdates, @Nullable Predicate<VpsAuthoredUrls> filterPredicate) {

@@ -126,7 +126,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     }
     catch (Exception e) {
       LOG.error("Failed to fetch accounts: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_fetch_accounts") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_fetch_accounts", e.getMessage()));
     }
 
     tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ManiaTableSyncResultModel>() {
@@ -154,10 +154,10 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     tableView.setItems(FXCollections.observableList(models));
     LOG.info(models.size() + " highscore have been submitted to vpin-mania.net.");
     if (models.size() == 1) {
-      statsLabel.setText(models.size() + " highscore has been submitted to vpin-mania.net.");
+      statsLabel.setText(Messages.get("dialog.mania_highscore_submitted", models.size()));
     }
     else {
-      statsLabel.setText(models.size() + " highscores have been submitted to vpin-mania.net.");
+      statsLabel.setText(Messages.get("dialog.mania_highscores_submitted", models.size()));
     }
 
     if(!tableView.getItems().isEmpty()) {

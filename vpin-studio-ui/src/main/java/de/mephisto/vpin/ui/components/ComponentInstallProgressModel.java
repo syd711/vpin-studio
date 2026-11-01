@@ -81,10 +81,10 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentInstal
       LOG.error("Failed to run installation: " + e.getMessage(), e);
       Platform.runLater(() -> {
         if (simulate) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_installation_simulation_failed"), Messages.get("dialog.failed_to_simulate_installation_update_for") + next + ": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_installation_simulation_failed"), Messages.get("msg.failed_to_simulate_installation_update_for", String.valueOf(next), e.getMessage()));
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_installation_failed"), Messages.get("dialog.failed_install_update_for") + next + ": " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_installation_failed"), Messages.get("msg.failed_install_update_for", String.valueOf(next), e.getMessage()));
         }
       });
     }

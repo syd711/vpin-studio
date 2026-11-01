@@ -264,9 +264,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     this.generateBtn.setDisable(true);
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Frame Picture");
+    fileChooser.setTitle(Messages.get("dialog.select_frame_picture"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.jpg", "*.png"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_image"), "*.jpg", "*.png"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {

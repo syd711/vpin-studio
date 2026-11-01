@@ -132,7 +132,7 @@ public class ProgressDialogController implements Initializable, DialogController
                 if (model.isShowSummary()) {
                   Platform.runLater(() -> {
                     String msg = model.getTitle() + " finished.";
-                    WidgetFactory.showInformation(Studio.stage, msg, Messages.get("dialog.processed") + progressResultModel.getProcessed() + " of " + model.getMax() + Messages.get("dialog.elements"));
+                    WidgetFactory.showInformation(Studio.stage, msg, Messages.get("dialog.processed_of_elements", progressResultModel.getProcessed(), model.getMax()));
                   });
                 }
               });
@@ -145,7 +145,7 @@ public class ProgressDialogController implements Initializable, DialogController
                 });
               }
               Platform.runLater(() -> {
-                WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_in_progressing") + e.getMessage());
+                WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_in_progressing", e.getMessage()));
               });
             }
             return null;

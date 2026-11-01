@@ -42,9 +42,9 @@ public class NvRamUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.nv_upload_failed") + e.getMessage(), e);
+      LOG.error("NV upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.nv_upload_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.nv_upload_failed", e.getMessage()));
       });
     }
   }

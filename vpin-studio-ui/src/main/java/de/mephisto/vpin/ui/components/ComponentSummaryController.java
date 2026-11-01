@@ -73,39 +73,39 @@ public class ComponentSummaryController implements Initializable {
 
   @FXML
   public void onVersionSet() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply_version"), Messages.get("dialog.apply") + latestVersionLabel.getText() + Messages.get("dialog.as_the_current_version_of") + component.getType() + "?", null, Messages.get("common.apply"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply_version"), Messages.get("msg.apply_as_the_current_version_of", latestVersionLabel.getText(), String.valueOf(component.getType())), null, Messages.get("common.apply"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().setVersion(component.getType(), component.getLatestReleaseVersion());
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_apply_version") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_apply_version", e.getMessage()));
       }
     }
   }
 
   @FXML
   public void onVersionReset() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.reset_version"), Messages.get("dialog.reset_version_2") + latestVersionLabel.getText() + "\"?", null, Messages.get("common.reset"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.reset_version"), Messages.get("msg.reset_version", latestVersionLabel.getText()), null, Messages.get("common.reset"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().setVersion(component.getType(), "-");
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_reset_version") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_reset_version", e.getMessage()));
       }
     }
   }
 
   @FXML
   public void onVersionIgnore() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.ignore_version"), Messages.get("dialog.ignore_version_2") + latestVersionLabel.getText() + "\"?", Messages.get("dialog.the_previous_version_will_be_used_as"), Messages.get("dialog.ignore_version"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.ignore_version"), Messages.get("msg.ignore_version", latestVersionLabel.getText()), Messages.get("dialog.the_previous_version_will_be_used_as"), Messages.get("dialog.ignore_version"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getComponentService().ignoreVersion(component.getType(), component.getLatestReleaseVersion());
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_ignore_version") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_ignore_version", e.getMessage()));
       }
     }
   }
@@ -113,7 +113,7 @@ public class ComponentSummaryController implements Initializable {
   @FXML
   public void onFolderSelect() {
     StudioFolderChooser chooser = new StudioFolderChooser();
-    chooser.setTitle("Select Target Folder");
+    chooser.setTitle(Messages.get("dialog.select_target_folder"));
     File targetFolder = chooser.showOpenDialog(Studio.stage);
     if (targetFolder != null && targetFolder.exists()) {
       try {
@@ -121,7 +121,7 @@ public class ComponentSummaryController implements Initializable {
         EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_apply_version") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_apply_version", e.getMessage()));
       }
     }
   }
@@ -133,7 +133,7 @@ public class ComponentSummaryController implements Initializable {
       EventManager.getInstance().notify3rdPartyVersionUpdate(component.getType());
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_apply_version") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_apply_version", e.getMessage()));
     }
   }
 

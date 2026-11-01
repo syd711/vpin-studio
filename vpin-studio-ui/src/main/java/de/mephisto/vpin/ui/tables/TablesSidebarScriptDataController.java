@@ -158,7 +158,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onScreenshotView() {
     if (this.game.isPresent()) {
       String url = Studio.client.getRestClient().getBaseUrl() + VPinStudioClientService.API + "vpx/screenshot/" + game.get().getId();
-      TableDialogs.openMediaDialog(Studio.stage, "Table Screenshot", url, "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, Messages.get("dialog.table_screenshot"), url, "image/png");
     }
   }
 
@@ -274,8 +274,8 @@ public class TablesSidebarScriptDataController implements Initializable {
       builder.directory(new File("resources"));
       builder.start();
     } catch (IOException e) {
-      LOG.error(Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage());
+      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_vpsaveedit", e.getMessage()));
     }
   }
 

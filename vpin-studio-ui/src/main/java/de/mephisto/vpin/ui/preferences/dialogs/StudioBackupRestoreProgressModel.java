@@ -81,7 +81,7 @@ public class StudioBackupRestoreProgressModel extends ProgressModel<String> {
     }
     catch (Exception ex) {
       LOG.error("Failed to write backup file: {}", ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_write_backup_file") + ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_write_backup_file", ex.getMessage()));
     }
   }
 }

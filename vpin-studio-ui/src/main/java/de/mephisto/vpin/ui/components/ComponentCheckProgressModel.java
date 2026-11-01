@@ -59,7 +59,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_check_failed"), Messages.get("dialog.failed_retrieve_component_information_for") + next + ": " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.component_check_failed"), Messages.get("msg.failed_retrieve_component_information_for", String.valueOf(next), e.getMessage()));
       });
     }
   }

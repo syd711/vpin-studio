@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.actions;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.scene.input.KeyCode;
@@ -15,8 +16,8 @@ public class BulkActions {
   private final static List<Action> actions = new ArrayList<>();
 
   static {
-    actions.add(new DisableTableAction(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN), "Disabling Tables"));
-    actions.add(new EnableTableAction(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN), "Activating Tables"));
+    actions.add(new DisableTableAction(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN), Messages.get("dialog.disabling_tables")));
+    actions.add(new EnableTableAction(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN), Messages.get("dialog.activating_tables")));
   }
 
   public static boolean consume(List<GameRepresentation> games, KeyEvent event) {

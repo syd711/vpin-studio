@@ -134,8 +134,8 @@ public class AltSoundEditorController implements Initializable {
       this.originalEntries = copyEntries(altSound.getEntries());
       EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     } catch (Exception ex) {
-      LOG.error(Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage());
+      LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_alt_sound", ex.getMessage()));
     }
   }
 
@@ -180,7 +180,7 @@ public class AltSoundEditorController implements Initializable {
     });
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-    loopedFilterCombo.setItems(FXCollections.observableList(Arrays.asList(null, "Yes", "No")));
+    loopedFilterCombo.setItems(FXCollections.observableList(Arrays.asList(null, Messages.get("common.yes"), Messages.get("common.no"))));
     loopedFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     nameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     filenameFilterCombo.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
@@ -300,10 +300,10 @@ public class AltSoundEditorController implements Initializable {
       }
 
       if (loopedFilter != null) {
-        if (loopedFilter.equals("Yes") && entry.getLoop() != 100) {
+        if (loopedFilter.equals(Messages.get("common.yes")) && entry.getLoop() != 100) {
           continue;
         }
-        if (loopedFilter.equals("No") && entry.getLoop() == 100) {
+        if (loopedFilter.equals(Messages.get("common.no")) && entry.getLoop() == 100) {
           continue;
         }
       }

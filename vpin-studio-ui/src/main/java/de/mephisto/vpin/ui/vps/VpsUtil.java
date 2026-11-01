@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.util.List;
 
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
@@ -48,29 +49,29 @@ public class VpsUtil {
   public static String getFeatureColorTooltip(String abb) {
       return switch (abb) {
           case "4K" ->
-                  "The resources used for the playfield and other images are 4k (or higher). The term is probably outdated since VPX can handle different resolutions.";
-          case "B2S" -> "Backglass";
-          case "Color Rom" -> "Colorized Rom, needed to be placed in Visual Pinball/VPinMame/altcolor/<ROM>";
-          case "FastFlips" -> "Process reducing lag in flippers.";
-          case "Fleep" -> "Consists of various realistic mechanical sounds created by Fleep.";
+                  Messages.get("dialog.vps_feature_4k");
+          case "B2S" -> Messages.get("dialog.vps_feature_b2s");
+          case "Color Rom" -> Messages.get("dialog.vps_feature_color_rom");
+          case "FastFlips" -> Messages.get("dialog.vps_feature_fastflips");
+          case "Fleep" -> Messages.get("dialog.vps_feature_fleep");
           case "FLEXDMD" ->
-                  "A folder containing DMD animations, mostly used in Original tables. Needs to be places in your Visual Pinball/Tables folder";
-          case "FSS" -> "Full Single Screen tables";
-          case "Hybrid" -> "Tables can do cabinet, desktop and VR modes.";
-          case "Kids" -> "Children Friendly";
-          case "LUT" -> "Color Grade Look Up Table. Change table's color values.";
-          case "MediaPack" -> "Mostly consisted of images, sounds and / or videos that could be used with frontends.";
-          case "MOD" -> "Modification.";
-          case "NFOZZY" -> "Nfozzy (and Rothbauerw)'s Physics.";
-          case "POV" -> "Point of View";
+                  Messages.get("dialog.vps_feature_flexdmd");
+          case "FSS" -> Messages.get("dialog.vps_feature_fss");
+          case "Hybrid" -> Messages.get("dialog.vps_feature_hybrid");
+          case "Kids" -> Messages.get("dialog.vps_feature_kids");
+          case "LUT" -> Messages.get("dialog.vps_feature_lut");
+          case "MediaPack" -> Messages.get("dialog.vps_feature_mediapack");
+          case "MOD" -> Messages.get("dialog.vps_feature_mod");
+          case "NFOZZY" -> Messages.get("dialog.vps_feature_nfozzy");
+          case "POV" -> Messages.get("dialog.vps_feature_pov");
           case "ROM" ->
-                  "Game Rom (Mame). Needs to be placed in placed in your Visual Pinball/VPinMame/<ROM> folder. Note: needs to be .zipped!";
-          case "SSF" -> "Surround Sound Feedback";
-          case "VR" -> "Virtual Reality, mostly used for VR glasses.";
+                  Messages.get("dialog.vps_feature_rom");
+          case "SSF" -> Messages.get("dialog.vps_feature_ssf");
+          case "VR" -> Messages.get("dialog.vps_feature_vr");
           case "Sound" ->
-                  "ALTernative Sound. Enhanced music, sounds or a completely different music track. To be placed in Visual Pinball/VPinMame/altsound";
-          case "Wheel" -> "Wheel art. Can be regular or animated.";
-          case "Topper" -> "Can be used to play extra videos when needed. For users that have more than 3 screens.";
+                  Messages.get("dialog.vps_feature_sound");
+          case "Wheel" -> Messages.get("dialog.vps_feature_wheel");
+          case "Topper" -> Messages.get("dialog.vps_feature_topper");
           default -> abb;
       };
   }

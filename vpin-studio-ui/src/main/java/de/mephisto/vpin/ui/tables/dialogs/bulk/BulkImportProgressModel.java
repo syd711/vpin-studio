@@ -69,7 +69,7 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
 
   @Override
   public String nextToString(BulkImportItem item) {
-    return Messages.get("dialog.uploading") + item.getFile().getName();
+    return Messages.get("msg.uploading", item.getFile().getName());
   }
 
   @Override

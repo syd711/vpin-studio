@@ -287,7 +287,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           }
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_valid_alt_sound_folder_found_for") + game.get().getId() + "\".");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.no_valid_alt_sound_folder_found_for", String.valueOf(game.get().getId())));
         }
       }
     }
@@ -316,7 +316,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           }
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_valid_alt_color_folder_found_for") + game.get().getId() + "\".");
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.no_valid_alt_color_folder_found_for", String.valueOf(game.get().getId())));
         }
       }
     }
@@ -398,8 +398,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_open_vpx") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpx") + e.getMessage());
+      LOG.error("Failed to open VPX: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_vpx", e.getMessage()));
     }
   }
 

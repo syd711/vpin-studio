@@ -26,14 +26,14 @@ public class SupportPreferencesController implements Initializable {
   @FXML
   private void onZipDownload() {
     DirectoryChooser chooser = new DirectoryChooser();
-    chooser.setTitle("Select Target Folder");
+    chooser.setTitle(Messages.get("dialog.select_target_folder"));
     File targetFolder = chooser.showDialog(stage);
 
     if (targetFolder != null && targetFolder.exists()) {
-      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new LogsDownloadProgressModel("Download Logs", targetFolder));
+      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new LogsDownloadProgressModel(Messages.get("dialog.download_logs"), targetFolder));
       if (!resultModel.getResults().isEmpty()) {
         File target = (File) resultModel.getResults().getFirst();
-        WidgetFactory.showInformation(stage, Messages.get("dialog.logs_generated"), Messages.get("dialog.downloaded") + target.getAbsolutePath() + "\".", Messages.get("dialog.please_attach_this_file_with_a_description"));
+        WidgetFactory.showInformation(stage, Messages.get("dialog.logs_generated"), Messages.get("msg.downloaded", target.getAbsolutePath()), Messages.get("dialog.please_attach_this_file_with_a_description"));
       }
     }
   }

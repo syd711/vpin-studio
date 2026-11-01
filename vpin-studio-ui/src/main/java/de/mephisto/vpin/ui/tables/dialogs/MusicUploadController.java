@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -26,7 +27,7 @@ public class MusicUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new MusicUploadProgressModel("Music Upload", getSelection(), getSelectedEmulatorId(), gameId);
+    return new MusicUploadProgressModel(Messages.get("dialog.upload_music"), getSelection(), getSelectedEmulatorId(), gameId);
   }
 
   @Override
@@ -40,7 +41,7 @@ public class MusicUploadController extends BaseUploadController {
     try {
       analysis.analyze();
     } catch (IOException e) {
-      return "Failed to analyze music bundle: " + e.getMessage();
+      return Messages.get("dialog.failed_to_analyze_music_bundle", e.getMessage());
     }
 
     String analyze = analysis.validateAssetTypeInArchive(AssetType.MUSIC_BUNDLE);

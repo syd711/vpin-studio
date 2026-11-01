@@ -422,9 +422,9 @@ public class DMDPositionController extends BasePrevNextController {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select DMD Image");
+    fileChooser.setTitle(Messages.get("dialog.select_dmd_image"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_image"), "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -818,8 +818,8 @@ public class DMDPositionController extends BasePrevNextController {
     disablePane.setManaged(canSelectHowToDisable);
     disablePane.setVisible(canSelectHowToDisable);
 
-    tablePositionLabel.setText((dmdinfo.isLocallySaved() ? "Locally" : "Globally") + " in " 
-        + (dmdinfo.isUseRegistry() ? "registry" : "dmddevice.ini"));
+    String dmdLocation = dmdinfo.isUseRegistry() ? Messages.get("dialog.dmd_registry") : "dmddevice.ini";
+    tablePositionLabel.setText(dmdinfo.isLocallySaved() ? Messages.get("dialog.dmd_saved_locally_in", dmdLocation) : Messages.get("dialog.dmd_saved_globally_in", dmdLocation));
 
     boolean isAlpha = DMDType.AlphaNumericDMD.equals(dmdinfo.getDMDType());
     backglassScorePane.setManaged(isAlpha);

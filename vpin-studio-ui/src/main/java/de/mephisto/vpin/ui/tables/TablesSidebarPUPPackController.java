@@ -148,7 +148,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_pup_pack_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_pup_pack_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       deleteBtn.setDisable(true);
       new Thread(() -> {
@@ -164,7 +164,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   private void onOptionApply() {
     String option = optionsCombo.getValue();
     if (!StringUtils.isEmpty(option)) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.apply") + option + "\"?", Messages.get("dialog.the_existing_settings_will_be_overwritten"));
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.apply", String.valueOf(option)), Messages.get("dialog.the_existing_settings_will_be_overwritten"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JobDescriptor jobExecutionResult = null;
         try {
@@ -240,7 +240,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     File file = new File(frontend.getInstallationDirectory(), "PinUpPackEditor.exe");
     if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_pinuppackeditor_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_pinuppackeditor_exe"), Messages.get("msg.the_exe_file_was_not_found", file.getAbsolutePath()));
     }
     else {
       Studio.open(file);
@@ -252,7 +252,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     File file = new File(frontend.getInstallationDirectory(), "PupPackScreenTweaker.exe");
     if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_puppackscreentweaker_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_puppackscreentweaker_exe"), Messages.get("msg.the_exe_file_was_not_found", file.getAbsolutePath()));
     }
     else {
       SystemCommandExecutor executor = new SystemCommandExecutor(List.of(file.getName()));
@@ -272,7 +272,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (game.isPresent()) {
       GameRepresentation g = game.get();
       if (StringUtils.isEmpty(g.getRom())) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom_name_found_for") + g.getGameDisplayName() + "\".", Messages.get("dialog.to_upload_a_pup_pack_a_rom"));
+        WidgetFactory.showAlert(Studio.stage, Messages.get("msg.no_rom_name_found_for", g.getGameDisplayName()), Messages.get("dialog.to_upload_a_pup_pack_a_rom"));
         return;
       }
 

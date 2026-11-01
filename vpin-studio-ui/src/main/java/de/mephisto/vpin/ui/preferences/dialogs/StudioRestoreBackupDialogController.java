@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.backups.StudioBackupDescriptor;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -105,9 +106,9 @@ public class StudioRestoreBackupDialogController implements Initializable, Dialo
     this.createBtn.setDisable(true);
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select VPin Studio Backup File");
+    fileChooser.setTitle(Messages.get("dialog.select_studio_backup_file"));
 
-    fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("VPin Studio Backup", "*.json"));
+    fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(Messages.get("dialog.filter_studio_backup"), "*.json"));
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
       this.fileNameField.setText(selection.getAbsolutePath());

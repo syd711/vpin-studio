@@ -93,7 +93,7 @@ public class SystemUtil {
       }
 
       if (!folder.exists() && (fallback != null && !fallback.exists())) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_local_folder") + folder.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.the_local_folder_does_not_exist", folder.getAbsolutePath()));
         return;
       }
 
@@ -105,7 +105,7 @@ public class SystemUtil {
           openFolderWithOS(fallback.getAbsolutePath());
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.the_local_folder") + folder.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.the_local_folder_does_not_exist", folder.getAbsolutePath()));
         }
       }
       catch (IOException e) {
@@ -135,8 +135,8 @@ public class SystemUtil {
           }
         }
         catch (Exception e) {
-          LOG.error(Messages.get("dialog.failed_to_open_network_folder") + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_network_folder") + e.getMessage());
+          LOG.error("Failed to open network folder: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_network_folder", e.getMessage()));
         }
       }
     }

@@ -31,8 +31,8 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
       Dialogs.openTextEditor(new TextEditorFile(TextEditorFileTypes.VPinballXIni), "VPinballX.ini");
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_open_file") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_file") + e.getMessage());
+      LOG.error("Failed to open file: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_file", e.getMessage()));
     }
   }
 

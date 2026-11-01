@@ -22,8 +22,8 @@ public class DismissalUtil {
       dismiss(game, validationState);
     }
     else {
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, Messages.get("dialog.ignore_this_warning_for_future_validations_of") + game.getGameDisplayName() + "?", "Dismiss",
-        "The warning can be re-enabled by validating the table again.", null, Messages.get("dialog.do_not_show_again"), false);
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(Studio.stage, Messages.get("msg.ignore_this_warning_for_future_validations_of", game.getGameDisplayName()), Messages.get("dialog.dismiss"),
+        Messages.get("dialog.warning_reenable_hint"), null, Messages.get("dialog.do_not_show_again"), false);
       if (!confirmationResult.isApplyClicked()) {
         dismiss(game, validationState);
       }

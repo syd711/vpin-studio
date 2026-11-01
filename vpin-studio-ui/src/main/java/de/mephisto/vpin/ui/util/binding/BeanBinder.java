@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util.binding;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -224,7 +225,7 @@ public class BeanBinder<T> {
     Font font = resolveFont(name, style, size);
     FontSelectorDialog fs = new FontSelectorDialog(font);
     fs.setHeight(500);
-    fs.setTitle("Select Font");
+    fs.setTitle(Messages.get("dialog.select_font"));
     fs.setHeaderText("");
     fs.show();
 

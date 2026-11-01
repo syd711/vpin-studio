@@ -78,7 +78,7 @@ public class VpsPreferencesController implements Initializable {
 
   @FXML
   public void onReload() {
-    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel(Messages.get("dialog.download_vps_database"), Arrays.asList(new File("<vpsdb.json>"))));
   }
 
   @Override

@@ -167,7 +167,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
             uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
             uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
 
-            GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
+            GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel(Messages.get("dialog.importing_game_media"), uploadDescriptor);
             result = UniversalUploadUtil.postProcess(progressModel);
 
             EventManager.getInstance().notifyTableChange(game.getId(), game.getRom(), game.getGameName());
@@ -193,9 +193,9 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     this.uploadBtn.setDisable(true);
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Media Pack");
+    fileChooser.setTitle(Messages.get("dialog.select_media_pack"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Media Pack", "*.zip", "*.rar", "*.7z"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_media_pack"), "*.zip", "*.rar", "*.7z"));
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       this.uploaderAnalysis = null;
@@ -248,7 +248,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
             this.uploadBtn.setDisable(false);
             this.cancelBtn.setDisable(false);
 
-            this.labelCount.setText(allData.size() + " entries");
+            this.labelCount.setText(Messages.get("dialog.entries_count", allData.size()));
 
             uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
             ObservableList<MediaUploadArchiveItem> items = tableView.getItems();
@@ -267,7 +267,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
         .onErrorLater(e -> {
           LOG.error("Media preview generation failed: {}", e.getMessage(), e);
           endReload();
-          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.media_preview_generation_failed") + e.getMessage());
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.media_preview_generation_failed", e.getMessage()));
         });
   }
 
@@ -307,7 +307,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     if (filterMode != null) {
       this.uploadBtn.setText(Messages.get("tables.media_upload.apply_selection"));
       this.tableInfo.setVisible(false);
-      this.stage.setTitle("Asset Selector");
+      this.stage.setTitle(Messages.get("dialog.asset_selector"));
     }
 
     if (selection != null) {
@@ -320,7 +320,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("media", "media", new MediaUploaderColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_media"), Messages.get("dialog.noun_media"), new MediaUploaderColumnSorter(this));
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 

@@ -58,9 +58,9 @@ public class GameMediaUploadPostProcessingProgressModel extends ProgressModel<Up
       progressResultModel.getResults().add(result);
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.table_upload_failed") + e.getMessage(), e);
+      LOG.error("Table upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.post_processing_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.post_processing_failed", e.getMessage()));
       });
     }
   }

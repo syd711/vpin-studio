@@ -231,7 +231,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       Frontend frontend = client.getFrontendService().getFrontendCached();
       File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
       if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_exe"), Messages.get("msg.the_exe_file_was_not_found", file.getAbsolutePath()));
       }
       else {
         Studio.open(file);
@@ -260,7 +260,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       LocalUISettings.setModal(CabMonitorController.MODAL_STATE_ID, false);
       monitorOpen = true;
       monitorBtn.getStyleClass().add("toggle-button-selected");
-      monitorStage = Dialogs.createStudioDialogStage(CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", CabMonitorController.MODAL_STATE_ID);
+      monitorStage = Dialogs.createStudioDialogStage(CabMonitorController.class, "dialog-cab-monitor.fxml", Messages.get("dialog.cabinet_monitor"), CabMonitorController.MODAL_STATE_ID);
       CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
       controller.setData(monitorStage);
       FXResizeHelper.install(monitorStage, 30, 6);
@@ -506,7 +506,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       Studio.loadStudio(new Stage(), client);
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.connection_failed_to") + connection.getName() + "/" + connection.getIp());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.connection_failed_to", connection.getName(), String.valueOf(connection.getIp())));
     }
   }
 

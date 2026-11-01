@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZSourceRepresentation;
@@ -17,7 +18,7 @@ import java.util.List;
 public class VPXZDialogs {
 
   public static void openTablesVpxzDialog(GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(TablesVPXZDialogController.class, "dialog-tables-vpxz.fxml", "VPXZ Table Packager");
+    Stage stage = Dialogs.createStudioDialogStage(TablesVPXZDialogController.class, "dialog-tables-vpxz.fxml", Messages.get("dialog.vpxz_table_packager"));
     TablesVPXZDialogController controller = (TablesVPXZDialogController) stage.getUserData();
     controller.setGames(game);
     stage.showAndWait();
@@ -33,7 +34,7 @@ public class VPXZDialogs {
 //  }
 
   public static VPXZSourceRepresentation openVpxzSourceFolderDialog(VPXZSourceRepresentation source) {
-    Stage stage = Dialogs.createStudioDialogStage(VPXZSourceFolderDialogController.class, "dialog-vpxz-source-folder.fxml", "VPXZ Folder");
+    Stage stage = Dialogs.createStudioDialogStage(VPXZSourceFolderDialogController.class, "dialog-vpxz-source-folder.fxml", Messages.get("dialog.vpxz_folder"));
     VPXZSourceFolderDialogController controller = (VPXZSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
@@ -45,7 +46,7 @@ public class VPXZDialogs {
   }
 
   public static boolean openVpxzUploadDialog(@Nullable File file) {
-    Stage stage = Dialogs.createStudioDialogStage(VPXZUploadController.class, "dialog-vpxz-upload.fxml", "Upload");
+    Stage stage = Dialogs.createStudioDialogStage(VPXZUploadController.class, "dialog-vpxz-upload.fxml", Messages.get("common.upload"));
     VPXZUploadController controller = (VPXZUploadController) stage.getUserData();
     controller.setFile(file);
     stage.showAndWait();
@@ -54,7 +55,7 @@ public class VPXZDialogs {
   }
 
   public static void openVpxzDownloadDialog(List<VPXZDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(VPXZDownloadDialogController.class, "dialog-vpxz-download.fxml", "VPXZ Download");
+    Stage stage = Dialogs.createStudioDialogStage(VPXZDownloadDialogController.class, "dialog-vpxz-download.fxml", Messages.get("dialog.vpxz_download"));
     VPXZDownloadDialogController controller = (VPXZDownloadDialogController) stage.getUserData();
     controller.setData(selectedItems);
     stage.showAndWait();

@@ -168,7 +168,7 @@ public class TableDialogs {
   }
 
   public static void openMetadataDialog(AssetMetaData metadata, String filename) {
-    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", Messages.get("dialog.metadata_for") + filename + "\"");
+    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", Messages.get("msg.metadata_for", filename));
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
     controller.setData(metadata);
     stage.showAndWait();
@@ -226,7 +226,7 @@ public class TableDialogs {
 
   public static boolean directUpload(Stage stage, AssetType assetType, GameRepresentation game, Runnable finalizer) {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle(Messages.get("dialog.select") + assetType.toString());
+    fileChooser.setTitle(Messages.get("msg.select", assetType.toString()));
     fileChooser.getExtensionFilters().addAll(
         new FileChooser.ExtensionFilter(assetType.toString(), assetType.installableExtension()));
 
@@ -262,7 +262,7 @@ public class TableDialogs {
       if (game.getDirectB2SPath() != null) {
         help2 = Messages.get("dialog.the_existing_directb2s_file_will_be_overwritten");
       }
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_backglass_for") + game.getGameDisplayName() + "\"?", help2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("msg.upload_backglass_for", game.getGameDisplayName()), help2);
       if (result.get().equals(ButtonType.OK)) {
         DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), Messages.get("dialog.directb2s_upload"), file, false);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -281,7 +281,7 @@ public class TableDialogs {
       if (game.getDirectB2SPath() != null) {
         help2 = Messages.get("dialog.the_existing_res_file_will_be_overwritten");
       }
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_res_file_for") + game.getGameDisplayName() + "\"?", help2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("msg.upload_res_file_for", game.getGameDisplayName()), help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
           ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), Messages.get("dialog.res_file_upload"), file);
@@ -303,7 +303,7 @@ public class TableDialogs {
         if (game.getIniPath() != null) {
           help2 = Messages.get("dialog.the_existing_ini_file_will_be_overwritten");
         }
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_ini_file_for") + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("msg.upload_ini_file_for", game.getGameDisplayName()), help2);
         if (result.get().equals(ButtonType.OK)) {
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), Messages.get("dialog.ini_upload"), file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -324,7 +324,7 @@ public class TableDialogs {
         if (game.getVbsPath() != null) {
           help2 = Messages.get("dialog.the_existing_vbs_file_will_be_overwritten");
         }
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_vbs_file_for") + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("msg.upload_vbs_file_for", game.getGameDisplayName()), help2);
         if (result.get().equals(ButtonType.OK)) {
           VbsUploadProgressModel model = new VbsUploadProgressModel(game.getId(), Messages.get("dialog.vbs_upload"), file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -342,7 +342,7 @@ public class TableDialogs {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_bam_cfg_file_for") + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("msg.upload_bam_cfg_file_for", game.getGameDisplayName()), help2);
         if (result.get().equals(ButtonType.OK)) {
           BamCfgUploadProgressModel model = new BamCfgUploadProgressModel(Messages.get("dialog.bam_cfg_upload"), Arrays.asList(file), game.getId());
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -363,7 +363,7 @@ public class TableDialogs {
         if (game.getPovPath() != null) {
           help2 = Messages.get("dialog.the_existing_pov_file_will_be_overwritten");
         }
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("dialog.upload_pov_file_for") + game.getGameDisplayName() + "\"?", help2);
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.upload"), Messages.get("msg.upload_pov_file_for", game.getGameDisplayName()), help2);
         if (result.get().equals(ButtonType.OK)) {
           PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), Messages.get("dialog.pov_upload"), file);
           ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -387,12 +387,12 @@ public class TableDialogs {
       targetFile = FileUtils.uniqueFile(targetFile);
       try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
         IOUtils.copy(in, fileOutputStream);
-        WidgetFactory.showInformation(stage, Messages.get("dialog.export_finished"), Messages.get("dialog.written") + targetFile.getName() + "\".");
+        WidgetFactory.showInformation(stage, Messages.get("dialog.export_finished"), Messages.get("msg.written", targetFile.getName()));
         return true;
       }
       catch (IOException e) {
         LOG.error("Failed to download {} : {}", targetFile.getName(), e.getMessage(), e);
-        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_download") + targetFile.getName() + ": " + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_download", targetFile.getName(), e.getMessage()));
       }
     }
     return false;
@@ -437,7 +437,7 @@ public class TableDialogs {
   }
 
   public static boolean openHighscoresAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(TableHighscoresAdminController.class, "dialog-highscores-admin.fxml", Messages.get("dialog.archived_highscores_for") + game.getGameDisplayName() + "\"");
+    Stage stage = Dialogs.createStudioDialogStage(TableHighscoresAdminController.class, "dialog-highscores-admin.fxml", Messages.get("msg.archived_highscores", game.getGameDisplayName()));
     TableHighscoresAdminController controller = (TableHighscoresAdminController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
@@ -446,7 +446,7 @@ public class TableDialogs {
   }
 
   public static boolean openAltColorAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(TableAltColorAdminController.class, "dialog-altcolor-admin.fxml", Messages.get("dialog.alt_colors_for") + game.getGameDisplayName() + "\"");
+    Stage stage = Dialogs.createStudioDialogStage(TableAltColorAdminController.class, "dialog-altcolor-admin.fxml", Messages.get("msg.alt_colors_for", game.getGameDisplayName()));
     TableAltColorAdminController controller = (TableAltColorAdminController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
@@ -580,7 +580,7 @@ public class TableDialogs {
 
   public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (client.getEmulatorService().isVpxGame(game) && StringUtils.isEmpty(game.getRom())) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom"), Messages.get("dialog.table") + game.getGameDisplayName() + Messages.get("dialog.has_no_rom_name_set"), Messages.get("dialog.the_rom_name_is_required_for_this"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom"), Messages.get("msg.table_has_no_rom_name_set", game.getGameDisplayName()), Messages.get("dialog.the_rom_name_is_required_for_this"));
     }
 
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", Messages.get("dialog.alt_color_upload"));
@@ -592,7 +592,7 @@ public class TableDialogs {
 
   public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom"), Messages.get("dialog.table") + game.getGameDisplayName() + Messages.get("dialog.has_no_rom_name_set"), Messages.get("dialog.the_rom_name_is_required_for_this"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_rom"), Messages.get("msg.table_has_no_rom_name_set", game.getGameDisplayName()), Messages.get("dialog.the_rom_name_is_required_for_this"));
     }
 
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", Messages.get("dialog.pup_pack_upload"));
@@ -611,7 +611,7 @@ public class TableDialogs {
   public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis analysis, @Nullable AssetType filterMode, int emulatorId) {
     String title = Messages.get("dialog.media_pack");
     if (game != null) {
-      title = Messages.get("dialog.media_for") + game.getGameDisplayName() + "\"";
+      title = Messages.get("msg.media_for", game.getGameDisplayName());
     }
     if (filterMode != null) {
       title = Messages.get("dialog.media_selection");
@@ -704,7 +704,7 @@ public class TableDialogs {
   }
 
   private static void onOpenAutoMatchAll(List<GameRepresentation> games) {
-    String title = Messages.get("dialog.auto_match_table_and_version_for_all") + games.size() + Messages.get("dialog.tables");
+    String title = Messages.get("msg.auto_match_table_and_version_for_all", String.valueOf(games.size()));
     String description = Messages.get("dialog.the_table_and_display_name_is_used");
     String hint = Messages.get("dialog.you_may_have_to_adept_the_result");
     AutoMatchDialogController controller = openAutoMatchDialog(title, description, hint, true);
@@ -735,9 +735,9 @@ public class TableDialogs {
   }
 
   private static boolean onOpenAutoMatch(List<GameRepresentation> games) {
-    String title = Messages.get("dialog.auto_match_table_and_version_for") + games.size() + Messages.get("dialog.tables");
+    String title = Messages.get("msg.auto_match_table_and_version_for_tables", String.valueOf(games.size()));
     if (games.size() == 1) {
-      title = Messages.get("dialog.auto_match_table_and_version_for") + "\"" + games.getFirst().getGameDisplayName() + "\"?";
+      title = Messages.get("msg.auto_match_table_and_version_for", games.getFirst().getGameDisplayName());
     }
 
     AutoMatchDialogController controller = openAutoMatchDialog(title, Messages.get("dialog.this_will_overwrite_the_existing_mapping"), Messages.get("dialog.this_action_will_overwrite_the_vps_table"), false);
@@ -749,7 +749,7 @@ public class TableDialogs {
   }
 
   public static boolean openScanAllDialog(List<GameRepresentation> games) {
-    String title = Messages.get("dialog.re_scan_all") + games.size() + Messages.get("dialog.tables");
+    String title = Messages.get("msg.re_scan_all_tables", String.valueOf(games.size()));
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         Messages.get("dialog.scanning_will_try_to_resolve_rom_and"), null, Messages.get("dialog.start_scan"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -840,17 +840,17 @@ public class TableDialogs {
     if (selectedItems.isEmpty()) {
       return false;
     }
-    String title = Messages.get("dialog.re_validate") + selectedItems.size() + Messages.get("dialog.tables");
+    String title = Messages.get("msg.re_validate_tables", String.valueOf(selectedItems.size()));
     if (selectedItems.size() == 1) {
-      title = Messages.get("dialog.re_validate_table") + selectedItems.getFirst().getGameDisplayName() + "\"?";
+      title = Messages.get("msg.re_validate_table", selectedItems.getFirst().getGameDisplayName());
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         Messages.get("dialog.this_will_reset_the_dismissed_validations_for"), null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      title = Messages.get("dialog.re_validating") + selectedItems.size() + " + " + Messages.get("dialog.tables_2");
+      title = Messages.get("msg.re_validating_tables", String.valueOf(selectedItems.size()));
       if (selectedItems.size() == 1) {
-        title = Messages.get("dialog.re_validating_table") + selectedItems.getFirst().getGameDisplayName() + "\"";
+        title = Messages.get("msg.re_validating_table", selectedItems.getFirst().getGameDisplayName());
       }
 
       ProgressDialog.createProgressDialog(new TableValidateProgressModel(title, selectedItems, reload));
@@ -880,7 +880,7 @@ public class TableDialogs {
       return;
     }
 
-    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + Messages.get("dialog.screen"), "dialog-media-preview");
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", Messages.get("msg.screen", String.valueOf(item.getScreen())), "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
     controller.setData(stage, item, false);
 

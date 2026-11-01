@@ -60,7 +60,7 @@ public class DOFSyncProgressModel extends ProgressModel<String> {
       progressResultModel.getResults().add(sync);
       client.getDofTesterService().clearCache();
     } catch (Exception e) {
-      progressResultModel.getResults().add("Error synchronizing DOF: " + e.getMessage());
+      progressResultModel.getResults().add(Messages.get("dialog.error_synchronizing_dof", e.getMessage()));
       LOG.error("Error synchronizing DOF: " + e.getMessage(), e);
     }
   }

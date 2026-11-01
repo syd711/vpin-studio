@@ -140,9 +140,9 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> subscriptions = client.getCompetitionService().getSubscriptions();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize") + subscriptions.size() + Messages.get("dialog.subscription_s"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.synchronize_subscription_s", String.valueOf(subscriptions.size())), Messages.get("dialog.this_will_re_check_your_local_highscores"));
     if (result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Table Subscriptions", subscriptions));
+      ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel(Messages.get("dialog.synchronizing_table_subscriptions"), subscriptions));
       this.onReload();
     }
   }
@@ -160,7 +160,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", Arrays.asList(c)));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel(Messages.get("dialog.creating_subscription"), Arrays.asList(c)));
         Platform.runLater(() -> {
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.getFirst());
@@ -212,15 +212,15 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {
       boolean isOwner = selection.getOwner().equals(String.valueOf(client.getDiscordService().getDiscordStatus(selection.getDiscordServerId()).getBotId()));
-      String help = "You are the owner of this subscription.";
-      String help2 = "The subscription and the corresponding channel will be deleted.";
+      String help = Messages.get("dialog.subscription_owner_hint");
+      String help2 = Messages.get("dialog.subscription_owner_delete_hint");
 
       if (!isOwner) {
-        help = "You are not the owner of this subscription.";
-        help2 = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
+        help = Messages.get("dialog.subscription_not_owner_hint");
+        help2 = Messages.get("dialog.subscription_delete_hint");
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_subscription") + selection.getName() + "'?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_subscription", selection.getName()),
           help, help2, Messages.get("dialog.delete_subscription_2"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
@@ -330,7 +330,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("msg.error", e.getMessage())));
       }
     });
 
@@ -367,7 +367,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("msg.error", e.getMessage())));
       }
     });
 
@@ -404,7 +404,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("msg.error", e.getMessage())));
       }
     });
 
@@ -437,7 +437,7 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       }
       catch (Exception e) {
         LOG.error("Failed to render table column: {}", e.getMessage(), e);
-        return new SimpleObjectProperty(new Label(Messages.get("dialog.error") + e.getMessage()));
+        return new SimpleObjectProperty(new Label(Messages.get("msg.error", e.getMessage())));
       }
     });
 

@@ -223,7 +223,7 @@ public class TableUploadController implements Initializable, DialogController {
         uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
 
 
-        GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
+        GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel(Messages.get("dialog.importing_game_media"), uploadDescriptor);
         result = UniversalUploadUtil.postProcess(progressModel);
 
         if (finalizer != null) {
@@ -260,7 +260,7 @@ public class TableUploadController implements Initializable, DialogController {
 
       if (!similar) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, Messages.get("common.warning"),
-            Messages.get("dialog.the_selected_file") + selection.getName() + Messages.get("dialog.doesn_t_seem_to_match_with_table") + game.getGameDisplayName() + "\".", Messages.get("dialog.proceed_anyway"), Messages.get("dialog.yes_replace_table"));
+            Messages.get("msg.the_selected_file_doesn_t_seem_to", selection.getName(), game.getGameDisplayName()), Messages.get("dialog.proceed_anyway"), Messages.get("dialog.yes_replace_table"));
         if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
           return false;
         }
@@ -279,7 +279,7 @@ public class TableUploadController implements Initializable, DialogController {
         }
         GameRepresentation game = checkResult.getFirstTypedResult();
         if (game != null) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(s, Messages.get("dialog.potential_table_match_found"), Messages.get("dialog.the_selected_file") + selection.getName() + Messages.get("dialog.seems_to_match_with_the_table") + game.getGameDisplayName() + "\".",
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(s, Messages.get("dialog.potential_table_match_found"), Messages.get("msg.the_selected_file_seems_to_match_with", selection.getName(), game.getGameDisplayName()),
               Messages.get("dialog.would_you_like_to_proceed_adding_a"), Messages.get("dialog.yes_upload_as_new_table"));
           if (result.isEmpty() || result.get().equals(ButtonType.CANCEL)) {
             return false;
@@ -306,14 +306,14 @@ public class TableUploadController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select VPX File");
+    fileChooser.setTitle(Messages.get("dialog.select_table_file"));
 
     List<String> filters = Arrays.asList("*.vpx", "*.vpt", "*.zip", "*.rar", "*.7z");
-    String description = "FP file";
+    String description = Messages.get("dialog.filter_vpx_file");
     GameEmulatorRepresentation value = emulatorCombo.getValue();
     if (value != null && value.isFpEmulator()) {
       filters = Arrays.asList("*.fpt", "*.zip", "*.rar", "*.7z");
-      description = "VPX file";
+      description = Messages.get("dialog.filter_fp_file");
     }
 
     fileChooser.getExtensionFilters().addAll(

@@ -30,9 +30,9 @@ public class PopperSettingsPreferencesController implements Initializable {
 
   private final Debouncer debouncer = new Debouncer();
 
-  private final static List<FadeoutLoading> FADEOUT_LOADINGS = Arrays.asList(new FadeoutLoading(0, "Normal"),
-      new FadeoutLoading(1, "Fade out video and audio"),
-      new FadeoutLoading(2, "Continue playing until loading video ends or a key is pressed."));
+  private final static List<FadeoutLoading> FADEOUT_LOADINGS = Arrays.asList(new FadeoutLoading(0, Messages.get("dialog.popper_fadeout_normal")),
+      new FadeoutLoading(1, Messages.get("dialog.popper_fadeout_fade")),
+      new FadeoutLoading(2, Messages.get("dialog.popper_fadeout_continue")));
 
 
   @FXML
@@ -327,8 +327,8 @@ public class PopperSettingsPreferencesController implements Initializable {
         }
       }
       catch (Exception e) {
-        LOG.error(Messages.get("dialog.failed_to_save_pinup_popper_custom_options") + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinup_popper_custom_options") + e.getMessage());
+        LOG.error("Failed to save PinUP Popper custom options: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_pinup_popper_custom_options", e.getMessage()));
       }
     });
   }

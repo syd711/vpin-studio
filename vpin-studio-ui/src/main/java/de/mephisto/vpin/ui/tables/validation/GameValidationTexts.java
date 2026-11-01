@@ -95,37 +95,37 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NO_AUDIO: {
-        label = invalidAssetMessage("Audio");
+        label = invalidAssetMessage(Messages.get("dialog.screen_audio"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_AUDIO_LAUNCH: {
-        label = invalidAssetMessage("Audio Launch");
+        label = invalidAssetMessage(Messages.get("dialog.screen_audio_launch"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_APRON: {
-        label = invalidAssetMessage("Full DMD");
+        label = invalidAssetMessage(Messages.get("dialog.screen_full_dmd"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_INFO: {
-        label = invalidAssetMessage("Info");
+        label = invalidAssetMessage(Messages.get("dialog.screen_info"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_HELP: {
-        label = invalidAssetMessage("Help");
+        label = invalidAssetMessage(Messages.get("dialog.screen_help"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_TOPPER: {
-        label = invalidAssetMessage("Topper");
+        label = invalidAssetMessage(Messages.get("dialog.screen_topper"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_BACKGLASS: {
-        label = invalidAssetMessage("Backglass");
+        label = invalidAssetMessage(Messages.get("dialog.screen_backglass"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
@@ -135,12 +135,12 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NO_LOADING: {
-        label = invalidAssetMessage("Loading");
+        label = invalidAssetMessage(Messages.get("dialog.screen_loading"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_PLAYFIELD: {
-        label = invalidAssetMessage("Playfield");
+        label = invalidAssetMessage(Messages.get("dialog.screen_playfield"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
@@ -150,12 +150,12 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NO_LOGO: {
-        label = invalidAssetMessage("Logo");
+        label = invalidAssetMessage(Messages.get("dialog.screen_logo"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }
       case CODE_NO_WHEEL_IMAGE: {
-        label = invalidAssetMessage("Wheel");
+        label = invalidAssetMessage(Messages.get("dialog.screen_wheel"));
         text = Messages.get("validation.game.no_media_text");
         break;
       }

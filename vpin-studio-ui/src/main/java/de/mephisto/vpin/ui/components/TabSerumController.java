@@ -54,7 +54,7 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
       }
       catch (Exception e) {
         LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_dmddeviceini_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_dmddeviceini_file", e.getMessage()));
       }
     }
   }

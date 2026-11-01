@@ -67,7 +67,7 @@ public class MediaConversionProgressModel extends ProgressModel<FrontendMediaIte
     }
     catch (Exception e) {
       LOG.error("Video conversion failed: " + e.getMessage(), e);
-      progressResultModel.getResults().add("Video conversion failed: " + e.getMessage());
+      progressResultModel.getResults().add(Messages.get("dialog.video_conversion_failed", e.getMessage()));
     }
   }
 

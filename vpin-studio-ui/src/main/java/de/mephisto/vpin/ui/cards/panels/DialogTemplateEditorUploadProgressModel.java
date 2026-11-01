@@ -36,7 +36,7 @@ public class DialogTemplateEditorUploadProgressModel extends UploadProgressModel
     catch (Exception e) {
       LOG.error("template upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.cards_template_upload_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.cards_template_upload_failed", e.getMessage()));
       });
     }
   }

@@ -122,7 +122,7 @@ public class PinVolPreferencesController implements Initializable {
 
     installationPane.disableProperty().bind(useDefaultFolderCheckBox.selectedProperty());
     useDefaultFolderCheckBox.selectedProperty().addListener((observableValue, integer, selected) -> {
-      installationFolderText.setText(selected ? null : "<change me>");
+      installationFolderText.setText(selected ? null : Messages.get("dialog.change_me"));
     });
 
     pinvolFolderErrorLabel.visibleProperty().bind(notvalid);
@@ -258,7 +258,7 @@ public class PinVolPreferencesController implements Initializable {
     File file = useDefaultFolderCheckBox.isSelected() ? new File("./resources", "PinVol.exe") : 
           new File(installationFolderText.getText(), "PinVol.exe");
     if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_pinvol_exe"), Messages.get("dialog.the_exe_file") + file.getAbsolutePath() + Messages.get("dialog.was_not_found"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.did_not_find_pinvol_exe"), Messages.get("msg.the_exe_file_was_not_found", file.getAbsolutePath()));
     }
     else {
       try {
@@ -269,8 +269,8 @@ public class PinVolPreferencesController implements Initializable {
         LOG.info("Executed PinVol command: " + String.join(" ", commands));
       }
       catch (Exception e) {
-        LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
+        LOG.error("Error opening browser: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_opening_browser", e.getMessage()));
       }
     }
   }

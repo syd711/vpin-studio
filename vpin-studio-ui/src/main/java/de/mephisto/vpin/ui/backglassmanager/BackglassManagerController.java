@@ -222,7 +222,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     DirectB2SModel selection = getSelectedModel();
     if (selection != null) {
       //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      String newName = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.rename_backglass"), Messages.get("dialog.enter_new_name_for_backglass_file") + selection.getFileName() + "\"", "The renaming will include all versions of the backglass too.", null, selection.getName());
+      String newName = WidgetFactory.showInputDialog(Studio.stage, Messages.get("dialog.rename_backglass"), Messages.get("msg.enter_new_name_for_backglass_file", selection.getFileName()), Messages.get("dialog.rename_backglass_versions_hint"), null, selection.getName());
       if (newName != null) {
         if (!FileUtils.isValidFilename(newName)) {
           WidgetFactory.showAlert(stage, Messages.get("dialog.invalid_filename"), Messages.get("dialog.the_specified_file_name_contains_invalid_characters"));
@@ -246,7 +246,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           }
         }
         catch (Exception ex) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_dupliate_backglass") + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_dupliate_backglass", ex.getMessage()));
         }
       }
     }
@@ -340,7 +340,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_backglass"), Messages.get("dialog.noun_backglasses"), new BackglassManagerColumnSorter(this));
 
     tableView.setPlaceholder(new Label(Messages.get("backglass.directb2s_admin.no_backglasses_found")));
 
@@ -487,9 +487,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return (model.isFullDmd() ?
-            "Full DMD backglass" : "DMD backglass present, but not Full-DMD Aspect Ratio")
-            + ", resolution " + model.getDmdWidth() + "x" + model.getDmdHeight();
+        return Messages.get(model.isFullDmd() ? "dialog.b2s_full_dmd_tooltip" : "dialog.b2s_dmd_not_full_tooltip", String.valueOf(model.getDmdWidth()), String.valueOf(model.getDmdHeight()));
       }
     });
 
@@ -501,7 +499,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return "Grill Height set to " + model.getGrillHeight();
+        return Messages.get("dialog.b2s_grill_height_set", String.valueOf(model.getGrillHeight()));
       }
     });
 
@@ -513,7 +511,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return model.getNbScores() > 0 ? "Backglass contains " + model.getNbScores() + " scores" : "";
+        return model.getNbScores() > 0 ? Messages.get("dialog.b2s_contains_scores", model.getNbScores()) : "";
       }
     });
 
@@ -525,7 +523,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return model.getResPath() != null ? "Backglass uses a specific .res file: " + model.getResPath() : "";
+        return model.getResPath() != null ? Messages.get("dialog.b2s_uses_res_file", model.getResPath()) : "";
       }
     });
     resColumn.setVisible(Features.RES_EDITOR);
@@ -538,7 +536,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return model.getFramePath() != null ? "Backglass uses a background frame: " + model.getFramePath() : "";
+        return model.getFramePath() != null ? Messages.get("dialog.b2s_uses_frame", model.getFramePath()) : "";
       }
     });
     frameColumn.setVisible(Features.RES_EDITOR);

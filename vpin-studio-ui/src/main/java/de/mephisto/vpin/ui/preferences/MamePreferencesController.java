@@ -79,8 +79,8 @@ public class MamePreferencesController implements Initializable {
     try {
       client.getMameService().saveOptions(options);
     } catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage());
+      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_mame_settings", e.getMessage()));
     }
 
     PreferencesController.markDirty(PreferenceType.serverSettings);

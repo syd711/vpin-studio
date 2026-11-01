@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -28,7 +29,7 @@ public class AltSoundUploadController extends BaseUploadController {
   }
 
   protected UploadProgressModel createUploadModel() {
-    return new AltSoundUploadProgressModel(game != null ? game.getId() : -1, "ALT Sound Upload",
+    return new AltSoundUploadProgressModel(game != null ? game.getId() : -1, Messages.get("dialog.upload_altsound"),
         getSelection(), getSelectedEmulatorId(), game.getRom());
   }
 

@@ -97,7 +97,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
     catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(stage, Messages.get("dialog.download_failed"), Messages.get("dialog.table_asset_download_failed") + e.getMessage());
+        WidgetFactory.showAlert(stage, Messages.get("dialog.download_failed"), Messages.get("msg.table_asset_download_failed", e.getMessage()));
       });
     }
   }

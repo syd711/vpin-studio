@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ public class BackglassManagerDragDropHandler extends BaseDragDropHandler {
   public BackglassManagerDragDropHandler(BackglassManagerController controller, TableView<?> directb2sList, StackPane tableStack) {
     super(directb2sList, tableStack, true);
     this.controller = controller;
-    this.overlayController.setMessage("Drop Backglass here...");
+    this.overlayController.setMessage(Messages.get("dialog.drop_backglass_here"));
   }
 
   @Override

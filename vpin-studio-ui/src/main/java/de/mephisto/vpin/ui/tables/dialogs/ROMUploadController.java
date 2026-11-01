@@ -14,7 +14,7 @@ public class ROMUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new RomUploadProgressModel("ROM Upload", getSelections(), getSelectedEmulatorId(), getSelectedGameId());
+    return new RomUploadProgressModel(Messages.get("dialog.upload_rom"), getSelections(), getSelectedEmulatorId(), getSelectedGameId());
   }
 
   @Override

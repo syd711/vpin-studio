@@ -242,7 +242,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
         restoreBtn.setDisable(false);
       }
 
-      labelCount.setText(tableView.getItems().size() + " backups");
+      labelCount.setText(Messages.get("dialog.backups_count", tableView.getItems().size()));
       this.searchTextField.setDisable(false);
       tableView.setVisible(true);
       endReload();
@@ -253,9 +253,9 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   private void onBackupDelete() {
     List<BackupModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      String title = "Delete the " + selectedItems.size() + " selected archives?";
+      String title = Messages.get("dialog.delete_selected_archives", selectedItems.size());
       if (selectedItems.size() == 1) {
-        title = "Delete Archive \"" + selectedItems.getFirst().getName() + "\"?";
+        title = Messages.get("dialog.delete_archive_quoted", selectedItems.getFirst().getName());
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, Messages.get("common.delete"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -270,7 +270,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("backup", "backups", new BackupsColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_backup"), Messages.get("dialog.noun_backups"), new BackupsColumnSorter(this));
 
     openFolderButton.setDisable(true);
     clearBtn.setVisible(false);
@@ -278,7 +278,7 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
-    tableView.setPlaceholder(new Label("This backup source does not contain any files."));
+    tableView.setPlaceholder(new Label(Messages.get("dialog.backup_source_empty")));
 
     systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());

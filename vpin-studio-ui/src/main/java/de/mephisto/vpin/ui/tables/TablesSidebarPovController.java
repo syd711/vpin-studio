@@ -222,7 +222,7 @@ public class TablesSidebarPovController implements Initializable {
 
   @FXML
   private void onPOVDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_pov_file_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_pov_file_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       Studio.client.getVpxService().deletePOV(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);

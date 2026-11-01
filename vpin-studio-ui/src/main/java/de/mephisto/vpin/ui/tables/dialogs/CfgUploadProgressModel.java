@@ -42,9 +42,9 @@ public class CfgUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.cfg_upload_failed") + e.getMessage(), e);
+      LOG.error("Cfg upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.cfg_upload_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.cfg_upload_failed", e.getMessage()));
       });
     }
   }

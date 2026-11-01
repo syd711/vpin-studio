@@ -90,7 +90,7 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
         .thenLater(() -> {
           try {
             tableView.setItems(FXCollections.observableList(filteredData));
-            this.labelCount.setText(filteredData.size() + " emulators");
+            this.labelCount.setText(Messages.get("dialog.emulators_count", filteredData.size()));
             tableView.refresh();
 
             endReload();
@@ -107,7 +107,7 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("emulator", "emulators", new EmulatorsTableColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_emulator"), Messages.get("dialog.noun_emulators"), new EmulatorsTableColumnSorter(this));
     validationError.setVisible(false);
 
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {

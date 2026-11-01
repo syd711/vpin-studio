@@ -114,7 +114,7 @@ public abstract class BaseDragDropHandler {
         catch (Exception e) {
           LOG.info("Failed to dispatch dropped file: " + e.getMessage(), e);
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_drop_file") + e.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_drop_file", e.getMessage()));
           });
         }
       }
@@ -132,7 +132,7 @@ public abstract class BaseDragDropHandler {
 
     LOG.info("Zipping " + file.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling \"" + file.getName() + "\"", file, tempFile));
+      ProgressDialog.createProgressDialog(new ZipProgressModel(Messages.get("dialog.bundling_quoted", file.getName()), file, tempFile));
       LOG.info("Created separate temp zip file \"" + tempFile.getAbsolutePath() + "\" for dropped folder \"" + file.getAbsolutePath() + "\"");
       dispatchDroppedFile(tempFile);
     });
@@ -157,7 +157,7 @@ public abstract class BaseDragDropHandler {
 
     LOG.info("Zipping " + tempFolder.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new ZipProgressModel("Bundling " + file.getName(), zipTempFolder, temporaryUploadFile));
+      ProgressDialog.createProgressDialog(new ZipProgressModel(Messages.get("dialog.bundling_quoted", file.getName()), zipTempFolder, temporaryUploadFile));
       LOG.info("Created separate temp zip file for dropped folder: " + file.getAbsolutePath());
       try {
         if (file.getAbsolutePath().startsWith(systemTmpFolder.getAbsolutePath())) {

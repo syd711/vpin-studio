@@ -620,7 +620,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (GameRepresentation game : selectedGames) {
         List<CompetitionRepresentation> gameCompetitions = client.getCompetitionService().getGameCompetitions(game.getId());
         for (CompetitionRepresentation gameCompetition : gameCompetitions) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.the_table") + game.getGameDisplayName() + Messages.get("dialog.is_used_by_for_competition") + gameCompetition.toString() + Messages.get("dialog.type") + gameCompetition.getType() + ").", Messages.get("dialog.delete_this_competition"), Messages.get("dialog.you_need_to_delete_all_competition_references"), Messages.get("dialog.delete_competition_2"));
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("msg.the_table_is_used_by_for_competition", game.getGameDisplayName(), gameCompetition.toString(), String.valueOf(gameCompetition.getType())), Messages.get("dialog.delete_this_competition"), Messages.get("dialog.you_need_to_delete_all_competition_references"), Messages.get("dialog.delete_competition_2"));
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             client.getCompetitionService().deleteCompetition(gameCompetition);
             EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -860,7 +860,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return isAllVpxSelected ? client.getGameService().getVpxGamesCached() : client.getGameService().getGamesByEmulator(value.getId());
       }).onErrorSupply(e -> {
         LOG.error("Loading tables failed", e);
-        Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
+        Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.loading_tables_failed", e.getMessage())));
         return Collections.emptyList();
       }).thenAcceptLater(data -> {
         this.emulatorCombo.setDisable(false);
@@ -886,7 +886,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         else {
           Frontend frontend = client.getFrontendService().getFrontendCached();
           this.validationErrorLabel.setText(Messages.get("tables.table_overview.no_tables_found"));
-          this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]" + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
+          this.validationErrorText.setText(FrontendUtil.replaceName(Messages.get("dialog.check_emulator_setup"), frontend));
         }
 
         List<GameEmulatorRepresentation> vpxEmus = emulatorCombo.getItems().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
@@ -1174,7 +1174,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             }
             catch (Exception e) {
               LOG.error("Failed to open .res file: {}", e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_res_file") + e.getMessage());
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_res_file", e.getMessage()));
             }
           }
         });
@@ -1207,7 +1207,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             }
             catch (Exception e) {
               LOG.error("Failed to open .vbs file: {}", e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vbs_file") + e.getMessage());
+              WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_vbs_file", e.getMessage()));
             }
           }
         });
@@ -1683,7 +1683,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       catch (Exception e) {
         LOG.error("Failed to open .ini file: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_ini_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_ini_file", e.getMessage()));
       }
     });
     return iniBtn;
@@ -1700,7 +1700,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     catch (Exception e) {
       LOG.error("Rating update failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.rating_update_failed") + e.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.rating_update_failed", e.getMessage()));
     }
   }
 
@@ -1724,7 +1724,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tt.append(defaultMediaItem.getName());
       tt.append("\n");
       if (mimeType.contains("audio")) {
-        tt.append(Messages.get("dialog.asset_status_type") + "\t " + Messages.get("dialog.asset_status_type_audio") + "\n");
+        tt.append(Messages.get("msg.type_audio") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-music-note-beamed");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
@@ -1734,7 +1734,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         btn.setGraphic(icon);
       }
       else if (mimeType.contains("image")) {
-        tt.append(Messages.get("dialog.asset_status_type") + "\t " + Messages.get("dialog.asset_status_type_picture") + "\n");
+        tt.append(Messages.get("msg.type_picture") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-card-image");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
@@ -1743,7 +1743,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         btn.setGraphic(icon);
       }
       else if (mimeType.contains("video")) {
-        tt.append(Messages.get("dialog.asset_status_type") + "\t " + Messages.get("dialog.asset_status_type_video") + "\n");
+        tt.append(Messages.get("msg.type_video") + "\n");
         FontIcon icon = WidgetFactory.createIcon("bi-film");
         if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
@@ -1994,7 +1994,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ToolbarController.INSTANCE.setTableOverviewController(this);
-    super.initialize("game", "games", new TableOverviewColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new TableOverviewColumnSorter(this));
 
     //manually fix new columns
     BaseTableSettings tableSettings = getTableSettings();

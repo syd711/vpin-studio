@@ -72,7 +72,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
           client.getBackupService().saveBackupSource(sourceRepresentation);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_repository") + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_repository", e.getMessage()));
         }
         onReload();
       }
@@ -87,7 +87,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
         client.getBackupService().saveBackupSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_repository") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_repository", e.getMessage()));
       }
       onReload();
     }
@@ -101,7 +101,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
         client.getBackupService().saveBackupSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_repository") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_repository", e.getMessage()));
       }
       onReload();
     }
@@ -111,13 +111,13 @@ public class BackupRepositoriesPreferencesController implements Initializable {
   private void onDelete() {
     BackupSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_repository") + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_repository", selectedItem.getName()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getBackupService().deleteBackupSource(selectedItem.getId());
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_deleting", selectedItem.getName(), e.getMessage()));
         }
         finally {
           onReload();

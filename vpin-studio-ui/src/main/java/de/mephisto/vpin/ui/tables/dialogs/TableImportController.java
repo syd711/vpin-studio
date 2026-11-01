@@ -129,7 +129,7 @@ public class TableImportController implements Initializable, DialogController {
     }
     catch (Exception e) {
       LOG.error("Failed to init import dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_read_import_list") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_read_import_list", e.getMessage()));
     }
   }
 
@@ -154,7 +154,7 @@ public class TableImportController implements Initializable, DialogController {
         })
         .onErrorSupply(e -> {
           LOG.error("Failed to init import dialog: " + e.getMessage(), e);
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_read_import_list") + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_read_import_list", e.getMessage())));
           return new GameList();
         })
         .thenAcceptLater(importableTables -> {
@@ -166,7 +166,7 @@ public class TableImportController implements Initializable, DialogController {
             tableBox.getChildren().add(label);
           }
           else {
-            CheckBox selectCheckbox = new CheckBox("Select All");
+            CheckBox selectCheckbox = new CheckBox(Messages.get("dialog.select_all"));
             selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
             selectCheckbox.setPrefHeight(50);
             selectCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -194,7 +194,7 @@ public class TableImportController implements Initializable, DialogController {
                 deleteBtn.setOnAction(new EventHandler<ActionEvent>() {
                   @Override
                   public void handle(ActionEvent event) {
-                    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_file_3") + item.getName() + "\"?");
+                    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("msg.delete_file", item.getName()));
                     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
                       client.getGameService().deleteGameFile(item.getEmuId(), item.getName());
                       refreshEmulator(emulator);

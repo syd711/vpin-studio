@@ -100,7 +100,7 @@ public class ServerSettingsPreferencesController implements Initializable {
   @FXML
   private void onBackup() {
     StudioFolderChooser fileChooser = new StudioFolderChooser();
-    fileChooser.setTitle("Select Target Folder");
+    fileChooser.setTitle(Messages.get("dialog.select_target_folder"));
     File selection = fileChooser.showOpenDialog(Studio.stage);
     if (selection != null) {
       try {
@@ -112,12 +112,12 @@ public class ServerSettingsPreferencesController implements Initializable {
           IOUtils.write(backup, fileOutputStream, StandardCharsets.UTF_8);
           LOG.info("Written backup file {}", file.getAbsolutePath());
           fileOutputStream.close();
-          WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.backup_finished"), Messages.get("dialog.written_backup_file") + file.getAbsolutePath() + "\".");
+          WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.backup_finished"), Messages.get("msg.written_backup_file", file.getAbsolutePath()));
         }
       }
       catch (Exception e) {
         LOG.error("Error creating backup file {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_create_backup_file") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_create_backup_file", e.getMessage()));
       }
     }
   }

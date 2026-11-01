@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.restclient.system.FolderRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -21,7 +22,7 @@ public class FolderChooserDialog {
     }
 
     if (title == null) {
-      title = "Choose Folder";
+      title = Messages.get("dialog.choose_folder");
     }
 
     if (stage == null) {
@@ -32,7 +33,7 @@ public class FolderChooserDialog {
       return openLocalFolderChooser(title, path);
     }
     else {
-      Stage dialogStage = Dialogs.createStudioDialogStage(stage, FolderChooserDialogController.class, "dialog-folder-chooser.fxml", "Choose Folder", "folderChooser");
+      Stage dialogStage = Dialogs.createStudioDialogStage(stage, FolderChooserDialogController.class, "dialog-folder-chooser.fxml", Messages.get("dialog.choose_folder"), "folderChooser");
       FolderChooserDialogController controller = (FolderChooserDialogController) dialogStage.getUserData();
       controller.setPath(path);
 

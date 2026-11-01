@@ -90,7 +90,7 @@ public class IScoredPreferencesController implements Initializable {
     IScoredGameRoomModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       PreferencesController.markDirty(PreferenceType.competitionSettings);
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_iscored_game_room") + selectedItem.iScoredGameRoom.getUrl() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_iscored_game_room", selectedItem.iScoredGameRoom.getUrl()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
           ProgressDialog.createProgressDialog(new IScoredGameRoomDeletionProgressModel(selectedItem.iScoredGameRoom));
@@ -127,7 +127,7 @@ public class IScoredPreferencesController implements Initializable {
         iScoredSettings.setEnabled(newValue);
 
         Platform.runLater(() -> {
-          ProgressDialog.createProgressDialog(new PreferencesSavingModel("Synchronizing iScored", iScoredSettings));
+          ProgressDialog.createProgressDialog(new PreferencesSavingModel(Messages.get("dialog.synchronizing_iscored"), iScoredSettings));
 
           PreferencesController.markDirty(PreferenceType.competitionSettings);
           enabledBox.setVisible(iScoredSettings.isEnabled());

@@ -176,7 +176,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
         SystemUtil.openFolder(file);
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("dialog.the_folder") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("msg.the_folder_does_not_exist", file.getAbsolutePath()));
       }
     }
     catch (Exception e) {
@@ -187,7 +187,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected void openFile(File file) {
     boolean open = Studio.open(file);
     if (!open) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("dialog.the_folder_2") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.folder_not_found"), Messages.get("msg.the_folder_does_not_exist_2", file.getAbsolutePath()));
     }
   }
 

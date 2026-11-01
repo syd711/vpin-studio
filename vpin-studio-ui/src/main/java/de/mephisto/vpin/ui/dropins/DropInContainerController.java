@@ -84,7 +84,7 @@ public class DropInContainerController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_file"), Messages.get("dialog.move") + file.getName() + Messages.get("dialog.to_trash_bin"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_file"), Messages.get("msg.move_to_trash_bin", file.getName()));
     if (result.get().equals(ButtonType.OK)) {
       if (!TrashBin.moveTo(file)) {
         WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.deletion_failed_another_process_is_blocking_this"));

@@ -59,18 +59,18 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private static final Map<String, String> SQL_TEMPLATES = new LinkedHashMap<>();
 
   static {
-    SQL_TEMPLATES.put("Top 10 - Most played", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY NumberPlays DESC LIMIT 10) ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("Top 10 - Least played", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY NumberPlays ASC LIMIT 10) ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("Top 10 - Not played for a long time", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY LastPlayed ASC LIMIT 10) ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("Never played tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId NOT IN (SELECT GameID from GamesStats) ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("10 Random tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] ORDER BY RANDOM() LIMIT 10");
-    SQL_TEMPLATES.put("All 'VPin Workshop' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND (tags LIKE '%VPW%' OR GameDisplay LIKE '%VPW%') ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All 'VR' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%VR%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All '4k' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%4k%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All kids-friendly tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%Kids%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All iScored competed tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%iscored%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All 'World Of Virtual Pinball' competed tables", "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%weekly%' ORDER BY GameDisplay");
-    SQL_TEMPLATES.put("All 'VPin Mania' challenge tables", "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%mania_challenge%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_top10_most_played"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY NumberPlays DESC LIMIT 10) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_top10_least_played"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY NumberPlays ASC LIMIT 10) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_top10_not_played"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY LastPlayed ASC LIMIT 10) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_never_played"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId NOT IN (SELECT GameID from GamesStats) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_random10"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] ORDER BY RANDOM() LIMIT 10");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_vpw"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND (tags LIKE '%VPW%' OR GameDisplay LIKE '%VPW%') ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_vr"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%VR%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_4k"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%4k%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_kids"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%Kids%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_iscored"), "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND TourneyID like '%iscored%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_wovp"), "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%weekly%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put(Messages.get("dialog.sql_template_mania"), "SELECT * FROM Games WHERE visible=1 AND TourneyID like '%mania_challenge%' ORDER BY GameDisplay");
   }
 
   @FXML
@@ -215,7 +215,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
       catch (Exception e) {
         LOG.error("Playlist renaming failed: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.playlist_renaming_failed") + e.getMessage());
+        WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("msg.playlist_renaming_failed", e.getMessage()));
       }
     }
   }
@@ -299,7 +299,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           }))
           .onErrorLater(e -> {
             LOG.error("Playlist creation failed: {}", e.getMessage(), e);
-            WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.playlist_creation_failed") + e.getMessage());
+            WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("msg.playlist_creation_failed", e.getMessage()));
           });
     }
     catch (Exception e) {
@@ -315,11 +315,11 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       String help2 = null;
       String btnText = Messages.get("dialog.delete_playlist");
       if (!selectedItem.getChildren().isEmpty()) {
-        help2 = "The child playlists of this playlist will be deleted too!";
-        btnText = "Delete All";
+        help2 = Messages.get("dialog.child_playlists_deleted_hint");
+        btnText = Messages.get("tables.table_delete.delete_all");
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_playlist"), Messages.get("dialog.delete_playlist_2") + value.getName() + "\"?", help2, btnText);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_playlist"), Messages.get("msg.delete_playlist", value.getName()), help2, btnText);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> client.getPlaylistsService().delete(value.getId()))
             .thenLater(() -> reload(value, () -> {
@@ -365,7 +365,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private void refreshView(Optional<PlaylistRepresentation> value) {
     saveDisabled = true;
 
-    dialogStage.setTitle("Playlist Manager");
+    dialogStage.setTitle(Messages.get("dialog.playlist_manager"));
     deleteBtn.setDisable(true);
 
     sqlText.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
@@ -394,7 +394,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     assetManagerBtn.setDisable(value.isEmpty());
     if (value.isPresent()) {
       PlaylistRepresentation plList = value.get();
-      dialogStage.setTitle("Playlist Manager - " + plList.getName());
+      dialogStage.setTitle(Messages.get("dialog.playlist_manager_with_name", plList.getName()));
       playlistTableController.setData(value);
       deleteBtn.setDisable(plList.getId() == 0 || !plList.getChildren().isEmpty());
 
@@ -617,12 +617,12 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           FontIcon icon = null;
           String tooltip = null;
           if (newItem.isSqlPlayList()) {
-            tooltip = "SQL Playlist";
+            tooltip = Messages.get("dialog.playlist_sql");
             icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
 
           }
           else {
-            tooltip = "Curated Playlist";
+            tooltip = Messages.get("dialog.playlist_curated");
             icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
           }
 
@@ -927,7 +927,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       catch (Exception e) {
         LOG.error("Failed to save playlist: {}", e.getMessage(), e);
         Platform.runLater(() -> {
-          WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_playlist") + e.getMessage());
+          WidgetFactory.showAlert(dialogStage, Messages.get("common.error"), Messages.get("msg.failed_to_save_playlist", e.getMessage()));
         });
       }
     }

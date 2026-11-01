@@ -133,7 +133,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
         }
         catch (Exception ex) {
           LOG.error("Failed to restore: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.restore_failed"), Messages.get("dialog.failed_to_trigger_import") + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.restore_failed"), Messages.get("msg.failed_to_trigger_import", ex.getMessage()));
         }
 
       });

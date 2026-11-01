@@ -67,8 +67,8 @@ public class HighscoreBackupDeleteProgressModel extends ProgressModel<HighscoreB
       client.getHigscoreBackupService().delete(gameId, backup.getFilename());
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_delete_backup") + e.getMessage(), e);
-      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_delete_backup") + e.getMessage()));
+      LOG.error("Failed to delete backup: " + e.getMessage(), e);
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_delete_backup", e.getMessage())));
     }
   }
 }

@@ -79,7 +79,7 @@ public class TextEditorController implements Initializable, DialogController {
     }
     catch (Exception ex) {
       LOG.error("Failed to save file: {} ", ex.getMessage(), ex);
-      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_saving_file") + ex.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.error_saving_file", ex.getMessage()));
     }
 
     this.saveBtn.setDisable(false);
