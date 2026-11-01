@@ -170,6 +170,23 @@ public class ConnectionProperties {
     }
   }
 
+  /**
+   * Stores the given MAC address for an existing connection if it is missing or has changed.
+   * Unknown hosts and empty MAC addresses are ignored.
+   */
+  public boolean updateMacAddress(String ipAddress, String macAddress) {
+    if (macAddress == null || macAddress.isEmpty()) {
+      return false;
+    }
+    ConnectionEntry connectionEntry = findConnectionIdByIp(ipAddress);
+    if (connectionEntry == null || macAddress.equalsIgnoreCase(connectionEntry.getMacAddress())) {
+      return false;
+    }
+    LOG.info("Updating MAC address of connection {} ({}) to {}", connectionEntry.getId(), ipAddress, macAddress);
+    store.set(ID_PREFIX + connectionEntry.getId() + ".mac_address", macAddress);
+    return true;
+  }
+
   private int getNextAvailableId() {
     int maxId = 0;
 

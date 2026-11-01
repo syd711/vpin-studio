@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.ConnectionEntry.ConnectionType;
+import de.mephisto.vpin.commons.utils.network.MacAddressDetector;
 import de.mephisto.vpin.commons.utils.network.WakeOnLan;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.system.SystemId;
@@ -38,10 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import de.mephisto.vpin.restclient.util.OSUtil;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -171,10 +169,7 @@ public class LauncherController implements Initializable {
           connection.setDiscovered(entry.getType().equals(ConnectionEntry.ConnectionType.DISCOVERED));
           // Store the MAC address whenever the server is reachable and it is missing or has changed,
           // so that WOL works for entries that were created while MAC detection failed.
-          if (!StringUtils.isEmpty(connection.getMacAddress()) && !connection.getMacAddress().equalsIgnoreCase(entry.getMacAddress())) {
-            LOG.info("Updating MAC address of connection {} to {}", ipAddress, connection.getMacAddress());
-            connectionProperties.upsertConnection(ipAddress, connection.getName(), connection.getMacAddress(), entry.getType());
-          }
+          connectionProperties.updateMacAddress(ipAddress, connection.getMacAddress());
           result.add(connection);
         } else {
           // Create a placeholder for an asleep connection
@@ -543,7 +538,7 @@ public class LauncherController implements Initializable {
         connection.setHost(host);
 
         // Detect MAC Address
-        String macAddress = detectMacAddressViaArp(host);
+        String macAddress = MacAddressDetector.detect(host);
         connection.setMacAddress(macAddress);
 
         InputStream av = client.getAssetService().getAvatar(false);
@@ -567,63 +562,5 @@ public class LauncherController implements Initializable {
     }
     executor.shutdownNow();
     return connection;
-  }
-
-  private String detectMacAddressViaArp(String host) {
-    try {
-      // arp expects an IP address, so resolve hostnames first
-      String ip = InetAddress.getByName(host).getHostAddress();
-
-      // Windows: 'arp -a <ip>', macOS/Linux: 'arp -n <ip>' ('-a <host>' is not valid on macOS)
-      String[] cmd = OSUtil.isWindows() ? new String[]{"arp", "-a", ip} : new String[]{"arp", "-n", ip};
-      Process process = new ProcessBuilder(cmd).redirectErrorStream(true).start();
-
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          String[] tokens = line.trim().split("\\s+"); // Handles spaces and tabs
-          boolean hostLine = false;
-          for (String token : tokens) {
-            // Windows/Linux list the plain IP, macOS wraps it in parentheses: "? (192.168.1.10) at ..."
-            if (token.equals(ip) || token.equals("(" + ip + ")")) {
-              hostLine = true;
-              break;
-            }
-          }
-          if (!hostLine) {
-            continue;
-          }
-
-          LOG.info("ARP entry found for host: {} ({})", host, ip);
-          for (String token : tokens) {
-            // macOS omits leading zeros, e.g. "0:1c:42:a:b:c"
-            if (token.matches("([0-9A-Fa-f]{1,2}[:-]){5}[0-9A-Fa-f]{1,2}")) {
-              String macAddress = normalizeMacAddress(token);
-              LOG.info("MAC Address detected for host {}: {}", host, macAddress);
-              return macAddress;
-            }
-          }
-        }
-      }
-      process.waitFor(2, TimeUnit.SECONDS);
-    } catch (Exception e) {
-      LOG.error("Error detecting MAC Address for host {}: {}", host, e.getMessage());
-    }
-
-    LOG.warn("No MAC Address found for host: {}", host);
-    return "";
-  }
-
-  private static String normalizeMacAddress(String mac) {
-    String separator = mac.contains("-") ? "-" : ":";
-    String[] parts = mac.split("[:-]");
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < parts.length; i++) {
-      if (i > 0) {
-        sb.append(separator);
-      }
-      sb.append(parts[i].length() == 1 ? "0" + parts[i] : parts[i]);
-    }
-    return sb.toString().toUpperCase();
   }
 }

@@ -24,6 +24,7 @@ import de.mephisto.vpin.restclient.textedit.TextEditorFileTypes;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.commons.utils.network.MacAddressDetector;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.ClearCacheProgressModel;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
@@ -368,6 +369,18 @@ public class Studio extends Application {
               Studio.client.getVpsService().invalidateAll();
               LOG.info("Pre-cached VPS tables");
             }, "Pre-cached VPS tables Thread").start();
+
+            // Store the MAC address of remote cabinets, so that WOL is available when they are asleep.
+            // This must happen here, as stored connections are auto-connected without showing the launcher.
+            final String host = client.getHost();
+            new Thread(() -> {
+              try {
+                new ConnectionProperties().updateMacAddress(host, MacAddressDetector.detect(host));
+              }
+              catch (Exception e) {
+                LOG.error("Failed to update MAC address for {}: {}", host, e.getMessage(), e);
+              }
+            }, "MAC Address Detection Thread").start();
 
             createManiaClient();
 
