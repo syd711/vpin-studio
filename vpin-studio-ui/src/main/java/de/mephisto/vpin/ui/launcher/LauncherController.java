@@ -41,6 +41,8 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import de.mephisto.vpin.restclient.util.OSUtil;
+
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
@@ -167,7 +169,10 @@ public class LauncherController implements Initializable {
         if (connection != null) {
           connection.setConnectionId(entry.getId());
           connection.setDiscovered(entry.getType().equals(ConnectionEntry.ConnectionType.DISCOVERED));
-          if (!StringUtils.isEmpty(connection.getMacAddress()) && StringUtils.isEmpty(entry.getMacAddress())) {
+          // Store the MAC address whenever the server is reachable and it is missing or has changed,
+          // so that WOL works for entries that were created while MAC detection failed.
+          if (!StringUtils.isEmpty(connection.getMacAddress()) && !connection.getMacAddress().equalsIgnoreCase(entry.getMacAddress())) {
+            LOG.info("Updating MAC address of connection {} to {}", ipAddress, connection.getMacAddress());
             connectionProperties.upsertConnection(ipAddress, connection.getName(), connection.getMacAddress(), entry.getType());
           }
           result.add(connection);
@@ -566,32 +571,59 @@ public class LauncherController implements Initializable {
 
   private String detectMacAddressViaArp(String host) {
     try {
-      // Run the 'arp -a' command
-      String[] cmd = {"arp","-a", host};
-      Process process = Runtime.getRuntime().exec(cmd);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      // arp expects an IP address, so resolve hostnames first
+      String ip = InetAddress.getByName(host).getHostAddress();
 
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.contains(host)) {
-          LOG.info("ARP entry found for host: {}", host);
+      // Windows: 'arp -a <ip>', macOS/Linux: 'arp -n <ip>' ('-a <host>' is not valid on macOS)
+      String[] cmd = OSUtil.isWindows() ? new String[]{"arp", "-a", ip} : new String[]{"arp", "-n", ip};
+      Process process = new ProcessBuilder(cmd).redirectErrorStream(true).start();
 
-          // Parse the MAC address from the output
-          String[] tokens = line.split("\\s+"); // Handles spaces and tabs
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          String[] tokens = line.trim().split("\\s+"); // Handles spaces and tabs
+          boolean hostLine = false;
           for (String token : tokens) {
-            // Match standard MAC address format
-            if (token.matches("([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}")) {
-              LOG.info("MAC Address detected for host {}: {}", host, token.toUpperCase());
-              return token.toUpperCase();
+            // Windows/Linux list the plain IP, macOS wraps it in parentheses: "? (192.168.1.10) at ..."
+            if (token.equals(ip) || token.equals("(" + ip + ")")) {
+              hostLine = true;
+              break;
+            }
+          }
+          if (!hostLine) {
+            continue;
+          }
+
+          LOG.info("ARP entry found for host: {} ({})", host, ip);
+          for (String token : tokens) {
+            // macOS omits leading zeros, e.g. "0:1c:42:a:b:c"
+            if (token.matches("([0-9A-Fa-f]{1,2}[:-]){5}[0-9A-Fa-f]{1,2}")) {
+              String macAddress = normalizeMacAddress(token);
+              LOG.info("MAC Address detected for host {}: {}", host, macAddress);
+              return macAddress;
             }
           }
         }
       }
+      process.waitFor(2, TimeUnit.SECONDS);
     } catch (Exception e) {
       LOG.error("Error detecting MAC Address for host {}: {}", host, e.getMessage());
     }
 
     LOG.warn("No MAC Address found for host: {}", host);
     return "";
+  }
+
+  private static String normalizeMacAddress(String mac) {
+    String separator = mac.contains("-") ? "-" : ":";
+    String[] parts = mac.split("[:-]");
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < parts.length; i++) {
+      if (i > 0) {
+        sb.append(separator);
+      }
+      sb.append(parts[i].length() == 1 ? "0" + parts[i] : parts[i]);
+    }
+    return sb.toString().toUpperCase();
   }
 }

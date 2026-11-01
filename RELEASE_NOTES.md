@@ -17,6 +17,7 @@
 - **Media Recorder**: Fixed new tables being added to the table list of the "Media Recorder" tab even when they belonged to a different emulator than the selected one.
 - **VR Support**: Fixed the regular .ini file of a table launched from the Studio in VR mode only being restored when the next table was launched. It is now restored when the table is exited.
 - **Highscores**: Fixed the highscore of the previously played table not being rescanned when the next table is launched. The table that was just being launched was scanned instead. This rescan catches highscores of tables that were exited without an exit event, e.g. because the cabinet was switched off.
+- **Launcher / Wake on LAN**: Fixed the MAC address of a connection not being detected on macOS, so the Wake on LAN button was never shown there. Connections that were saved without a MAC address get it the next time the launcher finds the server running.
 
 
 

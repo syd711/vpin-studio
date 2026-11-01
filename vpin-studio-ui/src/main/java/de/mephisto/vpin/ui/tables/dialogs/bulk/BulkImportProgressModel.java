@@ -33,6 +33,11 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
   private final File moveTarget;
   private final boolean keepStructure;
   private int currentIndex = -1;
+  private int imported = 0;
+  private int skipped = 0;
+  private int failed = 0;
+  private int moved = 0;
+  private int moveFailed = 0;
 
   /**
    * @param moveTarget    folder the successfully imported files are moved to, null to leave them in place
@@ -76,15 +81,19 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
       // fetched for every file, so media imported earlier in the same run is taken into account
       if (mode == BulkImportMode.IF_MISSING && !Studio.client.getGameMediaService().getGameMedia(gameId).getMediaItems(screen).isEmpty()) {
         LOG.info("Skipped bulk import of {}, screen {} already has media", item.getFile().getName(), screen);
+        skipped++;
         return;
       }
       JobDescriptor result = Studio.client.getGameMediaService().uploadMedia(item.getFile(), gameId, false, screen,
           mode != BulkImportMode.OVERWRITE, VPinScreen.Loading, percent -> progressResultModel.setProgress((currentIndex + percent) / items.size()));
       if (!StringUtils.isEmpty(result.getError())) {
         LOG.error("Bulk import of {} failed: {}", item.getFile().getName(), result.getError());
+        failed++;
         Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), result.getError()));
       }
       else {
+        imported++;
+        LOG.info("Bulk imported {} to game {}, screen {}, mode {}", item.getFile().getAbsolutePath(), gameId, screen, mode);
         touchedGames.add(gameId);
         progressResultModel.addProcessed();
         // only files that have been imported are moved
@@ -94,6 +103,7 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
       }
     }
     catch (Exception e) {
+      failed++;
       LOG.error("Bulk import of {} failed: {}", item.getFile().getName(), e.getMessage(), e);
     }
   }
@@ -111,9 +121,19 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
       Files.createDirectories(folder.toPath());
       File target = uniqueTarget(folder, source.getName());
       Files.move(source.toPath(), target.toPath());
-      LOG.info("Moved imported file {} to {}", source.getAbsolutePath(), target.getAbsolutePath());
+      // double check the result, a move across drives is a copy plus delete
+      if (target.isFile() && !source.exists()) {
+        moved++;
+        LOG.info("Moved imported file {} to {}", source.getAbsolutePath(), target.getAbsolutePath());
+      }
+      else {
+        moveFailed++;
+        LOG.error("Move of imported file {} to {} incomplete: target exists={}, source still exists={}",
+            source.getAbsolutePath(), target.getAbsolutePath(), target.isFile(), source.exists());
+      }
     }
     catch (IOException e) {
+      moveFailed++;
       LOG.error("Failed to move imported file {} to {}: {}", source.getAbsolutePath(), folder.getAbsolutePath(), e.getMessage(), e);
     }
   }
@@ -134,6 +154,10 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
 
   @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
+    int notProcessed = items.size() - imported - skipped - failed;
+    LOG.info("Bulk import finished: files={}, imported={}, skipped={}, failed={}, notProcessed={}, games={}{}",
+        items.size(), imported, skipped, failed, notProcessed, touchedGames.size(),
+        moveTarget != null ? ", moved=" + moved + ", moveFailed=" + moveFailed + " (target \"" + moveTarget.getAbsolutePath() + "\")" : "");
     Platform.runLater(() -> {
       for (Integer gameId : touchedGames) {
         EventManager.getInstance().notifyJobFinished(JobType.POPPER_MEDIA_INSTALL, gameId, false, true);
