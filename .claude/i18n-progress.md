@@ -85,6 +85,7 @@ Bundles: `vpin-studio-server/src/main/resources/messages/messages*.properties` (
 Lookup: `ServerMessages.msg(key, args…)` = locale of the current request (`Accept-Language`), outside of a request the
 local UI language. Jobs that capture a `locale` field at creation use `ServerMessages.get(key, locale, args…)`.
 `ServerMessagesTest` checks key sets, placeholders and MessageFormat validity of all 6 bundles.
+- Other modules (`vpin-studio-commons` FX components, server `messages/`) were not part of this run.
 
 ## Log
 
