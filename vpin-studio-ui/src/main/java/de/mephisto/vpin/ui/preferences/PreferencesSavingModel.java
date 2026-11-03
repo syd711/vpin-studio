@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -63,7 +64,7 @@ public class PreferencesSavingModel extends ProgressModel<JsonSettings> {
     try {
       client.getPreferenceService().setJsonPreference(settings);
     } catch (Exception e) {
-      progressResultModel.getResults().add("Error saving settings: " + e.getMessage());
+      progressResultModel.getResults().add(Messages.get("dialog.error_saving_settings", e.getMessage()));
       LOG.error("Error saving settings: " + e.getMessage(), e);
     }
   }

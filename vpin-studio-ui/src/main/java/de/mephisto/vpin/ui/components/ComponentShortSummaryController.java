@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
@@ -71,7 +72,7 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
       installedVersionLabel.setText(component.getInstalledVersion());
     }
     else {
-      createHelpIcon(installedVersionLabel, "The existing installation version can't be matched against the release version read from github.\nIt will be set after the first update.");
+      createHelpIcon(installedVersionLabel, Messages.get("dialog.component_version_unmatched_hint"));
     }
     latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
 

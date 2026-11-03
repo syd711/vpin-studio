@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.doflinx;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
@@ -207,11 +208,11 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
 
     if (isValid()) {
       summary.addEntry("DOFLinx.INI", getDOFLinxINI().getAbsolutePath());
-      summary.addEntry("Last Modified", DateUtil.formatDateTime(Instant.ofEpochMilli(getDOFLinxINI().lastModified())));
+      summary.addEntry(ServerMessages.msg("component.summary.last_modified"), DateUtil.formatDateTime(Instant.ofEpochMilli(getDOFLinxINI().lastModified())));
     }
     else {
       summary.addEntry("DOFLinx.INI", "-");
-      summary.addEntry("Last Modified", "-");
+      summary.addEntry(ServerMessages.msg("component.summary.last_modified"), "-");
     }
 
     return summary;

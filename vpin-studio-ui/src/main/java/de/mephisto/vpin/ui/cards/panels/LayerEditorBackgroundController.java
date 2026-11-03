@@ -122,7 +122,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   @FXML
   private void onOpenDefaultPicture() {
     if (this.game.isPresent()) {
-      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game.get()), "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, Messages.get("dialog.default_picture"), client.getBackglassServiceClient().getDefaultPictureUrl(game.get()), "image/png");
     }
   }
 
@@ -130,7 +130,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   private void onBackgroundReset() {
     if (this.game.isPresent()) {
       GameRepresentation game = this.game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.re_generate_default_background_for") + game.getGameDisplayName() + "\"?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.re_generate_default_background_for", game.getGameDisplayName()),
           Messages.get("dialog.this_will_re_generate_the_existing_default"), null, Messages.get("dialog.generate_background"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(game.getId());
@@ -142,9 +142,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   @FXML
   private void onUploadButton() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
+    fileChooser.setTitle(Messages.get("dialog.select_image"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_all_images"), "*.jpg", "*.png", "*.jpeg"),
         new FileChooser.ExtensionFilter("JPG", "*.jpg"),
         new FileChooser.ExtensionFilter("PNG", "*.png"));
     File file = fileChooser.showOpenDialog(stage);
@@ -159,7 +159,7 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
         }
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_image_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_image_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("msg.error", e.getMessage()));
       }
     }
   }

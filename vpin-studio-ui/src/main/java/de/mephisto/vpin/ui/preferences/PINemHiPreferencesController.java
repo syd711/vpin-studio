@@ -333,8 +333,8 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
       Studio.client.getPINemHiService().save(settings);
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_save_pinemhi_settings") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_pinemhi_settings") + e.getMessage());
+      LOG.error("Failed to save PINemHi settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_pinemhi_settings", e.getMessage()));
     }
   }
 

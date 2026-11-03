@@ -105,7 +105,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
           if (isCameraModeSupported(altExeName)) {
-            items.add(new LaunchConfiguration(altExeName + " " + Messages.get("tables.play_btn.camera_mode_suffix"), false, altExeName, "cameraMode"));
+            items.add(new LaunchConfiguration(Messages.get("msg.camera_mode", String.valueOf(altExeName)), false, altExeName, "cameraMode"));
           }
         }
       }
@@ -172,7 +172,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
       Frontend frontend = client.getFrontendService().getFrontendCached();
 
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
-          Messages.get("dialog.start_playing_table") + game.getGameDisplayName() + "\"?", Messages.get("dialog.start_table"),
+          Messages.get("msg.start_playing_table", game.getGameDisplayName()), Messages.get("dialog.start_table"),
           FrontendUtil.replaceNames(Messages.get("dialog.all_existing_emulator_and_frontend_processes_will"), frontend, Messages.get("dialog.vpx")),
           null, Messages.get("dialog.do_not_show_again"), false);
 

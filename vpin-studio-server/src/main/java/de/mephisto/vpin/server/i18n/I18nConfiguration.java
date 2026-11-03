@@ -16,7 +16,7 @@ import java.util.Locale;
  *
  * <p>The {@link LocaleResolver} reads the {@code Accept-Language} HTTP header
  * sent by the VPin Studio client with every request. Supported locales are
- * English (default) and German.
+ * English (default), German, Spanish, French, Italian and Portuguese.
  *
  * <p>The {@link MessageSource} loads message bundles from
  * {@code messages/messages.properties} (English) and
@@ -28,7 +28,11 @@ public class I18nConfiguration {
 
   private static final List<Locale> SUPPORTED_LOCALES = Arrays.asList(
       Locale.ENGLISH,
-      Locale.GERMAN
+      Locale.GERMAN,
+      Locale.of("es"),
+      Locale.FRENCH,
+      Locale.ITALIAN,
+      Locale.of("pt")
   );
 
   /**

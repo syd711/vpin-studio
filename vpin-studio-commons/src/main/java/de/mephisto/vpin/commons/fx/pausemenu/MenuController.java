@@ -173,7 +173,7 @@ public class MenuController implements Initializable {
       frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
       String extTableId = game.getExtTableId();
       vpsTable = client.getVpsService().getTableById(extTableId);
-      return "Loading Menu for \"" + game.getGameDisplayName() + "\"";
+      return Messages.get("pausemenu.menu.loading_menu_for", game.getGameDisplayName());
     }).thenAcceptLater((msg) -> {
       this.customViewController.setGame(game, vpsTable, frontendMedia);
       resetGameRow();

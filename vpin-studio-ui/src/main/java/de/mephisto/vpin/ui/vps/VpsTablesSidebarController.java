@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -203,20 +204,20 @@ public class VpsTablesSidebarController extends BaseSideBarController<VpsTable> 
       players.setText(String.valueOf(table.getPlayers()));
       ipdbLink.setText(StringUtils.isEmpty(table.getIpdbUrl()) ? "-" : table.getIpdbUrl());
 
-      TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, table, false, predicate.buildTableVersionPredicate());
+      TablesSidebarVpsController.addTablesSection(dataRoot, Messages.get("dialog.vps_section_table_version"), null, VpsDiffTypes.tableNewVersionVPX, table, false, predicate.buildTableVersionPredicate());
 
       Predicate<VpsAuthoredUrls> authoredUrlsPredicate = predicate.buildAuthoredUrlsPredicate();
-      TablesSidebarVpsController.addSection(dataRoot, "Backglasses", null, VpsDiffTypes.b2s, table.getB2sFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_backglasses"), null, VpsDiffTypes.b2s, table.getB2sFiles(), false, authoredUrlsPredicate);
 
-      TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", null, VpsDiffTypes.altSound, table.getAltSoundFiles(), false, authoredUrlsPredicate);
-      TablesSidebarVpsController.addSection(dataRoot, "ALT Color", null, VpsDiffTypes.altColor, table.getAltColorFiles(), false, authoredUrlsPredicate);
-      TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", null, VpsDiffTypes.pupPack, table.getPupPackFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_alt_sound"), null, VpsDiffTypes.altSound, table.getAltSoundFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_alt_color"), null, VpsDiffTypes.altColor, table.getAltColorFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_pup_pack"), null, VpsDiffTypes.pupPack, table.getPupPackFiles(), false, authoredUrlsPredicate);
       TablesSidebarVpsController.addSection(dataRoot, "ROM", null, VpsDiffTypes.rom, table.getRomFiles(), false, authoredUrlsPredicate);
-      TablesSidebarVpsController.addSection(dataRoot, "Sound", null, VpsDiffTypes.sound, table.getSoundFiles(), false, authoredUrlsPredicate);
-      TablesSidebarVpsController.addSection(dataRoot, "Topper", null, VpsDiffTypes.topper, table.getTopperFiles(), false, authoredUrlsPredicate);
-      TablesSidebarVpsController.addSection(dataRoot, "Tutorials", null, VpsDiffTypes.tutorial, table.getTutorialFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_sound"), null, VpsDiffTypes.sound, table.getSoundFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_topper"), null, VpsDiffTypes.topper, table.getTopperFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_tutorials"), null, VpsDiffTypes.tutorial, table.getTutorialFiles(), false, authoredUrlsPredicate);
       TablesSidebarVpsController.addSection(dataRoot, "POV", null, VpsDiffTypes.pov, table.getPovFiles(), false, authoredUrlsPredicate);
-      TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", null, VpsDiffTypes.wheel, table.getWheelArtFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, Messages.get("dialog.vps_section_wheel_art"), null, VpsDiffTypes.wheel, table.getWheelArtFiles(), false, authoredUrlsPredicate);
     }
   }
 

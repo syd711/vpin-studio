@@ -81,7 +81,7 @@ public class VpsVersionContainer extends VBox {
       this.getChildren().add(row);
 
       row = new HBox(6);
-      Button button = new Button("Download Table");
+      Button button = new Button(Messages.get("dialog.download_table"));
 
       if (downloadAction && vpsTable != null) {
         button.setOnAction(event -> {

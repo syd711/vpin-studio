@@ -111,7 +111,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
     catch (Exception e) {
       LOG.error("Failed to execute download: " + e.getMessage());
     }
-    return "Failed to load release notes.";
+    return Messages.get("dialog.failed_to_load_release_notes");
   }
 
   public void setData(Stage dialogStage, String version) {
@@ -126,7 +126,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
     }
     catch (Exception e) {
       LOG.error("Failed to load release info: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_load_release_info") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_load_release_info", e.getMessage()));
     }
 
     Platform.runLater(() -> {

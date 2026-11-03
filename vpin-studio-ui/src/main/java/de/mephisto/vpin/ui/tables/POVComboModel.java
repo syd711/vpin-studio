@@ -1,13 +1,14 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.util.Arrays;
 import java.util.List;
 
 public class POVComboModel {
 
-  private final static POVComboModel DEFAULT_MODEL = new POVComboModel("Default", -1);
-  private final static POVComboModel ENABLED_MODEL = new POVComboModel("Enabled", 1);
-  private final static POVComboModel DISABLED_MODEL = new POVComboModel("Disabled", 0);
+  private final static POVComboModel DEFAULT_MODEL = new POVComboModel(Messages.get("dialog.option_default"), -1);
+  private final static POVComboModel ENABLED_MODEL = new POVComboModel(Messages.get("dialog.option_enabled"), 1);
+  private final static POVComboModel DISABLED_MODEL = new POVComboModel(Messages.get("dialog.option_disabled"), 0);
 
   public final static List<POVComboModel> MODELS = Arrays.asList(DEFAULT_MODEL, ENABLED_MODEL, DISABLED_MODEL);
 

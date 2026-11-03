@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class UniversalUploadResource {
     }
     catch (Exception e) {
       LOG.error("Table upload failed: {}", e.getMessage(), e);
-      descriptor.setError("Table upload failed: " + e.getMessage());
+      descriptor.setError(ServerMessages.msg("upload.error.table_failed", e.getMessage()));
       descriptor.finalizeUpload();
     }
     return descriptor;

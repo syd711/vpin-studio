@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.ui.DnDOverlayController;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -38,7 +39,7 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     this.suffixes = Arrays.asList(suffix);
 
     this.overlayController = DnDOverlayController.load(loaderStack, node, singleSelectionOnly);
-    overlayController.setMessage("Drop Media here.");
+    overlayController.setMessage(Messages.get("dialog.drop_media_here"));
     overlayController.setMessageFontsize(14);
   }
 

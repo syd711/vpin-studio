@@ -243,7 +243,7 @@ public class WovpMenuItemController implements Initializable {
     errorContainer.setVisible(false);
     errorMsg.setText("");
 
-    playerBtn.setText((playerSelectionIndex + 1) + ". Player: " + wovpPlayer.getName());
+    playerBtn.setText(Messages.get("pausemenu.wovp_menu_item.player_button", playerSelectionIndex + 1, wovpPlayer.getName()));
 
     JFXFuture.supplyAsync(() -> {
       ScoreSubmit scoreSubmit = client.getCompetitionService().submitScore(wovpPlayer, messageText.getText(), true);

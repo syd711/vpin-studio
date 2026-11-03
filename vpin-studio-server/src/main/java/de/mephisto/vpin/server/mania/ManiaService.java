@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mania;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
@@ -86,13 +87,13 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     ManiaTableSyncResult result = new ManiaTableSyncResult();
     result.setVpsTableId(vpsTableId);
     if (!Features.MANIA_ENABLED) {
-      result.setError("VPin Mania is disabled.");
+      result.setError(ServerMessages.msg("mania.error.disabled"));
       return result;
     }
 
     VpsTable vpsTable = vpsService.getTableById(vpsTableId);
     if (vpsTable == null) {
-      result.setError("No matching VPS table found.");
+      result.setError(ServerMessages.msg("mania.error.no_vps_table"));
       return result;
     }
 
@@ -112,7 +113,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         String msg = "Skipped VPin Mania synchronization for \"" + vpsTable.getDisplayName() + "\", no matching game found.";
         LOG.info(msg);
         SLOG.info(msg);
-        result.setError(msg);
+        result.setError(ServerMessages.msg("mania.error.sync_skipped", vpsTable.getDisplayName()));
         continue;
       }
 
@@ -173,7 +174,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           if (isOnDenyList(deniedScoresByTableId, score, game)) {
             tableSyncItem.setTableScore(tableScore);
             tableSyncItem.setDenied(true);
-            tableSyncItem.setResult("Score for \"" + playerInitials + "\" is on the ignore list.");
+            tableSyncItem.setResult(ServerMessages.msg("mania.sync.ignored", playerInitials));
 
             result.add(tableSyncItem);
             continue;
@@ -183,7 +184,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
           SLOG.info("Submitted VPin Mania score " + score + " for \"" + game.getGameDisplayName() + "\" (player \"" + playerInitials + "\").");
           tableSyncItem.setTableScore(submitted != null ? submitted : tableScore);
-          tableSyncItem.setResult("Highscore for \"" + playerInitials + "\" successfully synchronized.");
+          tableSyncItem.setResult(ServerMessages.msg("mania.sync.synchronized", playerInitials));
           submittedInitials.add(playerInitials);
 
           result.add(tableSyncItem);
@@ -357,7 +358,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
    */
   public ManiaRegistration register(ManiaRegistration registration) {
     if (!Features.MANIA_ENABLED) {
-      registration.setResult("VPin Mania is disabled.");
+      registration.setResult(ServerMessages.msg("mania.error.disabled"));
       return registration;
     }
     try {
@@ -387,7 +388,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       Cabinet registeredCabinet = maniaClient.getCabinetClient().register(newCab, avatar, null);
       if (registeredCabinet == null) {
         LOG.error("Mania registration failed, no cabinet created.");
-        registration.setResult("Registration failed.");
+        registration.setResult(ServerMessages.msg("mania.error.registration_failed"));
         return registration;
       }
 

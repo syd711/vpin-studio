@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -26,7 +27,7 @@ public class BAMCfgUploadController extends BaseUploadController {
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new BamCfgUploadProgressModel("BAM Configuration File Upload", getSelections(), game.getId());
+    return new BamCfgUploadProgressModel(Messages.get("dialog.upload_bam_cfg"), getSelections(), game.getId());
   }
 
   protected void refreshEmulators() {

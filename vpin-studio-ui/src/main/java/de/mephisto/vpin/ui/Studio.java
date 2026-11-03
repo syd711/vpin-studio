@@ -602,12 +602,12 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"xdg-open", url});
         }
         catch (IOException e) {
-          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_opening_browser", e.getMessage()));
         }
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_determine_operating_system_for_name") + osName + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_determine_operating_system_for_name", String.valueOf(osName)));
       }
     }
   }
@@ -682,8 +682,8 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-t", file.getAbsolutePath()});
         }
         catch (IOException e) {
-          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_opening_browser", e.getMessage()));
         }
       }
       else if (osName.toLowerCase().contains("nux")) {
@@ -691,12 +691,12 @@ public class Studio extends Application {
           Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }
         catch (IOException e) {
-          LOG.error(Messages.get("dialog.error_opening_browser") + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_browser") + e.getMessage());
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_opening_browser", e.getMessage()));
         }
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_determine_operating_system_for_name") + osName + "\".");
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_determine_operating_system_for_name", String.valueOf(osName)));
       }
     }
     return false;

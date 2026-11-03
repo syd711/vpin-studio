@@ -46,7 +46,7 @@ public class Dialogs {
           Studio.edit(file);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.file_not_found"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.does_not_exist"));
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.file_not_found"), Messages.get("msg.the_file_does_not_exist", file.getAbsolutePath()));
         }
       }
       catch (Exception e) {
@@ -86,7 +86,7 @@ public class Dialogs {
   }
 
   public static boolean openUpdateDialog(VPinStudioClient client) {
-    Stage stage = createStudioDialogStage("dialog-updater.fxml", "VPin Studio Updater");
+    Stage stage = createStudioDialogStage("dialog-updater.fxml", Messages.get("dialog.studio_updater"));
     UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
     controller.setData(stage, client);
     stage.showAndWait();
@@ -114,7 +114,7 @@ public class Dialogs {
     }
     catch (Exception e) {
       LOG.error("Failed to open file: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(s, Messages.get("common.error"), Messages.get("dialog.failed_to_open_file") + e.getMessage());
+      WidgetFactory.showAlert(s, Messages.get("common.error"), Messages.get("msg.failed_to_open_file", e.getMessage()));
     }
     return false;
   }
@@ -155,12 +155,12 @@ public class Dialogs {
           Files.write(path, systemData.getData().getBytes());
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_data"), Messages.get("dialog.the_file") + file.getAbsolutePath() + Messages.get("dialog.does_not_contain_any_data_or_wasn"));
+          WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.no_data"), Messages.get("msg.the_file_does_not_contain_any_data", file.getAbsolutePath()));
         }
       }
       catch (IOException e) {
-        LOG.error(Messages.get("dialog.failed_to_create_temporary_file_for_text") + e.getMessage());
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_create_temporary_file_for_text") + e.getMessage());
+        LOG.error("Failed to create temporary file for text file: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_create_temporary_file_for_text", e.getMessage()));
         return;
       }
     }

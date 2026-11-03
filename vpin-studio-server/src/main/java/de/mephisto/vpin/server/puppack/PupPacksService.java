@@ -252,14 +252,14 @@ public class PupPacksService implements InitializingBean {
     File tempFile = new File(uploadDescriptor.getTempFilename());
     File pupVideosFolder = getPupPackFolder();
     if (!pupVideosFolder.exists()) {
-      uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
+      uploadDescriptor.setError(ServerMessages.msg("puppack.error.invalid_folder", pupVideosFolder.getAbsolutePath()));
       return;
     }
 
     LOG.info("Extracting PUP pack to {}", pupVideosFolder.getAbsolutePath());
     if (!pupVideosFolder.exists()) {
       if (!pupVideosFolder.mkdirs()) {
-        uploadDescriptor.setError("Failed to create PUP pack directory " + pupVideosFolder.getAbsolutePath());
+        uploadDescriptor.setError(ServerMessages.msg("puppack.error.create_folder", pupVideosFolder.getAbsolutePath()));
         return;
       }
     }

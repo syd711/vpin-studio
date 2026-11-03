@@ -190,7 +190,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
         help2 = Messages.get("dialog.delete_competition_hint_cancel");
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_competition") + selection.getName() + "'?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_competition", selection.getName()),
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
@@ -207,10 +207,10 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
   private void onFinish() {
     CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null && selection.isActive()) {
-      String helpText1 = "The competition is active for another " + selection.remainingDays() + " days.";
-      String helpText2 = "Finishing the competition will set the current leader as winner.";
+      String helpText1 = Messages.get("dialog.competition_active_days", selection.remainingDays());
+      String helpText2 = Messages.get("dialog.competition_finish_hint");
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.finish_competition") + selection.getName() + "'?", helpText1, helpText2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.finish_competition", selection.getName()), helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getCompetitionService().finishCompetition(selection);
         onReload();

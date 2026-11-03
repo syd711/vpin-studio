@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend.popper;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
@@ -2190,7 +2191,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setAddFavCheckboxes(sqlPlaylist && sql != null && sql.contains("EMUID"));
 
     if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
-      playlist.setSqlError("Missing SQL query");
+      playlist.setSqlError(ServerMessages.msg("playlist.error.missing_sql"));
     }
 
     try {

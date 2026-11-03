@@ -201,7 +201,7 @@ public class UploadAnalysisDispatcher {
     }
     catch (Exception e) {
       LOG.error("Error opening archive: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_opening_archive") + e.getMessage());
+      WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, Messages.get("common.error"), Messages.get("msg.error_opening_archive", e.getMessage()));
     }
     return null;
   }

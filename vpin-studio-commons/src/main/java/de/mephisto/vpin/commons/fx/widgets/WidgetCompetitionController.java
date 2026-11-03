@@ -93,7 +93,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
     Rank firstRank = new Rank(Ranking.FIRST, Tile.YELLOW_ORANGE);
     turnoverTile = TileBuilder.create().skinType(Tile.SkinType.TURNOVER)
-        .title("#1 Place")
+        .title(Messages.get("widgets.widget_competition.first_place"))
         .prefWidth(Double.MAX_VALUE)
         .customDecimalFormatEnabled(true)
         .customDecimalFormat(new DecimalFormat("###,###,###"))
@@ -104,7 +104,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         .value(0)
         .unit("")
         .image(image)
-        .text("#1 Place")
+        .text(Messages.get("widgets.widget_competition.first_place"))
         .animated(true)
         .checkThreshold(true)
         .onTileEvent(e -> {
@@ -127,7 +127,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
 
     countdownTile = TileBuilder.create().skinType(Tile.SkinType.CHARACTER)
-        .title("Remaining Days")
+        .title(Messages.get("widgets.widget_competition.remaining_days"))
         .borderWidth(1)
         .borderColor(Color.web("#111111"))
         .borderColor(Color.web("#111111"))
@@ -176,18 +176,18 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       if (remainingDays == 0) {
         long ms = Duration.between(Instant.now(), competition.getEndDate()).toMillis();
         if ((ms / 1000) < 3600) {
-          countdownTile.setTitle("Remaining Minutes");
+          countdownTile.setTitle(Messages.get("widgets.widget_competition.remaining_minutes"));
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "mm", false));
           countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
         }
         else {
-          countdownTile.setTitle("Remaining Hours");
+          countdownTile.setTitle(Messages.get("widgets.widget_competition.remaining_hours"));
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "HH", false));
           countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
         }
       }
       else {
-        countdownTile.setTitle("Remaining Days");
+        countdownTile.setTitle(Messages.get("widgets.widget_competition.remaining_days"));
         countdownTile.setDescription(String.valueOf(remainingDays));
         countdownTile.setText(Messages.get("widgets.widget_competition.competition_end", DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(competition.getEndDate().atZone(ZoneId.systemDefault()))));
       }
@@ -209,7 +209,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           if (!scores.isEmpty()) {
             ScoreRepresentation currentScore = scores.getFirst();
             Platform.runLater(() -> {
-              turnoverTile.setTitle("#1 Place");
+              turnoverTile.setTitle(Messages.get("widgets.widget_competition.first_place"));
               turnoverTile.setValue(currentScore.getScore());
 
               if (currentScore.getPlayer() != null) {

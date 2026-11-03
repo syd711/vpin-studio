@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.converter;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand.ImageOp;
@@ -58,7 +59,7 @@ public class MediaConverterService implements InitializingBean {
     }
     catch (Exception e) {
       LOG.error("Error converting media: {}", e.getMessage(), e);
-      result.setResult("Error converting media: " + e.getMessage());
+      result.setResult(ServerMessages.msg("media.convert.error", e.getMessage()));
     }
     return result;
   }
@@ -92,7 +93,7 @@ public class MediaConverterService implements InitializingBean {
       }
       else {
         LOG.warn("No matching conversion .bat file found for {}", command.getName());
-        operationResult.setResult("No matching conversion .bat file found for " + command.getName());
+        operationResult.setResult(ServerMessages.msg("media.convert.no_bat_file", command.getName()));
       }
     }
     else if (command.getType() == MediaConversionCommand.TYPE_FFMEPG) {
@@ -103,7 +104,7 @@ public class MediaConverterService implements InitializingBean {
     }
     else {
       LOG.warn("Not supported implementation of command {} for {}", command.getClass().getName(), command.getName());
-      operationResult.setResult("Not supported implementation of command " + command.getClass().getName() + " for " + command.getName());
+      operationResult.setResult(ServerMessages.msg("media.convert.not_supported", command.getClass().getName(), command.getName()));
     }
   }
 
@@ -114,7 +115,7 @@ public class MediaConverterService implements InitializingBean {
       File mediaFile = mediaService.getMediaFile(operation.getObjectId(), operation.getScreen(), operation.getFilename());
       if (mediaFile == null || !mediaFile.exists()) {
         LOG.info("No media item found for {}", operation.getFilename());
-        operationResult.setResult("No media item found for " + operation.getFilename());
+        operationResult.setResult(ServerMessages.msg("media.convert.no_media_item", operation.getFilename()));
         return result;
       }
       result.add(mediaFile);
@@ -154,7 +155,7 @@ public class MediaConverterService implements InitializingBean {
     String output = convertWithFfmpeg(command, mediaFile, targetFile);
     // now exchange files
     if (mediaFile.delete() && !targetFile.renameTo(mediaFile)) {
-      operationResult.setResult("Target file renaming failed: " + mediaFile.getAbsolutePath());
+      operationResult.setResult(ServerMessages.msg("media.convert.rename_failed", mediaFile.getAbsolutePath()));
     }
     return output;
   }
@@ -239,11 +240,11 @@ public class MediaConverterService implements InitializingBean {
         };
 
       ImageUtil.write(img, mediaFile);
-      result.setResult("Converted file " + mediaFile.getAbsolutePath());
+      result.setResult(ServerMessages.msg("media.convert.converted", mediaFile.getAbsolutePath()));
     }
     catch (Exception e) {
       LOG.error("Image conversion failed for {}: {}", mediaFile.getAbsolutePath(), e.getMessage(), e);
-      result.setResult("Image conversion failed for " + mediaFile.getAbsolutePath() + ": " + e.getMessage());
+      result.setResult(ServerMessages.msg("media.convert.image_failed", mediaFile.getAbsolutePath(), e.getMessage()));
     }
   }
 
@@ -281,16 +282,16 @@ public class MediaConverterService implements InitializingBean {
       }
     }
     else {
-      commands.add(new MediaConversionCommand("Rotate Clockwise 90°").setFFmpegArgs("-vf \"transpose=1\""));
-      commands.add(new MediaConversionCommand("Rotate Counter Clockwise 90°").setFFmpegArgs("-vf \"transpose=2\""));
-      commands.add(new MediaConversionCommand("Rotate 180°").setFFmpegArgs("-vf \"transpose=2,transpose=2\""));
-      commands.add(new MediaConversionCommand("Mute Volume").setFFmpegArgs("-c:v copy -an"));
+      commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.rotate_cw")).setFFmpegArgs("-vf \"transpose=1\""));
+      commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.rotate_ccw")).setFFmpegArgs("-vf \"transpose=2\""));
+      commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.rotate_180")).setFFmpegArgs("-vf \"transpose=2,transpose=2\""));
+      commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.mute")).setFFmpegArgs("-c:v copy -an"));
     }
 
     // add image commands
-    commands.add(new MediaConversionCommand("Rotate Clockwise 90°").setImageArgs(ImageOp.ROTATE_90));
-    commands.add(new MediaConversionCommand("Rotate Counter Clockwise 90°").setImageArgs(ImageOp.ROTATE_90_CCW));
-    commands.add(new MediaConversionCommand("Rotate 180°").setImageArgs(ImageOp.ROTATE_180));
+    commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.rotate_cw")).setImageArgs(ImageOp.ROTATE_90));
+    commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.rotate_ccw")).setImageArgs(ImageOp.ROTATE_90_CCW));
+    commands.add(new MediaConversionCommand(ServerMessages.msg("media.convert.cmd.rotate_180")).setImageArgs(ImageOp.ROTATE_180));
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 

@@ -57,12 +57,12 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
       result = true;
       try {
         uploadTypeGeneratorSelectedLast = false;
-        DefaultBackgroundUploadProgressModel model = new DefaultBackgroundUploadProgressModel(this.game.getId(), "Default Background Upload", selection);
+        DefaultBackgroundUploadProgressModel model = new DefaultBackgroundUploadProgressModel(this.game.getId(), Messages.get("dialog.upload_default_background"), selection);
         ProgressDialog.createProgressDialog(model);
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_default_background_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_default_background_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("msg.error", e.getMessage()));
       } finally {
         stage.close();
       }
@@ -74,9 +74,9 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Picture File");
+    fileChooser.setTitle(Messages.get("dialog.select_picture_file"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Pictures", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_pictures"), "*.png", "*.jpg", "*.jpeg"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {

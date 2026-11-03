@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class BackglassManagerDialogs {
 
   public static void openResGenerator(int emulatorId, String fileName) {
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, ResGeneratorDialogController.class, "dialog-res-generator.fxml", ".res File Generator", null);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, ResGeneratorDialogController.class, "dialog-res-generator.fxml", Messages.get("dialog.res_file_generator"), null);
     ResGeneratorDialogController controller = (ResGeneratorDialogController) stage.getUserData();
     controller.setData(stage, emulatorId, fileName);
     stage.showAndWait();

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
@@ -27,7 +28,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class BtnRecorderDialogController implements Initializable, DialogController, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(BtnRecorderDialogController.class);
-  public static final String PRESS_KEY = "-- Press Key --";
+  public static final String PRESS_KEY = Messages.get("dialog.press_key");
 
   @FXML
   private Button cancelBtn;

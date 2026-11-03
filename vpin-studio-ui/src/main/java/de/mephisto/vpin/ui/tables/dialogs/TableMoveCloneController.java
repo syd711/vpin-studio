@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -117,15 +118,15 @@ public class TableMoveCloneController implements Initializable, DialogController
     this.move = move;
 
     boolean bulk = games.size() > 1;
-    okBtn.setText(move ? "Move" : "Clone");
+    okBtn.setText(move ? Messages.get("dialog.move_button") : Messages.get("dialog.clone_button"));
     if (bulk) {
-      descriptionLabel1.setText((move ? "Move " : "Clone ") + games.size() + " tables to a different VPX emulator.");
-      descriptionLabel2.setText(move ? "The tables are removed from their current emulator once the move has finished." : "");
+      descriptionLabel1.setText(move ? Messages.get("dialog.move_tables_desc", games.size()) : Messages.get("dialog.clone_tables_desc", games.size()));
+      descriptionLabel2.setText(move ? Messages.get("dialog.move_tables_removed_hint") : "");
     }
     else {
       GameRepresentation game = games.get(0);
-      descriptionLabel1.setText((move ? "Move \"" : "Clone \"") + game.getGameDisplayName() + "\" to a different VPX emulator.");
-      descriptionLabel2.setText(move ? "The table is removed from the current emulator once the move has finished." : "");
+      descriptionLabel1.setText(move ? Messages.get("dialog.move_table_desc", game.getGameDisplayName()) : Messages.get("dialog.clone_table_desc", game.getGameDisplayName()));
+      descriptionLabel2.setText(move ? Messages.get("dialog.move_table_removed_hint") : "");
     }
 
     List<GameEmulatorRepresentation> targets = client.getEmulatorService().getVpxGameEmulators().stream()

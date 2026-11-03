@@ -129,7 +129,7 @@ public class TableDataTabScoreDataController implements Initializable {
     }
     catch (IOException e) {
       LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_em_highscore_file") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_em_highscore_file", e.getMessage()));
     }
   }
 
@@ -196,10 +196,10 @@ public class TableDataTabScoreDataController implements Initializable {
 
     if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
       if (!StringUtils.isEmpty(game.getRomAlias())) {
-        romName.setPromptText(game.getRom() + " (aliased ROM)");
+        romName.setPromptText(Messages.get("dialog.aliased_rom_hint", game.getRom()));
       }
       else {
-        romName.setPromptText(game.getScannedRom() + " (scanned value)");
+        romName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedRom()));
       }
 
       applyRomBtn.setDisable(false);
@@ -210,7 +210,7 @@ public class TableDataTabScoreDataController implements Initializable {
     altRomName.setText(tableRomAlt);
 
     if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
-      altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
+      altRomName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedAltRom()));
       applyAltRomBtn.setDisable(false);
     }
 
@@ -230,7 +230,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
     tableDataController.setHsFilenameValue(highscoreFileName.getValue());
     if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
-      highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
+      highscoreFileName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedHsFileName()));
     }
 
     // setValue() above already committed the value synchronously (and within the dirty-tracking
@@ -263,11 +263,11 @@ public class TableDataTabScoreDataController implements Initializable {
     resetBtn.setDisable(game.getHighscoreType() == null);
 
     if (!StringUtils.isEmpty(game.getScannedHsFileName()) && !StringUtils.isEmpty(highscoreFileName.getValue())) {
-      highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
+      highscoreFileName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedHsFileName()));
     }
     else if (StringUtils.isEmpty(game.getScannedHsFileName()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
       //apply scannedAltRom (aka tablename) fallback for scanned highscore field
-      scannedHighscoreFileName.setPromptText(game.getScannedAltRom() + ".txt (scanned value)");
+      scannedHighscoreFileName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedAltRom() + ".txt"));
     }
     applyHsBtn.setDisable(StringUtils.isEmpty(game.getScannedHsFileName()));
   }
@@ -287,7 +287,7 @@ public class TableDataTabScoreDataController implements Initializable {
     if (!newValue) {
       altRomName.setPromptText("");
       if (StringUtils.isEmpty(altRomName.getText()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
-        altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
+        altRomName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedAltRom()));
       }
     }
   }
@@ -303,10 +303,10 @@ public class TableDataTabScoreDataController implements Initializable {
       romName.setPromptText("");
       if (StringUtils.isEmpty(romName.getValue()) && !StringUtils.isEmpty(game.getScannedRom())) {
         if (!StringUtils.isEmpty(game.getRomAlias())) {
-          romName.setPromptText(game.getRom() + " (aliased ROM)");
+          romName.setPromptText(Messages.get("dialog.aliased_rom_hint", game.getRom()));
         }
         else {
-          romName.setPromptText(game.getScannedRom() + " (scanned value)");
+          romName.setPromptText(Messages.get("dialog.scanned_value_hint", game.getScannedRom()));
         }
       }
     }

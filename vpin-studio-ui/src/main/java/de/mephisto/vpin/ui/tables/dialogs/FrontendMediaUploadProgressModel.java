@@ -71,7 +71,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
 
   @Override
   public String nextToString(File file) {
-    return Messages.get("dialog.uploading") + file.getName();
+    return Messages.get("msg.uploading", file.getName());
   }
 
   @Override

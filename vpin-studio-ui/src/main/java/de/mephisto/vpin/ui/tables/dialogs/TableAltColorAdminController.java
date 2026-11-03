@@ -59,7 +59,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
         }
         catch (Exception ex) {
           LOG.error("Failed to restore ALT color: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_restore_alt_color_backup") + ex.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_restore_alt_color_backup", ex.getMessage()));
         }
       }
     }
@@ -71,7 +71,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
 
     List<String> selectedItems = backupList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + Messages.get("dialog.backup_s"));
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_n_backups", selectedItems.size()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         for (String selectedItem : selectedItems) {
           client.getAltColorService().deleteBackup(game.getId(), selectedItem);

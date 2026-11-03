@@ -167,9 +167,9 @@ public class AltSound2EditorController implements Initializable {
   private void onProfileDelete() {
     AltSound2DuckingProfile value = this.profilesCombo.getValue();
     if (value != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_profile") + value.getType().name().toUpperCase() + "\" " + value.getId() + "?",
-          "All related audio files will be resetted to the default profile.",
-          "If no other profile exists for this sample type, it will be removed from all ducking lists.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_profile", String.valueOf(value.getType().name().toUpperCase()), String.valueOf(value.getId())),
+          Messages.get("dialog.profile_delete_reset_hint"),
+          Messages.get("dialog.profile_delete_ducking_hint"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 //        altSound.getMusicDuckingProfiles().remove(value);
 //        altSound.getSoloDuckingProfiles().remove(value);
@@ -238,8 +238,8 @@ public class AltSound2EditorController implements Initializable {
       this.refreshProfiles();
       this.refresh();
     } catch (Exception ex) {
-      LOG.error(Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_alt_sound") + ex.getMessage());
+      LOG.error("Failed to save ALT sound: " + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_alt_sound", ex.getMessage()));
     }
   }
 
@@ -709,7 +709,7 @@ public class AltSound2EditorController implements Initializable {
         if (player == mediaPlayer) {
           stopPlayback();
         }
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), "Failed to play \"" + filename + "\": " + player.getError().getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_play_quoted", filename, player.getError().getMessage()));
       });
       player.setOnEndOfMedia(() -> {
         if (player == mediaPlayer) {

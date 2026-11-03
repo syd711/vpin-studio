@@ -48,8 +48,8 @@ public class TableStatusToggleProgressModel extends ProgressModel<GameRepresenta
 
     if (!failed.isEmpty()) {
       GameRepresentation game = failed.getFirst();
-      String action = game.isDisabled() ? "enabled" : "disabled";
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.the_table") + game.getGameDisplayName() + Messages.get("dialog.couldn_t_be") + action + ".", "Please try again.");
+      String action = game.isDisabled() ? Messages.get("dialog.table_action_enabled") : Messages.get("dialog.table_action_disabled");
+      WidgetFactory.showAlert(Studio.stage, Messages.get("msg.the_table_couldn_t_be", game.getGameDisplayName(), action), Messages.get("dialog.please_try_again"));
     }
   }
 

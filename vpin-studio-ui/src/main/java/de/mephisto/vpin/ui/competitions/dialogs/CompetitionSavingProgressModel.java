@@ -64,9 +64,9 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
     } catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_save_competitions_data") + e.getMessage(), e);
+      LOG.error("Failed to save competitions data: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.competition_update_failed"), Messages.get("dialog.failed_to_save_competitions_data") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.competition_update_failed"), Messages.get("msg.failed_to_save_competitions_data", e.getMessage()));
       });
     }
   }

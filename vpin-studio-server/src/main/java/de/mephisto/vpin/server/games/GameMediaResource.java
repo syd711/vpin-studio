@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
@@ -418,7 +419,7 @@ public class GameMediaResource {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return JobDescriptorFactory.error("Upload request did not contain a file object.");
+        return JobDescriptorFactory.error(ServerMessages.msg("upload.error.no_file"));
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -429,7 +430,7 @@ public class GameMediaResource {
       File out = gameMediaService.uniqueMediaAsset(gameId, screen, extractAudio ? "mp3" : suffix, append);
       if (out == null) {
         LOG.error("No game found for media upload.");
-        return JobDescriptorFactory.error("No game found for media upload.");
+        return JobDescriptorFactory.error(ServerMessages.msg("upload.error.no_game"));
       }
 
       LOG.info("Uploading {}", out.getAbsolutePath());

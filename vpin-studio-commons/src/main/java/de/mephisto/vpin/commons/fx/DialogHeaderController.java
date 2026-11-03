@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
@@ -50,7 +51,7 @@ public class DialogHeaderController implements Initializable {
   @FXML
   private void onCloseClick() {
     if (isDirty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "You have unsaved changes.", "Do you really want to close and lose them ?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.you_have_unsaved_changes"), Messages.get("dialog.close_and_lose_changes"));
       if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
         // stay here
         return;

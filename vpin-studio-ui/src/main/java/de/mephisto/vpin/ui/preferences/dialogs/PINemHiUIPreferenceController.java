@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
@@ -191,7 +192,7 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
 
       FontSelectorDialog fs = new FontSelectorDialog(font);
       fs.setHeight(500);
-      fs.setTitle("Select Font");
+      fs.setTitle(Messages.get("dialog.select_font"));
       fs.setHeaderText("");
 
       fs.showAndWait().ifPresent(result -> {

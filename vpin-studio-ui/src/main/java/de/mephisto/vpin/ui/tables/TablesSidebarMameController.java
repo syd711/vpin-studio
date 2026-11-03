@@ -46,10 +46,10 @@ public class TablesSidebarMameController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
 
   public final static java.util.List<SoundMode> SOUND_MODES = Arrays.asList(
-      new SoundMode(0, "0 - Standard built-in PinMAME emulation"),
-      new SoundMode(1, "1 - Built-in alternate sound file support"),
-      new SoundMode(2, "2 - External pinsound"),
-      new SoundMode(3, "3 - External pinsound + psrec sound recording"));
+      new SoundMode(0, Messages.get("dialog.mame_sound_mode_0")),
+      new SoundMode(1, Messages.get("dialog.mame_sound_mode_1")),
+      new SoundMode(2, Messages.get("dialog.mame_sound_mode_2")),
+      new SoundMode(3, Messages.get("dialog.mame_sound_mode_3")));
 
   @FXML
   private ScrollPane dataScrollPane;
@@ -170,7 +170,7 @@ public class TablesSidebarMameController implements Initializable {
 
 
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_vpin_mame_settings_for_table") + this.game.get().getGameDisplayName() + "'?",
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_vpin_mame_settings_for_table", this.game.get().getGameDisplayName()),
         Messages.get("dialog.the_default_settings_will_be_restored_on"));
     String rom = game.get().getRom();
     if (StringUtils.isEmpty(rom)) {
@@ -237,7 +237,7 @@ public class TablesSidebarMameController implements Initializable {
       }
 
       if (nvOffset > 0 && nvOffset == g.getNvOffset()) {
-        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.nvoffset_not_updated"), Messages.get("dialog.nvoffset_not_updated_because_it_already_has") + nvOffset + "\".", null);
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.nvoffset_not_updated"), Messages.get("msg.nvoffset_not_updated_because_it_already_has", String.valueOf(nvOffset)), null);
         onNvOffset(gameId);
         return;
       }
@@ -253,7 +253,7 @@ public class TablesSidebarMameController implements Initializable {
       }
       catch (Exception e) {
         LOG.error("Failed to set nvoffset value: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.setting_nvoffset_failed") + e.getMessage(), Messages.get("dialog.use_the_script_editor_to_set_the"));
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.setting_nvoffset_failed", e.getMessage()), Messages.get("dialog.use_the_script_editor_to_set_the"));
       }
     }
   }
@@ -276,8 +276,8 @@ public class TablesSidebarMameController implements Initializable {
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_open_alias_text_file") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_alias_text_file") + e.getMessage());
+      LOG.error("Failed to open alias text file: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_alias_text_file", e.getMessage()));
     }
   }
 
@@ -322,8 +322,8 @@ public class TablesSidebarMameController implements Initializable {
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage());
+      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_mame_settings", e.getMessage()));
     }
     finally {
       Studio.client.getGameService().reload(game.get().getId());
@@ -555,7 +555,7 @@ public class TablesSidebarMameController implements Initializable {
     forceStereo.setDisable(b);
     volumeSpinner.setDisable(b);
 
-    applyDefaultsBtn.setText(b ? "Override Defaults" : "Apply Defaults");
+    applyDefaultsBtn.setText(b ? Messages.get("dialog.override_defaults") : Messages.get("tables.pinvol_settings.apply_defaults"));
 
     Tooltip tooltip = new Tooltip(b ? Messages.get("dialog.mame_defaults_hint_use") : Messages.get("dialog.mame_defaults_hint_delete"));
     applyDefaultsBtn.setTooltip(tooltip);
@@ -588,8 +588,8 @@ public class TablesSidebarMameController implements Initializable {
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mame_settings") + e.getMessage());
+      LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_mame_settings", e.getMessage()));
     }
   }
 

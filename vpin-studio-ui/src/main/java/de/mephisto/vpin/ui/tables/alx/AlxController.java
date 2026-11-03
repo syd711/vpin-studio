@@ -114,7 +114,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
     GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
     allTables.setId(-1);
-    allTables.setName("All Tables");
+    allTables.setName(Messages.get("tables.alx.alx_delete.all_tables"));
     filtered.addFirst(allTables);
 
     // mind settings combo will also trigger refreshAlxData()
@@ -197,7 +197,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
           })
           .onErrorSupply(e -> {
             LOG.error("Failed to load ALX dashboard: " + e.getMessage(), e);
-            Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.cannot_load_statistics_to_initialize_dashboard") + e.getMessage(), Messages.get("dialog.please_submit_a_bug_report_with_log")));
+            Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.cannot_load_statistics_to_initialize_dashboard", e.getMessage()), Messages.get("dialog.please_submit_a_bug_report_with_log")));
             return new AlxSummary();
           })
           .thenAcceptLater(alxSummary -> {
@@ -206,8 +206,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
           });
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_initialize_alx_data") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_alx_data") + e.getMessage(), Messages.get("dialog.please_submit_a_bug_report_with_log"));
+      LOG.error("Failed to initialize ALX data: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_initialize_alx_data", e.getMessage()), Messages.get("dialog.please_submit_a_bug_report_with_log"));
     }
   }
 
@@ -240,8 +240,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createAvgWeekTimeTile(Studio.stage, tileList, entries, alxStartDate);
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_initialize_alx_dashboard") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_alx_dashboard") + e.getMessage(), Messages.get("dialog.please_submit_a_bug_report_with_log"));
+      LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_initialize_alx_dashboard", e.getMessage()), Messages.get("dialog.please_submit_a_bug_report_with_log"));
     }
   }
 

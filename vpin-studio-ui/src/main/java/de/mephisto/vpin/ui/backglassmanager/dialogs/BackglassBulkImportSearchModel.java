@@ -58,7 +58,7 @@ public class BackglassBulkImportSearchModel extends ProgressModel<DirectB2S> {
 
   @Override
   public String nextToString(DirectB2S backglass) {
-    return Messages.get("backglass.bulk_import.checking") + backglass.getName();
+    return Messages.get("msg.checking", backglass.getName());
   }
 
   @Override

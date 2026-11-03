@@ -129,7 +129,7 @@ public class PlayersController implements Initializable, StudioFXController {
         NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
       }
 
-      playerCountLabel.setText(builtInPlayersController.getCount() + " players");
+      playerCountLabel.setText(Messages.get("dialog.players_count", builtInPlayersController.getCount()));
     }
     else {
       if (player.isPresent()) {
@@ -139,7 +139,7 @@ public class PlayersController implements Initializable, StudioFXController {
         NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
       }
 
-      playerCountLabel.setText(discordPlayersController.getCount() + " players");
+      playerCountLabel.setText(Messages.get("dialog.players_count", discordPlayersController.getCount()));
     }
   }
 

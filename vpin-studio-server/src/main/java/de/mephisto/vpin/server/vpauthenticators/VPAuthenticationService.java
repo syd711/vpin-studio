@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpauthenticators;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
@@ -44,13 +45,12 @@ public class VPAuthenticationService {
   public String authenticate(AuthenticationProvider authenticationProvider, String login, String password) {
     if (authenticationProvider == null) {
       LOG.info("Skipped authentication, no provider selected.");
-      return "No authentication provider selected. Please choose and configure an authentication provider from the backup settings";
+      return ServerMessages.msg("auth.error.no_provider");
     }
 
     if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-      String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
-      LOG.info(msg);
-      return msg;
+      LOG.info("Missing credentials for authentication provider {}, login and password need to be set.", authenticationProvider);
+      return ServerMessages.msg("auth.error.missing_credentials", authenticationProvider);
     }
 
     LOG.info("Authentication using {}", authenticationProvider);
@@ -84,7 +84,7 @@ public class VPAuthenticationService {
         return runWithTimeout(() -> new VpuVPAuthenticator(vpuSettings).login());
       }
       default: {
-        return "Invalid authentication provider";
+        return ServerMessages.msg("auth.error.invalid_provider");
       }
     }
   }
@@ -99,9 +99,8 @@ public class VPAuthenticationService {
       return future.get(60, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      String msg = "Timeout running backup authentication, please try again later.";
-      LOG.error(msg, e);
-      return msg;
+      LOG.error("Timeout running backup authentication, please try again later.", e);
+      return ServerMessages.msg("auth.error.timeout");
     }
     finally {
       executor.shutdownNow();

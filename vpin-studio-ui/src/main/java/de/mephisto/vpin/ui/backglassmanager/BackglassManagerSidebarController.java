@@ -278,7 +278,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       String selectedVersion = getSelectedVersion();
       if (selection != null && selectedVersion != null) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + selectedVersion + "\"?", null, Messages.get("common.delete"));
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("msg.delete_backglass_file", String.valueOf(selectedVersion)), null, Messages.get("common.delete"));
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           client.getBackglassServiceClient().deleteBackglassVersion(getEmulatorId(), selectedVersion);
           BackglassManagerControllerUtils.notifyChange(getEmulatorId(), selectedVersion, game);
@@ -286,7 +286,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_delete_backglass_file") + ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_delete_backglass_file", ex.getMessage()));
     }
   }
 
@@ -305,9 +305,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private void onDMDUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select DMD Image");
+    fileChooser.setTitle(Messages.get("dialog.select_dmd_image"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_image"), "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -332,7 +332,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     if (tableData != null && tableData.isBackgroundAvailable() && game != null) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sPreviewBackground(tableData, false)) {
         Image img = new Image(in);
-        uploadImageAsMedia(game, VPinScreen.BackGlass, "Backglass", img);
+        uploadImageAsMedia(game, VPinScreen.BackGlass, Messages.get("dialog.screen_backglass"), img);
       }
       catch (IOException ioe) {
         LOG.error("Cannot download backglass and set as backglass media image for backglass " + tableData, ioe);
@@ -373,8 +373,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
     Optional<FrontendMediaItemRepresentation> existingImage = medias.getMediaItems(screen).stream().filter(m -> m.getMimeType().contains("image")).findAny();
     if (existingImage.isPresent()) {
-      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, Messages.get("dialog.replace") + screenName + Messages.get("dialog.media"),
-          "A " + screenName + Messages.get("dialog.media_asset_already_exists"),
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, Messages.get("msg.replace_media", screenName),
+          Messages.get("msg.a_media_asset_already_exists", screenName),
           Messages.get("dialog.append_new_asset_or_overwrite_existing_asset"), Messages.get("dialog.overwrite"), Messages.get("dialog.append"));
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
       }
@@ -386,8 +386,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     else {
-      Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.copy_in") + screenName + Messages.get("dialog.media"),
-          Messages.get("dialog.add_the") + screenName + Messages.get("dialog.image_as_media_asset"), null, Messages.get("dialog.copy"));
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.copy_in_media", screenName),
+          Messages.get("msg.add_the_image_as_media_asset", screenName), null, Messages.get("dialog.copy"));
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
       }
       else {
@@ -395,14 +395,14 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     }
     FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-        screenName + " Media Upload", List.of(tmp.toFile()), screen, append, null);
+        Messages.get("dialog.screen_media_upload", screenName), List.of(tmp.toFile()), screen, append, null);
     ProgressDialog.createProgressDialog(model);
   }
 
   @FXML
   private void onDMDDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_dmd_image"),
-        Messages.get("dialog.delete_dmd_image_from_backglass") + tableData.getFilename() + "\"?", null, Messages.get("common.delete"));
+        Messages.get("msg.delete_dmd_image_from_backglass", tableData.getFilename()), null, Messages.get("common.delete"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       BackglassManagerControllerUtils.deleteDMDImage(getEmulatorId(), getSelectedVersion(), game);
     }
@@ -424,7 +424,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           .thenAcceptLater((b2s) -> {
             BackglassManagerControllerUtils.notifyChange(b2s);
           })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_set") + selectedVersion + Messages.get("dialog.as_default"), e.getMessage()));
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.cannot_set_as_default", String.valueOf(selectedVersion)), e.getMessage()));
     }
   }
 
@@ -437,14 +437,14 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           .thenAcceptLater((b2s) -> {
             BackglassManagerControllerUtils.notifyChange(b2s);
           })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_set") + selectedVersion + Messages.get("dialog.as_default"), e.getMessage()));
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.cannot_set_as_default", String.valueOf(selectedVersion)), e.getMessage()));
     }
   }
 
   private void export(InputStream in) {
     if (in != null) {
       StudioFolderChooser chooser = new StudioFolderChooser();
-      chooser.setTitle("Select Target Folder");
+      chooser.setTitle(Messages.get("dialog.select_target_folder"));
       File targetFolder = chooser.showOpenDialog(stage);
 
       if (targetFolder != null) {
@@ -455,11 +455,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           IOUtils.copy(in, fileOutputStream);
           fileOutputStream.close();
 
-          WidgetFactory.showInformation(stage, Messages.get("dialog.export_finished"), Messages.get("dialog.written") + targetFile.getName() + "\".");
+          WidgetFactory.showInformation(stage, Messages.get("dialog.export_finished"), Messages.get("msg.written", targetFile.getName()));
         }
         catch (IOException e) {
-          LOG.error(Messages.get("dialog.failed_to_download_backglass_image") + e.getMessage(), e);
-          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_download_backglass_image") + e.getMessage());
+          LOG.error("Failed to download backglass image: " + e.getMessage(), e);
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_download_backglass_image", e.getMessage()));
         }
       }
     }
@@ -1030,7 +1030,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             } else {
               dmdResolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.resolution", (int) _dmdThumbnail.getWidth(), (int) _dmdThumbnail.getHeight()));
             }
-            fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
+            fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? Messages.get("common.yes") : Messages.get("common.no"));
           }
           else {
             dmdThumbnailImage.setImage(null);
@@ -1056,8 +1056,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       JFXFuture.runAsync(() -> client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings))
         .thenLater(() -> BackglassManagerControllerUtils.notifyChange(getEmulatorId(), getSelectedVersion(), game))
         .onErrorLater(e -> {
-          LOG.error(Messages.get("dialog.failed_to_save_b2stablesettings_xml") + e.getMessage());
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_b2stablesettings_xml") + e.getMessage());
+          LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_b2stablesettings_xml", e.getMessage()));
         });
     }
   }

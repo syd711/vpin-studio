@@ -175,7 +175,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
           installed++;
         }
       }
-      labelCount.setText(text + " / " + installed + " installed / " + unmapped + " not mapped");
+      labelCount.setText(Messages.get("msg.installed_not_mapped", text, installed, unmapped));
     }
   }
 
@@ -193,7 +193,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     if (forceReload) {
       super.clearViewCache();
-      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", List.of(new File("<vpsdb.json>"))));
+      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel(Messages.get("dialog.download_vps_database"), List.of(new File("<vpsdb.json>"))));
     }
 
     // calculate unmapped in a non blocking thread
@@ -235,7 +235,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("table", "tables", new VpsTablesColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new VpsTablesColumnSorter(this));
     tableView.setPlaceholder(new Label(Messages.get("vps.vps_tables.info")));
 
     super.loadFilterPanel("scene-vps-tables-filter.fxml");
@@ -336,7 +336,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     });
 
     List<VpsTableFormat> tableFormats = new ArrayList<>();
-    tableFormats.add(new VpsTableFormat("All Emulators", (String[]) null));
+    tableFormats.add(new VpsTableFormat(Messages.get("dialog.vps_all_emulators"), (String[]) null));
     tableFormats.add(new VpsTableFormat("Visual Pinball X", "VPX"));
     tableFormats.add(new VpsTableFormat("Visual Pinball 9", "VP9"));
     tableFormats.add(new VpsTableFormat("Future Pinball", "FP"));

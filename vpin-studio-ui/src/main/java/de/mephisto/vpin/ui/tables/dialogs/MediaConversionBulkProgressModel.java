@@ -74,7 +74,7 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
         if(!StringUtils.isEmpty(r.getResult())) {
           GameRepresentation game = client.getGameService().getGame(r.getMediaOperation().getObjectId());
           if(game != null) {
-            builder.append("Result for \"" + game.getGameDisplayName() + "\":\n");
+            builder.append(Messages.get("dialog.result_for_quoted", game.getGameDisplayName()) + "\n");
             builder.append(r.getResult());
             builder.append("\n");
           }
@@ -99,7 +99,7 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
     }
     catch (Exception e) {
       LOG.error("Media conversion failed: " + e.getMessage(), e);
-      progressResultModel.getResults().add("Media conversion failed: " + e.getMessage());
+      progressResultModel.getResults().add(Messages.get("dialog.media_conversion_failed", e.getMessage()));
     }
   }
 

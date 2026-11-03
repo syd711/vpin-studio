@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.ipdb;
 
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.commons.SystemInfo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -182,7 +183,7 @@ public class IpdbDatabase {
   protected String login(WebClient webClient) throws IOException {
     // don't even try to authenticate if settings are not set
     if (StringUtils.isBlank(settings.getLogin())) {
-      return "Login cannot be empty";
+      return ServerMessages.msg("auth.error.login_empty");
     }
 
     final HtmlPage loginPage = webClient.getPage(URL);

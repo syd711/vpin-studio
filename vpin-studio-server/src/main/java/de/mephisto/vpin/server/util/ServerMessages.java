@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -34,6 +37,7 @@ public class ServerMessages {
   private static final Logger LOG = LoggerFactory.getLogger(ServerMessages.class);
 
   private static final String BUNDLE_BASE = "messages/messages";
+  private static final ResourceBundle.Control NO_FALLBACK = ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 
   private ServerMessages() {
   }
@@ -94,16 +98,45 @@ public class ServerMessages {
    * same local UI language preference as the client-side {@code Messages} helper.
    */
   public static Locale resolveLocalLocale() {
+    // same mapping as Messages.resolveLocale(), not called directly: loading Messages changes the JVM default locale
     String lang = LocalUISettings.getString(LocalUISettings.LANGUAGE);
     if (StringUtils.isBlank(lang)) {
       return Locale.ENGLISH;
     }
-    switch (lang.toLowerCase()) {
-      case "de":
-        return Locale.GERMAN;
-      default:
-        return Locale.ENGLISH;
+    return switch (lang.toLowerCase()) {
+      case "de" -> Locale.GERMAN;
+      case "fr" -> Locale.FRENCH;
+      case "it" -> Locale.ITALIAN;
+      case "es" -> Locale.of("es");
+      case "pt" -> Locale.of("pt");
+      default -> Locale.ENGLISH;
+    };
+  }
+
+  /**
+   * Returns the locale of the current HTTP request ({@code Accept-Language}), or the local UI
+   * language when called outside of a request (background jobs, listeners, startup code).
+   */
+  public static Locale requestLocale() {
+    try {
+      if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attrs) {
+        String acceptLanguage = attrs.getRequest().getHeader(HttpHeaders.ACCEPT_LANGUAGE);
+        if (!StringUtils.isBlank(acceptLanguage)) {
+          return parseLocale(acceptLanguage);
+        }
+      }
     }
+    catch (Exception e) {
+      // no request bound to this thread
+    }
+    return resolveLocalLocale();
+  }
+
+  /**
+   * Resolves a message for {@link #requestLocale()}.
+   */
+  public static String msg(String key, Object... args) {
+    return get(key, requestLocale(), args);
   }
 
   /**
@@ -112,7 +145,8 @@ public class ServerMessages {
    */
   public static String get(String key, Locale locale, Object... args) {
     try {
-      ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_BASE, locale != null ? locale : Locale.ENGLISH);
+      // no fallback to the JVM default locale: that is the local UI language, not the requested one
+      ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_BASE, locale != null ? locale : Locale.ENGLISH, NO_FALLBACK);
       String value = bundle.getString(key);
       if (args != null && args.length > 0) {
         return MessageFormat.format(value, args);

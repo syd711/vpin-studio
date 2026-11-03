@@ -169,10 +169,10 @@ public class VpsEntry extends HBox {
 
       // add context menu on VPS button
       ContextMenu menu = new ContextMenu();
-      MenuItem vpsItem = new MenuItem("Open Link");
+      MenuItem vpsItem = new MenuItem(Messages.get("dialog.vps_open_link"));
       vpsItem.setOnAction(actionEvent -> Studio.browse(link));
       menu.getItems().add(vpsItem);
-      MenuItem copyItem = new MenuItem("Copy Link");
+      MenuItem copyItem = new MenuItem(Messages.get("dialog.vps_copy_link"));
       copyItem.setOnAction(actionEvent -> {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
@@ -182,7 +182,7 @@ public class VpsEntry extends HBox {
       menu.getItems().add(copyItem);
 
       if (Features.AUTO_INSTALLER) {
-        MenuItem installItem = new MenuItem("Install...");
+        MenuItem installItem = new MenuItem(Messages.get("dialog.vps_install"));
         installItem.setOnAction(actionEvent -> {
           boolean isInstalled = VpsInstallerUtils.installOrBrowse(game, link, VpsDiffTypes.tableNewVersionVPX);
           if (isInstalled && game != null && table != null && tableVersion != null) {
@@ -200,7 +200,7 @@ public class VpsEntry extends HBox {
       }
 
       if (game != null) {
-        MenuItem addTodoItem = new MenuItem("Add //TODO Link");
+        MenuItem addTodoItem = new MenuItem(Messages.get("dialog.vps_add_todo_link"));
         addTodoItem.setOnAction(actionEvent -> {
           String notes = StringUtils.defaultString(game.getComment());
           if (notes.length() > 0) {
@@ -214,7 +214,7 @@ public class VpsEntry extends HBox {
         menu.getItems().add(addTodoItem);
       }
       else if (table != null) {
-        MenuItem addTodoItem = new MenuItem("Add //TODO Link");
+        MenuItem addTodoItem = new MenuItem(Messages.get("dialog.vps_add_todo_link"));
         addTodoItem.setOnAction(actionEvent -> {
           String notes = StringUtils.defaultString(table.getComment());
           if (notes.length() > 0) {

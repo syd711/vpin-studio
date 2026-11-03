@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.text;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
@@ -88,7 +89,7 @@ public class TextHighscoreAdapters implements InitializingBean {
         }
       }
       LOG.info("No parser found for {}, length: {} rows.", file.getName(), lines.size());
-      metadata.setStatus("No parser found for highscore file \"" + file.getName() + "\". Please report this table.");
+      metadata.setStatus(ServerMessages.msg("highscore.status.no_parser", file.getName()));
     }
     catch (IOException e) {
       SLOG.error("Error reading EM highscore file: " + e.getMessage());

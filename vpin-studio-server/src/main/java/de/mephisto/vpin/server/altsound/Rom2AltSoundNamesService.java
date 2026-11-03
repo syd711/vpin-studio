@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.altsound.Rom2AltSoundInfo;
@@ -74,7 +75,7 @@ public class Rom2AltSoundNamesService {
     Rom2AltSoundNames names = new Rom2AltSoundNames();
     File altSoundFolder = altSoundService.getAltSoundFolder(game);
     if (altSoundFolder == null || !altSoundFolder.exists()) {
-      names.setError("No ALT sound folder found for \"" + game.getGameDisplayName() + "\".");
+      names.setError(ServerMessages.msg("rom2altsound.error.no_altsound_folder", game.getGameDisplayName()));
       return names;
     }
 
@@ -91,8 +92,7 @@ public class Rom2AltSoundNamesService {
       names.setVersion(rom2AltSoundService.getInstalledVersion());
     }
     if (names.getSoundRomId() == null) {
-      names.setError("The sound ROM of \"" + names.getRom() + "\" could not be identified, "
-          + "the pack has no " + MANIFEST_FILE + " and rom2altsound is not installed.");
+      names.setError(ServerMessages.msg("rom2altsound.error.sound_rom_unknown", names.getRom(), MANIFEST_FILE));
       return names;
     }
 
@@ -107,7 +107,7 @@ public class Rom2AltSoundNamesService {
     byId.forEach((id, name) -> names.getEntries().add(new Rom2AltSoundNames.Entry(id, name)));
 
     if (names.getEntries().isEmpty()) {
-      names.setError("No named sounds found, rename the audio files to name their sounds.");
+      names.setError(ServerMessages.msg("rom2altsound.error.no_named_sounds"));
     }
     return names;
   }

@@ -172,7 +172,7 @@ public class VPXZCreationJob implements Job {
       }
       else {
         LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
-        jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+        jobDescriptor.setError(ServerMessages.get("export.error.rename_failed", locale, target.getAbsolutePath()));
       }
 
       if (target.exists() && this.cancelled) {
@@ -181,7 +181,7 @@ public class VPXZCreationJob implements Job {
     }
     catch (Exception e) {
       LOG.error("Create .vpxz for {} failed: {}", game.getGameDisplayName(), e.getMessage(), e);
-      jobDescriptor.setError("Create .vpxz for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+      jobDescriptor.setError(ServerMessages.get("vpxz.error.create_failed", locale, game.getGameDisplayName(), e.getMessage()));
       return;
     }
     finally {

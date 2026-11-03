@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
@@ -31,8 +32,6 @@ import java.time.ZoneId;
 @Service
 public class HighscoreResolver implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
-  public static final String NO_SCORE_FOUND_MSG_VPX = "No nvram file, VPReg.stg entry or highscore text file found.";
-  public static final String NO_SCORE_FOUND_MSG_FP = "No matching or incompatible fpRAM file found.";
 
   @Autowired
   private SystemService systemService;
@@ -164,7 +163,7 @@ public class HighscoreResolver implements InitializingBean {
         }
 
         if (StringUtils.isEmpty(romName)) {
-          String msg = "No rom or table name found.";
+          String msg = ServerMessages.msg("highscore.status.no_rom");
           SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
           metadata.setStatus(msg);
           return metadata;
@@ -189,13 +188,13 @@ public class HighscoreResolver implements InitializingBean {
       if (rawScore == null) {
         if (metadata.getStatus() == null) {
           if(game.isVpxGame()) {
-            metadata.setStatus(NO_SCORE_FOUND_MSG_VPX);
+            metadata.setStatus(ServerMessages.msg("highscore.status.no_score_vpx"));
           }
           else if(game.isFpGame()) {
-            metadata.setStatus(NO_SCORE_FOUND_MSG_FP);
+            metadata.setStatus(ServerMessages.msg("highscore.status.no_score_fp"));
           }
           else {
-            metadata.setStatus("Unknown game type.");
+            metadata.setStatus(ServerMessages.msg("highscore.status.unknown_game_type"));
           }
         }
       }
@@ -276,7 +275,7 @@ public class HighscoreResolver implements InitializingBean {
         metadata.setRaw(summary.toRaw());
       }
       if (StringUtils.isEmpty(metadata.getRaw())) {
-        metadata.setStatus("Found VPReg entry, but no highscore entries in it.");
+        metadata.setStatus(ServerMessages.msg("highscore.status.vpreg_empty"));
         SLOG.info("Found VPReg entry, but no highscore entries in it.");
       }
       return metadata.getRaw();
@@ -313,7 +312,7 @@ public class HighscoreResolver implements InitializingBean {
       if (!RamOutputToScoreTextConverter.isSupportedRom(nvRamName)) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is currently not supported.";
         SLOG.info(msg);
-        metadata.setStatus(msg);
+        metadata.setStatus(ServerMessages.msg("highscore.status.nvram_unsupported", nvRamName));
         return null;
       }
       metadata.setType(HighscoreType.NVRam);
@@ -323,7 +322,7 @@ public class HighscoreResolver implements InitializingBean {
     catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       SLOG.error(msg);
-      metadata.setStatus(msg);
+      metadata.setStatus(ServerMessages.msg("highscore.status.parse_failed", e.getMessage()));
       LOG.error(msg, e);
     }
     return null;
@@ -354,7 +353,7 @@ public class HighscoreResolver implements InitializingBean {
     catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       SLOG.error(msg);
-      metadata.setStatus(msg);
+      metadata.setStatus(ServerMessages.msg("highscore.status.parse_failed", e.getMessage()));
       LOG.error(msg, e);
     }
     return null;

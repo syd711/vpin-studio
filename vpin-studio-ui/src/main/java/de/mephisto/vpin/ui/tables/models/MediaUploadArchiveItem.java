@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.models;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -112,7 +113,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     if (altSoundFolder != null) {
       if (altSoundFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
         assetType = AssetType.ALT_SOUND;
-        targetDisplayName = "VPin MAME \"altsound\" folder";  //emulator.getMameDirectory();
+        targetDisplayName = Messages.get("dialog.vpinmame_folder", "altsound");  //emulator.getMameDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -175,32 +176,32 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
       else if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null) {
         this.assetType = asset;
-        this.targetDisplayName = "VPin MAME \"nvram\" folder";
+        this.targetDisplayName = Messages.get("dialog.vpinmame_folder", "nvram");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.FPL) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPL) == null) {
         this.assetType = asset;
-        this.targetDisplayName = "Future Pinball \"Libraries\" folder";
+        this.targetDisplayName = Messages.get("dialog.future_pinball_folder", "Libraries");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null && !uploaderAnalysis.isFpTable()) {
         this.assetType = asset;
-        this.targetDisplayName = "VPin MAME \"roms\" folder";
+        this.targetDisplayName = Messages.get("dialog.vpinmame_folder", "roms");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.CROMC) || asset.equals(AssetType.VNI))) {
         this.assetType = asset;
-        this.targetDisplayName = "VPin MAME \"altcolor\" folder";
+        this.targetDisplayName = Messages.get("dialog.vpinmame_folder", "altcolor");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null && !uploaderAnalysis.isFpTable()) {
         this.assetType = AssetType.ROM;
-        this.targetDisplayName = "VPin MAME \"roms\" folder";
+        this.targetDisplayName = Messages.get("dialog.vpinmame_folder", "roms");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null && uploaderAnalysis.isFpTable()) {
         this.assetType = AssetType.FP_MODEL_PACK;
-        this.targetDisplayName = "FP Table Model Pack";
+        this.targetDisplayName = Messages.get("dialog.fp_table_model_pack");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.DIF) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIF) == null) {

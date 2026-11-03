@@ -158,7 +158,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
             }
         )
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.loading_tables_failed", e.getMessage())));
           return new Object[]{Collections.emptyList(), Collections.emptyList()};
         })
         .thenAcceptLater(objs -> {
@@ -226,7 +226,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("Highscore ", "backglasses", new HighscoreCardsColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new HighscoreCardsColumnSorter(this));
     super.loadFilterPanel("scene-highscore-cards-filter.fxml");
 
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
@@ -274,7 +274,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       CardTemplate template = getCardTemplateForGame(value);
       Label label = new Label("");
       if (template != null && !template.isTemplate()) {
-        label.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR, "The table has a customized highscore card"));
+        label.setGraphic(WidgetFactory.createCheckboxIcon(WidgetFactory.OK_COLOR, Messages.get("dialog.customized_highscore_card")));
       }
       label.getStyleClass().add("default-text");
       return label;

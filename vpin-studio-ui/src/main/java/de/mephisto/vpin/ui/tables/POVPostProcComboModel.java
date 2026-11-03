@@ -1,12 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.util.Arrays;
 import java.util.List;
 
 public class POVPostProcComboModel {
 
-  private final static POVPostProcComboModel DEFAULT_MODEL = new POVPostProcComboModel("Default", -1);
-  private final static POVPostProcComboModel DISABLED_MODEL = new POVPostProcComboModel("Disabled", 0);
+  private final static POVPostProcComboModel DEFAULT_MODEL = new POVPostProcComboModel(Messages.get("dialog.option_default"), -1);
+  private final static POVPostProcComboModel DISABLED_MODEL = new POVPostProcComboModel(Messages.get("dialog.option_disabled"), 0);
   private final static POVPostProcComboModel ENABLED_MODEL = new POVPostProcComboModel("Fast FXAA", 1);
   private final static POVPostProcComboModel S_FXAA_MODEL = new POVPostProcComboModel("Standard FXAA", 2);
   private final static POVPostProcComboModel Q_NFAA_MODEL = new POVPostProcComboModel("Quality FXAA", 3);

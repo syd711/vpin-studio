@@ -113,7 +113,7 @@ public class TablesSidebarAltColorController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_alt_color_files_for_table") + this.game.get().getGameDisplayName() + "'?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_alt_color_files_for_table", this.game.get().getGameDisplayName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getAltColorService().delete(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());

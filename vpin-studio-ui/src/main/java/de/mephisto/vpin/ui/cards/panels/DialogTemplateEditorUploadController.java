@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.ui.tables.dialogs.BaseUploadController;
@@ -35,7 +36,7 @@ public class DialogTemplateEditorUploadController extends BaseUploadController {
       return null;
     }
     // else
-    return new DialogTemplateEditorUploadProgressModel("Config File Upload", getSelection(), templateName);
+    return new DialogTemplateEditorUploadProgressModel(Messages.get("dialog.upload_cfg"), getSelection(), templateName);
   }
 
   @Override

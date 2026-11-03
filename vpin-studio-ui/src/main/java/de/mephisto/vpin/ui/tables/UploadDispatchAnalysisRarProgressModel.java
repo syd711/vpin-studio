@@ -94,7 +94,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   @Override
   public String nextToString(ISimpleInArchiveItem entry) {
     if (entry == null) {
-      return Messages.get("dialog.analyzing_quoted", "readme file");
+      return Messages.get("dialog.analyzing_quoted", Messages.get("dialog.readme_file"));
     }
     try {
       return Messages.get("dialog.analyzing_quoted", entry.getPath());

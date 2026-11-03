@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -69,9 +70,9 @@ public class PlaylistTemplatesController implements DialogController, Initializa
         client.getPlaylistsService().clearPlaylist(playlist.getId());
         return StudioPlaylistFactory.create(templateId, count, shuffle);
       }).thenAcceptLater((games) -> {
-        String title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
+        String title = Messages.get("dialog.adding_games_to_playlist", games.size(), playlist.getName());
         if (games.size() == 1) {
-          title = "Adding \"" + games.getFirst().getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
+          title = Messages.get("dialog.adding_game_to_playlist", games.getFirst().getGameDisplayName(), playlist.getName());
         }
         ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist, games, true));
         playlistTableController.setData(Optional.of(client.getPlaylistsService().getPlaylist(playlistId)));

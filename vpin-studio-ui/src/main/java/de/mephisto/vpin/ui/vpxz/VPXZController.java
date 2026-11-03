@@ -171,7 +171,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
     }
 
     VPXZDescriptorRepresentation descriptor = selectedItem.getBean();
-    ProgressDialog.createProgressDialog(new VPXZInstallationProgressModel("Upload & Install", descriptor));
+    ProgressDialog.createProgressDialog(new VPXZInstallationProgressModel(Messages.get("dialog.upload_and_install"), descriptor));
     doReload(Optional.empty());
   }
 
@@ -208,7 +208,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
       return;
     }
 
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_the_table") + selectedItem.getName() + Messages.get("dialog.from_your_device"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_the_table_from_your_device", selectedItem.getName()));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getVpxzService().deleteFromDevice(installedTable.get().getUuid());
       doReload(Optional.empty());
@@ -269,7 +269,7 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
         tableView.getSelectionModel().select(toModel(selectedVpxz));
       }
 
-      labelCount.setText(tableView.getItems().size() + " .vpxz files");
+      labelCount.setText(Messages.get("dialog.vpxz_files_count", tableView.getItems().size()));
       labelCount.setVisible(!tableView.getItems().isEmpty());
       this.searchTextField.setDisable(false);
       tableView.setVisible(true);
@@ -281,9 +281,9 @@ public class VPXZController extends BaseTableController<VPXZDescriptorRepresenta
   private void onVpxzDelete() {
     List<VPXZModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      String title = "Delete the " + selectedItems.size() + " selected files?";
+      String title = Messages.get("dialog.delete_selected_files", selectedItems.size());
       if (selectedItems.size() == 1) {
-        title = "Delete File \"" + selectedItems.getFirst().getName() + "\"?";
+        title = Messages.get("dialog.delete_file_quoted", selectedItems.getFirst().getName());
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, Messages.get("common.delete"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {

@@ -101,8 +101,8 @@ public class AutoFillSelectionController implements Initializable, DialogControl
         tableDetails = client.getFrontendService().autoFillTableDetailsSimulated(game.getId(), tableDetails, vpsTableId, vpsVersionId);
       }
       catch (Exception ex) {
-        LOG.error(Messages.get("dialog.failed_to_fill_table_details") + ex.getMessage(), ex);
-        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_fill_table_details") + ex.getMessage());
+        LOG.error("Failed to fill table details: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_fill_table_details", ex.getMessage()));
       }
     }
 

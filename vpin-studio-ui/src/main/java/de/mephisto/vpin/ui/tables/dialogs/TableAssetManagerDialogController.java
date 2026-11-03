@@ -234,7 +234,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private Tooltip mediaSearchTooltip;
-  private final static String mediaSearchTooltipText = "The selected table has the media search term \"%s\" set. You may not see downloaded assets in the \"Installed Assets\" list.";
 
   @FXML
   private Label mediaSearchLabel;
@@ -295,7 +294,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onScreenDelete(ActionEvent e) {
     if (!this.assetList.getItems().isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_screen_assets"), Messages.get("dialog.delete_all_media_for_screen") + screen.name() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_screen_assets"), Messages.get("msg.delete_all_media_for_screen", screen.name()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> {
           int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
@@ -315,7 +314,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onGameDelete(ActionEvent e) {
-    String msg = "Delete all media of " + getGameOrPlaylistName() + "?";
+    String msg = Messages.get("dialog.delete_all_media_of", getGameOrPlaylistName());
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_all_assets"), msg);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       JFXFuture.runAsync(() -> {
@@ -374,7 +373,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           refreshTableMediaView();
         })
         .onErrorLater(e -> {
-          WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.adding_blank_media_failed") + e.getMessage());
+          WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("msg.adding_blank_media_failed", e.getMessage()));
         });
   }
 
@@ -536,7 +535,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed") + e.getMessage());
+      WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("msg.fullscreen_switch_failed", e.getMessage()));
     }
     refreshTableMediaView();
   }
@@ -571,7 +570,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     FrontendMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       StudioFolderChooser chooser = new StudioFolderChooser();
-      chooser.setTitle("Select Download Folder");
+      chooser.setTitle(Messages.get("dialog.select_download_folder"));
       File targetFolder = chooser.showOpenDialog(stage);
       if (targetFolder != null && targetFolder.exists() && targetFolder.isDirectory()) {
         File asset = new File(targetFolder, selectedItem.getName());
@@ -579,7 +578,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         Platform.runLater(() -> {
           DownloadJobDescriptor job = new DownloadJobDescriptor(selectedItem.getUri() + "/" + URLEncoder.encode(selectedItem.getName(), Charset.defaultCharset()), uniqueTarget);
-          job.setTitle("Download of \"" + uniqueTarget.getName() + "\"");
+          job.setTitle(Messages.get("dialog.download_of_quoted", uniqueTarget.getName()));
           JobPoller.getInstance().queueJob(job);
         });
       }
@@ -599,7 +598,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
     List<FrontendMediaItemRepresentation> selectedItems = assetList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      String msg = selectedItems.size() == 1 ? (Messages.get("dialog.delete") + selectedItems.getFirst().getName() + "\"?") : ("Delete " + selectedItems.size() + " items?");
+      String msg = selectedItems.size() == 1 ? (Messages.get("msg.delete", selectedItems.getFirst().getName())) : ("Delete " + selectedItems.size() + " items?");
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, msg, Messages.get("dialog.the_selected_media_will_be_deleted"), null, Messages.get("common.delete"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> {
@@ -650,8 +649,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
             .thenAcceptLater(status -> {
               if (!status) {
                 WidgetFactory.showAlert(localStage, Messages.get("common.warning"),
-                    Messages.get("dialog.coundl_t_set_default_asset_for") + getGameOrPlaylistName() + ".",
-                    "Please check the asset files as they may be in an inconsistent state.");
+                    Messages.get("msg.coundl_t_set_default_asset_for", String.valueOf(getGameOrPlaylistName())),
+                    Messages.get("dialog.check_asset_files_inconsistent"));
 
               }
               if (isGameMode()) {
@@ -661,7 +660,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
             })
             .onErrorLater(e -> {
               WidgetFactory.showAlert(localStage, Messages.get("common.error"),
-                  Messages.get("dialog.an_error_occurred_while_setting_default_asset") + getGameOrPlaylistName() + "\".",
+                  Messages.get("msg.an_error_occurred_while_setting_default_asset", String.valueOf(getGameOrPlaylistName())),
                   e.getMessage());
             });
       }
@@ -676,7 +675,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       String name = selectedItem.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String suffix = FilenameUtils.getExtension(name);
-      String s = WidgetFactory.showInputDialog(localStage, Messages.get("dialog.rename"), Messages.get("dialog.renaming_of_table_asset") + selectedItem.getName() + "\"", "Enter a new name:", null, baseName);
+      String s = WidgetFactory.showInputDialog(localStage, Messages.get("dialog.rename"), Messages.get("msg.renaming_of_table_asset", selectedItem.getName()), Messages.get("dialog.enter_new_name"), null, baseName);
       if (!StringUtils.isEmpty(s) && FileUtils.isValidFilename(s)) {
         if (s.equalsIgnoreCase(baseName)) {
           return;
@@ -688,7 +687,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         String objectName = isPlaylistMode() ? playlist.getName() : game.getGameName();
         if (!s.startsWith(objectName)) {
-          WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.the_asset_name_must_start_with") + objectName + "\".");
+          WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("msg.the_asset_name_must_start_with", String.valueOf(objectName)));
           onRename();
           return;
         }
@@ -706,7 +705,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
             })
             .onErrorLater(e -> {
               LOG.error("Renaming table asset failed: " + e.getMessage(), e);
-              WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.renaming_failed") + e.getMessage());
+              WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("msg.renaming_failed", e.getMessage()));
             });
       }
       else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
@@ -793,7 +792,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private static TableAssetSource createDropInAssetSource(@NonNull File folder) {
     TableAssetSource source = new TableAssetSource();
     source.setId(DROP_IN_SOURCE_ID);
-    source.setName("Drop-In Folder");
+    source.setName(Messages.get("dialog.drop_in_folder"));
     source.setLocation(folder.getAbsolutePath());
     source.setEnabled(true);
     source.setProvided(true);
@@ -817,7 +816,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           asset.setUrl(f.toURI().toString());
           asset.setSourceId(DROP_IN_SOURCE_ID);
           asset.setName(f.getName());
-          asset.setAuthor("Drop-In Folder");
+          asset.setAuthor(Messages.get("dialog.drop_in_folder"));
           asset.setLength(f.length());
           return asset;
         })
@@ -826,7 +825,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private List<TableAsset> searchMedia(List<TableAssetSource> sources, VPinScreen screen, String term) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
-        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), sources, screen, term));
+        new TableAssetSearchProgressModel(Messages.get("dialog.asset_search"), game == null ? -1 : game.getId(), sources, screen, term));
     List<TableAsset> result = new ArrayList<>();
     for (Object search : progressDialog.getResults()) {
       result.addAll(((TableAssetSearch) search).getResult());
@@ -1292,9 +1291,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
               return;
             }
 
-            String name = "Video Conversion of " + selectedItems.size() + " media items";
+            String name = Messages.get("dialog.video_conversion_of_items", selectedItems.size());
             if (selectedItems.size() == 1) {
-              name = "Video Conversion " + "\"" + selectedItems.getFirst().getName() + "\"";
+              name = Messages.get("dialog.video_conversion_quoted", selectedItems.getFirst().getName());
             }
 
             int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
@@ -1304,7 +1303,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
             Platform.runLater(() -> {
               if (!results.isEmpty()) {
-                WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_converting_video") + results.getFirst());
+                WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.error_converting_video", String.valueOf(results.getFirst())));
               }
               else {
                 refreshTableMediaView();
@@ -1339,10 +1338,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void reshapeToolbar(Number w) {
     boolean small = w.intValue() < 725;
     uploadBtn.setText(small ? "" : Messages.get("dialog.upload"));
-    downloadAssetBtn.setText(small ? "" : "Download");
-    setDefaultBtn.setText(small ? "" : "Set As Default");
+    downloadAssetBtn.setText(small ? "" : Messages.get("common.download"));
+    setDefaultBtn.setText(small ? "" : Messages.get("tables.table_asset_manager.set_as_default"));
     renameBtn.setText(small ? "" : Messages.get("dialog.rename"));
-    reloadBtn.setText(small ? "" : "Reload");
+    reloadBtn.setText(small ? "" : Messages.get("tables.context_menu.reload"));
   }
 
   private boolean isEmbeddedMode() {
@@ -1536,7 +1535,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 //    clearCacheBtn.setDisable(mediaSearchSet);
 //    searchBtn.setDisable(mediaSearchSet);
     if (mediaSearchSet) {
-      mediaSearchTooltip.setText(String.format(mediaSearchTooltipText, game.getMediaSearch()));
+      mediaSearchTooltip.setText(Messages.get("dialog.media_search_term_hint", game.getMediaSearch()));
     }
 
     mediaSearchLabel.setVisible(mediaSearchSet);

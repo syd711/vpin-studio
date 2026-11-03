@@ -80,7 +80,7 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
     catch (Exception e) {
       LOG.error("Failed to save template mapping: {}", e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_template_mapping") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_template_mapping", e.getMessage()));
       });
     }
   }

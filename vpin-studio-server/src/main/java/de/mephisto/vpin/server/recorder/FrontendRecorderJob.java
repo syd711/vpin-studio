@@ -83,8 +83,8 @@ public class FrontendRecorderJob implements Job {
         jobDescriptor.setGameId(game.getId());
         jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching_frontend", locale));
         if (!jobDescriptor.isCancelled() && !frontend.startFrontendRecording()) {
-          jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
-          jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
+          jobDescriptor.setError(ServerMessages.get("recorder.error.frontend_launch", locale));
+          jobDescriptor.setErrorHint(ServerMessages.get("recorder.error.launch_hint", locale));
           LOG.error("Recording cancelled, the frontend could not be launched.");
           return;
         }
@@ -96,8 +96,8 @@ public class FrontendRecorderJob implements Job {
         try {
           jobDescriptor.setStatus(ServerMessages.get("recorder.status.launching", locale, game.getGameDisplayName()));
           if (!jobDescriptor.isCancelled() && !frontend.startGameRecording(game)) {
-            jobDescriptor.setError("Recording cancelled, the game could not be launched.");
-            jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
+            jobDescriptor.setError(ServerMessages.get("recorder.error.game_launch", locale));
+            jobDescriptor.setErrorHint(ServerMessages.get("recorder.error.launch_hint", locale));
             LOG.error("Recording cancelled, the game could not be launched.");
             return;
           }
@@ -174,8 +174,8 @@ public class FrontendRecorderJob implements Job {
    */
   void reportFailedRecordings(JobDescriptor jobDescriptor) {
     if (!failedRecordings.isEmpty()) {
-      jobDescriptor.setError("Recording failed for " + String.join(", ", failedRecordings) + ".");
-      jobDescriptor.setErrorHint("ffmpeg produced no video, existing media has been kept. Check the server logs for the ffmpeg output.");
+      jobDescriptor.setError(ServerMessages.get("recorder.error.failed_for", locale, String.join(", ", failedRecordings)));
+      jobDescriptor.setErrorHint(ServerMessages.get("recorder.error.ffmpeg_hint", locale));
     }
   }
 

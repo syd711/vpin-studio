@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
@@ -254,7 +255,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     iScoredSettings.setGameRooms(collect);
 
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new PreferencesSavingModel("Synchronizing iScored", iScoredSettings));
+      ProgressDialog.createProgressDialog(new PreferencesSavingModel(Messages.get("dialog.synchronizing_iscored"), iScoredSettings));
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       stage.close();
     });

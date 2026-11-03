@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -58,7 +59,7 @@ public class MediaConverterDialogController implements Initializable, DialogCont
     stage.close();
 
     Platform.runLater(() -> {
-      MediaConversionBulkProgressModel conversion = new MediaConversionBulkProgressModel("Conversion", this.games, VPinScreen.valueOf(value), command);
+      MediaConversionBulkProgressModel conversion = new MediaConversionBulkProgressModel(Messages.get("dialog.conversion"), this.games, VPinScreen.valueOf(value), command);
       ProgressDialog.createProgressDialog(conversion);
     });
   }
@@ -103,9 +104,9 @@ public class MediaConverterDialogController implements Initializable, DialogCont
 
     CommandModel(MediaConversionCommand command) {
       this.command = command;
-      this.suffix = "for videos";
+      this.suffix = Messages.get("dialog.for_videos");
       if(command.getType() == MediaConversionCommand.TYPE_IMAGE) {
-        this.suffix = "for images";
+        this.suffix = Messages.get("dialog.for_images");
       }
     }
 

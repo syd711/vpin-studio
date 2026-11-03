@@ -261,7 +261,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
               : client.getGameService().getGamesByEmulator(id);
         })
         .onErrorSupply(e -> {
-          Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.loading_tables_failed") + e.getMessage()));
+          Platform.runLater(() -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.loading_tables_failed", e.getMessage())));
           return Collections.emptyList();
         })
         .thenAcceptLater(data -> {
@@ -418,7 +418,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    super.initialize("table", "tables", new RecorderColumnSorter(this));
+    super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new RecorderColumnSorter(this));
     recordingOptions.setFillWidth(true);
 
 
@@ -743,10 +743,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     labelCount.setText(Messages.get("recorder.recorder.no_tables_selected"));
     if (!this.selection.isEmpty()) {
       if (this.selection.size() == 1) {
-        labelCount.setText(this.selection.size() + " table selected");
+        labelCount.setText(Messages.get("dialog.table_selected_count", this.selection.size()));
       }
       else {
-        labelCount.setText(this.selection.size() + " tables selected");
+        labelCount.setText(Messages.get("dialog.tables_selected_count", this.selection.size()));
       }
     }
     tableView.refresh();

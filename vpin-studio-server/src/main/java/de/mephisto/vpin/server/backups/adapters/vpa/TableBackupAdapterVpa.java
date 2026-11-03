@@ -192,7 +192,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
             }
             else {
                 LOG.error("Final renaming export file to {} failed.", target.getAbsolutePath());
-                jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+                jobDescriptor.setError(ServerMessages.get("export.error.rename_failed", locale, target.getAbsolutePath()));
             }
 
             // capped below 1: TableBackupJob still has to invalidate the backup cache
@@ -205,7 +205,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
         }
         catch (Exception e) {
             LOG.error("Create VPA for {} failed: {}", game.getGameDisplayName(), e.getMessage(), e);
-            jobDescriptor.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+            jobDescriptor.setError(ServerMessages.get("backup.error.create_failed", locale, game.getGameDisplayName(), e.getMessage()));
             return;
         }
         finally {

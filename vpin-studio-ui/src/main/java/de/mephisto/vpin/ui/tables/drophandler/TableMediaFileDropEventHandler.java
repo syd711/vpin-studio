@@ -72,7 +72,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     if (filtered.isEmpty() && !event.getDragboard().hasContent(DataFormat.URL)) {
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.none_of_the_selected_is_valid_for"),
-            Messages.get("dialog.only_files_with_extension_s") + String.join(Messages.get("dialog.item_2"), suffixes) + Messages.get("dialog.are_accepted_here"));
+            Messages.get("msg.only_files_with_extension_s_are_accepted", String.join(Messages.get("dialog.item_2"), suffixes)));
       });
       return;
     }
@@ -168,7 +168,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     catch (IOException e) {
       LOG.info("Creating drop copies failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.creating_copies_from_drop_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.creating_copies_from_drop_failed", e.getMessage()));
       });
       return;
     }
@@ -220,12 +220,12 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
       Map<String, OffsetDateTime> snapshot = dialogController != null ? dialogController.getMediaSnapshot(screen) : null;
       if (playlist != null) {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
-            "Media Upload", draggedCopies, screen, append);
+            Messages.get("dialog.media_upload"), draggedCopies, screen, append);
         ProgressDialog.createProgressDialog(model);
       }
       else if (game != null) {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
-            "Media Upload", draggedCopies, screen, append, loadingScreenId);
+            Messages.get("dialog.media_upload"), draggedCopies, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
       }
       if (snapshot != null) {

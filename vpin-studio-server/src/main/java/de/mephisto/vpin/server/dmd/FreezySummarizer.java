@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.dmd;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -26,7 +27,7 @@ public class FreezySummarizer {
     File iniFile = new File(mameFolder, "DmdDevice.ini");
     try {
       if (!iniFile.exists()) {
-        summary.addEntry("DmdDevice.ini", null, false, "The file \"" + iniFile.getAbsolutePath() + "\" does not exist.");
+        summary.addEntry("DmdDevice.ini", null, false, ServerMessages.msg("freezy.ini_missing", iniFile.getAbsolutePath()));
         return summary;
       }
 
@@ -59,13 +60,13 @@ public class FreezySummarizer {
       SubnodeConfiguration globalSection = iniConfiguration.getSection("global");
       String vniKey = globalSection.getString("vni..key");
       if (StringUtils.isEmpty(vniKey)) {
-        summary.addEntry("VNI Key", null, false, "\"vni.key\" not set in " + iniFile.getAbsolutePath(), "The \"vni.key\" must be set so that .pac files can be decoded.");
+        summary.addEntry(ServerMessages.msg("freezy.vni_key"), null, false, ServerMessages.msg("freezy.vni_key_not_set", iniFile.getAbsolutePath()), ServerMessages.msg("freezy.vni_key_hint"));
       }
       else if (!vniKey.equals("f0ad135937ffa111c60b24d88ebb2e59")) {
-        summary.addEntry("VNI Key", vniKey + " invalid, must be \"f0ad135937ffa111c60b24d88ebb2e59\"", false, null, "The \"vni.key\" must be set so that .pac files can be decoded.");
+        summary.addEntry(ServerMessages.msg("freezy.vni_key"), ServerMessages.msg("freezy.vni_key_invalid", vniKey), false, null, ServerMessages.msg("freezy.vni_key_hint"));
       }
       else {
-        summary.addEntry("VNI Key", vniKey + " (pac file colorizations are enabled)", true, null, "The \"vni.key\" must be set so that .pac files can be decoded.");
+        summary.addEntry(ServerMessages.msg("freezy.vni_key"), ServerMessages.msg("freezy.vni_key_valid", vniKey), true, null, ServerMessages.msg("freezy.vni_key_hint"));
       }
 
       int pluginIndex = 0;
@@ -73,19 +74,19 @@ public class FreezySummarizer {
       while (iniConfiguration.containsKey(key)) {
         String path = iniConfiguration.getString(key);
         boolean exists = new File(path).exists();
-        summary.addEntry("Plugin (" + pluginIndex + ") Path", path, exists, exists ? path : "The .dll file \"" + path + "\" does not exist, fix the path in the DmdDevice.ini.");
+        summary.addEntry(ServerMessages.msg("freezy.plugin_path", pluginIndex), path, exists, exists ? path : ServerMessages.msg("freezy.dll_missing", path));
 
         String key64 = "plugin.." + pluginIndex + "..path64";
         if (iniConfiguration.containsKey(key64)) {
           String path64 = iniConfiguration.getString(key64);
           exists = new File(path64).exists();
-          summary.addEntry("Plugin (" + pluginIndex + ") Path 64 ", path64, exists, exists ? path64 : "The .dll file \"" + path64 + "\" does not exist, fix the path in the DmdDevice.ini.");
+          summary.addEntry(ServerMessages.msg("freezy.plugin_path64", pluginIndex), path64, exists, exists ? path64 : ServerMessages.msg("freezy.dll_missing", path64));
         }
 
         String passthroughKey = "plugin.." + pluginIndex + "..passthrough";
         if (iniConfiguration.containsKey(passthroughKey)) {
           String passthrough = iniConfiguration.getString(passthroughKey);
-          summary.addEntry("Plugin (" + pluginIndex + ") Passthrough", passthrough, true, "");
+          summary.addEntry(ServerMessages.msg("freezy.plugin_passthrough", pluginIndex), passthrough, true, "");
         }
 
         pluginIndex++;
@@ -108,23 +109,27 @@ public class FreezySummarizer {
 
       SubnodeConfiguration virtualDmdSection = iniConfiguration.getSection("virtualdmd");
       if (virtualDmdSection == null) {
-        summary.addEntry("DmdDevice.ini", "Section \"virtualdmd\" not found in " + iniFile.getAbsolutePath());
+        summary.addEntry("DmdDevice.ini", ServerMessages.msg("freezy.section_missing", iniFile.getAbsolutePath()));
       }
       else {
         String enabled = virtualDmdSection.getString("enabled");
-        summary.addEntry("Virtual DMD Enabled", (enabled != null && enabled.equals("true")) ? "Yes" : "No");
+        summary.addEntry(ServerMessages.msg("freezy.virtual_dmd_enabled"), yesNo(enabled));
 
         enabled = virtualDmdSection.getString("stayontop");
-        summary.addEntry("Stay On Top", (enabled != null && enabled.equals("true")) ? "Yes" : "No", true, null, "If enabled, the virtual dmd stays on top of all other windows.");
+        summary.addEntry(ServerMessages.msg("freezy.stay_on_top"), yesNo(enabled), true, null, ServerMessages.msg("freezy.stay_on_top_hint"));
 
         enabled = virtualDmdSection.getString("useregistry");
-        summary.addEntry("Use Registry", (enabled != null && enabled.equals("true")) ? "Yes" : "No", true, null, "If enabled, DMD values (e.g. the position) will be written into the VPM's registry instead of the DmdDevice.ini.");
+        summary.addEntry(ServerMessages.msg("freezy.use_registry"), yesNo(enabled), true, null, ServerMessages.msg("freezy.use_registry_hint"));
       }
 
     } catch (Exception e) {
       LOG.error("Failed to load {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
-      summary.setError("Error creating freezy summary: " + e.getMessage());
+      summary.setError(ServerMessages.msg("freezy.error", e.getMessage()));
     }
     return summary;
+  }
+
+  private static String yesNo(String value) {
+    return "true".equals(value) ? ServerMessages.msg("component.summary.yes") : ServerMessages.msg("component.summary.no");
   }
 }

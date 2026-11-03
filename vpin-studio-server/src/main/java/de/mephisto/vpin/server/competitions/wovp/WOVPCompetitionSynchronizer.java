@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions.wovp;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.mania.CabinetClient;
 import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
@@ -193,8 +194,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     List<Game> gameMatches = findMatchingGame(pinballTable, vpsVersion);
     if (gameMatches.isEmpty()) {
       LOG.info("No matching game found for weekly challenge \"{}\"", challenge.getChallengeTypeCode());
-      addIssue(competition, "No matching game found for weekly challenge \"" + getModeName(challenge) + "\".");
-      addIssue(competition, "Please check the VPS matching of the table or download the correct version.");
+      addIssue(competition, ServerMessages.msg("competition.issue.no_matching_weekly_game", getModeName(challenge)));
+      addIssue(competition, ServerMessages.msg("competition.issue.check_vps_matching"));
       competition.setGameId(-1);
     }
     else {
@@ -213,8 +214,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
       else {
         competition.setGameId(-1);
         LOG.warn("WOVP game validation failed, did not find phrase \"{}\" in {}", scriptMatchKeywords, game.getGameFileName());
-        addIssue(competition, "WOVP game validation failed, required phrases not found in " + game.getGameFileName() + ", invalid table version.");
-        addIssue(competition, "Please check the VPS matching of the existing table or download the correct version.");
+        addIssue(competition, ServerMessages.msg("competition.issue.wovp_validation_failed", game.getGameFileName()));
+        addIssue(competition, ServerMessages.msg("competition.issue.check_vps_matching_existing"));
       }
     }
 

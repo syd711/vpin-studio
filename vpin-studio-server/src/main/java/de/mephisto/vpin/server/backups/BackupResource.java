@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.backups;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
@@ -149,7 +150,7 @@ public class BackupResource {
     }
     catch (Exception e) {
       LOG.error("Archive upload failed: {}", e.getMessage(), e);
-      return JobDescriptorFactory.error("Archive upload failed: " + e.getMessage());
+      return JobDescriptorFactory.error(ServerMessages.msg("backup.error.upload_failed", e.getMessage()));
     }
     return JobDescriptorFactory.error(null);
   }

@@ -129,12 +129,12 @@ public class DOFService implements InitializingBean {
       File tableMappingsfile = new File(getInstallationFolder(), "Config/tablemappings.xml");
       if (tableMappingsfile.exists()) {
         summary.addEntry("tablemappings.xml", tableMappingsfile.getAbsolutePath());
-        summary.addEntry("Last Modified", DateUtil.formatDateTime(OffsetDateTime.ofInstant(Instant.ofEpochMilli(tableMappingsfile.lastModified()), ZoneId.systemDefault())));
+        summary.addEntry(ServerMessages.msg("component.summary.last_modified"), DateUtil.formatDateTime(OffsetDateTime.ofInstant(Instant.ofEpochMilli(tableMappingsfile.lastModified()), ZoneId.systemDefault())));
       }
     }
     else {
       summary.addEntry("tablemappings.xml", "-");
-      summary.addEntry("Last Modified", "-");
+      summary.addEntry(ServerMessages.msg("component.summary.last_modified"), "-");
     }
 
     return summary;

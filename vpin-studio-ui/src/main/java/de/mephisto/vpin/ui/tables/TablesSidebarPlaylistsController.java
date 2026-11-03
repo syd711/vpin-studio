@@ -215,15 +215,15 @@ public class TablesSidebarPlaylistsController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
         try {
-          String title = "Removing " + games.size() + " games from \"" + playlist.getName() + "\"";
+          String title = Messages.get("dialog.removing_games_from_playlist", games.size(), playlist.getName());
           if (games.size() == 1) {
-            title = "Removing \"" + games.getFirst().getGameDisplayName() + "\" from \"" + playlist.getName() + "\"";
+            title = Messages.get("dialog.removing_game_from_playlist", games.getFirst().getGameDisplayName(), playlist.getName());
           }
 
           if (t1) {
-            title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
+            title = Messages.get("dialog.adding_games_to_playlist", games.size(), playlist.getName());
             if (games.size() == 1) {
-              title = "Adding \"" + games.getFirst().getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
+              title = Messages.get("dialog.adding_game_to_playlist", games.getFirst().getGameDisplayName(), playlist.getName());
             }
           }
 
@@ -231,8 +231,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
           refreshPlaylist(client.getPlaylistsService().getPlaylist(playlist.getId()), false);
         }
         catch (Exception e) {
-          LOG.error(Messages.get("dialog.failed_to_update_playlists") + e.getMessage(), e);
-          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_playlists") + e.getMessage());
+          LOG.error("Failed to update playlists: " + e.getMessage(), e);
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_update_playlists", e.getMessage()));
         }
       }
     });
@@ -260,27 +260,27 @@ public class TablesSidebarPlaylistsController implements Initializable {
     String tooltip = null;
     FontIcon icon = null;
     if (playlist.isSqlPlayList()) {
-      tooltip = "SQL Playlist";
+      tooltip = Messages.get("dialog.playlist_sql");
       icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
-      tooltip = "Favorite";
+      tooltip = Messages.get("dialog.playlist_favorite");
       icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
-      tooltip = "Global Favorite";
+      tooltip = Messages.get("dialog.playlist_global_favorite");
       icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-      tooltip = "Just Added";
+      tooltip = Messages.get("dialog.playlist_just_added");
       icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
-      tooltip = "Most Played";
+      tooltip = Messages.get("dialog.playlist_most_played");
       icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
     }
     else {
-      tooltip = "Curated Playlist";
+      tooltip = Messages.get("dialog.playlist_curated");
       icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
     }
     Label playListTypeIcon = new Label(null, icon);
@@ -308,8 +308,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
             refreshPlaylist(update, true);
           }
           catch (Exception e) {
-            LOG.error(Messages.get("dialog.failed_to_update_playlists") + e.getMessage(), e);
-            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_playlists") + e.getMessage());
+            LOG.error("Failed to update playlists: " + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_update_playlists", e.getMessage()));
           }
         }
       });

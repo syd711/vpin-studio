@@ -123,11 +123,11 @@ public class Rom2AltSoundService {
     }
 
     if (!OSUtil.isWindows()) {
-      info.setError("rom2altsound is only supported on Windows.");
+      info.setError(ServerMessages.msg("rom2altsound.error.windows_only"));
       return info;
     }
     if (StringUtils.isEmpty(game.getRom())) {
-      info.setError("The table has no ROM.");
+      info.setError(ServerMessages.msg("rom2altsound.error.no_rom"));
       return info;
     }
 
@@ -138,13 +138,13 @@ public class Rom2AltSoundService {
     info.setRomFile(romFile.getAbsolutePath());
     info.setRomFileExists(romFile.exists());
     if (!romFile.exists()) {
-      info.setError("ROM file \"" + romFile.getName() + "\" not found.");
+      info.setError(ServerMessages.msg("rom2altsound.error.rom_file_not_found", romFile.getName()));
       return info;
     }
 
     // checked after the ROM file, so that the file info is there without rom2altsound
     if (!info.isAvailable()) {
-      info.setError("rom2altsound is not installed.");
+      info.setError(ServerMessages.msg("rom2altsound.error.not_installed"));
       return info;
     }
 
@@ -159,7 +159,7 @@ public class Rom2AltSoundService {
     }
     catch (Exception e) {
       LOG.error("rom2altsound ROM check of {} failed: {}", romFile.getAbsolutePath(), e.getMessage(), e);
-      info.setError("ROM check failed: " + e.getMessage());
+      info.setError(ServerMessages.msg("rom2altsound.error.rom_check_failed", e.getMessage()));
     }
     return info;
   }
@@ -185,7 +185,7 @@ public class Rom2AltSoundService {
   private void applyRomCheck(@NonNull Rom2AltSoundInfo info, @NonNull JsonNode report, @NonNull String rom) {
     JsonNode units = report.path("units");
     if (!units.isArray() || units.isEmpty()) {
-      info.setError("The ROM file could not be read.");
+      info.setError(ServerMessages.msg("rom2altsound.error.rom_unreadable"));
       return;
     }
 
@@ -203,7 +203,7 @@ public class Rom2AltSoundService {
       }
     }
     if (set == null) {
-      info.setError("The ROM file holds no known PinMAME set.");
+      info.setError(ServerMessages.msg("rom2altsound.error.no_pinmame_set"));
       return;
     }
 
@@ -215,7 +215,7 @@ public class Rom2AltSoundService {
 
     JsonNode sound = set.path("sound");
     if (sound.isMissingNode() || sound.isNull()) {
-      info.setError("The ROM has no sound board.");
+      info.setError(ServerMessages.msg("rom2altsound.error.no_sound_board"));
       return;
     }
     info.setSoundBoard(text(sound.path("board")));
@@ -226,7 +226,7 @@ public class Rom2AltSoundService {
     info.setSoundRomsGood(sound.path("sound_roms_good").asBoolean(false));
 
     if (!info.isSoundRomsGood()) {
-      info.setError("The sound ROMs of the ROM file are missing or bad.");
+      info.setError(ServerMessages.msg("rom2altsound.error.bad_sound_roms"));
       return;
     }
     info.setSupported(true);
@@ -242,21 +242,21 @@ public class Rom2AltSoundService {
     }
     String rom = game.getRom();
     if (StringUtils.isEmpty(rom)) {
-      return JobDescriptorFactory.error("The table has no ROM.");
+      return JobDescriptorFactory.error(ServerMessages.msg("rom2altsound.error.no_rom"));
     }
 
     File romFolder = folderLookupService.getRomFolder(game);
     File romFile = folderLookupService.getRomFile(game);
     if (romFile == null || !romFile.exists()) {
-      return JobDescriptorFactory.error("ROM file \"" + rom + ".zip\" not found in " + romFolder.getAbsolutePath());
+      return JobDescriptorFactory.error(ServerMessages.msg("rom2altsound.error.rom_file_not_found_in", rom, romFolder.getAbsolutePath()));
     }
 
     File altSoundFolder = altSoundService.getAltSoundFolder(game);
     if (altSoundFolder == null) {
-      return JobDescriptorFactory.error("No ALT sound folder could be determined.");
+      return JobDescriptorFactory.error(ServerMessages.msg("rom2altsound.error.no_altsound_folder_determined"));
     }
     if (altSoundFolder.exists() && !options.isOverwrite() && altSoundService.isAltSoundAvailable(game)) {
-      return JobDescriptorFactory.error("An ALT sound already exists in " + altSoundFolder.getAbsolutePath());
+      return JobDescriptorFactory.error(ServerMessages.msg("rom2altsound.error.altsound_exists", altSoundFolder.getAbsolutePath()));
     }
 
     Locale locale = resolveLocale();
@@ -277,7 +277,7 @@ public class Rom2AltSoundService {
     Rom2AltSoundVersion version = new Rom2AltSoundVersion();
     version.setSupported(OSUtil.isWindows());
     if (!version.isSupported()) {
-      version.setError("rom2altsound is only supported on Windows.");
+      version.setError(ServerMessages.msg("rom2altsound.error.windows_only"));
       return version;
     }
 
@@ -293,7 +293,7 @@ public class Rom2AltSoundService {
     }
     catch (Exception e) {
       LOG.error("Failed to read the latest rom2altsound release: {}", e.getMessage(), e);
-      version.setError("The latest release could not be read: " + e.getMessage());
+      version.setError(ServerMessages.msg("rom2altsound.error.latest_release", e.getMessage()));
     }
 
     version.setUpdateAvailable(version.getLatestVersion() != null

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.discord;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.discord.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
@@ -752,7 +753,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to initialize Discord client: {}", e.getMessage(), e);
-      status.setError("Failed to initialize Discord client: " + e.getMessage());
+      status.setError(ServerMessages.msg("discord.settings.error.init", e.getMessage()));
       return status;
     }
 
@@ -774,7 +775,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
             preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null, false);
             preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null, false);
             preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false, false);
-            status.setError("No valid matching Discord server found.");
+            status.setError(ServerMessages.msg("discord.settings.error.no_server"));
             return status;
           }
         }
@@ -783,7 +784,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           DiscordChannel channel = this.getChannel(Long.parseLong(serverId), Long.parseLong(channelId));
           if (channel == null) {
             preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null, false);
-            status.setError("No valid matching channel found.");
+            status.setError(ServerMessages.msg("discord.settings.error.no_channel"));
             return status;
           }
         }
@@ -792,7 +793,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           Category category = this.discordClient.getCategory(Long.parseLong(serverId), Long.parseLong(categoryId));
           if (category == null) {
             preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null, false);
-            status.setError("No valid matching subscription category found.");
+            status.setError(ServerMessages.msg("discord.settings.error.no_category"));
             return status;
           }
         }
@@ -800,7 +801,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to validate Discord settings: {}", e.getMessage(), e);
-      status.setError("Failed to validate Discord settings: " + e.getMessage());
+      status.setError(ServerMessages.msg("discord.settings.error.validate", e.getMessage()));
     }
 
     return status;

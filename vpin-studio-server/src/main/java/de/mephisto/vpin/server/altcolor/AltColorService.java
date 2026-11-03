@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altcolor;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -320,7 +321,7 @@ public class AltColorService implements InitializingBean {
       }
       catch (IOException e) {
         LOG.error("Failed to copy alt color file: {}", e.getMessage(), e);
-        return JobDescriptorFactory.error("Failed to copy alt color file: " + e.getMessage());
+        return JobDescriptorFactory.error(ServerMessages.msg("altcolor.error.copy_failed", e.getMessage()));
       }
     }
     LOG.info("Successfully imported ALT color from temp file {}", out.getAbsolutePath());

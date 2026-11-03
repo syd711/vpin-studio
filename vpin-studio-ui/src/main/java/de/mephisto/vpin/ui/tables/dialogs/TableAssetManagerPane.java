@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import java.util.Arrays;
 import java.util.List;
 
@@ -84,17 +85,17 @@ public class TableAssetManagerPane<P extends TableAssetManagerPane.MediaPane> ex
   public static String getScreenLabel(VPinScreen screen, boolean embeddedMode) {
     switch (screen) {
       case AudioLaunch:
-        return embeddedMode ? "Audio L." : "Audio Launch";
+        return embeddedMode ? Messages.get("dialog.screen_audio_launch_short") : Messages.get("dialog.screen_audio_launch");
       case Menu:
-        return embeddedMode ? "Full DMD" : "Apron/Full DMD";
+        return embeddedMode ? Messages.get("dialog.screen_full_dmd") : Messages.get("dialog.screen_apron_full_dmd");
       case GameInfo:
-        return "Info / Flyer";
+        return Messages.get("dialog.screen_info_flyer");
       case GameHelp:
-        return "Help";
+        return Messages.get("dialog.screen_help");
       case BackGlass:
-        return "Backglass";
+        return Messages.get("dialog.screen_backglass");
       case PlayField:
-        return "Playfield";
+        return Messages.get("dialog.screen_playfield");
       default:
         return screen.name();
     }

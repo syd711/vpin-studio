@@ -98,7 +98,7 @@ public class Rom2AltSoundJob implements Job {
       if (done == null) {
         // the error is set already when rom2altsound failed without its "done" line
         if (result.getError() == null) {
-          result.setError("rom2altsound reported no result for \"" + rom + "\".");
+          result.setError(ServerMessages.get("rom2altsound.error.no_result", locale, rom));
         }
         return;
       }
@@ -107,21 +107,21 @@ public class Rom2AltSoundJob implements Job {
       String status = text(done, "status");
       if (STATUS_NOT_APPLICABLE.equals(status)) {
         LOG.info("rom2altsound cannot make an ALT sound for \"{}\": {}", rom, text(done, "reason"));
-        result.setError("rom2altsound cannot make an ALT sound for \"" + rom + "\": " + text(done, "reason"));
+        result.setError(ServerMessages.get("rom2altsound.error.not_applicable", locale, rom, text(done, "reason")));
         return;
       }
       if (!STATUS_OK.equals(status)) {
         logPackLog(packFolder);
-        result.setError("rom2altsound failed for \"" + rom + "\": " + text(done, "error"));
+        result.setError(ServerMessages.get("rom2altsound.error.failed_for", locale, rom, text(done, "error")));
         return;
       }
       if (done.path("written").asInt(0) == 0) {
         logPackLog(packFolder);
-        result.setError("rom2altsound wrote no sound files for \"" + rom + "\".");
+        result.setError(ServerMessages.get("rom2altsound.error.no_sound_files", locale, rom));
         return;
       }
       if (!new File(packFolder, "altsound.csv").exists()) {
-        result.setError("rom2altsound did not write an ALT sound pack for \"" + rom + "\".");
+        result.setError(ServerMessages.get("rom2altsound.error.no_pack", locale, rom));
         return;
       }
 
@@ -134,7 +134,7 @@ public class Rom2AltSoundJob implements Job {
     }
     catch (Exception e) {
       LOG.error("rom2altsound job for \"{}\" failed: {}", rom, e.getMessage(), e);
-      result.setError("ALT sound generation failed: " + e.getMessage());
+      result.setError(ServerMessages.get("rom2altsound.error.generation_failed", locale, e.getMessage()));
     }
     finally {
       service.jobFinished();
@@ -188,7 +188,8 @@ public class Rom2AltSoundJob implements Job {
     if (done == null && exitCode != 0 && !result.isCancelled()) {
       List<String> lastLines = tail(stderrFile);
       LOG.error("rom2altsound for \"{}\" failed with exit code {}:\n{}", rom, exitCode, String.join("\n", lastLines));
-      result.setError("rom2altsound failed with exit code " + exitCode + (lastLines.isEmpty() ? "" : ": " + lastLines.getLast()));
+      result.setError(lastLines.isEmpty() ? ServerMessages.get("rom2altsound.error.exit_code", locale, String.valueOf(exitCode))
+          : ServerMessages.get("rom2altsound.error.exit_code_detail", locale, String.valueOf(exitCode), lastLines.getLast()));
     }
     return done;
   }

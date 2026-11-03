@@ -61,9 +61,9 @@ public class AccountRowPanelController implements Initializable {
           maniaClient.getAccountClient().update(defaultCabinetCached.getId(), account);
         }
         catch (Exception e) {
-          LOG.error(Messages.get("dialog.failed_to_save_mania_account") + e.getMessage(), e);
+          LOG.error("Failed to save mania account: " + e.getMessage(), e);
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_mania_account") + e.getMessage());
+            WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_mania_account", e.getMessage()));
           });
         }
       }

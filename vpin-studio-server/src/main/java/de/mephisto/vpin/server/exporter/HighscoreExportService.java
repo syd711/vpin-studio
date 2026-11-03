@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.exporter;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -80,7 +81,7 @@ public class HighscoreExportService extends ExporterService {
     }
     catch (Exception e) {
       LOG.error("Failed to export highscore data: {}", e.getMessage(), e);
-      return "Failed to export highscore data: " + e.getMessage();
+      return ServerMessages.msg("export.error.highscores", e.getMessage());
     }
   }
 }

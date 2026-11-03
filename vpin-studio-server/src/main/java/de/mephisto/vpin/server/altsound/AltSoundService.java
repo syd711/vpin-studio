@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.altsound;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundEntry;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
@@ -230,7 +231,7 @@ public class AltSoundService implements InitializingBean {
     String folderName = !StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : rom;
     File altSoundFolder = folderLookupService.getAltSoundFolder(game, folderName);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
-      return JobDescriptorFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
+      return JobDescriptorFactory.error(ServerMessages.msg("altsound.error.create_folder", altSoundFolder.getAbsolutePath()));
     }
 
     LOG.info("Extracting ALT sound to {}", altSoundFolder.getAbsolutePath());

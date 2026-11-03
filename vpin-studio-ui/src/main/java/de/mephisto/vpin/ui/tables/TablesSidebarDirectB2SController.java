@@ -53,39 +53,39 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   //WE ARE CONFIGURING HIDE FIELDS HERE; SO VALUES ARE SET HERE INVERTED
   public final static List<B2SVisibility> VISIBILITIES = Arrays.asList(
-      new B2SVisibility(0, "Visible"),
-      new B2SVisibility(1, "Hidden"),
-      new B2SVisibility(2, "Standard")
+      new B2SVisibility(0, Messages.get("dialog.b2s_visible")),
+      new B2SVisibility(1, Messages.get("dialog.b2s_hidden")),
+      new B2SVisibility(2, Messages.get("dialog.b2s_standard"))
   );
 
   public final static List<B2SFormPosition> FORM_POSITIONS = Arrays.asList(
-      new B2SFormPosition(DirectB2ServerSettings.FORM_TO_BACK, "Form To Back"),
-      new B2SFormPosition(DirectB2ServerSettings.FORM_TO_FRONT, "Form To Front"),
-      new B2SFormPosition(DirectB2ServerSettings.FORM_TO_STANDARD, "Standard")
+      new B2SFormPosition(DirectB2ServerSettings.FORM_TO_BACK, Messages.get("dialog.b2s_form_to_back")),
+      new B2SFormPosition(DirectB2ServerSettings.FORM_TO_FRONT, Messages.get("dialog.b2s_form_to_front")),
+      new B2SFormPosition(DirectB2ServerSettings.FORM_TO_STANDARD, Messages.get("dialog.b2s_standard"))
   );
 
   public final static List<B2SStartAsExe> START_AS_EXE = Arrays.asList(
-      new B2SStartAsExe(0, "No"),
-      new B2SStartAsExe(1, "Yes"),
-      new B2SStartAsExe(2, "Use Server Default")
+      new B2SStartAsExe(0, Messages.get("common.no")),
+      new B2SStartAsExe(1, Messages.get("common.yes")),
+      new B2SStartAsExe(2, Messages.get("dialog.b2s_use_server_default"))
   );
 
   public final static List<B2SLedType> LED_TYPES = Arrays.asList(
-      new B2SLedType(1, "Simple LEDs"),
-      new B2SLedType(2, "Dream7 LEDs")
+      new B2SLedType(1, Messages.get("dialog.b2s_simple_leds")),
+      new B2SLedType(2, Messages.get("dialog.b2s_dream7_leds"))
   );
 
   public final static List<B2SDualMode> DUAL_MODES = Arrays.asList(
-      new B2SDualMode(1, "Authentic"),
-      new B2SDualMode(2, "Fantasy")
+      new B2SDualMode(1, Messages.get("dialog.b2s_authentic")),
+      new B2SDualMode(2, Messages.get("dialog.b2s_fantasy"))
   );
 
   public final static List<B2SGlowing> GLOWINGS = Arrays.asList(
-      new B2SGlowing(0, "Off"),
-      new B2SGlowing(1, "Low"),
-      new B2SGlowing(2, "Medium"),
-      new B2SGlowing(3, "High"),
-      new B2SGlowing(-1, "Default")
+      new B2SGlowing(0, Messages.get("dialog.b2s_glow_off")),
+      new B2SGlowing(1, Messages.get("dialog.b2s_glow_low")),
+      new B2SGlowing(2, Messages.get("dialog.b2s_glow_medium")),
+      new B2SGlowing(3, Messages.get("dialog.b2s_glow_high")),
+      new B2SGlowing(-1, Messages.get("dialog.option_default"))
   );
 
   @FXML
@@ -288,7 +288,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         if (tableData != null) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("dialog.delete_backglass_file") + tableData.getFilename() + "\"?", null, Messages.get("common.delete"));
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_backglass"), Messages.get("msg.delete_backglass_file", tableData.getFilename()), null, Messages.get("common.delete"));
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             boolean b = client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
             if (!b) {
@@ -302,7 +302,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       }
     }
     catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_delete_backglass_file") + ex.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_delete_backglass_file", ex.getMessage()));
     }
   }
 
@@ -318,7 +318,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private void onOpenDirectB2SBackground() {
     if (tableData != null) {
       String url = client.getBackglassServiceClient().getDirectB2sBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename());
-      TableDialogs.openMediaDialog(Studio.stage, "Backglass", url, "image/png");
+      TableDialogs.openMediaDialog(Studio.stage, Messages.get("dialog.screen_backglass"), url, "image/png");
     }
   }
 
@@ -508,7 +508,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           .thenAcceptLater((b2s) -> {
             BackglassManagerControllerUtils.notifyChange(b2s);
           })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_set") + this.tableData.getName() + Messages.get("dialog.as_default"), e.getMessage()));
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.cannot_set_as_default", this.tableData.getName()), e.getMessage()));
     }
   }
 
@@ -519,7 +519,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           .thenAcceptLater((b2s) -> {
             BackglassManagerControllerUtils.notifyChange(b2s);
           })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.cannot_set") + this.tableData.getName() + Messages.get("dialog.as_default"), e.getMessage()));
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.cannot_set_as_default", this.tableData.getName()), e.getMessage()));
     }
   }
 
@@ -546,8 +546,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         }
       }
       catch (Exception e) {
-        LOG.error(Messages.get("dialog.failed_to_save_b2stablesettings_xml") + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_save_b2stablesettings_xml") + e.getMessage());
+        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_save_b2stablesettings_xml", e.getMessage()));
       }
     }
   }

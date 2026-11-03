@@ -57,7 +57,7 @@ public class CompetitionSyncProgressModel extends ProgressModel<CompetitionRepre
       client.getDiscordService().checkCompetition(next);
     } catch (Exception e) {
       LOG.error("Failed sync competitions data: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.competition_synchronize_failed"), Messages.get("dialog.failed_to_sync_competitions_data") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.competition_synchronize_failed"), Messages.get("msg.failed_to_sync_competitions_data", e.getMessage()));
     }
   }
 

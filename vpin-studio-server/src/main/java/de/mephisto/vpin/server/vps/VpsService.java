@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vps;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
@@ -267,11 +268,11 @@ public class VpsService implements InitializingBean {
   public String checkLogin(String link) {
     try {
       VpsInstaller installer = getInstaller(link);
-      return installer != null ? installer.login() : "Source not supported";
+      return installer != null ? installer.login() : ServerMessages.msg("auth.error.source_not_supported");
     }
     catch (IOException ioe) {
       LOG.error("Check login for {} failed, {}", link, ioe.getMessage());
-      return "Error while authenticating, please try again";
+      return ServerMessages.msg("auth.error.failed");
     }
   }
 

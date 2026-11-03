@@ -169,7 +169,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.synchronize") + competitionRepresentations.size() + Messages.get("dialog.competitions"), Messages.get("dialog.this_will_re_check_your_local_highscores"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.synchronize_competitions", String.valueOf(competitionRepresentations.size())), Messages.get("dialog.this_will_re_check_your_local_highscores"));
     if (result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel(Messages.get("dialog.synchronizing_competition"), competitionRepresentations));
       this.onReload();
@@ -292,7 +292,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
         help2 = remainingDayMsg;
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_competition") + selection.getName() + "'?",
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_competition", selection.getName()),
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
@@ -312,7 +312,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
       String helpText1 = Messages.get("dialog.finish_competition_hint_active", selection.remainingDays());
       String helpText2 = Messages.get("dialog.finish_competition_hint_winner");
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.finish_competition") + selection.getName() + "'?", helpText1, helpText2);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.finish_competition", selection.getName()), helpText1, helpText2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getCompetitionService().finishCompetition(selection);
         onReload();

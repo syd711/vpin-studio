@@ -70,9 +70,9 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_sync_competitions_data") + e.getMessage(), e);
+      LOG.error("Failed to sync competitions data: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.iscored_synchronization_failed"), Messages.get("dialog.result") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.iscored_synchronization_failed"), Messages.get("msg.result", e.getMessage()));
       });
     }
   }

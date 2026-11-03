@@ -94,11 +94,10 @@ public class DiscordBotPreferencesController implements Initializable {
       }
       else {
         if (!status.isCanManageCategories()) {
-          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.the_bot_configuration_is_valid_but_your"), Messages.get("dialog.discord_allows_a_maximum_of_50_channels") +
-              Messages.get("dialog.with_the_channel_permission_the_bot_can"));
+          WidgetFactory.showInformation(Studio.stage, Messages.get("common.information"), Messages.get("dialog.the_bot_configuration_is_valid_but_your"), Messages.get("msg.discord_allows_a_maximum_of_50_channels"));
         }
         else {
-          WidgetFactory.showInformation(Studio.stage, "Information", Messages.get("dialog.no_issues_found"));
+          WidgetFactory.showInformation(Studio.stage, Messages.get("common.information"), Messages.get("dialog.no_issues_found"));
         }
 
       }
@@ -130,7 +129,7 @@ public class DiscordBotPreferencesController implements Initializable {
       client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_TOKEN, token.trim());
       DiscordBotStatus status = client.getDiscordService().validateSettings();
       if (status.getError() != null) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.invalid_bot_configuration_found_check_your_token"), Messages.get("dialog.error") + status.getError());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.invalid_bot_configuration_found_check_your_token"), Messages.get("msg.error", String.valueOf(status.getError())));
       }
       else {
         botTokenLabel.setText(token.trim());

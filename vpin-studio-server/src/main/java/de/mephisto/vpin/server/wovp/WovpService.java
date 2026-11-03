@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.wovp;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -95,13 +96,13 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     ScoreSubmit result = new ScoreSubmit();
     if (!wovpSettings.isEnabled()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP not enabled");
-      result.setErrorMessage("WOVP not enabled");
+      result.setErrorMessage(ServerMessages.msg("wovp.error.disabled"));
       return result;
     }
 
     if (!wovpSettings.isUseScoreSubmitter()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "Score submitter not enabled");
-      result.setErrorMessage("Score submitter not enabled");
+      result.setErrorMessage(ServerMessages.msg("wovp.error.submitter_disabled"));
       return result;
     }
 
@@ -110,14 +111,14 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     String apiKey = cachedPlayer.getApiKey();
     if (StringUtils.isEmpty(apiKey)) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "No API key set.");
-      result.setErrorMessage("No API key set.");
+      result.setErrorMessage(ServerMessages.msg("wovp.error.no_api_key"));
       return result;
     }
 
     GameStatus status = gameStatusService.getStatus();
     if (status == null || status.getGameId() < 0) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "No active game found.");
-      result.setErrorMessage("No active game found.");
+      result.setErrorMessage(ServerMessages.msg("wovp.error.no_active_game"));
       return result;
     }
 
@@ -126,7 +127,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     Optional<Competition> competition = weeklyCompetitions.stream().filter(c -> c.getGameId() == game.getId()).findFirst();
     if (competition.isEmpty()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "No matching challenge found for this game.");
-      result.setErrorMessage("No matching challenge found for this game.");
+      result.setErrorMessage(ServerMessages.msg("wovp.error.no_challenge"));
       return result;
     }
 
@@ -138,14 +139,14 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
     }
     catch (Exception e) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "Fetching challenges failed: " + e.getMessage());
-      result.setErrorMessage("Fetching challenges failed: " + e.getMessage());
+      result.setErrorMessage(ServerMessages.msg("wovp.error.fetch_failed", e.getMessage()));
       return result;
     }
 
     Optional<Challenge> challenge = challenges.getItems().stream().filter(c -> c.getId().equals(competition.get().getUuid())).findFirst();
     if (challenge.isEmpty()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "Challenge synchronization failed.");
-      result.setErrorMessage("Challenge synchronization failed.");
+      result.setErrorMessage(ServerMessages.msg("wovp.error.sync_failed"));
       return result;
     }
 
@@ -160,7 +161,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       File screenshotFile = screenshotService.getScreenshotFile(null);
       if (screenshotFile == null || !screenshotFile.exists()) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "No matching screenshot found.");
-        result.setErrorMessage("No matching screenshot found.");
+        result.setErrorMessage(ServerMessages.msg("wovp.error.no_screenshot"));
         return result;
       }
 
@@ -172,7 +173,7 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       catch (Exception e) {
         SLOG.info("[WOVP simulate=" + simulate + "] " + "Failed to submit WOVP highscore: " + e.getMessage());
         LOG.error("Failed to submit WOVP highscore: {}", e.getMessage(), e);
-        result.setErrorMessage("Failed to submit WOVP highscore: " + e.getMessage());
+        result.setErrorMessage(ServerMessages.msg("wovp.error.submit_failed", e.getMessage()));
         return result;
       }
     }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.exporter;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -128,7 +129,7 @@ public class BackglassExportService extends ExporterService {
     }
     catch (Exception e) {
       LOG.error("Failed to export highscore data: {}", e.getMessage(), e);
-      return "Failed to export highscore data: " + e.getMessage();
+      return ServerMessages.msg("export.error.highscores", e.getMessage());
     }
   }
 }

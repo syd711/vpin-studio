@@ -112,7 +112,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         if (!StringUtils.isEmpty(player.getManiaAccountUuid())) {
           Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getManiaAccountUuid());
           if (accountByUuid != null && !this.vpinManiaPlayerCheckbox.isSelected()) {
-            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, Messages.get("dialog.vpin_mania_player"), Messages.get("dialog.the_player") + this.player.getName() + Messages.get("dialog.is_a_registered_vpin_mania_player_and"), Messages.get("dialog.this_will_delete_the_online_account_and"));
+            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, Messages.get("dialog.vpin_mania_player"), Messages.get("msg.the_player_is_a_registered_vpin_mania_2", this.player.getName()), Messages.get("dialog.this_will_delete_the_online_account_and"));
             if (result2.isEmpty() || !result2.get().equals(ButtonType.OK)) {
               return;
             }

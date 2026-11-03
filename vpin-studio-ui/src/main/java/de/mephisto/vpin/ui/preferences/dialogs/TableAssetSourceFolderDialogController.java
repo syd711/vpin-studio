@@ -93,7 +93,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       client.getAssetSourcesService().saveAssetSource(source);
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_media_source") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_media_source", e.getMessage()));
     }
 
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();

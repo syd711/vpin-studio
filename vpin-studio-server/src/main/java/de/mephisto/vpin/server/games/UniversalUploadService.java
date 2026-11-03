@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -147,7 +148,7 @@ public class UniversalUploadService {
     }
     catch (Exception e) {
       LOG.error("Processing \"{}\" failed: {}", uploadDescriptor.getTempFilename(), e.getMessage(), e);
-      uploadDescriptor.setError("Processing failed: " + e.getMessage());
+      uploadDescriptor.setError(ServerMessages.msg("upload.error.processing_failed", e.getMessage()));
     }
     finally {
       uploadDescriptor.finalizeUpload();
@@ -260,7 +261,7 @@ public class UniversalUploadService {
           // in contrast to the shared ROM folder, the ALT sound is stored next to the table, so a table is required
           if (game == null) {
             LOG.error("Failed to install ALT sound bundle, no table found for id {}.", uploadDescriptor.getGameId());
-            uploadDescriptor.setError("The ALT sound is installed next to the table, select a table for this upload.");
+            uploadDescriptor.setError(ServerMessages.msg("upload.error.altsound_needs_table"));
             break;
           }
 
@@ -288,7 +289,7 @@ public class UniversalUploadService {
           // the ALT color folders are resolved per table, see FolderLookupService, so a table is required
           if (game == null) {
             LOG.error("Failed to install ALT color bundle, no table found for id {}.", uploadDescriptor.getGameId());
-            uploadDescriptor.setError("The ALT color is installed next to the table, select a table for this upload.");
+            uploadDescriptor.setError(ServerMessages.msg("upload.error.altcolor_needs_table"));
             break;
           }
 

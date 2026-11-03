@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.backups;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -58,7 +59,7 @@ public class BackupInstallerJob implements Job {
       }
     }
     catch (Exception e) {
-      result.setError("Failed to restore backup: " + e.getMessage());
+      result.setError(ServerMessages.msg("backup.error.restore_failed", e.getMessage()));
     }
   }
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpxz;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.games.descriptors.VPXZExportDescriptor;
 import de.mephisto.vpin.restclient.vpxz.VPXZDescriptorRepresentation;
 import de.mephisto.vpin.restclient.vpxz.VPXZPackageInfo;
@@ -180,7 +181,7 @@ public class VPXZResource {
     }
     catch (Exception e) {
       LOG.error("VPXZ upload failed: {}", e.getMessage(), e);
-      return JobDescriptorFactory.error("VPXZ upload failed: " + e.getMessage());
+      return JobDescriptorFactory.error(ServerMessages.msg("vpxz.error.upload_failed", e.getMessage()));
     }
     return JobDescriptorFactory.error(null);
   }

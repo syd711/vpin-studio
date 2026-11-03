@@ -69,9 +69,9 @@ public class HighscoreBackupProgressModel extends ProgressModel<GameRepresentati
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.failed_to_create_backup") + e.getMessage(), e);
+      LOG.error("Failed to create backup: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_create_backup") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_create_backup", e.getMessage()));
       });
     }
   }

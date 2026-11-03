@@ -71,9 +71,9 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
   @FXML
   private void onUploadButton() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
+    fileChooser.setTitle(Messages.get("dialog.select_image"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_all_images"), "*.jpg", "*.png", "*.jpeg"),
         new FileChooser.ExtensionFilter("JPG", "*.jpg"),
         new FileChooser.ExtensionFilter("PNG", "*.png"));
     File file = fileChooser.showOpenDialog(Studio.stage);
@@ -88,7 +88,7 @@ public class LayerEditorFrameController extends LayerEditorBaseController implem
         }
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_image_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.uploading_image_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("msg.error", e.getMessage()));
       }
     }
   }

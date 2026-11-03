@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.security;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class ResourceHandler {
       return ResponseEntity.ok().contentType(mimeType).body(body);
     } catch (Exception e) {
       LOG.error("Failed to return resources: {}", e.getMessage(), e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was an error completing the action.");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ServerMessages.msg("error.action_failed"));
     }
   }
 

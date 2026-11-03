@@ -190,8 +190,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       builder.start();
     }
     catch (IOException e) {
-      LOG.error(Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_vpsaveedit") + e.getMessage());
+      LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_vpsaveedit", e.getMessage()));
     }
   }
 
@@ -212,7 +212,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScanAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.scan_for_highscores_updates_of_all") + client.getGameService().getVpxGamesCached().size() + Messages.get("dialog.tables"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.scan_for_highscores_updates_of_all_tables", String.valueOf(client.getGameService().getVpxGamesCached().size())));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getVpxGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
@@ -223,7 +223,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onBackAll() {
     List<GameRepresentationModel> items = new ArrayList<>(tablesSidebarController.getTableOverviewController().getTableView().getItems());
     List<GameRepresentation> allGames = items.stream().map(g -> g.getGame()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.create_highscore_backup_for_all_currently_selected") + allGames.size() + Messages.get("dialog.tables"));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.create_highscore_backup_for_all_currently_selected", String.valueOf(allGames.size())));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(allGames));
     }
@@ -235,23 +235,23 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       String last = null;
       if (highscoreBackups != null && !this.highscoreBackups.isEmpty()) {
-        last = "The last backup was created at " + this.highscoreBackups.getFirst();
+        last = Messages.get("dialog.last_backup_created_at", String.valueOf(this.highscoreBackups.getFirst()));
       }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.create_highscore_backup_for_table") + g.getGameDisplayName() + "\"?", last);
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.create_highscore_backup_for_table", g.getGameDisplayName()), last);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           Studio.client.getHigscoreBackupService().backup(g.getId());
         }
         catch (Exception e) {
           LOG.error("Failed to back highscore: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_create_highscore_backup") + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_create_highscore_backup", e.getMessage()));
         }
         EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
     else if (this.games.size() > 1) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.create_highscore_backup_for") + games.size() + Messages.get("dialog.tables"));
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.create_highscore_backup_for_tables", String.valueOf(games.size())));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(this.games));
       }

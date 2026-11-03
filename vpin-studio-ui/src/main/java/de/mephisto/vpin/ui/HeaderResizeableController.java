@@ -82,7 +82,7 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMania() {
     if (ToolbarController.newVersion != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.update") + ToolbarController.newVersion, Messages.get("dialog.you_need_the_latest_vpin_studio_version"), null, Messages.get("dialog.update_2"));
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.update", String.valueOf(ToolbarController.newVersion)), Messages.get("dialog.you_need_the_latest_vpin_studio_version"), null, Messages.get("dialog.update_2"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Dialogs.openUpdateDialog();
       }

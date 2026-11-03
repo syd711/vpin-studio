@@ -62,13 +62,13 @@ public class BackupDownloadDialogController implements Initializable, DialogCont
         File asset = new File(targetFolder, selectedItem.getFilename());
         File uniqueTarget = FileUtils.uniqueFile(asset);
         DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(selectedItem.getFilename(), StandardCharsets.UTF_8), uniqueTarget);
-        job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
+        job.setTitle(Messages.get("dialog.download_of_quoted", selectedItem.getFilename()));
         JobPoller.getInstance().queueJob(job);
       }
     }
     catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.downloading_backup_files_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("dialog.error") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.downloading_backup_files_failed"), Messages.get("dialog.please_check_the_log_file_for_details"), Messages.get("msg.error", e.getMessage()));
     }
     finally {
       stage.close();
@@ -78,7 +78,7 @@ public class BackupDownloadDialogController implements Initializable, DialogCont
   @FXML
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
-    chooser.setTitle("Select Target Folder");
+    chooser.setTitle(Messages.get("dialog.select_target_folder"));
     if (targetFolder != null) {
       chooser.setInitialDirectory(targetFolder);
     }

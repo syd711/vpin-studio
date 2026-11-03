@@ -245,11 +245,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       IScoredGameRoomGameModel selection = selections.getFirst();
       String help2 = null;
       if (selection.iScoredGameRoom.isSynchronize()) {
-        help2 = "IMPORTANT: The synchronization for this game room is enabled. So the competition will be re-created during the next synchronization!";
+        help2 = Messages.get("dialog.iscored_sync_enabled_hint");
       }
 
-      String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete") + selection.competition.getName() + "\"?",
+      String help = Messages.get("dialog.subscription_delete_hint");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete", selection.competition.getName()),
           help, help2, Messages.get("dialog.delete_iscored_subscription"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
@@ -267,7 +267,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
 
     if (selections.size() > 1) {
-      String help = "The selected subscriptions will be deleted and none of your highscores will be pushed there anymore.";
+      String help = Messages.get("dialog.subscriptions_delete_hint");
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_selected_iscored_subscriptions"),
           help, null, Messages.get("dialog.delete_iscored_subscriptions"));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -507,7 +507,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (vpsTable != null) {
         return new SimpleObjectProperty(new VpsTableContainer(vpsTable, getLabelCss(value)));
       }
-      return new SimpleStringProperty("No matching VPS Table found.");
+      return new SimpleStringProperty(Messages.get("competitions.competitions_iscored.no_matching_vps_table_found_2"));
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
@@ -542,7 +542,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       IScoredGameRoomGameModel value = cellData.getValue();
       GameRoom gameRoom = value.gameRoom;
       if (gameRoom == null) {
-        return new SimpleObjectProperty<>("Invalid Game Room URL");
+        return new SimpleObjectProperty<>(Messages.get("dialog.invalid_game_room_url"));
       }
       return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom, value.game, getLabelCss(cellData.getValue())));
     });

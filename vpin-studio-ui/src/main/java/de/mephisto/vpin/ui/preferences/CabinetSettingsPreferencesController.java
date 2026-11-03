@@ -71,9 +71,9 @@ public class CabinetSettingsPreferencesController implements Initializable {
   @FXML
   private void onFileSelect(ActionEvent e) {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
+    fileChooser.setTitle(Messages.get("dialog.select_image"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_image"), "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -104,8 +104,8 @@ public class CabinetSettingsPreferencesController implements Initializable {
             maniaClient.getCabinetClient().update(cabinet);
           }
           catch (Exception e) {
-            LOG.error(Messages.get("dialog.failed_to_update_cabinet_name_for_vpin") + e.getMessage(), e);
-            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_cabinet_name_for_vpin") + e.getMessage());
+            LOG.error("Failed to update cabinet name for VPin Mania: " + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_update_cabinet_name_for_vpin", e.getMessage()));
           }
         }, 500)); 
       }

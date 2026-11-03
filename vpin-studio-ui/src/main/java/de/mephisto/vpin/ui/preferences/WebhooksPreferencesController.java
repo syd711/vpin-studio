@@ -63,9 +63,9 @@ public class WebhooksPreferencesController implements Initializable {
   @FXML
   private void onStartScript() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select .bat file");
+    fileChooser.setTitle(Messages.get("dialog.select_bat_file"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Script", "*.bat"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_script"), "*.bat"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -79,9 +79,9 @@ public class WebhooksPreferencesController implements Initializable {
   @FXML
   private void onStopScript() {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select .bat file");
+    fileChooser.setTitle(Messages.get("dialog.select_bat_file"));
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Script", "*.bat"));
+        new FileChooser.ExtensionFilter(Messages.get("dialog.filter_script"), "*.bat"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -124,7 +124,7 @@ public class WebhooksPreferencesController implements Initializable {
   private void onDelete() {
     WebhookSet selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_webhook_set") + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_webhook_set", selectedItem.getName()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           WebhookSettings webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
@@ -132,7 +132,7 @@ public class WebhooksPreferencesController implements Initializable {
           client.getPreferenceService().setJsonPreference(webhookSettings);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_deleting", selectedItem.getName(), e.getMessage()));
         }
         finally {
           reload();

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.exporter;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -65,7 +66,7 @@ public class MediaExportService extends ExporterService {
     }
     catch (Exception e) {
       LOG.error("Failed to export media data: {}", e.getMessage(), e);
-      return "Failed to export media data: " + e.getMessage();
+      return ServerMessages.msg("export.error.media", e.getMessage());
     }
   }
 }

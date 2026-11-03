@@ -47,7 +47,7 @@ public class DOFSynchronizationJob implements Job {
     try {
       String downloadUrl = "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=" + settings.getApiKey();
       LOG.info("Downloading https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
-      result.setStatus("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
+      result.setStatus(ServerMessages.get("dof.sync.downloading", locale, "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX"));
 
       File zipFile = new File(workingDir, "directoutputconfig.zip");
       if (zipFile.exists()) {
@@ -63,7 +63,7 @@ public class DOFSynchronizationJob implements Job {
         if (!StringUtils.isEmpty(settings.getInstallationPath())) {
           File targetFolder = new File(settings.getInstallationPath(), "Config");
           if (!targetFolder.exists()) {
-            result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
+            result.setError(ServerMessages.get("dof.sync.error.invalid_folder", locale, targetFolder.getAbsolutePath()));
             return;
           }
           LOG.info("Extracting DOF config folder {}", targetFolder.getAbsolutePath());
@@ -73,7 +73,7 @@ public class DOFSynchronizationJob implements Job {
       }
       else {
         LOG.info("Failed to download DOF configuration, please check your API key !");
-        result.setError("Failed to download DOF configuration");
+        result.setError(ServerMessages.get("dof.sync.error.download_failed", locale));
       }
 
       if (result.isCancelled()) {
@@ -84,7 +84,7 @@ public class DOFSynchronizationJob implements Job {
     }
     catch (Exception e) {
       LOG.error("Failed to execute download: {}", e.getMessage(), e);
-      result.setError("Failed to execute download: " + e.getMessage());
+      result.setError(ServerMessages.get("dof.sync.error.execute_failed", locale, e.getMessage()));
     }
     finally {
       LOG.info("DOF sync job finished.");

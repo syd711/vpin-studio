@@ -66,6 +66,6 @@ public class VPUPreferencesController implements Initializable {
 
     loginText.setText(settings.getLogin());
     passwordText.setText(settings.getPassword());
-    passwordText.setPromptText("<enter password to change it>");
+    passwordText.setPromptText(Messages.get("dialog.enter_password_to_change"));
   }
 }

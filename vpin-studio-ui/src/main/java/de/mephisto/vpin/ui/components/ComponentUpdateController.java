@@ -66,7 +66,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     install.setArtifactName("-latest-");
     install.setTargetFolder(component.getTargetFolder());
 
-    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, install);
+    ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.checking_status_for", type), install);
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().getFirst();
@@ -109,7 +109,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         install.setArtifactName(artifact);
         install.setTargetFolder(component.getTargetFolder());
   
-        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, install);
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.component_check_for", type), install);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
@@ -123,15 +123,15 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
       }
       catch (Exception e) {
-        LOG.error(Messages.get("dialog.failed_to_execute_component_check") + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_execute_component_check") + e.getMessage());
+        LOG.error("Failed to execute component check: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_execute_component_check", e.getMessage()));
       }
     });
   }
 
   private void runInstall() {
     String artifact = artifactCombo.getValue();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.install_update") + artifact + "\"?", Messages.get("dialog.existing_files_will_be_overwritten"), Messages.get("dialog.make_sure_to_follow_the_additional_instructions"), "Continue");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.install_update", String.valueOf(artifact)), Messages.get("dialog.existing_files_will_be_overwritten"), Messages.get("dialog.make_sure_to_follow_the_additional_instructions"), Messages.get("dialog.continue_button"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       run(false, Collections.emptyList());
     }

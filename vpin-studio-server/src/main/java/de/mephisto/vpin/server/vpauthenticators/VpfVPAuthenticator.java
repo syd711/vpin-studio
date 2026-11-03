@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vpauthenticators;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class VpfVPAuthenticator implements VPAuthenticator {
   @Override
   public String login() {
     if (StringUtils.isBlank(settings.getLogin())) {
-      return "Login cannot be empty";
+      return ServerMessages.msg("auth.error.login_empty");
     }
     try {
       return doLogin();

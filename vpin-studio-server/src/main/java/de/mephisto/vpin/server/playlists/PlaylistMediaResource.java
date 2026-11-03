@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
@@ -112,7 +113,7 @@ public class PlaylistMediaResource {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return JobDescriptorFactory.error("Upload request did not contain a file object.");
+        return JobDescriptorFactory.error(ServerMessages.msg("upload.error.no_file"));
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -120,7 +121,7 @@ public class PlaylistMediaResource {
       File out = playlistMediaService.uniqueMediaAsset(playlistId, screen, extractAudio ? "mp3" : suffix, append);
       if (out == null) {
         LOG.error("No playlist for media upload.");
-        return JobDescriptorFactory.error("No playlist found for media upload.");
+        return JobDescriptorFactory.error(ServerMessages.msg("upload.error.no_playlist"));
       }
       LOG.info("Uploading {}", out.getAbsolutePath());
       if (extractAudio) {

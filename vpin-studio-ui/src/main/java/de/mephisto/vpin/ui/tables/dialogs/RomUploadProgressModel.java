@@ -47,9 +47,9 @@ public class RomUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error(Messages.get("dialog.rom_upload_failed") + e.getMessage(), e);
+      LOG.error("ROM upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.rom_upload_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.rom_upload_failed", e.getMessage()));
       });
     }
   }

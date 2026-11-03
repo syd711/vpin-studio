@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
@@ -19,10 +20,10 @@ public class StudioPlaylistFactory {
   private final static Logger LOG = LoggerFactory.getLogger(StudioPlaylistFactory.class);
 
   public final static List<PlaylistTemplatesController.PlaylistTemplate> TEMPLATE_LIST = Arrays.asList(
-      new PlaylistTemplatesController.PlaylistTemplate(0, "Tables with an iScored subscription (visible only)"),
-      new PlaylistTemplatesController.PlaylistTemplate(1, "Tables with an iScored subscription (include hidden)"),
+      new PlaylistTemplatesController.PlaylistTemplate(0, Messages.get("dialog.playlist_template_iscored_visible")),
+      new PlaylistTemplatesController.PlaylistTemplate(1, Messages.get("dialog.playlist_template_iscored_hidden")),
 //      new PlaylistTemplatesController.PlaylistTemplate(2, "Tables where I have no highscore"),
-      new PlaylistTemplatesController.PlaylistTemplate(3, "Tables with PUP pack")
+      new PlaylistTemplatesController.PlaylistTemplate(3, Messages.get("dialog.playlist_template_pup_pack"))
   );
 
   public static List<GameRepresentation> create(int templateId, int count, boolean shuffle) {

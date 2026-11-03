@@ -124,7 +124,7 @@ public class LauncherController implements Initializable {
       dotNetInstalled = si.isDotNetInstalled();
     } catch (Exception e) {
       LOG.error("Error checking .net framework: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.error_checking_net_framework") + e.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.error_checking_net_framework", e.getMessage()));
     }
 
     if (!dotNetInstalled) {
@@ -233,7 +233,7 @@ public class LauncherController implements Initializable {
       }
 
       if (found) {
-        WidgetFactory.showAlert(stage, Messages.get("dialog.a_vpin_studio_connection_already_exists_for") + host + "'.");
+        WidgetFactory.showAlert(stage, Messages.get("msg.a_vpin_studio_connection_already_exists_for", String.valueOf(host)));
       } else {
         refreshBtn.setDisable(true);
         connectBtn.setDisable(true);
@@ -249,7 +249,7 @@ public class LauncherController implements Initializable {
                   ConnectionEntry.ConnectionType.CREATED);
               data.add(connection);
             } else {
-              WidgetFactory.showAlert(stage, Messages.get("dialog.no_service_found_for") + host + "'.",
+              WidgetFactory.showAlert(stage, Messages.get("msg.no_service_found_for", String.valueOf(host)),
                   Messages.get("dialog.please_check_the_ip_or_hostname_and"));
             }
 
@@ -280,8 +280,8 @@ public class LauncherController implements Initializable {
 
       if (!serverVersion.equals(clientVersion)) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.incompatible_version"),
-            Messages.get("dialog.the_vpin_server_you_are_connecting_to") + serverVersion + ".", "Please update your client.",
-            "Install Update");
+            Messages.get("msg.the_vpin_server_you_are_connecting_to", String.valueOf(serverVersion)), Messages.get("dialog.please_update_client"),
+            Messages.get("dialog.install_update_button"));
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           // Launch update of the remote client
           Dialogs.openUpdateDialog(client);
@@ -304,7 +304,7 @@ public class LauncherController implements Initializable {
           WakeOnLan.sendMagicPacket(connectionEntry.getIp(), connectionEntry.getMacAddress(), connectionEntry.getMagicPacketPort());
         } catch (Exception e) {
           LOG.error("WakeOnLan failed: {}", e.getMessage(), e);
-          WidgetFactory.showAlert(stage, Messages.get("dialog.wakeonlan_failed"), Messages.get("dialog.error") + e.getMessage());
+          WidgetFactory.showAlert(stage, Messages.get("dialog.wakeonlan_failed"), Messages.get("msg.error", e.getMessage()));
         }
       }
     }
@@ -362,7 +362,7 @@ public class LauncherController implements Initializable {
       }).start();
     } catch (Exception e) {
       LOG.error("Server installation failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, Messages.get("dialog.server_installation_failed"), Messages.get("dialog.error") + e.getMessage());
+      WidgetFactory.showAlert(stage, Messages.get("dialog.server_installation_failed"), Messages.get("msg.error", e.getMessage()));
     }
   }
 
@@ -448,7 +448,7 @@ public class LauncherController implements Initializable {
 
           wolButton.setOnAction(event -> {
             Optional<ButtonType> result = WidgetFactory.showConfirmation(stage,
-                Messages.get("dialog.send_wol_packet_to") + connection.getHost() + "?");
+                Messages.get("msg.send_wol_packet_to", String.valueOf(connection.getHost())));
             if (result.isPresent() && result.get().equals(ButtonType.OK)) {
               onWakeOnLan(connection);
               onConnectionRefresh();
@@ -494,7 +494,7 @@ public class LauncherController implements Initializable {
         deleteButton.setStyle("-fx-border-radius: 6px; -fx-cursor: hand;");
         deleteButton.setOnAction(event -> {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(stage,
-              Messages.get("dialog.delete_connection_to") + connection.getHost() + "'?");
+              Messages.get("msg.delete_connection_to", String.valueOf(connection.getHost())));
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             connectionProperties.removeConnection(connection.getHost());
             onConnectionRefresh();

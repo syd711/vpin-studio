@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -165,7 +166,7 @@ public class WidgetWeeklyCompetitionScoreItemController extends WidgetController
 
     if (score.isPending()) {
       statusLabel.setVisible(true);
-      String tt = "Score has not been approved yet.";
+      String tt = Messages.get("widgets.widget_weekly_competition_score_item.score_not_approved");
       if (!StringUtils.isEmpty(score.getNote())) {
         tt = tt + "\n\n\"" + score.getNote() + "\"";
       }

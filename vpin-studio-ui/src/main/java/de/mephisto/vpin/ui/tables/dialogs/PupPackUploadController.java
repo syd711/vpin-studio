@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -24,7 +25,7 @@ public class PupPackUploadController extends BaseUploadController {
 
   @Override 
   protected UploadProgressModel createUploadModel() {
-    return new PupPackUploadProgressModel(null, "PUP Pack Upload", getSelection());
+    return new PupPackUploadProgressModel(null, Messages.get("dialog.upload_pup_pack"), getSelection());
   }
 
   @Override

@@ -70,7 +70,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, Messages.get("dialog.ping_failed"), Messages.get("dialog.make_sure_that_the_ip_matches_with"), Messages.get("dialog.the_vpx_application_must_be_open_and"));
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.ping_successful"), Messages.get("dialog.version") + ping.getVersion());
+        WidgetFactory.showInformation(Studio.stage, Messages.get("dialog.ping_successful"), Messages.get("msg.version", ping.getVersion()));
       }
     }).onErrorLater(e -> {
         testBtn.setDisable(false);
@@ -100,7 +100,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
           client.getVpxzService().saveVPXZSource(sourceRepresentation);
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_vpxz_repository") + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_vpxz_repository", e.getMessage()));
         }
         onReload();
       }
@@ -115,7 +115,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
         client.getVpxzService().saveVPXZSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_vpxz_repository") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_vpxz_repository", e.getMessage()));
       }
       onReload();
     }
@@ -129,7 +129,7 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
         client.getVpxzService().saveVPXZSource(sourceRepresentation);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_vpxz_repository_2") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_vpxz_repository_2", e.getMessage()));
       }
       onReload();
     }
@@ -139,13 +139,13 @@ public class VPXZRepositoriesPreferencesController implements Initializable {
   private void onDelete() {
     VPXZSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("dialog.delete_repository") + selectedItem.getName() + "\"?");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("msg.delete_repository", selectedItem.getName()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getVpxzService().deleteVPXZSource(selectedItem.getId());
         }
         catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_deleting") + selectedItem.getName() + Messages.get("dialog.item") + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_deleting", selectedItem.getName(), e.getMessage()));
         }
         finally {
           onReload();

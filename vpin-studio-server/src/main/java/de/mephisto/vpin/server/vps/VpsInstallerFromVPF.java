@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vps;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +41,7 @@ public class VpsInstallerFromVPF implements VpsInstaller {
     try {
       // don't even try to authenticate if settings are not set
       if (StringUtils.isBlank(settings.getLogin())) {
-        return "Login cannot be empty";
+        return ServerMessages.msg("auth.error.login_empty");
       }
 
       // Perfom VPF authentication

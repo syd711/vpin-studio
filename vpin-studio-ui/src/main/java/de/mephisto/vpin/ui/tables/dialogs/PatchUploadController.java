@@ -126,7 +126,7 @@ public class PatchUploadController extends BaseUploadController {
 
 
         LOG.info("Starting Game Patcher");
-        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor, game);
+        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel(Messages.get("dialog.patching_game"), uploadDescriptor, game);
         result = UniversalUploadUtil.postProcess(progressModel);
 
         // call finalizer
@@ -141,7 +141,7 @@ public class PatchUploadController extends BaseUploadController {
       }
       catch (Exception e) {
         LOG.error("Patching table post upload failed: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.patching_table_post_upload_failed") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.patching_table_post_upload_failed", e.getMessage()));
       }
     }
   }

@@ -72,10 +72,10 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 public class TableDataController extends BasePrevNextController implements AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final static TableStatus STATUS_DISABLED = new TableStatus(0, "InActive (Disabled)");
-  private final static TableStatus STATUS_NORMAL = new TableStatus(1, "Visible (Normal)");
-  private final static TableStatus STATUS_MATURE = new TableStatus(2, "Visible (Mature/Hidden)");
-  private final static TableStatus STATUS_WIP = new TableStatus(3, "Work In Progress");
+  private final static TableStatus STATUS_DISABLED = new TableStatus(0, Messages.get("dialog.table_status_inactive"));
+  private final static TableStatus STATUS_NORMAL = new TableStatus(1, Messages.get("dialog.table_status_normal"));
+  private final static TableStatus STATUS_MATURE = new TableStatus(2, Messages.get("dialog.table_status_mature"));
+  private final static TableStatus STATUS_WIP = new TableStatus(3, Messages.get("dialog.table_status_wip"));
 
   public final static List<TableStatus> TABLE_STATUSES_FULL = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
   public final static List<TableStatus> TABLE_STATUSES_MINI = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL));
@@ -422,7 +422,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       }
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.auto_fill_failed") + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.auto_fill_failed", e.getMessage()));
     }
   }
 
@@ -570,7 +570,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
       if (game.getGameFilePath() != null && !updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
         String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
         if (duplicate != null) {
-          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.another_file_with_the_name") + duplicate + Messages.get("dialog.already_exist_please_chooser_another_name"));
+          WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.another_file_with_the_name_already_exist", String.valueOf(duplicate)));
           return false;
         }
       }
@@ -611,8 +611,8 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (Exception ex) {
       success = false;
-      LOG.error(Messages.get("dialog.error_saving_table_manifest") + ex.getMessage(), ex);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.error_saving_table_manifest") + ex.getMessage());
+      LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.error_saving_table_manifest", ex.getMessage()));
     }
     return success;
   }
@@ -1149,7 +1149,7 @@ public class TableDataController extends BasePrevNextController implements AutoC
     }
     catch (Exception e) {
       LOG.error("Failed to initialize Table Data Manager: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_initialize_table_data_manager") + e.getMessage(), Messages.get("dialog.please_report_this_bug_via_discord_or"));
+      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_initialize_table_data_manager", e.getMessage()), Messages.get("dialog.please_report_this_bug_via_discord_or"));
     }
   }
 

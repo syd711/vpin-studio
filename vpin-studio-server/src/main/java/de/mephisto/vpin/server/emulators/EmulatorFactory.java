@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.emulators;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.emulators.EmulatorValidation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
@@ -379,15 +380,15 @@ public class EmulatorFactory implements ApplicationContextAware, InitializingBea
     private GameEmulatorRepresentation setupSteamEmulator(EmulatorType emulatorType, EmulatorValidation validation) {
         File gameFolder = getSteamService().getGameFolder(emulatorType);
         if (gameFolder == null) {
-            validation.setErrorTitle("No installation directory found for this emulator type.");
-            validation.setErrorText("The automatic setup for this emulator is supported, but the installation directory was not found. Please contact support.");
+            validation.setErrorTitle(ServerMessages.msg("emulator.setup.no_install_dir_title"));
+            validation.setErrorText(ServerMessages.msg("emulator.setup.no_install_dir_text"));
             return null;
         }
 
         List<TableDetails> read = PUPGameImporter.read(emulatorType, -1);
         if (read.isEmpty()) {
-            validation.setErrorTitle("The PUP game import failed.");
-            validation.setErrorText("The automatic setup for this emulator is supported, but the automatic game import failed. Please contact support.");
+            validation.setErrorTitle(ServerMessages.msg("emulator.setup.import_failed_title"));
+            validation.setErrorText(ServerMessages.msg("emulator.setup.import_failed_text"));
             return null;
         }
 

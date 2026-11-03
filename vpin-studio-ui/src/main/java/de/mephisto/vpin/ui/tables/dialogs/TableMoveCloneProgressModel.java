@@ -79,7 +79,7 @@ public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentatio
       progressResultModel.addError();
       LOG.error("Failed to {} table \"{}\": {}", move ? "move" : "clone", game.getGameDisplayName(), e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to") + (move ? "move" : "clone") + Messages.get("dialog.table_2") + game.getGameDisplayName() + Messages.get("dialog.item") + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get(move ? "msg.failed_to_move_table" : "msg.failed_to_clone_table", game.getGameDisplayName(), e.getMessage()));
       });
     }
   }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions.mania;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallenge;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallengeOptOut;
@@ -241,15 +242,15 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
 
     if (StringUtils.isEmpty(challenge.getVpsTableId())) {
       LOG.info("VPin Mania challenge \"{}\" has no VPS table id", challenge.getTableName());
-      addIssue(competition, "The challenge has no VPS table assigned.");
+      addIssue(competition, ServerMessages.msg("competition.issue.no_vps_table"));
       competition.setGameId(-1);
     }
     else {
       List<Game> gameMatches = findMatchingGames(challenge.getVpsTableId(), challenge.getVpsVersionId());
       if (gameMatches.isEmpty()) {
         LOG.info("No matching game found for VPin Mania challenge \"{}\"", challenge.getTableName());
-        addIssue(competition, "No matching game found for challenge \"" + challenge.getTableName() + "\".");
-        addIssue(competition, "Please check the VPS matching of the table or download the correct version.");
+        addIssue(competition, ServerMessages.msg("competition.issue.no_matching_game", challenge.getTableName()));
+        addIssue(competition, ServerMessages.msg("competition.issue.check_vps_matching"));
         competition.setGameId(-1);
       }
       else {

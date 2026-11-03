@@ -69,7 +69,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
           EventManager.getInstance().notifyTableChange(this.game.getId(), rom);
         } catch (Exception ex) {
           LOG.error("Failed to restore highscore: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_restore_highscore_backup") + ex.getMessage() );
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_restore_highscore_backup", ex.getMessage()) );
         }
       }
     }
@@ -81,7 +81,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
 
     List<HighscoreBackup> selectedItems = backupList.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + Messages.get("dialog.backup_s"));
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, Messages.get("dialog.delete_n_backups", selectedItems.size()));
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         String rom = this.game.getRom();
         if (StringUtils.isEmpty(rom)) {

@@ -75,7 +75,7 @@ public class DOFPreferencesController implements Initializable {
       if (!results.isEmpty()) {
         Object o = results.getFirst();
         if (o instanceof String) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.dof_config_download_failed") + o);
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.dof_config_download_failed", String.valueOf(o)));
         }
         else {
           JobDescriptor result = (JobDescriptor) resultModel.getResults().getFirst();

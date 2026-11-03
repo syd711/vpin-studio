@@ -110,7 +110,7 @@ public class InstallationDialogController implements Initializable, DialogContro
       }
       directoryChooser.setInitialDirectory(this.installationFolder);
     }
-    directoryChooser.setTitle("Select Frontend System Folder");
+    directoryChooser.setTitle(Messages.get("dialog.select_frontend_system_folder"));
     File selectedDirectory = directoryChooser.showDialog(stage);
 
     if (selectedDirectory != null) {
@@ -222,7 +222,7 @@ public class InstallationDialogController implements Initializable, DialogContro
           try (ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;")) {
             int version = rs.next() ? rs.getInt("SQLVersion") : -1;
             if (version < 64) {
-              return "Invalid PinUP Popper version. Please install version 1.5 or higher to use VPin Studio.";
+              return Messages.get("dialog.invalid_popper_version");
             }
             // no problem detected, at least for the moment...
             return null;
@@ -231,25 +231,25 @@ public class InstallationDialogController implements Initializable, DialogContro
       }
       catch (Exception e) {
         LOG.error("Error while connecting to PinUp Popper database", e);
-        return "Cannot connect to PinUP Popper database or get database version.";
+        return Messages.get("dialog.popper_db_connect_failed");
       }
     }
-    return "No PinUP Popper installation found in this folder.";
+    return Messages.get("dialog.no_popper_installation");
   }
 
   private String validatePinballXInstallation() {
     return hasValidExe("PinballX.exe") ? null :
-        "No PinballX installation found in this folder.";
+        Messages.get("dialog.no_pinballx_installation");
   }
 
   private String validatePinballYInstallation() {
     return hasValidExe("PinballY.exe") ? null :
-        "No PinballY installation found in this folder.";
+        Messages.get("dialog.no_pinbally_installation");
   }
 
   private String validateStandaloneInstallation() {
     return hasValidExe("VPinballX.exe") || hasValidExe("VPinballX64.exe") ? null :
-        "No Visual Pinball installation found in this folder.";
+        Messages.get("dialog.no_vpx_installation");
   }
 
   private boolean hasValidExe(String s) {

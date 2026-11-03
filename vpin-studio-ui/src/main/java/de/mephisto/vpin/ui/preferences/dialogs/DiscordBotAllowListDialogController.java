@@ -107,8 +107,8 @@ public class DiscordBotAllowListDialogController implements Initializable, Dialo
                 client.getPreferenceService().setPreference(PreferenceNames.DISCORD_BOT_ALLOW_LIST, pref);
                 preferencesController.refreshAllowList();
               } catch (Exception e) {
-                LOG.error(Messages.get("dialog.failed_to_update_playlists") + e.getMessage(), e);
-                WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.failed_to_update_playlists") + e.getMessage());
+                LOG.error("Failed to update playlists: " + e.getMessage(), e);
+                WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.failed_to_update_playlists", e.getMessage()));
               }
             }
           });

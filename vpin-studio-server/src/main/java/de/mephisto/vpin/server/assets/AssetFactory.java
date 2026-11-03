@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
@@ -79,7 +80,7 @@ public class AssetFactory {
       //TABLE
       font = new Font("System", Font.PLAIN, HEADLINE_SIZE);
       graphics.setFont(font);
-      graphics.drawString("Applied for Tables with ROM:", xOffset, yOffset += 48);
+      graphics.drawString(ServerMessages.msg("assets.applied_for_roms"), xOffset, yOffset += 48);
 
       font = new Font("System", Font.BOLD, 30);
       graphics.setFont(font);

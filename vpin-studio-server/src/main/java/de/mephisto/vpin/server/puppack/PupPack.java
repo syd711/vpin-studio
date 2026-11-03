@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -202,13 +203,13 @@ public class PupPack {
       }
       catch (Exception e) {
         LOG.error("Error executing shutdown: {}", e.getMessage(), e);
-        return JobDescriptorFactory.error("Error executing shutdown: " + e.getMessage());
+        return JobDescriptorFactory.error(ServerMessages.msg("puppack.error.shutdown", e.getMessage()));
       }
       finally {
         this.load();
       }
     }
-    return JobDescriptorFactory.error("Option command file " + file.getAbsolutePath() + " not found.");
+    return JobDescriptorFactory.error(ServerMessages.msg("puppack.error.option_file_missing", file.getAbsolutePath()));
   }
 
   public String getSelectedOption() {
