@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.discord;
 
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -62,9 +61,6 @@ public class DiscordBotCommandResponseFactory {
 
   public static String createActiveCompetitionMessage(Competition competition, Game game, ScoreSummary summary) {
     String cType = "offline";
-    if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-      cType = "Discord";
-    }
     DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
     String format = String.format(COMPETITION_ACTIVE_TEMPLATE, competition.getName(),
         cType,
@@ -138,7 +134,7 @@ public class DiscordBotCommandResponseFactory {
     return builder.toString();
   }
 
-  public static String createRanksMessageFor(GameService gameService, Player player, ScoreSummary highscores, List<Competition> offlineCompetitions, List<Competition> onlineCompetitions) {
+  public static String createRanksMessageFor(GameService gameService, Player player, ScoreSummary highscores, List<Competition> offlineCompetitions) {
     StringBuilder builder = new StringBuilder();
 
     if (highscores.getScores().isEmpty()) {
@@ -190,15 +186,10 @@ public class DiscordBotCommandResponseFactory {
     }
 
     String offline = offlineCompetitions.size() == 1 ? "competition" : "competitions";
-    String online = onlineCompetitions.size() == 1 ? "competition" : "competitions";
     builder.append("\nThe player has won ");
     builder.append(offlineCompetitions.size());
     builder.append(" offline ");
     builder.append(offline);
-    builder.append(" and ");
-    builder.append(onlineCompetitions.size());
-    builder.append(" online ");
-    builder.append(online);
     builder.append(".\n");
 
     builder.append("```");

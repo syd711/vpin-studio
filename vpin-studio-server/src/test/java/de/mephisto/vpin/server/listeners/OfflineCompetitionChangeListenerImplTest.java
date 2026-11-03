@@ -62,7 +62,7 @@ public class OfflineCompetitionChangeListenerImplTest {
 
   @Test
   void competitionStarted_skips_whenNotOfflineType() {
-    Competition competition = buildCompetition(CompetitionType.DISCORD.name());
+    Competition competition = buildCompetition(CompetitionType.WEEKLY.name());
 
     listener.competitionStarted(competition);
 
@@ -84,7 +84,7 @@ public class OfflineCompetitionChangeListenerImplTest {
 
   @Test
   void competitionFinished_skips_whenNotOfflineType() {
-    Competition competition = buildCompetition(CompetitionType.DISCORD.name());
+    Competition competition = buildCompetition(CompetitionType.WEEKLY.name());
 
     listener.competitionFinished(competition, null, new ScoreSummary());
 
@@ -106,7 +106,7 @@ public class OfflineCompetitionChangeListenerImplTest {
 
   @Test
   void competitionDeleted_skips_whenNotOfflineType() {
-    Competition competition = buildCompetition(CompetitionType.DISCORD.name());
+    Competition competition = buildCompetition(CompetitionType.WEEKLY.name());
 
     listener.competitionDeleted(competition);
 

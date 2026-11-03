@@ -35,8 +35,6 @@ public class Preferences {
 
   private String discordUpdatesChannelId;
 
-  private String discordCategoryId;
-
   private String discordBotToken;
 
   private String discordBotAllowList;
@@ -126,9 +124,6 @@ public class Preferences {
 
   @Column(name = "discordBotCommandsEnabled", nullable = false, columnDefinition = "boolean default true")
   private boolean discordBotCommandsEnabled;
-
-  @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
-  private boolean discordDynamicSubscriptions;
 
   public String getDiscordClientSettings() {
     return discordClientSettings;
@@ -392,22 +387,6 @@ public class Preferences {
 
   public void setHighscoreFilterEnabled(boolean highscoreFilterEnabled) {
     this.highscoreFilterEnabled = highscoreFilterEnabled;
-  }
-
-  public boolean getDiscordDynamicSubscriptions() {
-    return discordDynamicSubscriptions;
-  }
-
-  public void setDiscordDynamicSubscriptions(boolean discordDynamicSubscriptions) {
-    this.discordDynamicSubscriptions = discordDynamicSubscriptions;
-  }
-
-  public String getDiscordCategoryId() {
-    return discordCategoryId;
-  }
-
-  public void setDiscordCategoryId(String discordCategoryId) {
-    this.discordCategoryId = discordCategoryId;
   }
 
   public boolean isDiscordBotCommandsEnabled() {

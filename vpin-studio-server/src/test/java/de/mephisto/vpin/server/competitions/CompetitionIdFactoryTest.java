@@ -14,11 +14,11 @@ public class CompetitionIdFactoryTest {
   @Test
   void createId_returnsLocalUrl_whenOwner() {
     Competition c = new Competition();
-    c.setType("SUBSCRIPTION");
+    c.setType("ISCORED");
 
     String id = CompetitionIdFactory.createId(c, true);
 
-    assertTrue(id.startsWith("vps://competition/subscription/local/"));
+    assertTrue(id.startsWith("vps://competition/iscored/local/"));
   }
 
   @Test
@@ -60,10 +60,10 @@ public class CompetitionIdFactoryTest {
   }
 
   @Test
-  void getCompetitionTypes_detectsSubscription() {
-    List<CompetitionType> types = CompetitionIdFactory.getCompetitionTypes("vps://competition/subscription/local/42");
+  void getCompetitionTypes_detectsIScored() {
+    List<CompetitionType> types = CompetitionIdFactory.getCompetitionTypes("vps://competition/iscored/local/42");
 
-    assertTrue(types.contains(CompetitionType.SUBSCRIPTION));
+    assertTrue(types.contains(CompetitionType.ISCORED));
   }
 
   @Test
@@ -75,16 +75,16 @@ public class CompetitionIdFactoryTest {
 
   @Test
   void getCompetitionTypes_detectsMultipleTypes() {
-    List<CompetitionType> types = CompetitionIdFactory.getCompetitionTypes("subscription,weekly");
+    List<CompetitionType> types = CompetitionIdFactory.getCompetitionTypes("iscored,weekly");
 
-    assertTrue(types.contains(CompetitionType.SUBSCRIPTION));
+    assertTrue(types.contains(CompetitionType.ISCORED));
     assertTrue(types.contains(CompetitionType.WEEKLY));
   }
 
   @Test
   void getCompetitionTypes_isCaseInsensitive() {
-    List<CompetitionType> types = CompetitionIdFactory.getCompetitionTypes("SUBSCRIPTION");
+    List<CompetitionType> types = CompetitionIdFactory.getCompetitionTypes("ISCORED");
 
-    assertTrue(types.contains(CompetitionType.SUBSCRIPTION));
+    assertTrue(types.contains(CompetitionType.ISCORED));
   }
 }

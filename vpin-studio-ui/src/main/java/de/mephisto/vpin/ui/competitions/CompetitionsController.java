@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
 import de.mephisto.vpin.commons.fx.widgets.WidgetWeeklyCompetitionScoreItemController;
 import de.mephisto.vpin.commons.utils.*;
@@ -9,15 +8,11 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionScore;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
-import de.mephisto.vpin.restclient.discord.DiscordChannel;
-import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.mania.ManiaSettingsController;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -26,7 +21,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -68,12 +62,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   private Tab offlineTab;
 
   @FXML
-  private Tab onlineTab;
-
-  @FXML
-  private Tab tableSubscriptionsTab;
-
-  @FXML
   private Tab iScoredSubscriptionsTab;
 
   @FXML
@@ -110,13 +98,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private HBox serverBox;
 
   @FXML
-  private HBox ownerBox;
-
-  @FXML
   private TitledPane metaDataPane;
-
-  @FXML
-  private TitledPane competitionMembersPane;
 
   @FXML
   private TitledPane dashboardPane;
@@ -152,15 +134,10 @@ public class CompetitionsController implements Initializable, StudioFXController
   private StackPane editorRootStack;
 
   @FXML
-  private VBox membersBox;
-
-  @FXML
   private Accordion accordion;
 
 
   private CompetitionsOfflineController offlineController;
-  private CompetitionsDiscordController discordController;
-  private TableSubscriptionsController tableSubscriptionsController;
   private IScoredSubscriptionsController iScoredSubscriptionsController;
   private WeeklySubscriptionsController weeklySubscriptionsController;
   private ManiaChallengesController maniaChallengesController;
@@ -177,11 +154,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    refreshUsers(competition);
-    competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     refreshView(tabPane.getSelectionModel().getSelectedItem());
-    discordController.onViewActivated(options);
-    tableSubscriptionsController.onViewActivated(options);
     refreshManiaChallengesTab(options != null && CompetitionType.MANIA_CHALLENGE.equals(options.getModel()));
 
     if (options != null && options.getModel() != null) {
@@ -192,12 +165,6 @@ public class CompetitionsController implements Initializable, StudioFXController
 
         if (competitionType.equals(CompetitionType.OFFLINE)) {
           tabPane.getSelectionModel().select(offlineTab);
-        }
-        else if (competitionType.equals(CompetitionType.DISCORD)) {
-          tabPane.getSelectionModel().select(onlineTab);
-        }
-        else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-          tabPane.getSelectionModel().select(tableSubscriptionsTab);
         }
         else if (competitionType.equals(CompetitionType.ISCORED) && iScoredSettings.isEnabled()) {
           tabPane.getSelectionModel().select(iScoredSubscriptionsTab);
@@ -226,9 +193,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     Tab selectedTab = getSelectedTab();
     if (selectedTab == offlineTab) {
       PreferencesController.open("player_rankings");
-    }
-    else if (selectedTab == onlineTab || selectedTab == tableSubscriptionsTab) {
-      PreferencesController.open("discord_bot");
     }
     else if (selectedTab == iScoredSubscriptionsTab) {
       PreferencesController.open("iscored");
@@ -321,24 +285,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       checkTitledPanes(CompetitionType.OFFLINE);
       offlineController.onReload();
     }
-    else if (tab == onlineTab) {
-      if (discordController != null) {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.discord_competitions")));
-        Optional<CompetitionRepresentation> selection = discordController.getSelection();
-        updateSelection(selection);
-        checkTitledPanes(CompetitionType.DISCORD);
-        discordController.onReload();
-      }
-    }
-    else if (tab == tableSubscriptionsTab) {
-      if (tableSubscriptionsController != null) {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions")));
-        Optional<CompetitionRepresentation> selection = tableSubscriptionsController.getSelection();
-        updateSelection(selection);
-        checkTitledPanes(CompetitionType.SUBSCRIPTION);
-        tableSubscriptionsController.onReload();
-      }
-    }
     else if (tab == iScoredSubscriptionsTab) {
       NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.iscored_subscriptions")));
       updateSelection(Optional.empty());
@@ -370,12 +316,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     if (tab == offlineTab) {
       return offlineController;
     }
-    if (tab == onlineTab) {
-      return discordController;
-    }
-    if (tab == tableSubscriptionsTab) {
-      return tableSubscriptionsController;
-    }
     if (tab == iScoredSubscriptionsTab) {
       return iScoredSubscriptionsController;
     }
@@ -394,7 +334,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   private void updateSelection(Optional<CompetitionRepresentation> competitionRepresentation) {
-    refreshUsers(competitionRepresentation);
     refreshMetaData(competitionRepresentation);
     refreshDashboard(competitionRepresentation);
     updateForTabSelection(competitionRepresentation);
@@ -533,27 +472,26 @@ public class CompetitionsController implements Initializable, StudioFXController
 
     if (competitionRepresentation.isPresent()) {
       String type = competitionRepresentation.get().getType();
-      if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name()) || type.equals(CompetitionType.WEEKLY.name()) || type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
+      if (type.equals(CompetitionType.WEEKLY.name()) || type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
         CompetitionRepresentation competition = competitionRepresentation.get();
         if (metaDataPane.isVisible() && !metaDataPane.isDisabled()) {
           uuidLabel.setText(competition.getUuid());
           copyBtn.setVisible(true);
           serverBox.getChildren().removeAll(serverBox.getChildren());
-          ownerBox.getChildren().removeAll(ownerBox.getChildren());
 
           if (competition.getJoinMode() != null) {
             JoinMode joinMode = JoinMode.valueOf(competition.getJoinMode());
             switch (joinMode) {
               case STRICT: {
-                scoreValidationLabel.setText(CompetitionDiscordDialogController.STRICT_DESCRIPTION);
+                scoreValidationLabel.setText(Messages.get("competitions.discord_competition_edit.rom_name_and_vpx_file_size_check"));
                 break;
               }
               case CHECKSUM: {
-                scoreValidationLabel.setText(CompetitionDiscordDialogController.CHECKSUM_DESCRIPTION);
+                scoreValidationLabel.setText(Messages.get("competitions.discord_competition_edit.rom_name_and_vpx_script_checksum_check"));
                 break;
               }
               case ROM_ONLY: {
-                scoreValidationLabel.setText(CompetitionDiscordDialogController.ROM_DESCRIPTION);
+                scoreValidationLabel.setText(Messages.get("competitions.discord_competition_edit.rom_name_check"));
                 break;
               }
             }
@@ -578,57 +516,6 @@ public class CompetitionsController implements Initializable, StudioFXController
           if (type.equals(CompetitionType.MANIA_CHALLENGE.name())) {
             maniaChallengesController.getSelection().ifPresent(this::refreshManiaChallengeMetaData);
           }
-
-          //TODO mpf
-          if (type.equals(CompetitionType.DISCORD.name()) || type.equals(CompetitionType.SUBSCRIPTION.name())) {
-            DiscordServer discordServer = client.getDiscordService().getDiscordServer(competition.getDiscordServerId());
-            if (discordServer != null) {
-              String avatarUrl = discordServer.getAvatarUrl();
-              Image image = null;
-              if (avatarUrl == null) {
-                image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-              }
-              else {
-                image = new Image(avatarUrl);
-              }
-
-              ImageView view = new ImageView(image);
-              view.setPreserveRatio(true);
-              view.setFitWidth(50);
-              view.setFitHeight(50);
-              serverBox.getChildren().removeAll(serverBox.getChildren());
-              Label label = new Label(discordServer.getName());
-              label.setStyle("-fx-font-size: 14px;");
-
-              CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-              serverBox.getChildren().addAll(view, label);
-            }
-
-            List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(competition.getDiscordServerId());
-            Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == competition.getDiscordChannelId()).findFirst();
-            first.ifPresent(discordChannel -> channelLabel.setText(discordChannel.getName()));
-
-
-            PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(competition.getDiscordServerId(), Long.valueOf(competition.getOwner()));
-            if (discordPlayer != null) {
-              HBox hBox = new HBox(6);
-              hBox.setAlignment(Pos.CENTER_LEFT);
-              hBox = new HBox(6);
-              hBox.setAlignment(Pos.CENTER_LEFT);
-              Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
-              ImageView view = new ImageView(image);
-              view.setPreserveRatio(true);
-              view.setFitWidth(50);
-              view.setFitHeight(50);
-              ownerBox.getChildren().removeAll(ownerBox.getChildren());
-              Label label = new Label(discordPlayer.getName());
-              label.setStyle("-fx-font-size: 14px;");
-
-              CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
-              ownerBox.getChildren().addAll(view, label);
-            }
-          }
-
 
           if (competition.getStartDate() != null) {
             DateTimeFormatter fmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
@@ -668,27 +555,7 @@ public class CompetitionsController implements Initializable, StudioFXController
 
   private void checkTitledPanes(CompetitionType competitionType) {
     switch (competitionType) {
-      case DISCORD: {
-        competitionMembersPane.setDisable(false);
-        competitionMembersPane.setExpanded(true);
-        metaDataPane.setDisable(false);
-        metaDataPane.setExpanded(false);
-
-        dashboardPane.setDisable(true);
-        break;
-      }
-      case SUBSCRIPTION: {
-        competitionMembersPane.setDisable(false);
-        competitionMembersPane.setExpanded(true);
-        metaDataPane.setDisable(false);
-        metaDataPane.setExpanded(false);
-
-        dashboardPane.setDisable(true);
-        break;
-      }
       case OFFLINE: {
-        competitionMembersPane.setDisable(true);
-        competitionMembersPane.setExpanded(false);
         metaDataPane.setDisable(true);
         metaDataPane.setExpanded(false);
 
@@ -696,8 +563,6 @@ public class CompetitionsController implements Initializable, StudioFXController
         break;
       }
       case ISCORED: {
-        competitionMembersPane.setDisable(true);
-        competitionMembersPane.setExpanded(false);
         metaDataPane.setDisable(true);
         metaDataPane.setExpanded(false);
 
@@ -708,8 +573,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
       case WEEKLY:
       case MANIA_CHALLENGE: {
-        competitionMembersPane.setDisable(true);
-        competitionMembersPane.setExpanded(false);
         metaDataPane.setDisable(false);
         metaDataPane.setExpanded(false);
 
@@ -732,22 +595,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.offline_competitions")));
-      }
-    }
-    else if (tab == onlineTab) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.discord_competitions"), competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.discord_competitions")));
-      }
-    }
-    else if (tab == tableSubscriptionsTab) {
-      if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions"), competitionRepresentation.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.competitions"), Messages.get("competitions.competitions.table_subscriptions")));
       }
     }
     else if (tab == iScoredSubscriptionsTab) {
@@ -779,39 +626,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
   }
 
-  private void refreshUsers(Optional<CompetitionRepresentation> cp) {
-    membersBox.getChildren().removeAll(membersBox.getChildren());
-    if (cp.isPresent()) {
-      CompetitionRepresentation competition = cp.get();
-      if (competitionMembersPane.isVisible() && !competitionMembersPane.isDisabled()) {
-        if (!competition.isActive()) {
-          membersBox.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("competitions.competitions.competition_not_active")));
-        }
-        else {
-          List<PlayerRepresentation> memberList = client.getCompetitionService().getDiscordCompetitionPlayers(competition.getId());
-          if (memberList.isEmpty()) {
-            membersBox.getChildren().add(WidgetFactory.createDefaultLabel(Messages.get("competitions.competitions.no_discord_members")));
-          }
-          else {
-            for (PlayerRepresentation player : memberList) {
-              try {
-                FXMLLoader loader = new FXMLLoader(DiscordUserEntryController.class.getResource("discord-user.fxml"));
-                loader.setResources(Messages.getBundle());
-                Parent playerPanel = loader.load();
-                DiscordUserEntryController controller = loader.getController();
-                controller.setData(player);
-                membersBox.getChildren().add(playerPanel);
-              }
-              catch (IOException e) {
-                LOG.error("Failed to load discord player list: " + e.getMessage(), e);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   private void loadTabs() {
     try {
       FXMLLoader loader = new FXMLLoader(CompetitionsOfflineController.class.getResource("tab-competitions-offline.fxml"));
@@ -823,30 +637,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     catch (IOException e) {
       LOG.error("failed to load offline: " + e.getMessage(), e);
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(CompetitionsDiscordController.class.getResource("tab-competitions-discord.fxml"));
-      loader.setResources(Messages.getBundle());
-      Parent parent = loader.load();
-      discordController = loader.getController();
-      discordController.setCompetitionsController(this);
-      onlineTab.setContent(parent);
-    }
-    catch (IOException e) {
-      LOG.error("failed to load online: " + e.getMessage(), e);
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(TableSubscriptionsController.class.getResource("tab-competitions-subscriptions.fxml"));
-      loader.setResources(Messages.getBundle());
-      Parent parent = loader.load();
-      tableSubscriptionsController = loader.getController();
-      tableSubscriptionsController.setCompetitionsController(this);
-      tableSubscriptionsTab.setContent(parent);
-    }
-    catch (IOException e) {
-      LOG.error("failed to load subscriptions: " + e.getMessage(), e);
     }
 
     if (Features.ISCORED_ENABLED) {
@@ -942,12 +732,6 @@ public class CompetitionsController implements Initializable, StudioFXController
     Tab selectedTab = getSelectedTab();
     if (selectedTab == offlineTab) {
       return offlineController;
-    }
-    if (selectedTab == onlineTab) {
-      return discordController;
-    }
-    if (selectedTab == tableSubscriptionsTab) {
-      return tableSubscriptionsController;
     }
     if (selectedTab == iScoredSubscriptionsTab) {
       return iScoredSubscriptionsController;

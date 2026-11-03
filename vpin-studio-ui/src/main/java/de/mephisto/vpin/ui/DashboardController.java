@@ -38,10 +38,8 @@ public class DashboardController implements Initializable, StudioFXController, C
   private VBox widgetCompetition;
 
   private WidgetCompetitionController offlineCompetitionWidgetController;
-  private WidgetCompetitionController discordCompetitionWidgetController;
   private WidgetLatestScoresController latestScoresController;
   private WidgetPlayerRankController playerRankController;
-  private BorderPane discordCompetitionsRoot;
 
   // Add a public no-args constructor
   public DashboardController() {
@@ -77,21 +75,6 @@ public class DashboardController implements Initializable, StudioFXController, C
 //    catch (IOException e) {
 //      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
 //    }
-//
-//    try {
-//      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
-      //loader.setResources(Messages.getBundle());
-//      discordCompetitionsRoot = loader.load();
-//      discordCompetitionsRoot.setMaxWidth(Double.MAX_VALUE);
-//      discordCompetitionWidgetController = loader.getController();
-//      widgetCompetition.getChildren().add(discordCompetitionsRoot);
-//      discordCompetitionWidgetController.setCompact();
-//      discordCompetitionWidgetController.setCompetitionType(CompetitionType.DISCORD);
-//    discordCompetitionsRoot.managedProperty().bindBidirectional(discordCompetitionsRoot.visibleProperty());
-//    }
-//    catch (IOException e) {
-//      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
-//    }
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetPlayerRankController.class.getResource("widget-player-rank.fxml"));
@@ -110,16 +93,11 @@ public class DashboardController implements Initializable, StudioFXController, C
 
   private void refreshView() {
     Platform.runLater(() -> {
-//      discordCompetitionsRoot.setVisible(Studio.stage.getHeight() > 1000);
       latestScoresController.refresh();
       playerRankController.refresh();
 
 //      CompetitionRepresentation c = client.getActiveCompetition(CompetitionType.OFFLINE);
 //      offlineCompetitionWidgetController.refresh(c);
-//      if (discordCompetitionsRoot.isVisible()) {
-//        c = client.getActiveCompetition(CompetitionType.DISCORD);
-//        discordCompetitionWidgetController.refresh(c);
-//      }
       NavigationController.setBreadCrumb(List.of(Messages.get("navigation.dashboard")));
     });
   }

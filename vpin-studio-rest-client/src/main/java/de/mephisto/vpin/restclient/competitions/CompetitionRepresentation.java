@@ -306,20 +306,9 @@ public class CompetitionRepresentation {
         return clone;
     }
 
-    public boolean isValid() {
-        if (getType() != null && getType().equals(CompetitionType.DISCORD.name())) {
-            return discordServerId > 0 && discordChannelId > 0;
-        }
-        return true;
-    }
-
     public boolean isActive() {
         if (!StringUtils.isEmpty(getWinnerInitials())) {
             return false;
-        }
-
-        if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
-            return true;
         }
 
         if (getType().equals(CompetitionType.ISCORED.name())) {
@@ -335,9 +324,6 @@ public class CompetitionRepresentation {
     }
 
     public boolean isPlanned() {
-        if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
-            return false;
-        }
         if (getType().equals(CompetitionType.ISCORED.name())) {
             return false;
         }

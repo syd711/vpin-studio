@@ -56,7 +56,7 @@ public class CompetitionIdUpdaterTest {
   @Test
   void isCompeted_returnsTrue_whenTourneyIdMatchesLocalCompetition() {
     Competition competition = new Competition();
-    competition.setType("SUBSCRIPTION");
+    competition.setType("ISCORED");
     String expectedId = CompetitionIdFactory.createId(competition, true);
 
     TableDetails td = new TableDetails();
@@ -80,10 +80,10 @@ public class CompetitionIdUpdaterTest {
   @Test
   void isCompeted_returnsFalse_whenTourneyIdDoesNotMatchAnyCompetition() {
     Competition competition = new Competition();
-    competition.setType("SUBSCRIPTION");
+    competition.setType("ISCORED");
 
     TableDetails td = new TableDetails();
-    td.setTourneyId("vps://competition/subscription/local/9999");
+    td.setTourneyId("vps://competition/iscored/local/9999");
 
     // competition uses default id (null -> 0), so the id won't be 9999
     assertFalse(competitionIdUpdater.isCompeted(td, Collections.singletonList(competition), true));

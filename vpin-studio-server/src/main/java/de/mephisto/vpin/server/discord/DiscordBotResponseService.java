@@ -11,7 +11,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -44,8 +43,6 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
   @Autowired
   private DiscordService discordService;
 
-  @Autowired
-  private HighscoreParsingService highscoreParser;
 
   @Override
   public BotCommandResponse onBotCommand(BotCommand cmd) {
@@ -71,16 +68,9 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
 
           Game game = gameService.getGame(activeCompetition.getGameId());
           if (game != null) {
-            if (activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
-              ScoreSummary scoreSummary = discordService.getScoreSummary(highscoreParser, activeCompetition.getUuid(), activeCompetition.getDiscordServerId(), activeCompetition.getDiscordChannelId());
-              String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, scoreSummary);
-              builder.append(msg);
-            }
-            else {
-              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game);
-              String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
-              builder.append(msg);
-            }
+            ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game);
+            String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
+            builder.append(msg);
           }
         }
 
@@ -145,9 +135,8 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
         Player player = playerService.getPlayerForInitials(cmd.getServerId(), cmd.getParameter());
         if (player != null) {
           List<Competition> offlineCompetitions = competitionService.getWonCompetitions(CompetitionType.OFFLINE, player.getInitials());
-          List<Competition> onlineCompetitions = competitionService.getWonCompetitions(CompetitionType.DISCORD, player.getInitials());
           ScoreSummary highscores = highscoreService.getAllHighscoresForPlayer(cmd.getServerId(), cmd.getParameter());
-          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(gameService, player, highscores, offlineCompetitions, onlineCompetitions);
+          return () -> DiscordBotCommandResponseFactory.createRanksMessageFor(gameService, player, highscores, offlineCompetitions);
         }
         return () -> "No player found with initials '" + cmd.getParameter().toUpperCase() + "'";
       }

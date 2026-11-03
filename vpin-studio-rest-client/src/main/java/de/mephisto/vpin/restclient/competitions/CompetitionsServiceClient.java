@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.wovp.ScoreSubmit;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -55,24 +54,12 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "discord/permissions/competitions/managechannel/" + serverId, Boolean.class);
   }
 
-  public boolean hasJoinPermissions(long serverId, long channelId) {
-    return getRestClient().get(API + "discord/permissions/competitions/join/" + serverId + "/" + channelId, Boolean.class);
-  }
-
   public CompetitionRepresentation getCompetitionByUuid(String uuid) {
     return getRestClient().get(API + "competitions/competition/" + uuid, CompetitionRepresentation.class);
   }
 
   public List<CompetitionRepresentation> getOfflineCompetitions() {
     return Arrays.asList(getRestClient().get(API + "competitions/offline", CompetitionRepresentation[].class));
-  }
-
-  public List<PlayerRepresentation> getDiscordCompetitionPlayers(long competitionId) {
-    return Arrays.asList(getRestClient().get(API + "competitions/players/" + competitionId, PlayerRepresentation[].class));
-  }
-
-  public List<CompetitionRepresentation> getDiscordCompetitions() {
-    return Arrays.asList(getRestClient().get(API + "competitions/discord", CompetitionRepresentation[].class));
   }
 
   public List<CompetitionRepresentation> getWeeklyCompetitions() {
@@ -85,10 +72,6 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
   public List<CompetitionScore> getWeeklyCompetitionScores(String uuid) {
     return Arrays.asList(getRestClient().get(API + "competitions/weekly/scores/" + uuid, CompetitionScore[].class));
-  }
-
-  public List<CompetitionRepresentation> getSubscriptions() {
-    return Arrays.asList(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
   }
 
 

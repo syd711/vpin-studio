@@ -53,10 +53,6 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   public void competitionCreated(@NonNull Competition competition) {
     CompetitionType type = CompetitionType.valueOf(competition.getType());
     switch (type) {
-      case SUBSCRIPTION: {
-        setGamesTournamentId(competition);
-        break;
-      }
       case ISCORED: {
         IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
         if (Features.ISCORED_ENABLED && iScoredSettings.isEnabled()) {
