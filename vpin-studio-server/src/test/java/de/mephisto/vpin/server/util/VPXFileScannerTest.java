@@ -130,6 +130,36 @@ public class VPXFileScannerTest {
     f.delete();
   }
 
+  /**
+   * Black Hole (Gottlieb 1981) selects its ROM with single line If statements,
+   * only the one matching the RomSet option must be taken.
+   */
+  @Test
+  public void testSingleLineIfRomSelector() throws IOException {
+    for (int romSet : new int[]{1, 2, 5, 6}) {
+      String script = """
+          RomSet = %d
+          If RomSet = 1 then cGameName="blckhole":DisplayTimer6.Enabled = true  End If
+          If RomSet = 2 then cGameName="blkhole2":DisplayTimer6.Enabled = true  End If
+          If RomSet = 5 then cGameName="blkhole7":DisplayTimer7.Enabled = true End If
+          If RomSet = 6 then cGameName="blkhol7s":DisplayTimer7.Enabled = true End If
+          Sub Table1_Init
+            With Controller
+              .GameName = cGameName
+            End With
+          End Sub
+          """.formatted(romSet);
+      String expected = switch (romSet) {
+        case 1 -> "blckhole";
+        case 2 -> "blkhole2";
+        case 5 -> "blkhole7";
+        default -> "blkhol7s";
+      };
+
+      ScanResult result = new ScanResult();
+      VPXFileScanner.scanLines(new File("test.vpx"), scripts, result, script);
+      assertEquals(expected, result.getRom(), "RomSet " + romSet);
+      assertEquals(expected, result.getGameName(), "RomSet " + romSet);
+    }
+  }
 }
-
-

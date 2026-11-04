@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.math.BigDecimal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,7 +64,10 @@ public class VPXFileScanner {
       "^\\s*(?:Dim\\s+)?\\w*music\\w*(?:dir|folder|path)\\w*\\s*=\\s*(?:[\\w.()]+\\s*&\\s*)?\"([^\"]+)\"\\s*(?:'.*)?$",
       Pattern.CASE_INSENSITIVE);
 
-  private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
+  private static final Pattern SINGLE_LINE_IF_PATTERN = Pattern.compile("If\\s+(.+?)\\s+Then\\s+(.+)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern END_IF_SUFFIX_PATTERN = Pattern.compile("(?:^|\\s)End\\s+If$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern CONDITION_PATTERN = Pattern.compile("\\(?\\s*(\\w+)\\s*(=|<>)\\s*([^()]+?)\\s*\\)?");
+  private static final Pattern VAR_PATTERN =Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
 
   /**
    * all lower case !
@@ -377,6 +381,9 @@ public class VPXFileScanner {
     String prevLine = "";
     for (String fulline : allLines) {
       String[] statements = stripComments(fulline);
+      if (prevLine.isEmpty()) {
+        statements = applySingleLineIf(statements, evalctxt);
+      }
       for (String statement : statements) {
         if (statement.endsWith("_")) {
           prevLine += statement.substring(0, statement.length() - 1) + " ";
@@ -444,7 +451,135 @@ public class VPXFileScanner {
     return allLines;
   }
 
-  private static void detectLine(ScanResult result, List<String> includedScripts, EvaluationContext evalctxt, int nbline, String line) {
+  /**
+   * Resolve a single line If statement, e.g. used as ROM selector:
+   * <pre>If RomSet = 2 then cGameName="blkhole2":DisplayTimer6.Enabled = true End If</pre>
+   * When the condition can be evaluated, only the statements of the matching branch are returned.
+   * When it cannot, the statements of the Then branch are returned, as the scanner did before.
+   */
+  static String[] applySingleLineIf(String[] statements, EvaluationContext evalctxt) {
+    if (statements.length == 0 || statements[statements.length - 1].endsWith("_")) {
+      return statements;
+    }
+    Matcher matcher = SINGLE_LINE_IF_PATTERN.matcher(statements[0]);
+    if (!matcher.matches()) {
+      return statements;
+    }
+
+    List<String> thenPart = new ArrayList<>();
+    List<String> elsePart = new ArrayList<>();
+    List<String> current = thenPart;
+    List<String> body = new ArrayList<>();
+    body.add(matcher.group(2));
+    body.addAll(Arrays.asList(statements).subList(1, statements.length));
+    for (String statement : body) {
+      statement = END_IF_SUFFIX_PATTERN.matcher(statement).replaceFirst("").trim();
+      int elseIdx = indexOfKeyword(statement, "Else");
+      if (elseIdx >= 0 && current == thenPart) {
+        addStatement(thenPart, statement.substring(0, elseIdx));
+        current = elsePart;
+        statement = statement.substring(elseIdx + "Else".length());
+      }
+      addStatement(current, statement);
+    }
+
+    Boolean condition = evaluateCondition(matcher.group(1), evalctxt);
+    List<String> selected = Boolean.FALSE.equals(condition) ? elsePart : thenPart;
+    return selected.toArray(new String[0]);
+  }
+
+  private static void addStatement(List<String> statements, String statement) {
+    statement = statement.trim();
+    if (!statement.isEmpty()) {
+      statements.add(statement);
+    }
+  }
+
+  /**
+   * @return the index of the keyword as a whole word outside a string, -1 if not found
+   */
+  private static int indexOfKeyword(String statement, String keyword) {
+    boolean inString = false;
+    for (int i = 0; i < statement.length(); i++) {
+      char c = statement.charAt(i);
+      if (c == '"') {
+        inString = !inString;
+      }
+      else if (!inString && statement.regionMatches(true, i, keyword, 0, keyword.length())) {
+        boolean startOk = i == 0 || !Character.isLetterOrDigit(statement.charAt(i - 1)) && statement.charAt(i - 1) != '_';
+        int end = i + keyword.length();
+        boolean endOk = end == statement.length() || !Character.isLetterOrDigit(statement.charAt(end)) && statement.charAt(end) != '_';
+        if (startOk && endOk) {
+          return i;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Evaluate simple conditions like <code>RomSet = 2</code>, <code>Mode &lt;&gt; "abc"</code>
+   * @return null when the condition cannot be evaluated
+   */
+  static Boolean evaluateCondition(String condition, EvaluationContext evalctxt) {
+    Matcher matcher = CONDITION_PATTERN.matcher(condition.trim());
+    if (!matcher.matches()) {
+      return null;
+    }
+    Object left = evalctxt.getVarValue(matcher.group(1));
+    Object right = evaluateOperand(matcher.group(3).trim(), evalctxt);
+    if (left == null || right == null) {
+      return null;
+    }
+
+    boolean equals;
+    BigDecimal leftNumber = toNumber(left);
+    BigDecimal rightNumber = toNumber(right);
+    if (leftNumber != null && rightNumber != null) {
+      equals = leftNumber.compareTo(rightNumber) == 0;
+    }
+    else {
+      equals = left.toString().equalsIgnoreCase(right.toString());
+    }
+    return "=".equals(matcher.group(2)) == equals;
+  }
+
+  private static Object evaluateOperand(String operand, EvaluationContext evalctxt) {
+    if (operand.length() >= 2 && operand.startsWith("\"") && operand.endsWith("\"")) {
+      return operand.substring(1, operand.length() - 1).replace("\"\"", "\"");
+    }
+    if (operand.equalsIgnoreCase("true") || operand.equalsIgnoreCase("false")) {
+      return Boolean.valueOf(operand);
+    }
+    BigDecimal number = toNumber(operand);
+    if (number != null) {
+      return number;
+    }
+    if (operand.matches("\\w+")) {
+      return evalctxt.getVarValue(operand);
+    }
+    return null;
+  }
+
+  private static BigDecimal toNumber(Object value) {
+    if (value instanceof BigDecimal bd) {
+      return bd;
+    }
+    if (value instanceof Number n) {
+      return new BigDecimal(n.toString());
+    }
+    if (value instanceof String s) {
+      try {
+        return new BigDecimal(s.trim());
+      }
+      catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  private static void detectLine(ScanResult result,List<String> includedScripts, EvaluationContext evalctxt, int nbline, String line) {
     try {
       lineDetectWith(line, evalctxt);
       lineEvaluateVars(line, evalctxt);

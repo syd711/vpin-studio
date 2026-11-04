@@ -1418,10 +1418,18 @@ public class BackglassService implements InitializingBean {
   }
 
   public String setScreenResFrame(int emulatorId, String b2sFilename, String screenName, InputStream is) throws IOException {
+    if (StringUtils.isEmpty(screenName)) {
+      LOG.error("No frame filename given for {}", b2sFilename);
+      return null;
+    }
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     File frameFolder = new File(emulator.getGamesDirectory(), "_Frames");
     if (frameFolder.exists() || is != null && frameFolder.mkdir()) {
-      File frameFile = new File(frameFolder, screenName);
+      // The _Frames folder is shared by all tables of the emulator, so the stored name must be table specific.
+      // Otherwise uploading a frame with the same original filename for another table overwrites this one.
+      String tableName = FilenameUtils.getBaseName(b2sFilename);
+      String frameName = StringUtils.startsWithIgnoreCase(screenName, tableName) ? screenName : tableName + " " + screenName;
+      File frameFile = new File(frameFolder, frameName);
       Files.deleteIfExists(frameFile.toPath());
       if (is != null) {
         try (FileOutputStream out = new FileOutputStream(frameFile)) {
