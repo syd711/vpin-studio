@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatchProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatcher;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMatcher.MatchMode;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMode;
+import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportMoveStructure;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.bulk.BulkImportScanProgressModel;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -66,7 +67,9 @@ public class BulkImporterController implements Initializable, DialogController {
   private static final int PREVIEW_CACHE_SIZE = 300;
   private static final String MOVE_ENABLED = "bulkImporterMoveEnabled";
   private static final String MOVE_TARGET = "bulkImporterMoveTarget";
+  // legacy setting, replaced by MOVE_STRUCTURE
   private static final String MOVE_KEEP_STRUCTURE = "bulkImporterMoveKeepStructure";
+  private static final String MOVE_STRUCTURE = "bulkImporterMoveStructure";
   private static final String EMULATOR_ID = "bulkImporterEmulatorId";
 
   @FXML
@@ -97,6 +100,8 @@ public class BulkImporterController implements Initializable, DialogController {
   private RadioButton moveFlatRadio;
   @FXML
   private RadioButton moveKeepStructureRadio;
+  @FXML
+  private RadioButton moveTableFolderRadio;
   @FXML
   private ToggleGroup moveStructureGroup;
   @FXML
@@ -337,13 +342,13 @@ public class BulkImporterController implements Initializable, DialogController {
   private void initMoveSettings() {
     moveCheck.setSelected(Boolean.parseBoolean(LocalUISettings.getString(MOVE_ENABLED)));
     moveTargetField.setText(StringUtils.defaultString(LocalUISettings.getString(MOVE_TARGET)));
-    boolean keepStructure = Boolean.parseBoolean(LocalUISettings.getString(MOVE_KEEP_STRUCTURE));
-    moveStructureGroup.selectToggle(keepStructure ? moveKeepStructureRadio : moveFlatRadio);
+    moveStructureGroup.selectToggle(getStructureRadio(loadMoveStructure()));
 
     moveTargetField.disableProperty().bind(moveCheck.selectedProperty().not());
     moveTargetBtn.disableProperty().bind(moveCheck.selectedProperty().not());
     moveFlatRadio.disableProperty().bind(moveCheck.selectedProperty().not());
     moveKeepStructureRadio.disableProperty().bind(moveCheck.selectedProperty().not());
+    moveTableFolderRadio.disableProperty().bind(moveCheck.selectedProperty().not());
 
     moveCheck.selectedProperty().addListener((obs, o, n) -> LocalUISettings.saveProperty(MOVE_ENABLED, String.valueOf(n)));
     moveStructureGroup.selectedToggleProperty().addListener((obs, old, toggle) -> {
@@ -351,8 +356,42 @@ public class BulkImporterController implements Initializable, DialogController {
         old.setSelected(true); // one structure option is always active
         return;
       }
-      LocalUISettings.saveProperty(MOVE_KEEP_STRUCTURE, String.valueOf(toggle == moveKeepStructureRadio));
+      LocalUISettings.saveProperty(MOVE_STRUCTURE, getMoveStructure().name());
     });
+  }
+
+  private static BulkImportMoveStructure loadMoveStructure() {
+    String value = LocalUISettings.getString(MOVE_STRUCTURE);
+    if (StringUtils.isNotBlank(value)) {
+      try {
+        return BulkImportMoveStructure.valueOf(value);
+      }
+      catch (IllegalArgumentException e) {
+        LOG.warn("Unknown bulk importer move structure \"{}\"", value);
+      }
+    }
+    return Boolean.parseBoolean(LocalUISettings.getString(MOVE_KEEP_STRUCTURE)) ? BulkImportMoveStructure.KEEP_STRUCTURE : BulkImportMoveStructure.FLAT;
+  }
+
+  private RadioButton getStructureRadio(BulkImportMoveStructure structure) {
+    switch (structure) {
+      case KEEP_STRUCTURE:
+        return moveKeepStructureRadio;
+      case TABLE_FOLDER:
+        return moveTableFolderRadio;
+      default:
+        return moveFlatRadio;
+    }
+  }
+
+  private BulkImportMoveStructure getMoveStructure() {
+    if (moveKeepStructureRadio.isSelected()) {
+      return BulkImportMoveStructure.KEEP_STRUCTURE;
+    }
+    if (moveTableFolderRadio.isSelected()) {
+      return BulkImportMoveStructure.TABLE_FOLDER;
+    }
+    return BulkImportMoveStructure.FLAT;
   }
 
   private static StringConverter<BulkImportMode> modeConverter() {
@@ -824,7 +863,7 @@ public class BulkImporterController implements Initializable, DialogController {
       WidgetFactory.showAlert(getStage(), Messages.get("bulk_importer.move_target_missing"));
       return;
     }
-    boolean keepStructure = moveKeepStructureRadio.isSelected();
+    BulkImportMoveStructure structure = getMoveStructure();
     long overwrites = selection.stream().filter(i -> i.modeProperty().get() == BulkImportMode.OVERWRITE).count();
     if (overwrites > 0) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(getStage(), Messages.get("bulk_importer.confirm_overwrite", overwrites, selection.size()));
@@ -832,16 +871,19 @@ public class BulkImporterController implements Initializable, DialogController {
         return;
       }
     }
-    logImportParameters(selection, moveTarget, keepStructure, overwrites);
+    logImportParameters(selection, moveTarget, structure, overwrites);
+    // the table folders are matched against all tables, so a folder is not used for a similar named table
+    BulkImportMatcher folderMatcher = matcher;
+    double minScore = scoreSlider.getValue();
     Stage stage = getStage();
     stage.close();
-    Platform.runLater(() -> ProgressDialog.createProgressDialog(new BulkImportProgressModel(selection, moveTarget, keepStructure)));
+    Platform.runLater(() -> ProgressDialog.createProgressDialog(new BulkImportProgressModel(selection, moveTarget, structure, folderMatcher, minScore)));
   }
 
-  private void logImportParameters(List<BulkImportItem> selection, File moveTarget, boolean keepStructure, long overwrites) {
+  private void logImportParameters(List<BulkImportItem> selection, File moveTarget, BulkImportMoveStructure structure, long overwrites) {
     GameEmulatorRepresentation emulator = emulatorCombo.getValue();
     LOG.info("Bulk import started: sourceFolder=\"{}\", recursive={}, emulator={}, matchMode={}, minScore={}%, "
-            + "detectScreen={}, defaultScreen={}, defaultMode={}, moveFiles={}, moveTarget=\"{}\", keepStructure={}, "
+            + "detectScreen={}, defaultScreen={}, defaultMode={}, moveFiles={}, moveTarget=\"{}\", moveStructure={}, "
             + "files={}/{}, overwrites={}",
         sourceFolder != null ? sourceFolder.getAbsolutePath() : null,
         recursiveCheck.isSelected(),
@@ -853,7 +895,7 @@ public class BulkImporterController implements Initializable, DialogController {
         defaultModeCombo.getValue(),
         moveCheck.isSelected(),
         moveTarget != null ? moveTarget.getAbsolutePath() : null,
-        keepStructure,
+        structure,
         selection.size(), items.size(),
         overwrites);
     for (BulkImportItem item : selection) {

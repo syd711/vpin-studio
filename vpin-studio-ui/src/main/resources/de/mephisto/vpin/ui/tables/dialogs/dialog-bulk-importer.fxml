@@ -160,6 +160,11 @@
                                           <Tooltip prefWidth="300.0" text="%bulk_importer.move_keep_structure_tooltip" wrapText="true" />
                                        </tooltip>
                                     </RadioButton>
+                                    <RadioButton fx:id="moveTableFolderRadio" mnemonicParsing="false" styleClass="default-text" text="%bulk_importer.move_table_folder" toggleGroup="$moveStructureGroup">
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="%bulk_importer.move_table_folder_tooltip" wrapText="true" />
+                                       </tooltip>
+                                    </RadioButton>
                                  </children>
                               </HBox>
                               <Label styleClass="default-title" text="%bulk_importer.title_post_processing" GridPane.columnSpan="2" />
