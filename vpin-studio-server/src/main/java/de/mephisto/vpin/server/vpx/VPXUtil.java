@@ -220,22 +220,55 @@ public class VPXUtil {
   }
 
   static List<String> vpxToolCommand(@NonNull String command, @NonNull File vpxFile, @NonNull File resourcesFolder, boolean windows) {
-    if (windows) {
-      // runs through cmd.exe, which needs the quotes
-      return Arrays.asList(VPX_TOOL_EXE, command, "\"" + vpxFile.getAbsolutePath() + "\"");
+    return vpxToolCommand(resourcesFolder, windows, command, vpxFile);
+  }
+
+  /**
+   * @param args the vpxtool arguments, {@link File} arguments are passed as absolute paths
+   */
+  static List<String> vpxToolCommand(@NonNull File resourcesFolder, boolean windows, @NonNull Object... args) {
+    List<String> cmds = new ArrayList<>();
+    // executed directly outside Windows: the executable needs an absolute path
+    cmds.add(windows ? VPX_TOOL_EXE : new File(resourcesFolder, VPX_TOOL).getAbsolutePath());
+    for (Object arg : args) {
+      if (arg instanceof File file) {
+        // cmd.exe needs the quotes, when executed directly they would become part of the argument
+        cmds.add(windows ? "\"" + file.getAbsolutePath() + "\"" : file.getAbsolutePath());
+      }
+      else {
+        cmds.add(String.valueOf(arg));
+      }
     }
-    // executed directly: the executable needs an absolute path, and quotes would become part of the argument
-    return Arrays.asList(new File(resourcesFolder, VPX_TOOL).getAbsolutePath(), command, vpxFile.getAbsolutePath());
+    return cmds;
+  }
+
+  /**
+   * Runs vpxtool with the given arguments and waits for it to finish.
+   * Note that the exit code is not available, callers have to check the generated files.
+   *
+   * @param args the vpxtool arguments, {@link File} arguments are passed as absolute paths
+   * @return the error output of the command, empty if there was none
+   */
+  @NonNull
+  public static String runVpxTool(@NonNull Object... args) throws Exception {
+    SystemCommandExecutor executor = vpxTool(args);
+    executor.executeCommand();
+    StringBuilder err = executor.getStandardErrorFromCommand();
+    return err != null ? err.toString().trim() : "";
   }
 
   private static SystemCommandExecutor vpxTool(@NonNull String command, @NonNull File vpxFile) {
+    return vpxTool(new Object[]{command, vpxFile});
+  }
+
+  private static SystemCommandExecutor vpxTool(@NonNull Object... args) {
     File resourcesFolder = new File("./resources");
     boolean windows = OSUtil.isWindows();
     if (!windows && !new File(resourcesFolder, VPX_TOOL).canExecute()) {
       LOG.error("{} not found in {}, install the release for this platform from https://github.com/francisdb/vpxtool/releases",
           VPX_TOOL, resourcesFolder.getAbsolutePath());
     }
-    List<String> cmds = vpxToolCommand(command, vpxFile, resourcesFolder, windows);
+    List<String> cmds = vpxToolCommand(resourcesFolder, windows, args);
     LOG.info("vpxtool CMD: {}", String.join(" ", cmds));
     SystemCommandExecutor executor = new SystemCommandExecutor(cmds, windows);
     executor.setDir(resourcesFolder);
