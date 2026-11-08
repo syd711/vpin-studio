@@ -38,6 +38,11 @@ public class GameController {
         return;
       }
 
+      LOG.info("GameController resolved {} controller(s):", filteredControllers.size());
+      for (Controller controller : filteredControllers) {
+        LOG.info("  - '{}' (type: {}, port: {}, components: {})", controller.getName(), controller.getType(), controller.getPortType(), controller.getComponents().length);
+      }
+
       LOG.info("Starting GameController");
       Event event = new Event();
       while (running) {
