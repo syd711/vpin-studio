@@ -5,7 +5,11 @@ import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallenge;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallengeOptOut;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallengesResponse;
+import de.mephisto.vpin.connectors.mania.model.DiscordServer;
 import de.mephisto.vpin.connectors.mania.model.User;
+import de.mephisto.vpin.restclient.mania.ManiaChallengeEntry;
+import de.mephisto.vpin.restclient.mania.ManiaChallengeParticipation;
+import de.mephisto.vpin.restclient.mania.ManiaChallengesResult;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -24,6 +28,7 @@ import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -79,14 +85,105 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
   private HighscoreService highscoreService;
 
   public synchronized boolean synchronizeChallenges(boolean forceReload) {
+    return doSynchronize(forceReload) != null;
+  }
+
+  /**
+   * Synchronizes the challenges and returns them together with the state of their competitions. The result is built
+   * from the same VPin Mania response the synchronization used, so it shows exactly what has been synchronized.
+   */
+  public synchronized ManiaChallengesResult getChallenges(boolean forceReload) {
+    ManiaChallengesResult result = new ManiaChallengesResult();
+    SyncData syncData = doSynchronize(forceReload);
+    if (syncData == null || syncData.response() == null) {
+      result.setError("VPin Mania challenges could not be loaded, check the server log for details.");
+      return result;
+    }
+
+    DiscordChallengesResponse response = syncData.response();
+    result.setParticipating(syncData.participating());
+    if (response.getOptOuts() != null) {
+      result.setOptOuts(response.getOptOuts());
+    }
+
+    try {
+      List<DiscordServer> servers = syncData.maniaClient().getDiscordChallengeClient().getServers();
+      if (servers != null) {
+        result.setServers(servers);
+      }
+    }
+    catch (Exception e) {
+      // only used to resolve the server and channel names
+      LOG.warn("Failed to load Discord servers of VPin Mania user: {}", e.getMessage());
+    }
+
+    List<Competition> challengeCompetitions = competitionService.getManiaChallengeCompetitions();
+    for (DiscordChallenge challenge : response.getChallenges()) {
+      ManiaChallengeEntry entry = new ManiaChallengeEntry();
+      entry.setChallenge(challenge);
+
+      String challengeId = String.valueOf(challenge.getId());
+      Optional<Competition> competition = challengeCompetitions.stream().filter(c -> challengeId.equals(c.getUuid())).findFirst();
+      if (competition.isPresent()) {
+        // the competition is the source of truth, its game has the competition id and so is part of the playlist
+        entry.setCompetitionId(competition.get().getId());
+        entry.setGameId(competition.get().getGameId());
+        entry.setIssues(competition.get().getIssues());
+      }
+      else if (!StringUtils.isEmpty(challenge.getVpsTableId())) {
+        // inactive challenge, the game is only resolved for the display
+        List<Game> matches = findMatchingGames(challenge.getVpsTableId(), challenge.getVpsVersionId());
+        if (!matches.isEmpty()) {
+          entry.setGameId(matches.getFirst().getId());
+        }
+      }
+
+      if (entry.getGameId() < 0) {
+        entry.setVersionMismatchGameId(findVersionMismatchGameId(challenge));
+      }
+      result.getChallenges().add(entry);
+    }
+    return result;
+  }
+
+  /**
+   * Opts in or out of the challenges of a Discord server or channel and synchronizes the challenges right away,
+   * so that the tables of the affected challenges are updated immediately.
+   */
+  public synchronized ManiaChallengesResult updateParticipation(@NonNull ManiaChallengeParticipation participation) throws Exception {
+    VPinManiaClient maniaClient = maniaService.getClient();
+    if (maniaClient == null) {
+      throw new IllegalStateException("VPin Mania client not available");
+    }
+
+    if (participation.isOptOut()) {
+      maniaClient.getDiscordChallengeClient().optOut(participation.getGuildId(), participation.getChannelId());
+    }
+    else {
+      maniaClient.getDiscordChallengeClient().optIn(participation.getGuildId(), participation.getChannelId());
+    }
+    LOG.info("Updated VPin Mania challenge participation for guild {}, channel {}: opt-out={}", participation.getGuildId(), participation.getChannelId(), participation.isOptOut());
+    return getChallenges(false);
+  }
+
+  private record SyncData(@NonNull VPinManiaClient maniaClient, @Nullable DiscordChallengesResponse response, boolean participating) {
+  }
+
+  /**
+   * @return null if VPin Mania is not available or the synchronization failed
+   */
+  @Nullable
+  private SyncData doSynchronize(boolean forceReload) {
     try {
       LOG.info("------------------------------- MANIA CHALLENGES SYNC -----------------------------------------------");
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       VPinManiaClient maniaClient = maniaService.getClient();
       if (Features.MANIA_ENABLED && maniaClient != null && !StringUtils.isEmpty(maniaSettings.getApiKey()) && !StringUtils.isEmpty(maniaSettings.getCabinetUuid())) {
         DiscordChallengesResponse response = maniaClient.getDiscordChallengeClient().getChallenges();
+        boolean participating = true;
         if (response != null) {
-          List<DiscordChallenge> challenges = getActiveChallenges(maniaClient, response);
+          participating = isParticipating(maniaClient);
+          List<DiscordChallenge> challenges = getActiveChallenges(response, participating);
           List<Competition> challengeCompetitions = competitionService.getManiaChallengeCompetitions();
           for (DiscordChallenge challenge : challenges) {
             LOG.info("------------------------------> Sync of {}", challenge.getTableName());
@@ -96,7 +193,7 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
           runCompetitionCleanupCheck(challenges, challengeCompetitions);
           runGameCleanupCheck();
         }
-        return true;
+        return new SyncData(maniaClient, response, participating);
       }
     }
     catch (Exception e) {
@@ -105,7 +202,22 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
     finally {
       LOG.info("------------------------------- /MANIA CHALLENGES SYNC ----------------------------------------------");
     }
-    return false;
+    return null;
+  }
+
+  /**
+   * The server only assigns games of the exact table version of a challenge, as the scores of other versions do not
+   * count for it. Another installed version is reported, so that the user can fix the VPS mapping or install the table.
+   */
+  private int findVersionMismatchGameId(@NonNull DiscordChallenge challenge) {
+    if (StringUtils.isEmpty(challenge.getVpsTableId()) || StringUtils.isEmpty(challenge.getVpsVersionId())) {
+      return -1;
+    }
+    return gameService.getGamesByVpsTableId(challenge.getVpsTableId(), null).stream()
+        .filter(g -> !challenge.getVpsVersionId().equals(g.getExtTableVersionId()))
+        .map(Game::getId)
+        .findFirst()
+        .orElse(-1);
   }
 
   /**
@@ -125,7 +237,7 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
       if (Features.MANIA_ENABLED && maniaClient != null && !StringUtils.isEmpty(maniaSettings.getApiKey()) && !StringUtils.isEmpty(maniaSettings.getCabinetUuid())) {
         DiscordChallengesResponse response = maniaClient.getDiscordChallengeClient().getChallenges();
         if (response != null) {
-          activeChallengeIds = getActiveChallenges(maniaClient, response).stream().map(c -> String.valueOf(c.getId())).toList();
+          activeChallengeIds = getActiveChallenges(response, isParticipating(maniaClient)).stream().map(c -> String.valueOf(c.getId())).toList();
         }
       }
 
@@ -150,10 +262,10 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
     }
   }
 
-  private List<DiscordChallenge> getActiveChallenges(@NonNull VPinManiaClient maniaClient, @NonNull DiscordChallengesResponse response) {
-    boolean participating = isParticipating(maniaClient);
+  private List<DiscordChallenge> getActiveChallenges(@NonNull DiscordChallengesResponse response, boolean participating) {
+    Instant now = Instant.now();
     return response.getChallenges().stream()
-        .filter(c -> participating && c.isRunning() && !isOptedOut(c, response.getOptOuts()))
+        .filter(c -> participating && c.isRunning() && !isExpired(c, now) && !isOptedOut(c, response.getOptOuts()))
         .collect(Collectors.toList());
   }
 
@@ -169,6 +281,13 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
       LOG.warn("Failed to load VPin Mania user settings: {}", e.getMessage());
     }
     return true;
+  }
+
+  /**
+   * The challenge state on VPin Mania may lag behind its end date, so the end date is checked too.
+   */
+  private static boolean isExpired(@NonNull DiscordChallenge challenge, @NonNull Instant now) {
+    return challenge.getEndsAt() != null && !challenge.getEndsAt().toInstant().isAfter(now);
   }
 
   private static boolean isOptedOut(@NonNull DiscordChallenge challenge, @NonNull List<DiscordChallengeOptOut> optOuts) {
@@ -258,13 +377,16 @@ public class ManiaChallengeCompetitionSynchronizer implements InitializingBean {
         competition.setGameId(game.getId());
         LOG.info("Applying game \"{}\" for VPin Mania challenge \"{}\"", game.getGameDisplayName(), challenge.getTableName());
 
-        //the highscore is only reset once, when the table starts participating in the challenge
-        if (competition.isHighscoreReset() && previousGameId != game.getId()) {
+        //the highscore is only reset once per challenge, when a table is matched for the first time,
+        //so a table that drops out of the matching and comes back (or a re-match on another table) keeps its scores.
+        //Competitions matched before this flag existed have previousGameId == game id and are only marked as done.
+        if (competition.isHighscoreReset() && !competition.isHighscoreResetDone() && previousGameId != game.getId()) {
           if (highscoreBackupService.backup(game) != null) {
             highscoreService.resetHighscore(game);
             LOG.info("Reset highscore of \"{}\" for VPin Mania challenge \"{}\"", game.getGameDisplayName(), challenge.getTableName());
           }
         }
+        competition.setHighscoreResetDone(true);
       }
     }
 

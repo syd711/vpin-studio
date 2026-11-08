@@ -7,6 +7,9 @@ import de.mephisto.vpin.connectors.mania.model.DiscordChallenge;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallengesResponse;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.mania.ManiaChallengeEntry;
+import de.mephisto.vpin.restclient.mania.ManiaChallengesResult;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionIdUpdater;
@@ -14,7 +17,10 @@ import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.junit.jupiter.api.Test;
@@ -24,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +59,10 @@ public class ManiaChallengeCompetitionSynchronizerTest {
   private CompetitionIdUpdater competitionIdUpdater;
   @Mock
   private ManiaService maniaService;
+  @Mock
+  private HighscoreBackupService highscoreBackupService;
+  @Mock
+  private HighscoreService highscoreService;
 
   @InjectMocks
   private ManiaChallengeCompetitionSynchronizer synchronizer;
@@ -178,5 +189,124 @@ public class ManiaChallengeCompetitionSynchronizerTest {
     synchronizer.runFinishedChallengesCheck();
 
     verify(competitionService).delete(5L);
+  }
+
+  // --- highscore reset ---
+
+  private Game matchGame(int id) {
+    Game game = mock(Game.class);
+    lenient().when(game.getId()).thenReturn(id);
+    TableDetails tableDetails = new TableDetails();
+    tableDetails.setStatus(1);
+    when(gameService.getGamesByVpsTableId(eq("vps1"), any())).thenReturn(new ArrayList<>(List.of(game)));
+    when(frontendService.getTableDetails(id)).thenReturn(tableDetails);
+    return game;
+  }
+
+  private Competition existingCompetition(int gameId, boolean resetDone) {
+    Competition competition = new Competition();
+    competition.setId(5L);
+    competition.setUuid("1");
+    competition.setGameId(gameId);
+    competition.setHighscoreResetDone(resetDone);
+    when(competitionService.getManiaChallengeCompetitions()).thenReturn(List.of(competition));
+    return competition;
+  }
+
+  @Test
+  void synchronizeChallenges_resetsHighscore_onFirstMatch() {
+    buildSettings(true, false).setChallengeResetHighscores(true);
+    mockChallengeClient(challenge(1, DiscordChallenge.STATUS_RUNNING));
+    when(competitionService.getManiaChallengeCompetitions()).thenReturn(Collections.emptyList());
+    Game game = matchGame(3);
+    when(highscoreBackupService.backup(game)).thenReturn(new File("backup"));
+
+    assertTrue(synchronizer.synchronizeChallenges(false));
+
+    verify(highscoreService).resetHighscore(game);
+    ArgumentCaptor<Competition> captor = ArgumentCaptor.forClass(Competition.class);
+    verify(competitionService).save(captor.capture());
+    assertTrue(captor.getValue().isHighscoreResetDone());
+  }
+
+  @Test
+  void synchronizeChallenges_doesNotResetHighscore_whenTableIsMatchedAgain() {
+    buildSettings(true, false).setChallengeResetHighscores(true);
+    mockChallengeClient(challenge(1, DiscordChallenge.STATUS_RUNNING));
+    // the table dropped out of the matching (e.g. disabled) after the reset had been applied
+    existingCompetition(-1, true);
+    matchGame(3);
+
+    assertTrue(synchronizer.synchronizeChallenges(false));
+
+    verifyNoInteractions(highscoreBackupService, highscoreService);
+  }
+
+  @Test
+  void synchronizeChallenges_marksLegacyCompetitionAsResetDone_withoutReset() {
+    buildSettings(true, false).setChallengeResetHighscores(true);
+    mockChallengeClient(challenge(1, DiscordChallenge.STATUS_RUNNING));
+    Competition competition = existingCompetition(3, false);
+    matchGame(3);
+
+    assertTrue(synchronizer.synchronizeChallenges(false));
+
+    verifyNoInteractions(highscoreBackupService, highscoreService);
+    assertTrue(competition.isHighscoreResetDone());
+  }
+
+  // --- getChallenges ---
+
+  @Test
+  void getChallenges_returnsError_whenNotRegistered() {
+    buildSettings(false, false);
+    mockChallengeClient();
+
+    ManiaChallengesResult result = synchronizer.getChallenges(false);
+
+    assertNotNull(result.getError());
+    assertTrue(result.getChallenges().isEmpty());
+  }
+
+  @Test
+  void getChallenges_returnsCompetitionStateOfActiveChallenge() {
+    buildSettings(true, false);
+    mockChallengeClient(challenge(1, DiscordChallenge.STATUS_RUNNING));
+    Competition competition = existingCompetition(3, true);
+    competition.setIssues("issue");
+    matchGame(3);
+
+    ManiaChallengesResult result = synchronizer.getChallenges(false);
+
+    assertNull(result.getError());
+    assertEquals(1, result.getChallenges().size());
+    ManiaChallengeEntry entry = result.getChallenges().getFirst();
+    assertEquals(5L, entry.getCompetitionId());
+    assertEquals(3, entry.getGameId());
+    assertEquals(-1, entry.getVersionMismatchGameId());
+  }
+
+  @Test
+  void getChallenges_reportsOtherTableVersion_withoutAssigningIt() {
+    buildSettings(true, false);
+    DiscordChallenge challenge = challenge(1, DiscordChallenge.STATUS_RUNNING);
+    challenge.setVpsVersionId("v2");
+    mockChallengeClient(challenge);
+    when(competitionService.getManiaChallengeCompetitions()).thenReturn(Collections.emptyList());
+    Game otherVersion = mock(Game.class);
+    when(otherVersion.getId()).thenReturn(4);
+    when(otherVersion.getExtTableVersionId()).thenReturn("v1");
+    when(gameService.getGamesByVpsTableId("vps1", "v2")).thenReturn(new ArrayList<>());
+    when(gameService.getGamesByVpsTableId("vps1", null)).thenReturn(new ArrayList<>(List.of(otherVersion)));
+
+    ManiaChallengesResult result = synchronizer.getChallenges(false);
+
+    ArgumentCaptor<Competition> captor = ArgumentCaptor.forClass(Competition.class);
+    verify(competitionService).save(captor.capture());
+    assertEquals(-1, captor.getValue().getGameId());
+
+    ManiaChallengeEntry entry = result.getChallenges().getFirst();
+    assertEquals(-1, entry.getGameId());
+    assertEquals(4, entry.getVersionMismatchGameId());
   }
 }

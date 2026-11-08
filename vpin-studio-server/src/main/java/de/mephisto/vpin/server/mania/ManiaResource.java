@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.mania;
 
+import de.mephisto.vpin.restclient.mania.ManiaChallengeParticipation;
+import de.mephisto.vpin.restclient.mania.ManiaChallengesResult;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
@@ -43,9 +45,14 @@ public class ManiaResource {
     return maniaService.synchronizeTables();
   }
 
-  @GetMapping("/synchronize/challenges")
-  public boolean synchronizeChallenges() {
-    return maniaChallengesService.synchronize(true);
+  @GetMapping("/challenges")
+  public ManiaChallengesResult getChallenges(@RequestParam(value = "forceReload", defaultValue = "false") boolean forceReload) {
+    return maniaChallengesService.getChallenges(forceReload);
+  }
+
+  @PostMapping("/challenges/participation")
+  public ManiaChallengesResult updateChallengeParticipation(@RequestBody ManiaChallengeParticipation participation) throws Exception {
+    return maniaChallengesService.updateParticipation(participation);
   }
 
   @PostMapping("/register")

@@ -35,6 +35,13 @@ public class Competition {
   @Column(name = "highscoreReset", nullable = false, columnDefinition = "boolean default true")
   private boolean highscoreReset;
 
+  /**
+   * Marks that the table of the competition has been matched and so the highscore reset has been applied (if enabled).
+   * Used for synchronized competitions to apply the reset only once.
+   */
+  @Column(name = "highscoreResetDone", nullable = false, columnDefinition = "boolean default false")
+  private boolean highscoreResetDone;
+
   private String uuid = UUID.randomUUID().toString();
 
   private String winnerInitials;
@@ -143,6 +150,14 @@ public class Competition {
 
   public void setHighscoreReset(boolean highscoreReset) {
     this.highscoreReset = highscoreReset;
+  }
+
+  public boolean isHighscoreResetDone() {
+    return highscoreResetDone;
+  }
+
+  public void setHighscoreResetDone(boolean highscoreResetDone) {
+    this.highscoreResetDone = highscoreResetDone;
   }
 
   public String getRom() {

@@ -130,6 +130,41 @@ public class CompetitionIdUpdaterTest {
     assertEquals("", td.getTourneyId());
   }
 
+  // --- competitionCreated / competitionChanged ---
+
+  private Competition maniaChallenge() {
+    Competition competition = new Competition();
+    competition.setId(7L);
+    competition.setGameId(3);
+    competition.setOwner("VPin Mania");
+    competition.setType(CompetitionType.MANIA_CHALLENGE.name());
+    return competition;
+  }
+
+  @Test
+  void competitionCreated_writesIdForManiaChallenge() {
+    TableDetails td = new TableDetails();
+    td.setTourneyId("vps://competition/weekly/remote/1");
+    when(gameMediaService.getTableDetails(3)).thenReturn(td);
+
+    competitionIdUpdater.competitionCreated(maniaChallenge());
+
+    assertEquals("vps://competition/weekly/remote/1,vps://competition/mania_challenge/remote/7", td.getTourneyId());
+    verify(gameMediaService).saveTableDetails(td, 3, false);
+  }
+
+  @Test
+  void competitionChanged_skipsSave_whenIdAlreadyPresent() {
+    TableDetails td = new TableDetails();
+    td.setTourneyId("vps://competition/mania_challenge/remote/7");
+    when(gameMediaService.getTableDetails(3)).thenReturn(td);
+
+    competitionIdUpdater.competitionChanged(maniaChallenge());
+
+    assertEquals("vps://competition/mania_challenge/remote/7", td.getTourneyId());
+    verify(gameMediaService, never()).saveTableDetails(any(), anyInt(), anyBoolean());
+  }
+
   // --- afterPropertiesSet ---
 
   @Test

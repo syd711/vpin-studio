@@ -1,6 +1,9 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.mania.ManiaChallengeParticipation;
+import de.mephisto.vpin.restclient.mania.ManiaChallengesResult;
+import org.jspecify.annotations.NonNull;
 import de.mephisto.vpin.server.competitions.mania.ManiaChallengeCompetitionSynchronizer;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -28,7 +31,7 @@ public class ManiaChallengesService implements InitializingBean, PreferenceChang
   @Autowired
   private PreferencesService preferencesService;
 
-  private static final Duration FINISHED_CHECK_INTERVAL = Duration.ofMinutes(5);
+  private static final Duration SYNC_INTERVAL = Duration.ofMinutes(5);
 
   @Autowired
   private ManiaChallengeCompetitionSynchronizer maniaChallengeCompetitionSynchronizer;
@@ -38,6 +41,14 @@ public class ManiaChallengesService implements InitializingBean, PreferenceChang
 
   public boolean synchronize(boolean forceReload) {
     return maniaChallengeCompetitionSynchronizer.synchronizeChallenges(forceReload);
+  }
+
+  public ManiaChallengesResult getChallenges(boolean forceReload) {
+    return maniaChallengeCompetitionSynchronizer.getChallenges(forceReload);
+  }
+
+  public ManiaChallengesResult updateParticipation(@NonNull ManiaChallengeParticipation participation) throws Exception {
+    return maniaChallengeCompetitionSynchronizer.updateParticipation(participation);
   }
 
   @Override
@@ -66,8 +77,15 @@ public class ManiaChallengesService implements InitializingBean, PreferenceChang
         synchronize(false);
       }).start();
 
-      //remove the competitions of challenges that have been finished in the meantime
-      scheduler.scheduleAtFixedRate(maniaChallengeCompetitionSynchronizer::runFinishedChallengesCheck, Instant.now().plus(FINISHED_CHECK_INTERVAL), FINISHED_CHECK_INTERVAL);
+      //pick up new challenges and remove the competitions of challenges that have been finished in the meantime
+      scheduler.scheduleAtFixedRate(this::runPeriodicSync, Instant.now().plus(SYNC_INTERVAL), SYNC_INTERVAL);
+    }
+  }
+
+  private void runPeriodicSync() {
+    if (!synchronize(false)) {
+      //VPin Mania is not available, at least remove the competitions that have passed their end date
+      maniaChallengeCompetitionSynchronizer.runFinishedChallengesCheck();
     }
   }
 }

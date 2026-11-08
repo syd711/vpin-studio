@@ -35,10 +35,18 @@ public class ManiaServiceClient extends VPinStudioClientService {
   }
 
   /**
-   * Synchronizes the VPin Mania Discord challenges into competitions, applying the wheel badges if enabled.
+   * Synchronizes the VPin Mania Discord challenges into competitions and returns them together with the state of
+   * their competitions on the server.
    */
-  public boolean synchronizeChallenges() {
-    return getRestClient().get(API + "mania/synchronize/challenges", Boolean.class);
+  public ManiaChallengesResult getChallenges(boolean forceReload) {
+    return getRestClient().get(API + "mania/challenges?forceReload=" + forceReload, ManiaChallengesResult.class);
+  }
+
+  /**
+   * Opts in or out of the challenges of a Discord server or channel and returns the synchronized challenges.
+   */
+  public ManiaChallengesResult updateChallengeParticipation(@NonNull ManiaChallengeParticipation participation) {
+    return getRestClient().post(API + "mania/challenges/participation", participation, ManiaChallengesResult.class);
   }
 
   public ManiaRegistration register(@NonNull ManiaRegistration registration) {

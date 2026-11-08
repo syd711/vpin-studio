@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallenge;
 import de.mephisto.vpin.connectors.mania.model.DiscordChallengeOptOut;
-import de.mephisto.vpin.connectors.mania.model.DiscordChallengesResponse;
 import de.mephisto.vpin.connectors.mania.model.DiscordChannel;
 import de.mephisto.vpin.connectors.mania.model.DiscordServer;
 import de.mephisto.vpin.connectors.mania.model.User;
@@ -15,6 +14,9 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.mania.ManiaChallengeEntry;
+import de.mephisto.vpin.restclient.mania.ManiaChallengeParticipation;
+import de.mephisto.vpin.restclient.mania.ManiaChallengesResult;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
@@ -225,21 +227,24 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
     getSelection().ifPresent(model -> updateParticipation(model.getChallenge().getGuildId(), null, false));
   }
 
+  /**
+   * The participation is updated via the server, which synchronizes the challenges right away, so that the
+   * competition ids and badges of the affected tables are updated immediately.
+   */
   private void updateParticipation(@NonNull String guildId, @Nullable String channelId, boolean optOut) {
     participationBtn.setDisable(true);
+    ManiaChallengeModel selection = tableView.getSelectionModel().getSelectedItem();
     JFXFuture.supplyAsync(() -> {
       try {
-        if (optOut) {
-          return maniaClient.getDiscordChallengeClient().optOut(guildId, channelId);
-        }
-        return maniaClient.getDiscordChallengeClient().optIn(guildId, channelId);
+        ManiaChallengesResult result = client.getManiaService().updateChallengeParticipation(new ManiaChallengeParticipation(guildId, channelId, optOut));
+        return toLoadResult(result);
       }
       catch (Exception e) {
         throw new JFXFuture.JFXRuntimeException(e.getMessage(), e);
       }
-    }).thenAcceptLater(response -> {
+    }).thenAcceptLater(result -> {
       LOG.info("Updated VPin Mania challenge participation for guild {}, channel {}: opt-out={}", guildId, channelId, optOut);
-      doReload();
+      applyLoadResult(result, selection);
     }).onErrorLater(e -> {
       LOG.error("Failed to update challenge participation: {}", e.getMessage(), e);
       participationBtn.setDisable(false);
@@ -268,39 +273,21 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
     doReload(false);
   }
 
-  private void doReload(boolean synchronize) {
+  /**
+   * The challenges are loaded via the server, which synchronizes them into competitions first. So the view always
+   * shows the state the competition ids, badges and the challenge playlist are based on.
+   *
+   * @param forceReload re-applies the game matching of all challenges on the server
+   */
+  private void doReload(boolean forceReload) {
     tableView.setVisible(false);
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
     }
 
     ManiaChallengeModel selection = tableView.getSelectionModel().getSelectedItem();
-    JFXFuture.supplyAsync(() -> {
-          if (synchronize) {
-            synchronizeChallenges();
-          }
-          return loadChallenges();
-        })
-        .thenAcceptLater(result -> {
-          List<ManiaChallengeModel> models = result.models();
-          this.challenges = models;
-          filterChallenges();
-          refreshWarnings(result.submitAllScores(), result.participating());
-
-          Optional<ManiaChallengeModel> reselect = selection != null ? models.stream().filter(m -> m.getId() == selection.getId()).findFirst() : Optional.empty();
-          if (reselect.isPresent()) {
-            tableView.getSelectionModel().select(reselect.get());
-          }
-          else if (!tableView.getItems().isEmpty()) {
-            tableView.getSelectionModel().select(0);
-          }
-          else {
-            refreshView(Optional.empty());
-          }
-
-          tableStack.getChildren().remove(loadingOverlay);
-          tableView.setVisible(true);
-        })
+    JFXFuture.supplyAsync(() -> toLoadResult(client.getManiaService().getChallenges(forceReload)))
+        .thenAcceptLater(result -> applyLoadResult(result, selection))
         .onErrorLater(e -> {
           LOG.error("Failed to load VPin Mania challenges: {}", e.getMessage(), e);
           this.challenges = new ArrayList<>();
@@ -320,49 +307,47 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
     warningBox.setManaged(warningBox.isVisible());
   }
 
-  /**
-   * Synchronizes the challenges with the competitions on the server, which updates the competition ids and badges of the tables.
-   */
-  private void synchronizeChallenges() {
-    try {
-      client.getManiaService().synchronizeChallenges();
+  private void applyLoadResult(@NonNull ChallengesLoadResult result, @Nullable ManiaChallengeModel selection) {
+    List<ManiaChallengeModel> models = result.models();
+    this.challenges = models;
+    filterChallenges();
+    refreshWarnings(result.submitAllScores(), result.participating());
+
+    Optional<ManiaChallengeModel> reselect = selection != null ? models.stream().filter(m -> m.getId() == selection.getId()).findFirst() : Optional.empty();
+    if (reselect.isPresent()) {
+      tableView.getSelectionModel().select(reselect.get());
     }
-    catch (Exception e) {
-      LOG.error("Failed to synchronize VPin Mania challenges: {}", e.getMessage(), e);
+    else if (!tableView.getItems().isEmpty()) {
+      tableView.getSelectionModel().select(0);
     }
+    else {
+      refreshView(Optional.empty());
+    }
+
+    tableStack.getChildren().remove(loadingOverlay);
+    tableView.setVisible(true);
   }
 
-  private ChallengesLoadResult loadChallenges() {
+  /**
+   * Executes REST calls, so do not call this on the FX thread.
+   */
+  private static ChallengesLoadResult toLoadResult(@Nullable ManiaChallengesResult result) {
+    if (result == null) {
+      throw new IllegalStateException("No VPin Mania challenges returned by the server");
+    }
+    if (result.getError() != null) {
+      throw new IllegalStateException(result.getError());
+    }
+
     // scores are only submitted to VPin Mania (and so to the challenges) if all highscores are submitted
     ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     boolean submitAllScores = maniaSettings.isSubmitAllScores();
 
-    // the participation in all challenges can be disabled in the user settings on the VPin Mania website
-    boolean participating = true;
-    try {
-      User currentUser = maniaClient.getUserClient().getCurrentUser();
-      participating = currentUser == null || currentUser.isParticipatingInDiscordChallenges();
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to load VPin Mania user settings: {}", e.getMessage());
-    }
-
-    DiscordChallengesResponse response = maniaClient.getDiscordChallengeClient().getChallenges();
-
-    List<DiscordServer> servers = Collections.emptyList();
-    try {
-      servers = maniaClient.getDiscordChallengeClient().getServers();
-    }
-    catch (Exception e) {
-      // only used to resolve the server and channel names
-      LOG.warn("Failed to load Discord servers of VPin Mania user: {}", e.getMessage());
-    }
-
     List<ManiaChallengeModel> models = new ArrayList<>();
-    for (DiscordChallenge challenge : response.getChallenges()) {
-      models.add(new ManiaChallengeModel(challenge, servers, response.getOptOuts(), !participating));
+    for (ManiaChallengeEntry entry : result.getChallenges()) {
+      models.add(new ManiaChallengeModel(entry, result.getServers(), result.getOptOuts(), !result.isParticipating()));
     }
-    return new ChallengesLoadResult(models, submitAllScores, participating);
+    return new ChallengesLoadResult(models, submitAllScores, result.isParticipating());
   }
 
   private record ChallengesLoadResult(List<ManiaChallengeModel> models, boolean submitAllScores, boolean participating) {
@@ -407,7 +392,10 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
       fallbackLabel.setWrapText(true);
       fallbackLabel.setPrefWidth(300);
       fallbackLabel.setStyle(ERROR_STYLE);
-      if (vpsTable == null) {
+      if (!value.getIssues().isEmpty()) {
+        fallbackLabel.setText(String.join("\n", value.getIssues()));
+      }
+      else if (vpsTable == null) {
         fallbackLabel.setText(Messages.get("competitions.competitions_weekly.no_matching_vps_table_found"));
       }
       else {
@@ -635,10 +623,13 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
     private final boolean channelOptedOut;
     private final boolean participationDisabled;
     private final boolean versionMismatch;
+    private final List<String> issues;
 
-    ManiaChallengeModel(@NonNull DiscordChallenge challenge, @NonNull List<DiscordServer> servers, @NonNull List<DiscordChallengeOptOut> optOuts, boolean participationDisabled) {
+    ManiaChallengeModel(@NonNull ManiaChallengeEntry entry, @NonNull List<DiscordServer> servers, @NonNull List<DiscordChallengeOptOut> optOuts, boolean participationDisabled) {
+      DiscordChallenge challenge = entry.getChallenge();
       this.challenge = challenge;
       this.participationDisabled = participationDisabled;
+      this.issues = StringUtils.isEmpty(entry.getIssues()) ? Collections.emptyList() : Arrays.asList(entry.getIssues().split("\\|"));
 
       for (DiscordServer server : servers) {
         if (server.getGuildId().equals(challenge.getGuildId())) {
@@ -655,17 +646,19 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
       this.serverOptedOut = optOuts.stream().anyMatch(o -> challenge.getGuildId().equals(o.getGuildId()) && o.isServerWide());
       this.channelOptedOut = optOuts.stream().anyMatch(o -> challenge.getGuildId().equals(o.getGuildId()) && challenge.getChannelId().equals(o.getChannelId()));
 
+      // the game matching is done by the server, so the view shows the game that has the competition id
       GameRepresentation match = null;
-      if (!StringUtils.isEmpty(challenge.getVpsTableId())) {
-        List<GameRepresentation> games = client.getGameService().getGamesByVpsTable(challenge.getVpsTableId(), challenge.getVpsVersionId());
-        if (games.isEmpty() && challenge.getVpsVersionId() != null) {
-          games = client.getGameService().getGamesByVpsTable(challenge.getVpsTableId(), null);
-        }
-        match = games.isEmpty() ? null : games.getFirst();
+      boolean mismatch = false;
+      if (entry.getGameId() >= 0) {
+        match = client.getGameService().getGame(entry.getGameId());
+      }
+      else if (entry.getVersionMismatchGameId() >= 0) {
+        // another table version is only shown to point at the issue, it is not part of the challenge as its scores do not count for it
+        match = client.getGameService().getGame(entry.getVersionMismatchGameId());
+        mismatch = match != null;
       }
       this.game = match;
-      // a game of another table version is only matched as fallback, its scores do not count for the challenge
-      this.versionMismatch = match != null && challenge.getVpsVersionId() != null && !challenge.getVpsVersionId().equals(match.getExtTableVersionId());
+      this.versionMismatch = mismatch;
 
       // the sidebar works on competitions, so the challenge is mapped to one
       competition = new CompetitionRepresentation();
@@ -735,7 +728,15 @@ public class ManiaChallengesController extends BaseCompetitionController impleme
     }
 
     /**
-     * True if the matched game has another table version than the one the challenge is bound to.
+     * The issues of the challenge competition reported by the server, e.g. if no matching table was found.
+     */
+    public List<String> getIssues() {
+      return issues;
+    }
+
+    /**
+     * True if no game of the challenge table version is installed, but one of another version. That game is shown,
+     * but not part of the challenge.
      */
     public boolean isVersionMismatch() {
       return versionMismatch;

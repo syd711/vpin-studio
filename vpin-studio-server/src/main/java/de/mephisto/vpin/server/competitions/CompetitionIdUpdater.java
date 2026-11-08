@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
@@ -58,6 +59,11 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         if (Features.ISCORED_ENABLED && iScoredSettings.isEnabled()) {
           setGamesTournamentId(competition);
         }
+        break;
+      }
+      case MANIA_CHALLENGE: {
+        // write the id right away, so the table is part of the challenge playlist without waiting for the started check
+        setGamesTournamentId(competition);
         break;
       }
     }
@@ -157,6 +163,11 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       String competitionId = CompetitionIdFactory.createId(competition, isOwner);
       List<String> updated = new ArrayList<>();
       String tournamentId = tableDetails.getTourneyId();
+      if (tournamentId != null && Arrays.stream(tournamentId.split(",")).anyMatch(s -> s.equalsIgnoreCase(competitionId))) {
+        // already set, avoid saving the table details on every competition update
+        return;
+      }
+
       if (tournamentId == null) {
         tableDetails.setTourneyId(competitionId);
       }
