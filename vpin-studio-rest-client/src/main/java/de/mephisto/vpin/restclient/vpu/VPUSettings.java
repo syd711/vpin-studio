@@ -2,13 +2,15 @@ package de.mephisto.vpin.restclient.vpu;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.vpauthenticators.CredentialSettings;
 
 /**
  *
  */
-public class VPUSettings extends JsonSettings {
+public class VPUSettings extends JsonSettings implements CredentialSettings {
   private String login;
   private String password;
+  private boolean passwordSet;
 
   public String getLogin() {
     return login;
@@ -24,6 +26,14 @@ public class VPUSettings extends JsonSettings {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public boolean isPasswordSet() {
+    return passwordSet;
+  }
+
+  public void setPasswordSet(boolean passwordSet) {
+    this.passwordSet = passwordSet;
   }
 
   @Override

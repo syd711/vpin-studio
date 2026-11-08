@@ -1,14 +1,11 @@
 package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -53,12 +50,6 @@ public class VpsResource {
   @GetMapping("/changeDate")
   public OffsetDateTime getChangeDate() {
     return vpsService.getChangeDate();
-  }
-
-  @GetMapping("/installLinks/{link}")
-  public List<VpsInstallLink> getInstallLinks(@PathVariable("link") String link) {
-    String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
-    return vpsService.getInstallLinks(decodedLink);
   }
 
   @PostMapping("/save")

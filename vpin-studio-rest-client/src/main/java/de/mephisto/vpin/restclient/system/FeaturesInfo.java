@@ -13,7 +13,6 @@ public class FeaturesInfo {
 
   public boolean VP_UNIVERSE = true;
   public boolean VP_FORUMS = true;
-  public boolean AUTO_INSTALLER = false;
 
   public boolean DROP_IN_FOLDER = true;
   public boolean DMD_DEVICE_INI = true;

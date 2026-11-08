@@ -35,7 +35,7 @@ public class PreferenceResource {
   @GetMapping("/json/{key}")
   public JsonSettings getJson(@PathVariable("key") String key) {
     try {
-      return preferencesService.getJsonPreference(key);
+      return preferencesService.getJsonPreferenceForClient(key);
     } 
     catch (Exception e) {
       LOG.error("Failed to read JSON preferences: {}", e.getMessage(), e);
@@ -67,7 +67,7 @@ public class PreferenceResource {
   @PutMapping(value = "/json/{key}")
   public boolean put(@PathVariable("key") String key, @RequestBody Map<String, Object> values) throws Exception {
     String json = (String) values.get("data");
-    return preferencesService.savePreference(key, json, false);
+    return preferencesService.saveJsonPreference(key, json, false);
   }
 
   static class PreferenceEntry {

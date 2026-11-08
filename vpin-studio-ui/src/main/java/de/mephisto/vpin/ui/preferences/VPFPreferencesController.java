@@ -65,7 +65,9 @@ public class VPFPreferencesController implements Initializable {
     VPFSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
 
     loginText.setText(settings.getLogin());
-    passwordText.setText(settings.getPassword());
-    passwordText.setPromptText(Messages.get("dialog.enter_password_to_change"));
+    // the server never sends the stored password, leaving the field blank keeps it
+    if (settings.isPasswordSet()) {
+      passwordText.setPromptText(Messages.get("dialog.enter_password_to_change"));
+    }
   }
 }

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.vpu.VPUSettings;
+import de.mephisto.vpin.server.util.SecretCipher;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -91,5 +93,45 @@ public class PreferencesServiceTest extends AbstractVPinServerTest {
     long value = preferencesService.getPreferenceValueLong(PreferenceNames.IDLE_TIMEOUT, 42L);
     // should return existing value or the default
     assertTrue(value >= 0 || value == 42L);
+  }
+
+  @Test
+  public void testCredentialPasswordIsEncryptedAndNotExposed() throws Exception {
+    Object original = preferencesService.getPreferenceValue(PreferenceNames.VPU_SETTINGS);
+    try {
+      VPUSettings settings = new VPUSettings();
+      settings.setLogin("user");
+      settings.setPassword("s3cret");
+      preferencesService.savePreference(settings, true);
+
+      // caller's object is not modified
+      assertEquals("s3cret", settings.getPassword());
+
+      // stored encrypted
+      String raw = (String) preferencesService.getPreferenceValue(PreferenceNames.VPU_SETTINGS);
+      assertFalse(raw.contains("s3cret"));
+      assertTrue(raw.contains("enc:"));
+
+      // decrypted for server-side use
+      VPUSettings loaded = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
+      assertEquals("s3cret", loaded.getPassword());
+      assertTrue(loaded.isPasswordSet());
+
+      // never returned to clients
+      VPUSettings client = (VPUSettings) preferencesService.getJsonPreferenceForClient(PreferenceNames.VPU_SETTINGS);
+      assertNull(client.getPassword());
+      assertTrue(client.isPasswordSet());
+
+      // client saving with blank password keeps the stored one
+      client.setLogin("user");
+      preferencesService.saveJsonPreference(PreferenceNames.VPU_SETTINGS, client.toJson(), true);
+      loaded = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
+      assertEquals("s3cret", loaded.getPassword());
+      VPUSettings rawSettings = VPUSettings.fromJson(VPUSettings.class, (String) preferencesService.getPreferenceValue(PreferenceNames.VPU_SETTINGS));
+      assertTrue(SecretCipher.isEncrypted(rawSettings.getPassword()));
+    }
+    finally {
+      preferencesService.savePreference(PreferenceNames.VPU_SETTINGS, original, true);
+    }
   }
 }

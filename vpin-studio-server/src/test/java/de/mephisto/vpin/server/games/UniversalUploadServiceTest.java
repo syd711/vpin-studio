@@ -103,19 +103,6 @@ public class UniversalUploadServiceTest {
   }
 
   @Test
-  void resolveLinks_nonLinkFilename_doesNothing() throws Exception {
-    UploadDescriptor descriptor = new UploadDescriptor();
-    descriptor.setOriginalUploadFileName("regular_file.zip");
-    descriptor.setTempFilename("/tmp/regular_file.zip");
-
-    // No exception and vpsService not called
-    universalUploadService.resolveLinks(descriptor);
-
-    verifyNoInteractions(vpsService);
-    assertThat(descriptor.getOriginalUploadFileName()).isEqualTo("regular_file.zip");
-  }
-
-  @Test
   void importFileBasedAssets_vrIniFile_isCopiedToVrIni(@TempDir Path tempDir) throws Exception {
     Game game = game(tempDir);
     Files.writeString(game.getIniFile().toPath(), "desktop");

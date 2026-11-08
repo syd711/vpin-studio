@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,11 +77,6 @@ public class VpsServiceClient extends VPinStudioClientService {
 
   public OffsetDateTime getChangeDate() {
     return getRestClient().get(API + "vps/changeDate", OffsetDateTime.class);
-  }
-
-  public List<VpsInstallLink> getInstallLinks(String link) {
-    String encodedLink = URLEncoder.encode(link, StandardCharsets.UTF_8);
-    return Arrays.asList(getRestClient().get(API + "vps/installLinks/" + encodedLink, VpsInstallLink[].class));
   }
 
   public VpsTable saveVpsData(VpsTable vpsTable) {

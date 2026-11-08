@@ -16,7 +16,6 @@ import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
@@ -50,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -125,9 +123,6 @@ public class UniversalUploadService {
     long start = System.currentTimeMillis();
     LOG.info("*********** Importing {} ************************", uploadDescriptor.getTempFilename());
     try {
-      // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
-      resolveLinks(uploadDescriptor);
-
       File tempFile = new File(uploadDescriptor.getTempFilename());
       UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
       analysis.analyze();
@@ -178,9 +173,6 @@ public class UniversalUploadService {
   }
 
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
-    // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
-    resolveLinks(uploadDescriptor);
-
     // For backup imports, check if the AssetType was enabled
     if (!isImportEnabled(uploadDescriptor, assetType)) {
       LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
@@ -395,30 +387,6 @@ public class UniversalUploadService {
       default: {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
-    }
-  }
-
-  public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
-    // detection that it is a file hosted on a remote source
-    String originalFilename = uploadDescriptor.getOriginalUploadFileName();
-    if (VpsInstallLink.isLinkFilename(originalFilename)) {
-
-      originalFilename = VpsInstallLink.getOriginalFilename(originalFilename);
-      uploadDescriptor.setOriginalUploadFileName(originalFilename);
-
-      File tempFile = new File(uploadDescriptor.getTempFilename());
-      try (InputStream in = new FileInputStream(tempFile)) {
-        String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        String link = StringUtils.substringBeforeLast(content, "@");
-        String order = StringUtils.substringAfterLast(content, "@");
-
-        String tempFilename = VpsInstallLink.getOriginalFilename(uploadDescriptor.getTempFilename());
-        uploadDescriptor.setTempFilename(tempFilename);
-        try (FileOutputStream fout = new FileOutputStream(tempFilename)) {
-          vpsService.downloadLink(fout, link, Integer.parseInt(order));
-        }
-      }
-      tempFile.delete();
     }
   }
 

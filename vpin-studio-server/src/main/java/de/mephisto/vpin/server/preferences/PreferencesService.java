@@ -6,11 +6,14 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.vpauthenticators.CredentialSettings;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SecretCipher;
 import de.mephisto.vpin.restclient.util.OSUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -115,6 +118,14 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
   public boolean savePreference(JsonSettings value, boolean silent) throws Exception {
     if (value != null) {
       String json = value.toJson();
+      if (value instanceof CredentialSettings) {
+        // encrypt on a copy, the caller keeps working with the plain password
+        JsonSettings copy = JsonSettings.fromJson(value.getClass(), json);
+        CredentialSettings credentials = (CredentialSettings) copy;
+        credentials.setPassword(SecretCipher.encrypt(credentials.getPassword()));
+        credentials.setPasswordSet(StringUtils.isNotEmpty(credentials.getPassword()));
+        json = copy.toJson();
+      }
       return savePreference(value.getSettingsName(), json, silent);
     }
 
@@ -158,6 +169,44 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     }
   }
 
+  /**
+   * Saves JSON settings sent by a client.
+   * For {@link CredentialSettings} a blank password means "unchanged", so the stored password is kept.
+   */
+  public boolean saveJsonPreference(String key, String json, boolean silent) throws Exception {
+    Class<? extends JsonSettings> clazz = getJsonClass(key);
+    if (clazz != null && CredentialSettings.class.isAssignableFrom(clazz)) {
+      JsonSettings settings = JsonSettings.fromJson(clazz, json);
+      CredentialSettings credentials = (CredentialSettings) settings;
+      if (StringUtils.isEmpty(credentials.getPassword())) {
+        CredentialSettings stored = (CredentialSettings) getJsonPreference(key, clazz);
+        credentials.setPassword(stored != null ? stored.getPassword() : null);
+      }
+      return savePreference(settings, silent);
+    }
+    return savePreference(key, json, silent);
+  }
+
+  /**
+   * Returns JSON settings for the REST API: passwords are never sent to clients.
+   */
+  public JsonSettings getJsonPreferenceForClient(String key) {
+    JsonSettings settings = getJsonPreference(key);
+    if (settings instanceof CredentialSettings credentials) {
+      credentials.setPassword(null);
+    }
+    return settings;
+  }
+
+  private static Class<? extends JsonSettings> getJsonClass(String key) {
+    try {
+      return PreferenceNames.getClassFromKey(key);
+    }
+    catch (UnsupportedOperationException e) {
+      return null;
+    }
+  }
+
   @SuppressWarnings("unchecked")
   public <T extends JsonSettings> T getJsonPreference(String key) {
     Class<? extends JsonSettings> clazz = PreferenceNames.getClassFromKey(key);
@@ -168,7 +217,12 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     try {
       Object preferenceValue = getPreferenceValue(key);
       if (preferenceValue != null) {
-        return JsonSettings.fromJson(jsonSettings, (String) preferenceValue);
+        T settings = JsonSettings.fromJson(jsonSettings, (String) preferenceValue);
+        if (settings instanceof CredentialSettings credentials) {
+          credentials.setPassword(SecretCipher.decrypt(credentials.getPassword()));
+          credentials.setPasswordSet(StringUtils.isNotEmpty(credentials.getPassword()));
+        }
+        return settings;
       }
       return jsonSettings.getDeclaredConstructor().newInstance();
     }
@@ -209,8 +263,33 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       LOG.error("Sticky keys init failed: {}", e.getMessage(), e);
     }
 
+    migratePlainTextPasswords();
+
     addChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  /**
+   * Older versions stored account passwords as plain text, re-save them encrypted.
+   */
+  private void migratePlainTextPasswords() {
+    for (String key : List.of(PreferenceNames.VPU_SETTINGS, PreferenceNames.VPF_SETTINGS)) {
+      try {
+        Object raw = getPreferenceValue(key);
+        if (raw == null) {
+          continue;
+        }
+        Class<? extends JsonSettings> clazz = PreferenceNames.getClassFromKey(key);
+        CredentialSettings stored = (CredentialSettings) JsonSettings.fromJson(clazz, (String) raw);
+        if (StringUtils.isNotEmpty(stored.getPassword()) && !SecretCipher.isEncrypted(stored.getPassword())) {
+          savePreference((JsonSettings) stored, true);
+          LOG.info("Encrypted stored password of \"{}\".", key);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to encrypt stored password of \"{}\": {}", key, e.getMessage(), e);
+      }
+    }
   }
 
   @Override

@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
+import de.mephisto.vpin.restclient.vpauthenticators.CredentialSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -48,6 +49,11 @@ public class VPAuthenticationService {
       return ServerMessages.msg("auth.error.no_provider");
     }
 
+    // the client never receives the stored password, a blank password means "use the stored one"
+    if (StringUtils.isEmpty(password)) {
+      password = getStoredPassword(authenticationProvider, login);
+    }
+
     if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
       LOG.info("Missing credentials for authentication provider {}, login and password need to be set.", authenticationProvider);
       return ServerMessages.msg("auth.error.missing_credentials", authenticationProvider);
@@ -87,6 +93,19 @@ public class VPAuthenticationService {
         return ServerMessages.msg("auth.error.invalid_provider");
       }
     }
+  }
+
+  private String getStoredPassword(AuthenticationProvider authenticationProvider, String login) {
+    String key = switch (authenticationProvider) {
+      case VPF -> PreferenceNames.VPF_SETTINGS;
+      case VPU -> PreferenceNames.VPU_SETTINGS;
+    };
+    CredentialSettings stored = (CredentialSettings) preferencesService.getJsonPreference(key, PreferenceNames.getClassFromKey(key));
+    // only reuse the stored password for the same account
+    if (stored != null && StringUtils.equals(stored.getLogin(), login)) {
+      return stored.getPassword();
+    }
+    return null;
   }
 
   private String runWithTimeout(Callable<String> task) {
