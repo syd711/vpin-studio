@@ -5,7 +5,9 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
@@ -257,6 +259,20 @@ public class TableOverviewContextMenu {
       validateItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
       validateItem.setOnAction(actionEvent -> tableOverviewController.onValidate());
       ctxMenu.getItems().add(validateItem);
+
+      WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
+      if (wovpSettings != null && wovpSettings.isEnabled()) {
+        ctxMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem wovpPatchItem = new MenuItem(Messages.get("tables.context_menu.wovp_patch"));
+        wovpPatchItem.setGraphic(WidgetFactory.createIcon("mdi2p-plus-circle-outline"));
+        wovpPatchItem.setOnAction(actionEvent -> WovpPatchProgressModel.run(vpxSelections(), true));
+        ctxMenu.getItems().add(wovpPatchItem);
+
+        MenuItem wovpUnpatchItem = new MenuItem(Messages.get("tables.context_menu.wovp_unpatch"));
+        wovpUnpatchItem.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline"));
+        wovpUnpatchItem.setOnAction(actionEvent -> WovpPatchProgressModel.run(vpxSelections(), false));
+        ctxMenu.getItems().add(wovpUnpatchItem);
+      }
     }
 
 //    if (!Features.IS_STANDALONE) {
@@ -459,5 +475,11 @@ public class TableOverviewContextMenu {
         }
       }
     }
+  }
+
+  private List<GameRepresentation> vpxSelections() {
+    return tableOverviewController.getSelections().stream()
+        .filter(g -> client.getEmulatorService().isVpxGame(g))
+        .collect(Collectors.toList());
   }
 }
