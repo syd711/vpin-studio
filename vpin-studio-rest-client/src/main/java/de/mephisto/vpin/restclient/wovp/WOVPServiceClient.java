@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /*********************************************************************************************************************
@@ -31,5 +32,28 @@ public class WOVPServiceClient extends VPinStudioClientService {
 
   public boolean clearCache() {
     return getRestClient().get(API + "wovp/clearCache", Boolean.class);
+  }
+
+  /**
+   * @return true if the table script contains the WoVP telemetry
+   */
+  public boolean isPatched(int gameId) {
+    return getRestClient().get(API + "wovp/patch/" + gameId, Boolean.class);
+  }
+
+  /**
+   * Adds the WoVP telemetry to the table. This extracts and re-assembles the table and can take a while.
+   *
+   * @param backup creates a .vpx.bak copy of the original table first
+   */
+  public WovpPatchResult patch(int gameId, boolean backup) {
+    return getRestClient().post(API + "wovp/patch/" + gameId + "?backup=" + backup, new HashMap<>(), WovpPatchResult.class);
+  }
+
+  /**
+   * Removes the WoVP telemetry from the table.
+   */
+  public WovpPatchResult unpatch(int gameId, boolean backup) {
+    return getRestClient().post(API + "wovp/unpatch/" + gameId + "?backup=" + backup, new HashMap<>(), WovpPatchResult.class);
   }
 }
