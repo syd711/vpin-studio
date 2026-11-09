@@ -60,17 +60,7 @@ Creating and maintaing the VPin Studio takes a lot of time and resources. Please
 
 https://www.nailbuster.com/wikipinup/doku.php?id=start
 
-<img src="https://www.nailbuster.com/wikipinup/lib/exe/fetch.php?media=wiki:logo.png" width="64"/> 
-
-### Visual Pinball Backup Manager
-
-<img src="documentation/vpbm-128.png" width="64"/> 
-
-
-Download: https://github.com/mmattner/vPinBackupManagerApp/releases
-
-Documentation: https://github.com/mmattner/vPinBackupManagerApp/wiki
-
+<img src="https://www.nailbuster.com/wikipinup/lib/exe/fetch.php?media=facebook_topper1.png" width="256"/> 
 
 ### PINemHi and PINemHi Leaderboard
 
