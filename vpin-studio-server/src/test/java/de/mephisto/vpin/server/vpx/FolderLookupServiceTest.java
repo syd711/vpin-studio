@@ -346,6 +346,45 @@ public class FolderLookupServiceTest {
     assertThat(FolderLookupService.findIgnoreCase(tempDir.resolve("nofolder").toFile(), "x.nv")).doesNotExist();
   }
 
+  // ---- VPX 10.8.1 layout of a single table, e.g. after "Move Table" ----
+
+  @Test
+  void perTableFolder_legacyEmulator_filesAreNextToTheTable() {
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    File tableFolder = new File(gamesFolder, "Twister (1996)");
+    GameEmulator emulator = legacyEmulator();
+    lenient().when(emulator.getGamesFolder()).thenReturn(gamesFolder);
+    Game game = mockGame(emulator);
+    when(game.getGameFolder()).thenReturn(tableFolder);
+
+    assertThat(folderLookupService.isPerTableFileStructure(game)).isFalse();
+
+    folderLookupService.createPerTableFileStructure(tableFolder);
+
+    assertThat(new File(tableFolder, FolderLookupService.PINMAME_FOLDER)).isDirectory();
+    assertThat(folderLookupService.isPerTableFileStructure(game)).isTrue();
+    assertThat(folderLookupService.getRomFolder(game)).isEqualTo(new File(tableFolder, "pinmame/roms"));
+    assertThat(folderLookupService.getNvRamFolder(game)).isEqualTo(new File(tableFolder, "pinmame/nvram"));
+    assertThat(folderLookupService.getCfgFolder(game)).isEqualTo(new File(tableFolder, "pinmame/cfg"));
+    assertThat(folderLookupService.getAltSoundFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "altsound/twst_405"));
+    assertThat(folderLookupService.getSerumFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "serum/twst_405"));
+    assertThat(folderLookupService.getVniFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "vni/twst_405"));
+    assertThat(folderLookupService.getMusicFolder(game)).isEqualTo(new File(tableFolder, "music"));
+    assertThat(folderLookupService.getUserFolder(game)).isEqualTo(new File(tableFolder, "user"));
+    verifyNoInteractions(vPinMameService);
+  }
+
+  @Test
+  void isPerTableFolder_neverForTheGamesFolderItself() {
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    new File(gamesFolder, FolderLookupService.PINMAME_FOLDER).mkdirs();
+
+    // a pinmame folder in the games folder would be shared by all tables, that is not the per table layout
+    assertThat(FolderLookupService.isPerTableFolder(gamesFolder, gamesFolder)).isFalse();
+    assertThat(FolderLookupService.isPerTableFolder(new File(gamesFolder, "Other"), gamesFolder)).isFalse();
+    assertThat(FolderLookupService.isPerTableFolder(null, gamesFolder)).isFalse();
+  }
+
   /**
    * An emulator with a VPinMAME folder, which keeps the shared legacy layout on every platform.
    */

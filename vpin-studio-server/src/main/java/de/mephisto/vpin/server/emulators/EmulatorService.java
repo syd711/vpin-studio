@@ -179,6 +179,12 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
       }
 
       emulator.setPerTableFileStructure(emulator.isVpxEmulator() && !FolderLookupService.isPreferLegacyFileStructure(emulator, OSUtil.isWindows()));
+      emulator.setEmulatorVersion(EmulatorVersion.resolve(emulator));
+      if (emulator.isVpxEmulator()) {
+        emulator.setPerTableFileStructureSupported(emulator.isPerTableFileStructure() || EmulatorVersion.isVpxPerTableFileLayoutSupported(emulator.getEmulatorVersion()));
+        LOG.info("VPX emulator \"{}\": version {}, per table file layout supported: {}", emulator.getName(),
+            emulator.getEmulatorVersion(), emulator.isPerTableFileStructureSupported());
+      }
 
       if (emulator.isVpxEmulator()) {
         // mind that popper may set a specific romDirectory

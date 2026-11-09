@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.SubfolderNaming;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -13,8 +14,13 @@ import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.music.MusicService;
+import de.mephisto.vpin.server.puppack.PupPack;
+import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.FolderLookupService;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +69,17 @@ public class GameMoveCloneService {
   @Autowired
   private FolderLookupService folderLookupService;
 
+  @Autowired
+  private PupPacksService pupPacksService;
+
+  @Autowired
+  private SystemService systemService;
+
   /**
    * Moves or clones a VPX table to a different VPX emulator, copying the table file, its directly
-   * associated files (.directb2s/.pov/.ini/.res), frontend media, ROM, NVRAM/highscore file, ALT
-   * sound/color packages, FlexDMD/UltraDMD package and music files, whenever present. For a move, the
+   * associated files (.directb2s/.pov/.ini/.vr.ini/.res), frontend media, ROM, NVRAM, PinMAME .cfg,
+   * highscore text file / VPReg.stg, ALT sound/color packages, FlexDMD/UltraDMD package, music files
+   * and (for the VPX 10.8.1 layout) the PUP pack, whenever present. For a move, the
    * original table entry and its VPX-adjacent files (media, .directb2s/.pov/.ini/.res/.vbs) are deleted
    * once the copy at the target emulator has succeeded. The ROM/NVRAM/ALT sound/ALT color/music/DMD
    * assets are only ever copied, never deleted from the source: they are commonly keyed by ROM name
@@ -78,6 +91,19 @@ public class GameMoveCloneService {
    * When {@code createSubfolder} is set, the table is placed into a new subfolder of the target
    * emulator's games folder instead of preserving any existing subfolder structure, named after the
    * table according to {@code subfolderNaming}.
+   * <p>
+   * The file layout is decided by the target emulator, see {@link GameEmulator#isPerTableFileStructureSupported()}:
+   * <ul>
+   *   <li>VPX 10.8.1 or newer: the table always gets its own subfolder, which uses the VPX 10.8.1 file layout, see
+   *   {@link FolderLookupService#isPerTableFileStructure(Game)}. All files except the frontend media are placed into
+   *   it (pinmame/roms, pinmame/nvram, pinmame/cfg, altsound, serum, vni, music, user, pupvideos). The frontend
+   *   media stays in the media folders of the frontend, as PinUP Popper does not support the medias folder of the
+   *   VPX 10.8.1 layout yet.</li>
+   *   <li>Older versions: the subfolder is optional, the files are placed into the shared folders of the
+   *   installation (VPinMAME roms/nvram/cfg/altsound/altcolor, Music, User, PUPVideos).</li>
+   * </ul>
+   * When a table in the VPX 10.8.1 layout is moved, its files belong to this table only, so the source table folder
+   * is deleted with all its content once the move has succeeded, unless it still holds another table.
    */
   public Game moveOrCloneGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
     Game original = gameService.getGame(gameId);
@@ -104,6 +130,15 @@ public class GameMoveCloneService {
     LOG.info("Starting {} of \"{}\" from emulator \"{}\" to \"{}\"", move ? "move" : "clone",
         original.getGameDisplayName(), original.getEmulator().getName(), targetEmulator.getName());
 
+    //VPX 10.8.1 keeps the ROM, NVRAM, ... next to the table, so every table needs its own folder there
+    boolean perTableTarget = targetEmulator.isPerTableFileStructureSupported();
+    if (perTableTarget) {
+      createSubfolder = true;
+    }
+    boolean perTableSource = folderLookupService.isPerTableFileStructure(original);
+    LOG.info("File layout of the source: {}, of the target: {} (VPX version {})", perTableSource ? "per table" : "shared",
+        perTableTarget ? "per table" : "shared", targetEmulator.getEmulatorVersion());
+
     //resolve the target file, preserving a possible subfolder structure
     String relativeName = original.getGameFileName();
     File target;
@@ -112,6 +147,10 @@ public class GameMoveCloneService {
       String subFolderName = resolveSubfolderName(original, subfolderNaming);
       targetSubFolder = FileUtils.uniqueFolder(new File(targetEmulator.getGamesFolder(), subFolderName));
       targetSubFolder.mkdirs();
+      if (perTableTarget) {
+        //must exist before the moved table is resolved, so that all its files are looked up next to it
+        folderLookupService.createPerTableFileStructure(targetSubFolder);
+      }
       target = new File(targetSubFolder, sourceFile.getName());
     }
     else if (FileUtils.lastSeparatorIndex(relativeName) >= 0) {
@@ -154,10 +193,13 @@ public class GameMoveCloneService {
 
     //carry over ROM/NVRAM, ALT sound/color, DMD package and music assets, see method javadoc
     copyRomAndNvRam(original, importedGame);
+    copyCfg(original, importedGame);
+    copyHighscoreFiles(original, importedGame);
     copyFolderIfPresent(altSoundService.getAltSoundFolder(original), altSoundService.getAltSoundFolder(importedGame), "ALT sound package");
     altColorService.copyAltColor(original, importedGame);
     copyDmdPackage(original, importedGame);
     copyMusic(original, importedGame);
+    copyPupPack(original, importedGame);
 
     frontendService.vpsLink(importedGame.getId(), original.getExtTableId(), original.getExtTableVersionId());
 
@@ -189,6 +231,10 @@ public class GameMoveCloneService {
       descriptor.setDeleteRom(false);
       if (!gameMediaService.deleteGame(descriptor)) {
         LOG.warn("Failed to fully clean up the original table \"{}\" after moving it.", original.getGameDisplayName());
+      }
+
+      if (perTableSource) {
+        deleteSourceTableFolder(sourceFile.getParentFile(), original.getEmulator());
       }
     }
 
@@ -229,6 +275,140 @@ public class GameMoveCloneService {
     catch (Exception e) {
       LOG.error("Failed to copy ROM/NVRAM for \"{}\": {}", original.getGameDisplayName(), e.getMessage(), e);
     }
+  }
+
+  /**
+   * Copies the PinMAME .cfg file (DIP switches, key mappings) of the ROM.
+   */
+  private void copyCfg(Game original, Game importedGame) {
+    try {
+      File sourceCfg = folderLookupService.getCfgFile(original);
+      File targetCfgFolder = folderLookupService.getCfgFolder(importedGame);
+      if (sourceCfg != null && sourceCfg.exists() && targetCfgFolder != null) {
+        copyAssetFile(sourceCfg, new File(targetCfgFolder, sourceCfg.getName()), "PinMAME .cfg file", true);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy PinMAME .cfg file for \"{}\": {}", original.getGameDisplayName(), e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Copies the highscore files kept in the user folder: the highscore text file of EM tables, or the
+   * VPReg.stg file of tables saving their highscores via the script. The VPReg.stg file holds the entries of
+   * all tables, so an existing one of the target is never overwritten.
+   */
+  private void copyHighscoreFiles(Game original, Game importedGame) {
+    try {
+      File targetUserFolder = folderLookupService.getUserFolder(importedGame);
+
+      File sourceHsFile = folderLookupService.getHighscoreTextFile(original);
+      if (sourceHsFile != null && sourceHsFile.exists()) {
+        copyAssetFile(sourceHsFile, new File(targetUserFolder, sourceHsFile.getName()), "highscore text file", true);
+      }
+
+      if (HighscoreType.VPReg.equals(original.getHighscoreType())) {
+        File sourceStg = folderLookupService.getVPRegFileForGame(original).getFile();
+        if (sourceStg != null && sourceStg.exists()) {
+          copyAssetFile(sourceStg, new File(targetUserFolder, sourceStg.getName()), "VPReg.stg file", false);
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy highscore files for \"{}\": {}", original.getGameDisplayName(), e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Copies the PUP pack into the pupvideos folder next to the table, where the PinUP Player plugin of VPX 10.8.1
+   * looks for it. The PUP pack in the PinUP Popper folder is kept, as PinUP Popper still uses it.
+   */
+  private void copyPupPack(Game original, Game importedGame) {
+    if (!folderLookupService.isPerTableFileStructure(importedGame)) {
+      copyPupPacksToPinUPSystem(original);
+      return;
+    }
+    try {
+      PupPack pupPack = pupPacksService.getPupPack(original);
+      if (pupPack != null && pupPack.getPupPackFolder() != null) {
+        File source = pupPack.getPupPackFolder();
+        File target = new File(new File(importedGame.getGameFolder(), "pupvideos"), source.getName());
+        copyFolderIfPresent(source, target, "PUP pack");
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy PUP pack for \"{}\": {}", original.getGameDisplayName(), e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Copies the PUP packs from the pupvideos folder of a table in the VPX 10.8.1 layout into the PUPVideos folder of
+   * the PinUP system, which is used by older VPX versions. Existing PUP packs are not overwritten.
+   */
+  private void copyPupPacksToPinUPSystem(Game original) {
+    if (!folderLookupService.isPerTableFileStructure(original)) {
+      return;
+    }
+    try {
+      File[] packs = new File(original.getGameFolder(), "pupvideos").listFiles(File::isDirectory);
+      if (packs == null || packs.length == 0) {
+        return;
+      }
+      File pupVideosFolder = new File(systemService.getPinupInstallationFolder(), "PUPVideos");
+      if (!pupVideosFolder.exists()) {
+        LOG.warn("Skipped copying the PUP packs of \"{}\", there is no PUPVideos folder {}", original.getGameDisplayName(), pupVideosFolder.getAbsolutePath());
+        return;
+      }
+      for (File pack : packs) {
+        File target = new File(pupVideosFolder, pack.getName());
+        if (!target.exists()) {
+          copyFolderIfPresent(pack, target, "PUP pack");
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy the PUP packs of \"{}\": {}", original.getGameDisplayName(), e.getMessage(), e);
+    }
+  }
+
+  /**
+   * Deletes the folder of a moved table in the VPX 10.8.1 layout: the ROM, NVRAM, ... in it belong to this table only
+   * and have been copied to the target. The games folder and folders that still hold another table are kept.
+   */
+  private void deleteSourceTableFolder(File tableFolder, GameEmulator emulator) {
+    try {
+      File gamesFolder = emulator.getGamesFolder();
+      if (!tableFolder.exists() || tableFolder.getAbsoluteFile().equals(gamesFolder.getAbsoluteFile())
+          || !tableFolder.toPath().toAbsolutePath().normalize().startsWith(gamesFolder.toPath().toAbsolutePath().normalize())) {
+        return;
+      }
+
+      String gameExt = StringUtils.defaultIfEmpty(emulator.getGameExt(), "vpx");
+      File[] otherTables = tableFolder.listFiles((dir, name) -> FilenameUtils.isExtension(name.toLowerCase(), gameExt.toLowerCase()));
+      if (otherTables != null && otherTables.length > 0) {
+        LOG.info("Kept table folder \"{}\", it still contains {} table file(s)", tableFolder.getAbsolutePath(), otherTables.length);
+        return;
+      }
+
+      if (SystemUtil.deleteFileOrFolder(tableFolder)) {
+        LOG.info("Deleted table folder \"{}\" of the moved table", tableFolder.getAbsolutePath());
+      }
+      else {
+        LOG.warn("Failed to delete table folder \"{}\" of the moved table", tableFolder.getAbsolutePath());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete table folder \"{}\": {}", tableFolder.getAbsolutePath(), e.getMessage(), e);
+    }
+  }
+
+  private void copyAssetFile(File source, File target, String label, boolean overwrite) throws Exception {
+    if (source.getAbsoluteFile().equals(target.getAbsoluteFile()) || (!overwrite && target.exists())) {
+      return;
+    }
+    target.getParentFile().mkdirs();
+    org.apache.commons.io.FileUtils.copyFile(source, target);
+    LOG.info("Copied {} \"{}\" to \"{}\"", label, source.getAbsolutePath(), target.getAbsolutePath());
   }
 
   /**

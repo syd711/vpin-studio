@@ -30,6 +30,8 @@ import java.util.Set;
 public class FolderLookupService {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  public static final String PINMAME_FOLDER = "pinmame";
+
   @Autowired
   private SystemService systemService;
 
@@ -69,7 +71,7 @@ public class FolderLookupService {
   @NonNull
   public File getAltSoundFolder(@NonNull Game game, String subfolder) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (!isPerTableFileStructure(game)) {
       File folder = new File(emulator.getMameFolder(), "altsound");
       return new File(folder, subfolder);
     }
@@ -82,7 +84,7 @@ public class FolderLookupService {
    */
   @NonNull
   public File getSerumFolder(@NonNull Game game, String subfolder) {
-    if (isPreferLegacyFileStructure(game.getEmulator())) {
+    if (!isPerTableFileStructure(game)) {
       return getLegacyAltColorFolder(game.getEmulator(), subfolder);
     }
     return new File(game.getGameFolder(), "serum/" + subfolder);
@@ -93,7 +95,7 @@ public class FolderLookupService {
    */
   @NonNull
   public File getVniFolder(@NonNull Game game, String subfolder) {
-    if (isPreferLegacyFileStructure(game.getEmulator())) {
+    if (!isPerTableFileStructure(game)) {
       return getLegacyAltColorFolder(game.getEmulator(), subfolder);
     }
     return new File(game.getGameFolder(), "vni/" + subfolder);
@@ -123,7 +125,7 @@ public class FolderLookupService {
   @NonNull
   public File getNvRamFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (!isPerTableFileStructure(game)) {
       File folder = vPinMameService.getNvRamFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "nvram");
@@ -137,7 +139,7 @@ public class FolderLookupService {
   @NonNull
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (!isPerTableFileStructure(game)) {
       File folder = vPinMameService.getRomsFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "roms");
@@ -158,7 +160,7 @@ public class FolderLookupService {
   @Nullable
   public File getCfgFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (!isPerTableFileStructure(game)) {
       File folder = vPinMameService.getCfgFolder();
       if (folder == null) {
         folder = new File(emulator.getMameFolder(), "cfg");
@@ -225,7 +227,7 @@ public class FolderLookupService {
   @Nullable
   public File getMusicFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (!isPerTableFileStructure(game)) {
       return getMusicFolder(emulator);
     }
     // VPX resolves PlayMusic() against the music folder next to the table
@@ -246,7 +248,7 @@ public class FolderLookupService {
   @NonNull
   public File getUserFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (isPreferLegacyFileStructure(emulator)) {
+    if (!isPerTableFileStructure(game)) {
       return new File(emulator.getInstallationFolder(), "User");
     }
 
@@ -292,8 +294,9 @@ public class FolderLookupService {
       tableName = highscoreMapping.getTableName();
     }
 
+    // with the per table layout, VPX writes it next to the table, so the shared one is only a fallback
     File stgFile = new File(getUserFolder(emulator), "VPReg.stg");
-    if (stgFile.exists()) {
+    if (!isPerTableFileStructure(game) && stgFile.exists()) {
       VPRegFile reg = new VPRegFile(stgFile, game.getRom(), tableName);
       if (reg.isValid()) {
         return reg;
@@ -365,7 +368,7 @@ public class FolderLookupService {
   @Nullable
   public File getNvRamFile(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null || (isPreferLegacyFileStructure(emulator) && emulator.getMameDirectory() == null)) {
+    if (emulator == null || (!isPerTableFileStructure(game) && emulator.getMameDirectory() == null)) {
       return null;
     }
 
@@ -451,6 +454,44 @@ public class FolderLookupService {
     File userFolder = new File(installationFolder, "User");
     File lowerCase = new File(installationFolder, "user");
     return !userFolder.exists() && lowerCase.exists() ? lowerCase : userFolder;
+  }
+
+  /**
+   * Whether the files of the given table are kept next to it, in the VPX 10.8.1 layout (pinmame/roms, pinmame/nvram,
+   * altsound, serum, vni, music, user, ...), instead of the shared folders of the installation.
+   * <p>
+   * This is the case for all tables of an emulator without the legacy file structure, see
+   * {@link #isPreferLegacyFileStructure(GameEmulator, boolean)}. Other tables use it when they live in their own
+   * subfolder of the games folder that contains a {@value #PINMAME_FOLDER} folder, e.g. after they have been
+   * moved to a VPX 10.8.1 installation, see {@link #createPerTableFileStructure(File)}.
+   */
+  public boolean isPerTableFileStructure(@NonNull Game game) {
+    GameEmulator emulator = game.getEmulator();
+    if (emulator == null) {
+      return false;
+    }
+    if (!isPreferLegacyFileStructure(emulator)) {
+      return true;
+    }
+    return isPerTableFolder(game.getGameFolder(), emulator.getGamesFolder());
+  }
+
+  public static boolean isPerTableFolder(@Nullable File tableFolder, @Nullable File gamesFolder) {
+    if (tableFolder == null || (gamesFolder != null && tableFolder.getAbsoluteFile().equals(gamesFolder.getAbsoluteFile()))) {
+      return false;
+    }
+    return new File(tableFolder, PINMAME_FOLDER).isDirectory();
+  }
+
+  /**
+   * Marks the given table folder to use the VPX 10.8.1 layout by creating its {@value #PINMAME_FOLDER} folder,
+   * see {@link #isPerTableFileStructure(Game)}.
+   */
+  public void createPerTableFileStructure(@NonNull File tableFolder) {
+    File pinmameFolder = new File(tableFolder, PINMAME_FOLDER);
+    if (!pinmameFolder.exists() && !pinmameFolder.mkdirs()) {
+      LOG.error("Failed to create \"{}\"", pinmameFolder.getAbsolutePath());
+    }
   }
 
   private boolean isPreferLegacyFileStructure(@NonNull GameEmulator emulator) {

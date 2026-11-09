@@ -272,9 +272,8 @@ public class MusicServiceTest {
     File bundle = musicBundle(tempDir);
     File tableMusicFolder = tempDir.resolve("Twister/music").toFile();
     GameEmulator emulator = mock(GameEmulator.class);
-    when(emulator.isPerTableFileStructure()).thenReturn(true);
     Game tableGame = mock(Game.class);
-    when(tableGame.getEmulator()).thenReturn(emulator);
+    when(folderLookupService.isPerTableFileStructure(tableGame)).thenReturn(true);
     when(folderLookupService.getMusicFolder(tableGame)).thenReturn(tableMusicFolder);
 
     musicService.installMusic(bundle, tableGame, emulator, mock(UploaderAnalysis.class));
@@ -288,9 +287,8 @@ public class MusicServiceTest {
     File bundle = musicBundle(tempDir);
     File musicFolder = tempDir.resolve("Music").toFile();
     GameEmulator emulator = mock(GameEmulator.class);
-    when(emulator.isPerTableFileStructure()).thenReturn(false);
     Game tableGame = mock(Game.class);
-    when(tableGame.getEmulator()).thenReturn(emulator);
+    when(folderLookupService.isPerTableFileStructure(tableGame)).thenReturn(false);
     when(folderLookupService.getMusicFolder(tableGame)).thenReturn(musicFolder);
 
     musicService.installMusic(bundle, tableGame, emulator, mock(UploaderAnalysis.class));

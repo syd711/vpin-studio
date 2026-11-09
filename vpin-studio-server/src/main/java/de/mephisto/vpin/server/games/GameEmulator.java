@@ -35,6 +35,15 @@ public class GameEmulator {
    * see FolderLookupService. Uploads of these assets need a table then, not an emulator.
    */
   private boolean perTableFileStructure;
+  /**
+   * The file version of the emulator executable, e.g. "10.8.1.3788" for VPX, null if unknown (always on non-Windows platforms).
+   */
+  private String emulatorVersion;
+  /**
+   * True if tables can be stored in the VPX 10.8.1 per table file layout, i.e. VPX 10.8.1 or newer, or a standalone
+   * installation that always uses this layout.
+   */
+  private boolean perTableFileStructureSupported;
 
   private String keepDisplays;
 
@@ -215,6 +224,22 @@ public class GameEmulator {
 
   public void setMameDirectory(String mameDirectory) {
     this.mameDirectory = mameDirectory;
+  }
+
+  public String getEmulatorVersion() {
+    return emulatorVersion;
+  }
+
+  public void setEmulatorVersion(String emulatorVersion) {
+    this.emulatorVersion = emulatorVersion;
+  }
+
+  public boolean isPerTableFileStructureSupported() {
+    return perTableFileStructureSupported;
+  }
+
+  public void setPerTableFileStructureSupported(boolean perTableFileStructureSupported) {
+    this.perTableFileStructureSupported = perTableFileStructureSupported;
   }
 
   public boolean isPerTableFileStructure() {

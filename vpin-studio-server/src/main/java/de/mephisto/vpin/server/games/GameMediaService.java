@@ -39,6 +39,7 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import de.mephisto.vpin.server.music.MusicService;
+import de.mephisto.vpin.server.vpx.FolderLookupService;
 import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -1000,7 +1001,7 @@ public class GameMediaService extends MediaService {
     String[] content = tableFolder.list();
     boolean empty = content == null || content.length == 0;
     if (!empty) {
-      if (!deleteContent || !emulator.isPerTableFileStructure()) {
+      if (!deleteContent || (!emulator.isPerTableFileStructure() && !FolderLookupService.isPerTableFolder(tableFolder, gamesFolder))) {
         return true;
       }
 

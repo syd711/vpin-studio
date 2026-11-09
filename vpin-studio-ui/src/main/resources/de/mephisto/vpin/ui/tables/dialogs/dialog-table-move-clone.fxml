@@ -41,6 +41,8 @@
                </VBox.margin>
             </Label>
             <ComboBox fx:id="targetEmulatorCombo" maxWidth="1.7976931348623157E308" />
+            <Label fx:id="emulatorVersionLabel" styleClass="checkbox-description" />
+            <Label fx:id="layoutHintLabel" maxWidth="420.0" styleClass="checkbox-description" wrapText="true" />
             <CheckBox fx:id="subfolderCheckBox" mnemonicParsing="false" onAction="#onSubfolderToggle" styleClass="default-text" text="%tables.table_move_clone.move_into_a_subfolder">
                <VBox.margin>
                   <Insets top="12.0" />

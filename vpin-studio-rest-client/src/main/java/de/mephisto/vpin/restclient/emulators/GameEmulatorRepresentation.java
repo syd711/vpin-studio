@@ -20,6 +20,15 @@ public class GameEmulatorRepresentation {
    * VPinMAME folder). Uploads of these assets need a table then instead of an emulator.
    */
   private boolean perTableFileStructure;
+  /**
+   * The file version of the emulator executable, e.g. "10.8.1.3788" for VPX, null if unknown.
+   */
+  private String emulatorVersion;
+  /**
+   * True if tables can be stored in the VPX 10.8.1 per table file layout (VPX 10.8.1 or newer, or a standalone
+   * installation). Tables moved to such an emulator get their own folder holding all their files.
+   */
+  private boolean perTableFileStructureSupported;
   private int id = -1;
   private boolean enabled;
   private String keepDisplays;
@@ -57,6 +66,22 @@ public class GameEmulatorRepresentation {
 
   public void setGameExt(String gameExt) {
     this.gameExt = gameExt;
+  }
+
+  public String getEmulatorVersion() {
+    return emulatorVersion;
+  }
+
+  public void setEmulatorVersion(String emulatorVersion) {
+    this.emulatorVersion = emulatorVersion;
+  }
+
+  public boolean isPerTableFileStructureSupported() {
+    return perTableFileStructureSupported;
+  }
+
+  public void setPerTableFileStructureSupported(boolean perTableFileStructureSupported) {
+    this.perTableFileStructureSupported = perTableFileStructureSupported;
   }
 
   public boolean isPerTableFileStructure() {

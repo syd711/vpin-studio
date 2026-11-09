@@ -44,7 +44,7 @@ public class MusicService {
     File musicFolder = null;
     if (game != null) {
       musicFolder = folderLookupService.getMusicFolder(game);
-      if (musicFolder != null && game.getEmulator().isPerTableFileStructure()) {
+      if (musicFolder != null && folderLookupService.isPerTableFileStructure(game)) {
         // VPX does not create the folder next to the table
         musicFolder.mkdirs();
       }

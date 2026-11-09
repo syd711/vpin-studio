@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,12 @@ public class TableMoveCloneController implements Initializable, DialogController
   private ComboBox<GameEmulatorRepresentation> targetEmulatorCombo;
 
   @FXML
+  private Label emulatorVersionLabel;
+
+  @FXML
+  private Label layoutHintLabel;
+
+  @FXML
   private CheckBox subfolderCheckBox;
 
   @FXML
@@ -60,8 +67,37 @@ public class TableMoveCloneController implements Initializable, DialogController
   private List<GameRepresentation> games;
   private boolean move;
 
+  /**
+   * The subfolder selection of the user, restored when switching back from a VPX 10.8.1 emulator that enforces it.
+   */
+  private boolean userSubfolderSelection;
+
   @FXML
   private void onSubfolderToggle(ActionEvent e) {
+    userSubfolderSelection = subfolderCheckBox.isSelected();
+    subfolderNamingBox.setDisable(!subfolderCheckBox.isSelected());
+  }
+
+  /**
+   * VPX 10.8.1 keeps the ROM, NVRAM, ... next to the table, so the table always needs its own subfolder there.
+   * Older versions use the shared folders of the installation, the subfolder is optional then.
+   */
+  private void onTargetEmulatorChange(GameEmulatorRepresentation target) {
+    if (target == null) {
+      emulatorVersionLabel.setText("");
+      layoutHintLabel.setText("");
+      return;
+    }
+
+    boolean perTable = target.isPerTableFileStructureSupported();
+    String version = target.getEmulatorVersion();
+    emulatorVersionLabel.setText(StringUtils.isEmpty(version) ? "" : Messages.get("tables.table_move_clone.emulator_version", version));
+    emulatorVersionLabel.setVisible(!StringUtils.isEmpty(version));
+    emulatorVersionLabel.setManaged(!StringUtils.isEmpty(version));
+    layoutHintLabel.setText(perTable ? Messages.get("tables.table_move_clone.layout_per_table_hint") : Messages.get("tables.table_move_clone.layout_shared_hint"));
+
+    subfolderCheckBox.setSelected(perTable || userSubfolderSelection);
+    subfolderCheckBox.setDisable(perTable);
     subfolderNamingBox.setDisable(!subfolderCheckBox.isSelected());
   }
 
@@ -106,6 +142,7 @@ public class TableMoveCloneController implements Initializable, DialogController
   public void initialize(URL url, ResourceBundle resourceBundle) {
     //populated in setData(), the emulator list depends on the game(s) being moved/cloned
     subfolderNamingBox.setDisable(true);
+    targetEmulatorCombo.valueProperty().addListener((obs, oldValue, newValue) -> onTargetEmulatorChange(newValue));
   }
 
   public void setData(TableOverviewController tableOverviewController, GameRepresentation game, boolean move) {
