@@ -308,19 +308,12 @@ public class TableOverviewContextMenu {
       if (vpxEmulators.size() > 1) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem moveTableItem = new MenuItem(multiSelection ? Messages.get("tables.context_menu.move_tables") : Messages.get("tables.context_menu.move_table"));
-        KeyCombination moveTableItemKey = new KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN);
-        moveTableItem.setAccelerator(moveTableItemKey);
-        moveTableItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-move-outline"));
-        moveTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, tableOverviewController.getSelections(), true));
-        ctxMenu.getItems().add(moveTableItem);
-
-        MenuItem cloneTableItem = new MenuItem(multiSelection ? Messages.get("tables.context_menu.clone_tables") : Messages.get("tables.context_menu.clone_table"));
-        KeyCombination cloneTableItemKey = new KeyCodeCombination(KeyCode.F7, KeyCombination.SHIFT_DOWN);
-        cloneTableItem.setAccelerator(cloneTableItemKey);
-        cloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2c-content-copy"));
-        cloneTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, tableOverviewController.getSelections(), false));
-        ctxMenu.getItems().add(cloneTableItem);
+        MenuItem moveCloneTableItem = new MenuItem(multiSelection ? Messages.get("tables.context_menu.move_clone_tables") : Messages.get("tables.context_menu.move_clone_table"));
+        KeyCombination moveCloneTableItemKey = new KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN);
+        moveCloneTableItem.setAccelerator(moveCloneTableItemKey);
+        moveCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-move-outline"));
+        moveCloneTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, tableOverviewController.getSelections()));
+        ctxMenu.getItems().add(moveCloneTableItem);
       }
 
       Menu uploadMenu = new Menu(Messages.get("tables.context_menu.upload"));

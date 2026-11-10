@@ -33,6 +33,20 @@
    <center>
       <VBox minWidth="420.0" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
+            <Label styleClass="preference-description" text="%tables.table_move_clone.operation" />
+            <HBox spacing="12.0">
+               <children>
+                  <RadioButton fx:id="moveRadio" mnemonicParsing="false" selected="true" styleClass="default-text" text="%dialog.move_button">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="operationGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="cloneRadio" mnemonicParsing="false" styleClass="default-text" text="%dialog.clone_button" toggleGroup="$operationGroup" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </HBox>
             <Label fx:id="descriptionLabel1" styleClass="preference-description" wrapText="true" />
             <Label fx:id="descriptionLabel2" layoutX="22.0" layoutY="22.0" styleClass="preference-description" wrapText="true" />
             <Label styleClass="preference-description" text="%tables.table_move_clone.target_vpx_emulator">

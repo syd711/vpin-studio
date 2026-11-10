@@ -16,6 +16,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,11 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableMoveCloneController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  @FXML
+  private RadioButton moveRadio;
+  @FXML
+  private ToggleGroup operationGroup;
 
   @FXML
   private Label descriptionLabel1;
@@ -65,7 +71,6 @@ public class TableMoveCloneController implements Initializable, DialogController
 
   private TableOverviewController tableOverviewController;
   private List<GameRepresentation> games;
-  private boolean move;
 
   /**
    * The subfolder selection of the user, restored when switching back from a VPX 10.8.1 emulator that enforces it.
@@ -116,10 +121,37 @@ public class TableMoveCloneController implements Initializable, DialogController
       stage.close();
     });
 
-    ProgressDialog.createProgressDialog(new TableMoveCloneProgressModel(games, targetEmulator, move, createSubfolder, subfolderNaming));
+    ProgressDialog.createProgressDialog(new TableMoveCloneProgressModel(games, targetEmulator, isMove(), createSubfolder, subfolderNaming));
     if (tableOverviewController != null) {
       tableOverviewController.doReload();
     }
+  }
+
+  private boolean isMove() {
+    return moveRadio.isSelected();
+  }
+
+  /**
+   * Updates the descriptions and the OK button for the selected operation (move or clone).
+   */
+  private void onOperationChange() {
+    if (games == null || games.isEmpty()) {
+      return;
+    }
+
+    boolean move = isMove();
+    okBtn.setText(move ? Messages.get("dialog.move_button") : Messages.get("dialog.clone_button"));
+    if (games.size() > 1) {
+      descriptionLabel1.setText(move ? Messages.get("dialog.move_tables_desc", games.size()) : Messages.get("dialog.clone_tables_desc", games.size()));
+      descriptionLabel2.setText(move ? Messages.get("dialog.move_tables_removed_hint") : "");
+    }
+    else {
+      GameRepresentation game = games.get(0);
+      descriptionLabel1.setText(move ? Messages.get("dialog.move_table_desc", game.getGameDisplayName()) : Messages.get("dialog.clone_table_desc", game.getGameDisplayName()));
+      descriptionLabel2.setText(move ? Messages.get("dialog.move_table_removed_hint") : "");
+    }
+    descriptionLabel2.setVisible(move);
+    descriptionLabel2.setManaged(move);
   }
 
   private SubfolderNaming getSelectedSubfolderNaming() {
@@ -143,28 +175,26 @@ public class TableMoveCloneController implements Initializable, DialogController
     //populated in setData(), the emulator list depends on the game(s) being moved/cloned
     subfolderNamingBox.setDisable(true);
     targetEmulatorCombo.valueProperty().addListener((obs, oldValue, newValue) -> onTargetEmulatorChange(newValue));
+    operationGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
+      // keep one operation selected at all times
+      if (newValue == null) {
+        operationGroup.selectToggle(oldValue);
+        return;
+      }
+      onOperationChange();
+    });
   }
 
-  public void setData(TableOverviewController tableOverviewController, GameRepresentation game, boolean move) {
-    setData(tableOverviewController, Collections.singletonList(game), move);
+  public void setData(TableOverviewController tableOverviewController, GameRepresentation game) {
+    setData(tableOverviewController, Collections.singletonList(game));
   }
 
-  public void setData(TableOverviewController tableOverviewController, List<GameRepresentation> games, boolean move) {
+  public void setData(TableOverviewController tableOverviewController, List<GameRepresentation> games) {
     this.tableOverviewController = tableOverviewController;
     this.games = games;
-    this.move = move;
 
     boolean bulk = games.size() > 1;
-    okBtn.setText(move ? Messages.get("dialog.move_button") : Messages.get("dialog.clone_button"));
-    if (bulk) {
-      descriptionLabel1.setText(move ? Messages.get("dialog.move_tables_desc", games.size()) : Messages.get("dialog.clone_tables_desc", games.size()));
-      descriptionLabel2.setText(move ? Messages.get("dialog.move_tables_removed_hint") : "");
-    }
-    else {
-      GameRepresentation game = games.get(0);
-      descriptionLabel1.setText(move ? Messages.get("dialog.move_table_desc", game.getGameDisplayName()) : Messages.get("dialog.clone_table_desc", game.getGameDisplayName()));
-      descriptionLabel2.setText(move ? Messages.get("dialog.move_table_removed_hint") : "");
-    }
+    onOperationChange();
 
     List<GameEmulatorRepresentation> targets = client.getEmulatorService().getVpxGameEmulators().stream()
         .filter(emu -> bulk || emu.getId() != games.get(0).getEmulatorId())
