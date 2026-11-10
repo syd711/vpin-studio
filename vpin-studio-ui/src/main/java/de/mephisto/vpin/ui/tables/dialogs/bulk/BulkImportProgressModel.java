@@ -1,12 +1,20 @@
 package de.mephisto.vpin.ui.tables.dialogs.bulk;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -30,6 +38,10 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
   private final List<BulkImportItem> items;
   private final Iterator<BulkImportItem> iterator;
   private final Set<Integer> touchedGames = new HashSet<>();
+  /**
+   * Games whose only loading media is an imported landscape video, Popper needs a blank video after it.
+   */
+  private final Set<Integer> fullscreenLoadingGames = new LinkedHashSet<>();
   private final File moveTarget;
   private final BulkImportMoveStructure structure;
   @Nullable
@@ -107,6 +119,15 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
         imported++;
         LOG.info("Bulk imported {} to game {}, screen {}, mode {}", item.getFile().getAbsolutePath(), gameId, screen, mode);
         touchedGames.add(gameId);
+        if (VPinScreen.Loading.equals(screen)) {
+          // a later loading video of the same table in this run may change the result
+          if (isFullscreenLoadingVideo(gameId)) {
+            fullscreenLoadingGames.add(gameId);
+          }
+          else {
+            fullscreenLoadingGames.remove(gameId);
+          }
+        }
         progressResultModel.addProcessed();
         // only files that have been imported are moved
         if (moveTarget != null) {
@@ -229,10 +250,106 @@ public class BulkImportProgressModel extends ProgressModel<BulkImportItem> {
         items.size(), imported, skipped, failed, notProcessed, touchedGames.size(),
         moveTarget != null ? ", moved=" + moved + ", moveFailed=" + moveFailed + " (target \"" + moveTarget.getAbsolutePath() + "\", structure " + structure + ")" : "");
     Platform.runLater(() -> {
-      for (Integer gameId : touchedGames) {
-        EventManager.getInstance().notifyJobFinished(JobType.POPPER_MEDIA_INSTALL, gameId, false, true);
+      if (!fullscreenLoadingGames.isEmpty() && confirmBlankVideos()) {
+        // the blank videos are added before the tables are refreshed
+        new Thread(() -> {
+          addBlankVideos();
+          Platform.runLater(this::notifyTouchedGames);
+        }, "bulk-importer-blank-videos").start();
+      }
+      else {
+        notifyTouchedGames();
       }
     });
     super.finalizeModel(progressResultModel);
+  }
+
+  private void notifyTouchedGames() {
+    for (Integer gameId : touchedGames) {
+      EventManager.getInstance().notifyJobFinished(JobType.POPPER_MEDIA_INSTALL, gameId, false, true);
+    }
+  }
+
+  /**
+   * Popper plays a landscape loading video in fullscreen, so a blank video has to be added after it.
+   * Like in the asset manager, this is only the case when the imported video is the only loading media of the table.
+   */
+  private boolean isFullscreenLoadingVideo(int gameId) {
+    try {
+      if (!FrontendType.Popper.equals(Studio.client.getFrontendService().getFrontendType())) {
+        return false;
+      }
+      List<FrontendMediaItemRepresentation> mediaItems = Studio.client.getGameMediaService().getGameMedia(gameId).getMediaItems(VPinScreen.Loading);
+      if (mediaItems.size() != 1) {
+        return false;
+      }
+      FrontendMediaItemRepresentation item = mediaItems.get(0);
+      if (!MimeTypeUtil.isVideo(item.getMimeType()) || item.getName().contains("(SCREEN")) {
+        return false;
+      }
+      AssetMetaData metadata = Studio.client.getGameMediaService().getMetadata(gameId, false, VPinScreen.Loading, item.getName());
+      return TableAssetManagerDialogController.isLandscape(metadata);
+    }
+    catch (Exception e) {
+      LOG.error("Fullscreen loading video check for game {} failed: {}", gameId, e.getMessage(), e);
+      return false;
+    }
+  }
+
+  /**
+   * Asks once for all tables, the answer is stored in the same UI settings the asset manager uses.
+   */
+  private boolean confirmBlankVideos() {
+    try {
+      UISettings uiSettings = Studio.client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      if (uiSettings.isAlwaysAddLoadingBlankVideo()) {
+        return true;
+      }
+      if (uiSettings.isHideLoadingBlankVideoConfirmation()) {
+        LOG.info("Skipped adding blank videos for {} fullscreen loading videos, confirmation is disabled", fullscreenLoadingGames.size());
+        return false;
+      }
+
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckboxAndCancel(Studio.stage, Messages.get("dialog.fullscreen_loading_video"),
+          Messages.get("dialog.add_blank"), Messages.get("dialog.always_add_blank"),
+          Messages.get("bulk_importer.fullscreen_loading_videos_text", fullscreenLoadingGames.size()), Messages.get("dialog.fullscreen_loading_video_help"),
+          Messages.get("dialog.do_not_show_again"), false);
+
+      if (confirmationResult.isApplyClicked()) {
+        uiSettings.setAlwaysAddLoadingBlankVideo(true);
+        Studio.client.getPreferenceService().setJsonPreference(uiSettings);
+      }
+      else if (confirmationResult.isChecked()) {
+        uiSettings.setHideLoadingBlankVideoConfirmation(true);
+        Studio.client.getPreferenceService().setJsonPreference(uiSettings);
+      }
+      return confirmationResult.isOkClicked() || confirmationResult.isApplyClicked();
+    }
+    catch (Exception e) {
+      LOG.error("Fullscreen loading video confirmation failed: {}", e.getMessage(), e);
+      return false;
+    }
+  }
+
+  private void addBlankVideos() {
+    List<Integer> failedGames = new ArrayList<>();
+    for (Integer gameId : fullscreenLoadingGames) {
+      try {
+        if (Studio.client.getGameMediaService().toFullScreen(gameId, false, VPinScreen.Loading, false)) {
+          LOG.info("Added blank video after the fullscreen loading video of game {}", gameId);
+        }
+        else {
+          failedGames.add(gameId);
+          LOG.error("Adding blank video after the fullscreen loading video of game {} failed", gameId);
+        }
+      }
+      catch (Exception e) {
+        failedGames.add(gameId);
+        LOG.error("Adding blank video after the fullscreen loading video of game {} failed: {}", gameId, e.getMessage(), e);
+      }
+    }
+    if (!failedGames.isEmpty()) {
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed")));
+    }
   }
 }

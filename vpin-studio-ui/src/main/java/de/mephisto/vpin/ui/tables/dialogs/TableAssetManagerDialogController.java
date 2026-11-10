@@ -451,7 +451,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private boolean isLandscapeVideo(int objectId, VPinScreen mediaScreen, FrontendMediaItemRepresentation item) {
     AssetMetaData metadata = client.getGameMediaService().getMetadata(objectId, isPlaylistMode(), mediaScreen, item.getName());
-    if (metadata == null) {
+    return isLandscape(metadata);
+  }
+
+  /**
+   * True when the media described by the metadata is wider than high.
+   */
+  public static boolean isLandscape(AssetMetaData metadata) {
+    if (metadata == null || metadata.getData() == null) {
       return false;
     }
     int width = toInt(metadata.getData().get("Width"));
