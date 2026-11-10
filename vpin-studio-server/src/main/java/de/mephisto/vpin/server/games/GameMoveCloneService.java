@@ -201,7 +201,11 @@ public class GameMoveCloneService {
     copyMusic(original, importedGame);
     copyPupPack(original, importedGame);
 
-    frontendService.vpsLink(importedGame.getId(), original.getExtTableId(), original.getExtTableVersionId());
+    //must go through the GameService: the VPS mapping is stored in the GameDetails too (the only storage when the
+    //frontend has no VPS mapping columns) and the cached game has to be refreshed, the frontend only is not enough
+    if (StringUtils.isNotEmpty(original.getExtTableId())) {
+      gameService.vpsLink(importedGame.getId(), original.getExtTableId(), original.getExtTableVersionId());
+    }
 
     if (move) {
       //clean up the original table now that the copy at the target emulator succeeded;
