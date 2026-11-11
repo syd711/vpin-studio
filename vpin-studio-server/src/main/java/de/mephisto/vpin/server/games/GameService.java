@@ -517,6 +517,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public synchronized void saveEventLog(HighscoreEventLog log) {
     try {
       GameDetails gameDetails = gameDetailsRepositoryService.findByPupId(log.getGameId());
+      if (gameDetails == null) {
+        LOG.warn("Skipped saving event log, no game details found for game id {}", log.getGameId());
+        return;
+      }
       gameDetails.setEventLog(log.toJson());
       gameDetailsRepositoryService.saveAndFlush(gameDetails);
       gameLifecycleService.notifyGameUpdated(log.getGameId());

@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -267,6 +268,14 @@ public class VPXService implements InitializingBean {
       }
     }
     return false;
+  }
+
+  /**
+   * @return the executable the game would be launched with, or null if no VPX executable exists
+   */
+  @Nullable
+  public File getLaunchExe(@NonNull Game game, @Nullable String altExe) {
+    return vpxCommandLineService.getLaunchExe(game, altExe);
   }
 
   public boolean play(@Nullable Game game, @Nullable String altExe, @Nullable String option) {

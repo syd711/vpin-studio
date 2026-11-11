@@ -187,7 +187,10 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
   }
 
   private static void launchGame(GameRepresentation game, String altExe, String option) {
-    client.getGameService().playGame(game.getId(), altExe, option);
+    String error = client.getGameService().playGame(game.getId(), altExe, option);
+    if (error != null) {
+      WidgetFactory.showAlert(stage, Messages.get("msg.failed_to_launch_table", game.getGameDisplayName()), error);
+    }
   }
 
   @Override

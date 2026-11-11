@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -136,6 +138,9 @@ public class GamesResource {
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     Game game = gameService.getGame(id);
+    if (game == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game found for id " + id);
+    }
     try {
       systemService.setMaintenanceMode(false);
       String altExe = (String) values.get("altExe");
@@ -143,10 +148,17 @@ public class GamesResource {
 
       GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
       if (gameEmulator == null) {
-        return false;
+        throw new ResponseStatusException(BAD_REQUEST, "No emulator found for \"" + game.getGameDisplayName() + "\".");
       }
 
       if (game.isVpxGame()) {
+        //check before the frontend is killed, the launch can not succeed anyway
+        if (vpxService.getLaunchExe(game, altExe) == null) {
+          String exe = altExe != null ? altExe : (gameEmulator.getExe() != null ? gameEmulator.getExe().getName() : gameEmulator.getExeName());
+          throw new ResponseStatusException(BAD_REQUEST, "Cannot launch \"" + game.getGameDisplayName() + "\": the VPX executable \""
+              + exe + "\" was not found in \"" + gameEmulator.getInstallationDirectory() + "\". Please check the emulator settings.");
+        }
+
         frontendService.killFrontend();
         SLOG.initLog(game.getId());
         //the frontend is not involved in this launch, so let the listeners prepare the table directly
@@ -191,7 +203,14 @@ public class GamesResource {
           return true;
         }
       }
-      throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
+      else {
+        throw new ResponseStatusException(BAD_REQUEST, "Unsupported emulator: " + game.getEmulator());
+      }
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Failed to launch \"" + game.getGameDisplayName() + "\", see the server log for details.");
+    }
+    catch (ResponseStatusException e) {
+      LOG.error("Failed to launch game {}: {}", id, e.getReason());
+      throw e;
     }
     finally {
       gameLifecycleService.notifyGameUpdated(game.getId());

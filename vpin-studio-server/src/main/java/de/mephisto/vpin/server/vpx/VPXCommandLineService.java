@@ -32,9 +32,15 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
   private ApplicationContext applicationContext;
 
-  public boolean execute(@NonNull Game game, @Nullable String altExe, @NonNull String... commandParams) {
-    File gameFile = game.getGameFile();
-    GameEmulator emulator = game.getEmulator(); 
+  /**
+   * Resolves the executable used to launch the given game: the explicit alt exe, the table's alt launch exe
+   * or the emulator default, falling back to the emulator default if the selected one does not exist.
+   *
+   * @return the executable or null if neither the selected one nor the emulator default exists
+   */
+  @Nullable
+  public File getLaunchExe(@NonNull Game game, @Nullable String altExe) {
+    GameEmulator emulator = game.getEmulator();
     File vpxExe = emulator.getExe();
 
     FrontendService frontendService = applicationContext.getBean(FrontendService.class);
@@ -47,14 +53,23 @@ public class VPXCommandLineService implements ApplicationContextAware {
       vpxExe = new File(emulator.getInstallationFolder(), altLaunchExe);
     }
 
-    if (!vpxExe.exists()) {
+    if (vpxExe == null || !vpxExe.exists()) {
       File defaultExe = emulator.getExe();
       if (defaultExe == null || !defaultExe.exists()) {
-        LOG.error("Cannot launch \"{}\": VPX executable {} not found.", game.getGameDisplayName(), vpxExe.getAbsolutePath());
-        return false;
+        LOG.error("Cannot launch \"{}\": VPX executable {} not found.", game.getGameDisplayName(), vpxExe != null ? vpxExe.getAbsolutePath() : null);
+        return null;
       }
-      LOG.warn("VPX executable {} not found, falling back to emulator default {}", vpxExe.getAbsolutePath(), defaultExe.getAbsolutePath());
+      LOG.warn("VPX executable {} not found, falling back to emulator default {}", vpxExe != null ? vpxExe.getAbsolutePath() : null, defaultExe.getAbsolutePath());
       vpxExe = defaultExe;
+    }
+    return vpxExe;
+  }
+
+  public boolean execute(@NonNull Game game, @Nullable String altExe, @NonNull String... commandParams) {
+    File gameFile = game.getGameFile();
+    File vpxExe = getLaunchExe(game, altExe);
+    if (vpxExe == null) {
+      return false;
     }
 
     try {

@@ -30,6 +30,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -81,15 +82,35 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/reloadEmulator/" + emulatorId, Boolean.class);
   }
 
-  public void playGame(int id, String altExe, String option) {
+  /**
+   * @return null if the game was launched, the error message otherwise
+   */
+  @Nullable
+  public String playGame(int id, String altExe, String option) {
     try {
       Map<String, Object> params = new HashMap<>();
       params.put("altExe", altExe);
       params.put("option", option);
       getRestClient().put(API + "games/play/" + id, params);
+      return null;
+    }
+    catch (RestClientResponseException e) {
+      LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
+      try {
+        Map<?, ?> body = e.getResponseBodyAs(Map.class);
+        Object message = body != null ? body.get("message") : null;
+        if (message != null && !StringUtils.isEmpty(message.toString())) {
+          return message.toString();
+        }
+      }
+      catch (Exception ex) {
+        //ignore, the body is not a Spring error response
+      }
+      return e.getStatusText() + " (" + e.getStatusCode().value() + ")";
     }
     catch (Exception e) {
       LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
+      return e.getMessage();
     }
   }
 
