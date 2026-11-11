@@ -86,7 +86,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
           List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
           for (Challenge challenge : challenges.getItems()) {
             LOG.info("------------------------------> Sync of {}", challenge.getName());
-            synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
+            try {
+              synchronizeChallenge(challenge, weeklyCompetitions, wovpSettings, forceReload);
+            }
+            catch (Exception e) {
+              LOG.error("Failed to synchronize WOVP challenge \"{}\": {}", challenge.getName(), e.getMessage(), e);
+            }
           }
 
           runCompetitionCleanupCheck(challenges, weeklyCompetitions);
@@ -226,11 +231,15 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   private List<Game> findMatchingGame(PinballTable pinballTable, String vpsVersion) {
     List<Game> gameMatches = gameService.getGamesByVpsTableId(pinballTable.getExternalId(), vpsVersion);
     List<Game> filteredMatches = gameMatches.stream().filter(g -> {
+      if (g.getGameFile() == null || !g.getGameFile().exists()) {
+        LOG.warn("Skipping WOVP match candidate \"{}\", game file does not exist: {}", g.getGameDisplayName(), g.getGameFile());
+        return false;
+      }
       TableDetails tableDetails = frontendService.getTableDetails(g.getId());
       return tableDetails.getStatus() > 0;
     }).collect(Collectors.toList());
 
-    filteredMatches.sort((o1, o2) -> o2.getModified().compareTo(o1.getModified()));
+    filteredMatches.sort(Comparator.comparing(Game::getModified, Comparator.nullsLast(Comparator.reverseOrder())));
     return filteredMatches;
   }
 

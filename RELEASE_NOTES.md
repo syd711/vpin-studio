@@ -17,4 +17,5 @@
 - **Competitions / VPin Mania Challenges**: 
   - Fixed new challenges not showing up in the challenge playlist until the server was restarted. The server only synchronized the challenges on startup, so challenges started afterwards had no table assigned. The challenges are now synchronized every 5 minutes and whenever the challenges view is opened.
   - Fixed the highscore of a challenge table being reset again when the table was re-matched to the challenge, e.g. after it had been disabled. The highscore is now only reset once per challenge.
+- **Competitions / WoVP Challenges**: Fixed WoVP challenges not being synchronized completely. When a challenge matched a table whose VPX file did not exist anymore, the synchronization stopped and all following challenges were skipped. Tables with missing VPX files are now ignored for the matching, and a failing challenge no longer stops the synchronization of the others.
 - **VPF/VPU Login**: Fixed security issue that the password for the VPU and VPF sites were not stored/transferred encrypted. 
