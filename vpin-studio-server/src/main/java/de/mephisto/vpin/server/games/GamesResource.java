@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.MoveCloneDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.MoveCopyDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
@@ -54,7 +54,7 @@ public class GamesResource {
   private GameMediaService gameMediaService;
 
   @Autowired
-  private GameMoveCloneService gameMoveCloneService;
+  private GameMoveCopyService gameMoveCopyService;
 
   @Autowired
   private VPXService vpxService;
@@ -333,9 +333,9 @@ public class GamesResource {
     return gameService.findMatch(term);
   }
 
-  @PostMapping("/moveOrClone")
-  public Game moveOrClone(@RequestBody MoveCloneDescriptor descriptor) throws Exception {
-    return gameMoveCloneService.moveOrCloneGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove(),
+  @PostMapping("/moveOrCopy")
+  public Game moveOrCopy(@RequestBody MoveCopyDescriptor descriptor) throws Exception {
+    return gameMoveCopyService.moveOrCopyGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove(),
         descriptor.isCreateSubfolder(), descriptor.getSubfolderNaming());
   }
 }

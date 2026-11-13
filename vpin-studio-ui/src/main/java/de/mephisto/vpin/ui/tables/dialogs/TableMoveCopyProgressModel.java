@@ -18,7 +18,7 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
-public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentation> {
+public class TableMoveCopyProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final List<GameRepresentation> games;
@@ -28,8 +28,8 @@ public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentatio
   private final boolean createSubfolder;
   private final SubfolderNaming subfolderNaming;
 
-  public TableMoveCloneProgressModel(List<GameRepresentation> games, GameEmulatorRepresentation targetEmulator, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) {
-    super(move ? Messages.get("dialog.moving_table") : Messages.get("dialog.cloning_table_title"));
+  public TableMoveCopyProgressModel(List<GameRepresentation> games, GameEmulatorRepresentation targetEmulator, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) {
+    super(move ? Messages.get("dialog.moving_table") : Messages.get("dialog.copying_table_title"));
     this.games = games;
     this.gameIterator = games.iterator();
     this.targetEmulator = targetEmulator;
@@ -66,20 +66,20 @@ public class TableMoveCloneProgressModel extends ProgressModel<GameRepresentatio
   @Override
   public String nextToString(GameRepresentation game) {
     return move ? Messages.get("dialog.moving_to", game.getGameDisplayName(), targetEmulator.getName())
-        : Messages.get("dialog.cloning_to", game.getGameDisplayName(), targetEmulator.getName());
+        : Messages.get("dialog.copying_to", game.getGameDisplayName(), targetEmulator.getName());
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      client.getGameService().moveOrCloneGame(game.getId(), targetEmulator.getId(), move, createSubfolder, subfolderNaming);
+      client.getGameService().moveOrCopyGame(game.getId(), targetEmulator.getId(), move, createSubfolder, subfolderNaming);
       progressResultModel.addProcessed(game.getId());
     }
     catch (Exception e) {
       progressResultModel.addError();
-      LOG.error("Failed to {} table \"{}\": {}", move ? "move" : "clone", game.getGameDisplayName(), e.getMessage(), e);
+      LOG.error("Failed to {} table \"{}\": {}", move ? "move" : "copy", game.getGameDisplayName(), e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get(move ? "msg.failed_to_move_table" : "msg.failed_to_clone_table", game.getGameDisplayName(), e.getMessage()));
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get(move ? "msg.failed_to_move_table" : "msg.failed_to_copy_table", game.getGameDisplayName(), e.getMessage()));
       });
     }
   }

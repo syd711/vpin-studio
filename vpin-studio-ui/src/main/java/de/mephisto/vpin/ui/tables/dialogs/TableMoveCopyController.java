@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableMoveCloneController implements Initializable, DialogController {
+public class TableMoveCopyController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @FXML
@@ -96,10 +96,10 @@ public class TableMoveCloneController implements Initializable, DialogController
 
     boolean perTable = target.isPerTableFileStructureSupported();
     String version = target.getEmulatorVersion();
-    emulatorVersionLabel.setText(StringUtils.isEmpty(version) ? "" : Messages.get("tables.table_move_clone.emulator_version", version));
+    emulatorVersionLabel.setText(StringUtils.isEmpty(version) ? "" : Messages.get("tables.table_move_copy.emulator_version", version));
     emulatorVersionLabel.setVisible(!StringUtils.isEmpty(version));
     emulatorVersionLabel.setManaged(!StringUtils.isEmpty(version));
-    layoutHintLabel.setText(perTable ? Messages.get("tables.table_move_clone.layout_per_table_hint") : Messages.get("tables.table_move_clone.layout_shared_hint"));
+    layoutHintLabel.setText(perTable ? Messages.get("tables.table_move_copy.layout_per_table_hint") : Messages.get("tables.table_move_copy.layout_shared_hint"));
 
     subfolderCheckBox.setSelected(perTable || userSubfolderSelection);
     subfolderCheckBox.setDisable(perTable);
@@ -121,7 +121,7 @@ public class TableMoveCloneController implements Initializable, DialogController
       stage.close();
     });
 
-    ProgressDialog.createProgressDialog(new TableMoveCloneProgressModel(games, targetEmulator, isMove(), createSubfolder, subfolderNaming));
+    ProgressDialog.createProgressDialog(new TableMoveCopyProgressModel(games, targetEmulator, isMove(), createSubfolder, subfolderNaming));
     if (tableOverviewController != null) {
       tableOverviewController.doReload();
     }
@@ -132,7 +132,7 @@ public class TableMoveCloneController implements Initializable, DialogController
   }
 
   /**
-   * Updates the descriptions and the OK button for the selected operation (move or clone).
+   * Updates the descriptions and the OK button for the selected operation (move or copy).
    */
   private void onOperationChange() {
     if (games == null || games.isEmpty()) {
@@ -140,14 +140,14 @@ public class TableMoveCloneController implements Initializable, DialogController
     }
 
     boolean move = isMove();
-    okBtn.setText(move ? Messages.get("dialog.move_button") : Messages.get("dialog.clone_button"));
+    okBtn.setText(move ? Messages.get("dialog.move_button") : Messages.get("dialog.copy_button"));
     if (games.size() > 1) {
-      descriptionLabel1.setText(move ? Messages.get("dialog.move_tables_desc", games.size()) : Messages.get("dialog.clone_tables_desc", games.size()));
+      descriptionLabel1.setText(move ? Messages.get("dialog.move_tables_desc", games.size()) : Messages.get("dialog.copy_tables_desc", games.size()));
       descriptionLabel2.setText(move ? Messages.get("dialog.move_tables_removed_hint") : "");
     }
     else {
       GameRepresentation game = games.get(0);
-      descriptionLabel1.setText(move ? Messages.get("dialog.move_table_desc", game.getGameDisplayName()) : Messages.get("dialog.clone_table_desc", game.getGameDisplayName()));
+      descriptionLabel1.setText(move ? Messages.get("dialog.move_table_desc", game.getGameDisplayName()) : Messages.get("dialog.copy_table_desc", game.getGameDisplayName()));
       descriptionLabel2.setText(move ? Messages.get("dialog.move_table_removed_hint") : "");
     }
     descriptionLabel2.setVisible(move);
@@ -172,7 +172,7 @@ public class TableMoveCloneController implements Initializable, DialogController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    //populated in setData(), the emulator list depends on the game(s) being moved/cloned
+    //populated in setData(), the emulator list depends on the game(s) being moved/copied
     subfolderNamingBox.setDisable(true);
     targetEmulatorCombo.valueProperty().addListener((obs, oldValue, newValue) -> onTargetEmulatorChange(newValue));
     operationGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
@@ -193,19 +193,40 @@ public class TableMoveCloneController implements Initializable, DialogController
     this.tableOverviewController = tableOverviewController;
     this.games = games;
 
-    boolean bulk = games.size() > 1;
     onOperationChange();
 
+    //tables of different emulators can't be moved/copied together, the target must differ from the source emulator
+    if (!isSingleSourceEmulator(games)) {
+      disableOperation(Messages.get("tables.table_move_copy.mixed_emulators"));
+      return;
+    }
+
+    int sourceEmulatorId = games.get(0).getEmulatorId();
     List<GameEmulatorRepresentation> targets = client.getEmulatorService().getVpxGameEmulators().stream()
-        .filter(emu -> bulk || emu.getId() != games.get(0).getEmulatorId())
+        .filter(emu -> emu.getId() != sourceEmulatorId)
         .toList();
     targetEmulatorCombo.getItems().setAll(targets);
-    if (!targets.isEmpty()) {
-      targetEmulatorCombo.getSelectionModel().selectFirst();
+    if (targets.isEmpty()) {
+      disableOperation(Messages.get("tables.table_move_copy.no_target_emulator"));
+      return;
     }
-    else {
-      okBtn.setDisable(true);
-    }
+    targetEmulatorCombo.getSelectionModel().selectFirst();
+  }
+
+  /**
+   * Returns true if all given games belong to the same emulator.
+   */
+  public static boolean isSingleSourceEmulator(List<GameRepresentation> games) {
+    return !games.isEmpty() && games.stream().map(GameRepresentation::getEmulatorId).distinct().count() == 1;
+  }
+
+  private void disableOperation(String reason) {
+    targetEmulatorCombo.getItems().clear();
+    targetEmulatorCombo.setDisable(true);
+    subfolderCheckBox.setDisable(true);
+    subfolderNamingBox.setDisable(true);
+    okBtn.setDisable(true);
+    layoutHintLabel.setText(reason);
   }
 
   @Override

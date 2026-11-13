@@ -478,13 +478,13 @@ public class TableDialogs {
   }
 
 
-  public static void openTableMoveCloneDialog(TableOverviewController tableOverviewController, GameRepresentation game) {
-    openTableMoveCloneDialog(tableOverviewController, Collections.singletonList(game));
+  public static void openTableMoveCopyDialog(TableOverviewController tableOverviewController, GameRepresentation game) {
+    openTableMoveCopyDialog(tableOverviewController, Collections.singletonList(game));
   }
 
-  public static void openTableMoveCloneDialog(TableOverviewController tableOverviewController, List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(TableMoveCloneController.class, "dialog-table-move-clone.fxml", Messages.get("dialog.move_clone_table"));
-    TableMoveCloneController controller = (TableMoveCloneController) stage.getUserData();
+  public static void openTableMoveCopyDialog(TableOverviewController tableOverviewController, List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(TableMoveCopyController.class, "dialog-table-move-copy.fxml", Messages.get("dialog.move_copy_table"));
+    TableMoveCopyController controller = (TableMoveCopyController) stage.getUserData();
     controller.setData(tableOverviewController, games);
     stage.showAndWait();
   }

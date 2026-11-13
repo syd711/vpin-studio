@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.games.descriptors;
 
-public class MoveCloneDescriptor {
+public class MoveCopyDescriptor {
   private int gameId;
   private int targetEmulatorId;
   private boolean move;

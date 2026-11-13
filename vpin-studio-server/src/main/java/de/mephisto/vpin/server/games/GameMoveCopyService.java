@@ -33,10 +33,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Moves or clones a VPX table between VPX emulators, see {@link #moveOrCloneGame(int, int, boolean, boolean, SubfolderNaming)}.
+ * Moves or copies a VPX table between VPX emulators, see {@link #moveOrCopyGame(int, int, boolean, boolean, SubfolderNaming)}.
  */
 @Service
-public class GameMoveCloneService {
+public class GameMoveCopyService {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Autowired
@@ -76,7 +76,7 @@ public class GameMoveCloneService {
   private SystemService systemService;
 
   /**
-   * Moves or clones a VPX table to a different VPX emulator, copying the table file, its directly
+   * Moves or copies a VPX table to a different VPX emulator, copying the table file, its directly
    * associated files (.directb2s/.pov/.ini/.vr.ini/.res), frontend media, ROM, NVRAM, PinMAME .cfg,
    * highscore text file / VPReg.stg, ALT sound/color packages, FlexDMD/UltraDMD package, music files
    * and (for the VPX 10.8.1 layout) the PUP pack, whenever present. For a move, the
@@ -105,13 +105,13 @@ public class GameMoveCloneService {
    * When a table in the VPX 10.8.1 layout is moved, its files belong to this table only, so the source table folder
    * is deleted with all its content once the move has succeeded, unless it still holds another table.
    */
-  public Game moveOrCloneGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
+  public Game moveOrCopyGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
     Game original = gameService.getGame(gameId);
     if (original == null) {
       throw new Exception("No game found for id " + gameId);
     }
     if (!original.isVpxGame()) {
-      throw new Exception("Only VPX tables can be moved or cloned between emulators.");
+      throw new Exception("Only VPX tables can be moved or copied between emulators.");
     }
 
     GameEmulator targetEmulator = emulatorService.getGameEmulator(targetEmulatorId);
@@ -127,7 +127,7 @@ public class GameMoveCloneService {
       throw new Exception("The table file \"" + sourceFile.getName() + "\" does not exist.");
     }
 
-    LOG.info("Starting {} of \"{}\" from emulator \"{}\" to \"{}\"", move ? "move" : "clone",
+    LOG.info("Starting {} of \"{}\" from emulator \"{}\" to \"{}\"", move ? "move" : "copy",
         original.getGameDisplayName(), original.getEmulator().getName(), targetEmulator.getName());
 
     //VPX 10.8.1 keeps the ROM, NVRAM, ... next to the table, so every table needs its own folder there
@@ -174,15 +174,15 @@ public class GameMoveCloneService {
     Game importedGame = gameService.scanGame(returningGameId, true);
 
     String targetFileName = targetSubFolder != null ? FileUtils.joinGameFileName(targetSubFolder.getName(), target.getName()) : target.getName();
-    TableDetails clonedTableDetails = gameMediaService.getTableDetails(returningGameId);
-    clonedTableDetails.setEmulatorId(targetEmulator.getId());
-    clonedTableDetails.setGameFileName(targetFileName);
-    clonedTableDetails.setGameName(importedGame.getGameName());
-    clonedTableDetails.setGameDisplayName(move ? original.getGameDisplayName() : original.getGameDisplayName() + " (cloned)");
-    gameMediaService.saveTableDetails(clonedTableDetails, returningGameId, false);
+    TableDetails targetTableDetails = gameMediaService.getTableDetails(returningGameId);
+    targetTableDetails.setEmulatorId(targetEmulator.getId());
+    targetTableDetails.setGameFileName(targetFileName);
+    targetTableDetails.setGameName(importedGame.getGameName());
+    targetTableDetails.setGameDisplayName(move ? original.getGameDisplayName() : original.getGameDisplayName() + " (copy)");
+    gameMediaService.saveTableDetails(targetTableDetails, returningGameId, false);
     frontendService.updateTableFileUpdated(returningGameId);
 
-    //clone media and directly associated files
+    //copy media and directly associated files
     gameMediaService.cloneGameMedia(original, importedGame);
     File targetParent = target.getParentFile();
     FileUtils.cloneFile(original.getDirectB2SFile(), targetParent, target.getName());
@@ -209,7 +209,7 @@ public class GameMoveCloneService {
 
     if (move) {
       //clean up the original table now that the copy at the target emulator succeeded;
-      //assets not covered by cloning above are intentionally left in place, see method javadoc
+      //assets not covered by copying above are intentionally left in place, see method javadoc
       DeleteDescriptor descriptor = new DeleteDescriptor();
       descriptor.setGameIds(Collections.singletonList(original.getId()));
       descriptor.setDeleteTable(true);
@@ -242,7 +242,7 @@ public class GameMoveCloneService {
       }
     }
 
-    LOG.info("{} of \"{}\" to emulator \"{}\" successful.", move ? "Move" : "Clone", importedGame.getGameDisplayName(), targetEmulator.getName());
+    LOG.info("{} of \"{}\" to emulator \"{}\" successful.", move ? "Move" : "Copy", importedGame.getGameDisplayName(), targetEmulator.getName());
     return gameService.getGame(returningGameId);
   }
 

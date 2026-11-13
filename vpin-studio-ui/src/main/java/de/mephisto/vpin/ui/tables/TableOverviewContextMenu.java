@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.wovp.WOVPSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
+import de.mephisto.vpin.ui.tables.dialogs.TableMoveCopyController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -308,12 +309,13 @@ public class TableOverviewContextMenu {
       if (vpxEmulators.size() > 1) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem moveCloneTableItem = new MenuItem(multiSelection ? Messages.get("tables.context_menu.move_clone_tables") : Messages.get("tables.context_menu.move_clone_table"));
-        KeyCombination moveCloneTableItemKey = new KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN);
-        moveCloneTableItem.setAccelerator(moveCloneTableItemKey);
-        moveCloneTableItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-move-outline"));
-        moveCloneTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCloneDialog(tableOverviewController, tableOverviewController.getSelections()));
-        ctxMenu.getItems().add(moveCloneTableItem);
+        MenuItem moveCopyTableItem = new MenuItem(multiSelection ? Messages.get("tables.context_menu.move_copy_tables") : Messages.get("tables.context_menu.move_copy_table"));
+        KeyCombination moveCopyTableItemKey = new KeyCodeCombination(KeyCode.F6, KeyCombination.SHIFT_DOWN);
+        moveCopyTableItem.setAccelerator(moveCopyTableItemKey);
+        moveCopyTableItem.setGraphic(WidgetFactory.createIcon("mdi2f-file-move-outline"));
+        moveCopyTableItem.setDisable(!TableMoveCopyController.isSingleSourceEmulator(tableOverviewController.getSelections()));
+        moveCopyTableItem.setOnAction(actionEvent -> TableDialogs.openTableMoveCopyDialog(tableOverviewController, tableOverviewController.getSelections()));
+        ctxMenu.getItems().add(moveCopyTableItem);
       }
 
       Menu uploadMenu = new Menu(Messages.get("tables.context_menu.upload"));
