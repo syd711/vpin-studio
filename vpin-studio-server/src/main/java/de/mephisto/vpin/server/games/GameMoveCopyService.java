@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Moves or copies a VPX table between VPX emulators, see {@link #moveOrCopyGame(int, int, boolean, boolean, SubfolderNaming)}.
+ * Moves or copies a VPX table between VPX emulators, see {@link #moveOrCopyGame(int, int, boolean, boolean, SubfolderNaming, boolean)}.
  */
 @Service
 public class GameMoveCopyService {
@@ -104,8 +104,14 @@ public class GameMoveCopyService {
    * </ul>
    * When a table in the VPX 10.8.1 layout is moved, its files belong to this table only, so the source table folder
    * is deleted with all its content once the move has succeeded, unless it still holds another table.
+   * <p>
+   * When {@code skipVPinMAMEFiles} is set and the target emulator supports the VPX 10.8.1 layout, the VPinMAME
+   * related files (ROM, NVRAM, PinMAME .cfg, ALT sound, ALT color) are not copied and no {@code pinmame} folder is
+   * created next to the table, so the table keeps using the shared VPinMAME installation. A source folder in the
+   * VPX 10.8.1 layout is not deleted on a move then, as it still holds the VPinMAME files that were not copied.
    */
-  public Game moveOrCopyGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
+  public Game moveOrCopyGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming,
+                             boolean skipVPinMAMEFiles) throws Exception {
     Game original = gameService.getGame(gameId);
     if (original == null) {
       throw new Exception("No game found for id " + gameId);
@@ -135,6 +141,11 @@ public class GameMoveCopyService {
     if (perTableTarget) {
       createSubfolder = true;
     }
+    //the option only exists for the VPX 10.8.1 layout, older versions always use the shared VPinMAME folders
+    boolean skipPinMAME = perTableTarget && skipVPinMAMEFiles;
+    if (skipPinMAME) {
+      LOG.info("Skipping the VPinMAME related files of \"{}\"", original.getGameDisplayName());
+    }
     boolean perTableSource = folderLookupService.isPerTableFileStructure(original);
     LOG.info("File layout of the source: {}, of the target: {} (VPX version {})", perTableSource ? "per table" : "shared",
         perTableTarget ? "per table" : "shared", targetEmulator.getEmulatorVersion());
@@ -147,7 +158,7 @@ public class GameMoveCopyService {
       String subFolderName = resolveSubfolderName(original, subfolderNaming);
       targetSubFolder = FileUtils.uniqueFolder(new File(targetEmulator.getGamesFolder(), subFolderName));
       targetSubFolder.mkdirs();
-      if (perTableTarget) {
+      if (perTableTarget && !skipPinMAME) {
         //must exist before the moved table is resolved, so that all its files are looked up next to it
         folderLookupService.createPerTableFileStructure(targetSubFolder);
       }
@@ -192,11 +203,13 @@ public class GameMoveCopyService {
     gameMediaService.cloneVRIniFile(original, target);
 
     //carry over ROM/NVRAM, ALT sound/color, DMD package and music assets, see method javadoc
-    copyRomAndNvRam(original, importedGame);
-    copyCfg(original, importedGame);
+    if (!skipPinMAME) {
+      copyRomAndNvRam(original, importedGame);
+      copyCfg(original, importedGame);
+      copyFolderIfPresent(altSoundService.getAltSoundFolder(original), altSoundService.getAltSoundFolder(importedGame), "ALT sound package");
+      altColorService.copyAltColor(original, importedGame);
+    }
     copyHighscoreFiles(original, importedGame);
-    copyFolderIfPresent(altSoundService.getAltSoundFolder(original), altSoundService.getAltSoundFolder(importedGame), "ALT sound package");
-    altColorService.copyAltColor(original, importedGame);
     copyDmdPackage(original, importedGame);
     copyMusic(original, importedGame);
     copyPupPack(original, importedGame);
@@ -238,7 +251,13 @@ public class GameMoveCopyService {
       }
 
       if (perTableSource) {
-        deleteSourceTableFolder(sourceFile.getParentFile(), original.getEmulator());
+        if (skipPinMAME) {
+          //the VPinMAME files in it have not been copied, so they must not get lost
+          LOG.info("Kept table folder \"{}\", its VPinMAME files have not been copied", sourceFile.getParentFile().getAbsolutePath());
+        }
+        else {
+          deleteSourceTableFolder(sourceFile.getParentFile(), original.getEmulator());
+        }
       }
     }
 

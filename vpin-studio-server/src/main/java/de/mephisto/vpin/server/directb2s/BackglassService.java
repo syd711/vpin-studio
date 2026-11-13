@@ -119,26 +119,30 @@ public class BackglassService implements InitializingBean {
   public DirectB2SData getDirectB2SData(@Nullable Game game) {
     if (game != null) {
       String directB2SFilename = BackglassNamingHelper.getBackglassFileName(game);
-      String baseName = FilenameUtils.removeExtension(directB2SFilename).trim();
-      DirectB2S b2s = cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
+      // for VPX 10.8.1 tables stored in a subfolder, the backglass name must be relative to the tables folder,
+      // as it is resolved against it later on (e.g. for the preview images)
+      String relativeFilename = directB2SFilename;
+      if (!game.isZenGame()) {
+        String relativeFolder = new File(game.getGameFileName()).getParent();
+        relativeFilename = (relativeFolder == null ? "" : relativeFolder + File.separatorChar) + directB2SFilename;
+      }
+      String baseName = FileUtils.baseUniqueFile(relativeFilename);
+      DirectB2S b2s = cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName.replaceAll("\\\\", "/"));
       if (b2s == null) {
-        String reloadFileName = game.getGameFileName();
-        if (!game.isZenGame()) {
-          // the backglass may be named after the table's folder, so look for the name it really has
-          String relativeFolder = new File(reloadFileName).getParent();
-          reloadFileName = (relativeFolder == null ? "" : relativeFolder + File.separatorChar) + directB2SFilename;
-        }
-        b2s = reloadDirectB2SAndVersions(game.getEmulator(), reloadFileName);
+        b2s = reloadDirectB2SAndVersions(game.getEmulator(), game.isZenGame() ? game.getGameFileName() : relativeFilename);
       }
       if (b2s != null) {
         if (b2s.isEnabled()) {
           File directB2SFile = game.getDirectB2SFile();
-          return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFilename);
+          return getDirectB2SData(directB2SFile, game.getEmulatorId(), relativeFilename);
         }
         else {
+          // versions are relative to the backglass folder already
           String directB2SFileName = b2s.getVersion(0);
-          File directB2SFile = new File(game.getGameFile().getParentFile(), directB2SFileName);
-          return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+          File directB2SFile = getB2sFile(game.getEmulatorId(), directB2SFileName);
+          if (directB2SFile != null) {
+            return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+          }
         }
       }
     }

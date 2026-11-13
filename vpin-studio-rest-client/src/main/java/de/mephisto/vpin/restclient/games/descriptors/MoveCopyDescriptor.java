@@ -6,6 +6,7 @@ public class MoveCopyDescriptor {
   private boolean move;
   private boolean createSubfolder;
   private SubfolderNaming subfolderNaming = SubfolderNaming.TABLE_NAME;
+  private boolean skipVPinMAMEFiles;
 
   public int getGameId() {
     return gameId;
@@ -45,5 +46,13 @@ public class MoveCopyDescriptor {
 
   public void setSubfolderNaming(SubfolderNaming subfolderNaming) {
     this.subfolderNaming = subfolderNaming;
+  }
+
+  public boolean isSkipVPinMAMEFiles() {
+    return skipVPinMAMEFiles;
+  }
+
+  public void setSkipVPinMAMEFiles(boolean skipVPinMAMEFiles) {
+    this.skipVPinMAMEFiles = skipVPinMAMEFiles;
   }
 }

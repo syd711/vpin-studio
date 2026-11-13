@@ -27,8 +27,10 @@ public class TableMoveCopyProgressModel extends ProgressModel<GameRepresentation
   private final boolean move;
   private final boolean createSubfolder;
   private final SubfolderNaming subfolderNaming;
+  private final boolean skipVPinMAMEFiles;
 
-  public TableMoveCopyProgressModel(List<GameRepresentation> games, GameEmulatorRepresentation targetEmulator, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) {
+  public TableMoveCopyProgressModel(List<GameRepresentation> games, GameEmulatorRepresentation targetEmulator, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming,
+                                    boolean skipVPinMAMEFiles) {
     super(move ? Messages.get("dialog.moving_table") : Messages.get("dialog.copying_table_title"));
     this.games = games;
     this.gameIterator = games.iterator();
@@ -36,6 +38,7 @@ public class TableMoveCopyProgressModel extends ProgressModel<GameRepresentation
     this.move = move;
     this.createSubfolder = createSubfolder;
     this.subfolderNaming = subfolderNaming;
+    this.skipVPinMAMEFiles = skipVPinMAMEFiles;
   }
 
   @Override
@@ -72,7 +75,7 @@ public class TableMoveCopyProgressModel extends ProgressModel<GameRepresentation
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      client.getGameService().moveOrCopyGame(game.getId(), targetEmulator.getId(), move, createSubfolder, subfolderNaming);
+      client.getGameService().moveOrCopyGame(game.getId(), targetEmulator.getId(), move, createSubfolder, subfolderNaming, skipVPinMAMEFiles);
       progressResultModel.addProcessed(game.getId());
     }
     catch (Exception e) {

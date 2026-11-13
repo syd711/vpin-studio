@@ -336,6 +336,6 @@ public class GamesResource {
   @PostMapping("/moveOrCopy")
   public Game moveOrCopy(@RequestBody MoveCopyDescriptor descriptor) throws Exception {
     return gameMoveCopyService.moveOrCopyGame(descriptor.getGameId(), descriptor.getTargetEmulatorId(), descriptor.isMove(),
-        descriptor.isCreateSubfolder(), descriptor.getSubfolderNaming());
+        descriptor.isCreateSubfolder(), descriptor.getSubfolderNaming(), descriptor.isSkipVPinMAMEFiles());
   }
 }

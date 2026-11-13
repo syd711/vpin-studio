@@ -60,6 +60,12 @@ public class TableMoveCopyController implements Initializable, DialogController 
   private VBox subfolderNamingBox;
 
   @FXML
+  private VBox skipVPinMAMEBox;
+
+  @FXML
+  private CheckBox skipVPinMAMECheckBox;
+
+  @FXML
   private RadioButton tableNameRadio;
   @FXML
   private RadioButton tableDisplayNameRadio;
@@ -91,6 +97,7 @@ public class TableMoveCopyController implements Initializable, DialogController 
     if (target == null) {
       emulatorVersionLabel.setText("");
       layoutHintLabel.setText("");
+      setSkipVPinMAMEVisible(false);
       return;
     }
 
@@ -104,6 +111,17 @@ public class TableMoveCopyController implements Initializable, DialogController 
     subfolderCheckBox.setSelected(perTable || userSubfolderSelection);
     subfolderCheckBox.setDisable(perTable);
     subfolderNamingBox.setDisable(!subfolderCheckBox.isSelected());
+
+    //only the VPX 10.8.1 layout keeps the VPinMAME files next to the table, so skipping them is optional there only
+    setSkipVPinMAMEVisible(perTable);
+  }
+
+  private void setSkipVPinMAMEVisible(boolean visible) {
+    skipVPinMAMEBox.setVisible(visible);
+    skipVPinMAMEBox.setManaged(visible);
+    if (skipVPinMAMEBox.getScene() != null && skipVPinMAMEBox.getScene().getWindow() != null) {
+      skipVPinMAMEBox.getScene().getWindow().sizeToScene();
+    }
   }
 
   @FXML
@@ -116,12 +134,13 @@ public class TableMoveCopyController implements Initializable, DialogController 
 
     boolean createSubfolder = subfolderCheckBox.isSelected();
     SubfolderNaming subfolderNaming = getSelectedSubfolderNaming();
+    boolean skipVPinMAMEFiles = targetEmulator.isPerTableFileStructureSupported() && skipVPinMAMECheckBox.isSelected();
 
     Platform.runLater(()-> {
       stage.close();
     });
 
-    ProgressDialog.createProgressDialog(new TableMoveCopyProgressModel(games, targetEmulator, isMove(), createSubfolder, subfolderNaming));
+    ProgressDialog.createProgressDialog(new TableMoveCopyProgressModel(games, targetEmulator, isMove(), createSubfolder, subfolderNaming, skipVPinMAMEFiles));
     if (tableOverviewController != null) {
       tableOverviewController.doReload();
     }
@@ -174,6 +193,7 @@ public class TableMoveCopyController implements Initializable, DialogController 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     //populated in setData(), the emulator list depends on the game(s) being moved/copied
     subfolderNamingBox.setDisable(true);
+    setSkipVPinMAMEVisible(false);
     targetEmulatorCombo.valueProperty().addListener((obs, oldValue, newValue) -> onTargetEmulatorChange(newValue));
     operationGroup.selectedToggleProperty().addListener((obs, oldValue, newValue) -> {
       // keep one operation selected at all times
@@ -225,6 +245,7 @@ public class TableMoveCopyController implements Initializable, DialogController 
     targetEmulatorCombo.setDisable(true);
     subfolderCheckBox.setDisable(true);
     subfolderNamingBox.setDisable(true);
+    setSkipVPinMAMEVisible(false);
     okBtn.setDisable(true);
     layoutHintLabel.setText(reason);
   }

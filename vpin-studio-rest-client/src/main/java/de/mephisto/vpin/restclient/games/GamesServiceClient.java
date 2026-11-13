@@ -170,6 +170,15 @@ public class GamesServiceClient extends VPinStudioClientService {
    * so subsequent getGamesByEmulator() calls reload from the server.
    */
   public GameRepresentation moveOrCopyGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming) throws Exception {
+    return moveOrCopyGame(gameId, targetEmulatorId, move, createSubfolder, subfolderNaming, false);
+  }
+
+  /**
+   * Moves or copies a VPX table to a different VPX emulator. With {@code skipVPinMAMEFiles}, the VPinMAME related
+   * files (ROM, NVRAM, .cfg, ALT sound, ALT color) are not copied when the target uses the VPX 10.8.1 file layout.
+   */
+  public GameRepresentation moveOrCopyGame(int gameId, int targetEmulatorId, boolean move, boolean createSubfolder, SubfolderNaming subfolderNaming,
+                                           boolean skipVPinMAMEFiles) throws Exception {
     try {
       MoveCopyDescriptor descriptor = new MoveCopyDescriptor();
       descriptor.setGameId(gameId);
@@ -177,6 +186,7 @@ public class GamesServiceClient extends VPinStudioClientService {
       descriptor.setMove(move);
       descriptor.setCreateSubfolder(createSubfolder);
       descriptor.setSubfolderNaming(subfolderNaming);
+      descriptor.setSkipVPinMAMEFiles(skipVPinMAMEFiles);
 
       GameRepresentation sourceGame = getGameCached(gameId);
       GameRepresentation result = getRestClient().post(API + "games/moveOrCopy", descriptor, GameRepresentation.class);

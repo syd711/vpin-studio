@@ -77,6 +77,15 @@
                   <RadioButton fx:id="tableFilenameRadio" mnemonicParsing="false" styleClass="default-text" text="%tables.table_move_copy.table_filename" toggleGroup="$subfolderNamingGroup" />
                </children>
             </VBox>
+            <VBox fx:id="skipVPinMAMEBox" spacing="3.0">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+               <children>
+                  <CheckBox fx:id="skipVPinMAMECheckBox" mnemonicParsing="false" styleClass="default-text" text="%tables.table_move_copy.skip_vpinmame_files" />
+                  <Label maxWidth="420.0" styleClass="checkbox-description" text="%tables.table_move_copy.skip_vpinmame_files_hint" wrapText="true" />
+               </children>
+            </VBox>
          </children>
          <BorderPane.margin>
             <Insets bottom="6.0" />
