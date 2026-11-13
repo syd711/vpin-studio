@@ -111,6 +111,9 @@ public class WOVPPreferencesController implements Initializable {
   @FXML
   private CheckBox resetCheckbox;
 
+  @FXML
+  private CheckBox autoPatchCheckbox;
+
 
   @FXML
   private Pane tagPane;
@@ -281,6 +284,18 @@ public class WOVPPreferencesController implements Initializable {
     resetCheckbox.setSelected(wovpSettings.isResetHighscores());
     resetCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       wovpSettings.setResetHighscores(newValue);
+      try {
+        client.getPreferenceService().setJsonPreference(wovpSettings);
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
+      }
+      catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), e.getMessage());
+      }
+    });
+
+    autoPatchCheckbox.setSelected(wovpSettings.isAutoPatchTables());
+    autoPatchCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      wovpSettings.setAutoPatchTables(newValue);
       try {
         client.getPreferenceService().setJsonPreference(wovpSettings);
         PreferencesController.markDirty(PreferenceType.competitionSettings);

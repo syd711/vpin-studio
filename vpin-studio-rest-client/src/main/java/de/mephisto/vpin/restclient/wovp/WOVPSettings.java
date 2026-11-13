@@ -25,6 +25,7 @@ public class WOVPSettings extends JsonSettings {
 
   private boolean taggingEnabled;
   private boolean resetHighscores = true;
+  private boolean autoPatchTables = true;
   private boolean useScoreSubmitter = true;
   private boolean allowAdditionalInput = false;
   private List<String> tags = new ArrayList<>();
@@ -171,6 +172,14 @@ public class WOVPSettings extends JsonSettings {
 
   public void setUseScoreSubmitter(boolean useScoreSubmitter) {
     this.useScoreSubmitter = useScoreSubmitter;
+  }
+
+  public boolean isAutoPatchTables() {
+    return autoPatchTables;
+  }
+
+  public void setAutoPatchTables(boolean autoPatchTables) {
+    this.autoPatchTables = autoPatchTables;
   }
 
   public boolean isResetHighscores() {

@@ -4,11 +4,14 @@ import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.connectors.mania.CabinetClient;
 import de.mephisto.vpin.connectors.wovp.Wovp;
 import de.mephisto.vpin.connectors.wovp.models.*;
+import de.mephisto.vpin.connectors.wovp.patcher.WovpPatchStatus;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.tagging.TaggingUtil;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
+import de.mephisto.vpin.restclient.wovp.WovpPatchResult;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionIdUpdater;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
@@ -20,11 +23,13 @@ import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
+import de.mephisto.vpin.server.wovp.WovpPatchService;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -75,6 +80,12 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
   @Autowired
   private GameCachingService gameCachingService;
 
+  @Autowired
+  private WovpPatchService wovpPatchService;
+
+  @Autowired
+  private GameStatusService gameStatusService;
+
   public synchronized boolean synchronizeWovp(String apiKey, boolean forceReload) {
     try {
       LOG.info("------------------------------- WOVP SYNC -----------------------------------------------------------");
@@ -94,8 +105,9 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
             }
           }
 
-          runCompetitionCleanupCheck(challenges, weeklyCompetitions);
-          runGameCleanupCheck();
+          runCompetitionCleanupCheck(challenges, weeklyCompetitions, wovpSettings);
+          runGameCleanupCheck(wovpSettings);
+          runTelemetryPatchCheck(wovpSettings);
         }
         return true;
       }
@@ -109,32 +121,85 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
     return false;
   }
 
-  private void runCompetitionCleanupCheck(Challenges challenges, List<Competition> weeklyCompetitions) {
+  private void runCompetitionCleanupCheck(Challenges challenges, List<Competition> weeklyCompetitions, WOVPSettings wovpSettings) {
     List<String> challengesIds = challenges.getItems().stream().map(c -> c.getId()).toList();
     for (Competition weeklyCompetition : weeklyCompetitions) {
       String uuid = weeklyCompetition.getUuid();
       if (!challengesIds.contains(uuid)) {
         competitionService.delete(weeklyCompetition.getId());
+        applyTelemetryPatch(gameService.getGame(weeklyCompetition.getGameId()), wovpSettings, false);
       }
     }
   }
 
-  private void runGameCleanupCheck() {
+  private void runGameCleanupCheck(WOVPSettings wovpSettings) {
     //clean old competition ids
     List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
     List<Integer> games = frontendService.getCompetedGamesIds(CompetitionType.WEEKLY);
     for (int gameId : games) {
-      runGameCleanupCheck(weeklyCompetitions, gameId);
+      runGameCleanupCheck(weeklyCompetitions, gameId, wovpSettings);
     }
   }
 
-  private void runGameCleanupCheck(List<Competition> weeklyCompetitions, int gameId) {
+  private void runGameCleanupCheck(List<Competition> weeklyCompetitions, int gameId, WOVPSettings wovpSettings) {
     TableDetails tableDetails = frontendService.getTableDetails(gameId);
     LOG.info("Running WOVP tournament id cleanup check for {}", tableDetails.getGameDisplayName());
     if (!competitionIdUpdater.isCompeted(tableDetails, weeklyCompetitions, false)) {
       competitionIdUpdater.unsetTourneyId(tableDetails, CompetitionType.WEEKLY, gameId);
       LOG.info("Cleared {} competition id from {}", CompetitionType.WEEKLY, tableDetails.getGameDisplayName());
-      frontendStatusService.deAugmentWheel(gameService.getGame(gameId));
+      Game game = gameService.getGame(gameId);
+      frontendStatusService.deAugmentWheel(game);
+      applyTelemetryPatch(game, wovpSettings, false);
+    }
+  }
+
+  /**
+   * Ensures that the tables of all weekly competitions contain the WOVP telemetry.
+   * This runs as a separate pass, so that it also applies to existing competitions, e.g. after the option has been enabled.
+   */
+  private void runTelemetryPatchCheck(WOVPSettings wovpSettings) {
+    if (!wovpSettings.isAutoPatchTables()) {
+      return;
+    }
+    for (Competition competition : competitionService.getWeeklyCompetitions()) {
+      if (competition.getGameId() > 0) {
+        applyTelemetryPatch(gameService.getGame(competition.getGameId()), wovpSettings, true);
+      }
+    }
+  }
+
+  /**
+   * Adds or removes the WOVP telemetry of the given table. A backup of the table is created before it is modified.
+   * The telemetry is only removed when the table is not used by any other weekly competition.
+   */
+  private void applyTelemetryPatch(@Nullable Game game, @NonNull WOVPSettings wovpSettings, boolean add) {
+    if (game == null || !wovpSettings.isAutoPatchTables() || !game.isVpxGame()) {
+      return;
+    }
+    String action = add ? "patch" : "removal";
+    try {
+      if (!add && competitionService.getWeeklyCompetitions().stream().anyMatch(c -> c.getGameId() == game.getId())) {
+        return;
+      }
+      if (wovpPatchService.isPatched(game.getId()) == add) {
+        return;
+      }
+      GameStatus status = gameStatusService.getStatus();
+      if (status != null && status.getGameId() == game.getId()) {
+        LOG.info("Skipped WOVP telemetry {} for \"{}\", the table is currently played.", action, game.getGameDisplayName());
+        return;
+      }
+
+      WovpPatchResult result = add ? wovpPatchService.patch(game.getId(), true) : wovpPatchService.unpatch(game.getId(), true);
+      if (result.getStatus() == WovpPatchStatus.FAILED) {
+        LOG.warn("WOVP telemetry {} for \"{}\" failed: {}", action, game.getGameDisplayName(), result.getMessage());
+      }
+      else {
+        LOG.info("WOVP telemetry {} for \"{}\" finished: {}", action, game.getGameDisplayName(), result.getStatus());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("WOVP telemetry {} for \"{}\" failed: {}", action, game.getGameDisplayName(), e.getMessage(), e);
     }
   }
 
@@ -159,6 +224,8 @@ public class WOVPCompetitionSynchronizer implements InitializingBean, Applicatio
               highscoreService.resetHighscore(game);
             }
           }
+          //the previous table is not competed anymore, unless it has been selected again
+          applyTelemetryPatch(game, wovpSettings, false);
         }
         return;
       }
