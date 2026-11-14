@@ -381,9 +381,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
    * Returns the modification dates of the media items of the given screen, used to detect newly added media afterwards.
    */
   public Map<String, OffsetDateTime> getMediaSnapshot(VPinScreen mediaScreen) {
+    return getMediaSnapshot(frontendMedia, mediaScreen);
+  }
+
+  /**
+   * Returns the modification dates of the media items of the given screen, used to detect newly added media afterwards.
+   */
+  public static Map<String, OffsetDateTime> getMediaSnapshot(FrontendMediaRepresentation media, VPinScreen mediaScreen) {
     Map<String, OffsetDateTime> snapshot = new HashMap<>();
-    if (frontendMedia != null) {
-      for (FrontendMediaItemRepresentation item : frontendMedia.getMediaItems(mediaScreen)) {
+    if (media != null) {
+      for (FrontendMediaItemRepresentation item : media.getMediaItems(mediaScreen)) {
         snapshot.put(item.getName(), item.getModificationDate());
       }
     }
@@ -394,39 +401,50 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
    * Popper plays a landscape loading video in fullscreen, so a blank video has to be added after it.
    */
   public void checkFullscreenLoadingVideo(VPinScreen mediaScreen, Map<String, OffsetDateTime> snapshot) {
-    if (!VPinScreen.Loading.equals(mediaScreen) || !client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
-      return;
-    }
     if (this.game == null && this.playlist == null) {
       return;
     }
+    int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+    if (checkFullscreenLoadingVideo(localStage, objectId, isPlaylistMode(), mediaScreen, snapshot)) {
+      refreshTableMediaView();
+    }
+  }
+
+  /**
+   * Popper plays a landscape loading video in fullscreen, so a blank video has to be added after it.
+   * Asks for confirmation unless the user stored the decision in the {@link UISettings}.
+   *
+   * @return true when a blank video has been added
+   */
+  public static boolean checkFullscreenLoadingVideo(Stage stage, int objectId, boolean playlistMode, VPinScreen mediaScreen, Map<String, OffsetDateTime> snapshot) {
+    if (!VPinScreen.Loading.equals(mediaScreen) || !client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+      return false;
+    }
 
     try {
-      int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-      FrontendMediaRepresentation media = client.getGameMediaService().getMedia(objectId, isPlaylistMode());
+      FrontendMediaRepresentation media = client.getGameMediaService().getMedia(objectId, playlistMode);
       List<FrontendMediaItemRepresentation> mediaItems = media.getMediaItems(mediaScreen);
       if (mediaItems.size() != 1) {
-        return;
+        return false;
       }
       boolean landscapeVideoAdded = mediaItems.stream()
           .filter(item -> MimeTypeUtil.isVideo(item.getMimeType()))
           .filter(item -> !item.getName().contains("(SCREEN"))
           .filter(item -> !snapshot.containsKey(item.getName()) || !Objects.equals(snapshot.get(item.getName()), item.getModificationDate()))
-          .anyMatch(item -> isLandscapeVideo(objectId, mediaScreen, item));
+          .anyMatch(item -> isLandscape(client.getGameMediaService().getMetadata(objectId, playlistMode, mediaScreen, item.getName())));
       if (!landscapeVideoAdded) {
-        return;
+        return false;
       }
 
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isAlwaysAddLoadingBlankVideo()) {
-        toFullScreen(mediaScreen, false);
-        return;
+        return toFullScreen(stage, objectId, playlistMode, mediaScreen, false);
       }
       if (uiSettings.isHideLoadingBlankVideoConfirmation()) {
-        return;
+        return false;
       }
 
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckboxAndCancel(localStage, Messages.get("dialog.fullscreen_loading_video"),
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckboxAndCancel(stage, Messages.get("dialog.fullscreen_loading_video"),
           Messages.get("dialog.add_blank"), Messages.get("dialog.always_add_blank"),
           Messages.get("dialog.fullscreen_loading_video_text"), Messages.get("dialog.fullscreen_loading_video_help"),
           Messages.get("dialog.do_not_show_again"), false);
@@ -441,17 +459,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       if (confirmationResult.isOkClicked() || confirmationResult.isApplyClicked()) {
-        toFullScreen(mediaScreen, false);
+        return toFullScreen(stage, objectId, playlistMode, mediaScreen, false);
       }
     }
     catch (Exception e) {
       LOG.error("Fullscreen loading video check failed: {}", e.getMessage(), e);
     }
-  }
-
-  private boolean isLandscapeVideo(int objectId, VPinScreen mediaScreen, FrontendMediaItemRepresentation item) {
-    AssetMetaData metadata = client.getGameMediaService().getMetadata(objectId, isPlaylistMode(), mediaScreen, item.getName());
-    return isLandscape(metadata);
+    return false;
   }
 
   /**
@@ -535,16 +549,22 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private void toFullScreen(VPinScreen mediaScreen, boolean amd) {
+    int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
+    toFullScreen(localStage, objectId, isPlaylistMode(), mediaScreen, amd);
+    refreshTableMediaView();
+  }
+
+  private static boolean toFullScreen(Stage stage, int objectId, boolean playlistMode, VPinScreen mediaScreen, boolean amd) {
     try {
-      int objectId = isPlaylistMode() ? playlist.getId() : game.getId();
-      if (!client.getGameMediaService().toFullScreen(objectId, isPlaylistMode(), mediaScreen, amd)) {
-        WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed"));
+      if (client.getGameMediaService().toFullScreen(objectId, playlistMode, mediaScreen, amd)) {
+        return true;
       }
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("dialog.fullscreen_switch_failed"));
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(localStage, Messages.get("common.error"), Messages.get("msg.fullscreen_switch_failed", e.getMessage()));
+      WidgetFactory.showAlert(stage, Messages.get("common.error"), Messages.get("msg.fullscreen_switch_failed", e.getMessage()));
     }
-    refreshTableMediaView();
+    return false;
   }
 
   @FXML

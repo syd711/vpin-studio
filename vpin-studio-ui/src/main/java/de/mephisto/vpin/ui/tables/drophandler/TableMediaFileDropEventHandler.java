@@ -137,15 +137,13 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         game = dialogController.getGame();
       }
 
-      Map<String, OffsetDateTime> snapshot = dialogController != null ? dialogController.getMediaSnapshot(screen) : null;
+      Map<String, OffsetDateTime> snapshot = getMediaSnapshot(game, null);
       if (playlist != null) {
         ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(playlist, screen, media));
       } else {
         ProgressDialog.createProgressDialog(new TableMediaCopyProgressModel(game, screen, media));
       }
-      if (snapshot != null) {
-        dialogController.checkFullscreenLoadingVideo(screen, snapshot);
-      }
+      checkFullscreenLoadingVideo(game, snapshot);
       refreshView();
     }
     catch (Exception e) {
@@ -217,7 +215,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         }
       }
 
-      Map<String, OffsetDateTime> snapshot = dialogController != null ? dialogController.getMediaSnapshot(screen) : null;
+      Map<String, OffsetDateTime> snapshot = getMediaSnapshot(game, medias);
       if (playlist != null) {
         FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
             Messages.get("dialog.media_upload"), draggedCopies, screen, append);
@@ -228,12 +226,39 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
             Messages.get("dialog.media_upload"), draggedCopies, screen, append, loadingScreenId);
         ProgressDialog.createProgressDialog(model);
       }
-      if (snapshot != null) {
-        dialogController.checkFullscreenLoadingVideo(screen, snapshot);
-      }
+      checkFullscreenLoadingVideo(game, snapshot);
 
       refreshView();
     });
+  }
+
+  /**
+   * Snapshot of the screen's media before the drop, used to detect the newly added loading video.
+   * The sidebar has no dialog controller, so the media of the selected game is used there.
+   */
+  private Map<String, OffsetDateTime> getMediaSnapshot(GameRepresentation game, FrontendMediaRepresentation medias) {
+    if (dialogController != null) {
+      return dialogController.getMediaSnapshot(screen);
+    }
+    if (game == null) {
+      return null;
+    }
+    if (medias == null) {
+      medias = client.getGameMediaService().getGameMedia(game.getId());
+    }
+    return TableAssetManagerDialogController.getMediaSnapshot(medias, screen);
+  }
+
+  private void checkFullscreenLoadingVideo(GameRepresentation game, Map<String, OffsetDateTime> snapshot) {
+    if (snapshot == null) {
+      return;
+    }
+    if (dialogController != null) {
+      dialogController.checkFullscreenLoadingVideo(screen, snapshot);
+    }
+    else if (game != null) {
+      TableAssetManagerDialogController.checkFullscreenLoadingVideo(Studio.stage, game.getId(), false, screen, snapshot);
+    }
   }
 
   private void refreshView() {
