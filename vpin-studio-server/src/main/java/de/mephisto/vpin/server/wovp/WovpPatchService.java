@@ -49,6 +49,38 @@ public class WovpPatchService {
   }
 
   /**
+   * Removes the WoVP telemetry from a table whose challenge has finished.
+   * The "&lt;table&gt;.vpx.bak" created when the table was patched is deleted once the telemetry has been removed.
+   */
+  @NonNull
+  public WovpPatchResult removeTelemetry(int gameId) {
+    WovpPatchResult result = run(gameId, false, false);
+    if (result.getStatus() == WovpPatchStatus.UNPATCHED) {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        File backupFile = getBackupFile(game.getGameFile());
+        if (backupFile.exists()) {
+          if (FileUtils.deleteQuietly(backupFile)) {
+            LOG.info("Deleted WoVP backup {}", backupFile.getAbsolutePath());
+          }
+          else {
+            LOG.warn("Failed to delete WoVP backup {}", backupFile.getAbsolutePath());
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @return the backup file that is created next to the table when it is patched, may not exist.
+   */
+  @NonNull
+  public static File getBackupFile(@NonNull File gameFile) {
+    return new File(gameFile.getParentFile(), gameFile.getName() + ".bak");
+  }
+
+  /**
    * Fast check based on the script embedded in the table, no extraction needed.
    */
   public boolean isPatched(int gameId) {
@@ -112,7 +144,7 @@ public class WovpPatchService {
 
       // 4. finalize
       if (backup) {
-        File backupFile = new File(gameFile.getParentFile(), gameFile.getName() + ".bak");
+        File backupFile = getBackupFile(gameFile);
         if (backupFile.exists()) {
           LOG.info("Existing backup {} has been kept.", backupFile.getAbsolutePath());
         }
