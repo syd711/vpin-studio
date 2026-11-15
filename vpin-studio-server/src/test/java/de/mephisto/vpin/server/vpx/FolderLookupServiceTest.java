@@ -248,10 +248,7 @@ public class FolderLookupServiceTest {
 
   @Test
   void getRomFile_withNoRom_returnsNull() {
-    GameEmulator emulator = legacyEmulator();
-    File romFolder = tempDir.toFile();
-    when(vPinMameService.getRomsFolder()).thenReturn(romFolder);
-    Game game = mockGame(emulator);
+    Game game = mock(Game.class);
     when(game.getRom()).thenReturn("");
 
     File result = folderLookupService.getRomFile(game);
@@ -372,6 +369,83 @@ public class FolderLookupServiceTest {
     assertThat(folderLookupService.getMusicFolder(game)).isEqualTo(new File(tableFolder, "music"));
     assertThat(folderLookupService.getUserFolder(game)).isEqualTo(new File(tableFolder, "user"));
     verifyNoInteractions(vPinMameService);
+  }
+
+  @Test
+  void perTableFolder_nvRamFallsBackToSharedVPinMameFolder() throws Exception {
+    // VPinMAME may still write the nvram of a table in the per table layout into its shared folder
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    File tableFolder = new File(gamesFolder, "Twister (1996)");
+    new File(tableFolder, "pinmame/nvram").mkdirs();
+    File sharedNvRamFolder = tempDir.resolve("VPinMAME/nvram").toFile();
+    sharedNvRamFolder.mkdirs();
+    File sharedNvRam = new File(sharedNvRamFolder, "twst_405.nv");
+    sharedNvRam.createNewFile();
+
+    GameEmulator emulator = legacyEmulator();
+    lenient().when(emulator.getGamesFolder()).thenReturn(gamesFolder);
+    when(vPinMameService.getNvRamFolder()).thenReturn(sharedNvRamFolder);
+    Game game = mockGame(emulator);
+    when(game.getGameFolder()).thenReturn(tableFolder);
+    when(game.getRom()).thenReturn("twst_405");
+
+    assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(sharedNvRam);
+
+    // the table specific nvram wins once it is the more recent one
+    File tableNvRam = new File(tableFolder, "pinmame/nvram/twst_405.nv");
+    tableNvRam.createNewFile();
+    sharedNvRam.setLastModified(System.currentTimeMillis() - 60_000);
+    assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(tableNvRam);
+  }
+
+  @Test
+  void perTableFolder_romFileFallsBackToSharedVPinMameFolder() throws Exception {
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    File tableFolder = new File(gamesFolder, "Twister (1996)");
+    new File(tableFolder, "pinmame/roms").mkdirs();
+    File sharedRomFolder = tempDir.resolve("VPinMAME/roms").toFile();
+    sharedRomFolder.mkdirs();
+    File sharedRom = new File(sharedRomFolder, "twst_405.zip");
+    sharedRom.createNewFile();
+
+    GameEmulator emulator = legacyEmulator();
+    lenient().when(emulator.getGamesFolder()).thenReturn(gamesFolder);
+    when(vPinMameService.getRomsFolder()).thenReturn(sharedRomFolder);
+    Game game = mockGame(emulator);
+    when(game.getGameFolder()).thenReturn(tableFolder);
+    when(game.getRom()).thenReturn("twst_405");
+
+    assertThat(folderLookupService.getRomFile(game)).isEqualTo(sharedRom);
+
+    // the ROM next to the table wins
+    File tableRom = new File(tableFolder, "pinmame/roms/twst_405.zip");
+    tableRom.createNewFile();
+    assertThat(folderLookupService.getRomFile(game)).isEqualTo(tableRom);
+  }
+
+  @Test
+  void perTableFolder_highscoreTextFileFallsBackToSharedUserFolder() throws Exception {
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    File tableFolder = new File(gamesFolder, "Pirate (1975)");
+    new File(tableFolder, FolderLookupService.PINMAME_FOLDER).mkdirs();
+    File installFolder = tempDir.resolve("VPX").toFile();
+    File sharedHsFile = new File(installFolder, "User/Pirate.txt");
+    sharedHsFile.getParentFile().mkdirs();
+    sharedHsFile.createNewFile();
+
+    GameEmulator emulator = legacyEmulator();
+    lenient().when(emulator.getGamesFolder()).thenReturn(gamesFolder);
+    when(emulator.getInstallationFolder()).thenReturn(installFolder);
+    Game game = mockGame(emulator);
+    when(game.getGameFolder()).thenReturn(tableFolder);
+    when(game.getHsFileName()).thenReturn("Pirate.txt");
+
+    assertThat(folderLookupService.getHighscoreTextFile(game)).isEqualTo(sharedHsFile);
+
+    File tableHsFile = new File(tableFolder, "user/Pirate.txt");
+    tableHsFile.getParentFile().mkdirs();
+    tableHsFile.createNewFile();
+    assertThat(folderLookupService.getHighscoreTextFile(game)).isEqualTo(tableHsFile);
   }
 
   @Test

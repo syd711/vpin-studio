@@ -108,29 +108,45 @@ public class BeanBinder<T> {
   }
 
   public <U> void bindComboBox(ComboBox<U> comboBox, String property, String defaultValue, Function<U, ?> mapper) {
+    // set while the combo is refreshed from the bean, so that the refresh does not write back into the bean
+    boolean[] updatingFromBean = {false};
     comboBox.valueProperty().addListener((observableValue, s, t1) -> {
-      setProperty(property, t1 != null ? mapper.apply(t1): null);
-    });
-    onBeanSet.add(() -> {
-      Object value = getProperty(property, defaultValue);
-      if (value != null) {
-        for (U item : comboBox.getItems()) {
-          if (item != null && value.equals(mapper.apply(item))) {
-            comboBox.setValue(item);
-            return;
-          }
-        }
-        // not found in items
-        if (comboBox.isEditable()) {
-          try {
-            comboBox.setValue((U) value);
-          }
-          catch (ClassCastException cce) {
-            LOG.warn("Cannot set value {} for {} as it is of wrong type: {}", value, property, cce.getMessage());
-          }
-        }
+      if (!updatingFromBean[0]) {
+        setProperty(property, t1 != null ? mapper.apply(t1): null);
       }
     });
+    onBeanSet.add(() -> {
+      updatingFromBean[0] = true;
+      try {
+        comboBox.setValue(resolveComboBoxValue(comboBox, property, getProperty(property, defaultValue), mapper));
+      }
+      finally {
+        updatingFromBean[0] = false;
+      }
+    });
+  }
+
+  @SuppressWarnings("unchecked")
+  private <U> U resolveComboBoxValue(ComboBox<U> comboBox, String property, Object value, Function<U, ?> mapper) {
+    if (value == null) {
+      // the combo must be cleared, otherwise it keeps showing the value of the previous bean
+      return null;
+    }
+    for (U item : comboBox.getItems()) {
+      if (item != null && value.equals(mapper.apply(item))) {
+        return item;
+      }
+    }
+    // not found in items
+    if (comboBox.isEditable()) {
+      try {
+        return (U) value;
+      }
+      catch (ClassCastException cce) {
+        LOG.warn("Cannot set value {} for {} as it is of wrong type: {}", value, property, cce.getMessage());
+      }
+    }
+    return null;
   }
 
   public void bindRadioButton(RadioButton radio, String property) {

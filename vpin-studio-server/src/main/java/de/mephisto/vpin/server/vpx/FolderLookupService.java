@@ -136,6 +136,18 @@ public class FolderLookupService {
     return new File(game.getGameFolder(), "pinmame/nvram/");
   }
 
+  /**
+   * The shared nvram folder of VPinMAME, or null if there is none, e.g. for a standalone installation.
+   */
+  @Nullable
+  private File getLegacyNvRamFolder(@NonNull GameEmulator emulator) {
+    File folder = vPinMameService.getNvRamFolder();
+    if (folder == null && !StringUtils.isEmpty(emulator.getMameDirectory())) {
+      folder = new File(emulator.getMameFolder(), "nvram");
+    }
+    return folder;
+  }
+
   @NonNull
   public File getRomFolder(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
@@ -257,19 +269,37 @@ public class FolderLookupService {
 
   public File getHighscoreTextFile(Game game) {
     if (!StringUtils.isEmpty(game.getHsFileName())) {
-      File f = new File(getUserFolder(game), game.getHsFileName());
-      if (f.exists()) {
+      File userFolder = getUserFolder(game);
+      File f = findHighscoreTextFile(game, userFolder);
+      if (f != null) {
         return f;
       }
 
-      if (!StringUtils.isEmpty(game.getScannedHsFileName())) {
-        f = new File(getUserFolder(game), game.getScannedHsFileName());
-        if (f.exists()) {
+      // tables in the per table layout may still be played by a VPX that writes into the shared user folder
+      if (isPerTableFileStructure(game) && game.getEmulator() != null) {
+        f = findHighscoreTextFile(game, getUserFolder(game.getEmulator()));
+        if (f != null) {
           return f;
         }
       }
 
-      return new File(getUserFolder(game), game.getHsFileName());
+      return new File(userFolder, game.getHsFileName());
+    }
+    return null;
+  }
+
+  @Nullable
+  private File findHighscoreTextFile(@NonNull Game game, @NonNull File userFolder) {
+    File f = new File(userFolder, game.getHsFileName());
+    if (f.exists()) {
+      return f;
+    }
+
+    if (!StringUtils.isEmpty(game.getScannedHsFileName())) {
+      f = new File(userFolder, game.getScannedHsFileName());
+      if (f.exists()) {
+        return f;
+      }
     }
     return null;
   }
@@ -325,16 +355,59 @@ public class FolderLookupService {
       }
     }
 
+    // tables in the per table layout may still be played by a VPX that writes into the shared VPReg.stg
+    File sharedStgFile = new File(getUserFolder(emulator), "VPReg.stg");
+    if (isPerTableFileStructure(game) && sharedStgFile.exists()) {
+      VPRegFile sharedReg = new VPRegFile(sharedStgFile, game.getRom(), tableName);
+      if (sharedReg.isValid()) {
+        return sharedReg;
+      }
+      if (!StringUtils.isEmpty(game.getScannedRom())) {
+        VPRegFile sharedRegScanned = new VPRegFile(sharedStgFile, game.getScannedRom(), tableName);
+        if (sharedRegScanned.isValid()) {
+          return sharedRegScanned;
+        }
+      }
+    }
+
     return reg;
   }
 
   @Nullable
   public File getRomFile(@NonNull Game game) {
-    File romFolder = getRomFolder(game);
-    if (romFolder.exists() && !StringUtils.isEmpty(game.getRom())) {
-      return findIgnoreCase(romFolder, game.getRom() + ".zip");
+    if (StringUtils.isEmpty(game.getRom())) {
+      return null;
     }
-    return null;
+
+    File romFolder = getRomFolder(game);
+    File romFile = romFolder.exists() ? findIgnoreCase(romFolder, game.getRom() + ".zip") : null;
+    if (romFile != null && romFile.exists()) {
+      return romFile;
+    }
+
+    // tables in the per table layout may still use the ROM from the shared VPinMAME roms folder
+    if (isPerTableFileStructure(game)) {
+      File legacyRomFolder = getLegacyRomFolder(game.getEmulator());
+      if (legacyRomFolder != null && legacyRomFolder.exists()) {
+        File legacyRomFile = findIgnoreCase(legacyRomFolder, game.getRom() + ".zip");
+        if (legacyRomFile.exists()) {
+          return legacyRomFile;
+        }
+      }
+    }
+    return romFile;
+  }
+
+  /**
+   * The shared roms folder of VPinMAME, or null if there is none, e.g. for a standalone installation.
+   */
+  @Nullable
+  private File getLegacyRomFolder(@NonNull GameEmulator emulator) {
+    File folder = vPinMameService.getRomsFolder();
+    if (folder == null && !StringUtils.isEmpty(emulator.getMameDirectory())) {
+      folder = new File(emulator.getMameFolder(), "roms");
+    }
+    return folder;
   }
 
   @Nullable
@@ -368,11 +441,32 @@ public class FolderLookupService {
   @Nullable
   public File getNvRamFile(@NonNull Game game) {
     GameEmulator emulator = game.getEmulator();
-    if (emulator == null || (!isPerTableFileStructure(game) && emulator.getMameDirectory() == null)) {
+    if (emulator == null) {
       return null;
     }
 
-    File nvRamFolder = getNvRamFolder(game);
+    if (!isPerTableFileStructure(game)) {
+      if (emulator.getMameDirectory() == null) {
+        return null;
+      }
+      return resolveNvRamFile(game, getNvRamFolder(game));
+    }
+
+    File nvRamFile = resolveNvRamFile(game, getNvRamFolder(game));
+    // VPinMAME may still write the nvram of a table in the per table layout into its shared nvram folder,
+    // so use the shared one if there is no table specific one or the shared one has been written more recently
+    File legacyNvRamFolder = getLegacyNvRamFolder(emulator);
+    if (legacyNvRamFolder != null && legacyNvRamFolder.exists()) {
+      File legacyNvRamFile = resolveNvRamFile(game, legacyNvRamFolder);
+      if (legacyNvRamFile.exists() && (!nvRamFile.exists() || legacyNvRamFile.lastModified() > nvRamFile.lastModified())) {
+        return legacyNvRamFile;
+      }
+    }
+    return nvRamFile;
+  }
+
+  @NonNull
+  private File resolveNvRamFile(@NonNull Game game, @NonNull File nvRamFolder) {
     String rom = game.getRom();
     File defaultNvRam = findIgnoreCase(nvRamFolder, rom + ".nv");
     if (defaultNvRam.exists() && game.getNvOffset() == 0) {

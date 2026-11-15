@@ -1,3 +1,15 @@
+## Release Notes 5.7.2
+
+### Changes
+
+### Bugfixes
+
+- **VPX 10.8.1**: Fixed highscores, NVRAM and ROMs not being found for tables in the per-table folder layout when VPX/VPinMAME still writes into the shared folders (user folder, VPReg.stg, VPinMAME nvram/roms).
+- **Table Data Manager**: Fixed drop-down fields (e.g. Custom2, Custom3, Alternative Launcher) keeping the previous table's value when switching to a table where the field is empty.
+
+---
+
+
 ## Release Notes 5.7.1
 
 ### Changes
