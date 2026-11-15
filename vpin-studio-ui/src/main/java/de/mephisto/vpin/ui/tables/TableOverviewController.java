@@ -2378,6 +2378,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       saveEmulatorSelection(EMULATOR_SELECTION, newValue);
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {
+        // the previous selection is gone after the emulator switch, so reset the sidebar (incl. media preview)
+        if (!assetManagerMode) {
+          tablesController.getTablesSideBarController().setGames(Optional.empty(), Collections.emptyList());
+        }
         reloadConsumers.add(selection -> {
           refreshViewForEmulator();
           getTableFilterController().applyFilters();

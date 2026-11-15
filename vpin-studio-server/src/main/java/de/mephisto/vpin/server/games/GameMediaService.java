@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.dmd.DMDBackupData;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -63,10 +64,12 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.time.OffsetDateTime;
 
@@ -626,34 +629,72 @@ public class GameMediaService extends MediaService {
     }
   }
 
-  public void cloneGameMedia(Game original, Game clone) {
-    VPinScreen[] values = VPinScreen.values();
-    for (VPinScreen originalScreenValue : values) {
-      try {
-        List<FrontendMediaItem> frontendMediaItems = frontendService.getGameMedia(original).getMediaItems(originalScreenValue);
-        for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
-          if (frontendMediaItem.getFile().exists()) {
-            File mediaFile = frontendMediaItem.getFile();
-            String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix, true), clone.getGameName() + "." + suffix);
-            if (mediaFile.getName().equals(cloneTarget.getName())) {
-              LOG.warn("Source name and target name of media asset {} are identical, skipping cloning.", mediaFile.getAbsolutePath());
-              return;
-            }
+  /**
+   * Copies all frontend media of the original game to the media folders of the clone, renamed to the game name of
+   * the clone. The part of the file name after the game name (e.g. the "01" of "Table01.png" or the "(Screen)" of
+   * "Table(Screen).mp4") is preserved, so that multiple media items of a screen do not overwrite each other.
+   *
+   * @return true if every media file of the original now exists as a separate copy for the clone; false if a copy
+   * failed or if a media file of the original is also the media file of the clone (e.g. both emulators share the
+   * same media folder and the game names are identical). Deleting the media of the original is only safe on true.
+   */
+  public boolean cloneGameMedia(Game original, Game clone) {
+    boolean separateCopies = true;
+    FrontendMedia originalMedia = frontendService.getGameMedia(original);
+    for (VPinScreen screen : VPinScreen.values()) {
+      Set<File> usedTargets = new HashSet<>();
+      for (FrontendMediaItem frontendMediaItem : originalMedia.getMediaItems(screen)) {
+        File mediaFile = frontendMediaItem.getFile();
+        if (!mediaFile.exists()) {
+          continue;
+        }
+        try {
+          String suffix = FilenameUtils.getExtension(mediaFile.getName());
+          File cloneMediaFolder = frontendService.getMediaFolder(clone, screen, suffix, true);
+          File cloneTarget = resolveCloneMediaFile(cloneMediaFolder, mediaFile, original.getGameName(), clone.getGameName(), usedTargets);
+          usedTargets.add(cloneTarget.getAbsoluteFile());
 
-            if (cloneTarget.exists() && !cloneTarget.delete()) {
-              LOG.error("Failed to clone media asset {}: deletion of existing asset failed.", cloneTarget.getAbsolutePath());
-              return;
-            }
-            org.apache.commons.io.FileUtils.copyFile(mediaFile, cloneTarget);
-            LOG.info("Cloned media asset: {} to {}", mediaFile.getAbsolutePath(), cloneTarget.getAbsolutePath());
+          if (mediaFile.getAbsoluteFile().equals(cloneTarget.getAbsoluteFile())) {
+            LOG.info("Media asset {} is shared by the original and the clone, skipping cloning.", mediaFile.getAbsolutePath());
+            separateCopies = false;
+            continue;
           }
+
+          if (cloneTarget.exists() && !cloneTarget.delete()) {
+            LOG.error("Failed to clone media asset {}: deletion of existing asset {} failed.", mediaFile.getAbsolutePath(), cloneTarget.getAbsolutePath());
+            separateCopies = false;
+            continue;
+          }
+          org.apache.commons.io.FileUtils.copyFile(mediaFile, cloneTarget);
+          LOG.info("Cloned media asset: {} to {}", mediaFile.getAbsolutePath(), cloneTarget.getAbsolutePath());
+        }
+        catch (Exception e) {
+          LOG.error("Failed to clone media asset {}: {}", mediaFile.getAbsolutePath(), e.getMessage(), e);
+          separateCopies = false;
         }
       }
-      catch (IOException e) {
-        LOG.info("Failed to clone media asset: {}", e.getMessage(), e);
-      }
     }
+    return separateCopies;
+  }
+
+  /**
+   * Resolves the media file name of the clone: the game name of the original is replaced with the one of the clone,
+   * the remaining part of the base name is kept. Files that do not start with the game name of the original (found
+   * via a media search term) get a numbered name. Names already used for another media item are never reused.
+   */
+  private File resolveCloneMediaFile(File cloneMediaFolder, File mediaFile, String originalGameName, String cloneGameName, Set<File> usedTargets) {
+    String suffix = FilenameUtils.getExtension(mediaFile.getName());
+    String baseName = FilenameUtils.getBaseName(mediaFile.getName());
+    String remainder = StringUtils.startsWithIgnoreCase(baseName, originalGameName) ? baseName.substring(originalGameName.length()) : "";
+
+    File target = new File(cloneMediaFolder, cloneGameName + remainder + "." + suffix);
+    int index = 1;
+    while (usedTargets.contains(target.getAbsoluteFile())) {
+      String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
+      target = new File(cloneMediaFolder, cloneGameName + nameIndex + remainder + "." + suffix);
+      index++;
+    }
+    return target;
   }
 
   public void renameGameMedia(Game game, String oldBaseName, String newBaseName) {

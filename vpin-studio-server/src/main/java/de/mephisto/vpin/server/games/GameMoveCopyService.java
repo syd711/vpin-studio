@@ -77,7 +77,7 @@ public class GameMoveCopyService {
 
   /**
    * Moves or copies a VPX table to a different VPX emulator, copying the table file, its directly
-   * associated files (.directb2s/.pov/.ini/.vr.ini/.res), frontend media, ROM, NVRAM, PinMAME .cfg,
+   * associated files (.directb2s/.pov/.ini/.vr.ini/.res), frontend metadata and media, ROM, NVRAM, PinMAME .cfg,
    * highscore text file / VPReg.stg, ALT sound/color packages, FlexDMD/UltraDMD package, music files
    * and (for the VPX 10.8.1 layout) the PUP pack, whenever present. For a move, the
    * original table entry and its VPX-adjacent files (media, .directb2s/.pov/.ini/.res/.vbs) are deleted
@@ -185,16 +185,14 @@ public class GameMoveCopyService {
     Game importedGame = gameService.scanGame(returningGameId, true);
 
     String targetFileName = targetSubFolder != null ? FileUtils.joinGameFileName(targetSubFolder.getName(), target.getName()) : target.getName();
-    TableDetails targetTableDetails = gameMediaService.getTableDetails(returningGameId);
-    targetTableDetails.setEmulatorId(targetEmulator.getId());
+    TableDetails targetTableDetails = resolveTargetTableDetails(original, returningGameId, importedGame, targetEmulator);
     targetTableDetails.setGameFileName(targetFileName);
-    targetTableDetails.setGameName(importedGame.getGameName());
     targetTableDetails.setGameDisplayName(move ? original.getGameDisplayName() : original.getGameDisplayName() + " (copy)");
     gameMediaService.saveTableDetails(targetTableDetails, returningGameId, false);
     frontendService.updateTableFileUpdated(returningGameId);
 
     //copy media and directly associated files
-    gameMediaService.cloneGameMedia(original, importedGame);
+    boolean mediaCopied = gameMediaService.cloneGameMedia(original, importedGame);
     File targetParent = target.getParentFile();
     FileUtils.cloneFile(original.getDirectB2SFile(), targetParent, target.getName());
     FileUtils.cloneFile(original.getPOVFile(), targetParent, target.getName());
@@ -232,7 +230,12 @@ public class GameMoveCopyService {
       descriptor.setDeleteRes(true);
       descriptor.setDeleteVbs(true);
       descriptor.setDeleteFromFrontend(true);
-      descriptor.setKeepAssets(false);
+      //the frontend media of the original must only be deleted when all of it exists as a separate copy for the
+      //moved table, otherwise (shared media folder or a failed copy) it would get lost
+      descriptor.setKeepAssets(!mediaCopied);
+      if (!mediaCopied) {
+        LOG.info("Kept the frontend media of \"{}\", not all of it has been copied to separate files.", original.getGameDisplayName());
+      }
       descriptor.setDeleteBAMCfg(false);
       descriptor.setDeleteHighscores(false);
       descriptor.setDeleteDMDs(false);
@@ -263,6 +266,41 @@ public class GameMoveCopyService {
 
     LOG.info("{} of \"{}\" to emulator \"{}\" successful.", move ? "Move" : "Copy", importedGame.getGameDisplayName(), targetEmulator.getName());
     return gameService.getGame(returningGameId);
+  }
+
+  /**
+   * Builds the frontend table details of the imported game from the ones of the original, so that the metadata
+   * (manufacturer, year, rating, notes, tags, custom fields, ...) is carried over. Only the values that identify the
+   * new frontend entry or depend on the target emulator are taken from the imported game:
+   * <ul>
+   *   <li>emulator id, game name (the media of the copy is named after it)</li>
+   *   <li>the launcher list of the target emulator; the alternative launcher of the original is only kept if the
+   *   target emulator offers it too</li>
+   *   <li>the media search term is cleared, the cloned media files are named after the game name</li>
+   * </ul>
+   * Falls back to the table details of the imported game when the ones of the original can't be read.
+   */
+  private TableDetails resolveTargetTableDetails(Game original, int returningGameId, Game importedGame, GameEmulator targetEmulator) {
+    TableDetails importedTableDetails = gameMediaService.getTableDetails(returningGameId);
+    TableDetails targetTableDetails = gameMediaService.getTableDetails(original.getId());
+    if (targetTableDetails == null) {
+      LOG.warn("Failed to read the table details of \"{}\", its metadata is not copied.", original.getGameDisplayName());
+      targetTableDetails = importedTableDetails;
+    }
+    else {
+      List<String> targetLaunchers = importedTableDetails != null ? importedTableDetails.getLauncherList() : Collections.emptyList();
+      targetTableDetails.setLauncherList(targetLaunchers);
+      String altLaunchExe = targetTableDetails.getAltLaunchExe();
+      if (StringUtils.isNotEmpty(altLaunchExe) && targetLaunchers.stream().noneMatch(altLaunchExe::equalsIgnoreCase)) {
+        LOG.info("The alternative launcher \"{}\" of \"{}\" does not exist for emulator \"{}\", it has been reset.",
+            altLaunchExe, original.getGameDisplayName(), targetEmulator.getName());
+        targetTableDetails.setAltLaunchExe(null);
+      }
+      targetTableDetails.setMediaSearch(null);
+    }
+    targetTableDetails.setEmulatorId(targetEmulator.getId());
+    targetTableDetails.setGameName(importedGame.getGameName());
+    return targetTableDetails;
   }
 
   /**

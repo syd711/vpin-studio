@@ -2,6 +2,9 @@
 
 ### Changes
 
+- **Move/Copy Table**: 
+  - The frontend metadata of the table (manufacturer, year, rating, notes, tags, custom fields, …) is now copied too.
+  - Fixed frontend media not being copied when the table kept its game name, which caused the media to be deleted on a move. Media is now only deleted after it has been copied, and multiple media items of a screen no longer overwrite each other.
 
 ---
 
