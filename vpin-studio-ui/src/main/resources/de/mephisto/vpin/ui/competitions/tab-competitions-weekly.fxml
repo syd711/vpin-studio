@@ -45,6 +45,7 @@
                                     </graphic>
                                 </TableColumn>
                                 <TableColumn fx:id="typeColumn" prefWidth="100.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_weekly.mode" />
+                                <TableColumn fx:id="patchedColumn" prefWidth="110.0" sortable="false" style="-fx-alignment: CENTER;" text="%competitions.competitions_weekly.wovp_patched" />
                                 <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="%competitions.competitions_iscored.virtual_pinball_spreadsheet_table" />
                                 <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="%competitions.competitions_iscored.table_version" />
                                 <TableColumn fx:id="startDateColumn" prefWidth="160.0" style="-fx-alignment: CENTER;" text="%competitions.competitions_discord.start_date" />
@@ -119,6 +120,29 @@
                             </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions_iscored.open_event_log" />
+                            </tooltip>
+                        </Button>
+                        <Separator layoutX="252.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="wovpPatchBtn" mnemonicParsing="false" onAction="#onWovpPatch" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-marked-circle-plus-outline" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%tables.context_menu.wovp_patch" />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="wovpUnpatchBtn" mnemonicParsing="false" onAction="#onWovpUnpatch" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-marked-circle-minus-outline" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="%tables.context_menu.wovp_unpatch" />
                             </tooltip>
                         </Button>
                         <Separator layoutX="252.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

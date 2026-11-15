@@ -265,12 +265,12 @@ public class TableOverviewContextMenu {
       if (wovpSettings != null && wovpSettings.isEnabled()) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
         MenuItem wovpPatchItem = new MenuItem(Messages.get("tables.context_menu.wovp_patch"));
-        wovpPatchItem.setGraphic(WidgetFactory.createIcon("mdi2p-plus-circle-outline"));
+        wovpPatchItem.setGraphic(WidgetFactory.createIcon("mdi2c-checkbox-marked-circle-plus-outline"));
         wovpPatchItem.setOnAction(actionEvent -> WovpPatchProgressModel.run(vpxSelections(), true));
         ctxMenu.getItems().add(wovpPatchItem);
 
         MenuItem wovpUnpatchItem = new MenuItem(Messages.get("tables.context_menu.wovp_unpatch"));
-        wovpUnpatchItem.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline"));
+        wovpUnpatchItem.setGraphic(WidgetFactory.createIcon("mdi2c-checkbox-marked-circle-minus-outline"));
         wovpUnpatchItem.setOnAction(actionEvent -> WovpPatchProgressModel.run(vpxSelections(), false));
         ctxMenu.getItems().add(wovpUnpatchItem);
       }

@@ -23,6 +23,14 @@
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
+            <Label fx:id="hintLabel" managed="false" textAlignment="CENTER" textFill="WHITE" visible="false" wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </Label>
          </children>
       </VBox>
    </center>

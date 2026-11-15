@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.WovpPatchProgressModel;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
@@ -33,6 +35,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -46,6 +49,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -62,6 +66,9 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
   @FXML
   private TableColumn<WeeklyCompetitionModel, Object> typeColumn;
+
+  @FXML
+  private TableColumn<WeeklyCompetitionModel, Object> patchedColumn;
 
   @FXML
   private TableColumn<WeeklyCompetitionModel, String> vpsTableColumn;
@@ -88,6 +95,12 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private Button dataManagerBtn;
 
   @FXML
+  private Button wovpPatchBtn;
+
+  @FXML
+  private Button wovpUnpatchBtn;
+
+  @FXML
   private StackPane tableStack;
 
   @FXML
@@ -102,6 +115,11 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
   private PlayButtonController playButtonController;
   private CompetitionsController competitionsController;
   private List<CompetitionRepresentation> weeklySubscriptions;
+
+  /**
+   * WoVP patch status by game id, resolved in the background on reload since the check reads the table script.
+   */
+  private final Map<Integer, Boolean> patchStatus = new ConcurrentHashMap<>();
 
   private boolean active = false;
   private boolean markDirty = false;
@@ -124,6 +142,34 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
         TableDialogs.openEventLogDialog(gameRepresentation);
       }
     }
+  }
+
+  @FXML
+  private void onWovpPatch(ActionEvent e) {
+    runWovpPatch(getPatchCandidates(true), true);
+  }
+
+  @FXML
+  private void onWovpUnpatch(ActionEvent e) {
+    runWovpPatch(getPatchCandidates(false), false);
+  }
+
+  /**
+   * The VPX tables of the current selection that are not already in the target patch state.
+   */
+  private List<GameRepresentation> getPatchCandidates(boolean patch) {
+    List<GameRepresentation> result = new ArrayList<>();
+    for (WeeklyCompetitionModel model : tableView.getSelectionModel().getSelectedItems()) {
+      GameRepresentation game = model.getGame();
+      if (game == null || !client.getEmulatorService().isVpxGame(game) || result.contains(game)) {
+        continue;
+      }
+      Boolean patched = patchStatus.get(game.getId());
+      if (patched == null || patched != patch) {
+        result.add(game);
+      }
+    }
+    return result;
   }
 
   @FXML
@@ -176,6 +222,19 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     JFXFuture.supplyAsync(() -> {
       client.getCompetitionService().synchronizeWeeklyCompetitions(forceReload);
       weeklySubscriptions = client.getCompetitionService().getWeeklyCompetitions();
+
+      patchStatus.clear();
+      for (CompetitionRepresentation weeklySubscription : weeklySubscriptions) {
+        int gameId = weeklySubscription.getGameId();
+        if (gameId > 0 && !patchStatus.containsKey(gameId)) {
+          try {
+            patchStatus.put(gameId, client.getWovpService().isPatched(gameId));
+          }
+          catch (Exception e) {
+            LOG.error("Failed to resolve WoVP patch status for game {}: {}", gameId, e.getMessage());
+          }
+        }
+      }
       return weeklySubscriptions;
     }).thenAcceptLater((weeklySubscriptions) -> {
       filterCompetitions(weeklySubscriptions);
@@ -214,6 +273,7 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       loadingOverlay = loader.load();
       WaitOverlayController loaderController = loader.getController();
       loaderController.setLoadingMessage(Messages.get("competitions.competitions_weekly.loading_competitions"));
+      loaderController.setHint(Messages.get("competitions.competitions_weekly.loading_competitions.hint"));
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: {}", e.getMessage(), e);
@@ -231,6 +291,30 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
       box.getChildren().add(modeLabel);
 
       return new SimpleObjectProperty(box);
+    });
+
+    patchedColumn.setCellValueFactory(cellData -> {
+      WeeklyCompetitionModel value = cellData.getValue();
+      GameRepresentation game = value.getGame();
+      if (game == null) {
+        return new SimpleObjectProperty<>("");
+      }
+
+      Boolean patched = patchStatus.get(game.getId());
+      if (patched == null) {
+        return new SimpleObjectProperty<>("-");
+      }
+
+      Label label = new Label();
+      if (patched) {
+        label.setGraphic(WidgetFactory.createCheckIcon());
+        label.setTooltip(new Tooltip(Messages.get("competitions.competitions_weekly.wovp_patched.yes")));
+      }
+      else {
+        label.setGraphic(WidgetFactory.createExclamationIcon());
+        label.setTooltip(new Tooltip(Messages.get("competitions.competitions_weekly.wovp_patched.no")));
+      }
+      return new SimpleObjectProperty<>(label);
     });
 
     tableColumn.setCellValueFactory(cellData -> {
@@ -353,6 +437,12 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
+    tableView.getSelectionModel().getSelectedItems().addListener((javafx.collections.ListChangeListener<WeeklyCompetitionModel>) c -> {
+      wovpPatchBtn.setDisable(getPatchCandidates(true).isEmpty());
+      wovpUnpatchBtn.setDisable(getPatchCandidates(false).isEmpty());
+    });
+    wovpPatchBtn.setDisable(true);
+    wovpUnpatchBtn.setDisable(true);
 
     tableView.setRowFactory(tv -> {
       TableRow<WeeklyCompetitionModel> row = new TableRow<>();
@@ -361,6 +451,10 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 //          onEdit();
         }
       });
+      final ContextMenu menu = new ContextMenu();
+      // filled in the capturing phase: ContextMenu#show ignores menus without items, so it must be populated before the row's own handler shows it
+      row.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, event -> refreshContextMenu(menu, row.getItem()));
+      row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> row.setContextMenu(isNowEmpty ? null : menu));
       return row;
     });
 
@@ -429,6 +523,67 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
     EventManager.getInstance().addListener(this);
   }
 
+  private void refreshContextMenu(ContextMenu ctxMenu, WeeklyCompetitionModel model) {
+    ctxMenu.getItems().clear();
+    if (model == null) {
+      return;
+    }
+    GameRepresentation game = model.getGame();
+
+    MenuItem dataManagerItem = new MenuItem(Messages.get("tables.context_menu.edit_table_data"));
+    dataManagerItem.setGraphic(WidgetFactory.createIcon("mdi2l-lead-pencil"));
+    dataManagerItem.setDisable(game == null);
+    dataManagerItem.setOnAction(e -> TableDialogs.openTableDataDialog(null, game));
+    ctxMenu.getItems().add(dataManagerItem);
+
+    VpsTable vpsTable = client.getVpsService().getTableById(model.getVpsTableId());
+    MenuItem downloadItem = new MenuItem(Messages.get("dialog.download_table"));
+    downloadItem.setGraphic(WidgetFactory.createIcon("mdi2o-open-in-new"));
+    downloadItem.setDisable(vpsTable == null);
+    downloadItem.setOnAction(e -> Studio.browse(VPS.getVpsTableUrl(vpsTable.getId())));
+    ctxMenu.getItems().add(downloadItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem eventLogItem = new MenuItem(Messages.get("tables.context_menu.event_log"));
+    eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
+    eventLogItem.setDisable(game == null || !game.isEventLogAvailable());
+    eventLogItem.setOnAction(e -> TableDialogs.openEventLogDialog(game));
+    ctxMenu.getItems().add(eventLogItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    List<GameRepresentation> patchCandidates = getPatchCandidates(true);
+    MenuItem wovpPatchItem = new MenuItem(Messages.get("tables.context_menu.wovp_patch"));
+    wovpPatchItem.setGraphic(WidgetFactory.createIcon("mdi2c-checkbox-marked-circle-plus-outline"));
+    wovpPatchItem.setDisable(patchCandidates.isEmpty());
+    wovpPatchItem.setOnAction(e -> runWovpPatch(patchCandidates, true));
+    ctxMenu.getItems().add(wovpPatchItem);
+
+    List<GameRepresentation> unpatchCandidates = getPatchCandidates(false);
+    MenuItem wovpUnpatchItem = new MenuItem(Messages.get("tables.context_menu.wovp_unpatch"));
+    wovpUnpatchItem.setGraphic(WidgetFactory.createIcon("mdi2c-checkbox-marked-circle-minus-outline"));
+    wovpUnpatchItem.setDisable(unpatchCandidates.isEmpty());
+    wovpUnpatchItem.setOnAction(e -> runWovpPatch(unpatchCandidates, false));
+    ctxMenu.getItems().add(wovpUnpatchItem);
+  }
+
+  private void runWovpPatch(List<GameRepresentation> games, boolean patch) {
+    if (games.isEmpty()) {
+      return;
+    }
+    WovpPatchProgressModel.run(games, patch);
+    JFXFuture.supplyAsync(() -> {
+      for (GameRepresentation game : games) {
+        patchStatus.put(game.getId(), client.getWovpService().isPatched(game.getId()));
+      }
+      return games;
+    }).thenAcceptLater(updated -> {
+      tableView.refresh();
+      refreshView(getSelection());
+    });
+  }
+
   private void bindSearchField() {
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
       tableView.getSelectionModel().clearSelection();
@@ -487,6 +642,8 @@ public class WeeklySubscriptionsController extends BaseCompetitionController imp
 
     tableNavigateBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
     dataManagerBtn.setDisable(model.isEmpty() || model.get().getGame() == null);
+    wovpPatchBtn.setDisable(getPatchCandidates(true).isEmpty());
+    wovpUnpatchBtn.setDisable(getPatchCandidates(false).isEmpty());
 
     competitionsController.setCompetition(model.map(weeklyCompetitionModel -> weeklyCompetitionModel.competition).orElse(null));
 
