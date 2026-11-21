@@ -58,6 +58,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -558,100 +559,67 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return frontendRunning || SystemService.isPinballEmulatorRunning();
   }
 
+  /**
+   * Called periodically and while a table is played, so it must stay cheap: the VPX check is a window title
+   * lookup that short-circuits everything else, the other emulators are detected with a single pass over the
+   * process list. ProcessHandle#info() is not cached and opens the process (reading its command line) on every
+   * call, so it is invoked exactly once per process.
+   */
   public static boolean isPinballEmulatorRunning() {
-    List<ProcessHandle> processes = getProcesses();
-    return isVPXRunning(processes) || isFPRunning(processes) || isMameRunning(processes) || isZenRunning(processes) || isZaccariaRunning(processes);
+    if (isVPXRunning()) {
+      return true;
+    }
+    return isProcessFileNameMatching(fileName -> isFPProcess(fileName) || isMameProcess(fileName)
+        || isZenProcess(fileName) || isZaccariaProcess(fileName))
+        || WindowsUtil.isProcessRunning(FP_WINDOW_TITLE);
   }
 
   public static boolean isFPRunning() {
-    List<ProcessHandle> processes = getProcesses();
-    return isFPRunning(processes);
+    return isProcessFileNameMatching(SystemService::isFPProcess) || WindowsUtil.isProcessRunning(FP_WINDOW_TITLE);
   }
 
   public static boolean isVPXRunning() {
-    List<ProcessHandle> processes = getProcesses();
-    return isVPXRunning(processes);
+    return WindowsUtil.isProcessRunning(VPX_WINDOW_TITLE);
   }
 
-  private static boolean isZaccariaRunning(List<ProcessHandle> processes) {
-    for (ProcessHandle p : processes) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("zaccaria")) {
-          LOG.debug("Found active zaccaria process: {}", fileName);
-          return true;
-        }
+  private final static String VPX_WINDOW_TITLE = "Visual Pinball Player";
+  private final static String FP_WINDOW_TITLE = "Future Pinball";
+
+  /**
+   * @param matcher receives the lower-cased executable file name of every process
+   */
+  private static boolean isProcessFileNameMatching(@NonNull Predicate<String> matcher) {
+    return ProcessHandle.allProcesses().anyMatch(p -> {
+      Optional<String> command = p.info().command();
+      if (command.isEmpty()) {
+        return false;
       }
-    }
-    return false;
-  }
-
-  private static boolean isZenRunning(List<ProcessHandle> processes) {
-    for (ProcessHandle p : processes) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("pinballfx") || fileName.toLowerCase().contains("pinball fx") || fileName.toLowerCase().contains("pinballm")) {
-          LOG.debug("Found active Zen process: {}", fileName);
-          return true;
-        }
+      String cmdName = command.get();
+      String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1).toLowerCase();
+      if (matcher.test(fileName)) {
+        LOG.debug("Found active emulator process: {}", fileName);
+        return true;
       }
-    }
-    return false;
+      return false;
+    });
   }
 
-  private static boolean isMameRunning(List<ProcessHandle> processes) {
-    for (ProcessHandle p : processes) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        if (fileName.toLowerCase().contains("mame")) {
-          LOG.debug("Found active MAME process: {}", fileName);
-          return true;
-        }
-      }
-    }
-    return false;
+  private static boolean isFPProcess(@NonNull String fileName) {
+    //FP tables are launched via BAM's FPLoader.exe by default (see FPCommandLineService/EmulatorFactory),
+    //not "Future Pinball.exe", so both process names must be matched to reliably detect an active table.
+    return fileName.contains("future pinball") || fileName.contains("fploader");
   }
 
-  public static boolean isVPXRunning(List<ProcessHandle> allProcesses) {
-//    for (ProcessHandle p : allProcesses) {
-//      if (p.info().command().isPresent()) {
-//        String cmdName = p.info().command().get();
-//        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-//        if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
-//          LOG.info("Found active VPX process: {}", fileName);
-//          return true;
-//        }
-//      }
-//    }
-
-    if (WindowsUtil.isProcessRunning("Visual Pinball Player")) {
-      return true;
-    }
-
-    return false;
+  private static boolean isMameProcess(@NonNull String fileName) {
+    return fileName.contains("mame");
   }
 
-  public static boolean isFPRunning(List<ProcessHandle> allProcesses) {
-    for (ProcessHandle p : allProcesses) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
-        //FP tables are launched via BAM's FPLoader.exe by default (see FPCommandLineService/EmulatorFactory),
-        //not "Future Pinball.exe", so both process names must be matched to reliably detect an active table.
-        if (fileName.toLowerCase().contains("future pinball") || fileName.toLowerCase().contains("fploader")) {
-          LOG.debug("Found active FP process: {}", fileName);
-          return true;
-        }
-      }
-    }
+  private static boolean isZenProcess(@NonNull String fileName) {
+    return fileName.contains("pinballfx") || fileName.contains("pinball fx") || fileName.contains("pinballm");
+  }
 
-    if (WindowsUtil.isProcessRunning("Future Pinball")) {
-      return true;
-    }
-    return false;
+  private static boolean isZaccariaProcess(@NonNull String fileName) {
+    return fileName.contains("zaccaria");
   }
 
   public List<MonitorInfo> getMonitorInfos() {

@@ -672,7 +672,7 @@ public class BackglassService implements InitializingBean {
         return cacheDirectB2SVersion.get(key);
       }
 
-      key = game.getEmulatorId() + "@" + FilenameUtils.getBaseName(BackglassNamingHelper.getBackglassFileName(game));
+      key = game.getEmulatorId() + "@" + FileUtils.baseUniqueFile(getRelativeBackglassFileName(game)).replaceAll("\\\\", "/");
       if (cacheDirectB2SVersion.containsKey(key)) {
         return cacheDirectB2SVersion.get(key);
       }
@@ -683,10 +683,18 @@ public class BackglassService implements InitializingBean {
   @Nullable
   public DirectB2S getDirectB2SAndVersions(Game game) {
     if (game != null) {
-      String backglassFileName = BackglassNamingHelper.getBackglassFileName(game);
-      return reloadDirectB2SAndVersions(game.getEmulator(), backglassFileName);
+      return reloadDirectB2SAndVersions(game.getEmulator(), getRelativeBackglassFileName(game));
     }
     return null;
+  }
+
+  /**
+   * The backglass file name relative to the emulator's backglass folder, including the subfolder of the table,
+   * e.g. "Twister (1996)/Twister v1.1.directb2s". Versions and cache keys are relative to that folder too.
+   */
+  private static String getRelativeBackglassFileName(@NonNull Game game) {
+    String relativeFolder = game.isZenGame() ? "" : FilenameUtils.getPath(game.getGameFileName());
+    return relativeFolder + BackglassNamingHelper.getBackglassFileName(game);
   }
 
   public DirectB2S getDirectB2SAndVersions(int emulatorId, String fileName) {

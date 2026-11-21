@@ -8,6 +8,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class GameController {
@@ -15,7 +16,8 @@ public class GameController {
 
   private static GameController INSTANCE;
 
-  private final List<GameControllerInputListener> listeners = new ArrayList<>();
+  //modified concurrently: every event is dispatched on its own thread while the pause menu adds/removes itself
+  private final List<GameControllerInputListener> listeners = new CopyOnWriteArrayList<>();
 
   private boolean running = true;
 
@@ -64,10 +66,15 @@ public class GameController {
 //              LOG.info("GameControllerEvent: " + comp.getName());
 //              LOG.info("GameControllerEvent2: " + comp.getPollData());
               new Thread(() -> {
-                for (GameControllerInputListener listener : new ArrayList<>(listeners)) {
-                  listener.controllerEvent(comp.getName());
+                for (GameControllerInputListener listener : listeners) {
+                  try {
+                    listener.controllerEvent(comp.getName());
+                  }
+                  catch (Exception e) {
+                    LOG.error("Game controller listener {} failed for '{}': {}", listener.getClass().getSimpleName(), comp.getName(), e.getMessage(), e);
+                  }
                 }
-              }).start();
+              }, "Game Controller Event").start();
             }
           }
         }
@@ -95,7 +102,8 @@ public class GameController {
   }
 
   public void addListener(GameControllerInputListener listener) {
-    this.listeners.add(listener);
+    //a listener registered twice would receive every event twice
+    ((CopyOnWriteArrayList<GameControllerInputListener>) this.listeners).addIfAbsent(listener);
   }
 
   public void removeListener(GameControllerInputListener listener) {

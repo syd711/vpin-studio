@@ -22,7 +22,9 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.OSUtil;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +36,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -58,7 +62,12 @@ public class PauseMenu extends Application {
   private Stage stage;
   private boolean visible = false;
   private boolean test = false;
-  private boolean alreadyMuted = false;
+  private volatile boolean alreadyMuted = false;
+  private volatile boolean preparing = false;
+  /**
+   * Incremented on every show request and exit, a menu whose preparation has been overtaken by an exit is not shown.
+   */
+  private final AtomicInteger toggleRequest = new AtomicInteger();
 
   private final List<FrontendScreenAsset> screenAssets = new ArrayList<>();
   private final List<PauseMenuStatusChangeListener> listeners = new ArrayList<>();
@@ -255,118 +264,167 @@ public class PauseMenu extends Application {
     togglePauseMenu(null, false);
   }
 
+  /**
+   * Data of the pause menu that is fetched from the server before the menu is shown.
+   */
+  private record PreparedPauseMenu(@NonNull GameRepresentation game, @NonNull PauseMenuSettings settings,
+                                   boolean scoreSubmitterEnabled,
+                                   @Nullable FrontendPlayerDisplay tutorialDisplay,
+                                   @Nullable FrontendMediaItemRepresentation tutorialItem) {
+  }
+
+  /**
+   * Must be called on the FX thread. All REST calls and the screenshot are done in the background: blocking the
+   * FX thread made the menu laggy, so only the stage handling happens on the FX thread.
+   */
   public void togglePauseMenu(@Nullable GameStatus status, boolean test) {
+    if (visible) {
+      exitPauseMenu();
+      return;
+    }
+    if (preparing) {
+      LOG.info("Pause menu is still being prepared, ignoring toggle request.");
+      return;
+    }
+
     this.test = test;
-    client.getPreferenceService().clearCache();
+    if (test) {
+      loadPauseMenu();
+    }
 
-    if (!visible) {
-      if (!test) {
-        status = client.getGameStatusService().startPause();
-      }
-      else {
-        loadPauseMenu();
-      }
-
-      try {
-        if (status == null) {
-          status = client.getGameStatusService().getStatus();
-        }
-        if (!status.isActive()) {
-          LOG.info("Skipped showing start menu: no game status found.");
-          return;
-        }
-        else {
-          LOG.info("Found game status for " + status.getGameId());
-          SLOG.info("Found game status for " + status.getGameId());
-        }
-
-        //reload card settings to resolve actual target screen
-        GameRepresentation game = client.getGameService().getGame(status.getGameId());
-        PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-
-        if (!test && pauseMenuSettings.isPressPause()) {
-          togglePauseKey(0);
-        }
-
-        screenAssets.clear();
-        if (pauseMenuSettings.isTutorialsOnScreen() && pauseMenuSettings.isShowTutorials()) {
-          VPinScreen tutorialScreen = pauseMenuSettings.getTutorialsScreen();
-          List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
-          if (!videoTutorials.isEmpty()) {
-            String videoUrl = PauseMenuItemsFactory.createVideoUrl(game);
-            VPinScreen tutorialsScreen = pauseMenuSettings.getTutorialsScreen();
-            FrontendPlayerDisplay screenDisplay = client.getFrontendService().getScreenDisplay(tutorialsScreen);
-            FrontendMediaItemRepresentation tutorialItem = new FrontendMediaItemRepresentation();
-            tutorialItem.setMimeType("video/mp4");
-            tutorialItem.setScreen(tutorialScreen);
-            tutorialItem.setUri(videoUrl);
-
-            FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, game, screenDisplay, tutorialScreen, tutorialItem, pauseMenuSettings);
-            screenAssets.add(assetScreen);
+    preparing = true;
+    int request = toggleRequest.incrementAndGet();
+    JFXFuture.supplyAsync(() -> preparePauseMenu(status, test))
+        .thenAcceptLater(prepared -> {
+          preparing = false;
+          if (prepared == null) {
+            return;
           }
-        }
-
-        StateMananger.getInstance().setControls(pauseMenuSettings);
-
-        //we need to take the screenshot before the menu is shown
-        boolean scoreSubmitterEnabled = client.getCompetitionService().isScoreSubmitterEnabled();
-        boolean alwaysTakeScreenshot = pauseMenuSettings.isAlwaysTakeScreenshot();
-        test = false;
-        if (!test && (scoreSubmitterEnabled || alwaysTakeScreenshot)) {
-          client.takeScoreScreenshot();
-        }
-
-        visible = true;
-
-        PauseMenuState state = new PauseMenuState();
-        state.setGame(game);
-        state.setScoreSubmitterEnabled(scoreSubmitterEnabled);
-        state.setApronMode(pauseMenuSettings.isApronMode());
-        state.setVisibleItemCount(pauseMenuSettings.getVisibleItemCount());
-
-        StateMananger.getInstance().setState(state);
-        stage.getScene().setCursor(Cursor.NONE);
-
-        ServerFX.forceShow(stage);
-        LOG.info("Forced showing pause stage, starting post launch processing.");
-        JFXFuture.supplyAsync(() -> {
-          Boolean isMuted = WindowsVolumeControl.isMuted();
-          alreadyMuted = isMuted != null && isMuted;
-
-          if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
-            NirCmd.muteSystem(true);
+          //the menu has been exited (e.g. by a table exit) while it was prepared
+          if (request != toggleRequest.get()) {
+            LOG.info("Skipped showing pause menu, it has been closed during its preparation.");
+            if (!test) {
+              new Thread(() -> client.getGameStatusService().finishPause(), "Pause Menu Exit").start();
+            }
+            return;
           }
-
-          listeners.forEach(PauseMenuStatusChangeListener::pauseMenuShow);
-          return true;
-        }).thenAcceptLater((result) -> {
-          long start = System.currentTimeMillis();
-          try {
-            LOG.info("Pause menu screens preparation finished, using {} screen assets.", screenAssets.size());
-          }
-          catch (Exception e) {
-            LOG.error("Failed to prepare pause menu screens: {}", e.getMessage(), e);
-          }
-
-          LOG.info("Asset fetch for pause menu took {}ms", (System.currentTimeMillis() - start));
+          showPauseMenu(prepared);
+        })
+        .onErrorLater(e -> {
+          preparing = false;
+          LOG.error("Failed to init pause menu: " + e.getMessage(), e);
         });
-      }
-      catch (Exception e) {
-        LOG.error("Failed to init pause menu: " + e.getMessage(), e);
+  }
+
+  /**
+   * Runs in the background, everything blocking happens here.
+   */
+  @Nullable
+  private PreparedPauseMenu preparePauseMenu(@Nullable GameStatus status, boolean test) {
+    client.getPreferenceService().clearCache();
+    if (!test) {
+      status = client.getGameStatusService().startPause();
+    }
+
+    if (status == null) {
+      status = client.getGameStatusService().getStatus();
+    }
+    if (!status.isActive()) {
+      LOG.info("Skipped showing start menu: no game status found.");
+      return null;
+    }
+    LOG.info("Found game status for " + status.getGameId());
+    SLOG.info("Found game status for " + status.getGameId());
+
+    //reload card settings to resolve actual target screen
+    GameRepresentation game = client.getGameService().getGame(status.getGameId());
+    PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
+    if (!test && pauseMenuSettings.isPressPause()) {
+      togglePauseKey(0);
+    }
+
+    FrontendPlayerDisplay tutorialDisplay = null;
+    FrontendMediaItemRepresentation tutorialItem = null;
+    if (pauseMenuSettings.isTutorialsOnScreen() && pauseMenuSettings.isShowTutorials()) {
+      List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+      if (!videoTutorials.isEmpty()) {
+        VPinScreen tutorialScreen = pauseMenuSettings.getTutorialsScreen();
+        tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
+        tutorialItem = new FrontendMediaItemRepresentation();
+        tutorialItem.setMimeType("video/mp4");
+        tutorialItem.setScreen(tutorialScreen);
+        tutorialItem.setUri(PauseMenuItemsFactory.createVideoUrl(game));
       }
     }
-    else {
-      exitPauseMenu();
+
+    //we need to take the screenshot before the menu is shown
+    boolean scoreSubmitterEnabled = client.getCompetitionService().isScoreSubmitterEnabled();
+    if (scoreSubmitterEnabled || pauseMenuSettings.isAlwaysTakeScreenshot()) {
+      client.takeScoreScreenshot();
+    }
+    return new PreparedPauseMenu(game, pauseMenuSettings, scoreSubmitterEnabled, tutorialDisplay, tutorialItem);
+  }
+
+  /**
+   * Runs on the FX thread.
+   */
+  private void showPauseMenu(@NonNull PreparedPauseMenu prepared) {
+    PauseMenuSettings pauseMenuSettings = prepared.settings();
+    try {
+      screenAssets.clear();
+      if (prepared.tutorialItem() != null) {
+        FrontendScreenAsset assetScreen = PauseMenuScreensFactory.createScreenStage(client, prepared.game(), prepared.tutorialDisplay(),
+            prepared.tutorialItem().getScreen(), prepared.tutorialItem(), pauseMenuSettings);
+        screenAssets.add(assetScreen);
+      }
+
+      StateMananger.getInstance().setControls(pauseMenuSettings);
+
+      visible = true;
+
+      PauseMenuState state = new PauseMenuState();
+      state.setGame(prepared.game());
+      state.setScoreSubmitterEnabled(prepared.scoreSubmitterEnabled());
+      state.setApronMode(pauseMenuSettings.isApronMode());
+      state.setVisibleItemCount(pauseMenuSettings.getVisibleItemCount());
+
+      StateMananger.getInstance().setState(state);
+      stage.getScene().setCursor(Cursor.NONE);
+
+      ServerFX.forceShow(stage);
+      LOG.info("Forced showing pause stage, starting post launch processing.");
+      JFXFuture.runAsync(() -> {
+        Boolean isMuted = WindowsVolumeControl.isMuted();
+        alreadyMuted = isMuted != null && isMuted;
+
+        if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
+          NirCmd.muteSystem(true);
+        }
+
+        listeners.forEach(PauseMenuStatusChangeListener::pauseMenuShow);
+        LOG.info("Pause menu screens preparation finished, using {} screen assets.", screenAssets.size());
+      });
+    }
+    catch (Exception e) {
+      LOG.error("Failed to init pause menu: " + e.getMessage(), e);
     }
   }
 
+  /**
+   * Must be called on the FX thread. Hides the stages immediately, everything blocking (REST calls, NirCmd,
+   * listeners) is done in the background.
+   */
   public void exitPauseMenu() {
-    if (!test) {
-      client.getGameStatusService().finishPause();
-    }
+    //cancels a pause menu that is still being prepared
+    toggleRequest.incrementAndGet();
+
+    boolean wasVisible = visible;
+    boolean wasTest = test;
+    boolean wasMuted = alreadyMuted;
+    visible = false;
 
     StateMananger.getInstance().exit();
-    PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     LOG.info("Exited pause menu");
     SLOG.info("Exited pause menu");
@@ -375,47 +433,46 @@ public class PauseMenu extends Application {
       stage.hide();
     }
 
-    Platform.runLater(() -> {
-      try {
-        Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION);
-      }
-      catch (InterruptedException e) {
-        //
-      }
-      screenAssets.stream().forEach(asset -> {
+    List<FrontendScreenAsset> assets = new ArrayList<>(screenAssets);
+    screenAssets.clear();
+    if (!assets.isEmpty()) {
+      PauseTransition delay = new PauseTransition(Duration.millis(PauseMenuUIDefaults.SELECTION_SCALE_DURATION));
+      delay.setOnFinished(e -> assets.forEach(asset -> {
         asset.getScreenStage().hide();
         asset.getFrontendScreenController().dispose();
-      });
-      screenAssets.clear();
-      listeners.forEach(PauseMenuStatusChangeListener::pauseMenuHide);
-    });
-
-
-    try {
-      if (!test) {
-        NirCmd.focusWindow("Visual Pinball Player");
-      }
-
-      if (pauseMenuSettings.isMuteOnPause() && !alreadyMuted) {
-        NirCmd.muteSystem(false);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to execute focus command: {}", e.getMessage(), e);
+      }));
+      delay.play();
     }
 
-    if (visible && pauseMenuSettings.isPressPause()) {
-      new Thread(() -> {
-        long delay = 1000;
-        if (pauseMenuSettings.getUnpauseDelay() > 0) {
-          delay = pauseMenuSettings.getUnpauseDelay();
+    new Thread(() -> {
+      try {
+        if (!wasTest) {
+          client.getGameStatusService().finishPause();
         }
-        if (!test) {
+        PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
+        if (!wasTest) {
+          NirCmd.focusWindow("Visual Pinball Player");
+        }
+
+        if (pauseMenuSettings.isMuteOnPause() && !wasMuted) {
+          NirCmd.muteSystem(false);
+        }
+
+        if (wasVisible && pauseMenuSettings.isPressPause() && !wasTest) {
+          long delay = 1000;
+          if (pauseMenuSettings.getUnpauseDelay() > 0) {
+            delay = pauseMenuSettings.getUnpauseDelay();
+          }
           togglePauseKey(delay);
         }
-      }).start();
-    }
-    visible = false;
+
+        listeners.forEach(PauseMenuStatusChangeListener::pauseMenuHide);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to finish pause menu exit: {}", e.getMessage(), e);
+      }
+    }, "Pause Menu Exit").start();
   }
 
   private static void togglePauseKey(long delay) {

@@ -55,7 +55,6 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   private final static int HIGHSCORE_DEBOUNCE_MS = 1000;
 
   private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Highscore Monitor"));
-  private volatile boolean emulatorWasRunning = false;
 
   @Autowired
   private GameService gameService;
@@ -85,6 +84,7 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
    * detected them (which tells us how to resolve the game for that file).
    */
   private final Map<File, FolderWatch> pendingFileChanges = new ConcurrentHashMap<>();
+  private volatile long lastFileChangeMs = 0;
 
   private enum FileKind {
     NVRAM, VPX_USER, FP_RAM
@@ -158,6 +158,7 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   private void startFolderMonitor(@NonNull File folder, @NonNull FolderWatch watch) {
     FolderMonitoringThread monitor = new FolderMonitoringThread((changedFolder, file) -> {
       if (file != null && isRelevantFile(watch.kind, file)) {
+        lastFileChangeMs = System.currentTimeMillis();
         pendingFileChanges.put(file, watch);
         debouncer.debounce(HIGHSCORE_DEBOUNCE_KEY, this::flushPendingFileChanges, HIGHSCORE_DEBOUNCE_MS);
       }
@@ -186,13 +187,26 @@ public class HighscoreMonitoringService implements InitializingBean, PreferenceC
   /**
    * Polled periodically so that file changes which arrived while a table was still being played get
    * flushed as soon as the emulator exits, instead of waiting for another file write to trigger it.
+   * The emulator process check is only done when there is something to flush: it enumerates the system
+   * processes and must not run every few seconds during gameplay for nothing.
    */
   private void checkEmulatorState() {
-    boolean emulatorRunning = SystemService.isPinballEmulatorRunning();
-    if (emulatorWasRunning && !emulatorRunning) {
-      flushPendingFileChanges();
+    try {
+      if (pendingFileChanges.isEmpty()) {
+        return;
+      }
+      //leave fresh changes to the debouncer, the file may still be written
+      if (System.currentTimeMillis() - lastFileChangeMs < HIGHSCORE_DEBOUNCE_MS) {
+        return;
+      }
+      if (!SystemService.isPinballEmulatorRunning()) {
+        flushPendingFileChanges();
+      }
     }
-    emulatorWasRunning = emulatorRunning;
+    catch (Exception e) {
+      //an exception would cancel the scheduled task silently
+      LOG.error("Highscore monitor emulator check failed: {}", e.getMessage(), e);
+    }
   }
 
   private void onHighscoreFileChanged(@NonNull File file, @NonNull FolderWatch watch) {

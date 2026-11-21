@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.directb2s.BackglassFileType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
@@ -32,10 +33,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -491,15 +493,32 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     activateCheckbox.selectedProperty().removeListener(activationChangeListener);
     activateCheckbox.setSelected(false);
     String selectedVersion = getSelectedVersion();
-    if (selectedVersion != null && game.isPresent() && game.get().getDirectB2SPath() != null) {
-      // compare full names, a .directb2s and a .B2SPro version may share the same base name
-      boolean selected = new File(selectedVersion).getName().equalsIgnoreCase(new File(game.get().getDirectB2SPath()).getName());
-      activateCheckbox.setSelected(selected);
+    if (selectedVersion != null && game.isPresent()) {
+      activateCheckbox.setSelected(isActiveVersion(selectedVersion, game.get().getDirectB2SVersions()));
     }
     noneActiveInfo.setVisible(!activateCheckbox.isSelected());
     activateCheckbox.selectedProperty().addListener(activationChangeListener);
   }
 
+
+  /**
+   * Same semantics as DirectB2S#addVersion / the backglass manager: a version is active when it is a main file
+   * (no unique " (n)" marker). When both a main .directb2s and a main .B2SPro file exist, the .B2SPro one wins.
+   * Do not compare with the game's directB2SPath, it is resolved differently (table name / folder name lookup)
+   * and may not match the backglass group the versions belong to.
+   */
+  static boolean isActiveVersion(@NonNull String version, @NonNull List<String> versions) {
+    String name = FilenameUtils.getName(version);
+    if (!FileUtils.isMainFilename(name)) {
+      return false;
+    }
+    if (BackglassFileType.isB2SPro(name)) {
+      return true;
+    }
+    return versions.stream()
+        .map(FilenameUtils::getName)
+        .noneMatch(v -> FileUtils.isMainFilename(v) && BackglassFileType.isB2SPro(v));
+  }
 
   private void setDirectB2SDisabled() {
     if (this.tableData != null && this.tableSettings != null) {

@@ -12,7 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -39,7 +38,8 @@ public class FrontendScreensManager {
       root.setStyle("-fx-background-color: transparent;");
 
       MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(-1);
-      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
+      //plain 2D scene: these stages are shown on top of a running emulator, so no depth buffer and no MSAA surfaces
+      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight());
       scene.setFill(Color.TRANSPARENT);
       scene.setCursor(Cursor.NONE);
 
@@ -64,7 +64,7 @@ public class FrontendScreensManager {
         LOG.error("Failed to frontend screen: " + e.getMessage(), e);
       }
 
-      showStage(screenStage, asset.getDuration());
+      showStage(screenStage, asset);
       return screenStage;
     }
     catch (Exception e) {
@@ -73,17 +73,22 @@ public class FrontendScreensManager {
     return null;
   }
 
-  private void showStage(Stage stage, int duration) {
+  /**
+   * Shows the stage. Stages with a duration are closed and disposed afterwards, stages without a duration
+   * stay open until the caller disposes them (see PauseMenu#exitPauseMenu).
+   */
+  private void showStage(@NonNull Stage stage, @NonNull FrontendScreenAsset asset) {
+    int duration = asset.getDuration();
     stage.show();
     TransitionUtil.createInFader(stage.getScene().getRoot(), 500).play();
     new Thread(() -> {
       try {
         stage.getScene().setCursor(Cursor.NONE);
         if (duration > 0) {
-          Thread.sleep(duration * 1000);
+          Thread.sleep(duration * 1000L);
           Platform.runLater(() -> {
             FadeTransition outFader = TransitionUtil.createOutFader(stage.getScene().getRoot(), 500);
-            outFader.setOnFinished(event -> stage.hide());
+            outFader.setOnFinished(event -> closeStage(stage, asset));
             outFader.play();
           });
         }
@@ -94,6 +99,24 @@ public class FrontendScreensManager {
       catch (InterruptedException e) {
         //ignore
       }
-    }).start();
+    }, "Frontend Screen Timer").start();
+  }
+
+  /**
+   * Hiding the stage alone keeps the media alive: a looping JavaFX media player would keep decoding (with audio)
+   * and a launched VLC process would keep playing on top of the emulator. Must be called on the FX thread.
+   */
+  private void closeStage(@NonNull Stage stage, @NonNull FrontendScreenAsset asset) {
+    stage.hide();
+    try {
+      FrontendScreenController controller = asset.getFrontendScreenController();
+      if (controller != null) {
+        controller.dispose();
+      }
+      LOG.info("Closed and disposed screen asset \"{}\"", asset.getName());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to dispose screen asset \"{}\": {}", asset.getName(), e.getMessage(), e);
+    }
   }
 }

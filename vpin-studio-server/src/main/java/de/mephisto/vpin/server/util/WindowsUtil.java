@@ -1,13 +1,11 @@
 package de.mephisto.vpin.server.util;
 
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import org.apache.commons.lang3.Strings;
 
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Window lookups through the Win32 API. JNA only implements window enumeration on Windows,
@@ -15,17 +13,38 @@ import java.util.List;
  */
 public class WindowsUtil {
 
+  /**
+   * Checks if a visible top-level window exists whose title contains one of the given strings (case-insensitive).
+   * <p>
+   * Called periodically while tables are played, so this enumerates the windows directly instead of using
+   * JNA's WindowUtils#getAllWindows, which additionally opens the owning process of every window to resolve
+   * its file path. GetWindowText (unlike GetWindowTextLength) does not send messages to windows of other
+   * processes, so a hung window can't block this call.
+   */
   public static boolean isProcessRunning(String... title) {
     if (!OSUtil.isWindows()) {
       return false;
     }
-    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    for (String s : title) {
-      if (windows.stream().anyMatch(wdw -> Strings.CI.contains(wdw.getTitle(), s))) {
+    AtomicBoolean found = new AtomicBoolean(false);
+    char[] buffer = new char[512];
+    User32.INSTANCE.EnumWindows((hwnd, data) -> {
+      if (!User32.INSTANCE.IsWindowVisible(hwnd)) {
         return true;
       }
-    }
-    return false;
+      int length = User32.INSTANCE.GetWindowText(hwnd, buffer, buffer.length);
+      if (length <= 0) {
+        return true;
+      }
+      String windowTitle = new String(buffer, 0, length);
+      for (String s : title) {
+        if (Strings.CI.contains(windowTitle, s)) {
+          found.set(true);
+          return false; //stop enumeration
+        }
+      }
+      return true;
+    }, null);
+    return found.get();
   }
 
   public static boolean isWindowOpened(String name) {

@@ -4,6 +4,8 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -86,6 +88,25 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
 
     b2s = backglassService.getDirectB2SAndVersions(1, "250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s");
     assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s.getFileName());
+  }
+
+  @Test
+  public void testGetBackglassOfTableInSubfolder() {
+    GameEmulator emu = emulatorService.getGameEmulator(1);
+    String gameFileName = "250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).vpx";
+    Game g = mock(Game.class);
+    when(g.getEmulator()).thenReturn(emu);
+    when(g.getEmulatorId()).thenReturn(1);
+    when(g.getGameFileName()).thenReturn(gameFileName);
+    when(g.getGameFile()).thenReturn(new File(emu.getGamesDirectory(), gameFileName));
+
+    DirectB2S b2s = backglassService.getDirectB2SAndVersions(g);
+    assertNotNull(b2s);
+    assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s.getFileName());
+    assertEquals(1, b2s.getVersions().size());
+    assertTrue(b2s.isEnabled());
+
+    assertSame(b2s, backglassService.getCacheDirectB2SAndVersions(g));
   }
 
   @Test

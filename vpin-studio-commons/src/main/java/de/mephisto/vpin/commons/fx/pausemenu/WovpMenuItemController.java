@@ -99,6 +99,7 @@ public class WovpMenuItemController implements Initializable {
   private WovpPlayer wovpPlayer;
   private int playerSelectionIndex = 0;
   private static Image screenshotImage;
+  private Transition submitBlink;
   private PauseMenuItem pauseMenuItem;
 
   public void setData(GameRepresentation game, PauseMenuItem pauseMenuItem, VpsTable tableById, Image sectionImage) {
@@ -325,6 +326,7 @@ public class WovpMenuItemController implements Initializable {
     }
 
     Transition blink = TransitionUtil.createBlink(submitBtn);
+    submitBlink = blink;
     blink.play();
 
     submitBtn.setText(Messages.get("pausemenu.wovp_menu_item.sending_highscores"));
@@ -369,6 +371,11 @@ public class WovpMenuItemController implements Initializable {
   }
 
   public void reset() {
+    //the blink is endless and would keep the JavaFX animation timer busy after the menu has been closed
+    if (submitBlink != null) {
+      submitBlink.stop();
+      submitBlink = null;
+    }
     screenshotImage = null;
     //reload the players on next open, the API key order may have changed
     players = null;

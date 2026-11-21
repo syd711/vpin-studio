@@ -260,7 +260,9 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
 
     if (inputDebounceMs > 0) {
       if (overlayKey != null) {
-        if (overlayKey.matches(eventName)) {
+        //plain comparison: String#matches would compile the key name as a regex on every key stroke
+        //and fail for key names like "[" or "\"
+        if (overlayKey.equals(eventName)) {
           if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < inputDebounceMs) {
             LOG.info("Debouncer: Skipped overlay key event, because it event within debounce range.");
             return true;
@@ -271,7 +273,7 @@ public class InputEventService implements TableStatusChangeListener, FrontendSta
       }
 
       if (pauseKey != null) {
-        if (pauseKey.matches(eventName)) {
+        if (pauseKey.equals(eventName)) {
           if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < inputDebounceMs) {
             LOG.info("Debouncer: Skipped pause key event, because it event within debounce range.");
             return true;

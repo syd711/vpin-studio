@@ -2,10 +2,13 @@
 
 ### Changes
 
-### Bugfixes
-
-- **VPX 10.8.1**: Fixed highscores, NVRAM and ROMs not being found for tables in the per-table folder layout when VPX/VPinMAME still writes into the shared folders (user folder, VPReg.stg, VPinMAME nvram/roms).
+- **Critical Performance Fixes: Applied performance fixes to the server while tables are played: highscore card on table launch, emulator process detection, highscore monitoring, input handling, pause menu and the server's JVM settings.**
+  - Since version 5.1.8, the server checked every 5 seconds whether an emulator is running, even when the highscore monitoring was disabled. Every check scanned all system processes multiple times, causing CPU load while tables are played. The check is now only done when highscore changes are pending, and the emulator detection itself is much faster.
+- **VPX 10.8.1/10.9**: 
+  - Fixed highscores, NVRAM and ROMs not being found for tables in the per-table folder layout when VPX/VPinMAME still writes into the shared folders (user folder, VPReg.stg, VPinMAME nvram/roms).
+  - Fixed calculation of the active backglass when used with 10.8.1.
 - **Table Data Manager**: Fixed drop-down fields (e.g. Custom2, Custom3, Alternative Launcher) keeping the previous table's value when switching to a table where the field is empty.
+- **Backups**: All columns of the backups table are now sortable.
 
 ---
 

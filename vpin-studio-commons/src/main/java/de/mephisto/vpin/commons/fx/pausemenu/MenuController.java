@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
 import javafx.animation.Transition;
 import javafx.util.Duration;
 import javafx.application.Platform;
@@ -494,13 +495,10 @@ public class MenuController implements Initializable {
     }
 
 
-    Platform.runLater(() -> {
-      try {
-        Thread.sleep(SELECTION_SCALE_DURATION * 2);
-      }
-      catch (InterruptedException e) {
-        //
-      }
+    //second pass for a player that has been created by a selection animation still in progress,
+    //delayed with a PauseTransition: sleeping inside Platform.runLater would block the FX thread
+    PauseTransition delay = new PauseTransition(Duration.millis(SELECTION_SCALE_DURATION * 2));
+    delay.setOnFinished(event -> {
       try {
         if (mediaView != null && mediaView.getMediaPlayer() != null) {
           LOG.info("Stopping active pause menu media player.");
@@ -515,6 +513,7 @@ public class MenuController implements Initializable {
       this.mediaView.setMediaPlayer(null);
       this.mediaView.setVisible(false);
     });
+    delay.play();
   }
 
   public PauseMenuItem getSelection() {

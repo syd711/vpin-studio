@@ -85,49 +85,49 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
   TableColumn<BackupModel, BackupModel> directB2SColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> pupPackColumn;
+  TableColumn<BackupModel, BackupModel> pupPackColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> romColumn;
+  TableColumn<BackupModel, BackupModel> romColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> popperColumn;
+  TableColumn<BackupModel, BackupModel> popperColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> povColumn;
+  TableColumn<BackupModel, BackupModel> povColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> iniColumn;
+  TableColumn<BackupModel, BackupModel> iniColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> vbsColumn;
+  TableColumn<BackupModel, BackupModel> vbsColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> resColumn;
+  TableColumn<BackupModel, BackupModel> resColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> musicColumn;
+  TableColumn<BackupModel, BackupModel> musicColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> highscoreColumn;
+  TableColumn<BackupModel, BackupModel> highscoreColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> dmdColumn;
+  TableColumn<BackupModel, BackupModel> dmdColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> registryColumn;
+  TableColumn<BackupModel, BackupModel> registryColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> altSoundColumn;
+  TableColumn<BackupModel, BackupModel> altSoundColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> altColorColumn;
+  TableColumn<BackupModel, BackupModel> altColorColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> sizeColumn;
+  TableColumn<BackupModel, BackupModel> sizeColumn;
 
   @FXML
-  private TableColumn<BackupModel, BackupModel> createdAtColumn;
+  TableColumn<BackupModel, BackupModel> createdAtColumn;
 
   @FXML
   private Separator endSeparator;
