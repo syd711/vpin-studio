@@ -50,7 +50,30 @@ public class DMDDeviceIniService {
 
   @NonNull
   public File getDmdDeviceIniFile(@NonNull GameEmulator gameEmulator) {
-    return new File(gameEmulator.getMameFolder(), DMD_DEVICE_INI);
+    // 1) explicit override via environment, as supported by DmdDevice itself
+    String dmddeviceConfig = System.getenv("DMDDEVICE_CONFIG");
+    if (!StringUtils.isEmpty(dmddeviceConfig)) {
+      File altIniFile = new File(dmddeviceConfig);
+      if (altIniFile.exists()) {
+        return altIniFile;
+      }
+    }
+
+    // 2) VPinMAME folder of the emulator installation (VPX <= 10.8.0 layout)
+    File iniFile = new File(gameEmulator.getMameFolder(), DMD_DEVICE_INI);
+    if (iniFile.exists()) {
+      return iniFile;
+    }
+
+    // 3) VPX 10.8.1+ installs ship without a VPinMAME folder, fall back to the resolved VPinMAME installation
+    File mameFolder = vPinMameService.getMameFolder();
+    if (mameFolder != null) {
+      File mameIniFile = new File(mameFolder, DMD_DEVICE_INI);
+      if (mameIniFile.exists()) {
+        return mameIniFile;
+      }
+    }
+    return iniFile;
   }
 
   @Nullable
@@ -336,7 +359,7 @@ public class DMDDeviceIniService {
   }
 
   public boolean saveDmdDeviceIni(GameEmulator emulator, INIConfiguration iniConfiguration) {
-    File iniFile = new File(emulator.getMameFolder(), DMD_DEVICE_INI);
+    File iniFile = getDmdDeviceIniFile(emulator);
     if (!iniFile.exists()) {
       return false;
     }
@@ -379,16 +402,7 @@ public class DMDDeviceIniService {
   }
 
   private void loadDmdDeviceIni(@NonNull GameEmulator gameEmulator) {
-    File iniFile = new File(gameEmulator.getMameFolder(), DMD_DEVICE_INI);
-
-    String dmddeviceConfig = System.getenv("DMDDEVICE_CONFIG");
-    if (!StringUtils.isEmpty(dmddeviceConfig)) {
-      File altIniFile = new File(dmddeviceConfig);
-      if (altIniFile.exists()) {
-        iniFile = altIniFile;
-      }
-    }
-
+    File iniFile = getDmdDeviceIniFile(gameEmulator);
     if (!iniFile.exists()) {
       LOG.error("No {} file found.", DMD_DEVICE_INI);
       return;

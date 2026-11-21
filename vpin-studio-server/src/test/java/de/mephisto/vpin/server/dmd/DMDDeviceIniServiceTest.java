@@ -112,6 +112,24 @@ public class DMDDeviceIniServiceTest {
     assertThat(result).isEqualTo("rom with dots");
   }
 
+  @Test
+  void getDmdDeviceIniFile_fallsBackToResolvedMameFolder_whenEmulatorHasNoVPinMAME() throws Exception {
+    // VPX 10.8.1+ installations ship without a VPinMAME folder
+    File emulatorMameFolder = tempDir.resolve("vpx1081").toFile();
+    File globalMameFolder = tempDir.resolve("VPinMAME").toFile();
+    globalMameFolder.mkdirs();
+    File globalIni = new File(globalMameFolder, DMDDeviceIniService.DMD_DEVICE_INI);
+    java.nio.file.Files.writeString(globalIni.toPath(), "[virtualdmd]\nenabled = true\n");
+
+    GameEmulator emulator = mock(GameEmulator.class);
+    when(emulator.getMameFolder()).thenReturn(emulatorMameFolder);
+    when(vPinMameService.getMameFolder()).thenReturn(globalMameFolder);
+
+    File result = dmdDeviceIniService.getDmdDeviceIniFile(emulator);
+
+    assertThat(result.getAbsolutePath()).isEqualTo(globalIni.getAbsolutePath());
+  }
+
   // ---- getDmdDeviceIni returns null when file missing ----
 
   @Test
