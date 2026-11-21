@@ -520,7 +520,10 @@ public class BackupsController extends BaseTableController<BackupDescriptorRepre
     }, this, true);
 
     BaseLoadingColumn.configureColumn(createdAtColumn, (value, model) -> {
-      return new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
+      Label l = new Label(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(value.getCreatedAt().atZone(ZoneId.systemDefault())));
+      l.setStyle("");
+      l.getStyleClass().add("default-text");
+      return l;
     }, this, true);
 
 
