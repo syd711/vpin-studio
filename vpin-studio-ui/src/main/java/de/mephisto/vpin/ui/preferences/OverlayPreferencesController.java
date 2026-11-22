@@ -11,7 +11,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +25,6 @@ public class OverlayPreferencesController implements Initializable {
 
   @FXML
   private CheckBox showOverlayOnStartupCheckbox;
-
-  @FXML
-  private RadioButton radioA;
 
   @FXML
   private RadioButton radioB;
@@ -81,34 +77,19 @@ public class OverlayPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(overlaySettings);
     });
 
-    radioA.setUserData("");
-    radioB.setUserData("-hs-plrs-offline");
+    radioB.setUserData(OverlaySettings.DESIGN_HS_PLAYERS_OFFLINE);
     radioC.setUserData("-hs");
     radioD.setUserData("-hs-plrs-iframe");
 
     String value = overlaySettings.getDesignType();
-    radioA.setSelected(true);
 
     ToggleGroup toggleGroup = new ToggleGroup();
-    radioA.setToggleGroup(toggleGroup);
     radioB.setToggleGroup(toggleGroup);
     radioC.setToggleGroup(toggleGroup);
     radioD.setToggleGroup(toggleGroup);
 
-    if (StringUtils.isEmpty(value)) {
-      value = "";
-    }
-
     externalPageUrl.setDisable(true);
     switch (value) {
-      case "": {
-        toggleGroup.selectToggle(radioA);
-        break;
-      }
-      case "-hs-plrs-offline": {
-        toggleGroup.selectToggle(radioB);
-        break;
-      }
       case "-hs": {
         toggleGroup.selectToggle(radioC);
         break;
@@ -116,6 +97,10 @@ public class OverlayPreferencesController implements Initializable {
       case "-hs-plrs-iframe": {
         toggleGroup.selectToggle(radioD);
         externalPageUrl.setDisable(false);
+        break;
+      }
+      default: {
+        toggleGroup.selectToggle(radioB);
         break;
       }
     }

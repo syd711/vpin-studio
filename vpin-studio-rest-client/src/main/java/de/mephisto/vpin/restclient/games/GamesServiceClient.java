@@ -509,6 +509,13 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/highscorefile/" + gameId + "/fileinfo", FileInfo.class);
   }
 
+  /**
+   * The file or folder of the given type of the table, resolved by the server for the file layout of the table.
+   */
+  public FileInfo getFileInfo(int gameId, GameFileType type) {
+    return getRestClient().get(API + "games/" + gameId + "/fileinfo/" + type.name(), FileInfo.class);
+  }
+
   public HighscoreFiles getHighscoreFiles(int gameId) {
     return getRestClient().get(API + "games/highscorefiles/" + gameId, HighscoreFiles.class);
   }

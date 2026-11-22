@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -29,9 +30,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.*;
@@ -119,18 +117,12 @@ public class TableDataTabScoreDataController implements Initializable {
   @FXML
   private void onEMHighscore() {
     FileInfo hsFileinfo = client.getGameService().getHighscoreFileInfo(this.game.getId());
-    File userFolder = hsFileinfo.getFallback();
-    if (!userFolder.exists()) {
+    if (hsFileinfo == null || hsFileinfo.getFallback() == null) {
       WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.failed_to_open_em_highscore_file_user"));
       return;
     }
-    try {
-      Desktop.getDesktop().open(userFolder);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
-      WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_em_highscore_file", e.getMessage()));
-    }
+    // the fallback is the (closest existing) folder of the highscore file, resolved on the server
+    SystemUtil.openFolder(hsFileinfo.getFallback());
   }
 
   @FXML

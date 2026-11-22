@@ -93,6 +93,15 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
   }
 
   public ScoreSubmit submitScore(@NonNull WovpPlayer wovpPlayer, @Nullable String message, boolean simulate) {
+    return submitScore(wovpPlayer, message, simulate, -1);
+  }
+
+  /**
+   * @param gameId the game to simulate the submit for, used instead of the active game when it is set and the submit
+   *               is only simulated (e.g. for the pause menu test, where no game is running).
+   *               A real submit always requires an active game.
+   */
+  public ScoreSubmit submitScore(@NonNull WovpPlayer wovpPlayer, @Nullable String message, boolean simulate, int gameId) {
     ScoreSubmit result = new ScoreSubmit();
     if (!wovpSettings.isEnabled()) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "WOVP not enabled");
@@ -115,14 +124,24 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
       return result;
     }
 
-    GameStatus status = gameStatusService.getStatus();
-    if (status == null || status.getGameId() < 0) {
+    int submitGameId = -1;
+    if (simulate && gameId > 0) {
+      submitGameId = gameId;
+    }
+    else {
+      GameStatus status = gameStatusService.getStatus();
+      if (status != null) {
+        submitGameId = status.getGameId();
+      }
+    }
+
+    Game game = submitGameId >= 0 ? gameService.getGame(submitGameId) : null;
+    if (game == null) {
       SLOG.info("[WOVP simulate=" + simulate + "] " + "No active game found.");
       result.setErrorMessage(ServerMessages.msg("wovp.error.no_active_game"));
       return result;
     }
 
-    Game game = gameService.getGame(status.getGameId());
     List<Competition> weeklyCompetitions = competitionService.getWeeklyCompetitions();
     Optional<Competition> competition = weeklyCompetitions.stream().filter(c -> c.getGameId() == game.getId()).findFirst();
     if (competition.isEmpty()) {
@@ -239,10 +258,17 @@ public class WovpService implements InitializingBean, PreferenceChangedListener,
   }
 
   public boolean isScoreSubmitEnabled() {
+    return isScoreSubmitEnabled(-1);
+  }
+
+  /**
+   * @param gameId the game to check, the active game is used if not set.
+   */
+  public boolean isScoreSubmitEnabled(int gameId) {
     wovpSettings = preferencesService.getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
     List<WovpPlayer> players = getPlayers();
     if (!players.isEmpty()) {
-      ScoreSubmit scoreSubmit = submitScore(players.getFirst(), null, true);
+      ScoreSubmit scoreSubmit = submitScore(players.getFirst(), null, true, gameId);
       return scoreSubmit.getErrorMessage() == null;
     }
     return false;

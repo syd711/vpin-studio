@@ -335,11 +335,15 @@ public class FolderLookupService {
 
     // the user folder next to the table, where VPX 10.8.1 writes it
     File gameFileParent = game.getGameFile().getParentFile();
-    stgFile = new File(gameFileParent, "user/VPReg.stg");
+    File tableStgFile = new File(gameFileParent, "user/VPReg.stg");
+    stgFile = tableStgFile;
     if (!stgFile.exists() && gameFileParent != null) {
       File grandparent = gameFileParent.getParentFile();
       if (grandparent != null) {
-        stgFile = new File(grandparent, "user/VPReg.stg");
+        File parentStgFile = new File(grandparent, "user/VPReg.stg");
+        if (parentStgFile.exists()) {
+          stgFile = parentStgFile;
+        }
       }
     }
 
@@ -370,6 +374,11 @@ public class FolderLookupService {
       }
     }
 
+    // nothing found: return the file where VPX writes it, the table's user folder in the per table layout
+    if (!stgFile.exists()) {
+      File expectedStgFile = isPerTableFileStructure(game) ? tableStgFile : new File(getUserFolder(emulator), "VPReg.stg");
+      return new VPRegFile(expectedStgFile, game.getRom(), tableName);
+    }
     return reg;
   }
 

@@ -60,7 +60,7 @@ public class AltSoundResource {
   @GetMapping("{id}/fileinfo")
   public FileInfo getAltSoundFolder(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
-    return game != null ? FileInfo.folder(altSoundService.getAltSoundFolder(game), null) : null;
+    return game != null ? GameFileInfoService.folder(altSoundService.getAltSoundFolder(game), game.getGameFolder()) : null;
   }
 
   @DeleteMapping("{id}")

@@ -43,8 +43,11 @@ public class SystemUtil {
         if (fileInfo.getFile() != null && fileInfo.getFile().exists()) {
           openFile(fileInfo.getFile());
         }
-        else {
+        else if (fileInfo.getFallback() != null) {
           openFolder(fileInfo.getFallback());
+        }
+        else {
+          openFile(fileInfo.getFile());
         }
       }
       else {
@@ -69,7 +72,8 @@ public class SystemUtil {
         if (file.exists()) {
           openFileWithOS(file.getAbsolutePath());
         }
-        else if (folder != null && folder.exists()) {
+        else if (folder != null) {
+          // openFolder() falls back to the closest existing parent, e.g. when the nvram folder doesn't exist yet
           openFolder(folder);
         }
       }
@@ -88,21 +92,18 @@ public class SystemUtil {
     }
 
     if (isLocal()) {
-      while (!folder.exists()) {
-        folder = folder.getParentFile();
+      // a missing folder is replaced by the fallback, else by its closest existing parent
+      File target = folder;
+      if (!target.exists() && fallback != null && fallback.exists()) {
+        target = fallback;
       }
-
-      if (!folder.exists() && (fallback != null && !fallback.exists())) {
-        WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.the_local_folder_does_not_exist", folder.getAbsolutePath()));
-        return;
+      while (target != null && !target.exists()) {
+        target = target.getParentFile();
       }
 
       try {
-        if (folder.exists()) {
-          openFolderWithOS(folder.getAbsolutePath());
-        }
-        else if (fallback != null && fallback.exists()) {
-          openFolderWithOS(fallback.getAbsolutePath());
+        if (target != null) {
+          openFolderWithOS(target.getAbsolutePath());
         }
         else {
           WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.the_local_folder_does_not_exist", folder.getAbsolutePath()));

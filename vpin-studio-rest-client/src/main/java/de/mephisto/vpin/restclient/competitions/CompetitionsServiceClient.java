@@ -34,7 +34,15 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
 
   public ScoreSubmit submitScore(WovpPlayer player, String message, boolean simulate) {
+    return submitScore(player, message, simulate, -1);
+  }
+
+  /**
+   * @param gameId the game a simulated submit is checked for, the active game is used if not set.
+   */
+  public ScoreSubmit submitScore(WovpPlayer player, String message, boolean simulate, int gameId) {
     ScoreSubmit submit = new ScoreSubmit();
+    submit.setGameId(gameId);
     submit.setMessage(message);
     submit.setPlayerId(player.getId());
     submit.setSimulate(simulate);
@@ -203,9 +211,12 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return new ByteArrayInputStream(imageBytes);
   }
 
-  public boolean isScoreSubmitterEnabled() {
+  /**
+   * @param gameId the game to check the submitter for, also when the game is not running (pause menu test).
+   */
+  public boolean isScoreSubmitterEnabled(int gameId) {
     try {
-      return getRestClient().get(API + "competitions/submitter/enabled", Boolean.class);
+      return getRestClient().get(API + "competitions/submitter/enabled/" + gameId, Boolean.class);
     }
     catch (Exception e) {
       LOG.error("Failed to get submitter state: " + e.getMessage(), e);

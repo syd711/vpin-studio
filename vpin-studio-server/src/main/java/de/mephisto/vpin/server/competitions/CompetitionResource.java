@@ -56,10 +56,15 @@ public class CompetitionResource {
     return wovpService.isScoreSubmitEnabled();
   }
 
+  @GetMapping("/submitter/enabled/{gameId}")
+  public boolean isScoreSubmitEnabled(@PathVariable("gameId") int gameId) {
+    return wovpService.isScoreSubmitEnabled(gameId);
+  }
+
   @PostMapping("/weekly/submit")
   public ScoreSubmit submitScore(@RequestBody ScoreSubmit scoreSubmit) {
     WovpPlayer player = wovpService.getPlayer(scoreSubmit.getPlayerId());
-    return wovpService.submitScore(player, scoreSubmit.getMessage(), scoreSubmit.isSimulate());
+    return wovpService.submitScore(player, scoreSubmit.getMessage(), scoreSubmit.isSimulate(), scoreSubmit.getGameId());
   }
 
   @GetMapping("/iscored")

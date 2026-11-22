@@ -7,6 +7,18 @@ public class ScoreSubmit {
   private String message;
   private String errorMessage;
   private boolean simulate;
+  /**
+   * The game a simulated submit is checked for, the active game is used if not set.
+   */
+  private int gameId = -1;
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
 
   public boolean isSimulate() {
     return simulate;

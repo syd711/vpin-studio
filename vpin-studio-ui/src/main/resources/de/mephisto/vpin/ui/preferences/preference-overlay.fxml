@@ -78,7 +78,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.overlay_design" textFill="WHITE" wrapText="true" GridPane.rowIndex="1">
@@ -86,38 +85,33 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="%pref.overlay.recent_highscores_player_ranking_offline_competitions_online" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="%pref.overlay.recent_highscores_player_ranking_offline_competitions" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="%pref.overlay.recent_highscores_player_ranking_offline_competitions" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%pref.overlay.recent_highscores" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%pref.overlay.recent_highscores" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%pref.overlay.recent_highscores_player_ranking_external_page" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="%pref.overlay.recent_highscores_player_ranking_external_page" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.external_page_url" textFill="WHITE" wrapText="true" GridPane.rowIndex="5">
+                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="%pref.overlay.external_page_url" textFill="WHITE" wrapText="true" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="externalPageUrl" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                        <TextField fx:id="externalPageUrl" GridPane.columnIndex="2" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label text="%pref.overlay.you_can_use_this_field_to_add_urls" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="TOP" />
-                        <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                        <Label text="%pref.overlay.you_can_use_this_field_to_add_urls" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+                        <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="3" GridPane.rowIndex="4">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                            </graphic>

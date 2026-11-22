@@ -101,8 +101,10 @@ public class WovpMenuItemController implements Initializable {
   private static Image screenshotImage;
   private Transition submitBlink;
   private PauseMenuItem pauseMenuItem;
+  private GameRepresentation game;
 
   public void setData(GameRepresentation game, PauseMenuItem pauseMenuItem, VpsTable tableById, Image sectionImage) {
+    this.game = game;
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setVisible(false);
     this.authorsLabel.setVisible(false);
@@ -247,7 +249,7 @@ public class WovpMenuItemController implements Initializable {
     playerBtn.setText(Messages.get("pausemenu.wovp_menu_item.player_button", playerSelectionIndex + 1, wovpPlayer.getName()));
 
     JFXFuture.supplyAsync(() -> {
-      ScoreSubmit scoreSubmit = client.getCompetitionService().submitScore(wovpPlayer, messageText.getText(), true);
+      ScoreSubmit scoreSubmit = client.getCompetitionService().submitScore(wovpPlayer, messageText.getText(), true, game.getId());
       return scoreSubmit;
     }).thenAcceptLater(result -> {
       loadingIndicator.setVisible(false);

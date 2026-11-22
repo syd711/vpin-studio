@@ -4,7 +4,9 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class OverlaySettings extends JsonSettings {
-  private String designType;
+  public static final String DESIGN_HS_PLAYERS_OFFLINE = "-hs-plrs-offline";
+
+  private String designType = DESIGN_HS_PLAYERS_OFFLINE;
 
   private String pageUrl;
 
@@ -13,6 +15,11 @@ public class OverlaySettings extends JsonSettings {
   private int overlayScreenId = -1;
 
   public String getDesignType() {
+    // the former default design "" (player ranking, offline + online competitions) has been removed,
+    // so empty and legacy values are migrated to the closest remaining design
+    if (designType == null || designType.isBlank() || designType.equalsIgnoreCase("null")) {
+      return DESIGN_HS_PLAYERS_OFFLINE;
+    }
     return designType;
   }
 

@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.games.GameFileType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -29,7 +29,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +48,8 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  private static final String[] VPX_EXES = {"VPinballX64.exe", "VPinballX_BGFX64.exe", "VPinballX_GL64.exe", "VPinballX.exe", "VPinballX_BGFX.exe", "VPinballX_GL.exe"};
 
   @FXML
   private Accordion tableAccordion;
@@ -196,77 +197,17 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   @FXML
   private void onHighscores() {
-    try {
-      if (this.game.isPresent()) {
-        GameRepresentation gameRepresentation = this.game.get();
-        FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
-        if (hsFileInfo != null && hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
-          SystemUtil.open(hsFileInfo);
-        }
-        else if (hsFileInfo != null && hsFileInfo.getFile() != null) {
-          SystemUtil.openFile(hsFileInfo.getFile());
-        }
-
-        GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(gameRepresentation.getEmulatorId());
-        if (gameEmulator.isFpEmulator()) {
-          File f = new File(gameEmulator.getInstallationDirectory(), "fpRAM");
-          SystemUtil.openFile(f);
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    openFileInfo(GameFileType.HIGHSCORE, "msg.no_highscore_file_found_for");
   }
 
   @FXML
   private void onTables() {
-    try {
-      if (this.game.isPresent()) {
-        GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getGamesDirectory());
-        File file = new File(folder, g.getGameFileName());
-        SystemUtil.openFile(file);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    openFileInfo(GameFileType.TABLE, null);
   }
 
   @FXML
   private void onPupPack() {
-    try {
-      if (this.game.isPresent()) {
-        Frontend frontend = client.getFrontendService().getFrontendCached();
-        File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
-        if (!StringUtils.isEmpty(game.get().getRom())) {
-          File romFolder = new File(pupFolder, game.get().getRom());
-          if (romFolder.exists()) {
-            pupFolder = romFolder;
-          }
-        }
-
-        if (!StringUtils.isEmpty(game.get().getRomAlias())) {
-          File romFolder = new File(pupFolder, game.get().getRomAlias());
-          if (romFolder.exists()) {
-            pupFolder = romFolder;
-          }
-        }
-
-        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-        if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
-          SystemUtil.openFolder(pupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
-        }
-        else {
-          SystemUtil.openFolder(new File(frontend.getInstallationDirectory(), "PUPVideos"));
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    openFileInfo(GameFileType.PUPPACK, null);
   }
 
   @FXML
@@ -275,27 +216,16 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         FileInfo altSoundFolder = client.getAltSoundService().getAltSoundFolderInfo(game.get().getId());
         if (altSoundFolder != null) {
-          UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-          if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
-            SystemUtil.open(altSoundFolder);
-          }
-          else {
-            GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.get().getEmulatorId());
-            if (gameEmulator != null) {
-              SystemUtil.openFolder(new File(gameEmulator.getInstallationDirectory(), "VPinMAME/altsound"));
-            }
-          }
+          SystemUtil.open(altSoundFolder);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.no_valid_alt_sound_folder_found_for", String.valueOf(game.get().getId())));
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.no_valid_alt_sound_folder_found_for", game.get().getGameDisplayName()));
         }
       }
     }
-    catch (
-        Exception e) {
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
-
   }
 
   @FXML
@@ -304,19 +234,10 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         FileInfo altColorFolder = client.getAltColorService().getAltColorFolderInfo(game.get().getId());
         if (altColorFolder != null) {
-          UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-          if (StringUtils.isEmpty(uiSettings.getWinNetworkShare()) || client.getSystemService().isLocal()) {
-            SystemUtil.open(altColorFolder);
-          }
-          else {
-            GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.get().getEmulatorId());
-            if (gameEmulator != null) {
-              SystemUtil.openFolder(new File(gameEmulator.getInstallationDirectory(), "VPinMAME/altcolor"));
-            }
-          }
+          SystemUtil.open(altColorFolder);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.no_valid_alt_color_folder_found_for", String.valueOf(game.get().getId())));
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.no_valid_alt_color_folder_found_for", game.get().getGameDisplayName()));
         }
       }
     }
@@ -327,59 +248,40 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   @FXML
   private void onDirectB2S() {
-    try {
-      if (this.game.isPresent()) {
-        GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getGamesDirectory());
-        String backglassName = FilenameUtils.getBaseName(g.getGameFileName()) + ".directb2s";
-        // the active backglass may be a .B2SPro file
-        File file = g.getDirectB2SPath() != null ? new File(g.getDirectB2SPath()) : new File(folder, backglassName);
-        SystemUtil.openFile(file);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    openFileInfo(GameFileType.DIRECTB2S, null);
   }
 
   @FXML
   private void onPov() {
-    try {
-      if (this.game.isPresent()) {
-        GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getGamesDirectory());
-        String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".pov";
-        File file = new File(folder, fileName);
-        SystemUtil.openFile(file);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    openFileInfo(GameFileType.POV, null);
   }
 
   @FXML
   private void onDMD() {
+    openFileInfo(GameFileType.DMD, "dialog.no_dmd_found");
+  }
+
+  /**
+   * Opens the file or folder of the selected table in the file explorer. The server resolves it, as the location
+   * depends on the file layout of the table, e.g. VPX 10.8.1 keeps most files in the table's own subfolder.
+   *
+   * @param notFoundMessageKey the message shown when the table has no such file, called with the table name
+   */
+  private void openFileInfo(GameFileType type, String notFoundMessageKey) {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
-
-        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
-        File dmdFolder = dmdPackage != null ? new File(tablesFolder, dmdPackage.getName()) : null;
-        if (dmdFolder == null) {
-          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("dialog.no_dmd_found"));
+        GameRepresentation g = this.game.get();
+        FileInfo fileInfo = client.getGameService().getFileInfo(g.getId(), type);
+        if (fileInfo != null) {
+          SystemUtil.open(fileInfo);
         }
-        else {
-          SystemUtil.openFolder(dmdFolder, tablesFolder);
+        else if (notFoundMessageKey != null) {
+          WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get(notFoundMessageKey, g.getGameDisplayName()));
         }
-
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+      LOG.error("Failed to open Explorer for {}: {}", type, e.getMessage(), e);
     }
   }
 
@@ -388,10 +290,10 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     try {
       if (this.game.isPresent()) {
         GameRepresentation game = this.game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
 
         String vpxFilePath = "\"" + new File(emulatorRepresentation.getGamesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
-        String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX64.exe").getAbsolutePath();
+        String vpxExePath = getVpxExe(emulatorRepresentation).getAbsolutePath();
         ProcessBuilder builder = new ProcessBuilder(vpxExePath, "-Edit", vpxFilePath);
         builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));
         builder.start();
@@ -401,6 +303,28 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       LOG.error("Failed to open VPX: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, Messages.get("common.error"), Messages.get("msg.failed_to_open_vpx", e.getMessage()));
     }
+  }
+
+  /**
+   * The VPX executable of the emulator: the configured one, else the first existing one of the known builds,
+   * as VPX 10.8.1 may only ship the BGFX or GL build.
+   */
+  private static File getVpxExe(GameEmulatorRepresentation emulator) {
+    File installationFolder = new File(emulator.getInstallationDirectory());
+    String exeName = emulator.getExeName();
+    if (!StringUtils.isEmpty(exeName) && exeName.toLowerCase().endsWith(".exe")) {
+      File exe = new File(installationFolder, exeName);
+      if (exe.exists()) {
+        return exe;
+      }
+    }
+    for (String name : VPX_EXES) {
+      File exe = new File(installationFolder, name);
+      if (exe.exists()) {
+        return exe;
+      }
+    }
+    return new File(installationFolder, VPX_EXES[0]);
   }
 
   @FXML

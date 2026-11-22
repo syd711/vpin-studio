@@ -18,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,16 +56,7 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
       overlayStage.setTitle("VPin Studio Overlay");
       overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
-      if (overlaySettings.getDesignType() == null) {
-        WidgetFactory.showAlert(overlayStage, "Error", "No overlay design selected.", "Select an overlay design from the preferences.");
-        System.exit(0);
-      }
-
       String designType = overlaySettings.getDesignType();
-      if (StringUtils.isEmpty(designType) || designType.equalsIgnoreCase("null")) {
-        designType = "";
-      }
-
       String resource = ServerFX.resolveDashboard(designType);
       FXMLLoader overlayLoader = new FXMLLoader(OverlayController.class.getResource(resource));
       Parent widgetRoot = overlayLoader.load();

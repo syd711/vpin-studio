@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameFileType;
 import de.mephisto.vpin.restclient.games.GameFilterRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
@@ -85,6 +86,9 @@ public class GamesResource {
 
   @Autowired
   private SteamService steamService;
+
+  @Autowired
+  private GameFileInfoService gameFileInfoService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -275,8 +279,13 @@ public class GamesResource {
 
   @GetMapping("/highscorefile/{id}/fileinfo")
   public FileInfo getHighscoreFileInfo(@PathVariable("id") int gameId) {
-    File hsfile = gameService.getHighscoreFile(gameId);
-    return hsfile != null ? FileInfo.file(hsfile, hsfile.getParentFile()) : null;
+    return getFileInfo(gameId, GameFileType.HIGHSCORE);
+  }
+
+  @GetMapping("/{id}/fileinfo/{type}")
+  public FileInfo getFileInfo(@PathVariable("id") int gameId, @PathVariable("type") GameFileType type) {
+    Game game = gameService.getGame(gameId);
+    return game != null ? gameFileInfoService.getFileInfo(game, type) : null;
   }
 
   @GetMapping("/scorehistory/{id}")

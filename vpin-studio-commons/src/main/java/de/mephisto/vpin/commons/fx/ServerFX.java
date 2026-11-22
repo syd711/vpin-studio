@@ -144,9 +144,6 @@ public class ServerFX extends Application {
       try {
         OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
         String value = overlaySettings.getDesignType();
-        if (StringUtils.isEmpty(value) || value.equalsIgnoreCase("null")) {
-          value = "";
-        }
         String resource = resolveDashboard(value);
 
         FXMLLoader loader = new FXMLLoader(OverlayController.class.getResource(resource));
