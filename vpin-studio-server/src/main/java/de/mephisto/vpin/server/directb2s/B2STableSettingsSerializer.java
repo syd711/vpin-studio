@@ -38,6 +38,11 @@ public class B2STableSettingsSerializer {
 
   private final static List<String> skippedWhenMinusOne = List.of("UsedLEDType");
 
+  /**
+   * Serializer instances are created per call, so the lock must be static.
+   */
+  private final static Object XML_LOCK = new Object();
+
   public B2STableSettingsSerializer() {
   }
 
@@ -52,17 +57,30 @@ public class B2STableSettingsSerializer {
   }
 
   protected <T> void serializeXml(@NonNull T settings, @NonNull File xmlFile, String rom, List<String> tableEntries, SettingsGetter<T> getter, boolean add) throws VPinStudioException {
+    // read-modify-write cycles must not interleave, else concurrent saves lose or corrupt entries
+    synchronized (XML_LOCK) {
+      doSerializeXml(settings, xmlFile, rom, tableEntries, getter, add);
+    }
+  }
+
+  private <T> void doSerializeXml(@NonNull T settings, @NonNull File xmlFile, String rom, List<String> tableEntries, SettingsGetter<T> getter, boolean add) throws VPinStudioException {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
       DocumentBuilder db = dbf.newDocumentBuilder();
-      Document doc = null;
-      try {
-        doc = db.parse(xmlFile);
+      Document doc;
+      if (xmlFile.exists() && xmlFile.length() > 0) {
+        try {
+          doc = db.parse(xmlFile);
+        }
+        catch (Exception e) {
+          // never overwrite an existing file we cannot read, it would erase the settings of all other tables
+          throw new IOException("The file exists but cannot be parsed (" + e.getMessage() + "). " +
+              "Nothing saved to prevent erasing data, please check your file!", e);
+        }
       }
-      catch (Exception e) {
-        LOG.error("Cannot parse {}, recreate an empty one.", xmlFile, e);
+      else {
         doc = db.newDocument();
       }
 
@@ -175,7 +193,7 @@ public class B2STableSettingsSerializer {
       if (settingsNode.hasChildNodes()) {
         NodeList subchildNodes = settingsNode.getChildNodes();
         for (int j = 0; j < subchildNodes.getLength(); j++) {
-          if (subchildNodes.item(i) instanceof Element) {
+          if (subchildNodes.item(j) instanceof Element) {
             return settingsNode;
           }
         }

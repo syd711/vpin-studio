@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -30,8 +34,28 @@ public class XMLUtil {
         "\r\n" +
         "</xsl:stylesheet>";
 
+  /**
+   * Writes the document into a temporary file next to the target and then moves it over the target,
+   * so readers never see a partially written file.
+   */
   public static void write(File xmlFile, Document doc, boolean ignoreDeclaration) throws IOException, TransformerException {
-    try (FileWriter writer = new FileWriter(xmlFile)) {
+    File tmpFile = new File(xmlFile.getAbsoluteFile().getParentFile(), xmlFile.getName() + ".tmp");
+    try {
+      writeDirect(tmpFile, doc, ignoreDeclaration);
+      try {
+        Files.move(tmpFile.toPath(), xmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+      }
+      catch (AtomicMoveNotSupportedException e) {
+        Files.move(tmpFile.toPath(), xmlFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      }
+    }
+    finally {
+      Files.deleteIfExists(tmpFile.toPath());
+    }
+  }
+
+  private static void writeDirect(File xmlFile, Document doc, boolean ignoreDeclaration) throws IOException, TransformerException {
+    try (Writer writer = Files.newBufferedWriter(xmlFile.toPath(), StandardCharsets.UTF_8)) {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       transformerFactory.setAttribute("indent-number", 2);
 

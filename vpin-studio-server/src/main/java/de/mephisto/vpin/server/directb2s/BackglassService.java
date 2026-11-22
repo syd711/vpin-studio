@@ -888,22 +888,33 @@ public class BackglassService implements InitializingBean {
     }
   }
 
+  /**
+   * Deletes the active backglass file of the backglass the given file belongs to. All other versions
+   * (of all backglass types sharing the same base name) are kept. To delete a specific version,
+   * use {@link #deleteVersion(int, String)}.
+   *
+   * @return true when the active backglass file has been deleted
+   */
   public boolean deleteBackglass(int emulatorId, String filename) {
-    DirectB2S b2s = removeDirectB2SAndVersions(emulatorId, filename);
-    if (b2s != null) {
-      GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
-      for (String version : b2s.getVersions()) {
-        File b2sFile = new File(emulator.getBackglassDirectory(), version);
-        if (b2sFile.exists() && b2sFile.delete()) {
-          cacheRemove(emulatorId, b2sFile);
-          LOG.info("Deleted {}", b2sFile.getAbsolutePath());
-          return true;
-        }
-        else {
-          LOG.info("Cannot delete {}", b2sFile.getAbsolutePath());
-        }
-      }
+    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+    if (emulator == null) {
+      return false;
     }
+    // always resolve from the file system, the cache may be outdated
+    DirectB2S b2s = reloadDirectB2SAndVersions(emulator, filename);
+    if (b2s == null || !b2s.isEnabled()) {
+      LOG.info("No active backglass found for {}, nothing deleted", filename);
+      return false;
+    }
+
+    File b2sFile = new File(emulator.getBackglassDirectory(), b2s.getFileName());
+    if (b2sFile.exists() && b2sFile.delete()) {
+      cacheRemove(emulatorId, b2sFile);
+      LOG.info("Deleted active backglass {}", b2sFile.getAbsolutePath());
+      reloadDirectB2SAndVersions(emulator, filename);
+      return true;
+    }
+    LOG.error("Cannot delete {}", b2sFile.getAbsolutePath());
     return false;
   }
 
@@ -913,6 +924,9 @@ public class BackglassService implements InitializingBean {
     if (b2sFile.exists() && b2sFile.delete()) {
       cacheRemove(emulatorId, b2sFile);
       LOG.info("Deleted {}", b2sFile.getAbsolutePath());
+    }
+    else {
+      LOG.error("Cannot delete backglass version {}", b2sFile.getAbsolutePath());
     }
     return reloadDirectB2SAndVersions(emulator, filename);
   }

@@ -13,10 +13,13 @@
   - The "Open script in Visual Pinball X" button of the table sidebar now starts the VPX executable configured for the emulator, or the first existing VPX build (e.g. BGFX or GL), instead of always using "VPinballX64.exe".
 - **Table Data Manager**: Fixed drop-down fields (e.g. Custom2, Custom3, Alternative Launcher) keeping the previous table's value when switching to a table where the field is empty.
 - **Backups**: All columns of the backups table are now sortable.
+- **Backglasses**: 
+  - Fixed deleting the backglass from the table sidebar removing the wrong file when a table had both a .directb2s and a .B2SPro backglass. Only the active backglass file is deleted now, all other versions are kept.
+  - Fixed the B2STableSettings.xml getting corrupted when settings were saved concurrently. The file is no longer overwritten when it cannot be read, so the settings of other tables are not lost.
 - **Pause Menu**: Removed the "Expert Mode" from the button binding dialog. Buttons are now only bound with "Bind Key". Existing bindings are kept.
 - **Overlay**: Removed the overlay design "Recent Highscores / Player Ranking / Offline Competitions / Online Competitions" from the overlay preferences, as online competitions are no longer supported. Overlays that used this design are switched to "Recent Highscores / Player Ranking / Offline Competitions".
 
-Thanks you to @Buffdriver, @wrique and @gonzonia!
+Thanks you to @Buffdriver, @wrique, @YabbaDabbaDoo and @gonzonia!
 
 ---
 

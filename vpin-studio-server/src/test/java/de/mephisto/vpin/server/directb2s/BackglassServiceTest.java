@@ -110,6 +110,67 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   }
 
   @Test
+  public void testDeleteBackglassDeletesActiveOnly() throws Exception {
+    GameEmulator emu = emulatorService.getGameEmulator(1);
+    File source = new File(emu.getGamesDirectory(), "Twister (1996).directb2s");
+    File b2sPro = new File(emu.getBackglassDirectory(), "DeleteTest.B2SPro");
+    File directb2s = new File(emu.getBackglassDirectory(), "DeleteTest (1).directb2s");
+    File directb2s2 = new File(emu.getBackglassDirectory(), "DeleteTest (2).directb2s");
+    try {
+      Files.copy(source.toPath(), b2sPro.toPath());
+      Files.copy(source.toPath(), directb2s.toPath());
+      Files.copy(source.toPath(), directb2s2.toPath());
+
+      // passing a non-active version still deletes the active one only
+      assertTrue(backglassService.deleteBackglass(emu.getId(), "DeleteTest (1).directb2s"));
+      assertFalse(b2sPro.exists());
+      assertTrue(directb2s.exists());
+      assertTrue(directb2s2.exists());
+
+      DirectB2S b2s = backglassService.getDirectB2SAndVersions(emu.getId(), "DeleteTest (1).directb2s");
+      assertNotNull(b2s);
+      assertFalse(b2s.isEnabled());
+      assertEquals(2, b2s.getVersions().size());
+
+      // no active backglass anymore, nothing to delete
+      assertFalse(backglassService.deleteBackglass(emu.getId(), "DeleteTest (1).directb2s"));
+      assertTrue(directb2s.exists());
+      assertTrue(directb2s2.exists());
+    }
+    finally {
+      backglassService.removeDirectB2SAndVersions(emu.getId(), "DeleteTest.directb2s");
+      Files.deleteIfExists(b2sPro.toPath());
+      Files.deleteIfExists(directb2s.toPath());
+      Files.deleteIfExists(directb2s2.toPath());
+    }
+  }
+
+  @Test
+  public void testDeleteVersionKeepsOtherType() throws Exception {
+    GameEmulator emu = emulatorService.getGameEmulator(1);
+    File source = new File(emu.getGamesDirectory(), "Twister (1996).directb2s");
+    File b2sPro = new File(emu.getBackglassDirectory(), "DeleteTest.B2SPro");
+    File directb2s = new File(emu.getBackglassDirectory(), "DeleteTest (1).directb2s");
+    try {
+      Files.copy(source.toPath(), b2sPro.toPath());
+      Files.copy(source.toPath(), directb2s.toPath());
+
+      DirectB2S b2s = backglassService.deleteVersion(emu.getId(), "DeleteTest (1).directb2s");
+      assertFalse(directb2s.exists());
+      assertTrue(b2sPro.exists());
+      assertNotNull(b2s);
+      assertTrue(b2s.isEnabled());
+      assertEquals("DeleteTest.B2SPro", b2s.getFileName());
+      assertEquals(1, b2s.getVersions().size());
+    }
+    finally {
+      backglassService.removeDirectB2SAndVersions(emu.getId(), "DeleteTest.B2SPro");
+      Files.deleteIfExists(b2sPro.toPath());
+      Files.deleteIfExists(directb2s.toPath());
+    }
+  }
+
+  @Test
   public void testOperations() throws Exception {
     // check no folder
     doAllTests("Twister (1996)", 2);
