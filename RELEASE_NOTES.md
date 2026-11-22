@@ -8,8 +8,12 @@
   - Fixed highscores, NVRAM and ROMs not being found for tables in the per-table folder layout when VPX/VPinMAME still writes into the shared folders (user folder, VPReg.stg, VPinMAME nvram/roms).
   - Fixed calculation of the active backglass when used with 10.8.1.
   - Fixed the DMD Position dialog not reading or changing the DMD type (e.g. switching to alphanumeric) for VPX 10.8.1 tables. 10.8.1 installations ship without a VPinMAME folder, so the DmdDevice.ini was not found. It is now resolved from the VPinMAME installation instead.
+  - Fixed the emulator validation reporting "no games found" for VPX 10.8.1 installations. The tables folder was only checked for table files at its top level, but 10.8.1 stores every table in its own subfolder. Subfolders are now included in the check.
 - **Table Data Manager**: Fixed drop-down fields (e.g. Custom2, Custom3, Alternative Launcher) keeping the previous table's value when switching to a table where the field is empty.
 - **Backups**: All columns of the backups table are now sortable.
+- **Pause Menu**: Removed the "Expert Mode" from the button binding dialog. Buttons are now only bound with "Bind Key". Existing bindings are kept.
+
+Thanks you to @Buffdriver, @wrique and @gonzonia!
 
 ---
 
