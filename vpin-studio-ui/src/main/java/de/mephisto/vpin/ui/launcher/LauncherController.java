@@ -180,7 +180,15 @@ public class LauncherController implements Initializable {
           maybeAsleepConnection.setAvatar(new Image(Studio.class.getResourceAsStream("avatar-default.png"))); // Default
           maybeAsleepConnection.setDiscovered(entry.getType().equals(ConnectionEntry.ConnectionType.DISCOVERED));
           maybeAsleepConnection.setMaybeAsleep(true);
-          maybeAsleepConnection.setMacAddress(entry.getMacAddress());
+
+          //Fall back if MacAddress empty for some reason, let's try to update it again.
+          String macAddress = maybeAsleepConnection.getMacAddress();
+            if (macAddress == null || macAddress.isEmpty()) {
+              connectionProperties.updateMacAddress(maybeAsleepConnection.getHost(), MacAddressDetector.detect(maybeAsleepConnection.getHost()));
+              maybeAsleepConnection.setMacAddress(MacAddressDetector.detect(maybeAsleepConnection.getHost()));
+            };
+
+
           LOG.info("Connection to {} is asleep or unreachable.", ipAddress);
           result.add(maybeAsleepConnection);
         }
@@ -301,6 +309,9 @@ public class LauncherController implements Initializable {
       ConnectionEntry connectionEntry = connectionProperties.getConnection(connectionId);
       if (connectionEntry != null && !connectionEntry.getMacAddress().isEmpty()) {
         try {
+         // LOG.info(connectionEntry.getIp());
+         // LOG.info(connectionEntry.getMacAddress());
+          //LOG.info(String.valueOf(connectionEntry.getMagicPacketPort()));
           WakeOnLan.sendMagicPacket(connectionEntry.getIp(), connectionEntry.getMacAddress(), connectionEntry.getMagicPacketPort());
         } catch (Exception e) {
           LOG.error("WakeOnLan failed: {}", e.getMessage(), e);
