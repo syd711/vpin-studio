@@ -19,7 +19,7 @@
 - **Pause Menu**: Removed the "Expert Mode" from the button binding dialog. Buttons are now only bound with "Bind Key". Existing bindings are kept.
 - **Overlay**: Removed the overlay design "Recent Highscores / Player Ranking / Offline Competitions / Online Competitions" from the overlay preferences, as online competitions are no longer supported. Overlays that used this design are switched to "Recent Highscores / Player Ranking / Offline Competitions".
 
-Thanks you to @Buffdriver, @wrique, @YabbaDabbaDoo and @gonzonia!
+Thank you to @Buffdriver, @wrique, @YabbaDabbaDoo and @gonzonia!
 
 ---
 
