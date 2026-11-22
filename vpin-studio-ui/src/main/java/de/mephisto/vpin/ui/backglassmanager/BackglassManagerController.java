@@ -139,6 +139,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private BackglassManagerSidebarController backglassManagerSideBarController; //fxml magic! Not unused
 
+  /**
+   * True once the full backglass list has been requested. models is never null, so it can't be used
+   * to detect the first activation: table change events may add single items before the view was opened.
+   */
+  private boolean loaded = false;
+
   //-------------
   @FXML
   private void onEmulatorManager() {
@@ -289,6 +295,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   public void doReload() {
+    loaded = true;
     startReload(Messages.get("backglass.directb2s_admin.loading_backglasses"));
 
     refreshPlaylists();
@@ -402,7 +409,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.backglasses")));
 
     // first time activation
-    if (models == null || models.isEmpty()) {
+    if (!loaded) {
       doReload();
 
       if (this.tableView.getItems().isEmpty()) {
@@ -673,7 +680,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @Override
   public void tableChanged(int id, String rom, String gameName) {
     // tab should have been initialized to support reload
-    if (id > 0 && models != null) {
+    if (id > 0 && loaded) {
       // When a game is updated or added, the associated backglass in table + view should be updated
       // If it is a new game, this backglass sis discovered and added into the table as a new row
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2S(id))
