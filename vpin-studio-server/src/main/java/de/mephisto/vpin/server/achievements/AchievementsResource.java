@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.achievements.AchievementsSyncResult;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievementsDetails;
+import de.mephisto.vpin.restclient.achievements.VpxPluginStatus;
 import de.mephisto.vpin.server.achievements.cloud.AchievementsCloudService;
 import de.mephisto.vpin.server.achievements.migration.AchievementsMigrationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,16 @@ public class AchievementsResource {
   @PostMapping("/migration")
   public AchievementsMigrationResult migrate(@RequestBody AchievementsMigrationRequest request) {
     return migrationService.migrate(request);
+  }
+
+  @GetMapping("/vpxplugins")
+  public VpxPluginStatus getVpxPluginStatus() {
+    return achievementsService.getLiveTrackingStatus();
+  }
+
+  @PostMapping("/vpxplugins")
+  public VpxPluginStatus installVpxPlugins() {
+    return achievementsService.installPlugins();
   }
 
   @GetMapping("/migration/watcherfolder")

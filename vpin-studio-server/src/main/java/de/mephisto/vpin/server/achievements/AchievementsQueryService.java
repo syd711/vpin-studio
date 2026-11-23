@@ -428,6 +428,7 @@ public class AchievementsQueryService {
       deltas = new LinkedHashMap<>();
     }
     details.highlights = SessionHighlights.analyze(deltas, details.session.score);
+    SessionHighlights.addBestBall(details.highlights, details.session.bestBall, details.session.bestBallNo);
     deltas.entrySet().stream()
         .filter(e -> e.getValue() != null && e.getValue() > 0)
         .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
@@ -452,6 +453,18 @@ public class AchievementsQueryService {
     info.unlocks = unlocks;
     info.score = SessionHighlights.score(AchievementStateStore.read(s.getEndAudits(), new TypeReference<Map<String, Object>>() {
     }));
+    info.bestBall = s.getBestBall();
+    info.bestBallNo = s.getBestBallNo();
+    info.liveTracked = s.isLiveTracked();
+    Map<Integer, Long> scores = AchievementStateStore.read(s.getPlayerScores(), new TypeReference<Map<Integer, Long>>() {
+    });
+    if (scores != null) {
+      info.playerScores.putAll(scores);
+      Long p1 = scores.get(1);
+      if (p1 != null && p1 > 0) {
+        info.score = p1;
+      }
+    }
     return info;
   }
 

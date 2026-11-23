@@ -103,7 +103,7 @@ public class TableSummaryTileController {
     wheelBox.getChildren().clear();
     if (global) {
       wheelBox.setStyle("");
-      wheelBox.getChildren().add(icon("mdi2t-trophy-variant", ORANGE, 48));
+      wheelBox.getChildren().add(icon("mdi2t-trophy-variant", ORANGE, WHEEL_SIZE));
       return;
     }
     wheelBox.setStyle("");

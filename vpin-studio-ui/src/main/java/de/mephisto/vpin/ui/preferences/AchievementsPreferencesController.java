@@ -4,11 +4,13 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.achievements.AchievementsSettings;
+import de.mephisto.vpin.restclient.achievements.VpxPluginStatus;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.achievements.AchievementsMigrationDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -34,8 +36,19 @@ public class AchievementsPreferencesController implements Initializable {
   private CheckBox cloudCheckbox;
   @FXML
   private VBox playersBox;
+  @FXML
+  private CheckBox liveCheckbox;
+  @FXML
+  private Button liveInstallBtn;
+  @FXML
+  private Label liveStatusLabel;
 
   private AchievementsSettings settings;
+
+  @FXML
+  private void onLiveInstall() {
+    installPlugins();
+  }
 
   @FXML
   private void onMigrate() {
@@ -58,7 +71,56 @@ public class AchievementsPreferencesController implements Initializable {
       settings.setCloudSyncEnabled(n);
       save();
     });
+    liveCheckbox.setSelected(settings.isLiveTrackingEnabled());
+    liveCheckbox.selectedProperty().addListener((obs, o, n) -> {
+      settings.setLiveTrackingEnabled(n);
+      save();
+      if (n) {
+        installPlugins();
+      }
+      else {
+        // the server restores the official PinMAME plugin in the background
+        liveInstallBtn.setDisable(true);
+        liveStatusLabel.setText(Messages.get("pref.achievements.live_state.disabled"));
+      }
+    });
+    liveInstallBtn.setDisable(!settings.isLiveTrackingEnabled());
+    refreshLiveStatus();
     refreshPlayers();
+  }
+
+  private void installPlugins() {
+    liveInstallBtn.setDisable(true);
+    liveStatusLabel.setText(Messages.get("pref.achievements.live_installing"));
+    JFXFuture.supplyAsync(() -> client.getAchievementsService().installVpxPlugins())
+        .thenAcceptLater(this::showLiveStatus)
+        .onErrorLater(e -> {
+          liveInstallBtn.setDisable(!settings.isLiveTrackingEnabled());
+          liveStatusLabel.setText(e.getMessage());
+        });
+  }
+
+  private void refreshLiveStatus() {
+    JFXFuture.supplyAsync(() -> client.getAchievementsService().getVpxPluginStatus())
+        .thenAcceptLater(this::showLiveStatus)
+        .onErrorLater(e -> liveStatusLabel.setText(""));
+  }
+
+  private void showLiveStatus(VpxPluginStatus status) {
+    liveInstallBtn.setDisable(!settings.isLiveTrackingEnabled());
+    if (status == null) {
+      liveStatusLabel.setText("");
+      return;
+    }
+    String state = settings.isLiveTrackingEnabled() ? status.state : VpxPluginStatus.DISABLED;
+    String text = Messages.get("pref.achievements.live_state." + state,
+        status.installedTag != null ? status.installedTag : "", status.vpxVersion != null ? status.vpxVersion : "");
+    if (status.detail != null && (VpxPluginStatus.FAILED.equals(state) || VpxPluginStatus.REBUILD_NEEDED.equals(state))) {
+      text += System.lineSeparator() + status.detail;
+    }
+    liveStatusLabel.setText(text);
+    liveStatusLabel.setStyle("-fx-text-fill: " + (VpxPluginStatus.READY.equals(state) ? "#5CC46A"
+        : VpxPluginStatus.DISABLED.equals(state) ? "#BDBDBD" : "#FF9800") + ";");
   }
 
   private void save() {

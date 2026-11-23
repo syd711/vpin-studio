@@ -55,6 +55,8 @@ public class BadgesGridTileController implements Initializable {
   @FXML
   private Button showBadgeBtn;
   @FXML
+  private Button hideBadgeBtn;
+  @FXML
   private VBox groupsBox;
 
   private PlayerAchievements player;
@@ -127,17 +129,31 @@ public class BadgesGridTileController implements Initializable {
         ? player.badges.stream().filter(x -> x.id.equals(player.selectedBadge)).map(x -> x.name).findFirst().orElse("-") : "-";
     displayBadgeLabel.setText(Messages.get("achievements.display_badge", display));
     show(showBadgeBtn, b.earned && !b.selected);
+    show(hideBadgeBtn, b.selected);
   }
 
   @FXML
   private void onShowBadge() {
-    if (player == null || selected == null) {
+    if (selected != null) {
+      selectBadge(selected.id);
+    }
+  }
+
+  @FXML
+  private void onHideBadge() {
+    selectBadge(null);
+  }
+
+  private void selectBadge(@Nullable String badgeId) {
+    if (player == null) {
       return;
     }
     PlayerAchievements p = player;
-    String badgeId = selected.id;
     JFXFuture.supplyAsync(() -> client.getAchievementsService().selectBadge(p.playerId, badgeId))
         .thenAcceptLater(ok -> {
+          if (!ok) {
+            return;
+          }
           p.selectedBadge = badgeId;
           for (BadgeInfo b : p.badges) {
             b.selected = b.id.equals(badgeId);

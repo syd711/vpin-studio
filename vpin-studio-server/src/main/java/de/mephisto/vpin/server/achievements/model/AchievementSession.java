@@ -42,6 +42,50 @@ public class AchievementSession {
   @Column(columnDefinition = "TEXT")
   private String playerUnlocks;
 
+  /** points of the best ball of player 1, score-server plugin only */
+  private Long bestBall;
+
+  private Integer bestBallNo;
+
+  /** JSON map player (1 based) -> final score, score-server plugin only */
+  @Column(columnDefinition = "TEXT")
+  private String playerScores;
+
+  /** the game was tracked with the score-server plugin (one session per pinball game) */
+  private Boolean liveTracked;
+
+  public Long getBestBall() {
+    return bestBall;
+  }
+
+  public void setBestBall(Long bestBall) {
+    this.bestBall = bestBall;
+  }
+
+  public Integer getBestBallNo() {
+    return bestBallNo;
+  }
+
+  public void setBestBallNo(Integer bestBallNo) {
+    this.bestBallNo = bestBallNo;
+  }
+
+  public String getPlayerScores() {
+    return playerScores;
+  }
+
+  public void setPlayerScores(String playerScores) {
+    this.playerScores = playerScores;
+  }
+
+  public boolean isLiveTracked() {
+    return Boolean.TRUE.equals(liveTracked);
+  }
+
+  public void setLiveTracked(boolean liveTracked) {
+    this.liveTracked = liveTracked;
+  }
+
   public Long getId() {
     return id;
   }

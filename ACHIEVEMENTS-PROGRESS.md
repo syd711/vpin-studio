@@ -101,7 +101,27 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
     on, Preferences > Pause Menu). Entry only for games with a ROM when achievements are enabled and a player tracks
     them (admin player first). Shows table progress, last tracked game (highlights + unlocks) and the next achievements.
     Checked visually 2026-11-23 (GET api/v1/system/pausemenu/test/237/30 with a test game of che_cho, ok).
-  - [ ] 14 VPX 10.8.1 score-server multiplayer/live unlocks, 15 AWEditor custom achievements.
+  - [x] 14 VPX 10.8.1 score-server (2026-11-23; decision: own plugin build in the Studio repo, live tracking opt-in,
+    `AchievementsSettings.liveTrackingEnabled`, default off).
+    Build: `.github/workflows/build-vpx-plugins.yml` + `.github/vpx-plugins/patch_score_server.py` /
+    `patch_pinmame_plugin.py` (own scripts, AW is GPL; both patches tested against score-server main and VPX
+    v10.8.1-5436-af26b2d93). Pre-release `vpx-plugins-*`, never latest (the Studio updater uses releases/latest).
+    Server `achievements/scoreserver`: ScoreServerClient (java.net.http WebSocket, ws://127.0.0.1:3131), ScoreServerGame,
+    LiveNvram (snapshot -> .nv layout), VpxIni, VpxPluginInstaller (newest build for the installed VPX revision, sha256
+    check, backup/restore of the official PinMAME plugin, `resources/achievements/vpx-plugins/state.json`; install on
+    startup/setting change/after table exit when VPX was running, uninstall when switched off).
+    AchievementsService: with round_start every pinball game is evaluated at game_end (baseline = first snapshot),
+    live checks from ball 2 every 2 s in single player games (unlocks stored right away, tallies only at game end,
+    live unlocks get the session id at game end), table exit only evaluates a game still running; plugins without
+    round_start: session evaluation with the player count of the plugin. Session columns bestBall/bestBallNo/
+    playerScores/liveTracked, Best Ball highlight, player scores in the Played games dialog. REST GET/POST
+    `achievements/vpxplugins`, prefs section "Live Tracking" (checkbox, status, Install/Repair), i18n 6 languages,
+    docs. Tests: LiveNvramTest, VpxIniTest, ScoreServerClientTest, ScoreServerConnectionTest (local WebSocket test
+    server), AchievementsServiceIntegrationTest (live unlocks + full plugin path) - all achievements tests green.
+    **Not done yet:** the workflow has not run on GitHub (no plugin release exists, the installer reports "no build"
+    until then); not tested with a real VPX 10.8.1 + plugin on a cabinet. A plugin game shorter than the minimum
+    session length is ignored, but its live unlocks stay (like the Watcher).
+  - 15 AWEditor custom achievements: won't be ported (decision 2026-11-23).
   - 16 Mania web views: deferred (decision 2026-11-23: later, once users are using achievements).
 - Firebase "claim" of a Player ID that was never claimed succeeds with any key (same as in the Watcher).
 

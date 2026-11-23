@@ -41,6 +41,7 @@
                <children>
                   <Label fx:id="displayBadgeLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
                   <Button fx:id="showBadgeBtn" mnemonicParsing="false" onAction="#onShowBadge" text="%achievements.show_next_to_name" />
+                  <Button fx:id="hideBadgeBtn" mnemonicParsing="false" onAction="#onHideBadge" text="%achievements.hide_next_to_name" />
                </children>
             </VBox>
          </children>

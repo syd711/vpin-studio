@@ -11,6 +11,19 @@ public class AchievementsSettings extends JsonSettings {
   private boolean enabled = true;
   private boolean cloudSyncEnabled = true;
   private int minSessionSeconds = 60;
+  /**
+   * VPX 10.8.1+: installs the score-server plugin (and a patched PinMAME plugin) for per game evaluation, live
+   * unlocks and the detection of multiplayer games.
+   */
+  private boolean liveTrackingEnabled = false;
+
+  public boolean isLiveTrackingEnabled() {
+    return liveTrackingEnabled;
+  }
+
+  public void setLiveTrackingEnabled(boolean liveTrackingEnabled) {
+    this.liveTrackingEnabled = liveTrackingEnabled;
+  }
 
   public boolean isEnabled() {
     return enabled;

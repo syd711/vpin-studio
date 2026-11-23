@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.AchievementLeaderboard;
 import de.mephisto.vpin.connectors.mania.model.AchievementLeaderboardEntry;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.achievements.AchievementsController;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -34,6 +35,12 @@ public class LeaderboardsGlobalTileController {
     infoLabel.setText(Messages.get("achievements.cloud_unavailable"));
     show(headerRow, false);
     rowsBox.getChildren().clear();
+  }
+
+  public void showRegistration(AchievementsController controller) {
+    infoLabel.setText(Messages.get("dialog.registration_required"));
+    show(headerRow, false);
+    rowsBox.getChildren().setAll(registrationBox(controller));
   }
 
   public void load(@Nullable PlayerAchievements p) {

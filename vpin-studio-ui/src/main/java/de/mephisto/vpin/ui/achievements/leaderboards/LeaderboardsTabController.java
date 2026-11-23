@@ -19,9 +19,11 @@ public class LeaderboardsTabController implements AchievementsTab {
   private LeaderboardsTableTileController tableTileController;
 
   private boolean dirty = true;
+  private AchievementsController controller;
 
   @Override
   public void setAchievementsController(AchievementsController controller) {
+    this.controller = controller;
     tableTileController.setAchievementsController(controller);
   }
 
@@ -43,6 +45,11 @@ public class LeaderboardsTabController implements AchievementsTab {
     if (!isManiaAvailable()) {
       globalTileController.showUnavailable();
       tableTileController.clear();
+      return;
+    }
+    if (controller.isRegistrationRequired()) {
+      globalTileController.showRegistration(controller);
+      tableTileController.showRegistration();
       return;
     }
     globalTileController.load(p);

@@ -15,9 +15,31 @@ import java.util.Map;
  * {@code _build_events_from_deltas}, {@code analyze_session}): events are derived from the audit deltas of a game
  * by keywords and grouped into the categories Power, Precision and Fun.
  * <p>
- * "Best Ball" is not supported, it needs live ball tracking (score-server plugin of VPX 10.8.1).
+ * "Best Ball" needs the points per ball of the score-server plugin (VPX 10.8.1+), see {@link #addBestBall}.
  */
 public final class SessionHighlights {
+
+  public static final String BEST_BALL = "best_ball";
+
+  /**
+   * Puts "Best Ball" first in the Power highlights (like the Watcher), the value is the points of the best ball.
+   */
+  public static void addBestBall(@NonNull Map<String, List<SessionHighlight>> highlights, @Nullable Long points, @Nullable Integer ball) {
+    if (points == null || points <= 0) {
+      return;
+    }
+    SessionHighlight h = new SessionHighlight();
+    h.key = BEST_BALL;
+    h.category = POWER;
+    h.label = ball != null && ball > 0 ? "Best Ball (B" + ball + ")" : "Best Ball";
+    h.value = points;
+    List<SessionHighlight> power = highlights.computeIfAbsent(POWER, c -> new ArrayList<>());
+    power.removeIf(x -> BEST_BALL.equals(x.key));
+    power.add(0, h);
+    if (power.size() > LINES_PER_CATEGORY) {
+      power.subList(LINES_PER_CATEGORY, power.size()).clear();
+    }
+  }
 
   public static final String POWER = "Power";
   public static final String PRECISION = "Precision";

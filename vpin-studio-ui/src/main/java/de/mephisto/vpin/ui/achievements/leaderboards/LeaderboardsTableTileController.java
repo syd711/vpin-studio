@@ -65,6 +65,8 @@ public class LeaderboardsTableTileController implements Initializable {
   private VBox rankingBox;
   @FXML
   private VBox rowsBox;
+  @FXML
+  private VBox registerBox;
 
   private AchievementsController controller;
   private String selectedRom;
@@ -102,15 +104,28 @@ public class LeaderboardsTableTileController implements Initializable {
     show(infoPanel, false);
     show(messageLabel, false);
     show(rankingBox, false);
+    show(registerBox, false);
+  }
+
+  public void showRegistration() {
+    clear();
+    chipsPane.getChildren().clear();
+    registerBox.getChildren().setAll(registrationBox(controller));
+    show(registerBox, true);
+  }
+
+  private boolean isLeaderboardAvailable() {
+    return isManiaAvailable() && !controller.isRegistrationRequired();
   }
 
   /**
    * Reloads the leaderboard of the selected table, if any.
    */
   public void reload() {
-    if (selectedRom == null || !isManiaAvailable()) {
+    if (selectedRom == null || !isLeaderboardAvailable()) {
       return;
     }
+    show(registerBox, false);
     String rom = selectedRom;
     String uuid = ownUuid();
     showMessage(Messages.get("achievements.loading"));
@@ -164,7 +179,7 @@ public class LeaderboardsTableTileController implements Initializable {
   @FXML
   private void onSearch() {
     String term = searchField.getText() == null ? "" : searchField.getText().trim();
-    if (term.length() < 2 || !isManiaAvailable()) {
+    if (term.length() < 2 || !isLeaderboardAvailable()) {
       return;
     }
     JFXFuture.supplyAsync(() -> Studio.maniaClient.getAchievementClient().searchBoards(term))

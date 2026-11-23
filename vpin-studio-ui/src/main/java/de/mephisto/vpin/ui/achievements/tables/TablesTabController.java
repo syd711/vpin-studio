@@ -67,6 +67,7 @@ public class TablesTabController implements AchievementsTab, Initializable {
   public void setAchievementsController(AchievementsController controller) {
     this.controller = controller;
     summaryTileController.setAchievementsController(controller);
+    top5TileController.setAchievementsController(controller);
   }
 
   @Override

@@ -7,8 +7,9 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.achievements.AchievementsController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
-import static de.mephisto.vpin.ui.achievements.AchievementsUI.number;
+import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
 
 /**
  * Overview tile: the global cloud rank of the player (VPin Mania).
@@ -19,6 +20,8 @@ public class OverviewCloudRankTileController {
   private Label rankLabel;
   @FXML
   private Label detailLabel;
+  @FXML
+  private VBox registerBox;
 
   private AchievementsController controller;
   private PlayerAchievements player;
@@ -30,6 +33,13 @@ public class OverviewCloudRankTileController {
   public void render(PlayerAchievements p) {
     this.player = p;
     rankLabel.setText("—");
+    boolean registrationRequired = controller.isRegistrationRequired();
+    show(detailLabel, !registrationRequired);
+    show(registerBox, registrationRequired);
+    if (registrationRequired) {
+      registerBox.getChildren().setAll(registrationBox(controller));
+      return;
+    }
     if (!controller.isCloudAvailable()) {
       detailLabel.setText(Messages.get("achievements.cloud_not_linked"));
       return;

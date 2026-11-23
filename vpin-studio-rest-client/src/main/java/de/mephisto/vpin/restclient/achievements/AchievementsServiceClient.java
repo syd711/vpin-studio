@@ -74,6 +74,20 @@ public class AchievementsServiceClient extends VPinStudioClientService {
   }
 
   @Nullable
+  /**
+   * State of the VPX plugins of the live tracking.
+   */
+  public VpxPluginStatus getVpxPluginStatus() {
+    return getRestClient().get(API + "achievements/vpxplugins", VpxPluginStatus.class);
+  }
+
+  /**
+   * Installs or repairs the VPX plugins of the live tracking (downloads them from GitHub, can take a while).
+   */
+  public VpxPluginStatus installVpxPlugins() {
+    return getRestClient().post(API + "achievements/vpxplugins", java.util.Map.of(), VpxPluginStatus.class);
+  }
+
   public AchievementsMigrationResult migrate(@NonNull AchievementsMigrationRequest request) {
     return getRestClient().post(API + "achievements/migration", request, AchievementsMigrationResult.class);
   }

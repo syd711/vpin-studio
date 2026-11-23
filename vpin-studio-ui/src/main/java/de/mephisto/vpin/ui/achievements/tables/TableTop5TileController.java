@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.AchievementLeaderboard;
 import de.mephisto.vpin.connectors.mania.model.AchievementLeaderboardEntry;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.achievements.AchievementsController;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -25,11 +26,20 @@ public class TableTop5TileController {
   private VBox rowsBox;
 
   private String rom;
+  private AchievementsController controller;
+
+  public void setAchievementsController(AchievementsController controller) {
+    this.controller = controller;
+  }
 
   public void load(String rom, @Nullable PlayerAchievements p) {
     this.rom = rom;
     if (!isManiaAvailable()) {
       rowsBox.getChildren().setAll(muted(Messages.get("achievements.cloud_unavailable")));
+      return;
+    }
+    if (controller.isRegistrationRequired()) {
+      rowsBox.getChildren().setAll(registrationBox(controller));
       return;
     }
     String uuid = p != null ? p.maniaAccountUuid : null;

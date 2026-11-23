@@ -55,7 +55,7 @@ public class OverviewRankingTileController {
 
   public void render(PlayerAchievements p) {
     this.player = p;
-    boolean cloud = controller.isCloudAvailable();
+    boolean cloud = controller.isCloudAvailable() || controller.isRegistrationRequired();
     cloudBtn.setDisable(!cloud);
     if (cloudRanking && cloud) {
       showCloudRanking();
@@ -88,6 +88,10 @@ public class OverviewRankingTileController {
     cloudBtn.setSelected(true);
     show(playerRank, false);
     show(cloudBox, true);
+    if (controller.isRegistrationRequired()) {
+      cloudBox.getChildren().setAll(registrationBox(controller));
+      return;
+    }
     if (player == null) {
       return;
     }

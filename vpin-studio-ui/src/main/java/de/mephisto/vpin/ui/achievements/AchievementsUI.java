@@ -7,6 +7,7 @@ import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
@@ -315,6 +316,28 @@ public final class AchievementsUI {
   public static void show(Node node, boolean visible) {
     node.setVisible(visible);
     node.setManaged(visible);
+  }
+
+  /**
+   * Hint and button to register the cabinet for VPin Mania, shown by tiles that require VPin Mania data.
+   */
+  public static VBox registrationBox(AchievementsController controller) {
+    Label label = muted(Messages.get("dialog.you_need_to_register_your_cabinet_for"));
+    label.setWrapText(true);
+    VBox box = new VBox(8, label, registerButton(controller));
+    box.setAlignment(Pos.CENTER_LEFT);
+    return box;
+  }
+
+  public static Button registerButton(AchievementsController controller) {
+    Button btn = new Button(Messages.get("dialog.register_cabinet"));
+    btn.setStyle("-fx-font-size: 14px;");
+    FontIcon icon = new FontIcon("mdi2a-account-plus");
+    icon.setIconSize(18);
+    icon.setIconColor(Color.WHITE);
+    btn.setGraphic(icon);
+    btn.setOnAction(e -> controller.registerCabinet());
+    return btn;
   }
 
   public static boolean isManiaAvailable() {

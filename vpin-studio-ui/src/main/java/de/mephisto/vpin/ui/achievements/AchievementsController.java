@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.achievements.badges.BadgesTabController;
 import de.mephisto.vpin.ui.achievements.leaderboards.LeaderboardsTabController;
 import de.mephisto.vpin.ui.achievements.overview.OverviewTabController;
 import de.mephisto.vpin.ui.achievements.tables.TablesTabController;
+import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.PreferencesController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -82,6 +83,7 @@ public class AchievementsController implements Initializable, StudioFXController
 
   private PlayerAchievements current;
   private boolean updatingCombo;
+  private volatile boolean maniaRegistered = true;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -150,7 +152,11 @@ public class AchievementsController implements Initializable, StudioFXController
 
   public void reload() {
     Long selectedId = current != null ? current.playerId : null;
-    JFXFuture.supplyAsync(() -> client.getAchievementsService().getPlayers())
+    JFXFuture.supplyAsync(() -> {
+          // the cabinet registration check is blocking, so it is done once per reload in the background
+          maniaRegistered = !AchievementsUI.isManiaAvailable() || ManiaHelper.isRegistered();
+          return client.getAchievementsService().getPlayers();
+        })
         .thenAcceptLater(players -> {
           updatingCombo = true;
           playerCombo.getItems().setAll(players);
@@ -252,6 +258,26 @@ public class AchievementsController implements Initializable, StudioFXController
   @Nullable
   public PlayerAchievements getCurrent() {
     return current;
+  }
+
+  /**
+   * True if VPin Mania is enabled but the cabinet has not been registered yet.
+   */
+  public boolean isRegistrationRequired() {
+    return AchievementsUI.isManiaAvailable() && !maniaRegistered;
+  }
+
+  /**
+   * Opens the VPin Mania cabinet registration (same as the Mania button of the header) and reloads all tabs on success.
+   */
+  public void registerCabinet() {
+    if (ManiaHelper.register()) {
+      maniaRegistered = true;
+      for (AchievementsTab tab : tabs()) {
+        tab.setDirty();
+      }
+      reload();
+    }
   }
 
   public boolean isCloudAvailable() {

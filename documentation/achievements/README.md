@@ -21,6 +21,30 @@ achievements; tables whose map was added after the release get their achievement
   play time of the frontend statistics.
 - Achievement, badge and level-up notifications are shown on the cabinet (can be switched off).
 
+## Live tracking (VPX 10.8.1+)
+
+VPin Studio preferences > VPin Mania > Achievements > **Enable live tracking** (off by default, Windows and 64 bit
+VPX only). VPin Studio then installs two VPX plugins and enables them in `VPinballX.ini`:
+
+- the [score-server](https://github.com/superhac/score-server) plugin by superhac, which reports players, balls,
+  scores and the live NVRAM while a table is played
+- the PinMAME plugin of VPX with an additional interface the score-server needs. The original PinMAME plugin is
+  backed up (`plugin-pinmame64.dll.studio-original`) and restored when the live tracking is switched off.
+
+With the plugins:
+
+- every pinball game is evaluated on its own when it ends, not the whole table session
+- achievements unlock during the game (single player games, from ball 2 on, checked every 2 seconds)
+- multiplayer games are detected by the plugin (more reliable than the NVRAM maps); per-table achievements are not
+  evaluated for them
+- the **Played games** dialog shows the best ball (Power highlight) and the scores of all players
+
+The plugins are built for one VPX version (`.github/workflows/build-vpx-plugins.yml`, released as
+`vpx-plugins-*` pre-releases of the VPin Studio repository). Nothing is changed while VPX is running; the installation
+is done after VPX was closed. When a VPX update replaces the PinMAME plugin with a newer official one, the live
+tracking stays off until a plugin build for that version is released. Without the plugins (or when they are not
+connected), tables are tracked as described above.
+
 ## Views
 
 | Tab | Content |

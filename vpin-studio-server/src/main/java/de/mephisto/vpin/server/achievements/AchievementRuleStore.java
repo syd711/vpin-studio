@@ -108,6 +108,20 @@ public class AchievementRuleStore {
     return getAuditReader(rom).read(rom, nvFile);
   }
 
+  /**
+   * Decodes NVRAM bytes in the layout of the .nv file (e.g. a live snapshot of the score-server plugin merged into the
+   * .nv file, see {@code LiveNvram}).
+   */
+  @NonNull
+  public NvramSnapshot read(@NonNull String rom, byte[] nvData) {
+    NvramAuditReader reader = getAuditReader(rom);
+    String mapRom = reader.resolveMapRom(rom);
+    if (mapRom == null || nvData == null || nvData.length == 0) {
+      return NvramSnapshot.empty();
+    }
+    return reader.read(mapRom, nvData);
+  }
+
   @NonNull
   public List<AchievementRule> getGlobalRules() {
     if (globalRules == null) {

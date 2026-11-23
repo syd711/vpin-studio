@@ -41,6 +41,8 @@ import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
 public class AchievementsSessionsDialog implements Initializable, DialogController {
 
   private static final int MAX_SESSIONS = 200;
+  /** highlight key of the best ball (score-server plugin) */
+  private static final String BEST_BALL = "best_ball";
   private static final Map<String, String> CATEGORY_ICONS = Map.of(
       "Power", "mdi2f-fire", "Precision", "mdi2t-target", "Fun", "mdi2e-emoticon-happy-outline");
   private static final Map<String, String> CATEGORY_COLORS = Map.of(
@@ -170,6 +172,16 @@ public class AchievementsSessionsDialog implements Initializable, DialogControll
       mp.setWrapText(true);
       summary.getChildren().add(mp);
     }
+    if (s.playerScores.size() > 1) {
+      HBox scores = new HBox(30);
+      for (Map.Entry<Integer, Long> e : s.playerScores.entrySet()) {
+        scores.getChildren().add(stat(Messages.get("achievements.sessions.player_score", e.getKey()), number(e.getValue())));
+      }
+      summary.getChildren().add(scores);
+    }
+    if (s.liveTracked) {
+      summary.getChildren().add(muted(Messages.get("achievements.sessions.live_tracked")));
+    }
     detailsBox.getChildren().add(summary);
 
     // highlights
@@ -179,7 +191,7 @@ public class AchievementsSessionsDialog implements Initializable, DialogControll
     if (any) {
       HBox columns = new HBox(10);
       for (Map.Entry<String, List<SessionHighlight>> e : d.highlights.entrySet()) {
-        columns.getChildren().add(highlightColumn(e.getKey(), e.getValue()));
+        columns.getChildren().add(highlightColumn(e.getKey(), e.getValue(), s.bestBallNo));
       }
       highlights.getChildren().add(columns);
     }
@@ -223,7 +235,7 @@ public class AchievementsSessionsDialog implements Initializable, DialogControll
     detailsBox.getChildren().add(audits);
   }
 
-  private VBox highlightColumn(String category, List<SessionHighlight> list) {
+  private VBox highlightColumn(String category, List<SessionHighlight> list, Integer bestBallNo) {
     String color = CATEGORY_COLORS.getOrDefault(category, MUTED);
     HBox title = new HBox(6, icon(CATEGORY_ICONS.getOrDefault(category, "mdi2s-star"), color, 18),
         colored(translate("achievements.highlight.category." + category, category), color, 14, true));
@@ -238,7 +250,11 @@ public class AchievementsSessionsDialog implements Initializable, DialogControll
       col.getChildren().add(muted("—"));
     }
     for (SessionHighlight h : list) {
-      HBox line = new HBox(6, text(translate("achievements.highlight." + h.key, h.label)), spacer());
+      String label = translate("achievements.highlight." + h.key, h.label);
+      if (BEST_BALL.equals(h.key) && bestBallNo != null && bestBallNo > 0 && !label.equals(h.label)) {
+        label = label + " (B" + bestBallNo + ")";
+      }
+      HBox line = new HBox(6, text(label), spacer());
       if (!h.flag) {
         line.getChildren().add(bold(number(h.value)));
       }

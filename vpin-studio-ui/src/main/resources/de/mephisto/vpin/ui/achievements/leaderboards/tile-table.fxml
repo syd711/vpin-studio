@@ -83,6 +83,7 @@
                </padding>
             </HBox>
             <Label fx:id="messageLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" visible="false" />
+            <VBox fx:id="registerBox" managed="false" visible="false" />
             <VBox fx:id="rankingBox" managed="false" visible="false">
                <children>
                   <HBox spacing="10.0" style="-fx-background-color: #161616;">
