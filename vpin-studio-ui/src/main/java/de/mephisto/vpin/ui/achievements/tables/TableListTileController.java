@@ -92,8 +92,13 @@ public class TableListTileController implements Initializable {
    * Sets the tables and selects the pending ROM or the first table with achievements.
    */
   public void setTables(List<TableAchievements> tables) {
+    TableAchievements selected = tableList.getSelectionModel().getSelectedItem();
     this.tables = tables;
     applyFilter();
+    if (selectRom == null && selected != null) {
+      // the list items are new instances after a reload, keep the selection by ROM
+      selectRom = selected.rom;
+    }
     if (!selectPending() && !tableList.getItems().isEmpty()) {
       TableAchievements first = tableList.getItems().stream().filter(t -> !GLOBAL.equals(t.rom) && t.hasMap && t.total > 0).findFirst()
           .orElse(tableList.getItems().get(0));
@@ -102,7 +107,13 @@ public class TableListTileController implements Initializable {
   }
 
   public void selectRom(String rom) {
-    this.selectRom = rom;
+    this.selectRom = rom != null ? rom.trim() : null;
+    if (selectRom != null && tables.stream().anyMatch(t -> selectRom.equalsIgnoreCase(t.rom))
+        && tableList.getItems().stream().noneMatch(t -> selectRom.equalsIgnoreCase(t.rom))) {
+      // the requested table is hidden by the current filter, reset it
+      searchField.setText("");
+      filterGroup.selectToggle(allBtn);
+    }
     selectPending();
   }
 
@@ -149,6 +160,7 @@ public class TableListTileController implements Initializable {
         : filterGroup.getSelectedToggle() == notStartedBtn ? TableAchievements.STATUS_NOT_STARTED
         : filterGroup.getSelectedToggle() == noMapBtn ? TableAchievements.STATUS_NO_MAP : null;
     TableAchievements selected = tableList.getSelectionModel().getSelectedItem();
+    String selectedRom = selected != null ? selected.rom : null;
     List<TableAchievements> filtered = new ArrayList<>();
     for (TableAchievements t : tables) {
       boolean global = GLOBAL.equals(t.rom);
@@ -157,8 +169,8 @@ public class TableListTileController implements Initializable {
       filtered.add(t);
     }
     tableList.getItems().setAll(filtered);
-    if (selected != null && filtered.contains(selected)) {
-      tableList.getSelectionModel().select(selected);
+    if (selectedRom != null) {
+      filtered.stream().filter(t -> selectedRom.equals(t.rom)).findFirst().ifPresent(t -> tableList.getSelectionModel().select(t));
     }
   }
 
