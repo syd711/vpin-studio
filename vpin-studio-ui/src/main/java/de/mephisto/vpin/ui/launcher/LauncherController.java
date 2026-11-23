@@ -309,9 +309,9 @@ public class LauncherController implements Initializable {
       ConnectionEntry connectionEntry = connectionProperties.getConnection(connectionId);
       if (connectionEntry != null && !connectionEntry.getMacAddress().isEmpty()) {
         try {
-          LOG.info(connectionEntry.getIp());
-          LOG.info(connectionEntry.getMacAddress());
-          LOG.info(String.valueOf(connectionEntry.getMagicPacketPort()));
+      //    LOG.info(connectionEntry.getIp());
+     //     LOG.info(connectionEntry.getMacAddress());
+      //    LOG.info(String.valueOf(connectionEntry.getMagicPacketPort()));
           WakeOnLan.sendMagicPacket(connectionEntry.getIp(), connectionEntry.getMacAddress(), connectionEntry.getMagicPacketPort());
         } catch (Exception e) {
           LOG.error("WakeOnLan failed: {}", e.getMessage(), e);
