@@ -185,149 +185,204 @@ public class VpxPluginInstaller {
     String version = emulator.getEmulatorVersion();
     res.vpxFolder = vpxFolder.getAbsolutePath();
     res.vpxVersion = version;
-    if (version == null || VpxIni.compareVersion(version, MIN_VPX_VERSION) < 0) {
+    if (!isSupportedVersion(version)) {
       res.state = VpxPluginStatus.VPX_OLD;
       return res;
     }
 
     ObjectNode state = loadState();
-    Package pkg = null;
-    String newestOther = null;
-    try {
-      List<JsonNode> releases = fetchReleases();
-      for (JsonNode release : releases) {
-        JsonNode manifest = fetchManifest(release);
-        if (manifest == null) {
-          continue;
-        }
-        if (VpxIni.sameRevision(version, manifest.path("vpx_version").asString(""))) {
-          pkg = download(release, manifest);
-          break;
-        }
-        if (newestOther == null) {
-          newestOther = manifest.path("vpx_version").asString("");
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to fetch the VPX plugin releases: {}", e.getMessage());
-    }
+    PackageLookup lookup = findPackage(state, version);
+    Package pkg = lookup.pkg();
     if (pkg == null) {
-      pkg = cachedPackage(state, version);
+      return noPackage(res, version, lookup.newestOther());
     }
-    if (pkg == null) {
-      if (newestOther != null) {
-        res.state = VpxPluginStatus.REBUILD_NEEDED;
-        res.detail = "VPX " + version + " is installed, the newest plugin build is for VPX " + newestOther + ".";
-      }
-      else {
-        res.state = VpxPluginStatus.NO_BUILD;
-      }
-      return res;
-    }
-
-    String tag = pkg.manifest.path("tag").asString("");
-    String patchedSha = pkg.manifest.path("files").path(PINMAME_FOLDER + "/" + PINMAME_DLL).asString("").toLowerCase(Locale.ROOT);
-    String serverSha = pkg.manifest.path("files").path(SCORE_SERVER_FOLDER + "/" + SCORE_SERVER_DLL).asString("").toLowerCase(Locale.ROOT);
-    File pmDir = new File(vpxFolder, "plugins/" + PINMAME_FOLDER);
-    File pmDll = new File(pmDir, PINMAME_DLL);
-    File ssDir = new File(vpxFolder, "plugins/" + SCORE_SERVER_FOLDER);
-    File ssDll = new File(ssDir, SCORE_SERVER_DLL);
+    InstallPlan plan = InstallPlan.create(vpxFolder, pkg, state);
     boolean running = isVpxRunning();
 
-    String currentSha = pmDll.isFile() ? sha256(pmDll) : "";
-    List<String> ownBuilds = strings(state.get("patchedShas"));
-    boolean needPinmame = !currentSha.equals(patchedSha);
-    boolean newBuild = !tag.equals(state.path("installedTag").asString(""));
-    String originalSha = state.path("originalSha").asString("");
-    if (needPinmame && !currentSha.isEmpty() && !newBuild && !originalSha.isEmpty()
-        && !currentSha.equals(originalSha) && !ownBuilds.contains(currentSha)) {
-      // same build as before, but another official PinMAME plugin is installed: VPX was updated
+    if (plan.needPinmame() && isOfficialPinmameUpdated(plan, state, vpxFolder)) {
       res.state = VpxPluginStatus.REBUILD_NEEDED;
       res.detail = "A VPX update installed a new PinMAME plugin, the live tracking is off until a new plugin build is released.";
       return res;
     }
-    boolean needServer = !ssDll.isFile() || !sha256(ssDll).equals(serverSha);
-
-    if ((needPinmame || needServer) && running) {
+    if (plan.needsCopy() && running) {
       res.state = VpxPluginStatus.BUSY;
       res.detail = "VPX is running, the plugins are installed after VPX was closed.";
       return res;
     }
 
     try {
-      if (needServer) {
-        FileUtils.copyDirectory(new File(pkg.folder, SCORE_SERVER_FOLDER), ssDir);
-      }
-      if (needPinmame) {
-        if (!pmDir.exists() && !pmDir.mkdirs()) {
-          throw new IOException("Failed to create " + pmDir.getAbsolutePath());
-        }
-        // back up the official plugin, never one of the own builds
-        if (!currentSha.isEmpty() && !ownBuilds.contains(currentSha)) {
-          Files.copy(pmDll.toPath(), new File(pmDir, PINMAME_DLL + PINMAME_BACKUP_SUFFIX).toPath(), StandardCopyOption.REPLACE_EXISTING);
-          state.put("originalSha", currentSha);
-        }
-        Files.copy(new File(pkg.folder, PINMAME_FOLDER + "/" + PINMAME_DLL).toPath(), pmDll.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        if (!sha256(pmDll).equals(patchedSha)) {
-          throw new IOException("The patched PinMAME plugin did not verify after the copy.");
-        }
-      }
+      copyPlugins(plan, pkg, state);
     }
     catch (AccessDeniedException e) {
       res.state = VpxPluginStatus.FAILED;
       res.detail = "No write access to the VPX plugins folder (" + e.getMessage() + ").";
       return res;
     }
+    recordInstallation(state, plan, pkg, vpxFolder, version);
+    if (plan.needsCopy()) {
+      LOG.info("Installed the VPX plugins {} into {}", plan.tag(), vpxFolder.getAbsolutePath());
+    }
 
-    if (!ownBuilds.contains(patchedSha) && !patchedSha.isEmpty()) {
-      ownBuilds.add(patchedSha);
+    if (!enablePlugins(res, vpxFolder, version, running)) {
+      return res;
+    }
+    res.state = VpxPluginStatus.READY;
+    res.ready = true;
+    res.installedTag = plan.tag();
+    return res;
+  }
+
+  private static boolean isSupportedVersion(@Nullable String version) {
+    return version != null && VpxIni.compareVersion(version, MIN_VPX_VERSION) >= 0;
+  }
+
+  /**
+   * What has to be copied into one VPX installation for the given package.
+   *
+   * @param currentSha the hash of the installed PinMAME plugin, empty if there is none
+   * @param ownBuilds  the hashes of the PinMAME plugins built by the VPin Studio that were installed before
+   */
+  private record InstallPlan(String tag, String patchedSha, File pmDir, File pmDll, File ssDir,
+                             String currentSha, List<String> ownBuilds, boolean needPinmame, boolean needServer) {
+
+    static InstallPlan create(File vpxFolder, Package pkg, ObjectNode state) throws IOException {
+      String tag = pkg.manifest().path("tag").asString("");
+      String patchedSha = manifestSha(pkg.manifest(), PINMAME_FOLDER, PINMAME_DLL);
+      String serverSha = manifestSha(pkg.manifest(), SCORE_SERVER_FOLDER, SCORE_SERVER_DLL);
+      File pmDir = new File(vpxFolder, "plugins/" + PINMAME_FOLDER);
+      File pmDll = new File(pmDir, PINMAME_DLL);
+      File ssDir = new File(vpxFolder, "plugins/" + SCORE_SERVER_FOLDER);
+      File ssDll = new File(ssDir, SCORE_SERVER_DLL);
+
+      String currentSha = pmDll.isFile() ? sha256(pmDll) : "";
+      boolean needPinmame = !currentSha.equals(patchedSha);
+      boolean needServer = !ssDll.isFile() || !sha256(ssDll).equals(serverSha);
+      return new InstallPlan(tag, patchedSha, pmDir, pmDll, ssDir, currentSha, strings(state.get("patchedShas")),
+          needPinmame, needServer);
+    }
+
+    boolean needsCopy() {
+      return needPinmame || needServer;
+    }
+
+    /**
+     * @return true if an official PinMAME plugin is installed (none of the own builds)
+     */
+    boolean hasOfficialPinmame() {
+      return !currentSha.isEmpty() && !ownBuilds.contains(currentSha);
+    }
+  }
+
+  private static String manifestSha(JsonNode manifest, String folder, String dll) {
+    return manifest.path("files").path(folder + "/" + dll).asString("").toLowerCase(Locale.ROOT);
+  }
+
+  /**
+   * Detects a VPX update: the build is the same as before, but another official PinMAME plugin than the backed up
+   * one is installed. Only applies to the installation the state was written for, the backup hash of another VPX
+   * installation says nothing about this one.
+   */
+  private static boolean isOfficialPinmameUpdated(InstallPlan plan, ObjectNode state, File vpxFolder) {
+    boolean sameInstallation = vpxFolder.getAbsolutePath().equalsIgnoreCase(state.path("vpxFolder").asString(""));
+    boolean newBuild = !plan.tag().equals(state.path("installedTag").asString(""));
+    String originalSha = state.path("originalSha").asString("");
+    return sameInstallation && !newBuild && !originalSha.isEmpty()
+        && plan.hasOfficialPinmame() && !plan.currentSha().equals(originalSha);
+  }
+
+  private void copyPlugins(InstallPlan plan, Package pkg, ObjectNode state) throws IOException {
+    if (plan.needServer()) {
+      FileUtils.copyDirectory(new File(pkg.folder(), SCORE_SERVER_FOLDER), plan.ssDir());
+    }
+    if (plan.needPinmame()) {
+      copyPinmame(plan, pkg, state);
+    }
+  }
+
+  private void copyPinmame(InstallPlan plan, Package pkg, ObjectNode state) throws IOException {
+    File pmDir = plan.pmDir();
+    if (!pmDir.exists() && !pmDir.mkdirs()) {
+      throw new IOException("Failed to create " + pmDir.getAbsolutePath());
+    }
+    // back up the official plugin, never one of the own builds
+    if (plan.hasOfficialPinmame()) {
+      Files.copy(plan.pmDll().toPath(), new File(pmDir, PINMAME_DLL + PINMAME_BACKUP_SUFFIX).toPath(), StandardCopyOption.REPLACE_EXISTING);
+      state.put("originalSha", plan.currentSha());
+    }
+    Files.copy(new File(pkg.folder(), PINMAME_FOLDER + "/" + PINMAME_DLL).toPath(), plan.pmDll().toPath(), StandardCopyOption.REPLACE_EXISTING);
+    if (!sha256(plan.pmDll()).equals(plan.patchedSha())) {
+      throw new IOException("The patched PinMAME plugin did not verify after the copy.");
+    }
+  }
+
+  private void recordInstallation(ObjectNode state, InstallPlan plan, Package pkg, File vpxFolder, String version) throws IOException {
+    List<String> ownBuilds = new ArrayList<>(plan.ownBuilds());
+    if (!plan.patchedSha().isEmpty() && !ownBuilds.contains(plan.patchedSha())) {
+      ownBuilds.add(plan.patchedSha());
     }
     ArrayNode shas = state.putArray("patchedShas");
     ownBuilds.subList(Math.max(0, ownBuilds.size() - 10), ownBuilds.size()).forEach(shas::add);
-    state.put("installedTag", tag);
-    state.put("cache", pkg.folder.getAbsolutePath());
+    state.put("installedTag", plan.tag());
+    state.put("cache", pkg.folder().getAbsolutePath());
     state.put("vpxFolder", vpxFolder.getAbsolutePath());
     state.put("vpxVersion", version);
     saveState(state);
-    if (needPinmame || needServer) {
-      LOG.info("Installed the VPX plugins {} into {}", tag, vpxFolder.getAbsolutePath());
-    }
+  }
 
+  /**
+   * Enables both plugins in VPinballX.ini.
+   *
+   * @return false if this was not possible, the reason is written into the given status
+   */
+  private boolean enablePlugins(VpxPluginStatus res, File vpxFolder, String version, boolean running) throws IOException {
     File ini = VpxIni.find(appData(), vpxFolder, version);
     if (ini == null) {
       res.state = VpxPluginStatus.FAILED;
       res.detail = "VPinballX.ini not found, start VPX once so that it creates its settings.";
-      return res;
+      return false;
     }
-    if (!VpxIni.isPluginEnabled(ini, SCORE_SERVER_ID) || !VpxIni.isPluginEnabled(ini, PINMAME_ID)) {
-      if (running) {
-        res.state = VpxPluginStatus.BUSY;
-        res.detail = "VPX is running, the plugins are enabled after VPX was closed.";
-        return res;
-      }
-      VpxIni.setPluginEnabled(ini, SCORE_SERVER_ID, true);
-      VpxIni.setPluginEnabled(ini, PINMAME_ID, true);
-      LOG.info("Enabled the score-server and PinMAME plugins in {}", ini.getAbsolutePath());
+    if (VpxIni.isPluginEnabled(ini, SCORE_SERVER_ID) && VpxIni.isPluginEnabled(ini, PINMAME_ID)) {
+      return true;
     }
-    res.state = VpxPluginStatus.READY;
-    res.ready = true;
-    res.installedTag = tag;
-    return res;
+    if (running) {
+      res.state = VpxPluginStatus.BUSY;
+      res.detail = "VPX is running, the plugins are enabled after VPX was closed.";
+      return false;
+    }
+    VpxIni.setPluginEnabled(ini, SCORE_SERVER_ID, true);
+    VpxIni.setPluginEnabled(ini, PINMAME_ID, true);
+    LOG.info("Enabled the score-server and PinMAME plugins in {}", ini.getAbsolutePath());
+    return true;
   }
 
+  //------------------------------------------- Emulator --------------------------------------------------------------
+
+  /**
+   * Several VPX emulators can be configured (e.g. older versions next to a 10.8.1). The 64-bit installation with the
+   * newest version is used, so an older emulator listed first does not hide a supported one. If none is supported,
+   * the newest one is returned to report its version.
+   */
   @Nullable
   private GameEmulator findVpxEmulator() {
+    GameEmulator best = null;
     for (GameEmulator emulator : emulatorService.getVpxGameEmulators()) {
-      File folder = emulator.getInstallationFolder();
-      if (folder != null && folder.isDirectory()) {
-        File[] exes = folder.listFiles(f -> f.getName().toLowerCase(Locale.ROOT).matches("vpinballx.*64\\.exe"));
-        if (exes != null && exes.length > 0) {
-          return emulator;
-        }
+      if (!hasVpx64Executable(emulator)) {
+        continue;
+      }
+      if (best == null || VpxIni.compareVersion(emulator.getEmulatorVersion(), best.getEmulatorVersion()) > 0) {
+        best = emulator;
       }
     }
-    return null;
+    return best;
+  }
+
+  private static boolean hasVpx64Executable(GameEmulator emulator) {
+    File folder = emulator.getInstallationFolder();
+    if (folder == null || !folder.isDirectory()) {
+      return false;
+    }
+    File[] exes = folder.listFiles(f -> f.getName().toLowerCase(Locale.ROOT).matches("vpinballx.*64\\.exe"));
+    return exes != null && exes.length > 0;
   }
 
   public static boolean isVpxRunning() {
@@ -340,6 +395,56 @@ public class VpxPluginInstaller {
   //------------------------------------------- Releases --------------------------------------------------------------
 
   private record Package(JsonNode manifest, File folder) {
+  }
+
+  /**
+   * @param pkg         the package for the installed VPX revision, null if there is none
+   * @param newestOther the VPX version of the newest build for another revision, null if there is none
+   */
+  private record PackageLookup(@Nullable Package pkg, @Nullable String newestOther) {
+  }
+
+  /**
+   * Looks up the newest plugin build for the given VPX revision, falls back to the cached package when GitHub is not
+   * reachable.
+   */
+  private PackageLookup findPackage(ObjectNode state, String version) {
+    Package pkg = null;
+    String newestOther = null;
+    try {
+      for (JsonNode release : fetchReleases()) {
+        JsonNode manifest = fetchManifest(release);
+        if (manifest == null) {
+          continue;
+        }
+        String buildVersion = manifest.path("vpx_version").asString("");
+        if (VpxIni.sameRevision(version, buildVersion)) {
+          pkg = download(release, manifest);
+          break;
+        }
+        if (newestOther == null) {
+          newestOther = buildVersion;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to fetch the VPX plugin releases: {}", e.getMessage());
+    }
+    if (pkg == null) {
+      pkg = cachedPackage(state, version);
+    }
+    return new PackageLookup(pkg, newestOther);
+  }
+
+  private static VpxPluginStatus noPackage(VpxPluginStatus res, String version, @Nullable String newestOther) {
+    if (newestOther != null) {
+      res.state = VpxPluginStatus.REBUILD_NEEDED;
+      res.detail = "VPX " + version + " is installed, the newest plugin build is for VPX " + newestOther + ".";
+    }
+    else {
+      res.state = VpxPluginStatus.NO_BUILD;
+    }
+    return res;
   }
 
   /**

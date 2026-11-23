@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.achievements.AchievementsSettings;
 import de.mephisto.vpin.restclient.achievements.VpxPluginStatus;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.achievements.AchievementsMigrationDialog;
+import de.mephisto.vpin.ui.achievements.AchievementsUI;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -19,7 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -128,8 +131,9 @@ public class AchievementsPreferencesController implements Initializable {
   }
 
   private void refreshPlayers() {
-    JFXFuture.supplyAsync(() -> client.getPlayerService().getPlayers())
-        .thenAcceptLater(players -> {
+    JFXFuture.supplyAsync(() -> new PlayersData(client.getPlayerService().getPlayers(), AchievementsUI.getManiaLinkedPlayerIds()))
+        .thenAcceptLater(data -> {
+          List<PlayerRepresentation> players = data.players();
           playersBox.getChildren().clear();
           if (players.isEmpty()) {
             playersBox.getChildren().add(new Label(Messages.get("achievements.no_players")));
@@ -150,12 +154,16 @@ public class AchievementsPreferencesController implements Initializable {
                 LOG.error("Failed to save player: {}", e.getMessage(), e);
               }
             });
-            Label mania = new Label(p.getManiaAccountUuid() != null ? Messages.get("pref.achievements.linked") : Messages.get("pref.achievements.not_linked"));
-            mania.setStyle("-fx-text-fill: " + (p.getManiaAccountUuid() != null ? "#5CC46A" : "#BDBDBD") + "; -fx-font-size: 13px;");
+            boolean linked = data.linkedPlayerIds().contains(p.getId());
+            Label mania = new Label(linked ? Messages.get("pref.achievements.linked") : Messages.get("pref.achievements.not_linked"));
+            mania.setStyle("-fx-text-fill: " + (linked ? "#5CC46A" : "#BDBDBD") + "; -fx-font-size: 13px;");
             row.getChildren().addAll(tracked, mania);
             playersBox.getChildren().add(row);
           }
         });
+  }
+
+  private record PlayersData(List<PlayerRepresentation> players, Set<Long> linkedPlayerIds) {
   }
 
 }

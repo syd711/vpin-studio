@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,7 +72,10 @@ public class AchievementsCloudService implements AchievementsService.Achievement
   @Autowired
   private AchievementUnlockRepository unlockRepository;
 
+  private static final long ACCOUNT_CHECK_TTL_MS = 10 * 60 * 1000;
+
   private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> new Thread(r, "Achievements Cloud Sync"));
+  private final Map<String, AccountCheck> accountChecks = new ConcurrentHashMap<>();
 
   @Override
   public void achievementsChanged(@NonNull Set<Long> playerIds) {
@@ -92,6 +96,49 @@ public class AchievementsCloudService implements AchievementsService.Achievement
     return Features.MANIA_ENABLED && achievementsService.getSettings().isCloudSyncEnabled();
   }
 
+  /**
+   * True if the player has a VPin Mania account and this cabinet is registered for VPin Mania. The account UUID
+   * alone is not enough: it stays in the player record when the cabinet has been deleted outside of Studio or
+   * Studio points to another VPin Mania server.
+   */
+  public boolean isManiaLinked(@NonNull Player player) {
+    return Features.MANIA_ENABLED && !StringUtils.isEmpty(player.getManiaAccountUuid()) && getCabinet() != null
+        && accountExists(player.getManiaAccountUuid());
+  }
+
+  /**
+   * Checks that the account still exists in VPin Mania (it may have been deleted there). The result is cached for
+   * {@link #ACCOUNT_CHECK_TTL_MS}. If VPin Mania cannot be reached the account is assumed to exist and nothing is
+   * cached, so being offline never unlinks players.
+   */
+  private boolean accountExists(@NonNull String accountUuid) {
+    AccountCheck check = accountChecks.get(accountUuid);
+    if (check != null && System.currentTimeMillis() - check.checkedAt() < ACCOUNT_CHECK_TTL_MS) {
+      return check.exists();
+    }
+    VPinManiaClient client = client();
+    if (client == null) {
+      return true;
+    }
+    try {
+      // the search matches the UUID exactly and ignores the visibility of the account
+      boolean exists = client.getAccountClient().searchAccounts(accountUuid).stream()
+          .anyMatch(a -> accountUuid.equals(a.getUuid()));
+      if (!exists) {
+        LOG.info("Achievements: VPin Mania account {} does not exist (anymore), the player is handled as local only.", accountUuid);
+      }
+      accountChecks.put(accountUuid, new AccountCheck(exists, System.currentTimeMillis()));
+      return exists;
+    }
+    catch (Exception e) {
+      LOG.warn("Achievements: failed to check VPin Mania account {}: {}", accountUuid, e.getMessage());
+      return true;
+    }
+  }
+
+  private record AccountCheck(boolean exists, long checkedAt) {
+  }
+
   @NonNull
   public AchievementsSyncResult syncAll(boolean refreshRarity) {
     AchievementsSyncResult result = new AchievementsSyncResult();
@@ -103,8 +150,10 @@ public class AchievementsCloudService implements AchievementsService.Achievement
       result.message = "This cabinet is not registered for VPin Mania.";
       return result;
     }
+    // a synchronization started by the user re-checks the accounts
+    accountChecks.clear();
     for (Player player : achievementsService.getTrackedPlayers()) {
-      if (StringUtils.isEmpty(player.getManiaAccountUuid())) {
+      if (!isManiaLinked(player)) {
         result.skippedPlayers++;
         continue;
       }
@@ -154,7 +203,7 @@ public class AchievementsCloudService implements AchievementsService.Achievement
     String accountUuid = player.getManiaAccountUuid();
     VPinManiaClient client = client();
     Cabinet cabinet = getCabinet();
-    if (StringUtils.isEmpty(accountUuid) || client == null || cabinet == null) {
+    if (client == null || cabinet == null || !isManiaLinked(player)) {
       return -1;
     }
     try {
@@ -318,7 +367,7 @@ public class AchievementsCloudService implements AchievementsService.Achievement
   public String uploadImport(@NonNull Player player, @NonNull String firebasePid) {
     VPinManiaClient client = client();
     Cabinet cabinet = getCabinet();
-    if (client == null || cabinet == null || StringUtils.isEmpty(player.getManiaAccountUuid())) {
+    if (client == null || cabinet == null || !isManiaLinked(player)) {
       return "VPin Mania is not available, the data is only imported locally.";
     }
     List<AchievementUnlock> unlocks = unlockRepository.findByPlayerId(player.getId());

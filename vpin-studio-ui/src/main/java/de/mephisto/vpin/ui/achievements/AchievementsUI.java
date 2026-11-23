@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.LoggerFactory;
 
 import java.time.ZoneId;
 import java.time.chrono.IsoChronology;
@@ -28,8 +29,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Widgets and colors of the achievements views (VPin Studio dark theme, see the visual concept).
@@ -346,6 +349,25 @@ public final class AchievementsUI {
 
   public static boolean isManiaAvailable() {
     return Studio.Features.MANIA_ENABLED && Studio.maniaClient != null;
+  }
+
+  /**
+   * The ids of the players whose VPin Mania account is usable. The server decides this: an account UUID alone is
+   * not enough, the cabinet must be registered too. Must not be called on the FX thread.
+   */
+  public static Set<Long> getManiaLinkedPlayerIds() {
+    Set<Long> result = new HashSet<>();
+    try {
+      for (PlayerAchievements p : Studio.client.getAchievementsService().getPlayers()) {
+        if (p.maniaAccountUuid != null) {
+          result.add(p.playerId);
+        }
+      }
+    }
+    catch (Exception e) {
+      LoggerFactory.getLogger(AchievementsUI.class).warn("Failed to read the VPin Mania link state: {}", e.getMessage());
+    }
+    return result;
   }
 
   public static String nextLevelText(PlayerAchievements p) {

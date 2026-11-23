@@ -31,6 +31,7 @@ import javafx.util.StringConverter;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
@@ -46,6 +47,7 @@ public class AchievementsMigrationDialog implements Initializable, DialogControl
   private BorderPane root;
 
   private final ComboBox<PlayerRepresentation> playerCombo = new ComboBox<>();
+  private Set<Long> linkedPlayerIds = Set.of();
   private final RadioButton firebaseRadio = new RadioButton(Messages.get("achievements.migration.source_cloud"));
   private final RadioButton localRadio = new RadioButton(Messages.get("achievements.migration.source_local"));
   private final TextField pidField = new TextField();
@@ -79,7 +81,7 @@ public class AchievementsMigrationDialog implements Initializable, DialogControl
       @Override
       public String toString(PlayerRepresentation p) {
         return p == null ? "" : p.getName() + (p.getInitials() != null ? " (" + p.getInitials() + ")" : "")
-            + (p.getManiaAccountUuid() == null ? " \u2013 " + Messages.get("pref.achievements.not_linked") : "");
+            + (!linkedPlayerIds.contains(p.getId()) ? " \u2013 " + Messages.get("pref.achievements.not_linked") : "");
       }
 
       @Override
@@ -162,7 +164,10 @@ public class AchievementsMigrationDialog implements Initializable, DialogControl
     root.setCenter(content);
 
     updateFields();
-    JFXFuture.supplyAsync(() -> client.getPlayerService().getPlayers()).thenAcceptLater(players -> {
+    JFXFuture.supplyAsync(() -> {
+      linkedPlayerIds = AchievementsUI.getManiaLinkedPlayerIds();
+      return client.getPlayerService().getPlayers();
+    }).thenAcceptLater(players -> {
       playerCombo.getItems().setAll(players);
       players.stream().filter(PlayerRepresentation::isAdministrative).findFirst().ifPresentOrElse(playerCombo::setValue,
           () -> {

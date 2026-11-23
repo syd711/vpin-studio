@@ -127,7 +127,7 @@ public class AchievementsMigrationService {
       }
 
       fillPreview(result, data);
-      boolean maniaLinked = !StringUtils.isEmpty(player.getManiaAccountUuid());
+      boolean maniaLinked = cloudService.isManiaLinked(player);
       if (request.previewOnly) {
         result.cloudUpload = maniaLinked && data.pid != null && data.recoveryKey != null;
         result.success = true;

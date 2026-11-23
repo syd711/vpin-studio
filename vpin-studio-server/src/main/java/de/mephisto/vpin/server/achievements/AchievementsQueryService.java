@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.achievements.AchievementSessionInfo;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievementsDetails;
+import de.mephisto.vpin.server.achievements.cloud.AchievementsCloudService;
 import de.mephisto.vpin.server.achievements.model.AchievementPlayerState;
 import de.mephisto.vpin.server.achievements.model.AchievementSession;
 import de.mephisto.vpin.server.achievements.model.AchievementSessionRepository;
@@ -63,6 +64,8 @@ public class AchievementsQueryService {
   private AchievementUnlockRepository unlockRepository;
   @Autowired
   private AchievementSessionRepository sessionRepository;
+  @Autowired
+  private AchievementsCloudService cloudService;
 
   @NonNull
   public List<PlayerAchievements> getPlayers() {
@@ -97,7 +100,7 @@ public class AchievementsQueryService {
     p.badgesEarned = (int) p.badges.stream().filter(b -> b.earned).count();
     p.lastSync = state.getLastSync() != null ? Date.from(state.getLastSync()) : null;
     p.migratedFirebasePid = state.getMigratedFirebasePid();
-    p.pendingUploads = player.getManiaAccountUuid() == null ? 0 :
+    p.pendingUploads = p.maniaAccountUuid == null ? 0 :
         (int) unlocks.stream().filter(u -> u.getSyncedAt() == null && u.isUploadable()).count();
 
     List<AchievementUnlock> sorted = new ArrayList<>(unlocks);
@@ -114,7 +117,8 @@ public class AchievementsQueryService {
     p.playerId = player.getId();
     p.name = player.getName();
     p.initials = player.getInitials();
-    p.maniaAccountUuid = player.getManiaAccountUuid();
+    // only exposed while the account is usable, otherwise the player is shown and handled as local only
+    p.maniaAccountUuid = cloudService.isManiaLinked(player) ? player.getManiaAccountUuid() : null;
     p.tracked = player.isAchievementsEnabled();
     return p;
   }
