@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.Studio;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.fxml.Initializable;
@@ -86,6 +87,10 @@ public class TableListTileController implements Initializable {
 
   public void setOnSelect(Consumer<TableAchievements> onSelect) {
     this.onSelect = onSelect;
+  }
+
+  public ReadOnlyObjectProperty<TableAchievements> selectedTableProperty() {
+    return tableList.getSelectionModel().selectedItemProperty();
   }
 
   /**
