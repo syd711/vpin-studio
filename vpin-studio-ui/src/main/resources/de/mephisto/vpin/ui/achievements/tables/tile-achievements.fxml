@@ -24,7 +24,7 @@
          <children>
             <Label minWidth="24.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" />
             <Label maxWidth="Infinity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.achievement" HBox.hgrow="ALWAYS" />
-            <Label minWidth="100.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.unlocked_column" />
+            <Label minWidth="145.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.unlocked_column" />
             <Label minWidth="90.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.rarity" />
          </children>
          <padding>
