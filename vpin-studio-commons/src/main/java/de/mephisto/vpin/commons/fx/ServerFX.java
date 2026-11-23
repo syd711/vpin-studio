@@ -65,6 +65,7 @@ public class ServerFX extends Application {
 
   private Stage overlayStage;
   private Stage maintenanceStage;
+  private MaintenanceController maintenanceController;
 
   private boolean overlayVisible = false;
 
@@ -229,21 +230,30 @@ public class ServerFX extends Application {
   }
 
   public void setMaintenanceVisible(boolean b) {
-    if (maintenanceStage != null) {
-      if (b) {
-        maintenanceStage.setFullScreen(true);
-        maintenanceStage.show();
-      }
-      else {
+    if (!b) {
+      //the stage is disposed on hide: a hidden stage would keep the looping maintenance video decoding.
+      //Disabling maintenance mode is also called when it was never shown, so there may be nothing to do.
+      if (maintenanceStage != null) {
         maintenanceStage.hide();
+        if (maintenanceController != null) {
+          maintenanceController.dispose();
+        }
+        maintenanceStage = null;
+        maintenanceController = null;
       }
+      return;
+    }
+
+    if (maintenanceStage != null) {
+      maintenanceStage.setFullScreen(true);
+      maintenanceStage.show();
       return;
     }
 
     BorderPane root = new BorderPane();
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
     MonitorInfo screen = ServerFX.client.getSystemService().getScreenInfo(overlaySettings.getOverlayScreenId());
-    final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
+    final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight());
     scene.setCursor(Cursor.NONE);
 
     maintenanceStage = new Stage();
@@ -261,18 +271,15 @@ public class ServerFX extends Application {
       FXMLLoader loader = new FXMLLoader(MaintenanceController.class.getResource(resource));
       loader.setResources(Messages.getBundle());
       Parent widgetRoot = loader.load();
-      /*MaintenanceController controller =*/
-      loader.getController();
+      maintenanceController = loader.getController();
       root.setCenter(widgetRoot);
     }
     catch (IOException e) {
-      LOG.error("Failed to init dashboard: " + e.getMessage(), e);
+      LOG.error("Failed to init maintenance screen: " + e.getMessage(), e);
     }
 
-    if (b) {
-      maintenanceStage.setFullScreen(true);
-      maintenanceStage.show();
-    }
+    maintenanceStage.setFullScreen(true);
+    maintenanceStage.show();
   }
 
   public void togglePauseMenu() {

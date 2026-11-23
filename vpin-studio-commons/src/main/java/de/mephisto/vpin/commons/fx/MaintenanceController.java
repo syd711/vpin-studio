@@ -47,4 +47,18 @@ public class MaintenanceController implements Initializable {
       mediaView.setVisible(true);
     });
   }
+
+  public void dispose() {
+    MediaPlayer mediaPlayer = mediaView.getMediaPlayer();
+    if (mediaPlayer != null) {
+      try {
+        mediaPlayer.stop();
+        mediaPlayer.dispose();
+      }
+      catch (Exception e) {
+        LOG.error("Failed to dispose maintenance media player: {}", e.getMessage());
+      }
+      mediaView.setMediaPlayer(null);
+    }
+  }
 }
