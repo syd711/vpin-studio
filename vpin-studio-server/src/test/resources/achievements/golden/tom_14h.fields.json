@@ -1,0 +1,722 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Extra Balls",
+  "section": ""
+ },
+ {
+  "label": "RECENT LEFT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT CENT. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT RGHT. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT 4TH SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT PAID CRED",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT SERV. CRED",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL LEFT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL CENTR. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL RIGHT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL 4TH SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL PAID CRED.",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL SERV. CRED.",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "Games Started",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Total Plays",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Total Free Plays",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Replay Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Special Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Match Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "H.S.T.D. Credits",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Tickets Awarded",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Left Drains",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Right Drains",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Play Time",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Machine On",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Tilts",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Replay 1 Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Replay 2 Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Replay 3 Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Replay 4 Awards",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "1 Player Games",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "2 Player Games",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "3 Player Games",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "4 Player Games",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "H.S.T.D. Reset Count",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Burn-in Time",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "1st Replay Level",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Left Flipper",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Right Flipper",
+  "section": "B.3 Standard Audits"
+ },
+ {
+  "label": "Buy-In Ex. Balls",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Multiball",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Illusions",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Basement",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Theatre",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Balls Saved",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Balls Vanished",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Tiger Multiball",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Locks Lit",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Grand Finale",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Midnight",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "1 Buy-In Games",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "2 Buy-In Games",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "3 Buy-In Games",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": ">=4 Buy-In Games",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Trunk Failures",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Left Drain Save",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Left Drain Miss",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Right Drain Save",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Magnet Diverts",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Trunk Ball Drain",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Trunk Plain Hits",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Trunk Magnet Hits",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Trunk Lamp Hits",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Trunk Scoop Hits",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Got to 6 PM",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Secret Locks",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "Pinball Cheats",
+  "section": "B.4 Feature Audits"
+ },
+ {
+  "label": "0-19M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "20-49M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "50-99M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "100-249M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "250-499M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "500-599M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "600-699M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "700-799M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "800-899M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "900-999M Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "1-1.24B Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "1.25-1.49B Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Over 1.5B Score",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 0.0-1.0M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 1.0-1.5M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 1.5-2.0M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 2.0-2.5M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 2.5-3.0M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 3.0-3.5M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 3.5-4.0M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 4-5M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 5-6M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 6-8M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 8-10M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time 10-15M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "Game Time > 15M",
+  "section": "B.5 Histograms"
+ },
+ {
+  "label": "TOTALS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "CLOCK LAST SET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "AUDITS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "COINS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "FACTORY SETTING",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST GAME START",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST REPLAY",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST HSTD RESET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "CHAMPION RESET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST PRINTOUT",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST SERV. CRED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "Balls Per Game",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tilt Warnings",
+  "section": "adjustments"
+ },
+ {
+  "label": "Max E.B. Count",
+  "section": "adjustments"
+ },
+ {
+  "label": "Max E.B. Per B.I.P.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay System",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Percent",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Start",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Levels",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay L1",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay L2",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay L3",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay L4",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Boost",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Special Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Match Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Ex. Ball Ticket",
+  "section": "adjustments"
+ },
+ {
+  "label": "Max. Tick./Player",
+  "section": "adjustments"
+ },
+ {
+  "label": "Match Feature",
+  "section": "adjustments"
+ },
+ {
+  "label": "Custom Message",
+  "section": "adjustments"
+ },
+ {
+  "label": "Language",
+  "section": "adjustments"
+ },
+ {
+  "label": "Clock Style",
+  "section": "adjustments"
+ },
+ {
+  "label": "Date Style",
+  "section": "adjustments"
+ },
+ {
+  "label": "Show Time + Date",
+  "section": "adjustments"
+ },
+ {
+  "label": "Allow Dim. Illum.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tournament Play",
+  "section": "adjustments"
+ },
+ {
+  "label": "Euro. Scr. Format",
+  "section": "adjustments"
+ },
+ {
+  "label": "Min. Vol. Override",
+  "section": "adjustments"
+ },
+ {
+  "label": "GI Power Saver",
+  "section": "adjustments"
+ },
+ {
+  "label": "Power Save Level",
+  "section": "adjustments"
+ },
+ {
+  "label": "Ticket Exp. Board",
+  "section": "adjustments"
+ },
+ {
+  "label": "No Bonus Flips",
+  "section": "adjustments"
+ },
+ {
+  "label": "Game Restart",
+  "section": "adjustments"
+ },
+ {
+  "label": "Buy Extra Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "Buy-In Count",
+  "section": "adjustments"
+ },
+ {
+  "label": "Attract Sounds",
+  "section": "adjustments"
+ },
+ {
+  "label": "Ball Save",
+  "section": "adjustments"
+ },
+ {
+  "label": "Default Buy-In HS1",
+  "section": "adjustments"
+ },
+ {
+  "label": "Default Buy-In HS2",
+  "section": "adjustments"
+ },
+ {
+  "label": "Default Buy-In HS3",
+  "section": "adjustments"
+ },
+ {
+  "label": "Default Buy-In HS4",
+  "section": "adjustments"
+ },
+ {
+  "label": "% Spell Magic",
+  "section": "adjustments"
+ },
+ {
+  "label": "% Lite Extra Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "% Lite Special",
+  "section": "adjustments"
+ },
+ {
+  "label": "Trunk Ball Save",
+  "section": "adjustments"
+ },
+ {
+  "label": "Hocus Pocus",
+  "section": "adjustments"
+ },
+ {
+  "label": "Trunk Motor",
+  "section": "adjustments"
+ },
+ {
+  "label": "German Speech",
+  "section": "adjustments"
+ },
+ {
+  "label": "'MAGIC' memory",
+  "section": "adjustments"
+ },
+ {
+  "label": "Difficult Lock",
+  "section": "adjustments"
+ },
+ {
+  "label": "Clock Start Hour",
+  "section": "adjustments"
+ },
+ {
+  "label": "Mode Start Hits",
+  "section": "adjustments"
+ },
+ {
+  "label": "Give Magic Letter",
+  "section": "adjustments"
+ },
+ {
+  "label": "Grand Champion Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Grand Champion Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "BUY-IN SCORE #1 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #1 Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #2 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #2 Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #3 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #3 Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #4 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "BUY-IN SCORE #4 Score",
+  "section": "mode_champions"
+ }
+]

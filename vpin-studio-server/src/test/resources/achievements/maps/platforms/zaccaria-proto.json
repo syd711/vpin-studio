@@ -1,0 +1,37 @@
+{
+  "_notes": "Zaccaria Prototype games, 1MHz National Semiconductor SC/MP ISP-8A 500D",
+  "cpu": "SCAMP",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "NVRAM",
+      "address": "0x0D00",
+      "size": "0x100",
+      "type": "nvram"
+    },
+    {
+      "label": "ROM 1",
+      "address": "0x0000",
+      "size": "0x400",
+      "type": "rom"
+    },
+    {
+      "label": "ROM 2",
+      "address": "0x0400",
+      "size": "0x400",
+      "type": "rom"
+    },
+    {
+      "label": "ROM 3",
+      "address": "0x0800",
+      "size": "0x400",
+      "type": "rom"
+    },
+    {
+      "label": "ROM 4",
+      "address": "0x1400",
+      "size": "0x400",
+      "type": "rom"
+    }
+  ]
+}

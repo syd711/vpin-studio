@@ -1,0 +1,53 @@
+{
+  "global": {
+    "__global__": [
+      {
+        "title": "Global – Games Started: 50 Total",
+        "ts": "2026-03-01T20:15:00+00:00",
+        "origin": "global_achievements"
+      },
+      {
+        "title": "Bally Rookie",
+        "ts": "2026-03-02T21:00:00+00:00",
+        "origin": "global_achievements"
+      }
+    ]
+  },
+  "session": {
+    "afm_113b": [
+      {
+        "title": "afm_113b – Ramps Made: 5",
+        "ts": "2026-03-01T20:15:00+00:00",
+        "vps_id": "abc123XYZ"
+      },
+      {
+        "title": "afm_113b – Play 5 Minutes",
+        "ts": "2026-03-01T20:15:00+00:00"
+      }
+    ],
+    "tz_94h": [
+      {
+        "title": "tz_94h – Play 10 Minutes",
+        "ts": "2026-03-05T01:30:00+00:00"
+      }
+    ]
+  },
+  "roms_played": [
+    "afm_113b",
+    "tz_94h",
+    "mm_109c"
+  ],
+  "badges": [
+    "first_steps",
+    "night_owl"
+  ],
+  "selected_badge": "night_owl",
+  "global_tally": {
+    "Global – Games Started: 100 Total": {
+      "progress": 61,
+      "entries": []
+    }
+  },
+  "cloud_upload_done": true,
+  "_signature": "15f7f41e4c812b1b058eaa801249d10d55a029898f0d2e5e3e32e2f840752370"
+}

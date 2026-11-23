@@ -198,6 +198,13 @@
                         <Label styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_every_time_a_highscore_is_2" textFill="WHITE" wrapText="true" />
                      </children>
                   </VBox>
+                  <Label styleClass="preference-subtitle" text="%pref.notifications.achievements_notifications" wrapText="true">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="achievementsCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="%pref.notifications.achievements_unlocked" />
+                  <Label styleClass="checkbox-description" text="%pref.notifications.shows_a_notification_for_achievements" textFill="WHITE" wrapText="true" />
                   <Label styleClass="preference-subtitle" text="%pref.notifications.in_game_recorder_notifications" wrapText="true">
                      <VBox.margin>
                         <Insets top="12.0" />

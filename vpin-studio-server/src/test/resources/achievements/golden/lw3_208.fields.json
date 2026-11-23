@@ -1,0 +1,42 @@
+[
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "First Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fifth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Sixth Initials",
+  "section": "high_scores"
+ }
+]

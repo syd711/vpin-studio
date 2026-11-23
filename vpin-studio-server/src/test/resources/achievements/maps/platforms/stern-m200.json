@@ -1,0 +1,43 @@
+{
+  "_notes": "Similar to bally-stern-6800, but stores all 8 bits in NVRAM",
+  "cpu": "6800",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x200",
+      "size": "0x100",
+      "type": "nvram"
+    },
+    {
+      "label": "ROM U1",
+      "address": "0x1000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U5",
+      "address": "0x1800",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U2",
+      "address": "0x5000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U6",
+      "address": "0x5800",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

@@ -1,0 +1,1749 @@
+{
+  "_notes": [
+    "Compiled by Tom Collins using template-wpc.json.",
+    "WPC 50024, SYS 3.30 REV 0.4 (rs_la4, rs_lx4)",
+    "WPC 50024, SYS 3.34 REV 0.5 (rs_la5, rs_lx5)",
+    "WPC 50024, SYS 3.49 REV 0.6 (rs_l6)",
+    "WPC 50024, SYS 3.49 REV 0.7 (rs_l6c)",
+    "WPC 50024, SYS 3.49 REV 7.0 (rs_70)",
+    "2025-07-07 Tom Collins added automated audits",
+    "unknown location for audit 'B.4 30 BLAST FOR E.B.', single-byte value"
+  ],
+  "_fileformat": 0.9,
+  "_metadata": {
+    "version": 13,
+    "copyright": "Copyright (C) 2025 by Tom Collins <tom@tomlogic.com>",
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "platform": "williams-wpc-12K",
+    "roms": [
+      "rs_70",
+      "rs_l6"
+    ],
+    "validation": {
+      "checksum": [
+        {
+          "label": "Audits {#}",
+          "repeat": {
+            "count": 119,
+            "step": 6
+          },
+          "start": "0x1811",
+          "length": 6,
+          "complement": true
+        },
+        {
+          "label": "Custom Message (2x32)",
+          "start": "0x177C",
+          "end": "0x17FF",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Adjustments",
+          "start": "0x1B1D",
+          "end": "0x1BFA",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Timestamps",
+          "start": "0x1BFD",
+          "end": "0x1C60",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "High Scores",
+          "start": "0x1C61",
+          "end": "0x1C86",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Grand Champion",
+          "start": "0x1C87",
+          "end": "0x1C91",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "HSTD Reset",
+          "start": "0x1C92",
+          "end": "0x1C97",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Credits",
+          "start": "0x1C98",
+          "end": "0x1CA1",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Volume",
+          "start": "0x1CA2",
+          "end": "0x1CA4",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "start": "0x1CA5",
+          "end": "0x1CAF",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "start": "0x1CB0",
+          "end": "0x1D85",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Custom Message (3x32)",
+          "start": "0x1D86",
+          "end": "0x1E48",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Custom Message (2x32)",
+          "start": "0x1E49",
+          "end": "0x1EC5",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Mode Champions",
+          "start": "0x1EC6",
+          "end": "0x1EEB",
+          "bits": 16,
+          "complement": true
+        }
+      ]
+    }
+  },
+  "last_played": {
+    "start": 6144,
+    "encoding": "wpc_rtc",
+    "length": 7
+  },
+  "game_state": {
+    "player_count": {
+      "label": "Players",
+      "start": 5913,
+      "encoding": "int"
+    },
+    "scores": [
+      {
+        "label": "Player 1",
+        "start": 5792,
+        "encoding": "bcd",
+        "length": 6
+      },
+      {
+        "label": "Player 2",
+        "start": 5799,
+        "encoding": "bcd",
+        "length": 6
+      },
+      {
+        "label": "Player 3",
+        "start": 5806,
+        "encoding": "bcd",
+        "length": 6
+      },
+      {
+        "label": "Player 4",
+        "start": 5813,
+        "encoding": "bcd",
+        "length": 6
+      }
+    ],
+    "game_id": {
+      "label": "WPC Game ID",
+      "start": 6156,
+      "encoding": "ch",
+      "length": 5
+    },
+    "credits": {
+      "_notes": "1-byte credits followed by 6 bytes encoding partial/bonus credits",
+      "label": "Credits",
+      "start": 7320,
+      "encoding": "int"
+    },
+    "volume": {
+      "label": "Volume",
+      "start": 7330,
+      "encoding": "int",
+      "min": 0,
+      "max": 31,
+      "special_values": {
+        "255": "n/a"
+      }
+    },
+    "replay": {
+      "label": "Replay",
+      "start": 7354,
+      "encoding": "bcd",
+      "length": 2,
+      "scale": 1000000
+    },
+    "game_over": {
+      "label": "Game Over",
+      "start": 141,
+      "encoding": "bool"
+    },
+    "current_player": {
+      "label": "Current Player",
+      "start": 946,
+      "encoding": "int"
+    },
+    "current_ball": {
+      "label": "Ball",
+      "start": 947,
+      "encoding": "int"
+    },
+    "extra_balls": {
+      "label": "Extra Balls",
+      "start": 948,
+      "encoding": "int"
+    },
+    "eb_on_this_ball": {
+      "label": "EBs this Ball",
+      "start": 949,
+      "encoding": "int"
+    },
+    "ball_count": {
+      "label": "Ball Count",
+      "start": 6944,
+      "encoding": "int"
+    },
+    "max_credits": {
+      "label": "Maximum Credits",
+      "start": 7068,
+      "encoding": "int"
+    },
+    "free_play": {
+      "label": "Free Play",
+      "start": 7070,
+      "encoding": "bool"
+    }
+  },
+  "high_scores": [
+    {
+      "label": "Grand Champion",
+      "short_label": "GC",
+      "initials": {
+        "start": 7303,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7306,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "First Place",
+      "short_label": "1st",
+      "initials": {
+        "start": 7265,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7268,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "Second Place",
+      "short_label": "2nd",
+      "initials": {
+        "start": 7274,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7277,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "Third Place",
+      "short_label": "3rd",
+      "initials": {
+        "start": 7283,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7286,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "Fourth Place",
+      "short_label": "4th",
+      "initials": {
+        "start": 7292,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7295,
+        "encoding": "bcd",
+        "length": 6
+      }
+    }
+  ],
+  "mode_champions": [
+    {
+      "label": "Today's HS #1",
+      "initials": {
+        "start": 7878,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7881,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "Today's HS #2",
+      "initials": {
+        "start": 7887,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7890,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "Today's HS #3",
+      "initials": {
+        "start": 7896,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7899,
+        "encoding": "bcd",
+        "length": 6
+      }
+    },
+    {
+      "label": "Today's HS #4",
+      "initials": {
+        "start": 7905,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7908,
+        "encoding": "bcd",
+        "length": 6
+      }
+    }
+  ],
+  "audits": {
+    "B.2 EARNINGS AUDS.": {
+      "02": {
+        "label": "RECENT LEFT SLOT",
+        "start": 6203,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "RECENT CENT. SLOT",
+        "start": 6209,
+        "encoding": "int",
+        "length": 3
+      },
+      "04": {
+        "label": "RECENT RGHT. SLOT",
+        "start": 6215,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "RECENT 4TH SLOT",
+        "start": 6221,
+        "encoding": "int",
+        "length": 3
+      },
+      "06": {
+        "label": "RECENT PAID CRED",
+        "start": 6227,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "RECENT SERV. CRED",
+        "start": 6233,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "TOTAL LEFT SLOT",
+        "start": 6167,
+        "encoding": "int",
+        "length": 3
+      },
+      "10": {
+        "label": "TOTAL CENTR. SLOT",
+        "start": 6173,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "TOTAL RIGHT SLOT",
+        "start": 6179,
+        "encoding": "int",
+        "length": 3
+      },
+      "12": {
+        "label": "TOTAL 4TH SLOT",
+        "start": 6185,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "TOTAL PAID CRED.",
+        "start": 6191,
+        "encoding": "int",
+        "length": 3
+      },
+      "14": {
+        "label": "TOTAL SERV. CRED.",
+        "start": 6197,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.3 STANDARD AUDS.": {
+      "01": {
+        "label": "GAMES STARTED",
+        "start": 6275,
+        "encoding": "int",
+        "length": 3
+      },
+      "02": {
+        "label": "TOTAL PLAYS",
+        "start": 6281,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "TOTAL FREE PLAYS",
+        "start": 6287,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "REPLAY AWARDS",
+        "start": 6293,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "SPECIAL AWARDS",
+        "start": 6299,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "MATCH AWARDS",
+        "start": 6305,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "H.S.T.D. CREDITS",
+        "start": 6311,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "EXTRA BALLS",
+        "start": 6323,
+        "encoding": "int",
+        "length": 3
+      },
+      "15": {
+        "label": "TICKETS AWARDED",
+        "start": 6317,
+        "encoding": "int",
+        "length": 3
+      },
+      "17": {
+        "label": "LEFT DRAINS",
+        "start": 6419,
+        "encoding": "int",
+        "length": 3
+      },
+      "18": {
+        "label": "RIGHT DRAINS",
+        "start": 6425,
+        "encoding": "int",
+        "length": 3
+      },
+      "21": {
+        "label": "PLAY TIME",
+        "start": 6329,
+        "encoding": "int",
+        "length": 3,
+        "units": "seconds",
+        "scale": 10
+      },
+      "22": {
+        "label": "MINUTES ON",
+        "start": 6335,
+        "encoding": "int",
+        "length": 3,
+        "units": "minutes"
+      },
+      "23": {
+        "label": "BALLS PLAYED",
+        "start": 6341,
+        "encoding": "int",
+        "length": 3
+      },
+      "24": {
+        "label": "TILTS",
+        "start": 6347,
+        "encoding": "int",
+        "length": 3
+      },
+      "25": {
+        "label": "REPLAY 1 AWARDS",
+        "start": 6353,
+        "encoding": "int",
+        "length": 3
+      },
+      "26": {
+        "label": "REPLAY 2 AWARDS",
+        "start": 6359,
+        "encoding": "int",
+        "length": 3
+      },
+      "27": {
+        "label": "REPLAY 3 AWARDS",
+        "start": 6365,
+        "encoding": "int",
+        "length": 3
+      },
+      "28": {
+        "label": "REPLAY 4 AWARDS",
+        "start": 6371,
+        "encoding": "int",
+        "length": 3
+      },
+      "29": {
+        "label": "1 PLAYER GAMES",
+        "start": 6377,
+        "encoding": "int",
+        "length": 3
+      },
+      "30": {
+        "label": "2 PLAYER GAMES",
+        "start": 6383,
+        "encoding": "int",
+        "length": 3
+      },
+      "31": {
+        "label": "3 PLAYER GAMES",
+        "start": 6389,
+        "encoding": "int",
+        "length": 3
+      },
+      "32": {
+        "label": "4 PLAYER GAMES",
+        "start": 6395,
+        "encoding": "int",
+        "length": 3
+      },
+      "33": {
+        "label": "H.S.T.D. RESET COUNT",
+        "start": 7316,
+        "encoding": "int",
+        "length": 2
+      },
+      "34": {
+        "label": "BURN-IN TIME",
+        "start": 6413,
+        "encoding": "int",
+        "length": 3,
+        "units": "seconds",
+        "scale": 10
+      },
+      "36": {
+        "label": "LEFT FLIPPER",
+        "start": 6653,
+        "encoding": "int",
+        "length": 3
+      },
+      "37": {
+        "label": "RIGHT FLIPPER",
+        "start": 6659,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.4 FEATURE AUDS.": {
+      "01": {
+        "label": "BUY-IN EX. BALLS",
+        "start": 6677,
+        "encoding": "int",
+        "length": 3
+      },
+      "02": {
+        "label": "MULTIBALLS",
+        "start": 6725,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "CITIES STARTED",
+        "start": 6791,
+        "encoding": "int",
+        "length": 3
+      },
+      "04": {
+        "label": "F. ROCKS STARTED",
+        "start": 6809,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "COLLECTED WHEEL",
+        "start": 6785,
+        "encoding": "int",
+        "length": 3
+      },
+      "06": {
+        "label": "MADE SKILL",
+        "start": 6707,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "LOCK 1",
+        "start": 6713,
+        "encoding": "int",
+        "length": 3
+      },
+      "08": {
+        "label": "LOCK 2",
+        "start": 6719,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "1st MULTIBALLS",
+        "start": 6731,
+        "encoding": "int",
+        "length": 3
+      },
+      "10": {
+        "label": "2nd MULTIBALLS",
+        "start": 6737,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "JACKPOTS",
+        "start": 6743,
+        "encoding": "int",
+        "length": 3
+      },
+      "12": {
+        "label": "REMATCH",
+        "start": 6749,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "M-BALL RESTART",
+        "start": 6755,
+        "encoding": "int",
+        "length": 3
+      },
+      "14": {
+        "label": "BOB'S VISITS",
+        "start": 6761,
+        "encoding": "int",
+        "length": 3
+      },
+      "15": {
+        "label": "BOB'S BOUGHT",
+        "start": 6767,
+        "encoding": "int",
+        "length": 3
+      },
+      "16": {
+        "label": "BRIDGE OUTS",
+        "start": 6773,
+        "encoding": "int",
+        "length": 3
+      },
+      "17": {
+        "label": "2X PLUS BLAST",
+        "start": 6779,
+        "encoding": "int",
+        "length": 3
+      },
+      "18": {
+        "label": "CITIES LIT",
+        "start": 6797,
+        "encoding": "int",
+        "length": 3
+      },
+      "19": {
+        "label": "F. ROCKS LIT",
+        "start": 6803,
+        "encoding": "int",
+        "length": 3
+      },
+      "20": {
+        "label": "TODAY'S H.S.",
+        "start": 6815,
+        "encoding": "int",
+        "length": 3
+      },
+      "21": {
+        "label": "BALLS SAVED",
+        "start": 6821,
+        "encoding": "int",
+        "length": 3
+      },
+      "22": {
+        "label": "WEST COAST CITY",
+        "start": 6827,
+        "encoding": "int",
+        "length": 3
+      },
+      "23": {
+        "label": "SUPER PAYDAY",
+        "start": 6833,
+        "encoding": "int",
+        "length": 3
+      },
+      "24": {
+        "label": "BLAST E.B. LIT",
+        "start": 6839,
+        "encoding": "int",
+        "length": 3
+      },
+      "25": {
+        "label": "BRIDGE E.B. LIT",
+        "start": 6845,
+        "encoding": "int",
+        "length": 3
+      },
+      "26": {
+        "label": "WHEEL E.B. LIT",
+        "start": 6851,
+        "encoding": "int",
+        "length": 3
+      },
+      "27": {
+        "label": "F. ROCKS E.B. LIT",
+        "start": 6857,
+        "encoding": "int",
+        "length": 3
+      },
+      "28": {
+        "label": "BOB'S E.B. LIT",
+        "start": 6863,
+        "encoding": "int",
+        "length": 3
+      },
+      "29": {
+        "label": "BOB'S EXTRA BALL",
+        "start": 6869,
+        "encoding": "int",
+        "length": 3
+      },
+      "32": {
+        "label": "1 BUY-IN GAMES",
+        "start": 6683,
+        "encoding": "int",
+        "length": 3
+      },
+      "33": {
+        "label": "2 BUY-IN GAMES",
+        "start": 6689,
+        "encoding": "int",
+        "length": 3
+      },
+      "34": {
+        "label": "3 BUY-IN GAMES",
+        "start": 6695,
+        "encoding": "int",
+        "length": 3
+      },
+      "35": {
+        "label": ">=4 BUY-IN GAMES",
+        "start": 6701,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.5 HISTOGRAMS": {
+      "01": {
+        "label": "0-19 M. SCORE",
+        "start": 6431,
+        "encoding": "int",
+        "length": 3
+      },
+      "02": {
+        "label": "20-49 M. SCORE",
+        "start": 6437,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "50-99 M. SCORE",
+        "start": 6443,
+        "encoding": "int",
+        "length": 3
+      },
+      "04": {
+        "label": "100-249 M. SCORE",
+        "start": 6449,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "250-499 M. SCORE",
+        "start": 6455,
+        "encoding": "int",
+        "length": 3
+      },
+      "06": {
+        "label": "500-599 M. SCORE",
+        "start": 6461,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "600-699 M. SCORE",
+        "start": 6467,
+        "encoding": "int",
+        "length": 3
+      },
+      "08": {
+        "label": "700-799 M. SCORE",
+        "start": 6473,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "800-899 M. SCORE",
+        "start": 6479,
+        "encoding": "int",
+        "length": 3
+      },
+      "10": {
+        "label": "900-999 M. SCORE",
+        "start": 6485,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "1-1.24 B. SCORE",
+        "start": 6491,
+        "encoding": "int",
+        "length": 3
+      },
+      "12": {
+        "label": "1.25-1.49 B. SCORE",
+        "start": 6497,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "OVER 1.5 BILLION",
+        "start": 6503,
+        "encoding": "int",
+        "length": 3
+      },
+      "14": {
+        "label": "GAME TIME 0.0-1.0M",
+        "start": 6509,
+        "encoding": "int",
+        "length": 3
+      },
+      "15": {
+        "label": "GAME TIME 1.0-1.5M",
+        "start": 6515,
+        "encoding": "int",
+        "length": 3
+      },
+      "16": {
+        "label": "GAME TIME 1.5-2.0M",
+        "start": 6521,
+        "encoding": "int",
+        "length": 3
+      },
+      "17": {
+        "label": "GAME TIME 2.0-2.5M",
+        "start": 6527,
+        "encoding": "int",
+        "length": 3
+      },
+      "18": {
+        "label": "GAME TIME 2.5-3.0M",
+        "start": 6533,
+        "encoding": "int",
+        "length": 3
+      },
+      "19": {
+        "label": "GAME TIME 3.0-3.5M",
+        "start": 6539,
+        "encoding": "int",
+        "length": 3
+      },
+      "20": {
+        "label": "GAME TIME 3.5-4.0M",
+        "start": 6545,
+        "encoding": "int",
+        "length": 3
+      },
+      "21": {
+        "label": "GAME TIME 4-5 M.",
+        "start": 6551,
+        "encoding": "int",
+        "length": 3
+      },
+      "22": {
+        "label": "GAME TIME 5-6 M.",
+        "start": 6557,
+        "encoding": "int",
+        "length": 3
+      },
+      "23": {
+        "label": "GAME TIME 6-8 M.",
+        "start": 6563,
+        "encoding": "int",
+        "length": 3
+      },
+      "24": {
+        "label": "GAME TIME 8-10 M",
+        "start": 6569,
+        "encoding": "int",
+        "length": 3
+      },
+      "25": {
+        "label": "GAME TIME 10-15M",
+        "start": 6575,
+        "encoding": "int",
+        "length": 3
+      },
+      "26": {
+        "label": "GAME TIME > 15M",
+        "start": 6581,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.6 TIME-STAMPS": {
+      "02": {
+        "label": "TOTALS CLEARED",
+        "start": 7165,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "03": {
+        "label": "CLOCK LAST SET",
+        "start": 7172,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "04": {
+        "label": "AUDITS CLEARED",
+        "start": 7179,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "05": {
+        "label": "COINS CLEARED",
+        "start": 7186,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "06": {
+        "label": "FACTORY SETTING",
+        "start": 7193,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "07": {
+        "label": "LAST GAME START",
+        "start": 7200,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "08": {
+        "label": "LAST REPLAY",
+        "start": 7207,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "09": {
+        "label": "LAST HSTD RESET",
+        "start": 7214,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "10": {
+        "label": "CHAMPION RESET",
+        "start": 7221,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "11": {
+        "label": "LAST PRINTOUT",
+        "start": 7228,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "12": {
+        "label": "LAST SERV. CRED",
+        "start": 7235,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "13": {
+        "label": "TODAY H.S. RESET",
+        "start": 7242,
+        "encoding": "wpc_rtc",
+        "length": 7
+      }
+    }
+  },
+  "adjustments": {
+    "A.1 Standard Adjustments": {
+      "01": {
+        "label": "Balls Per Game",
+        "start": 6943,
+        "encoding": "int",
+        "length": 2,
+        "min": 1,
+        "max": 10,
+        "default": 3
+      },
+      "02": {
+        "label": "Tilt Warnings",
+        "start": 6945,
+        "encoding": "int",
+        "length": 2,
+        "min": 1,
+        "max": 10,
+        "default": 3
+      },
+      "03": {
+        "label": "Max. E.B. Count",
+        "start": 6947,
+        "encoding": "int",
+        "length": 2,
+        "min": 0,
+        "max": 10,
+        "default": 4,
+        "special_values": {
+          "0": "NO EX. BALL"
+        }
+      },
+      "04": {
+        "label": "Max E.B. Per B.I.P.",
+        "start": 6949,
+        "encoding": "int",
+        "length": 2,
+        "min": 0,
+        "max": 10,
+        "default": 0,
+        "special_values": {
+          "0": "OFF"
+        }
+      },
+      "05": {
+        "label": "Replay System",
+        "start": 6952,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Auto %",
+          "Fixed"
+        ]
+      },
+      "06": {
+        "label": "Replay Percent",
+        "start": 6953,
+        "encoding": "int",
+        "length": 2,
+        "min": 5,
+        "max": 50,
+        "default": 10,
+        "suffix": "%"
+      },
+      "07": {
+        "label": "Replay Start",
+        "start": 6955,
+        "encoding": "bcd",
+        "length": 2,
+        "min": 350,
+        "max": 1400,
+        "default": 500,
+        "scale": 1000000
+      },
+      "08": {
+        "label": "Replay Levels",
+        "start": 6957,
+        "encoding": "int",
+        "length": 2,
+        "min": 1,
+        "max": 4,
+        "default": 1
+      },
+      "09": {
+        "label": "Replay Level 1",
+        "start": 6959,
+        "encoding": "bcd",
+        "length": 2,
+        "min": 0,
+        "max": 1400,
+        "default": 500,
+        "scale": 1000000,
+        "special_values": {
+          "0": "OFF"
+        }
+      },
+      "10": {
+        "label": "Replay Level 2",
+        "start": 6961,
+        "encoding": "bcd",
+        "length": 2,
+        "min": 0,
+        "max": 1400,
+        "default": 0,
+        "scale": 1000000,
+        "special_values": {
+          "0": "OFF"
+        }
+      },
+      "11": {
+        "label": "Replay Level 3",
+        "start": 6963,
+        "encoding": "bcd",
+        "length": 2,
+        "min": 0,
+        "max": 1400,
+        "default": 0,
+        "scale": 1000000,
+        "special_values": {
+          "0": "OFF"
+        }
+      },
+      "12": {
+        "label": "Replay Level 4",
+        "start": 6965,
+        "encoding": "bcd",
+        "length": 2,
+        "min": 0,
+        "max": 1400,
+        "default": 0,
+        "scale": 1000000,
+        "special_values": {
+          "0": "OFF"
+        }
+      },
+      "13": {
+        "label": "Replay Boost",
+        "start": 6967,
+        "encoding": "bcd",
+        "length": 2,
+        "min": 0,
+        "max": 250,
+        "default": 100,
+        "scale": 1000000
+      },
+      "14": {
+        "label": "Replay Award",
+        "start": 6970,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Credit",
+          "Ticket",
+          "Extra Ball",
+          "Audit"
+        ]
+      },
+      "15": {
+        "label": "Special Award",
+        "start": 6972,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Credit",
+          "Ticket",
+          "Extra Ball",
+          "Points"
+        ]
+      },
+      "16": {
+        "label": "Match Award",
+        "start": 6974,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Credit",
+          "Ticket"
+        ]
+      },
+      "17": {
+        "label": "Ex. Ball Ticket",
+        "start": 6976,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "18": {
+        "label": "Max. Tick./Player",
+        "start": 6977,
+        "encoding": "int",
+        "length": 2,
+        "min": 0,
+        "max": 100,
+        "default": 25
+      },
+      "19": {
+        "label": "Match Feature",
+        "start": 6979,
+        "encoding": "int",
+        "length": 2,
+        "min": 0,
+        "max": 50,
+        "default": 0,
+        "suffix": "%",
+        "special_values": {
+          "0": "OFF"
+        }
+      },
+      "20": {
+        "label": "Custom Message",
+        "start": 6982,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "21": {
+        "label": "Language",
+        "start": 6984,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "English"
+        ]
+      },
+      "22": {
+        "label": "Clock Style",
+        "start": 6986,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "AM / PM",
+          "24 Hour"
+        ]
+      },
+      "23": {
+        "label": "Date Style",
+        "start": 6988,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Mmm. DD, YY",
+          "DD Mmm. YY"
+        ]
+      },
+      "24": {
+        "label": "Show Time + Date",
+        "start": 6990,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "25": {
+        "label": "Allow Dim Illum.",
+        "start": 6992,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "26": {
+        "label": "Tournament Play",
+        "start": 6994,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "27": {
+        "label": "Euro. Scr. Format",
+        "start": 6996,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "28": {
+        "label": "Min. Vol. Override",
+        "start": 6998,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "29": {
+        "label": "GI Power Saver",
+        "start": 6999,
+        "encoding": "int",
+        "length": 2,
+        "min": 1,
+        "max": 60,
+        "default": 15,
+        "suffix": " MINUTES",
+        "special_values": {
+          "1": "OFF"
+        }
+      },
+      "30": {
+        "label": "Power Save Level",
+        "start": 7001,
+        "encoding": "int",
+        "length": 2,
+        "min": 4,
+        "max": 7,
+        "default": 5
+      },
+      "31": {
+        "label": "Ticket Exp. Board",
+        "start": 7004,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "32": {
+        "label": "No Bonus Flips",
+        "start": 7006,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "33": {
+        "label": "Game Re-Start",
+        "start": 7008,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Never",
+          "Slow",
+          "Instantly"
+        ]
+      }
+    },
+    "A.2 Feature Adjustments": {
+      "01": {
+        "label": "Blink Eyes",
+        "start": 7110,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "02": {
+        "label": "Special Percent",
+        "start": 7111,
+        "length": 2,
+        "encoding": "int",
+        "min": 5,
+        "max": 15,
+        "default": 8,
+        "suffix": "%"
+      },
+      "03": {
+        "label": "Extraball Percnt",
+        "start": 7113,
+        "length": 2,
+        "encoding": "int",
+        "min": 5,
+        "max": 35,
+        "default": 20,
+        "suffix": "%"
+      },
+      "04": {
+        "label": "Extraball Memory",
+        "start": 7116,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "05": {
+        "label": "Buy Extra Ball",
+        "start": 7118,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Off",
+          "1/2 Cred.",
+          "n/a",
+          "1 Credit"
+        ]
+      },
+      "06": {
+        "label": "Buy In Count",
+        "start": 7119,
+        "length": 2,
+        "encoding": "int",
+        "min": 1,
+        "max": 7,
+        "default": 4,
+        "special_values": {
+          "7": "Unlimited"
+        }
+      },
+      "07": {
+        "label": "Attract Sounds",
+        "start": 7122,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "08": {
+        "label": "Starting Day",
+        "start": 7124,
+        "encoding": "enum",
+        "min": 1,
+        "max": 5,
+        "default": 1,
+        "values": [
+          "n/a",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ]
+      },
+      "09": {
+        "label": "Weeks To Lock 2",
+        "start": 7126,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "0 Weeks",
+          "1 Week"
+        ]
+      },
+      "10": {
+        "label": "Br.Outs For Wheel",
+        "start": 7128,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "0 Bridges",
+          "1 Bridge"
+        ]
+      },
+      "11": {
+        "label": "Skill Shot Award",
+        "start": 7130,
+        "encoding": "enum",
+        "default": 2,
+        "values": [
+          "Flying Lit",
+          "Start City",
+          "Souvenir"
+        ]
+      },
+      "12": {
+        "label": "Game Over Effect",
+        "start": 7132,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "13": {
+        "label": "Wheel Lamps Mem.",
+        "start": 7134,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "14": {
+        "label": "Wheel In Memory",
+        "start": 7136,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "No",
+          "Yes"
+        ]
+      },
+      "15": {
+        "label": "M. Between Cities",
+        "start": 7138,
+        "encoding": "enum",
+        "default": 3,
+        "values": [
+          "100 Miles",
+          "200 Miles",
+          "300 Miles",
+          "400 Miles",
+          "500 Miles",
+          "600 Miles",
+          "700 Miles",
+          "800 Miles",
+          "900 Miles",
+          "1000 Miles"
+        ]
+      },
+      "16": {
+        "label": "Longer Path",
+        "start": 7140,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "17": {
+        "label": "Ball Save Timer",
+        "start": 7142,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "18": {
+        "label": "Outlane Serving",
+        "start": 7144,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "19": {
+        "label": "Default E.B. Blast",
+        "start": 7146,
+        "encoding": "enum",
+        "default": 2,
+        "values": [
+          "EB Blast 5",
+          "EB Blast 6",
+          "EB Blast 7",
+          "EB Blast 8",
+          "EB Blast 9"
+        ]
+      },
+      "20": {
+        "label": "Disable \"Ted\"",
+        "start": 7148,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "21": {
+        "label": "Disable \"Red\"",
+        "start": 7150,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "22": {
+        "label": "Dis. L. Ramp Div.",
+        "start": 7152,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "23": {
+        "label": "Dis. R. Ramp Div.",
+        "start": 7154,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "24": {
+        "label": "Dis. L. Lower Div.",
+        "start": 7156,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      },
+      "25": {
+        "label": "Shaker Motor",
+        "start": 7158,
+        "encoding": "enum",
+        "default": 1,
+        "values": [
+          "Off",
+          "Normal",
+          "Soft"
+        ]
+      },
+      "26": {
+        "label": "Buyin Aft. W.Coast",
+        "start": 7160,
+        "encoding": "enum",
+        "default": 0,
+        "values": [
+          "Off",
+          "On"
+        ]
+      }
+    }
+  },
+  "checksum8": [
+    {
+      "start": 6161,
+      "end": 6874,
+      "groupings": 6,
+      "label": "Audits"
+    }
+  ],
+  "checksum16": [
+    {
+      "start": 6012,
+      "end": 6143,
+      "label": "Custom Message (2x32)"
+    },
+    {
+      "start": 6941,
+      "end": 7162,
+      "label": "Adjustments"
+    },
+    {
+      "start": 7165,
+      "end": 7264,
+      "label": "Timestamps"
+    },
+    {
+      "start": 7265,
+      "end": 7302,
+      "label": "High Scores"
+    },
+    {
+      "start": 7303,
+      "end": 7313,
+      "label": "Grand Champion"
+    },
+    {
+      "start": 7314,
+      "end": 7319,
+      "label": "HSTD Reset"
+    },
+    {
+      "start": 7320,
+      "end": 7329,
+      "label": "Credits"
+    },
+    {
+      "start": 7330,
+      "end": 7332,
+      "label": "Volume"
+    },
+    {
+      "start": 7333,
+      "end": 7343
+    },
+    {
+      "start": 7344,
+      "end": 7557
+    },
+    {
+      "start": 7558,
+      "end": 7752,
+      "label": "Custom Message (3x32)"
+    },
+    {
+      "start": 7753,
+      "end": 7877,
+      "label": "Custom Message (2x32)"
+    },
+    {
+      "start": 7878,
+      "end": 7915,
+      "label": "Mode Champions"
+    }
+  ]
+}

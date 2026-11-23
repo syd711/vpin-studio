@@ -97,6 +97,16 @@ public class Preferences {
 
   private String dofTesterSettings;
 
+  private String achievementsSettings;
+
+  public String getAchievementsSettings() {
+    return achievementsSettings;
+  }
+
+  public void setAchievementsSettings(String achievementsSettings) {
+    this.achievementsSettings = achievementsSettings;
+  }
+
   private String discordClientSettings;
 
   @Column(length = 1024)

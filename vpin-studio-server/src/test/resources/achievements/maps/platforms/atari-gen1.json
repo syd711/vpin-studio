@@ -1,0 +1,36 @@
+{
+  "_notes": [
+    "Atari Generation 1.",
+    "DIP switches 0x2000-0x200F, rotary replay switch 0x204C-204F."
+  ],
+  "cpu": "6800",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "_notes": "Hardware has sockets for 512 bytes; some games shipped with 256 bytes",
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x200",
+      "type": "ram"
+    },
+    {
+      "_notes": "Games don't have non-volatile RAM.  This 0-byte entry points to an unused memory area.",
+      "label": "NVRAM placeholder",
+      "address": "0x1000",
+      "size": 0,
+      "type": "nvram"
+    },
+    {
+      "label": "ROM E00",
+      "address": "0x7000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM E0",
+      "address": "0x7800",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

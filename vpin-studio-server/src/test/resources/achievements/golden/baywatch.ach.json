@@ -1,0 +1,52 @@
+{
+ "rules": [
+  {
+   "title": "baywatch – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "baywatch – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "baywatch – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "baywatch – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "baywatch – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "baywatch – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  }
+ ]
+}

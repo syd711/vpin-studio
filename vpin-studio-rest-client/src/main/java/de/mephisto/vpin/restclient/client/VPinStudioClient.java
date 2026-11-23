@@ -31,6 +31,7 @@ import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
+import de.mephisto.vpin.restclient.achievements.AchievementsServiceClient;
 import de.mephisto.vpin.restclient.notifications.NotificationsServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
@@ -104,6 +105,7 @@ public class VPinStudioClient {
   private final VPinMameServiceClient vPinMameServiceClient;
   private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
+  private final AchievementsServiceClient achievementsServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final NotificationsServiceClient notificationsServiceClient;
   private final PlayersServiceClient playersServiceClient;
@@ -161,6 +163,7 @@ public class VPinStudioClient {
     this.jobsServiceClient = new JobsServiceClient(this);
     this.vPinMameServiceClient = new VPinMameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
+    this.achievementsServiceClient = new AchievementsServiceClient(this);
     this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.notificationsServiceClient = new NotificationsServiceClient(this);
@@ -256,6 +259,10 @@ public class VPinStudioClient {
 
   public MediaConversionServiceClient getMediaConversionService() {
     return mediaConversionServiceClient;
+  }
+
+  public AchievementsServiceClient getAchievementsService() {
+    return achievementsServiceClient;
   }
 
   public ManiaServiceClient getManiaService() {

@@ -305,6 +305,60 @@ Derives the game-specific music subfolder from the stored asset paths:
 - `getMp3Files(Game)` — returns all `File` objects matching the stored asset patterns. Exact names use `File.exists()`; wildcard patterns use `Files.walk` + `FilenameUtils.wildcardMatch` on relativized paths.
 - `getMissingMp3Files(Game)` — same loop, collects patterns for which no matching file was found. Bogus patterns like `/*.mp3` (pure-variable paths with no literal prefix) are skipped.
 
+## Achievements
+
+Java port of the Python **VPX Achievement Watcher** (AW). The "Achievements" navigation item replaced the
+Dashboard. Player identity is the VPin Mania account; Firebase is only a one-time migration source.
+User docs: `documentation/achievements/README.md`.
+
+### Code locations
+
+- Server `server/achievements/`: `AchievementsService` (TableStatusChangeListener, session evaluation,
+  notifications), `AchievementsResource` (`/api/v1/achievements/...`), `AchievementsQueryService`,
+  `AchievementRuleStore`, `AchievementGameIndex`
+  - `nvram/` NvramAuditReader, RomMapResolver (exact → alias → romnames parent → family), MapFieldExtractor
+  - `rules/` AW-compatible rule model, RomRuleGenerator, RuleEvaluator; global rules bundled as
+    `achievements/global_achievements.json`
+  - `progression/` LevelCalculator, Badge/BadgeEvaluator, RarityTier, SessionHighlights
+  - `bundle/` release-bundled per-ROM rule sets (see release step below)
+  - `cloud/` AchievementsCloudService (sync queue to Mania, restore, rarity cache)
+  - `migration/` FirebaseLegacyClient (claim once, then read), LocalWatcherImporter, AchievementsMigrationService
+  - `scoreserver/` live tracking via the VPX 10.8.1 score-server plugin (WebSocket `ws://127.0.0.1:3131`),
+    VpxPluginInstaller
+  - `model/` JPA entities: AchievementUnlock, AchievementSession, AchievementPlayerState
+- REST client `restclient/achievements/` (AchievementsServiceClient, AchievementsSettings, DTOs);
+  setting key `PreferenceNames.ACHIEVEMENTS_SETTINGS`; per-player flag `Player.achievementsEnabled`
+- UI `ui/achievements/` (Overview/Tables/Badges/Leaderboards tabs, Played games + migration dialogs),
+  prefs `preferences/preference-achievements.fxml`; pause menu entry `commons/fx/pausemenu/AchievementsMenuItemController`
+- Mania backend: `C:\workspace-php\vpin-mania` (`AchievementService.php`, `AchievementController.php`, schema at
+  the end of `server/sql/create_schema.sql`); client `vpin-mania-rest-client` `AchievementClient` (≥ 2.1.0).
+  The UI reads Mania leaderboards directly via `Studio.maniaClient`; all writes go through the Studio server.
+- Plugin build: `.github/workflows/build-vpx-plugins.yml` + `.github/vpx-plugins/*.py` (pre-releases
+  `vpx-plugins-*`, never "latest" because the Studio updater uses releases/latest).
+
+### Design decisions
+
+- **Attribution:** every game is credited to all players with "Track achievements" on; no active-player concept.
+- **Tallies** are deltas since tracking started (no absolute audit sums); playtime comes from ALX.
+- **Multiplayer games** (player count > 1) skip per-ROM rules; global tallies still count. With live tracking
+  (opt-in, `liveTrackingEnabled`) single-player games are checked live from ball 2.
+- **Rule titles are the identity** and must stay AW-compatible (migration). Golden tests in
+  `src/test/resources/achievements/golden` guard RomRuleGenerator; rules only depend on the NVRAM map.
+- Players without a Mania account are tracked locally; unlocks upload once linked. Merged Mania players
+  share the union of unlocks.
+- Known AW bugs intentionally not ported (rarity badges, hot streak, night owl, tally over absolute audits).
+
+### Release step
+
+Before each release run `RuleBundleBuilder <pinmame-nvram-maps checkout> <commit>` from the repo root and
+commit the added files. It only adds ROMs; "held back" ROMs (whose current map would change their rules) are
+kept on purpose — changing them needs a deliberate rule migration.
+
+### Testing notes
+
+Spring tests (e.g. `AchievementsServiceIntegrationTest`) modify `testsystem/vpin-studio.db` and
+`testsystem/vPinball/PinUPSystem/PUPDatabase.db` — restore with `git checkout -- testsystem/`.
+
 ## Additional Resources
 
 - `README.md` - Project overview

@@ -1,0 +1,20 @@
+{
+  "_notes": [
+    "Capcom pinball hardware (1995-1996).",
+    "68000 CPU @ 10MHz, 16-bit data bus.",
+    "64KB NVRAM (DS1644 or similar) mapped on D0-D7 only (lower byte of 16-bit bus).",
+    "NVRAM CPU base address: 0x30000000.",
+    "Each CPU address is an even file offset: file_offset = cpu_addr - 0x30000000.",
+    "File size: 65582 bytes (0x10000 data bytes + 46 bytes PinMAME overhead)."
+  ],
+  "cpu": "68000",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "NVRAM",
+      "address": "0x30000000",
+      "size": "0x10000",
+      "type": "nvram"
+    }
+  ]
+}

@@ -1,0 +1,1600 @@
+{
+ "rules": [
+  {
+   "title": "mm_109c – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – BALL SAVES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – BALL SAVES: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TOTAL MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TOTAL MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – BALLS LOCKED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALLS LOCKED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – BALLS LOCKED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALLS LOCKED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. J.P.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. J.P.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. J.P.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. J.P.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. S.J.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. S.J.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. S.J.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. S.J.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE M.B. E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE M.B. E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE ATK. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE ATK. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE ATK. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE ATK. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE ATK. COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE ATK. COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE ATK. COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE ATK. COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE ATK. E.B.L.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE ATK. E.B.L.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CASTLE ATK. E.B.L.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CASTLE ATK. E.B.L.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 1st CASTLE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st CASTLE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 1st CASTLE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st CASTLE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 1st CASTLE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st CASTLE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 1st CASTLE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st CASTLE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 2nd CASTLE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd CASTLE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 2nd CASTLE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd CASTLE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 2nd CASTLE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd CASTLE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 2nd CASTLE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd CASTLE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 3rd CASTLE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd CASTLE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 3rd CASTLE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd CASTLE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 3rd CASTLE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd CASTLE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 3rd CASTLE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd CASTLE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 4th CASTLE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th CASTLE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 4th CASTLE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th CASTLE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 4th CASTLE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th CASTLE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 4th CASTLE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th CASTLE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 5th CASTLE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th CASTLE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 5th CASTLE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th CASTLE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 5th CASTLE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th CASTLE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 5th CASTLE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th CASTLE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 6th CASTLE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th CASTLE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 6th CASTLE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th CASTLE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 6th CASTLE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th CASTLE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 6th CASTLE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th CASTLE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLLS! LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLLS! LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLLS! LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLLS! LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLLS! START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLLS! START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLLS! START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLLS! START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLLS! COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLLS! COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLLS! COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLLS! COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLL BOMBS COLL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLL BOMBS COLL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLL BOMBS COLL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLL BOMBS COLL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLL BOMBS USED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLL BOMBS USED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLL BOMBS USED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLL BOMBS USED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – JOUST MAD. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JOUST MAD. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – JOUST MAD. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JOUST MAD. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CATAPULT MAD. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CATAPULT MAD. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – CATAPULT MAD. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CATAPULT MAD. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – PEASANT MAD. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PEASANT MAD. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – PEASANT MAD. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PEASANT MAD. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – DAMSEL MAD. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DAMSEL MAD. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – DAMSEL MAD. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DAMSEL MAD. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLL MAD. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLL MAD. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – TROLL MAD. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TROLL MAD. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 1 MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 1 MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 2 MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 2 MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 3 MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 3 MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 4 MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4 MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 4 MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4 MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 5 MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – 5 MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS JP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS JP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS JP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS JP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS S.J.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS S.J.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS S.J.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS S.J.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS D.S.J.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS D.S.J.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – M.B. MADNESS D.S.J.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M.B. MADNESS D.S.J.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – HURRY UP START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – HURRY UP START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – HURRY UP AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – HURRY UP AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – HURRY UP E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – HURRY UP E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – R. MADNESS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. MADNESS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – R. MADNESS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. MADNESS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – R. MADNESS COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. MADNESS COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – R. MADNESS COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. MADNESS COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – R. MADNESS E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. MADNESS E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – R. MADNESS E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. MADNESS E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – BARNYRD M.B. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BARNYRD M.B. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – BARNYRD M.B. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BARNYRD M.B. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – B. KINGDOM START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "B. KINGDOM START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – B. KINGDOM START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "B. KINGDOM START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – B. KINGDOM COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "B. KINGDOM COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – B. KINGDOM COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "B. KINGDOM COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – SUPER SKILL SHOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER SKILL SHOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – SUPER SKILL SHOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER SKILL SHOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – SUPER JETS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER JETS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – SUPER JETS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER JETS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – RANDOM AWARD: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM AWARD",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – RANDOM AWARD: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM AWARD",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – RANDOM E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – RANDOM E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – VIDEO MODE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO MODE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – VIDEO MODE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO MODE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – VIDEO E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – VIDEO E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – VIDEO COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – VIDEO COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – SMACK TRL. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SMACK TRL. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – SMACK TRL. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SMACK TRL. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Castle Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Castle Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Castle Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Castle Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Joust Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Joust Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Joust Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Joust Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Catapult Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Catapult Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Catapult Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Catapult Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Peasant Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Peasant Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Peasant Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Peasant Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Damsel Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Damsel Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Damsel Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Damsel Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Troll Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Troll Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Troll Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Troll Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Madness Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Madness Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Madness Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Madness Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #1 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #1 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #1 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #1 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #1: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #1",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #1: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #1",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #1 Timestamp: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #1 Timestamp",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #1 Timestamp: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #1 Timestamp",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #2 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #2 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #2 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #2 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #2: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #2",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #2: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #2",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #2 Timestamp: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #2 Timestamp",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #2 Timestamp: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #2 Timestamp",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #3 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #3 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #3 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #3 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #3: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #3",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #3: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #3",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #3 Timestamp: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #3 Timestamp",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #3 Timestamp: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #3 Timestamp",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #4 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #4 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #4 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #4 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #4: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #4",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #4: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #4",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #4 Timestamp: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #4 Timestamp",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – King of the Realm #4 Timestamp: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "King of the Realm #4 Timestamp",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Total Plays: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Plays",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Total Plays: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Plays",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Total Free Plays: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Free Plays",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Total Free Plays: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Free Plays",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Replay Awards: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Replay Awards",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Replay Awards: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Replay Awards",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Match Awards: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Match Awards",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Match Awards: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Match Awards",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Tickets Awarded: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tickets Awarded",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Tickets Awarded: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tickets Awarded",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Left Drains: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Left Drains",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Left Drains: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Left Drains",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Right Drains: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Right Drains",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Right Drains: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Right Drains",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Tilts: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tilts",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "mm_109c – Tilts: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tilts",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

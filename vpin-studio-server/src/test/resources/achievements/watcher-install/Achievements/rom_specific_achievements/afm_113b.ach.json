@@ -1,0 +1,1177 @@
+{
+ "rules": [
+  {
+   "title": "afm_113b – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BALL SAVES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BALL SAVES: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – TOTAL MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – TOTAL MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ATK. WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ATK. WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ATK. WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ATK. WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ATK. WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ATK. WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ATK. WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ATK. WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ATK. WAVE E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ATK. WAVE E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ATK. WAVE E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ATK. WAVE E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – LOCKS LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCKS LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – LOCKS LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCKS LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BALLS LOCKED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALLS LOCKED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BALLS LOCKED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALLS LOCKED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MAIN M.B. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MAIN M.B. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MAIN M.B. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MAIN M.B. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MAIN M.B. JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MAIN M.B. JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MAIN M.B. JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MAIN M.B. JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MAIN M.B. SUPER JP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MAIN M.B. SUPER JP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MAIN M.B. SUPER JP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MAIN M.B. SUPER JP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 1st WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 1st WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 1st WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 1st WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 2nd WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 2nd WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 2nd WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 2nd WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 3rd WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 3rd WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 3rd WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 3rd WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 4th WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 4th WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 4th WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 4th WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4th WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 5th WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 5th WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 5th WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 5th WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5th WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 6th WAVE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th WAVE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 6th WAVE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th WAVE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 6th WAVE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th WAVE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 6th WAVE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "6th WAVE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – HURRY UP AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – HURRY UP AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HURRY UP AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ANNIHIL. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ANNIHIL. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ANNIHIL. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ANNIHIL. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ANNIHIL. AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ANNIHIL. AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ANNIHIL. AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ANNIHIL. AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ANNIHIL. JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ANNIHIL. JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – ANNIHIL. JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ANNIHIL. JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTIAN COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTIAN COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTIAN COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTIAN COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. ATK. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. ATK. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. ATK. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. ATK. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. ATK. KILLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. ATK. KILLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. ATK. KILLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. ATK. KILLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. BOMBS COLL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. BOMBS COLL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. BOMBS COLL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. BOMBS COLL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. BOMBS USED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. BOMBS USED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTN. BOMBS USED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTN. BOMBS USED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTIAN M.B. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTIAN M.B. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTIAN M.B. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTIAN M.B. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTIAN M.B. KILLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTIAN M.B. KILLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – MARTIAN M.B. KILLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARTIAN M.B. KILLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 5-WAY COMBOS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5-WAY COMBOS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – 5-WAY COMBOS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5-WAY COMBOS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SUPER JETS START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER JETS START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SUPER JETS START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER JETS START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – R. UNIVERSE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. UNIVERSE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – R. UNIVERSE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. UNIVERSE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – R. UNIVERSE WON: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. UNIVERSE WON",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – R. UNIVERSE WON: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. UNIVERSE WON",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SKILL SHOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SKILL SHOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SUPER SKILL SHOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER SKILL SHOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SUPER SKILL SHOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER SKILL SHOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BONUS X: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS X",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BONUS X: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS X",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BOT. LANE COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOT. LANE COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BOT. LANE COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOT. LANE COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BOT. LANE E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOT. LANE E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BOT. LANE E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOT. LANE E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – RANDOM AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – RANDOM AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – RANDOM E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – RANDOM E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RANDOM E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – STROBE M.B. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STROBE M.B. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – STROBE M.B. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STROBE M.B. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – STROBE E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STROBE E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – STROBE E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STROBE E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO MODE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO MODE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO MODE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO MODE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO MOTHERSHIP: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO MOTHERSHIP",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO MOTHERSHIP: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO MOTHERSHIP",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – VIDEO COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VIDEO COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SNEAK ATK. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SNEAK ATK. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SNEAK ATK. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SNEAK ATK. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SNEAK ATK. COMPL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SNEAK ATK. COMPL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – SNEAK ATK. COMPL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SNEAK ATK. COMPL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – NOVICE MODES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "NOVICE MODES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – NOVICE MODES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "NOVICE MODES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BUY-IN EX. BALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – BUY-IN EX. BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Martian Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Martian Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Martian Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Martian Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Ruler of the Universe Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ruler of the Universe Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Ruler of the Universe Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ruler of the Universe Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Ruler of the Universe Timestamp: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ruler of the Universe Timestamp",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Ruler of the Universe Timestamp: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ruler of the Universe Timestamp",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Total Plays: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Plays",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Total Plays: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Plays",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Total Free Plays: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Free Plays",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Total Free Plays: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Free Plays",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Replay Awards: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Replay Awards",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Replay Awards: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Replay Awards",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Match Awards: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Match Awards",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Match Awards: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Match Awards",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "afm_113b – Tickets Awarded: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tickets Awarded",
+    "min": 1
+   },
+   "scope": "session"
+  }
+ ]
+}

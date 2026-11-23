@@ -136,6 +136,7 @@ public class PlayerService {
     model.setCompetitionName(player.getCompetitionName());
     model.setInitials(player.getInitials());
     model.setAdministrative(player.isAdministrative());
+    model.setAchievementsEnabled(player.isAchievementsEnabled());
     model.setManiaAccountUuid(player.getManiaAccountUuid());
 
     Player updated = playerRepository.saveAndFlush(model);

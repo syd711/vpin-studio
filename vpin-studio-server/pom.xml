@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>5.7.2</version>
+    <version>5.8.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -55,7 +55,7 @@
         <vpin-studio-popper-client.version>2.0.0</vpin-studio-popper-client.version>
         <jda.version>6.4.1</jda.version>
         <vpin-connector-assets.version>1.1.0</vpin-connector-assets.version>
-        <vpin-mania-rest-client.version>2.0.1</vpin-mania-rest-client.version>
+        <vpin-mania-rest-client.version>2.1.0</vpin-mania-rest-client.version>
         <poi.version>5.4.0</poi.version>
         <commons-configuration2.version>2.11.0</commons-configuration2.version>
         <commons-net.version>3.11.1</commons-net.version>
@@ -341,7 +341,7 @@
         <dependency>
             <groupId>net.nvrams</groupId>
             <artifactId>java-pinmame-nvmaps</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
 
         <dependency>
@@ -513,6 +513,17 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>achievements/bundle/**</exclude>
+                </excludes>
+            </resource>
+            <!-- frozen NVRAM maps and rules of the achievement rule bundle, must be copied byte by byte -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>achievements/bundle/**</include>
+                </includes>
             </resource>
         </resources>
 

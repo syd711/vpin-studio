@@ -1,0 +1,22 @@
+{
+  "_notes": [
+    "6808 @ 1MHz, 2KB of NVRAM at address 0x0000",
+    "Similar to Williams System 11, but 8KB of NVRAM."
+  ],
+  "cpu": "6808",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x800",
+      "type": "nvram"
+    },
+    {
+      "label": "ROM 5C",
+      "address": "0x8000",
+      "size": "0x8000",
+      "type": "rom"
+    }
+  ]
+}

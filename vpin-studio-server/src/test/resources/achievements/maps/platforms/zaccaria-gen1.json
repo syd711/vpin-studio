@@ -1,0 +1,21 @@
+{
+  "_notes": "Zaccaria Gen 1 games, 3MHz Signetics 2650, 1KB NVRAM",
+  "cpu": "S2650",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "_notes": "might not be present on Locomotion (1981)",
+      "label": "RAM",
+      "address": "0x1400",
+      "size": "0x400",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x1800",
+      "size": "0x400",
+      "type": "nvram",
+      "nibble": "low"
+    }
+  ]
+}

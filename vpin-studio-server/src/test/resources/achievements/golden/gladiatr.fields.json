@@ -1,0 +1,62 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Ultimate Gladiator Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Ultimate Gladiator Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fifth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fifth Score",
+  "section": "high_scores"
+ }
+]

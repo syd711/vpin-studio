@@ -1,0 +1,160 @@
+{
+ "rules": [
+  {
+   "title": "apollo13 – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – First Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "First Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – First Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "First Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Second Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Second Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Second Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Second Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Third Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Third Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Third Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Third Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Fourth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fourth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Fourth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fourth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Fifth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fifth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Fifth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fifth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Sixth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Sixth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "apollo13 – Sixth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Sixth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

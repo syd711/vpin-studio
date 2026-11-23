@@ -1,0 +1,19 @@
+{
+  "_notes": "65C02 @ 4MHz, 8KB of NVRAM at address 0x0000, 64KB ROM (w/48KB accessible)",
+  "cpu": "65C02",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x2000",
+      "type": "nvram"
+    },
+    {
+      "label": "ROM",
+      "address": "0x4000",
+      "size": "0xC000",
+      "type": "rom"
+    }
+  ]
+}

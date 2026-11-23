@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox minWidth="380.0" prefWidth="460.0" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.leaderboards.LeaderboardsGlobalTileController">
+   <children>
+      <VBox spacing="2.0">
+         <children>
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.global" />
+            <Label fx:id="infoLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
+         </children>
+      </VBox>
+      <HBox fx:id="headerRow" managed="false" spacing="10.0" style="-fx-background-color: #161616;" visible="false">
+         <children>
+            <Label minWidth="40.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.rank" />
+            <Label maxWidth="Infinity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.player" HBox.hgrow="ALWAYS" />
+            <Label minWidth="44.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.lvl" />
+            <Label minWidth="80.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.unlocked" />
+         </children>
+         <padding>
+            <Insets bottom="7.0" left="10.0" right="10.0" top="7.0" />
+         </padding>
+      </HBox>
+      <VBox fx:id="rowsBox" spacing="8.0" />
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+   </padding>
+</VBox>

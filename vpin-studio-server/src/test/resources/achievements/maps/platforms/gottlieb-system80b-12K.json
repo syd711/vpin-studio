@@ -1,0 +1,53 @@
+{
+  "_notes": [
+    "Games using a 2732 (4KB) PROM2.  Second 2KB starts at 0x9000.",
+    "Excalibur, Bad Girls, Big House, Hot Shots, Bone Busters, Night Moves."
+  ],
+  "cpu": "6502",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RIOT1",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "RIOT2",
+      "address": "0x0080",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "RIOT3",
+      "address": "0x0100",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "PROM 2 (first half)",
+      "address": "0x1000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x1800",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "low"
+    },
+    {
+      "label": "PROM 1",
+      "address": "0x2000",
+      "size": "0x2000",
+      "type": "rom"
+    },
+    {
+      "label": "PROM 2 (second half)",
+      "address": "0x9000",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

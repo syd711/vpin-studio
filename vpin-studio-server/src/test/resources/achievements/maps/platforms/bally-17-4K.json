@@ -1,0 +1,32 @@
+{
+  "_notes": "Bally AS-2518-17 with two 2KB ROMs",
+  "cpu": "6800",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x200",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "high"
+    },
+    {
+      "label": "U1 or U2 ROM",
+      "address": "0x1000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "U6 ROM",
+      "address": "0x1800",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

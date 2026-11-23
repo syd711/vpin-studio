@@ -1,0 +1,41 @@
+{
+  "_notes": [
+    "Williams System 3/4, 6800 CPU at 895kHz, 256 byte RAM, 256 4-bit NVRAM",
+    "Game has 2KB EEPROM at IC14 (second half blank) or two 512-byte PROMs at IC21/IC22"
+  ],
+  "cpu": "6800",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x100",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x0100",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "low"
+    },
+    {
+      "label": "Game ROM/PROMs (IC14 or IC21/IC22)",
+      "address": "0x6000",
+      "size": "0x400",
+      "type": "rom"
+    },
+    {
+      "label": "ROM (IC20)",
+      "address": "0x7000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM (IC17)",
+      "address": "0x7800",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "_notes": [
+    "Multiple System 80B games don't have PROM2.",
+    "Early games (Chicago Cubs, Bounty Hunter, Rock, Rock Encore) and Amazon Hunt II/III"
+  ],
+  "cpu": "6502",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RIOT1",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "RIOT2",
+      "address": "0x0080",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "RIOT3",
+      "address": "0x0100",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x1800",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "low"
+    },
+    {
+      "label": "PROM 1",
+      "address": "0x2000",
+      "size": "0x2000",
+      "type": "rom"
+    }
+  ]
+}

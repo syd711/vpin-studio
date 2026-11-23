@@ -1,0 +1,245 @@
+{
+  "_notes": [
+    "Lethal Weapon 3 [Data East, 1992]",
+    "2026-02-13 added by Tom Collins <tom@scorbit.io>",
+    "Adjustments 0x1E00-0x1E59 are protected by a plain 8-bit sum (checksum8_sum, not complemented) at 0x1FC0,",
+    "the byte right after the custom-message text, followed by a change counter and the 0xFF fill. This",
+    "block runs from 0x1E00 to the byte before the 0xFF fill. Verified against saved lw3_208 and aar_101 images (both cabinets), one",
+    "writer must drop the write rather than repair it.",
+    "Adjustments 0x1E00-0x1E59 are protected by a plain 8-bit sum (complement false) at 0x1FC0; see README.md in maps/dataeast."
+  ],
+  "_fileformat": 0.9,
+  "_metadata": {
+    "version": 11,
+    "copyright": [
+      "Copyright (C) 2026 by Tom Collins <tom@scorbit.io>"
+    ],
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "platform": "dataeast",
+    "roms": [
+      "aar_101",
+      "lw3_208",
+      "lw3_208p",
+      "lw3_300",
+      "lw3_301",
+      "mj_130"
+    ],
+    "validation": {
+      "checksum": [
+        {
+          "label": "Adjustments",
+          "start": "0x1E00",
+          "length": 90,
+          "complement": false,
+          "checksum": "0x1FC0"
+        }
+      ]
+    }
+  },
+  "game_state": {
+    "scores": [
+      {
+        "label": "Player 1",
+        "encoding": "bcd",
+        "offsets": [
+          "0x01C1",
+          "0x01B1",
+          "0x01B2",
+          "0x01B3",
+          "0x01B4"
+        ]
+      },
+      {
+        "label": "Player 2",
+        "encoding": "bcd",
+        "offsets": [
+          "0x01C2",
+          "0x01B5",
+          "0x01B6",
+          "0x01B7",
+          "0x01B8"
+        ]
+      },
+      {
+        "label": "Player 3",
+        "encoding": "bcd",
+        "offsets": [
+          "0x01C3",
+          "0x01B9",
+          "0x01BA",
+          "0x01BB",
+          "0x01BC"
+        ]
+      },
+      {
+        "label": "Player 4",
+        "encoding": "bcd",
+        "offsets": [
+          "0x01C4",
+          "0x01BD",
+          "0x01BE",
+          "0x01BF",
+          "0x01C0"
+        ]
+      }
+    ],
+    "credits": {
+      "label": "Credits",
+      "start": "0x16CE",
+      "encoding": "bcd"
+    },
+    "free_play": {
+      "label": "Free Play",
+      "start": "0x1E04",
+      "encoding": "bool"
+    },
+    "max_credits": {
+      "label": "Max Credits",
+      "start": "0x1E0F",
+      "encoding": "bcd"
+    },
+    "player_count": {
+      "label": "Player Count",
+      "start": "0x01A5",
+      "encoding": "int"
+    },
+    "ball_count": {
+      "label": "Ball Count",
+      "start": "0x1E0D",
+      "encoding": "bcd"
+    },
+    "current_player": {
+      "label": "Player",
+      "start": "0x01A2",
+      "encoding": "int"
+    },
+    "current_ball": {
+      "label": "Ball",
+      "start": "0x01A3",
+      "encoding": "int"
+    },
+    "game_over": {
+      "_notes": "game is over if current player/ball is 0",
+      "label": "Game Over",
+      "start": "0x01A2",
+      "encoding": "bool",
+      "invert": true
+    }
+  },
+  "high_scores": [
+    {
+      "label": "First",
+      "short_label": "#1",
+      "initials": {
+        "start": "0x16BA",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "encoding": "bcd",
+        "offsets": [
+          "0x1694",
+          "0x167C",
+          "0x167D",
+          "0x167E",
+          "0x167F"
+        ]
+      }
+    },
+    {
+      "label": "Second",
+      "short_label": "#2",
+      "initials": {
+        "start": "0x16BD",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "encoding": "bcd",
+        "offsets": [
+          "0x1695",
+          "0x1680",
+          "0x1681",
+          "0x1682",
+          "0x1683"
+        ]
+      }
+    },
+    {
+      "label": "Third",
+      "short_label": "#3",
+      "initials": {
+        "start": "0x16C0",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "encoding": "bcd",
+        "offsets": [
+          "0x1696",
+          "0x1684",
+          "0x1685",
+          "0x1686",
+          "0x1687"
+        ]
+      }
+    },
+    {
+      "label": "Fourth",
+      "short_label": "#4",
+      "initials": {
+        "start": "0x16C3",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "encoding": "bcd",
+        "offsets": [
+          "0x1697",
+          "0x1688",
+          "0x1689",
+          "0x168A",
+          "0x168B"
+        ]
+      }
+    },
+    {
+      "label": "Fifth",
+      "short_label": "#5",
+      "initials": {
+        "start": "0x16C6",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "encoding": "bcd",
+        "offsets": [
+          "0x1698",
+          "0x168C",
+          "0x168D",
+          "0x168E",
+          "0x168F"
+        ]
+      }
+    },
+    {
+      "label": "Sixth",
+      "short_label": "#6",
+      "initials": {
+        "start": "0x16C9",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "encoding": "bcd",
+        "offsets": [
+          "0x1699",
+          "0x1690",
+          "0x1691",
+          "0x1692",
+          "0x1693"
+        ]
+      }
+    }
+  ]
+}

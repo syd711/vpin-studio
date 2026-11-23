@@ -1,3 +1,6 @@
+# Synced resources are validated byte-for-byte (length/crc32) against sync.json,
+# which is generated from the LF files on GitHub. Never convert line endings.
+resources/** -text
 # Shell scripts require LF
 *.sh    text eol=lf
 # Batch scripts require CRLF

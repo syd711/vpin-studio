@@ -1,0 +1,13 @@
+{
+  "platforms" : [ "platforms/alving.e08342ea.json", "platforms/atari-gen2.a4184f52.json", "platforms/bally-17-3K.6e6f35b9.json", "platforms/bally-17-4K.b84b5bd6.json", "platforms/bally-17-8K.57def8d7.json", "platforms/bally-35-6K.9be87fc1.json", "platforms/bally-35-8K.fe7b5187.json", "platforms/dataeast-v1.0bcd2939.json", "platforms/dataeast.e8dab2c6.json", "platforms/gottlieb-system1.c7ec2cd3.json", "platforms/gottlieb-system3-32K.c4930ef2.json", "platforms/gottlieb-system3.e0493c0a.json", "platforms/gottlieb-system80-1prom.ba35bd5a.json", "platforms/gottlieb-system80-2prom.b0a8a08c.json", "platforms/gottlieb-system80b-10K.02602418.json", "platforms/gottlieb-system80b-12K.3feae549.json", "platforms/gottlieb-system80b-8K.683f1e71.json", "platforms/rowamet.c58cc0ae.json", "platforms/stern-m100.dcb6f679.json", "platforms/stern-m200.3996b9f4.json", "platforms/stern-sam.6e326d93.json", "platforms/stern-sam.d7216a78.json", "platforms/taito-1979.1b203406.json", "platforms/taito.27eea1c9.json", "platforms/whitestar.a551b715.json", "platforms/williams-system11-40K.31decb7d.json", "platforms/williams-system11-48K.b7e9054f.json", "platforms/williams-system4.6508ad91.json", "platforms/williams-system6-6K.8de87619.json", "platforms/williams-system6-7.5K.961e74c7.json", "platforms/williams-system7-10K.39e896ea.json", "platforms/williams-system7-12K.353496f8.json", "platforms/williams-system9-12K.8983dcbb.json", "platforms/williams-system9-16K.7d71edab.json", "platforms/williams-wpc-12K.e2e496ad.json", "platforms/williams-wpc-8K.0afec9b6.json", "platforms/zaccaria-gen1.bb881bc7.json", "platforms/zaccaria-gen2.cc3be787.json", "platforms/zaccaria-proto.519eede0.json" ],
+  "revision" : 2,
+  "sources" : [ {
+    "revision" : 1,
+    "maps" : "eb0d7cf",
+    "added" : 872
+  }, {
+    "revision" : 2,
+    "maps" : "e40060f",
+    "added" : 728
+  } ]
+}

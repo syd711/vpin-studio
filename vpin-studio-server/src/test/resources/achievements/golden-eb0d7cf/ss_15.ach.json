@@ -1,0 +1,1753 @@
+{
+ "rules": [
+  {
+   "title": "ss_15 – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BALL SAVES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BALL SAVES: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TOTAL MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TOTAL MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 2ND CRATE MULTI: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2ND CRATE MULTI",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 2ND CRATE MULTI: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2ND CRATE MULTI",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 3RD CRATE MULTI: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3RD CRATE MULTI",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 3RD CRATE MULTI: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3RD CRATE MULTI",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – NO MULTI GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "NO MULTI GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – NO MULTI GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "NO MULTI GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER SPINS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER SPINS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER SPINS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER SPINS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER TIMEOUT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER TIMEOUT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER TIMEOUT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER TIMEOUT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – RAMP E.B. LIT: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RAMP E.B. LIT",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – RAMP E.B. LIT: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RAMP E.B. LIT",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BONUS X E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS X E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BONUS X E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS X E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPELL CAST: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPELL CAST",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPELL CAST: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPELL CAST",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SAVED BY SPELL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SAVED BY SPELL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SAVED BY SPELL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SAVED BY SPELL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER SKULL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER SKULL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER SKULL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER SKULL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER 2X MODE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER 2X MODE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER 2X MODE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER 2X MODE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER EYEBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER EYEBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER EYEBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER EYEBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER BEAT MODE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER BEAT MODE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER BEAT MODE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER BEAT MODE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER COFFIN: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER COFFIN",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER COFFIN: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER COFFIN",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER PATHETIC: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER PATHETIC",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER PATHETIC: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER PATHETIC",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER LAB: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER LAB",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER LAB: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER LAB",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER BOOGIE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER BOOGIE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER BOOGIE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER BOOGIE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER CRATE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER CRATE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER CRATE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER CRATE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER LEAPER: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER LEAPER",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER LEAPER: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER LEAPER",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER BEAST: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER BEAST",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER BEAST: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER BEAST",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE ITEM COMP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE ITEM COMP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE ITEM COMP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE ITEM COMP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LAB ITEM COMP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LAB ITEM COMP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LAB ITEM COMP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LAB ITEM COMP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BEAST ITEM COMP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BEAST ITEM COMP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BEAST ITEM COMP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BEAST ITEM COMP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN ITEM COMP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN ITEM COMP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN ITEM COMP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN ITEM COMP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAPER ITEM COMP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAPER ITEM COMP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAPER ITEM COMP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAPER ITEM COMP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SKULL ITEM COMP.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKULL ITEM COMP.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SKULL ITEM COMP.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKULL ITEM COMP.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TALES COMPLETED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TALES COMPLETED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TALES COMPLETED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TALES COMPLETED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – STIFF MODE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STIFF MODE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – STIFF MODE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STIFF MODE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAP MODE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAP MODE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAP MODE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAP MODE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAP MODE FINISH: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAP MODE FINISH",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAP MODE FINISH: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAP MODE FINISH",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAP EXTRA BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAP EXTRA BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEAP EXTRA BALL: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEAP EXTRA BALL",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BOOGIE MAN START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOOGIE MAN START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BOOGIE MAN START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOOGIE MAN START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BEAT CRATE START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BEAT CRATE START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BEAT CRATE START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BEAT CRATE START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEFT RAMP MADE: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT RAMP MADE",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEFT RAMP MADE: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT RAMP MADE",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – RIGHT RAMP MADE: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RIGHT RAMP MADE",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – RIGHT RAMP MADE: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RIGHT RAMP MADE",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – STIFF JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STIFF JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – STIFF JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STIFF JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE SKILL SHOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE SKILL SHOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE SKILL SHOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE SKILL SHOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIN SKILL SHOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIN SKILL SHOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIN SKILL SHOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIN SKILL SHOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEFT LOOP SHOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT LOOP SHOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEFT LOOP SHOTS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT LOOP SHOTS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LOOP TO SKULLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOOP TO SKULLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LOOP TO SKULLS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOOP TO SKULLS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SINGLE STANDUP: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SINGLE STANDUP",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SINGLE STANDUP: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SINGLE STANDUP",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY EX. BALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY EX. BALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY EX. BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY EX. BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY SPECIAL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY SPECIAL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY SPECIAL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY SPECIAL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY LOCK LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY LOCK LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY LOCK LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY LOCK LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY SKULL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY SKULL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY SKULL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY SKULL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY BOOGIE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY BOOGIE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY BOOGIE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY BOOGIE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY BONUS X: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY BONUS X",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY BONUS X: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY BONUS X",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY 250 K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY 250 K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY 250 K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY 250 K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY 500 K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY 500 K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – MYSTERY 500 K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MYSTERY 500 K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – NO ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "NO ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – NO ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "NO ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – ONE ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ONE ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – ONE ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ONE ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TWO ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TWO ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TWO ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TWO ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – THREE ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THREE ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – THREE ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THREE ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – FOUR ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FOUR ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – FOUR ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FOUR ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – FIVE ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FIVE ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – FIVE ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FIVE ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SIX ITEM GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SIX ITEM GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SIX ITEM GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SIX ITEM GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN MB. EXTEND: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN MB. EXTEND",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – COFFIN MB. EXTEND: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COFFIN MB. EXTEND",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE MB. EXTEND: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE MB. EXTEND",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CRATE MB. EXTEND: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CRATE MB. EXTEND",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER POPPER: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER POPPER",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – SPIDER POPPER: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIDER POPPER",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – WEB COMPLETED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WEB COMPLETED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – WEB COMPLETED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WEB COMPLETED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEFT LEAPER HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT LEAPER HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – LEFT LEAPER HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT LEAPER HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CNTR. LEAPER HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CNTR. LEAPER HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – CNTR. LEAPER HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CNTR. LEAPER HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – RT. LEAPER HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RT. LEAPER HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – RT. LEAPER HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RT. LEAPER HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BUY-IN EX. BALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – BUY-IN EX. BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 1 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 1 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 2 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 2 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 3 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – 3 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – >=4 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=4 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – >=4 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=4 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Spider Champ Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Spider Champ Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Spider Champ Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Spider Champ Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Spider Champ Timestamp: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Spider Champ Timestamp",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Spider Champ Timestamp: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Spider Champ Timestamp",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff Count Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff Count Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #1 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #1 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #1 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #1 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #2 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #2 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #2 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #2 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #3 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #3 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #3 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #3 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #4 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #4 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #4 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #4 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #5 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #5 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #5 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #5 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #6 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #6 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #6 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #6 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #7 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #7 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #7 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #7 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #8 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #8 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #8 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #8 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #9 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #9 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #9 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #9 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #10 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #10 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Favorite Stiff #10 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Favorite Stiff #10 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TOTAL PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TOTAL PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – EXTRA BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – EXTRA BALLS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TOTAL FREE PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – TOTAL FREE PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – REPLAY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "ss_15 – REPLAY AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

@@ -34,6 +34,8 @@ public class PlayerRepresentation {
 
   private boolean administrative;
 
+  private boolean achievementsEnabled = true;
+
   //the uuid of the account on mania.net
   private String maniaAccountUuid;
 
@@ -60,6 +62,14 @@ public class PlayerRepresentation {
 
   public void setManiaAccountUuid(String maniaAccountUuid) {
     this.maniaAccountUuid = maniaAccountUuid;
+  }
+
+  public boolean isAchievementsEnabled() {
+    return achievementsEnabled;
+  }
+
+  public void setAchievementsEnabled(boolean achievementsEnabled) {
+    this.achievementsEnabled = achievementsEnabled;
   }
 
   public boolean isAdministrative() {

@@ -1,0 +1,502 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Extra Balls",
+  "section": ""
+ },
+ {
+  "label": "RECENT LEFT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT CENT. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT RGHT. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT 4TH SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT PAID CRED",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT SERV. CRED",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL LEFT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL CENTR. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL RIGHT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL 4TH SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL PAID CRED.",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL SERV. CRED.",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "GAMES STARTED",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TOTAL PLAYS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TOTAL FREE PLAYS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "SPECIAL AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "MATCH AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "H.S.T.D. CREDITS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "EXTRA BALLS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TICKETS AWARDED",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "LEFT DRAINS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "RIGHT DRAINS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "PLAY TIME",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "MINUTES ON",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "BALLS PLAYED",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TILTS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 1 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 2 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 3 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 4 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "1 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "2 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "3 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "4 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "H.S.T.D. RESET COUNT",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "BURN-IN TIME",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "LEFT FLIPPER",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "RIGHT FLIPPER",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "B.K. OPEN (GAMES)",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "2ND MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "3RD MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "REMATCH MADE",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TRAIN JACKPOT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "RAMP JACKPOTS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "DOUBLE JACKPOT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TRIPLE JACKPOT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "QUICK MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "VAULT MILLIONS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "H. UP. MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "THING VAULT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "MANSION AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "MANSION EX. BALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TOUR THE MANSION",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "RAMP E.B. LIT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TRAIN WRECK E.B.",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TRAIN TARGET",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TRAIN WRECKS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SWAMP 1X",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SWAMP 5X",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SKILL SHOTS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "CENTER RAMP",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SIDE RAMP",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "CENTER KICKOUT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "RIGHT KICKOUT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "THING TRIPS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "THING AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "THING FLIPS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "THING FLIPS HITS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "MANSION SPOTS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SUPER BEAR GAMES",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "0-1.9 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "2-4.9 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "5-9.9 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "10-19 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "20-29 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "30-39 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "40-49 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "50-69 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "70-99 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "100-149 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "150-199 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "200-299 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "OVER 300 MILLION",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 0.0-1.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 1.0-1.5M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 1.5-2.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 2.0-2.5M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 2.5-3.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 3.0-3.5M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 3.5-4.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 4-5 M.",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 5-6 M.",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 6-8 M.",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 8-10 M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 10-15M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME > 15M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "TOTALS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "CLOCK LAST SET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "AUDITS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "COINS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "FACTORY SETTING",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST GAME START",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST REPLAY",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST HSTD RESET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "CHAMPION RESET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST PRINTOUT",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST SERV. CRED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "Grand Champion Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Grand Champion Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Score",
+  "section": "high_scores"
+ }
+]

@@ -22,6 +22,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import de.mephisto.vpin.ui.achievements.AchievementsController;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -123,7 +124,7 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @FXML
   private void onDashboardClick() {
-    navigateTo(NavigationItem.Dashboard);
+    navigateTo(NavigationItem.Achievements);
   }
 
   @FXML
@@ -305,7 +306,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     this.buttons.add(systemManagerBtn);
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
-    navigationItemMap.put(NavigationItem.Dashboard, new NavigationView(NavigationItem.Dashboard, DashboardController.class, dashboardBtn, "scene-dashboard.fxml"));
+    navigationItemMap.put(NavigationItem.Achievements, new NavigationView(NavigationItem.Achievements, AchievementsController.class, dashboardBtn, "scene-achievements.fxml"));
     navigationItemMap.put(NavigationItem.Players, new NavigationView(NavigationItem.Players, PlayersController.class, playersBtn, "scene-players.fxml"));
 
     navigationItemMap.put(NavigationItem.Competitions, new NavigationView(NavigationItem.Competitions, CompetitionsController.class, competitionsBtn, "scene-competitions.fxml"));

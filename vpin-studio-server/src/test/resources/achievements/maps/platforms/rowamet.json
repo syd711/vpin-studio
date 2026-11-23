@@ -1,0 +1,30 @@
+{
+  "_notes": [
+    "Rowamet Heavy Metal: the Taito do Brasil board (platform taito) with a Z80 as the main CPU - PinMAME's rowamet",
+    "machine imports the taito machine and replaces its CPU - plus Rowamet's own Z80 sound board. Same memory map: two",
+    "4KB ROMs at 0x0000, 512 bytes of scratch RAM at 0x3E00 and the 256-byte battery-backed window at 0x4000 that the",
+    "taito driver saves as the .nv file, with the display and command DMA inside it."
+  ],
+  "cpu": "Z80",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "ROM",
+      "address": "0x0000",
+      "size": "0x2000",
+      "type": "rom"
+    },
+    {
+      "label": "RAM",
+      "address": "0x3E00",
+      "size": "0x200",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x4000",
+      "size": "0x100",
+      "type": "nvram"
+    }
+  ]
+}

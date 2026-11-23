@@ -1,0 +1,43 @@
+{
+  "_notes": [
+    "Gottlieb System 1 games with two 2KB system ROMs and 4-bit game ROM.",
+    "Scores in RAM are big-endian, but settings in NVRAM are little-endian."
+  ],
+  "cpu": "PPS-4",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "ROM U5 (A1752CF)",
+      "address": "0x0000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U4 (A1753CE)",
+      "address": "0x0800",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "RAM",
+      "address": "0x1000",
+      "size": "0x100",
+      "type": "ram",
+      "nibble": "low"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x1800",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "low"
+    },
+    {
+      "label": "Game PROM",
+      "address": "0x2000",
+      "size": "0x400",
+      "type": "rom",
+      "nibble": "low"
+    }
+  ]
+}

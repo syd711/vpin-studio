@@ -1,0 +1,122 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "First Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fifth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fifth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Sixth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Sixth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Seventh Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Seventh Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Eighth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Eighth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Ninth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Ninth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Tenth Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Tenth Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "5 MULTIBALLS CHAMPS #1 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "5 MULTIBALLS CHAMPS #2 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "5 MULTIBALLS CHAMPS #3 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "5 MULTIBALLS CHAMPS #4 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "5 MULTIBALLS CHAMPS #5 Initials",
+  "section": "mode_champions"
+ }
+]

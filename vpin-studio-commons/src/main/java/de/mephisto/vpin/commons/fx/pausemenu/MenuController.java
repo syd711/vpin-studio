@@ -411,6 +411,21 @@ public class MenuController implements Initializable {
         LOG.error("Failed to init todo component: " + e.getMessage(), e);
       }
     }
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.achievements)) {
+      try {
+        String resource = "menu-achievements-view.fxml";
+        FXMLLoader loader = new FXMLLoader(AchievementsMenuItemController.class.getResource(resource));
+        loader.setResources(Messages.getBundle());
+        Pane widgetRoot = loader.load();
+        AchievementsMenuItemController achievementsController = loader.getController();
+        achievementsController.setData(game);
+        scoreView.setCenter(widgetRoot);
+        scoreView.setVisible(true);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to init achievements component: " + e.getMessage(), e);
+      }
+    }
     else if (activeSelection.getItemType().equals(PauseMenuItemTypes.highscores)) {
       ProgressIndicator indicator = new ProgressIndicator();
       indicator.setPrefWidth(300.0);

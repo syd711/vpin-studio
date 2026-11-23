@@ -139,6 +139,17 @@
                               <Tooltip prefWidth="400.0" text="%players.player_edit.this_user_is_the_default_owner_of_competitions" wrapText="true" />
                            </tooltip>
                         </Label>
+                        <CheckBox fx:id="achievementsCheckbox" mnemonicParsing="false" text="%players.player_edit.track_achievements" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip prefWidth="400.0" text="%players.player_edit.track_achievements_tooltip" wrapText="true" />
+                           </tooltip>
+                           <HBox.margin>
+                              <Insets left="24.0" />
+                           </HBox.margin>
+                        </CheckBox>
                      </children>
                   </HBox>
                </children>

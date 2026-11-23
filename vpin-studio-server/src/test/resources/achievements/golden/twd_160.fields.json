@@ -1,0 +1,1030 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Tilted",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Replay Type",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Percentage",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Levels",
+  "section": "adjustments"
+ },
+ {
+  "label": "Auto Replay Start",
+  "section": "adjustments"
+ },
+ {
+  "label": "Dynamic Replay Start",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Level #1",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Level #2",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Level #3",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Level #4",
+  "section": "adjustments"
+ },
+ {
+  "label": "Replay Boost",
+  "section": "adjustments"
+ },
+ {
+  "label": "Special Limit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Special Percentage",
+  "section": "adjustments"
+ },
+ {
+  "label": "Special Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Free Game Limit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Extra Ball Limit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Extra Ball Percentage",
+  "section": "adjustments"
+ },
+ {
+  "label": "Game Pricing",
+  "section": "adjustments"
+ },
+ {
+  "label": "Match Percentage",
+  "section": "adjustments"
+ },
+ {
+  "label": "Match Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Balls Per Game",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tilt Warnings",
+  "section": "adjustments"
+ },
+ {
+  "label": "Credit Limit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Allow High Scores",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Grand Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #1 Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #2 Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #3 Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #4 Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Grand Champion Score",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #1",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #2",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #3",
+  "section": "adjustments"
+ },
+ {
+  "label": "High Score #4",
+  "section": "adjustments"
+ },
+ {
+  "label": "HSTD Initials",
+  "section": "adjustments"
+ },
+ {
+  "label": "HSTD Reset Count",
+  "section": "adjustments"
+ },
+ {
+  "label": "Free Play",
+  "section": "adjustments"
+ },
+ {
+  "label": "Language",
+  "section": "adjustments"
+ },
+ {
+  "label": "Player Language Select",
+  "section": "adjustments"
+ },
+ {
+  "label": "Custom Message",
+  "section": "adjustments"
+ },
+ {
+  "label": "Flash Lamp Power",
+  "section": "adjustments"
+ },
+ {
+  "label": "Coil Pulse Power",
+  "section": "adjustments"
+ },
+ {
+  "label": "Knocker Volume",
+  "section": "adjustments"
+ },
+ {
+  "label": "Game Restart",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bill Validator",
+  "section": "adjustments"
+ },
+ {
+  "label": "Music Volume",
+  "section": "adjustments"
+ },
+ {
+  "label": "Ball Save Time",
+  "section": "adjustments"
+ },
+ {
+  "label": "Timed Plunger",
+  "section": "adjustments"
+ },
+ {
+  "label": "Flipper Ball Launch",
+  "section": "adjustments"
+ },
+ {
+  "label": "Coindoor Ball Saver",
+  "section": "adjustments"
+ },
+ {
+  "label": "Competition Mode",
+  "section": "adjustments"
+ },
+ {
+  "label": "Consolation Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "Fast Boot",
+  "section": "adjustments"
+ },
+ {
+  "label": "Q24 Option",
+  "section": "adjustments"
+ },
+ {
+  "label": "Ticket Dispenser",
+  "section": "adjustments"
+ },
+ {
+  "label": "Player Competition",
+  "section": "adjustments"
+ },
+ {
+  "label": "Team Scores",
+  "section": "adjustments"
+ },
+ {
+  "label": "Location ID",
+  "section": "adjustments"
+ },
+ {
+  "label": "Game ID",
+  "section": "adjustments"
+ },
+ {
+  "label": "Time Format",
+  "section": "adjustments"
+ },
+ {
+  "label": "Coin Input Delay",
+  "section": "adjustments"
+ },
+ {
+  "label": "Lost Ball Recovery",
+  "section": "adjustments"
+ },
+ {
+  "label": "Coin Door Disable Tilt",
+  "section": "adjustments"
+ },
+ {
+  "label": "Adult Content",
+  "section": "adjustments"
+ },
+ {
+  "label": "Pop Bumper Difficulty",
+  "section": "adjustments"
+ },
+ {
+  "label": "Combos for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Supplies for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Fish Tanks for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Barn Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Riot Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Arena Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Blood Bath M.B. Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "X-bow Kills for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Prison M.B. Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Well M.B. Shots for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Woodbury S.S. for M.KILL",
+  "section": "adjustments"
+ },
+ {
+  "label": "Walker Kills Add Shot X Every",
+  "section": "adjustments"
+ },
+ {
+  "label": "1ST Walker Kills E.B.",
+  "section": "adjustments"
+ },
+ {
+  "label": "2ND Walker Kills E.B.",
+  "section": "adjustments"
+ },
+ {
+  "label": "1ST Walker Kills B.G. Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "2ND+ Walker Kills B.G. Lit Every",
+  "section": "adjustments"
+ },
+ {
+  "label": "Walker Kills L.M.S. Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Walkers Lit (Init. Value)",
+  "section": "adjustments"
+ },
+ {
+  "label": "Walkers Init. At",
+  "section": "adjustments"
+ },
+ {
+  "label": "Walkers Lit (Min. Value)",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Lit at Game Start",
+  "section": "adjustments"
+ },
+ {
+  "label": "1ST # Sup. for Modes Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "2ND+ # Sup. for Modes Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Max. # Sup. for Modes Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Sup. Compl. B.B. M.B. Lit Start.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Sup. Compl. B.B. M.B. Lit Inc.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Sup. Compl. B.B. M.B. Lit Max.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Shot Modes Lit Carry. Ball/Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "Shot Modes Light/Start W/ M.B.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Barn Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Barn Timer Reset",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Timer Reset",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Reset Shots Compl.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Riot Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Riot Timer Reset",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Timer Reset",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Reset Shots Compl.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Arena Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Arena Timer Reset",
+  "section": "adjustments"
+ },
+ {
+  "label": "Terminus Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Terminus Timer Reset",
+  "section": "adjustments"
+ },
+ {
+  "label": "Prison Starting Letters",
+  "section": "adjustments"
+ },
+ {
+  "label": "Prison Additional Letters",
+  "section": "adjustments"
+ },
+ {
+  "label": "Prison Tgt. Carry. Ball/Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "Prison M.B. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Prison M.B. Progress Carry.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Well Walker Starting Hits",
+  "section": "adjustments"
+ },
+ {
+  "label": "Well Walker Addl. Hits",
+  "section": "adjustments"
+ },
+ {
+  "label": "Well Walker M.B. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Well M.B. Progress Carry.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bld. Bth. M.B. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bld. Bth. M.B. A.A.B. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bld. Bth. M.B. A.A.B. Limit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bld. Bth. M.B. Sup. Compl. A.A.B.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Shots to Finish",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tower JP. Carryover Ball/Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "1ST Tower E.B.",
+  "section": "adjustments"
+ },
+ {
+  "label": "2ND+ Tower E.B. Every",
+  "section": "adjustments"
+ },
+ {
+  "label": "2X Scoring Timer Base",
+  "section": "adjustments"
+ },
+ {
+  "label": "2X Scoring Timer Inc.",
+  "section": "adjustments"
+ },
+ {
+  "label": "2X Scoring Timer Carry. Ball/Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "# Fish Tank Heads at Game Start",
+  "section": "adjustments"
+ },
+ {
+  "label": "Stack Woodbury Skill Shot Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "Wdbry. S.S. Lit Carry. B. to B.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Woodbury S.S. Select Lock/Plunge",
+  "section": "adjustments"
+ },
+ {
+  "label": "Woodbury S.S. Lockout Psns./Awd.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Stack X-Bows Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "X-bow Scores Carry. Ball/Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "X-bow Kills Starting Kills",
+  "section": "adjustments"
+ },
+ {
+  "label": "X-bow Kills Addl. Kills",
+  "section": "adjustments"
+ },
+ {
+  "label": "X-bow Kills Max. Kills",
+  "section": "adjustments"
+ },
+ {
+  "label": "X-bow Mode Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "M.KILL Shot Sequencing",
+  "section": "adjustments"
+ },
+ {
+  "label": "M.KILL Walker Kills Multiplier",
+  "section": "adjustments"
+ },
+ {
+  "label": "M.KILL Scores Carry. Horde Start",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde A.A.B. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walker Advance Timer Init",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walker Advance Timer Dec.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walker Advance Timer Min.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Starting # of Walkers",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Inc. # of Walkers",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walkers Max.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walker Kills/Level Init",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walker Kills/Level Inc.",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Walker Kills/Level Max.",
+  "section": "adjustments"
+ },
+ {
+  "label": "1ST Y. Walker Kills Siege Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "2ND+ Y. Walker Kills Siege Lit",
+  "section": "adjustments"
+ },
+ {
+  "label": "L.M.S. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "L.M.S. A.A.B. Autofire Timer",
+  "section": "adjustments"
+ },
+ {
+  "label": "L.M.S. A.A.B. Lit Every",
+  "section": "adjustments"
+ },
+ {
+  "label": "Zombie Kills Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Zombie Kills Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Zombie Kills Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Combo Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Combo Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Combo Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Bicycle Girl Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Barn Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Barn Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Barn Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "CDC Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Riot Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Riot Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Riot Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Tunnel Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Arena Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Arena Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Arena Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Terminus Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Terminus Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Terminus Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Blood Bath Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Blood Bath Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Blood Bath Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Crossbow Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Crossbow Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Crossbow Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "X Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "X Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "X Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Horde Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Last Man Stand. Champion",
+  "section": "adjustments"
+ },
+ {
+  "label": "Last Man Stand. Champion Award",
+  "section": "adjustments"
+ },
+ {
+  "label": "Last Man Stand. Champion Awards",
+  "section": "adjustments"
+ },
+ {
+  "label": "Disable Left Drop Targets",
+  "section": "adjustments"
+ },
+ {
+  "label": "Disable Prison Doors",
+  "section": "adjustments"
+ },
+ {
+  "label": "Disable Prison Magnet",
+  "section": "adjustments"
+ },
+ {
+  "label": "Shaker Motor (Optional)",
+  "section": "adjustments"
+ },
+ {
+  "label": "Abort Animations",
+  "section": "adjustments"
+ },
+ {
+  "label": "Slingshot Power",
+  "section": "adjustments"
+ },
+ {
+  "label": "1 SW.+ Trough = End of Ball",
+  "section": "adjustments"
+ },
+ {
+  "label": "Music Attenuation",
+  "section": "adjustments"
+ },
+ {
+  "label": "Speech Attenuation",
+  "section": "adjustments"
+ },
+ {
+  "label": "Grand Champion Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Walkers Killed Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Walkers Killed Champion",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Combo Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Combo Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Bicycle Girl Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Bicycle Girl Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Barn Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Barn Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "CDC Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "CDC Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Riot Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Riot Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Tunnel Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Tunnel Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Arena Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Arena Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Terminus Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Terminus Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Blood Bath Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Blood Bath Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Crossbow Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Crossbow Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "X Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "X Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Horde Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Horde Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Last Man Standing Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Last Man Standing Champion Score",
+  "section": "mode_champions"
+ }
+]

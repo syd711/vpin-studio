@@ -49,6 +49,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox maniaScoresCheckbox;
 
   @FXML
+  private CheckBox achievementsCheckbox;
+
+  @FXML
   private Pane iScoredScoresBox;
 
   @FXML
@@ -256,6 +259,12 @@ public class PauseMenuPreferencesController implements Initializable {
     maniaScoresCheckbox.setSelected(pauseMenuSettings.isShowManiaScores());
     maniaScoresCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setShowManiaScores(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    achievementsCheckbox.setSelected(pauseMenuSettings.isShowAchievements());
+    achievementsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setShowAchievements(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 

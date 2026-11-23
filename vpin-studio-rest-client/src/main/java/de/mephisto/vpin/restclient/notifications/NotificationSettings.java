@@ -16,6 +16,7 @@ public class NotificationSettings extends JsonSettings {
   private boolean competitionNotification = true;
   private boolean recordingStartNotification = true;
   private boolean recordingEndNotification = true;
+  private boolean achievementsNotification = true;
   private int notificationsScreenId = -1;
   private int margin = 0;
   private int textboxMargin = 0;
@@ -69,6 +70,14 @@ public class NotificationSettings extends JsonSettings {
 
   public void setRecordingEndNotification(boolean recordingEndNotification) {
     this.recordingEndNotification = recordingEndNotification;
+  }
+
+  public boolean isAchievementsNotification() {
+    return achievementsNotification;
+  }
+
+  public void setAchievementsNotification(boolean achievementsNotification) {
+    this.achievementsNotification = achievementsNotification;
   }
 
   public boolean isDesktopMode() {

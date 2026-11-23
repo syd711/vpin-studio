@@ -1,0 +1,70 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "High Score #1 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #1 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #2 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #2 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #3 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #3 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #4 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #4 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #5 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #5 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #6 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "High Score #6 Score",
+  "section": "high_scores"
+ }
+]

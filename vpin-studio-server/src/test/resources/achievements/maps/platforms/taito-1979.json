@@ -1,0 +1,29 @@
+{
+  "_notes": [
+    "Taito do Brasil 1979 hardware (PinMAME machine taito_old): 8080 CPU, five 1KB ROMs, and the 256-byte",
+    "battery-backed window at 0x1000 that the driver saves as the .nv file. Same design as the later boards one page",
+    "lower: display DMA at 0x1000, command DMA at 0x1010, settings at 0x10F0, high score at 0x10F9, credits at 0x10FF."
+  ],
+  "cpu": "8080",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "ROM",
+      "address": "0x0000",
+      "size": "0x1000",
+      "type": "rom"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x1000",
+      "size": "0x100",
+      "type": "nvram"
+    },
+    {
+      "label": "ROM (upper)",
+      "address": "0x1800",
+      "size": "0x400",
+      "type": "rom"
+    }
+  ]
+}

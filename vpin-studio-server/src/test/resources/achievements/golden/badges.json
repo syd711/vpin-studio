@@ -1,0 +1,157 @@
+[
+ {
+  "id": "first_steps",
+  "name": "First Steps",
+  "description": "Unlock your very first achievement"
+ },
+ {
+  "id": "getting_started",
+  "name": "Getting Started",
+  "description": "Unlock 5 unique achievements"
+ },
+ {
+  "id": "deca",
+  "name": "Deca",
+  "description": "Unlock 10 unique achievements"
+ },
+ {
+  "id": "half_century",
+  "name": "Half Century",
+  "description": "Unlock 50 unique achievements"
+ },
+ {
+  "id": "century",
+  "name": "Century",
+  "description": "Unlock 100 unique achievements"
+ },
+ {
+  "id": "hoarder",
+  "name": "Hoarder",
+  "description": "Unlock 500 unique achievements"
+ },
+ {
+  "id": "thousandaire",
+  "name": "Thousandaire",
+  "description": "Unlock 1000 unique achievements"
+ },
+ {
+  "id": "first_star",
+  "name": "First Star",
+  "description": "Reach Prestige 1"
+ },
+ {
+  "id": "two_stars",
+  "name": "Rising Star",
+  "description": "Reach Prestige 2"
+ },
+ {
+  "id": "three_stars",
+  "name": "Superstar",
+  "description": "Reach Prestige 3"
+ },
+ {
+  "id": "four_stars",
+  "name": "Elite Star",
+  "description": "Reach Prestige 4"
+ },
+ {
+  "id": "five_stars",
+  "name": "Maximum Prestige",
+  "description": "Reach Prestige 5 — Fully Maxed"
+ },
+ {
+  "id": "explorer",
+  "name": "Explorer",
+  "description": "Play 10 different tables"
+ },
+ {
+  "id": "globetrotter",
+  "name": "Globetrotter",
+  "description": "Play tables from 5 different manufacturers"
+ },
+ {
+  "id": "bally_fan",
+  "name": "Bally Fan",
+  "description": "Play 5 different Bally tables"
+ },
+ {
+  "id": "williams_fan",
+  "name": "Williams Fan",
+  "description": "Play 5 different Williams tables"
+ },
+ {
+  "id": "stern_fan",
+  "name": "Stern Fan",
+  "description": "Play 5 different Stern tables"
+ },
+ {
+  "id": "gottlieb_fan",
+  "name": "Gottlieb Fan",
+  "description": "Play 5 different Gottlieb tables"
+ },
+ {
+  "id": "dedicated",
+  "name": "Dedicated",
+  "description": "Accumulate 10 hours of total playtime"
+ },
+ {
+  "id": "marathon",
+  "name": "Marathon",
+  "description": "Accumulate 50 hours of total playtime"
+ },
+ {
+  "id": "addict",
+  "name": "Addict",
+  "description": "Accumulate 100 hours of total playtime"
+ },
+ {
+  "id": "long_session",
+  "name": "Endurance",
+  "description": "Play a single session for 60+ minutes"
+ },
+ {
+  "id": "hot_streak",
+  "name": "Hot Streak",
+  "description": "Unlock 5 achievements in a single session"
+ },
+ {
+  "id": "night_owl",
+  "name": "Night Owl",
+  "description": "Start a session after midnight (00:00–05:00)"
+ },
+ {
+  "id": "speed_demon",
+  "name": "Speed Demon",
+  "description": "Unlock 3 achievements within 5 minutes"
+ },
+ {
+  "id": "rare_finder",
+  "name": "Rare Finder",
+  "description": "Unlock a Rare achievement"
+ },
+ {
+  "id": "epic_hunter",
+  "name": "Epic Hunter",
+  "description": "Unlock an Epic achievement"
+ },
+ {
+  "id": "legendary_hunter",
+  "name": "Legendary Hunter",
+  "description": "Unlock a Legendary achievement"
+ },
+ {
+  "id": "cloud_pioneer",
+  "name": "Cloud Pioneer",
+  "description": "Complete your first cloud upload"
+ },
+ {
+  "id": "level_5",
+  "name": "Level 5",
+  "description": "Reach Player Level 5"
+ },
+ {
+  "id": "level_10",
+  "name": "Level 10",
+  "description": "Reach Player Level 10"
+ }
+]

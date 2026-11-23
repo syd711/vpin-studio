@@ -1,0 +1,362 @@
+{
+  "_notes": [
+    "Compiled by Francis De Brabandere.",
+    "Centaur (Bally 1981)",
+    "https://www.ipdb.org/machine.cgi?id=476",
+    "https://opdb.org/machines/409",
+    "Bally MPU AS-2518-35 (U6: 720-53_6.732)",
+    "7-digit score display",
+    "centaura is the free play version.",
+    "By default the credits are not shown, set dip switch 27 to show them."
+  ],
+  "_fileformat": 0.8,
+  "_metadata": {
+    "version": 5,
+    "copyright": [
+      "Copyright (C) 2024 by Francis De Brabandere <francisdb@gmail.com>",
+      "Copyright (C) 2025 by Tom Collins <tom@scorbit.io>"
+    ],
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "platform": "bally-35-8K",
+    "roms": [
+      "centaur"
+    ]
+  },
+  "game_state": {
+    "_notes": [
+      "score @ 0x21E, 0x225, 0x22C, 0x233 are display memory, and active in game",
+      "during attract, last game scores at 0x248, 0x24F, 0x256, 0x25D"
+    ],
+    "credits": {
+      "label": "Credits",
+      "start": "0x02AD",
+      "length": 2,
+      "encoding": "bcd"
+    },
+    "scores": [
+      {
+        "label": "Player 1",
+        "start": "0x021E",
+        "encoding": "bcd",
+        "length": 7
+      },
+      {
+        "label": "Player 2",
+        "start": "0x0225",
+        "encoding": "bcd",
+        "length": 7
+      },
+      {
+        "label": "Player 3",
+        "start": "0x022C",
+        "encoding": "bcd",
+        "length": 7
+      },
+      {
+        "label": "Player 4",
+        "start": "0x0233",
+        "encoding": "bcd",
+        "length": 7
+      }
+    ],
+    "final_scores": [
+      {
+        "label": "Final Score P1",
+        "start": "0x0248",
+        "encoding": "bcd",
+        "length": 7
+      },
+      {
+        "label": "Final Score P2",
+        "start": "0x024F",
+        "encoding": "bcd",
+        "length": 7
+      },
+      {
+        "label": "Final Score P3",
+        "start": "0x0256",
+        "encoding": "bcd",
+        "length": 7
+      },
+      {
+        "label": "Final Score P4",
+        "start": "0x025D",
+        "encoding": "bcd",
+        "length": 7
+      }
+    ],
+    "current_ball": {
+      "label": "Current Ball",
+      "start": "0x0B",
+      "nibble": "high",
+      "encoding": "bcd"
+    },
+    "player_count": {
+      "label": "Players",
+      "start": "0x0B",
+      "nibble": "low",
+      "encoding": "bcd"
+    },
+    "current_player": {
+      "label": "Current Player",
+      "start": "0x0C",
+      "encoding": "bcd"
+    },
+    "ball_count": {
+      "label": "Ball Count",
+      "encoding": "dipsw",
+      "offsets": [
+        32,
+        31
+      ],
+      "values": [
+        3,
+        5,
+        4,
+        2
+      ]
+    },
+    "max_credits": {
+      "label": "Max Credits",
+      "encoding": "dipsw",
+      "offsets": [
+        26,
+        25
+      ],
+      "values": [
+        10,
+        15,
+        25,
+        40
+      ]
+    },
+    "game_over": {
+      "_notes": "reading 'game over' lamp",
+      "label": "Game Over",
+      "start": "0x20C",
+      "encoding": "bool",
+      "mask": "0x4",
+      "invert": true
+    },
+    "tilted": {
+      "_notes": "reading 'tilt' lamp",
+      "label": "Tilted",
+      "start": "0x20C",
+      "encoding": "bool",
+      "mask": "0x8",
+      "invert": true
+    }
+  },
+  "high_scores": [
+    {
+      "label": "High Score",
+      "short_label": "HS",
+      "score": {
+        "start": "0x02A6",
+        "encoding": "bcd",
+        "length": 7
+      }
+    }
+  ],
+  "audits": {
+    "Bookkeeping functions": {
+      "05": {
+        "label": "Current Credits",
+        "start": "0x02AD",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 40
+      },
+      "06": {
+        "label": "Total Plays (Paid and Free Games)",
+        "start": "0x02B4",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "07": {
+        "label": "Total Replays (Free Games)",
+        "start": "0x02BB",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "08": {
+        "label": "Game Percentage",
+        "start": "0x02C2",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "09": {
+        "label": "HSTD Achieved",
+        "start": "0x02C9",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "10": {
+        "label": "Coin Chute #1",
+        "start": "0x02D0",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "11": {
+        "label": "Coin Chute #2",
+        "start": "0x02D7",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "12": {
+        "label": "Coin Chute #3",
+        "start": "0x02DE",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "13": {
+        "label": "Specials Awarded",
+        "start": "0x02E5",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "14": {
+        "label": "Minutes of Game Play",
+        "start": "0x02EC",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      },
+      "15": {
+        "label": "Service Credits",
+        "start": "0x02F3",
+        "length": 7,
+        "encoding": "bcd",
+        "min": 0,
+        "max": 99999
+      }
+    }
+  },
+  "adjustments": {
+    "High score functions": {
+      "01": {
+        "label": "Replay Level 1",
+        "start": "0x0291",
+        "encoding": "bcd",
+        "length": 7,
+        "min": 0,
+        "max": 9990000,
+        "default": 0,
+        "special_values": {
+          "0": "OFF"
+        },
+        "multiple_of": 10000
+      },
+      "02": {
+        "label": "Replay Level 2",
+        "start": "0x0298",
+        "encoding": "bcd",
+        "length": 7,
+        "min": 0,
+        "max": 9990000,
+        "default": 0,
+        "special_values": {
+          "0": "OFF"
+        },
+        "multiple_of": 10000
+      },
+      "03": {
+        "label": "Replay Level 3",
+        "start": "0x029F",
+        "encoding": "bcd",
+        "length": 7,
+        "min": 0,
+        "max": 9990000,
+        "default": 0,
+        "special_values": {
+          "0": "OFF"
+        },
+        "multiple_of": 10000
+      },
+      "04": {
+        "label": "High score to date",
+        "start": "0x02A6",
+        "encoding": "bcd",
+        "length": 7,
+        "min": 0,
+        "max": 9990000
+      }
+    },
+    "Game Adjustments": {
+      "16": {
+        "label": "High Score award #1",
+        "start": "0x02FA",
+        "encoding": "bcd",
+        "min": 0,
+        "max": 3,
+        "special_values": {
+          "0": "No Award",
+          "1": "Novelty",
+          "2": "Extra Ball",
+          "3": "Replay"
+        }
+      },
+      "17": {
+        "label": "High Score award #2",
+        "start": "0x02FB",
+        "encoding": "bcd",
+        "min": 0,
+        "max": 3,
+        "special_values": {
+          "0": "No Award",
+          "1": "No Award",
+          "2": "Extra Ball",
+          "3": "Replay"
+        }
+      },
+      "18": {
+        "label": "???",
+        "start": "0x02FC",
+        "encoding": "bcd",
+        "min": 0,
+        "max": 3
+      },
+      "19": {
+        "label": "HSTD Award",
+        "start": "0x02FD",
+        "encoding": "bcd",
+        "min": 0,
+        "max": 3,
+        "suffix": " credits"
+      },
+      "20": {
+        "label": "???",
+        "start": "0x02FE",
+        "encoding": "int",
+        "min": 0,
+        "max": 15
+      },
+      "21": {
+        "label": "???",
+        "start": "0x02FF",
+        "length": 1,
+        "encoding": "int",
+        "min": 0,
+        "max": 15
+      }
+    }
+  }
+}
