@@ -34,7 +34,7 @@ defaults:
 
 jobs:
   build:
-    runs-on: windows-2025-vs2026
+    runs-on: windows-2025
     steps:
       - name: Enable long paths for git
         run: git config --global core.longpaths true
@@ -84,12 +84,20 @@ jobs:
           echo "short=${MAJ}.${MIN}.${REV}" >> $GITHUB_OUTPUT
           echo "VPX ${MAJ}.${MIN}.${REV}"
 
+      # VPX targets VS 2026, whose MSVC 14.52 fails on bgfx/bimg's bundled dav1d (C7780 __has_include_next).
+      # Build with VS 2022 instead (runner windows-2025).
+      - name: Use the VS 2022 generator
+        working-directory: vpinball
+        run: |
+          sed -i 's/Visual Studio 18 2026/Visual Studio 17 2022/g' platforms/windows-x64/external.sh
+          grep -c "Visual Studio 17 2022" platforms/windows-x64/external.sh
+
       - name: Restore third-party cache
         id: cache
         uses: actions/cache/restore@v4
         with:
           path: vpinball/external
-          key: vpx-plugins-external-${{ hashFiles('vpinball/platforms/config.sh', 'vpinball/platforms/windows-x64/external.sh') }}
+          key: vpx-plugins-external-vs2022-${{ hashFiles('vpinball/platforms/config.sh', 'vpinball/platforms/windows-x64/external.sh') }}
 
       - name: Build third-party libraries
         working-directory: vpinball
@@ -100,12 +108,12 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: vpinball/external
-          key: vpx-plugins-external-${{ hashFiles('vpinball/platforms/config.sh', 'vpinball/platforms/windows-x64/external.sh') }}
+          key: vpx-plugins-external-vs2022-${{ hashFiles('vpinball/platforms/config.sh', 'vpinball/platforms/windows-x64/external.sh') }}
 
       - name: Build plugins
         working-directory: vpinball
         run: |
-          cmake -DRENDERER=BGFX -DPLATFORM=windows -DARCH=x64 -G "Visual Studio 18 2026" -A x64 -B build
+          cmake -DRENDERER=BGFX -DPLATFORM=windows -DARCH=x64 -G "Visual Studio 17 2022" -A x64 -B build
           cmake --build build --config Release --target PinMAMEPlugin ScoreServerPlugin --parallel
 
       - name: Package
