@@ -80,7 +80,7 @@ public class AchievementGameIndex {
             s.manufacturerByRom.put(rom, mfr);
           }
         }
-        if (ruleStore.getAuditReader().isSupported(rom)) {
+        if (ruleStore.isSupported(rom)) {
           s.romsWithMap.add(rom);
         }
       }

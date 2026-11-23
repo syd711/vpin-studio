@@ -1,0 +1,1096 @@
+{
+ "rules": [
+  {
+   "title": "tz_94h – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BUY-IN EX. BALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BUY-IN EX. BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 1st GUMBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st GUMBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 1st GUMBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st GUMBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 1st LOCK GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st LOCK GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 1st LOCK GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st LOCK GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 1st MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 1st MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 2nd MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 2nd MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 3rd MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 3rd MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3rd MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOTAL MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOTAL MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – WHITE MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHITE MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – WHITE MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHITE MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – MULTI RE-START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTI RE-START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – MULTI RE-START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTI RE-START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DOUBLE JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOUBLE JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DOUBLE JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOUBLE JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – GUMBALLS LOADED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GUMBALLS LOADED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – GUMBALLS LOADED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GUMBALLS LOADED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – POWERBALL PLAYED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWERBALL PLAYED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – POWERBALL PLAYED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWERBALL PLAYED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – POWERBALL MANIA: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWERBALL MANIA",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – POWERBALL MANIA: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWERBALL MANIA",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – P.B. MANIA JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "P.B. MANIA JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – P.B. MANIA JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "P.B. MANIA JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DOOR AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOOR AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DOOR AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOOR AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SLOT AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SLOT AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SLOT AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SLOT AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – PIANO AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PIANO AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – PIANO AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PIANO AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DOOR EX. BALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOOR EX. BALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DOOR EX. BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOOR EX. BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LOST IN THE ZONE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOST IN THE ZONE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LOST IN THE ZONE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOST IN THE ZONE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – FAST-LOCK M. BALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FAST-LOCK M. BALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – FAST-LOCK M. BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FAST-LOCK M. BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – FASTLOCK JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FASTLOCK JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – FASTLOCK JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FASTLOCK JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SPIRAL EX. BALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIRAL EX. BALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SPIRAL EX. BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIRAL EX. BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DEAD END EX. BALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DEAD END EX. BALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DEAD END EX. BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DEAD END EX. BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – ROBOT 1st E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ROBOT 1st E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – ROBOT 1st E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ROBOT 1st E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – ROBOT 2nd E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ROBOT 2nd E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – ROBOT 2nd E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ROBOT 2nd E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LEFT DRAIN E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT DRAIN E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LEFT DRAIN E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT DRAIN E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BATTLE THE POWER: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BATTLE THE POWER",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BATTLE THE POWER: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BATTLE THE POWER",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – POWER DEFEATED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWER DEFEATED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – POWER DEFEATED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWER DEFEATED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOWN SQ. AWARD: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOWN SQ. AWARD",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOWN SQ. AWARD: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOWN SQ. AWARD",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DEAD END AWARD: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DEAD END AWARD",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – DEAD END AWARD: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DEAD END AWARD",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – HITCH-HIKERS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HITCH-HIKERS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – HITCH-HIKERS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HITCH-HIKERS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TRIPLE PICKUPS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRIPLE PICKUPS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TRIPLE PICKUPS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRIPLE PICKUPS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – CAMERA AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CAMERA AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – CAMERA AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CAMERA AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SKILL SHOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SKILL SHOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SUPER SKILL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER SKILL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SUPER SKILL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER SKILL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BONUS X: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS X",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BONUS X: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS X",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SPIRAL AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIRAL AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SPIRAL AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPIRAL AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LEFT RAMPS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT RAMPS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LEFT RAMPS: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT RAMPS",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – RIGHT RAMPS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RIGHT RAMPS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – RIGHT RAMPS: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RIGHT RAMPS",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 3-WAY COMBO: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3-WAY COMBO",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 3-WAY COMBO: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3-WAY COMBO",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 4-WAY COMBO: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4-WAY COMBO",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – 4-WAY COMBO: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "4-WAY COMBO",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – FREE RIDES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FREE RIDES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – FREE RIDES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "FREE RIDES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BUY-IN FREE RIDE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN FREE RIDE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – BUY-IN FREE RIDE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN FREE RIDE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Lost in the Zone Champion Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Lost in the Zone Champion Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Lost in the Zone Champion Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Lost in the Zone Champion Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #1 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #1 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #1 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #1 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #2 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #2 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #2 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #2 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #3 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #3 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #3 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #3 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #4 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #4 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Buy-In High Score #4 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In High Score #4 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOTAL PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOTAL PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – EXTRA BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – EXTRA BALLS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOTAL FREE PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TOTAL FREE PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – REPLAY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – REPLAY AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SPECIAL AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPECIAL AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – SPECIAL AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SPECIAL AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – MATCH AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MATCH AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – MATCH AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MATCH AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TICKETS AWARDED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TICKETS AWARDED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – TICKETS AWARDED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TICKETS AWARDED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LEFT DRAINS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT DRAINS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tz_94h – LEFT DRAINS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LEFT DRAINS",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

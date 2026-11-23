@@ -1,0 +1,1123 @@
+{
+ "rules": [
+  {
+   "title": "cc_13 – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BALL SEARCHES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SEARCHES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BALL SEARCHES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SEARCHES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – 5 BALL SEARCHES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 BALL SEARCHES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – 5 BALL SEARCHES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 BALL SEARCHES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BALL SAVES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BALL SAVES: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALL SAVES",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L LOOP SHOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L LOOP SHOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L LOOP SHOTS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L LOOP SHOTS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L RAMP SHOTS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L RAMP SHOTS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L RAMP SHOTS: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L RAMP SHOTS",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – MINE HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MINE HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – MINE HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MINE HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – C RAMP SHOTS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "C RAMP SHOTS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – C RAMP SHOTS: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "C RAMP SHOTS",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BART HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BART HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BART HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BART HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BART COLLECTED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BART COLLECTED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BART COLLECTED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BART COLLECTED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R LOOP SHOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R LOOP SHOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R LOOP SHOTS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R LOOP SHOTS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R RAMP SHOTS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R RAMP SHOTS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R RAMP SHOTS: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R RAMP SHOTS",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – MOTHERLODE LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MOTHERLODE LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – MOTHERLODE LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MOTHERLODE LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – STAMPEDE STARTED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STAMPEDE STARTED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – STAMPEDE STARTED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STAMPEDE STARTED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – COMBOS COMPLETE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COMBOS COMPLETE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – COMBOS COMPLETE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COMBOS COMPLETE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – SHOWDOWN START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SHOWDOWN START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – SHOWDOWN START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SHOWDOWN START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BART BR. COMPLETE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BART BR. COMPLETE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BART BR. COMPLETE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BART BR. COMPLETE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – HIGH NOON START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HIGH NOON START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – HIGH NOON START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HIGH NOON START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – HIGH NOON WIN: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HIGH NOON WIN",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – HIGH NOON WIN: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "HIGH NOON WIN",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – STRANGER (@END): 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STRANGER (@END)",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – STRANGER (@END): 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "STRANGER (@END)",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – PARTNER (@END): 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PARTNER (@END)",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – PARTNER (@END): 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PARTNER (@END)",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – DEPUTY (@END): 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DEPUTY (@END)",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – DEPUTY (@END): 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DEPUTY (@END)",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – SHERIFF (@END): 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SHERIFF (@END)",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – SHERIFF (@END): 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SHERIFF (@END)",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – MARSHALL (@END): 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARSHALL (@END)",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – MARSHALL (@END): 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MARSHALL (@END)",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. QUICKDRAW LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. QUICKDRAW LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. QUICKDRAW LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. QUICKDRAW LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. QUICKDRAW LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. QUICKDRAW LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. QUICKDRAW LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. QUICKDRAW LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. QDRAW START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. QDRAW START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. QDRAW START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. QDRAW START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. QDRAW START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. QDRAW START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. QDRAW START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. QDRAW START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – QUICKDRAW WINS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "QUICKDRAW WINS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – QUICKDRAW WINS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "QUICKDRAW WINS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. GUNFIGHT START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. GUNFIGHT START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. GUNFIGHT START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. GUNFIGHT START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. GUNFIGHT START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. GUNFIGHT START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. GUNFIGHT START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. GUNFIGHT START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – GUNFIGHT WINS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GUNFIGHT WINS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – GUNFIGHT WINS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GUNFIGHT WINS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – SKILL EB. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL EB. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – SKILL EB. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL EB. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY EB. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY EB. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY EB. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY EB. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY EB.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY EB.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY EB.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY EB.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – POLLY EB. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POLLY EB. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – POLLY EB. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POLLY EB. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Q.DRAW EB. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Q.DRAW EB. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Q.DRAW EB. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Q.DRAW EB. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY MB START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY MB START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY MB START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY MB START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – TOP LANES CMPLT.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOP LANES CMPLT.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – TOP LANES CMPLT.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOP LANES CMPLT.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – GOLD MINE MB: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GOLD MINE MB",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – GOLD MINE MB: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GOLD MINE MB",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – GOLD MINE JPOT.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GOLD MINE JPOT.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – GOLD MINE JPOT.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "GOLD MINE JPOT.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – =1 GOLD MINE MB: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "=1 GOLD MINE MB",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – =1 GOLD MINE MB: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "=1 GOLD MINE MB",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – =2 GOLD MINE MB: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "=2 GOLD MINE MB",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – =2 GOLD MINE MB: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "=2 GOLD MINE MB",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – >=3 GOLD MINE MB: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=3 GOLD MINE MB",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – >=3 GOLD MINE MB: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=3 GOLD MINE MB",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – POLLY PERL. START: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POLLY PERL. START",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – POLLY PERL. START: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POLLY PERL. START",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – POLLY PERIL WIN: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POLLY PERIL WIN",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – POLLY PERIL WIN: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POLLY PERIL WIN",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – ALL SHOWDN TGTS.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ALL SHOWDN TGTS.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – ALL SHOWDN TGTS.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "ALL SHOWDN TGTS.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – BOUNTY AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOUNTY AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. DROP UP REQ.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. DROP UP REQ.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. DROP UP REQ.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. DROP UP REQ.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. DROP HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. DROP HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – L. DROP HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "L. DROP HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – LC. DROP UP REQ.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LC. DROP UP REQ.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – LC. DROP UP REQ.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LC. DROP UP REQ.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – LC. DROP HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LC. DROP HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – LC. DROP HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LC. DROP HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – RC. DROP UP REQ.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RC. DROP UP REQ.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – RC. DROP UP REQ.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RC. DROP UP REQ.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – RC. DROP HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RC. DROP HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – RC. DROP HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RC. DROP HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. DROP UP REQ.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. DROP UP REQ.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. DROP UP REQ.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. DROP UP REQ.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. DROP HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. DROP HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – R. DROP HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "R. DROP HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – TOTAL PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – TOTAL PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – EXTRA BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – EXTRA BALLS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – TOTAL FREE PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – TOTAL FREE PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "cc_13 – REPLAY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  }
+ ]
+}

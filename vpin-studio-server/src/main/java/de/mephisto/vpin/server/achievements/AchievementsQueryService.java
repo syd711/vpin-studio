@@ -9,7 +9,6 @@ import de.mephisto.vpin.server.achievements.model.AchievementSession;
 import de.mephisto.vpin.server.achievements.model.AchievementSessionRepository;
 import de.mephisto.vpin.server.achievements.model.AchievementUnlock;
 import de.mephisto.vpin.server.achievements.model.AchievementUnlockRepository;
-import de.mephisto.vpin.server.achievements.nvram.NvramSnapshot;
 import de.mephisto.vpin.server.achievements.progression.BadgeEvaluator;
 import de.mephisto.vpin.server.achievements.progression.LevelCalculator;
 import de.mephisto.vpin.server.achievements.progression.RarityTier;
@@ -19,7 +18,6 @@ import de.mephisto.vpin.server.achievements.rules.RuleCondition;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.vpx.FolderLookupService;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +59,6 @@ public class AchievementsQueryService {
   private AchievementUnlockRepository unlockRepository;
   @Autowired
   private AchievementSessionRepository sessionRepository;
-  @Autowired
-  private FolderLookupService folderLookupService;
 
   @NonNull
   public List<PlayerAchievements> getPlayers() {
@@ -250,7 +246,7 @@ public class AchievementsQueryService {
     t.vpsTableId = game.getExtTableId();
     t.vpsVersionId = game.getExtTableVersionId();
     t.hasMap = index.romsWithMap.contains(rom);
-    t.mapRom = t.hasMap ? ruleStore.getAuditReader().resolveMapRom(rom) : null;
+    t.mapRom = t.hasMap ? ruleStore.resolveMapRom(rom) : null;
     Instant lp = lastPlayed.get(rom);
     t.lastPlayed = lp != null ? Date.from(lp) : null;
     if (t.hasMap) {
@@ -280,17 +276,11 @@ public class AchievementsQueryService {
   }
 
   /**
-   * The rules of a ROM; generated from the current .nv file if they do not exist yet (the Watcher generates them
-   * the first time the audits are available).
+   * The rules of a ROM (bundled, or generated from the live map).
    */
   private List<AchievementRule> rulesFor(String rom, Game game) {
-    List<AchievementRule> rules = ruleStore.getRomRules(rom);
-    if (rules != null) {
-      return rules;
-    }
     try {
-      NvramSnapshot snapshot = ruleStore.getAuditReader().read(rom, folderLookupService.getNvRamFile(game));
-      return ruleStore.ensureRomRules(rom, snapshot);
+      return ruleStore.ensureRomRules(rom);
     }
     catch (Exception e) {
       return List.of();
@@ -329,8 +319,7 @@ public class AchievementsQueryService {
     }
     else {
       details.table = getTable(playerId, key);
-      List<AchievementRule> r = ruleStore.getRomRules(key);
-      rules = r != null ? r : List.of();
+      rules = ruleStore.ensureRomRules(key);
     }
 
     AchievementPlayerState state = stateStore.getState(playerId);

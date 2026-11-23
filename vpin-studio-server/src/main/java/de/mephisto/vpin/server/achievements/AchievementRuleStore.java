@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.achievements;
 
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.server.achievements.bundle.RuleBundle;
 import de.mephisto.vpin.server.achievements.nvram.NvramAuditReader;
 import de.mephisto.vpin.server.achievements.nvram.NvramSnapshot;
 import de.mephisto.vpin.server.achievements.rules.AchievementRule;
@@ -21,9 +22,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Global and per ROM achievement rules. Per ROM rules are generated once (like the Watcher, on the first time
- * the audits of the ROM are available) and stored as {@code resources/achievements/rom/<rom>.ach.json} in the
- * Watcher's format. A {@code resources/achievements/global_achievements.json} overrides the bundled global rules.
+ * Global and per ROM achievement rules.
+ * <p>
+ * Per ROM rules come from the {@link RuleBundle} shipped with VPin Studio; bundled ROMs are also decoded with the
+ * frozen map of the bundle. ROMs that are not bundled yet (maps added after the release) get their rules generated
+ * from the live map in {@code resources/maps} and stored as {@code resources/achievements/rom/<rom>.ach.json} in the
+ * Watcher's format; the next bundle normally contains the same rules, since they only depend on the map.
+ * A {@code resources/achievements/global_achievements.json} overrides the bundled global rules.
  */
 @Component
 public class AchievementRuleStore {
@@ -32,6 +37,8 @@ public class AchievementRuleStore {
   private final Map<String, List<AchievementRule>> romRules = new ConcurrentHashMap<>();
   private volatile List<AchievementRule> globalRules;
   private volatile NvramAuditReader auditReader;
+  private volatile RuleBundle bundle;
+  private volatile boolean bundleLoaded;
 
   @NonNull
   public File getFolder() {
@@ -43,12 +50,62 @@ public class AchievementRuleStore {
     return new File(getFolder(), "rom");
   }
 
+  /**
+   * The reader for the live maps in {@code resources/maps}.
+   */
   @NonNull
-  public synchronized NvramAuditReader getAuditReader() {
+  public synchronized NvramAuditReader getLiveAuditReader() {
     if (auditReader == null) {
       auditReader = new NvramAuditReader(new File(SystemInfo.RESOURCES, "maps"));
     }
     return auditReader;
+  }
+
+  /**
+   * @return the bundled rules and maps, null if no bundle is available.
+   */
+  @Nullable
+  public RuleBundle getBundle() {
+    if (!bundleLoaded) {
+      synchronized (this) {
+        if (!bundleLoaded) {
+          bundle = RuleBundle.install(new File(getFolder(), "bundle"));
+          bundleLoaded = true;
+        }
+      }
+    }
+    return bundle;
+  }
+
+  public boolean isBundled(@Nullable String rom) {
+    RuleBundle b = getBundle();
+    return b != null && b.contains(rom);
+  }
+
+  /**
+   * The reader to decode the ROM with: the frozen map of the bundle for bundled ROMs, the live map otherwise.
+   */
+  @NonNull
+  public NvramAuditReader getAuditReader(@Nullable String rom) {
+    RuleBundle b = getBundle();
+    if (b != null && b.contains(rom)) {
+      return b.getReader();
+    }
+    return getLiveAuditReader();
+  }
+
+  public boolean isSupported(@Nullable String rom) {
+    return getAuditReader(rom).isSupported(rom);
+  }
+
+  @Nullable
+  public String resolveMapRom(@Nullable String rom) {
+    return getAuditReader(rom).resolveMapRom(rom);
+  }
+
+  @NonNull
+  public NvramSnapshot read(@NonNull String rom, @Nullable File nvFile) {
+    return getAuditReader(rom).read(rom, nvFile);
   }
 
   @NonNull
@@ -85,7 +142,8 @@ public class AchievementRuleStore {
   }
 
   /**
-   * @return the stored rules of the ROM, null if they have not been generated yet.
+   * @return the bundled or stored rules of the ROM, null if the ROM is not bundled and its rules have not been
+   * generated yet.
    */
   @Nullable
   public List<AchievementRule> getRomRules(@NonNull String rom) {
@@ -93,6 +151,14 @@ public class AchievementRuleStore {
     List<AchievementRule> cached = romRules.get(key);
     if (cached != null) {
       return cached;
+    }
+    RuleBundle b = getBundle();
+    if (b != null && b.contains(key)) {
+      List<AchievementRule> rules = b.getRules(key);
+      if (rules != null) {
+        romRules.put(key, rules);
+      }
+      return rules;
     }
     File file = getRomRuleFile(key);
     if (file.exists()) {
@@ -109,31 +175,34 @@ public class AchievementRuleStore {
   }
 
   /**
-   * Returns the rules of the ROM and generates them from the given audits if they do not exist yet
-   * (port of {@code _ensure_rom_specific}).
+   * Returns the rules of the ROM. ROMs that are not bundled get their rules generated once from the live map
+   * (the audits of an empty NVRAM, see {@link NvramAuditReader#getSyntheticAudits(String)}).
    */
   @NonNull
-  public List<AchievementRule> ensureRomRules(@NonNull String rom, @Nullable NvramSnapshot audits) {
+  public List<AchievementRule> ensureRomRules(@NonNull String rom) {
     List<AchievementRule> existing = getRomRules(rom);
     if (existing != null) {
       return existing;
     }
-    if (audits == null || audits.isEmpty()) {
+    String key = rom.toLowerCase();
+    NvramAuditReader live = getLiveAuditReader();
+    if (!live.isSupported(key)) {
       return Collections.emptyList();
     }
-    String key = rom.toLowerCase();
     synchronized (this) {
       existing = getRomRules(key);
       if (existing != null) {
         return existing;
       }
-      List<AchievementRule> rules = RomRuleGenerator.generate(key, audits.audits(), getAuditReader().getFields(key));
+      List<AchievementRule> rules = RomRuleGenerator.generate(key, live.getSyntheticAudits(key), live.getFields(key));
       if (rules.isEmpty()) {
+        // remembered until the next restart, the map may be usable after a map update
+        romRules.put(key, Collections.emptyList());
         return Collections.emptyList();
       }
       try {
         new AchievementRuleSet(new ArrayList<>(rules)).save(getRomRuleFile(key));
-        LOG.info("Created achievement rules for {} with {} rules", key, rules.size());
+        LOG.info("Created achievement rules for {} (not bundled) with {} rules", key, rules.size());
       }
       catch (Exception e) {
         LOG.error("Failed to write achievement rules for {}: {}", key, e.getMessage());
@@ -145,9 +214,13 @@ public class AchievementRuleStore {
   }
 
   /**
-   * Stores rule files imported from an Achievement Watcher installation, existing files are kept.
+   * Stores rule files imported from an Achievement Watcher installation, existing files are kept. Bundled ROMs
+   * always use the bundled rules (generated from the same map version as the Watcher's).
    */
   public boolean importRomRules(@NonNull String rom, @NonNull File watcherRuleFile) {
+    if (isBundled(rom)) {
+      return false;
+    }
     File target = getRomRuleFile(rom);
     if (target.exists()) {
       return false;

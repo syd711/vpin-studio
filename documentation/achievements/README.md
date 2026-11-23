@@ -4,6 +4,10 @@ The **Achievements** section replaces the former dashboard. It is a port of the
 [VPX Achievement Watcher](https://github.com/Mizzlsolti/vpx-achievement-watcher) and tracks achievements for every
 table whose ROM has an NVRAM map ([pinmame-nvram-maps](https://github.com/tomlogic/pinmame-nvram-maps)).
 
+The achievements of a table come with VPin Studio: every release contains the achievement rules for all ROMs with an
+NVRAM map, so all cabinets have the same achievements for a table. Updates of the NVRAM maps never change existing
+achievements; tables whose map was added after the release get their achievements generated on the cabinet.
+
 ## How it works
 
 - When a table is launched from the frontend, VPin Studio reads the audits of the table's `.nv` file.

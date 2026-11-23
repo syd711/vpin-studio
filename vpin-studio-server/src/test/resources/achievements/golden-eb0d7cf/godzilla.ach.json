@@ -1,0 +1,322 @@
+{
+ "rules": [
+  {
+   "title": "godzilla – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #1 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #1 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #1 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #1 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #2 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #2 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #2 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #2 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #3 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #3 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #3 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #3 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #4 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #4 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #4 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #4 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #5 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #5 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – 5 MULTIBALLS CHAMPS #5 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "5 MULTIBALLS CHAMPS #5 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – First Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "First Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – First Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "First Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Second Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Second Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Second Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Second Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Third Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Third Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Third Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Third Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Fourth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fourth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Fourth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fourth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Fifth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fifth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Fifth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Fifth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Sixth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Sixth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Sixth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Sixth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Seventh Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Seventh Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Seventh Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Seventh Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Eighth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Eighth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Eighth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Eighth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Ninth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ninth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Ninth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ninth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Tenth Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tenth Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "godzilla – Tenth Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tenth Initials",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

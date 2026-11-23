@@ -35,11 +35,14 @@ public class NvramAuditReader {
   private static final Logger LOG = LoggerFactory.getLogger(NvramAuditReader.class);
 
   private static final Set<String> TEXT_ENCODINGS = Set.of("ch", "wpc_rtc", "raw");
+  /** larger than the NVRAM of every platform, the rest is passed as PinMAME data and ignored */
+  private static final int EMPTY_NVRAM_SIZE = 0x100000;
 
   private final ObjectMapper mapper = JsonMapper.builder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
   private final File mapFolder;
   private final NVRamMapParser parser;
   private final RomMapResolver resolver;
+  private final int romCount;
   private final Map<String, List<MapField>> fieldCache = new ConcurrentHashMap<>();
 
   public NvramAuditReader(@NonNull File mapFolder) {
@@ -47,6 +50,14 @@ public class NvramAuditReader {
     this.parser = new NVRamMapParser(mapFolder.getAbsolutePath() + File.separator);
     Set<String> roms = parser.getSupportedRoms().stream().filter(r -> !r.startsWith("_")).collect(Collectors.toSet());
     this.resolver = new RomMapResolver(roms);
+    this.romCount = roms.size();
+  }
+
+  /**
+   * @return the number of ROMs listed in the map index.
+   */
+  public int getSupportedRomCount() {
+    return romCount;
   }
 
   /**
@@ -84,6 +95,42 @@ public class NvramAuditReader {
         return Collections.emptyList();
       }
     });
+  }
+
+  /**
+   * The audits decoded from an empty NVRAM. Rule generation only looks at which fields decode to numbers, so the
+   * rules generated from these audits are the same as the ones generated from a real .nv file, but they only
+   * depend on the map.
+   */
+  @NonNull
+  public Map<String, Object> getSyntheticAudits(@NonNull String rom) {
+    String mapRom = resolveMapRom(rom);
+    if (mapRom == null) {
+      return Collections.emptyMap();
+    }
+    return read(mapRom, new byte[EMPTY_NVRAM_SIZE]).audits();
+  }
+
+  /**
+   * @return the path of the map file used for the ROM, relative to the map folder, e.g. "maps/williams/wpc/afm_113.map.json".
+   */
+  @Nullable
+  public String getMapPath(@Nullable String rom) {
+    String mapRom = resolveMapRom(rom);
+    if (mapRom == null) {
+      return null;
+    }
+    try {
+      return parser.mapPathForRom(mapRom);
+    }
+    catch (IOException e) {
+      return null;
+    }
+  }
+
+  @NonNull
+  public File getMapFolder() {
+    return mapFolder;
   }
 
   /**

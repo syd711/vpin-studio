@@ -513,6 +513,17 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>achievements/bundle/**</exclude>
+                </excludes>
+            </resource>
+            <!-- frozen NVRAM maps and rules of the achievement rule bundle, must be copied byte by byte -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>achievements/bundle/**</include>
+                </includes>
             </resource>
         </resources>
 

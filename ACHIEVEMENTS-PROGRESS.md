@@ -52,12 +52,19 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
 ## Status: all phases implemented. Nothing is committed (Studio, vpin-mania-rest-client, vpin-mania).
 
 ## TODOs / follow-ups (instead of questions)
-- Deploy: run the achievement block at the end of `vpin-mania/server/sql/create_schema.sql` on production BEFORE
-  deploying the PHP code; deploy vpin-mania-rest-client 2.1.0 to the GitLab package registry (only installed locally).
-- NVRAM map updates change the fields of a map. Rule files are generated once per ROM and then kept, but a cabinet that
-  generates a ROM's rules after a map update gets a different rule set than one that generated them earlier, and the
-  Watcher pinned the maps to one commit (eb0d7cf). Consider pinning the map version for rule generation, or keeping
-  generated rule sets centrally in VPin Mania, so totals are the same on all cabinets.
+- [x] Deploy: Mania schema + PHP code and vpin-mania-rest-client 2.1.0 deployed to production (2026-11-23).
+- [x] Release-bundled rule sets (`server/achievements/bundle`): per ROM rules + the frozen map (and platform file)
+  they were generated from, shipped in the server jar under `achievements/bundle` (~10 MB source, ~1.6 MB zipped),
+  extracted to `resources/achievements/bundle` on first use. Bundled ROMs are decoded with their frozen map, other
+  ROMs (maps added after the release) get rules generated from the live map. Rules now only depend on the map
+  (decoded from an empty NVRAM), so they exist before the first game. Revision 1 = eb0d7cf (872 ROMs, matches the
+  Watcher, see `golden-eb0d7cf`), revision 2 = e40060f (+728 ROMs). 22 ROMs have no usable fields (Atari/Capcom/Alvin G
+  maps the library can't decode), they get added automatically once they produce rules. Measured drift eb0d7cf ->
+  e40060f: 219 ROMs would get different rules, 184 would have unreachable rules with frozen rules + live maps.
+  Server pom: the bundle is excluded from resource filtering.
+  **Release step:** run `RuleBundleBuilder <pinmame-nvram-maps checkout> <commit>` (from the repo root) before each
+  release and commit the added files. It only adds ROMs; "held back" lists ROMs whose current map would change
+  their rules (kept on purpose, changing them needs a deliberate rule migration).
 - [x] Golden tests no longer read the gitignored `resources/maps`: the maps of the 20 test ROMs are copied to
   `src/test/resources/achievements/maps` (refresh with `copy_test_maps.py`, see the README there).
 - Like the Watcher, the per-ROM rules include adjustment fields (e.g. "Replay Type: 1", "Extra Ball Limit: 3") that can

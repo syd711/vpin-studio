@@ -74,7 +74,7 @@ public class AchievementsServiceIntegrationTest extends AbstractVPinServerTest {
       assertThat(game).isNotNull();
       String rom = game.getRom().toLowerCase();
       File nv = folderLookupService.getNvRamFile(game);
-      NvramSnapshot start = ruleStore.getAuditReader().read(rom, nv);
+      NvramSnapshot start = ruleStore.read(rom, nv);
       assertThat(start.audits()).isNotEmpty();
 
       Map<String, Object> endAudits = new LinkedHashMap<>(start.audits());

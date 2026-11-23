@@ -141,17 +141,17 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
       if (rom == null || getTrackedPlayers().isEmpty()) {
         return;
       }
-      if (!ruleStore.getAuditReader().isSupported(rom)) {
+      if (!ruleStore.isSupported(rom)) {
         LOG.info("Achievements: no NVRAM map for ROM '{}', \"{}\" is not tracked.", rom, game.getGameDisplayName());
         return;
       }
       File nvFile = folderLookupService.getNvRamFile(game);
-      NvramSnapshot start = ruleStore.getAuditReader().read(rom, nvFile);
+      NvramSnapshot start = ruleStore.read(rom, nvFile);
       if (start.isEmpty()) {
         LOG.info("Achievements: no readable .nv file for '{}' yet, the first game of this ROM is not tracked.", rom);
         return;
       }
-      ruleStore.ensureRomRules(rom, start);
+      ruleStore.ensureRomRules(rom);
       activeSessions.put(game.getId(), new ActiveSession(game.getId(), rom, nvFile, nvFile.lastModified(), start, Instant.now()));
       LOG.info("Achievements: tracking \"{}\" ({}), {} audit fields", game.getGameDisplayName(), rom, start.audits().size());
     }
@@ -192,7 +192,7 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
       Thread.sleep(500);
       waited += 500;
     }
-    NvramSnapshot end = ruleStore.getAuditReader().read(session.rom(), nvFile);
+    NvramSnapshot end = ruleStore.read(session.rom(), nvFile);
     if (end.isEmpty()) {
       LOG.warn("Achievements: could not read end audits for {}", session.rom());
       return;
@@ -210,7 +210,7 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
       return Collections.emptyList();
     }
     boolean multiplayer = end.playerCount() != null && end.playerCount() > 1;
-    List<AchievementRule> romRules = ruleStore.ensureRomRules(rom, start);
+    List<AchievementRule> romRules = ruleStore.ensureRomRules(rom);
 
     AchievementSession session = new AchievementSession();
     session.setGameId(game != null ? game.getId() : -1);
