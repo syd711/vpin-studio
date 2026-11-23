@@ -47,6 +47,40 @@
                   <Font size="14.0" />
                </font>
             </Button>
+            <Separator fx:id="tableSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
+               </tooltip>
+            </Button>
+            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="%dialog.asset_manager" />
+               </tooltip>
+            </Button>
+            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onDataManager" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
+               </tooltip>
+            </Button>
             <Region HBox.hgrow="ALWAYS" />
             <Label fx:id="statusLabel" textFill="#bdbdbd">
                <font>

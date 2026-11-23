@@ -4,7 +4,12 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.AchievementsSyncResult;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
+import de.mephisto.vpin.restclient.achievements.TableAchievements;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -17,6 +22,7 @@ import de.mephisto.vpin.ui.PreferencesController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -33,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -71,6 +78,14 @@ public class AchievementsController implements Initializable, StudioFXController
   private Button syncBtn;
   @FXML
   private Label statusLabel;
+  @FXML
+  private Separator tableSeparator;
+  @FXML
+  private Button openTableBtn;
+  @FXML
+  private Button assetManagerBtn;
+  @FXML
+  private Button dataManagerBtn;
 
   @FXML
   private OverviewTabController overviewController;
@@ -119,7 +134,63 @@ public class AchievementsController implements Initializable, StudioFXController
       attachToolbar();
       refreshSelectedTab();
     });
+    tablesController.selectedTableProperty().addListener((obs, o, n) -> updateTableButtons());
     attachToolbar();
+  }
+
+  /**
+   * The table buttons are only shown on the tables tab and need a selected table that is installed.
+   */
+  private void updateTableButtons() {
+    boolean tablesVisible = tabPane.getSelectionModel().getSelectedItem() == tablesTab;
+    for (Node node : List.of(tableSeparator, openTableBtn, assetManagerBtn, dataManagerBtn)) {
+      node.setVisible(tablesVisible);
+      node.setManaged(tablesVisible);
+    }
+    boolean disabled = getSelectedGameId() <= 0;
+    openTableBtn.setDisable(disabled);
+    assetManagerBtn.setDisable(disabled);
+    dataManagerBtn.setDisable(disabled);
+  }
+
+  private int getSelectedGameId() {
+    TableAchievements table = tablesController.selectedTableProperty().get();
+    return table == null || TablesTabController.GLOBAL.equals(table.rom) ? 0 : table.gameId;
+  }
+
+  private void openSelectedGame(Consumer<GameRepresentation> consumer) {
+    int gameId = getSelectedGameId();
+    if (gameId <= 0) {
+      return;
+    }
+    JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
+        .thenAcceptLater(game -> {
+          if (game != null) {
+            // the dialogs are modal, so the table list is reloaded once they are closed
+            consumer.accept(game);
+            tablesController.setDirty();
+            tablesController.refresh(current);
+          }
+        })
+        .onErrorLater(e -> LOG.error("Failed to load game {}: {}", gameId, e.getMessage(), e));
+  }
+
+  @FXML
+  private void onOpenTable() {
+    int gameId = getSelectedGameId();
+    if (gameId > 0) {
+      NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(gameId));
+    }
+  }
+
+  @FXML
+  private void onAssetManager() {
+    openSelectedGame(game -> TableDialogs.openTableAssetsDialog(null, game, VPinScreen.BackGlass));
+  }
+
+  @FXML
+  private void onDataManager() {
+    openSelectedGame(game -> TableDialogs.openTableDataDialog(null, game));
   }
 
   /**
@@ -139,6 +210,7 @@ public class AchievementsController implements Initializable, StudioFXController
     if (pane.getTop() != toolbar) {
       pane.setTop(toolbar);
     }
+    updateTableButtons();
   }
 
   @Override

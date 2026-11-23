@@ -59,8 +59,7 @@ public class AchievementsServiceClient extends VPinStudioClientService {
   public boolean selectBadge(long playerId, @Nullable String badgeId) {
     try {
       String param = badgeId != null ? "?badge=" + URLEncoder.encode(badgeId, StandardCharsets.UTF_8) : "";
-      getRestClient().put(API + "achievements/player/" + playerId + "/badge" + param, java.util.Map.of());
-      return true;
+      return Boolean.TRUE.equals(getRestClient().put(API + "achievements/player/" + playerId + "/badge" + param, java.util.Map.of()));
     }
     catch (Exception e) {
       LOG.error("Failed to select badge: {}", e.getMessage(), e);

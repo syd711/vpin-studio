@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievementsDetails;
 import de.mephisto.vpin.ui.achievements.AchievementsController;
 import de.mephisto.vpin.ui.achievements.AchievementsTab;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -73,6 +74,10 @@ public class TablesTabController implements AchievementsTab, Initializable {
   @Override
   public void setDirty() {
     dirty = true;
+  }
+
+  public ReadOnlyObjectProperty<TableAchievements> selectedTableProperty() {
+    return tableListTileController.selectedTableProperty();
   }
 
   public void selectRom(String rom) {

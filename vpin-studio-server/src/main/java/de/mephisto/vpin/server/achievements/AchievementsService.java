@@ -859,8 +859,16 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
 
   public boolean selectBadge(long playerId, @Nullable String badgeId) {
     AchievementPlayerState state = stateStore.getState(playerId);
-    if (badgeId != null && !badgeId.isEmpty() && !stateStore.getBadges(state).contains(badgeId)) {
-      return false;
+    if (badgeId != null && badgeId.isEmpty()) {
+      badgeId = null;
+    }
+    if (badgeId != null) {
+      // the UI shows the live evaluation, the stored set is only updated after a game: store badges earned since
+      updateBadges(state, unlockRepository.findByPlayerId(playerId));
+      if (!stateStore.getBadges(state).contains(badgeId)) {
+        LOG.warn("Achievements: player {} has not earned the badge \"{}\"", playerId, badgeId);
+        return false;
+      }
     }
     state.setSelectedBadge(badgeId);
     state.setSummaryDirty(true);

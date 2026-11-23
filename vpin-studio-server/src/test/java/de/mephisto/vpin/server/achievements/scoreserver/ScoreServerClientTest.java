@@ -93,6 +93,8 @@ public class ScoreServerClientTest {
 
   @Test
   public void startsGameWithScoresForPluginsWithoutRoundStart() {
+    scores(1, 0, 0, 0); // attract mode: no game for plugins without round_start either
+    assertThat(client.getGamesSince(Instant.EPOCH)).isEmpty();
     scores(1, 1, 1, 100);
     scores(1, 1, 2, 5_000);
     send("{\"type\":\"game_end\",\"rom\":\"afm_113b\",\"reason\":\"plugin_unload\",\"scores\":[]}");

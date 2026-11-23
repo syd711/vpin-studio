@@ -6,15 +6,19 @@ import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.achievements.AchievementsController;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
 
 /**
  * Overview tile: the global cloud rank of the player (VPin Mania).
  */
-public class OverviewCloudRankTileController {
+public class OverviewCloudRankTileController implements Initializable {
 
   @FXML
   private Label rankLabel;
@@ -37,6 +41,7 @@ public class OverviewCloudRankTileController {
     show(detailLabel, !registrationRequired);
     show(registerBox, registrationRequired);
     if (registrationRequired) {
+      rankLabel.setVisible(false);
       registerBox.getChildren().setAll(registrationBox(controller));
       return;
     }
@@ -60,5 +65,10 @@ public class OverviewCloudRankTileController {
           }
         })
         .onErrorLater(e -> detailLabel.setText(Messages.get("achievements.cloud_unavailable")));
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    rankLabel.managedProperty().bindBidirectional(rankLabel.visibleProperty());
   }
 }
