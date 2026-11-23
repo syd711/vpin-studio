@@ -1,0 +1,206 @@
+{
+  "_notes": [
+    "Compiled by Tom Collins <tom@scorbit.io>",
+    "bay_f201 & bay_g300 player_count @ 0x1C9; possibly other changes",
+    "version 3 game -- clra; ldab <count>; ldx #$1E00; loop adda 0,x / inx / decb; rts -- so the",
+    "address the caller stores the result to. Taken from baywatch and confirmed against saved NVRAM",
+    "hook_501 exactly, which is what validates it.",
+    "Other ROM revisions listed under roms were not scanned; they are expected to match baywatch, and a",
+    "mismatch fails safe because a writer must refuse a region that does not validate.",
+    "Adjustments 0x1E00-0x1E5B are protected by a plain 8-bit sum (complement false) at 0x1FDD; see README.md in maps/dataeast."
+  ],
+  "_fileformat": 0.9,
+  "_metadata": {
+    "version": 5,
+    "copyright": [
+      "Copyright (C) 2025 by Tom Collins <tom@scorbit.io>"
+    ],
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "platform": "dataeast",
+    "roms": [
+      "baywatch",
+      "bay_401",
+      "bay_d400",
+      "bay_e400"
+    ],
+    "validation": {
+      "checksum": [
+        {
+          "label": "Adjustments",
+          "start": "0x1E00",
+          "length": 92,
+          "complement": false,
+          "checksum": "0x1FDD"
+        }
+      ]
+    }
+  },
+  "game_state": {
+    "scores": [
+      {
+        "label": "Player 1",
+        "start": "0x16D5",
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 2",
+        "start": "0x16DA",
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 3",
+        "start": "0x16DF",
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 4",
+        "start": "0x16E4",
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 5",
+        "start": "0x16E9",
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 6",
+        "start": "0x16EE",
+        "encoding": "bcd",
+        "length": 5
+      }
+    ],
+    "credits": {
+      "label": "Credits",
+      "start": "0x16CC",
+      "encoding": "bcd"
+    },
+    "free_play": {
+      "label": "Free Play",
+      "start": "0x1E04",
+      "encoding": "bool"
+    },
+    "max_credits": {
+      "label": "Max Credits",
+      "start": "0x1E0F",
+      "encoding": "bcd"
+    },
+    "player_count": {
+      "label": "Player Count",
+      "start": "0x1D1",
+      "encoding": "int"
+    },
+    "ball_count": {
+      "label": "Ball Count",
+      "start": "0x1E0D",
+      "encoding": "bcd"
+    },
+    "current_player": {
+      "label": "Player",
+      "start": "0x1CE",
+      "encoding": "int"
+    },
+    "current_ball": {
+      "label": "Ball",
+      "start": "0x1CF",
+      "encoding": "int"
+    },
+    "game_over": {
+      "_notes": "game is over if current player/ball is 0",
+      "label": "Game Over",
+      "start": "0x1CE",
+      "encoding": "bool",
+      "invert": true
+    }
+  },
+  "high_scores": [
+    {
+      "label": "High Score #1",
+      "short_label": "#1",
+      "initials": {
+        "start": "0x16BA",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": "0x167C",
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "High Score #2",
+      "short_label": "#2",
+      "initials": {
+        "start": "0x16BD",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": "0x1681",
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "High Score #3",
+      "short_label": "#3",
+      "initials": {
+        "start": "0x16C0",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": "0x1686",
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "High Score #4",
+      "short_label": "#4",
+      "initials": {
+        "start": "0x16C3",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": "0x168B",
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "High Score #5",
+      "short_label": "#5",
+      "initials": {
+        "start": "0x16C6",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": "0x1690",
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "High Score #6",
+      "short_label": "#6",
+      "initials": {
+        "start": "0x16C9",
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": "0x1695",
+        "encoding": "bcd",
+        "length": 5
+      }
+    }
+  ]
+}

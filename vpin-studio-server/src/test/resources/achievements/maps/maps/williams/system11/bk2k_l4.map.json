@@ -1,0 +1,501 @@
+{
+  "_notes": [
+    "Compiled by Francis De Brabandere.",
+    "Black Knight (Williams 1989)",
+    "https://www.ipdb.org/machine.cgi?id=311",
+    "Williams System 11B",
+    "2025-03 v0.2: Tom Collins added audits",
+    "2025-09 v0.4: Tom Collins added to game_state",
+    "Adjustments 0x780-0x7E3 are protected by an 8-bit complement sum at 0x7EC: the ROM's checksum",
+    "routine (CE 07 80 4F AB 00 08 8C 07 7E4 26 F8 43 39 in U27) sums from 0x780 up to but not including",
+    "0x7E4 and complements it, and the ROM stores the result with STAA $07EC. Verified against this",
+    "game's saved NVRAM from two cabinets. A write to the block that leaves the check byte stale is",
+    "answered at the next boot with a full factory reset of NVRAM (measured live on swrds_l2)."
+  ],
+  "_fileformat": 0.9,
+  "_metadata": {
+    "version": 7,
+    "copyright": [
+      "Copyright (C) 2024 by Francis De Brabandere <francisdb@gmail.com>",
+      "Copyright (C) 2025 by Tom Collins <tom@scorbit.io>"
+    ],
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "platform": "williams-system11-48K",
+    "roms": [
+      "bk2k_l4"
+    ],
+    "validation": {
+      "checksum": [
+        {
+          "label": "Audits {#}",
+          "repeat": {
+            "count": 46,
+            "step": 4
+          },
+          "start": "0x0640",
+          "length": 4,
+          "complement": true
+        },
+        {
+          "label": "Credits",
+          "start": "0x06FA",
+          "complement": true,
+          "checksum": "0x0767"
+        },
+        {
+          "label": "Adjustments",
+          "start": "0x0780",
+          "end": "0x07E3",
+          "complement": true,
+          "checksum": "0x07EC"
+        }
+      ]
+    }
+  },
+  "game_state": {
+    "credits": {
+      "label": "Credits",
+      "start": 1786,
+      "length": 1,
+      "encoding": "bcd"
+    },
+    "scores": [
+      {
+        "label": "Player 1",
+        "start": 512,
+        "encoding": "bcd",
+        "length": 4
+      },
+      {
+        "label": "Player 2",
+        "start": 516,
+        "encoding": "bcd",
+        "length": 4
+      },
+      {
+        "label": "Player 3",
+        "start": 520,
+        "encoding": "bcd",
+        "length": 4
+      },
+      {
+        "label": "Player 4",
+        "start": 524,
+        "encoding": "bcd",
+        "length": 4
+      }
+    ],
+    "current_ball": {
+      "label": "Ball",
+      "start": 56,
+      "encoding": "bcd",
+      "mask": "0x0F",
+      "special_values": {
+        "0": "n/a"
+      }
+    },
+    "ball_count": {
+      "label": "Ball Count",
+      "start": 1928,
+      "encoding": "bcd"
+    },
+    "max_credits": {
+      "label": "Maximum Credits",
+      "start": 1931,
+      "encoding": "bcd"
+    },
+    "player_count": {
+      "label": "Player Count",
+      "short_label": "Players",
+      "start": 178,
+      "encoding": "int",
+      "offset": 1,
+      "special_values": {
+        "256": "n/a"
+      }
+    },
+    "current_player": {
+      "label": "Current Player",
+      "short_label": "P#",
+      "start": 179,
+      "encoding": "int",
+      "offset": 1
+    },
+    "tilted": {
+      "label": "Tilted",
+      "start": 174,
+      "encoding": "bool"
+    },
+    "game_over": {
+      "label": "Game Over",
+      "start": 175,
+      "encoding": "bool"
+    },
+    "extra_balls": {
+      "label": "Extra Balls",
+      "start": 182,
+      "encoding": "int"
+    },
+    "tilt_warnings": {
+      "label": "Tilt Warnings",
+      "start": 185,
+      "encoding": "int"
+    },
+    "free_play": {
+      "label": "Free Play",
+      "start": 1942,
+      "encoding": "bool"
+    }
+  },
+  "high_scores": [
+    {
+      "label": "Greatest Hero 1",
+      "short_label": "1st",
+      "initials": {
+        "start": 1803,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 1787,
+        "encoding": "bcd",
+        "length": 4
+      }
+    },
+    {
+      "label": "Greatest Hero 2",
+      "short_label": "2nd",
+      "initials": {
+        "start": 1806,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 1791,
+        "encoding": "bcd",
+        "length": 4
+      }
+    },
+    {
+      "label": "Greatest Hero 3",
+      "short_label": "3rd",
+      "initials": {
+        "start": 1809,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 1795,
+        "encoding": "bcd",
+        "length": 4
+      }
+    },
+    {
+      "label": "Greatest Hero 4",
+      "short_label": "4th",
+      "initials": {
+        "start": 1812,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 1799,
+        "encoding": "bcd",
+        "length": 4
+      }
+    }
+  ],
+  "checksum8": [
+    {
+      "start": 1600,
+      "end": 1783,
+      "groupings": 4,
+      "label": "Audits"
+    },
+    {
+      "start": 1786,
+      "checksum": 1895,
+      "label": "Credits"
+    },
+    {
+      "start": 1920,
+      "end": 2019,
+      "checksum": 2028,
+      "label": "Adjustments"
+    }
+  ],
+  "audits": {
+    "Audits": {
+      "01": {
+        "start": 1604,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "LEFT COINS"
+      },
+      "02": {
+        "start": 1608,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "CENTER COINS"
+      },
+      "03": {
+        "start": 1612,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "RIGHT COINS"
+      },
+      "04": {
+        "start": 1616,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "PAID CREDITS"
+      },
+      "05": {
+        "start": 1620,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "TOTAL PLAYS"
+      },
+      "06": {
+        "start": 1624,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "TOTAL FREE"
+      },
+      "08": {
+        "start": 1628,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "REPLAY AWARDS"
+      },
+      "10": {
+        "start": 1632,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "SPECIAL AWARDS"
+      },
+      "12": {
+        "start": 1636,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "MATCH AWARDS"
+      },
+      "13": {
+        "start": 1640,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "H.S.T.D. CREDITS"
+      },
+      "15": {
+        "start": 1644,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "EXTRA BALLS"
+      },
+      "18": {
+        "start": 1648,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "MINUTES OF PLAY"
+      },
+      "19": {
+        "start": 1652,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "BALLS PLAYED"
+      },
+      "20": {
+        "start": 1656,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "REPLAY1 AWARDS"
+      },
+      "21": {
+        "start": 1660,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "REPLAY2 AWARDS"
+      },
+      "22": {
+        "start": 1664,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "REPLAY3 AWARDS"
+      },
+      "23": {
+        "start": 1668,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "REPLAY4 AWARDS"
+      },
+      "24": {
+        "start": 1672,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "1 PLAYER GAMES"
+      },
+      "25": {
+        "start": 1676,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "2 PLAYER GAMES"
+      },
+      "26": {
+        "start": 1680,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "3 PLAYER GAMES"
+      },
+      "27": {
+        "start": 1684,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "4 PLAYER GAMES"
+      },
+      "28": {
+        "start": 1688,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "BURN-IN CYCLES"
+      },
+      "29": {
+        "start": 1692,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "SPELL WAR"
+      },
+      "30": {
+        "start": 1696,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "SPELL KNIGHT"
+      },
+      "31": {
+        "start": 1700,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "UPPER RAMP SHOTS"
+      },
+      "32": {
+        "start": 1704,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "EXTRA BALL LIT"
+      },
+      "33": {
+        "start": 1708,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "RAMP EXTRA BALLS"
+      },
+      "34": {
+        "start": 1712,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "2 BALL MULTIBALL"
+      },
+      "35": {
+        "start": 1716,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "MILLION VIA WAR"
+      },
+      "36": {
+        "start": 1720,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "3 BALL MULTIBALL"
+      },
+      "37": {
+        "start": 1724,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "JACKPOTS AWARDED"
+      },
+      "38": {
+        "start": 1728,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "RANSOMS AWARDED"
+      },
+      "39": {
+        "start": 1815,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "H.S. RESET COUNTER"
+      },
+      "40": {
+        "start": 1736,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "0.0-0.4 MIL. SCORE"
+      },
+      "41": {
+        "start": 1740,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "0.5-0.9 MIL. SCORE"
+      },
+      "42": {
+        "start": 1744,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "1.0-1.9 MIL. SCORE"
+      },
+      "43": {
+        "start": 1748,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "2.0-2.9 MIL. SCORE"
+      },
+      "44": {
+        "start": 1752,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "3.0-3.9 MIL. SCORE"
+      },
+      "45": {
+        "start": 1756,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "4.0-5.9 MIL. SCORE"
+      },
+      "46": {
+        "start": 1760,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "6.0-7.9 MIL. SCORE"
+      },
+      "47": {
+        "start": 1764,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "8.0-99.9 MIL. SCORE"
+      },
+      "50": {
+        "start": 1768,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "WHEEL SPINS"
+      },
+      "51": {
+        "start": 1772,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "LEFT DRAINS"
+      },
+      "52": {
+        "start": 1776,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "KICKBACKS"
+      },
+      "53": {
+        "start": 1780,
+        "encoding": "bcd",
+        "length": 3,
+        "label": "RIGHT DRAINS"
+      }
+    }
+  }
+}

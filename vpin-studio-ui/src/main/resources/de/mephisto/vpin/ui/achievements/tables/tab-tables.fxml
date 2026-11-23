@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TablesTabController">
+   <left>
+      <StackPane>
+         <children>
+            <fx:include fx:id="tableListTile" source="tile-table-list.fxml" />
+         </children>
+         <padding>
+            <Insets right="10.0" top="10.0" />
+         </padding>
+      </StackPane>
+   </left>
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;">
+         <content>
+            <VBox spacing="10.0">
+               <children>
+                  <Label fx:id="messageLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" visible="false" />
+                  <fx:include fx:id="summaryTile" managed="false" source="tile-summary.fxml" visible="false" />
+                  <fx:include fx:id="infoTile" managed="false" source="tile-info.fxml" visible="false" />
+                  <HBox fx:id="lowerBox" managed="false" spacing="10.0" visible="false">
+                     <children>
+                        <fx:include fx:id="achievementsTile" source="tile-achievements.fxml" HBox.hgrow="ALWAYS" />
+                        <fx:include fx:id="top5Tile" source="tile-top5.fxml" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

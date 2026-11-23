@@ -1,0 +1,38 @@
+{
+  "_notes": [
+    "Stern SAM AT91R40008 @ 40MHz, 128KB of NVRAM at address 0x02100000.",
+    "Multiple areas of RAM according to PinMAME.",
+    "The RAM entries bound what a map is allowed to read, not what the machine has: PinMAME's CPU",
+    "image for these games is 80MB, and game state has been found well outside the two 64K windows",
+    "originally listed here -- X-Men counts its ball at 0x00030AE5. Main RAM is widened to 1MB to",
+    "cover it. Widening only permits reads; it cannot change how any existing field decodes."
+  ],
+  "cpu": "AT91",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "Boot RAM",
+      "address": "0x00000000",
+      "size": "0x10000",
+      "type": "ram"
+    },
+    {
+      "label": "Main RAM",
+      "address": "0x00000000",
+      "size": "0x100000",
+      "type": "ram"
+    },
+    {
+      "label": "Swapped RAM",
+      "address": "0x00300000",
+      "size": "0x10000",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x02100000",
+      "size": "0x20000",
+      "type": "nvram"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "_notes": "Williams System 9: 6808 @ 1MHz, 2KB of NVRAM at address 0x0000",
+  "cpu": "6808",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "RAM",
+      "address": "0x0000",
+      "size": "0x0800",
+      "type": "nvram"
+    },
+    {
+      "label": "ROM U19",
+      "address": "0x5000",
+      "size": "0x1000",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U20",
+      "address": "0x6000",
+      "size": "0x2000",
+      "type": "rom"
+    }
+  ]
+}

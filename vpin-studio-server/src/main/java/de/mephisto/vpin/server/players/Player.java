@@ -55,6 +55,9 @@ public class Player {
   @Column(name = "administrative", nullable = false, columnDefinition = "boolean default false")
   private boolean administrative;
 
+  @Column(name = "achievementsEnabled", nullable = false, columnDefinition = "boolean default true")
+  private boolean achievementsEnabled = true;
+
   public String getCompetitionName() {
     return competitionName;
   }
@@ -69,6 +72,14 @@ public class Player {
 
   public void setManiaAccountUuid(String maniaAccountUuid) {
     this.maniaAccountUuid = maniaAccountUuid;
+  }
+
+  public boolean isAchievementsEnabled() {
+    return achievementsEnabled;
+  }
+
+  public void setAchievementsEnabled(boolean achievementsEnabled) {
+    this.achievementsEnabled = achievementsEnabled;
   }
 
   public boolean isAdministrative() {

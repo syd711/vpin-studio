@@ -1,0 +1,871 @@
+{
+ "rules": [
+  {
+   "title": "rs_l6 – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BUY-IN EX. BALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BUY-IN EX. BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN EX. BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – CITIES STARTED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CITIES STARTED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – CITIES STARTED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CITIES STARTED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – F. ROCKS STARTED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "F. ROCKS STARTED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – F. ROCKS STARTED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "F. ROCKS STARTED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – COLLECTED WHEEL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COLLECTED WHEEL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – COLLECTED WHEEL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "COLLECTED WHEEL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – MADE SKILL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE SKILL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – MADE SKILL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE SKILL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – LOCK 1: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – LOCK 1: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – LOCK 2: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 2",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – LOCK 2: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 2",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 1st MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 1st MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1st MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 2nd MULTIBALLS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd MULTIBALLS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 2nd MULTIBALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2nd MULTIBALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – REMATCH: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REMATCH",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – REMATCH: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REMATCH",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – M-BALL RESTART: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M-BALL RESTART",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – M-BALL RESTART: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "M-BALL RESTART",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S VISITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S VISITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S VISITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S VISITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S BOUGHT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S BOUGHT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S BOUGHT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S BOUGHT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BRIDGE OUTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BRIDGE OUTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BRIDGE OUTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BRIDGE OUTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 2X PLUS BLAST: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2X PLUS BLAST",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 2X PLUS BLAST: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2X PLUS BLAST",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – CITIES LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CITIES LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – CITIES LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CITIES LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – F. ROCKS LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "F. ROCKS LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – F. ROCKS LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "F. ROCKS LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – TODAY'S H.S.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TODAY'S H.S.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – TODAY'S H.S.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TODAY'S H.S.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BALLS SAVED: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALLS SAVED",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BALLS SAVED: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BALLS SAVED",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – WEST COAST CITY: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WEST COAST CITY",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – WEST COAST CITY: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WEST COAST CITY",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – SUPER PAYDAY: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER PAYDAY",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – SUPER PAYDAY: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER PAYDAY",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BLAST E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BLAST E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BLAST E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BLAST E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BRIDGE E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BRIDGE E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BRIDGE E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BRIDGE E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – WHEEL E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – WHEEL E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – F. ROCKS E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "F. ROCKS E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – F. ROCKS E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "F. ROCKS E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S E.B. LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S E.B. LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S E.B. LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S E.B. LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S EXTRA BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S EXTRA BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – BOB'S EXTRA BALL: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BOB'S EXTRA BALL",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 1 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 1 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 2 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 2 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 3 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – 3 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – >=4 BUY-IN GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=4 BUY-IN GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – >=4 BUY-IN GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=4 BUY-IN GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #1 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #1 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #1 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #1 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #1 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #1 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #2 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #2 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #2 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #2 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #2 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #2 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #3 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #3 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #3 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #3 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #3 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #3 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #4 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #4 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #4 Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #4 Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Today's HS #4 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Today's HS #4 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Dis. L. Ramp Div.: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Dis. L. Ramp Div.",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Dis. L. Ramp Div.: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Dis. L. Ramp Div.",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Weeks To Lock 2: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Weeks To Lock 2",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Weeks To Lock 2: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Weeks To Lock 2",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – TOTAL PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – TOTAL PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Buy Extra Ball: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy Extra Ball",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Buy Extra Ball: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy Extra Ball",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Dis. R. Ramp Div.: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Dis. R. Ramp Div.",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – Dis. R. Ramp Div.: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Dis. R. Ramp Div.",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "rs_l6 – TOTAL FREE PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  }
+ ]
+}

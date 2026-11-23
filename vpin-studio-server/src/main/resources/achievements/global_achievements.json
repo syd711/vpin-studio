@@ -1,0 +1,1099 @@
+{
+  "rules": [
+    {
+      "title": "Global – Games Started: 50 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 50
+      }
+    },
+    {
+      "title": "Global – Games Started: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Games Started: 250 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 250
+      }
+    },
+    {
+      "title": "Global – Games Started: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Games Started: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Games Started: 2000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 2000
+      }
+    },
+    {
+      "title": "Global – Games Started: 3000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 3000
+      }
+    },
+    {
+      "title": "Global – Games Started: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Games Started: 7500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 7500
+      }
+    },
+    {
+      "title": "Global – Games Started: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Global – Games Started: 15000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 15000
+      }
+    },
+    {
+      "title": "Global – Games Started: 20000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 20000
+      }
+    },
+    {
+      "title": "Global – Games Started: 25000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 25000
+      }
+    },
+    {
+      "title": "Global – Games Started: 30000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 30000
+      }
+    },
+    {
+      "title": "Global – Games Started: 50000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Games Started",
+        "min": 50000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Balls Played: 250 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 250
+      }
+    },
+    {
+      "title": "Global – Balls Played: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Balls Played: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Balls Played: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 15000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 15000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 25000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 25000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 50000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 50000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 75000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 75000
+      }
+    },
+    {
+      "title": "Global – Balls Played: 100000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Balls Played",
+        "min": 100000
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 200 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 200
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 300 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 300
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 25000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 25000
+      }
+    },
+    {
+      "title": "Global – Ramps Made: 50000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ramps Made",
+        "min": 50000
+      }
+    },
+    {
+      "title": "Global – Jackpots: 25 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 25
+      }
+    },
+    {
+      "title": "Global – Jackpots: 50 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 50
+      }
+    },
+    {
+      "title": "Global – Jackpots: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Jackpots: 150 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 150
+      }
+    },
+    {
+      "title": "Global – Jackpots: 300 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 300
+      }
+    },
+    {
+      "title": "Global – Jackpots: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Jackpots: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Jackpots: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Jackpots: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Jackpots: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Jackpots",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 10 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 10
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 25 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 25
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 50 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 50
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 250 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 250
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Total Multiballs: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Total Multiballs",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Loops: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Loops: 200 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 200
+      }
+    },
+    {
+      "title": "Global – Loops: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Loops: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Loops: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Loops: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Loops: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Global – Loops: 25000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Loops",
+        "min": 25000
+      }
+    },
+    {
+      "title": "Global – Combos: 50 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 50
+      }
+    },
+    {
+      "title": "Global – Combos: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Combos: 250 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 250
+      }
+    },
+    {
+      "title": "Global – Combos: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Combos: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Combos: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Combos: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Combos: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Global – Combos: 25000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Combos",
+        "min": 25000
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 10 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 10
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 20 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 20
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 30 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 30
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 50 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 50
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 250 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 250
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Extra Balls: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Extra Balls",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 20 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 20
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 50 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 50
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 100 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 100
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 250 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 250
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 500
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 1000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 1000
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 2500 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 2500
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 5000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 5000
+      }
+    },
+    {
+      "title": "Global – Ball Saves: 10000 Total",
+      "scope": "global",
+      "condition": {
+        "type": "nvram_tally",
+        "field": "Ball Saves",
+        "min": 10000
+      }
+    },
+    {
+      "title": "Bally Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Bally",
+        "min": 3
+      }
+    },
+    {
+      "title": "Williams Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Williams",
+        "min": 3
+      }
+    },
+    {
+      "title": "Stern Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Stern",
+        "min": 3
+      }
+    },
+    {
+      "title": "Data East Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Data East",
+        "min": 3
+      }
+    },
+    {
+      "title": "Gottlieb Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Gottlieb",
+        "min": 3
+      }
+    },
+    {
+      "title": "Sega Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Sega",
+        "min": 3
+      }
+    },
+    {
+      "title": "Capcom Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Capcom",
+        "min": 3
+      }
+    },
+    {
+      "title": "Bally Veteran",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Bally",
+        "min": 5
+      }
+    },
+    {
+      "title": "Williams Veteran",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Williams",
+        "min": 5
+      }
+    },
+    {
+      "title": "Stern Veteran",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Stern",
+        "min": 5
+      }
+    },
+    {
+      "title": "Data East Veteran",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Data East",
+        "min": 5
+      }
+    },
+    {
+      "title": "Gottlieb Veteran",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Gottlieb",
+        "min": 5
+      }
+    },
+    {
+      "title": "Bally Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Bally"
+      }
+    },
+    {
+      "title": "Williams Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Williams"
+      }
+    },
+    {
+      "title": "Stern Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Stern"
+      }
+    },
+    {
+      "title": "Data East Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Data East"
+      }
+    },
+    {
+      "title": "Gottlieb Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Gottlieb"
+      }
+    },
+    {
+      "title": "Sega Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Sega"
+      }
+    },
+    {
+      "title": "Capcom Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Capcom"
+      }
+    },
+    {
+      "title": "Brand Explorer",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "__any__",
+        "min_brands": 3
+      }
+    },
+    {
+      "title": "Brand Connoisseur",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "__any__",
+        "min_brands": 5
+      }
+    },
+    {
+      "title": "Brand Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "__any__",
+        "min_brands": 7
+      }
+    },
+    {
+      "title": "Golden Age",
+      "scope": "global",
+      "condition": {
+        "type": "rom_multi_brand",
+        "manufacturers": [
+          "Bally",
+          "Williams",
+          "Gottlieb"
+        ]
+      }
+    },
+    {
+      "title": "Modern Era",
+      "scope": "global",
+      "condition": {
+        "type": "rom_multi_brand",
+        "manufacturers": [
+          "Stern",
+          "Data East",
+          "Sega"
+        ]
+      }
+    },
+    {
+      "title": "Table Tourist",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "__any__",
+        "min": 10
+      }
+    },
+    {
+      "title": "Table Explorer",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "__any__",
+        "min": 20
+      }
+    },
+    {
+      "title": "Complete Collector",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "__any__"
+      }
+    },
+    {
+      "title": "Midway Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Midway",
+        "min": 3
+      }
+    },
+    {
+      "title": "Midway Master",
+      "scope": "global",
+      "condition": {
+        "type": "rom_complete_set",
+        "manufacturer": "Midway"
+      }
+    },
+    {
+      "title": "Premier Rookie",
+      "scope": "global",
+      "condition": {
+        "type": "rom_count",
+        "manufacturer": "Premier",
+        "min": 3
+      }
+    }
+  ]
+}

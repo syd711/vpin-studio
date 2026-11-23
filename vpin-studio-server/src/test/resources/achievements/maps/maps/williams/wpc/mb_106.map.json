@@ -1,0 +1,1087 @@
+{
+  "_notes": [
+    "Compiled by Tom Collins using template-wpc.json.",
+    "WPC 50065, SYS 3.77 REV 1.0",
+    "2025-07-07 Tom Collins added automated audits"
+  ],
+  "_fileformat": 0.9,
+  "_metadata": {
+    "version": 6,
+    "copyright": "Copyright (C) 2025 by Tom Collins <tom@tomlogic.com>",
+    "license": "Open Data Commons Open Database License (ODbL) v1.0",
+    "platform": "williams-wpc-12K",
+    "roms": [
+      "mb_106",
+      "mb_106b"
+    ],
+    "free_only": [
+      "mb_106"
+    ],
+    "validation": {
+      "checksum": [
+        {
+          "label": "Audits {#}",
+          "repeat": {
+            "count": 127,
+            "step": 6
+          },
+          "start": "0x1811",
+          "length": 6,
+          "complement": true
+        },
+        {
+          "label": "Custom Message (2x32)",
+          "start": "0x177C",
+          "end": "0x17FF",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Adjustments",
+          "start": "0x1B1D",
+          "end": "0x1C2C",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Timestamps",
+          "start": "0x1C2F",
+          "end": "0x1C92",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "High Scores",
+          "start": "0x1C93",
+          "end": "0x1CB4",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Grand Champion",
+          "start": "0x1CB5",
+          "end": "0x1CBE",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "HSTD Reset",
+          "start": "0x1CBF",
+          "end": "0x1CC4",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Credits",
+          "start": "0x1CC5",
+          "end": "0x1CCE",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Volume",
+          "start": "0x1CCF",
+          "end": "0x1CD1",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "start": "0x1CD2",
+          "end": "0x1CDC",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "start": "0x1CDD",
+          "end": "0x1DB2",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Custom Message (3x32)",
+          "start": "0x1DB3",
+          "end": "0x1E75",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Custom Message (2x32)",
+          "start": "0x1E76",
+          "end": "0x1EF2",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Monster Bash Champion",
+          "start": "0x1EF3",
+          "end": "0x1EFC",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Monsters of Rock Champion",
+          "start": "0x1EFD",
+          "end": "0x1F06",
+          "bits": 16,
+          "complement": true
+        },
+        {
+          "label": "Mosh Multiball Champion",
+          "start": "0x1F07",
+          "end": "0x1F10",
+          "bits": 16,
+          "complement": true
+        }
+      ]
+    }
+  },
+  "last_played": {
+    "start": 6144,
+    "encoding": "wpc_rtc",
+    "length": 7
+  },
+  "game_state": {
+    "player_count": {
+      "label": "Players",
+      "start": 5909,
+      "encoding": "int"
+    },
+    "scores": [
+      {
+        "label": "Player 1",
+        "start": 5792,
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 2",
+        "start": 5798,
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 3",
+        "start": 5804,
+        "encoding": "bcd",
+        "length": 5
+      },
+      {
+        "label": "Player 4",
+        "start": 5810,
+        "encoding": "bcd",
+        "length": 5
+      }
+    ],
+    "game_id": {
+      "label": "WPC Game ID",
+      "start": 6156,
+      "encoding": "ch",
+      "length": 5
+    },
+    "replay": {
+      "label": "Replay",
+      "start": 7399,
+      "encoding": "bcd",
+      "length": 2,
+      "scale": 1000000
+    },
+    "credits": {
+      "_notes": "1-byte credits followed by 6 bytes encoding partial/bonus credits",
+      "label": "Credits",
+      "start": 7365,
+      "encoding": "int"
+    },
+    "volume": {
+      "label": "Volume",
+      "start": 7375,
+      "encoding": "int",
+      "min": 0,
+      "max": 31,
+      "special_values": {
+        "255": "n/a"
+      }
+    },
+    "game_over": {
+      "label": "Game Over",
+      "start": 141,
+      "encoding": "bool"
+    },
+    "current_player": {
+      "label": "Current Player",
+      "start": 946,
+      "encoding": "int"
+    },
+    "current_ball": {
+      "label": "Ball",
+      "start": 947,
+      "encoding": "int"
+    },
+    "extra_balls": {
+      "label": "Extra Balls",
+      "start": 948,
+      "encoding": "int"
+    },
+    "eb_on_this_ball": {
+      "label": "EBs this Ball",
+      "start": 949,
+      "encoding": "int"
+    },
+    "ball_count": {
+      "label": "Ball Count",
+      "start": 6944,
+      "encoding": "int"
+    },
+    "max_credits": {
+      "label": "Maximum Credits",
+      "start": 7070,
+      "encoding": "int"
+    },
+    "free_play": {
+      "label": "Free Play",
+      "start": 7072,
+      "encoding": "bool"
+    }
+  },
+  "high_scores": [
+    {
+      "label": "Grand Champion",
+      "short_label": "GC",
+      "initials": {
+        "start": 7349,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7352,
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "First Place",
+      "short_label": "1st",
+      "initials": {
+        "start": 7315,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7318,
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "Second Place",
+      "short_label": "2nd",
+      "initials": {
+        "start": 7323,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7326,
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "Third Place",
+      "short_label": "3rd",
+      "initials": {
+        "start": 7331,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7334,
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "Fourth Place",
+      "short_label": "4th",
+      "initials": {
+        "start": 7339,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7342,
+        "encoding": "bcd",
+        "length": 5
+      }
+    }
+  ],
+  "mode_champions": [
+    {
+      "label": "Monster Bash Champion",
+      "initials": {
+        "start": 7923,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7926,
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "Monsters of Rock Champion",
+      "initials": {
+        "start": 7933,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7936,
+        "encoding": "bcd",
+        "length": 5
+      }
+    },
+    {
+      "label": "Mosh Multiball Champion",
+      "initials": {
+        "start": 7943,
+        "encoding": "ch",
+        "length": 3
+      },
+      "score": {
+        "start": 7946,
+        "encoding": "bcd",
+        "length": 5
+      }
+    }
+  ],
+  "audits": {
+    "B.2 EARNINGS AUDS.": {
+      "02": {
+        "label": "RECENT LEFT SLOT",
+        "start": 6203,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "RECENT CENT. SLOT",
+        "start": 6209,
+        "encoding": "int",
+        "length": 3
+      },
+      "04": {
+        "label": "RECENT RGHT. SLOT",
+        "start": 6215,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "RECENT 4TH SLOT",
+        "start": 6221,
+        "encoding": "int",
+        "length": 3
+      },
+      "06": {
+        "label": "RECENT PAID CRED",
+        "start": 6227,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "RECENT SERV. CRED",
+        "start": 6233,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "TOTAL LEFT SLOT",
+        "start": 6167,
+        "encoding": "int",
+        "length": 3
+      },
+      "10": {
+        "label": "TOTAL CENTR. SLOT",
+        "start": 6173,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "TOTAL RIGHT SLOT",
+        "start": 6179,
+        "encoding": "int",
+        "length": 3
+      },
+      "12": {
+        "label": "TOTAL 4TH SLOT",
+        "start": 6185,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "TOTAL PAID CRED.",
+        "start": 6191,
+        "encoding": "int",
+        "length": 3
+      },
+      "14": {
+        "label": "TOTAL SERV. CRED.",
+        "start": 6197,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.3 STANDARD AUDS.": {
+      "01": {
+        "label": "GAMES STARTED",
+        "start": 6275,
+        "encoding": "int",
+        "length": 3
+      },
+      "02": {
+        "label": "TOTAL PLAYS",
+        "start": 6281,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "TOTAL FREE PLAYS",
+        "start": 6287,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "REPLAY AWARDS",
+        "start": 6293,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "SPECIAL AWARDS",
+        "start": 6299,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "MATCH AWARDS",
+        "start": 6305,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "H.S.T.D. CREDITS",
+        "start": 6311,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "EXTRA BALLS",
+        "start": 6323,
+        "encoding": "int",
+        "length": 3
+      },
+      "15": {
+        "label": "TICKETS AWARDED",
+        "start": 6317,
+        "encoding": "int",
+        "length": 3
+      },
+      "17": {
+        "label": "LEFT DRAINS",
+        "start": 6419,
+        "encoding": "int",
+        "length": 3
+      },
+      "18": {
+        "label": "RIGHT DRAINS",
+        "start": 6425,
+        "encoding": "int",
+        "length": 3
+      },
+      "21": {
+        "label": "PLAY TIME",
+        "start": 6329,
+        "encoding": "int",
+        "length": 3,
+        "units": "seconds",
+        "scale": 10
+      },
+      "22": {
+        "label": "MINUTES ON",
+        "start": 6335,
+        "encoding": "int",
+        "length": 3
+      },
+      "23": {
+        "label": "BALLS PLAYED",
+        "start": 6341,
+        "encoding": "int",
+        "length": 3
+      },
+      "24": {
+        "label": "TILTS",
+        "start": 6347,
+        "encoding": "int",
+        "length": 3
+      },
+      "25": {
+        "label": "REPLAY 1 AWARDS",
+        "start": 6353,
+        "encoding": "int",
+        "length": 3
+      },
+      "26": {
+        "label": "REPLAY 2 AWARDS",
+        "start": 6359,
+        "encoding": "int",
+        "length": 3
+      },
+      "27": {
+        "label": "REPLAY 3 AWARDS",
+        "start": 6365,
+        "encoding": "int",
+        "length": 3
+      },
+      "28": {
+        "label": "REPLAY 4 AWARDS",
+        "start": 6371,
+        "encoding": "int",
+        "length": 3
+      },
+      "29": {
+        "label": "1 PLAYER GAMES",
+        "start": 6377,
+        "encoding": "int",
+        "length": 3
+      },
+      "30": {
+        "label": "2 PLAYER GAMES",
+        "start": 6383,
+        "encoding": "int",
+        "length": 3
+      },
+      "31": {
+        "label": "3 PLAYER GAMES",
+        "start": 6389,
+        "encoding": "int",
+        "length": 3
+      },
+      "32": {
+        "label": "4 PLAYER GAMES",
+        "start": 6395,
+        "encoding": "int",
+        "length": 3
+      },
+      "33": {
+        "label": "H.S.T.D. RESET COUNT",
+        "start": 7361,
+        "encoding": "int",
+        "length": 2
+      },
+      "34": {
+        "label": "BURN-IN TIME",
+        "start": 6413,
+        "encoding": "int",
+        "length": 3,
+        "units": "seconds",
+        "scale": 10
+      },
+      "36": {
+        "label": "LEFT FLIPPER",
+        "start": 6653,
+        "encoding": "int",
+        "length": 3
+      },
+      "37": {
+        "label": "RIGHT FLIPPER",
+        "start": 6659,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.4 FEATURE AUDS.": {
+      "01": {
+        "label": "BALL SAVES",
+        "start": 6683,
+        "encoding": "int",
+        "length": 3
+      },
+      "02": {
+        "label": "TOTAL MULTIBALLS",
+        "start": 6689,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "CREATURE START",
+        "start": 6695,
+        "encoding": "int",
+        "length": 3
+      },
+      "04": {
+        "label": "CREATURE COMPL.",
+        "start": 6701,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "BALL/CHAIN START",
+        "start": 6707,
+        "encoding": "int",
+        "length": 3
+      },
+      "06": {
+        "label": "BALL/CHAIN COMPL.",
+        "start": 6713,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "FRANK. M.B. START",
+        "start": 6719,
+        "encoding": "int",
+        "length": 3
+      },
+      "08": {
+        "label": "FRANK. M.B. COMPL.",
+        "start": 6725,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "MAYHEM LIT",
+        "start": 6731,
+        "encoding": "int",
+        "length": 3
+      },
+      "10": {
+        "label": "MAYHEM START",
+        "start": 6737,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "MAYHEM COMPL.",
+        "start": 6743,
+        "encoding": "int",
+        "length": 3
+      },
+      "12": {
+        "label": "MOON FEVER START",
+        "start": 6749,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "MOON FEVER COMPL.",
+        "start": 6755,
+        "encoding": "int",
+        "length": 3
+      },
+      "14": {
+        "label": "DRAC-ATK. LIT",
+        "start": 6761,
+        "encoding": "int",
+        "length": 3
+      },
+      "15": {
+        "label": "DRAC-ATK. START",
+        "start": 6767,
+        "encoding": "int",
+        "length": 3
+      },
+      "16": {
+        "label": "DRAC-ATK. COMPL.",
+        "start": 6773,
+        "encoding": "int",
+        "length": 3
+      },
+      "17": {
+        "label": "MONSTER E.B. LIT",
+        "start": 6779,
+        "encoding": "int",
+        "length": 3
+      },
+      "18": {
+        "label": "INSTRMNT. SPC. LIT",
+        "start": 6785,
+        "encoding": "int",
+        "length": 3
+      },
+      "19": {
+        "label": "BASH START",
+        "start": 6791,
+        "encoding": "int",
+        "length": 3
+      },
+      "20": {
+        "label": "ROCK START",
+        "start": 6797,
+        "encoding": "int",
+        "length": 3
+      },
+      "21": {
+        "label": "ROCK 5X AWARDS",
+        "start": 6803,
+        "encoding": "int",
+        "length": 3
+      },
+      "22": {
+        "label": "ROCK 7X AWARDS",
+        "start": 6809,
+        "encoding": "int",
+        "length": 3
+      },
+      "23": {
+        "label": "ROCK 10X AWARDS",
+        "start": 6815,
+        "encoding": "int",
+        "length": 3
+      },
+      "24": {
+        "label": "RANDOM AWARD",
+        "start": 6821,
+        "encoding": "int",
+        "length": 3
+      },
+      "25": {
+        "label": "RANDOM E.B. LIT",
+        "start": 6827,
+        "encoding": "int",
+        "length": 3
+      },
+      "26": {
+        "label": "MOSH M.B. START",
+        "start": 6833,
+        "encoding": "int",
+        "length": 3
+      },
+      "27": {
+        "label": "C. LOOP E.B. LIT",
+        "start": 6839,
+        "encoding": "int",
+        "length": 3
+      },
+      "28": {
+        "label": "FRANK. L.C. START",
+        "start": 6845,
+        "encoding": "int",
+        "length": 3
+      },
+      "29": {
+        "label": "LAMENT START",
+        "start": 6851,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.5 HISTOGRAMS": {
+      "01": {
+        "label": "0-0.99 M. SCORE",
+        "start": 6431,
+        "encoding": "int",
+        "length": 3
+      },
+      "02": {
+        "label": "1-1.99 M. SCORE",
+        "start": 6437,
+        "encoding": "int",
+        "length": 3
+      },
+      "03": {
+        "label": "2-4.99 M. SCORE",
+        "start": 6443,
+        "encoding": "int",
+        "length": 3
+      },
+      "04": {
+        "label": "5-9.99 M. SCORE",
+        "start": 6449,
+        "encoding": "int",
+        "length": 3
+      },
+      "05": {
+        "label": "10-19.99 M. SCORE",
+        "start": 6455,
+        "encoding": "int",
+        "length": 3
+      },
+      "06": {
+        "label": "20-29.99 M. SCORE",
+        "start": 6461,
+        "encoding": "int",
+        "length": 3
+      },
+      "07": {
+        "label": "30-39.99 M. SCORE",
+        "start": 6467,
+        "encoding": "int",
+        "length": 3
+      },
+      "08": {
+        "label": "40-49.99 M. SCORE",
+        "start": 6473,
+        "encoding": "int",
+        "length": 3
+      },
+      "09": {
+        "label": "50-59.99 M. SCORE",
+        "start": 6479,
+        "encoding": "int",
+        "length": 3
+      },
+      "10": {
+        "label": "60-69.99 M. SCORE",
+        "start": 6485,
+        "encoding": "int",
+        "length": 3
+      },
+      "11": {
+        "label": "70-79.99 M. SCORE",
+        "start": 6491,
+        "encoding": "int",
+        "length": 3
+      },
+      "12": {
+        "label": "80-89.99 M. SCORE",
+        "start": 6497,
+        "encoding": "int",
+        "length": 3
+      },
+      "13": {
+        "label": "OVER 90 MILLION",
+        "start": 6503,
+        "encoding": "int",
+        "length": 3
+      },
+      "14": {
+        "label": "GAME TIME 0.0-1.0M",
+        "start": 6509,
+        "encoding": "int",
+        "length": 3
+      },
+      "15": {
+        "label": "GAME TIME 1.0-1.5M",
+        "start": 6515,
+        "encoding": "int",
+        "length": 3
+      },
+      "16": {
+        "label": "GAME TIME 1.5-2.0M",
+        "start": 6521,
+        "encoding": "int",
+        "length": 3
+      },
+      "17": {
+        "label": "GAME TIME 2.0-2.5M",
+        "start": 6527,
+        "encoding": "int",
+        "length": 3
+      },
+      "18": {
+        "label": "GAME TIME 2.5-3.0M",
+        "start": 6533,
+        "encoding": "int",
+        "length": 3
+      },
+      "19": {
+        "label": "GAME TIME 3.0-3.5M",
+        "start": 6539,
+        "encoding": "int",
+        "length": 3
+      },
+      "20": {
+        "label": "GAME TIME 3.5-4.0M",
+        "start": 6545,
+        "encoding": "int",
+        "length": 3
+      },
+      "21": {
+        "label": "GAME TIME 4-5 M.",
+        "start": 6551,
+        "encoding": "int",
+        "length": 3
+      },
+      "22": {
+        "label": "GAME TIME 5-6 M.",
+        "start": 6557,
+        "encoding": "int",
+        "length": 3
+      },
+      "23": {
+        "label": "GAME TIME 6-8 M.",
+        "start": 6563,
+        "encoding": "int",
+        "length": 3
+      },
+      "24": {
+        "label": "GAME TIME 8-10 M",
+        "start": 6569,
+        "encoding": "int",
+        "length": 3
+      },
+      "25": {
+        "label": "GAME TIME 10-15M",
+        "start": 6575,
+        "encoding": "int",
+        "length": 3
+      },
+      "26": {
+        "label": "GAME TIME > 15M",
+        "start": 6581,
+        "encoding": "int",
+        "length": 3
+      }
+    },
+    "B.6 TIME-STAMPS": {
+      "02": {
+        "label": "TOTALS CLEARED",
+        "start": 7215,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "03": {
+        "label": "CLOCK LAST SET",
+        "start": 7222,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "04": {
+        "label": "AUDITS CLEARED",
+        "start": 7229,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "05": {
+        "label": "COINS CLEARED",
+        "start": 7236,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "06": {
+        "label": "FACTORY SETTING",
+        "start": 7243,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "07": {
+        "label": "LAST GAME START",
+        "start": 7250,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "08": {
+        "label": "LAST REPLAY",
+        "start": 7257,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "09": {
+        "label": "LAST HSTD RESET",
+        "start": 7264,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "10": {
+        "label": "CHAMPION RESET",
+        "start": 7271,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "11": {
+        "label": "LAST PRINTOUT",
+        "start": 7278,
+        "encoding": "wpc_rtc",
+        "length": 7
+      },
+      "12": {
+        "label": "LAST SERV. CRED",
+        "start": 7285,
+        "encoding": "wpc_rtc",
+        "length": 7
+      }
+    }
+  },
+  "checksum8": [
+    {
+      "start": 6161,
+      "end": 6922,
+      "groupings": 6,
+      "label": "Audits"
+    }
+  ],
+  "checksum16": [
+    {
+      "start": 6012,
+      "end": 6143,
+      "label": "Custom Message (2x32)"
+    },
+    {
+      "start": 6941,
+      "end": 7212,
+      "label": "Adjustments"
+    },
+    {
+      "start": 7215,
+      "end": 7314,
+      "label": "Timestamps"
+    },
+    {
+      "start": 7315,
+      "end": 7348,
+      "label": "High Scores"
+    },
+    {
+      "start": 7349,
+      "end": 7358,
+      "label": "Grand Champion"
+    },
+    {
+      "start": 7359,
+      "end": 7364,
+      "label": "HSTD Reset"
+    },
+    {
+      "start": 7365,
+      "end": 7374,
+      "label": "Credits"
+    },
+    {
+      "start": 7375,
+      "end": 7377,
+      "label": "Volume"
+    },
+    {
+      "start": 7378,
+      "end": 7388
+    },
+    {
+      "start": 7389,
+      "end": 7602
+    },
+    {
+      "start": 7603,
+      "end": 7797,
+      "label": "Custom Message (3x32)"
+    },
+    {
+      "start": 7798,
+      "end": 7922,
+      "label": "Custom Message (2x32)"
+    },
+    {
+      "start": 7923,
+      "end": 7932,
+      "label": "Monster Bash Champion"
+    },
+    {
+      "start": 7933,
+      "end": 7942,
+      "label": "Monsters of Rock Champion"
+    },
+    {
+      "start": 7943,
+      "end": 7952,
+      "label": "Mosh Multiball Champion"
+    }
+  ]
+}

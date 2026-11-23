@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.tables.ClearCacheProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -67,6 +66,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   @FXML
   private CheckBox adminRoleCheckbox;
+
+  @FXML
+  private CheckBox achievementsCheckbox;
 
   @FXML
   private CheckBox vpinManiaPlayerCheckbox;
@@ -175,7 +177,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     }
 
     if (this.avatar == null) {
-      Image image = new Image(DashboardController.class.getResourceAsStream("avatar-blank.png"));
+      Image image = new Image(de.mephisto.vpin.ui.Studio.class.getResourceAsStream("avatar-blank.png"));
       avatar = TileBuilder.create()
           .skinType(Tile.SkinType.IMAGE)
           .maxSize(200, 200)
@@ -233,6 +235,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       initialsField.setText(this.player.getInitials());
       iScoredNameField.setText(this.player.getCompetitionName());
       adminRoleCheckbox.setSelected(player.isAdministrative());
+      achievementsCheckbox.setSelected(player.isAchievementsEnabled());
 
       vpinManiaPlayerCheckbox.setSelected(false);
       vpinManiaPlayerCheckbox.setDisable(cabinet == null);
@@ -312,6 +315,8 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
+    this.achievementsCheckbox.setSelected(player.isAchievementsEnabled());
+    this.achievementsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAchievementsEnabled(newValue));
 
     this.vpinManiaPlayerCheckbox.setDisable(cabinet == null);
     this.vpinManiaPlayerCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {

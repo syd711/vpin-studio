@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewTabController">
+   <content>
+      <VBox>
+         <children>
+            <Label fx:id="emptyLabel" managed="false" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" text="%achievements.no_players" visible="false">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <GridPane fx:id="grid" hgap="10.0" managed="false" vgap="10.0" visible="false" VBox.vgrow="ALWAYS">
+               <columnConstraints>
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+                  <ColumnConstraints percentWidth="8.333333" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints vgrow="NEVER" />
+                  <RowConstraints vgrow="ALWAYS" />
+                  <RowConstraints vgrow="NEVER" />
+               </rowConstraints>
+               <children>
+                  <fx:include fx:id="levelTile" source="tile-level.fxml" GridPane.columnIndex="0" GridPane.columnSpan="6" GridPane.rowIndex="0" />
+                  <fx:include fx:id="unlockedTile" source="tile-unlocked.fxml" GridPane.columnIndex="6" GridPane.columnSpan="3" GridPane.rowIndex="0" />
+                  <fx:include fx:id="cloudRankTile" source="tile-cloud-rank.fxml" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="0" />
+                  <!-- the latest scores tile has a fixed width (its score items are fixed size), the other two share the rest -->
+                  <HBox spacing="10.0" GridPane.columnIndex="0" GridPane.columnSpan="12" GridPane.rowIndex="1">
+                     <children>
+                        <fx:include fx:id="recentUnlocksTile" source="tile-recent-unlocks.fxml" HBox.hgrow="ALWAYS" />
+                        <fx:include fx:id="latestScoresTile" source="tile-latest-scores.fxml" HBox.hgrow="NEVER" />
+                        <fx:include fx:id="rankingTile" source="tile-ranking.fxml" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <fx:include fx:id="badgesTile" source="tile-badges.fxml" GridPane.columnIndex="0" GridPane.columnSpan="8" GridPane.rowIndex="2" />
+                  <fx:include fx:id="closestTile" source="tile-closest.fxml" GridPane.columnIndex="8" GridPane.columnSpan="4" GridPane.rowIndex="2" />
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </GridPane>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

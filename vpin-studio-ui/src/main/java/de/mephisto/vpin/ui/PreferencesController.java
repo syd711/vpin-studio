@@ -258,6 +258,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onAchievements(ActionEvent event) throws IOException {
+    load("preference-achievements.fxml", event);
+  }
+
+  @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
   }

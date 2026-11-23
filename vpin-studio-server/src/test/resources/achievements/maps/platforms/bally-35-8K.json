@@ -1,0 +1,47 @@
+{
+  "_notes": [
+    "Bally AS-2518-35 with 4KB ROMs in U2 and U6",
+    "Platform includes Cybernaut and Fireball Classic which used 6802 CPU"
+  ],
+  "cpu": "6800",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "RAM U7",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM U8",
+      "address": "0x200",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "high"
+    },
+    {
+      "label": "ROM U1 (or low 2K of U2)",
+      "address": "0x1000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U6 (low 2K)",
+      "address": "0x1800",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U2 (or high 2K of U2)",
+      "address": "0x5000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U6 (high 2K)",
+      "address": "0x5800",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

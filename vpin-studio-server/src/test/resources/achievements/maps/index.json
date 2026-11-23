@@ -1,0 +1,23 @@
+{
+  "_note": "Subset of resources/maps/index.json for the achievement golden tests (see README.md)",
+  "afm_113b": "maps/williams/wpc/afm_113.map.json",
+  "mm_109c": "maps/williams/wpc/mm_109.map.json",
+  "tz_94h": "maps/williams/wpc/tz_94h.map.json",
+  "taf_l7": "maps/williams/wpc/taf_l7.map.json",
+  "cc_13": "maps/williams/wpc/cc_13.map.json",
+  "tom_14h": "maps/williams/wpc/tom_13.map.json",
+  "apollo13": "maps/sega/whitestar/apollo13.map.json",
+  "lw3_208": "maps/dataeast/version3/lw3_208.map.json",
+  "baywatch": "maps/dataeast/version3b/baywatch.map.json",
+  "twd_156": "maps/stern/sam/twd_156.map.json",
+  "godzilla": "maps/sega/whitestar/godzilla.map.json",
+  "mb_106b": "maps/williams/wpc/mb_106.map.json",
+  "ss_15": "maps/williams/wpc/ss_15.map.json",
+  "xenon": "maps/bally/as-2518-35/xenon.map.json",
+  "centaur": "maps/bally/as-2518-35/centaur.map.json",
+  "sttng_l7": "maps/williams/wpc/sttng_l7.map.json",
+  "bop_l7": "maps/williams/wpc/bop_l7.map.json",
+  "rs_l6": "maps/williams/wpc/rs_l6.map.json",
+  "gladiatr": "maps/gottlieb/system3/gladiatr.map.json",
+  "bk2k_l4": "maps/williams/system11/bk2k_l4.map.json"
+}

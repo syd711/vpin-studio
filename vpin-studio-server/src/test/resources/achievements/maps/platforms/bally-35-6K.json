@@ -1,0 +1,38 @@
+{
+  "_notes": "Bally AS-2518-35 with 2KB ROMs in U1, U2 and U6",
+  "cpu": "6800",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "RAM U7",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM U8",
+      "address": "0x200",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "high"
+    },
+    {
+      "label": "ROM U1",
+      "address": "0x1000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U2",
+      "address": "0x5000",
+      "size": "0x800",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U6",
+      "address": "0x5800",
+      "size": "0x800",
+      "type": "rom"
+    }
+  ]
+}

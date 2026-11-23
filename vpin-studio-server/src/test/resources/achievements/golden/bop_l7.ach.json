@@ -1,0 +1,817 @@
+{
+ "rules": [
+  {
+   "title": "bop_l7 – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – RETURN TO FACE 1: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RETURN TO FACE 1",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – RETURN TO FACE 1: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RETURN TO FACE 1",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MADE FACE 2: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE FACE 2",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MADE FACE 2: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE FACE 2",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MADE FACE 3: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE FACE 3",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MADE FACE 3: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE FACE 3",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MADE FACE 4: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE FACE 4",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MADE FACE 4: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MADE FACE 4",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EX LIT OFF LOOP: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EX LIT OFF LOOP",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EX LIT OFF LOOP: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EX LIT OFF LOOP",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EX LIT PINBOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EX LIT PINBOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EX LIT PINBOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EX LIT PINBOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EX LIT RANDOM: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EX LIT RANDOM",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EX LIT RANDOM: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EX LIT RANDOM",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JACK LIT RANDOM: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACK LIT RANDOM",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JACK LIT RANDOM: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACK LIT RANDOM",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JACK LIT LOOP: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACK LIT LOOP",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JACK LIT LOOP: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JACK LIT LOOP",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SMALL WHEEL SPIN: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SMALL WHEEL SPIN",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SMALL WHEEL SPIN: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SMALL WHEEL SPIN",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BIG WHEEL SPINS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BIG WHEEL SPINS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BIG WHEEL SPINS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BIG WHEEL SPINS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JETS AT MAXIMUM: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JETS AT MAXIMUM",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – JETS AT MAXIMUM: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "JETS AT MAXIMUM",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 50K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 50K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 50K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 50K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 75K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 75K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 75K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 75K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 100K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 100K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 100K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 100K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 200K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 200K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 200K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 200K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 25K: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 25K",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL SHOT 25K: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOT 25K",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – PINBOT PLAYFIELD: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PINBOT PLAYFIELD",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – PINBOT PLAYFIELD: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "PINBOT PLAYFIELD",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BONUS MULT LOOP: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS MULT LOOP",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BONUS MULT LOOP: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS MULT LOOP",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BONUS MULT. TARGT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS MULT. TARGT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BONUS MULT. TARGT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BONUS MULT. TARGT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – UNLIMIT. MILLION: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "UNLIMIT. MILLION",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – UNLIMIT. MILLION: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "UNLIMIT. MILLION",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BILLION: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BILLION",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BILLION: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BILLION",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL MULTIPLIER: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL MULTIPLIER",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – SKILL MULTIPLIER: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL MULTIPLIER",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BILLION LIT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BILLION LIT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – BILLION LIT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BILLION LIT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – WHEEL 50 MILL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL 50 MILL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – WHEEL 50 MILL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL 50 MILL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – WHEEL 10 MILL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL 10 MILL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – WHEEL 10 MILL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL 10 MILL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – WHEEL 1 MILL.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL 1 MILL.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – WHEEL 1 MILL.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "WHEEL 1 MILL.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – POWER CHARGE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWER CHARGE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – POWER CHARGE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "POWER CHARGE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – LOCK 1 IN EYES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1 IN EYES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – LOCK 1 IN EYES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1 IN EYES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – LOCK 1 IN NECK: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1 IN NECK",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – LOCK 1 IN NECK: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1 IN NECK",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – LOCK 1 HUMAN: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1 HUMAN",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – LOCK 1 HUMAN: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "LOCK 1 HUMAN",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MINI EXIT LEFT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MINI EXIT LEFT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MINI EXIT LEFT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MINI EXIT LEFT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MINI EXIT RIGHT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MINI EXIT RIGHT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – MINI EXIT RIGHT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MINI EXIT RIGHT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – OMBINATION LOOPS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "OMBINATION LOOPS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – OMBINATION LOOPS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "OMBINATION LOOPS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Billionaire #{#} Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Billionaire #{#} Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Billionaire #{#} Initials: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Billionaire #{#} Initials",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Billionaire #{#} Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Billionaire #{#} Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – TOTAL PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – TOTAL PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EXTRA BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – EXTRA BALLS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – TOTAL FREE PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – TOTAL FREE PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – REPLAY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "bop_l7 – REPLAY AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

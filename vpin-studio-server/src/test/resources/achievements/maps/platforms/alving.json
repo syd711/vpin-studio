@@ -1,0 +1,17 @@
+{
+  "_notes": [
+    "Alvin G. and Company pinball hardware (1991-1995).",
+    "MC68000 @ 12 MHz, 8 KB battery-backed SRAM at CPU address 0x0000.",
+    "File size: 8238 bytes (8192 data bytes + 46 bytes PinMAME overhead)."
+  ],
+  "cpu": "MC68000",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "NVRAM",
+      "address": "0x0000",
+      "size": "0x2000",
+      "type": "nvram"
+    }
+  ]
+}

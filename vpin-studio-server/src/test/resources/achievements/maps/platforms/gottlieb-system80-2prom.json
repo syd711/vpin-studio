@@ -1,0 +1,56 @@
+{
+  "_notes": "Gottlieb System 80/80A games with two 512-byte game PROMs.",
+  "cpu": "6502",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "RIOT1",
+      "address": "0x0000",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "RIOT2",
+      "address": "0x0080",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "RIOT3",
+      "address": "0x0100",
+      "size": "0x80",
+      "type": "ram"
+    },
+    {
+      "label": "Game PROM 1",
+      "address": "0x1000",
+      "size": "0x200",
+      "type": "rom"
+    },
+    {
+      "label": "Game PROM 2",
+      "address": "0x1200",
+      "size": "0x200",
+      "type": "rom"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x1800",
+      "size": "0x100",
+      "type": "nvram",
+      "nibble": "low"
+    },
+    {
+      "label": "ROM U2",
+      "address": "0x2000",
+      "size": "0x1000",
+      "type": "rom"
+    },
+    {
+      "label": "ROM U3",
+      "address": "0x3000",
+      "size": "0x1000",
+      "type": "rom"
+    }
+  ]
+}

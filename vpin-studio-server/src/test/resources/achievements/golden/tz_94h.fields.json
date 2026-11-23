@@ -1,0 +1,586 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Extra Balls",
+  "section": ""
+ },
+ {
+  "label": "RECENT LEFT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT CENT. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT RGHT. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT 4TH SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT PAID CRED",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "RECENT SERV. CRED",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL LEFT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL CENTR. SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL RIGHT SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL 4TH SLOT",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL PAID CRED.",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "TOTAL SERV. CRED.",
+  "section": "B.2 EARNINGS AUDS."
+ },
+ {
+  "label": "GAMES STARTED",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TOTAL PLAYS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TOTAL FREE PLAYS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "SPECIAL AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "MATCH AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "H.S.T.D. CREDITS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "EXTRA BALLS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TICKETS AWARDED",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "LEFT DRAINS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "RIGHT DRAINS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "PLAY TIME",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "MINUTES ON",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "BALLS PLAYED",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "TILTS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 1 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 2 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 3 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "REPLAY 4 AWARDS",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "1 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "2 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "3 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "4 PLAYER GAMES",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "H.S.T.D. RESET COUNT",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "BURN-IN TIME",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "LEFT FLIPPER",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "RIGHT FLIPPER",
+  "section": "B.3 STANDARD AUDS."
+ },
+ {
+  "label": "BUY-IN EX. BALLS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "1st GUMBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "1st LOCK GAMES",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "1st MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "2nd MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "3rd MULTIBALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TOTAL MULTIBALLS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "WHITE MULTIBALLS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "MULTI RE-START",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "JACKPOTS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "DOUBLE JACKPOTS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "GUMBALLS LOADED",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "POWERBALL PLAYED",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "POWERBALL MANIA",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "P.B. MANIA JACKPOT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "DOOR AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SLOT AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "PIANO AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "DOOR EX. BALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "LOST IN THE ZONE",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "FAST-LOCK M. BALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "FASTLOCK JACKPOT",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SPIRAL EX. BALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "DEAD END EX. BALL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "ROBOT 1st E.B.",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "ROBOT 2nd E.B.",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "LEFT DRAIN E.B.",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "BATTLE THE POWER",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "POWER DEFEATED",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TOWN SQ. AWARD",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "DEAD END AWARD",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "HITCH-HIKERS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "TRIPLE PICKUPS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "CAMERA AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SKILL SHOTS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SUPER SKILL",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "BONUS X",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "SPIRAL AWARDS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "LEFT RAMPS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "RIGHT RAMPS",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "3-WAY COMBO",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "4-WAY COMBO",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "FREE RIDES",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "BUY-IN FREE RIDE",
+  "section": "B.4 FEATURE AUDS."
+ },
+ {
+  "label": "0-4.9 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "5-9.9 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "10-19 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "20-39 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "40-59 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "60-89 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "90-119 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "120-149 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "150-199 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "200-249 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "250-349 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "350-499 M. SCORE",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "OVER 500 MILLION",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 0.0-1.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 1.0-1.5M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 1.5-2.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 2.0-2.5M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 2.5-3.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 3.0-3.5M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 3.5-4.0M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 4-5 M.",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 5-6 M.",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 6-8 M.",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 8-10 M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME 10-15M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "GAME TIME > 15M",
+  "section": "B.5 HISTOGRAMS"
+ },
+ {
+  "label": "TOTALS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "CLOCK LAST SET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "AUDITS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "COINS CLEARED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "FACTORY SETTING",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST GAME START",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST REPLAY",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST HSTD RESET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "CHAMPION RESET",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST PRINTOUT",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "LAST SERV. CRED",
+  "section": "B.6 TIME-STAMPS"
+ },
+ {
+  "label": "Grand Champion Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Grand Champion Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "First Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Second Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Third Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Fourth Place Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Lost in the Zone Champion Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Lost in the Zone Champion Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #1 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #1 Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #2 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #2 Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #3 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #3 Score",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #4 Initials",
+  "section": "mode_champions"
+ },
+ {
+  "label": "Buy-In High Score #4 Score",
+  "section": "mode_champions"
+ }
+]

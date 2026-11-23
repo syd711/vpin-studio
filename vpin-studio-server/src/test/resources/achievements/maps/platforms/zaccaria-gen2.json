@@ -1,0 +1,14 @@
+{
+  "_notes": "Zaccaria Gen 2 games, 3MHz Signetics 2650, 2KB NVRAM",
+  "cpu": "S2650",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "NVRAM",
+      "address": "0x1800",
+      "size": "0x800",
+      "type": "nvram",
+      "nibble": "low"
+    }
+  ]
+}

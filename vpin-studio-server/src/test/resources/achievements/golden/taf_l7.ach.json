@@ -1,0 +1,727 @@
+{
+ "rules": [
+  {
+   "title": "taf_l7 – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – B.K. OPEN (GAMES): 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "B.K. OPEN (GAMES)",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – B.K. OPEN (GAMES): 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "B.K. OPEN (GAMES)",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – 2ND MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2ND MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – 2ND MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2ND MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – 3RD MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3RD MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – 3RD MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3RD MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – REMATCH MADE: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REMATCH MADE",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – REMATCH MADE: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REMATCH MADE",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – RAMP JACKPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RAMP JACKPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – RAMP JACKPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RAMP JACKPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – DOUBLE JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOUBLE JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – DOUBLE JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "DOUBLE JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRIPLE JACKPOT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRIPLE JACKPOT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRIPLE JACKPOT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRIPLE JACKPOT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – QUICK MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "QUICK MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – QUICK MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "QUICK MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – VAULT MILLIONS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VAULT MILLIONS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – VAULT MILLIONS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "VAULT MILLIONS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – H. UP. MULTIBALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "H. UP. MULTIBALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – H. UP. MULTIBALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "H. UP. MULTIBALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING VAULT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING VAULT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING VAULT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING VAULT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MANSION AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MANSION AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MANSION AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MANSION AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MANSION EX. BALL: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MANSION EX. BALL",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MANSION EX. BALL: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MANSION EX. BALL",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TOUR THE MANSION: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOUR THE MANSION",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TOUR THE MANSION: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOUR THE MANSION",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – RAMP E.B. LIT: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RAMP E.B. LIT",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – RAMP E.B. LIT: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RAMP E.B. LIT",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN WRECK E.B.: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN WRECK E.B.",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN WRECK E.B.: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN WRECK E.B.",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN TARGET: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN TARGET",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN TARGET: 20",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN TARGET",
+    "min": 20
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN WRECKS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN WRECKS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TRAIN WRECKS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TRAIN WRECKS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SWAMP 1X: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SWAMP 1X",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SWAMP 1X: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SWAMP 1X",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SWAMP 5X: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SWAMP 5X",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SWAMP 5X: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SWAMP 5X",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SKILL SHOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SKILL SHOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SKILL SHOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – CENTER RAMP: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CENTER RAMP",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – CENTER RAMP: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CENTER RAMP",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SIDE RAMP: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SIDE RAMP",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SIDE RAMP: 10",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SIDE RAMP",
+    "min": 10
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – CENTER KICKOUT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CENTER KICKOUT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – CENTER KICKOUT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "CENTER KICKOUT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – RIGHT KICKOUT: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RIGHT KICKOUT",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – RIGHT KICKOUT: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "RIGHT KICKOUT",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING TRIPS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING TRIPS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING TRIPS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING TRIPS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING AWARDS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING AWARDS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING FLIPS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING FLIPS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING FLIPS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING FLIPS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING FLIPS HITS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING FLIPS HITS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – THING FLIPS HITS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "THING FLIPS HITS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MANSION SPOTS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MANSION SPOTS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – MANSION SPOTS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "MANSION SPOTS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SUPER BEAR GAMES: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER BEAR GAMES",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – SUPER BEAR GAMES: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "SUPER BEAR GAMES",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TOTAL PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TOTAL PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – EXTRA BALLS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – EXTRA BALLS: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "EXTRA BALLS",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TOTAL FREE PLAYS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – TOTAL FREE PLAYS: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "TOTAL FREE PLAYS",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "taf_l7 – REPLAY AWARDS: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "REPLAY AWARDS",
+    "min": 1
+   },
+   "scope": "session"
+  }
+ ]
+}

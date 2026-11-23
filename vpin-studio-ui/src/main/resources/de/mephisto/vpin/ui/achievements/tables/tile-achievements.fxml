@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableAchievementsTileController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="8.0">
+         <children>
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.achievements" />
+            <Region HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="showLockedCheckbox" mnemonicParsing="false" selected="true" style="-fx-text-fill: white;" text="%achievements.show_locked">
+               <font>
+                  <Font size="14.0" />
+               </font></CheckBox>
+         </children>
+      </HBox>
+      <HBox spacing="10.0" style="-fx-background-color: #161616;">
+         <children>
+            <Label minWidth="24.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" />
+            <Label maxWidth="Infinity" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.achievement" HBox.hgrow="ALWAYS" />
+            <Label minWidth="100.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.unlocked_column" />
+            <Label minWidth="90.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.rarity" />
+         </children>
+         <padding>
+            <Insets bottom="7.0" left="10.0" right="10.0" top="7.0" />
+         </padding>
+      </HBox>
+      <VBox fx:id="rowsBox" spacing="8.0" />
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+   </padding>
+</VBox>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLevelTileController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="18.0">
+         <children>
+            <StackPane fx:id="circleBox" />
+            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="BASELINE_LEFT" spacing="10.0">
+                     <children>
+                        <Label fx:id="nameLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                        <Label fx:id="prestigeLabel" style="-fx-font-size: 15px; -fx-text-fill: #DD9646;" />
+                     </children>
+                  </HBox>
+                  <StackPane fx:id="progressBox" />
+                  <Label fx:id="nextLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+   </padding>
+</VBox>

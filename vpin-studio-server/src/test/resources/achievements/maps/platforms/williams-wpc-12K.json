@@ -1,0 +1,25 @@
+{
+  "_notes": "WPC games (DCS and later): 6809 @ 2MHz, 12KB of NVRAM at address 0x0000",
+  "cpu": "6809",
+  "endian": "big",
+  "memory_layout": [
+    {
+      "label": "NVRAM",
+      "address": "0x0000",
+      "size": "0x3000",
+      "type": "nvram"
+    },
+    {
+      "label": "Banked ROM",
+      "address": "0x4000",
+      "size": "0x4000",
+      "type": "banked"
+    },
+    {
+      "label": "System ROM",
+      "address": "0x8000",
+      "size": "0x8000",
+      "type": "rom"
+    }
+  ]
+}

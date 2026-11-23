@@ -1,0 +1,70 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Tilted",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Current Credits",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Total Plays (Paid and Free Games)",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Total Replays (Free Games)",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Game Percentage",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "HSTD Achieved",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Coin Chute #1",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Coin Chute #2",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Coin Chute #3",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Specials Awarded",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Minutes of Game Play",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "Service Credits",
+  "section": "Bookkeeping functions"
+ },
+ {
+  "label": "High Score Score",
+  "section": "high_scores"
+ }
+]

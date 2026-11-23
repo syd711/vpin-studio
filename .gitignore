@@ -78,6 +78,7 @@ hs_err_pid*
 /resources/flags/
 /resources/maps/
 /resources/maps/**
+/resources/achievements/
 resources/media-raw/
 resources/media-cropped/
 /resources/overlay.png

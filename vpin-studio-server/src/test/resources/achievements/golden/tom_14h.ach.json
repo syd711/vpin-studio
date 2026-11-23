@@ -1,0 +1,781 @@
+{
+ "rules": [
+  {
+   "title": "tom_14h – Play 5 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 300
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Play 10 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 600
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Play 15 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 900
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Play 20 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1200
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Play 30 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 1800
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Play 45 Minutes",
+   "condition": {
+    "type": "session_time",
+    "min_seconds": 2700
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Buy-In Ex. Balls: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In Ex. Balls",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Buy-In Ex. Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy-In Ex. Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Multiball: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Multiball",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Multiball: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Multiball",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Illusions: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Illusions",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Illusions: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Illusions",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Basement: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Basement",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Basement: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Basement",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Theatre: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Theatre",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Theatre: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Theatre",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Balls Saved: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Balls Saved",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Balls Saved: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Balls Saved",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Balls Vanished: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Balls Vanished",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Balls Vanished: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Balls Vanished",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Tiger Multiball: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tiger Multiball",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Tiger Multiball: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Tiger Multiball",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Locks Lit: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Locks Lit",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Locks Lit: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Locks Lit",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Grand Finale: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Grand Finale",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Grand Finale: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Grand Finale",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Midnight: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Midnight",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Midnight: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Midnight",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – 1 Buy-In Games: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 Buy-In Games",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – 1 Buy-In Games: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "1 Buy-In Games",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – 2 Buy-In Games: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 Buy-In Games",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – 2 Buy-In Games: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "2 Buy-In Games",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – 3 Buy-In Games: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 Buy-In Games",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – 3 Buy-In Games: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "3 Buy-In Games",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – >=4 Buy-In Games: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=4 Buy-In Games",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – >=4 Buy-In Games: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": ">=4 Buy-In Games",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Failures: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Failures",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Failures: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Failures",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Left Drain Save: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Left Drain Save",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Left Drain Save: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Left Drain Save",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Left Drain Miss: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Left Drain Miss",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Left Drain Miss: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Left Drain Miss",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Right Drain Save: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Right Drain Save",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Right Drain Save: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Right Drain Save",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Magnet Diverts: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Magnet Diverts",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Magnet Diverts: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Magnet Diverts",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Ball Drain: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Ball Drain",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Ball Drain: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Ball Drain",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Plain Hits: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Plain Hits",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Plain Hits: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Plain Hits",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Magnet Hits: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Magnet Hits",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Magnet Hits: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Magnet Hits",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Lamp Hits: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Lamp Hits",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Lamp Hits: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Lamp Hits",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Scoop Hits: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Scoop Hits",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Trunk Scoop Hits: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Trunk Scoop Hits",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Got to 6 PM: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Got to 6 PM",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Got to 6 PM: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Got to 6 PM",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Secret Locks: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Secret Locks",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Secret Locks: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Secret Locks",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Pinball Cheats: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Pinball Cheats",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Pinball Cheats: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Pinball Cheats",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #1 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #1 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #1 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #1 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #2 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #2 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #2 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #2 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #3 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #3 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #3 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #3 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #4 Initials: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #4 Initials",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – BUY-IN SCORE #4 Score: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "BUY-IN SCORE #4 Score",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Extra Balls: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Extra Balls: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Extra Balls",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Difficult Lock: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Difficult Lock",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Difficult Lock: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Difficult Lock",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Total Plays: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Plays",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Total Plays: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Plays",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Buy Extra Ball: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy Extra Ball",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Buy Extra Ball: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Buy Extra Ball",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Mode Start Hits: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Mode Start Hits",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Mode Start Hits: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Mode Start Hits",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Total Free Plays: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Free Plays",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Total Free Plays: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Total Free Plays",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Ball Save: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ball Save",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Ball Save: 5",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Ball Save",
+    "min": 5
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Replay Awards: 1",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Replay Awards",
+    "min": 1
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – Replay Awards: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "Replay Awards",
+    "min": 3
+   },
+   "scope": "session"
+  },
+  {
+   "title": "tom_14h – % Lite Extra Ball: 3",
+   "condition": {
+    "type": "nvram_delta",
+    "field": "% Lite Extra Ball",
+    "min": 3
+   },
+   "scope": "session"
+  }
+ ]
+}

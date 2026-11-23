@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox minWidth="340.0" prefWidth="400.0" spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableListTileController">
+   <fx:define>
+      <ToggleGroup fx:id="filterGroup" />
+   </fx:define>
+   <children>
+      <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.tab.tables" />
+      <StackPane alignment="CENTER_RIGHT">
+         <children>
+            <TextField fx:id="searchField" prefHeight="30.0" promptText="%achievements.search_table">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+               </graphic>
+            </Button>
+         </children>
+      </StackPane>
+      <FlowPane hgap="5.0" vgap="5.0">
+         <children>
+            <ToggleButton fx:id="allBtn" mnemonicParsing="false" selected="true" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="inProgressBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="completedBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="notStartedBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
+            <ToggleButton fx:id="noMapBtn" mnemonicParsing="false" style="-fx-font-size: 14px;" toggleGroup="$filterGroup" />
+         </children>
+      </FlowPane>
+      <ListView fx:id="tableList" style="-fx-background-color: #283335;" VBox.vgrow="ALWAYS" />
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+   </padding>
+</VBox>

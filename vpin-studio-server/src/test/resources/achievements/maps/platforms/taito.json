@@ -1,0 +1,31 @@
+{
+  "_notes": [
+    "Taito do Brasil, 1980-1985: 8080 CPU, 2KB ROMs at 0x0000 (three to five of them), 512 bytes of scratch RAM at 0x3E00",
+    "and the 256-byte battery-backed window at 0x4000 that PinMAME's taito driver saves as the .nv file.",
+    "The display DMA (0x4080-0x408F) and command DMA (0x4090-0x409F) sit inside that window, so player scores,",
+    "ball in play and credits are in the .nv image. Little-endian: the display holds each 6-digit score as three",
+    "BCD bytes least-significant first; the stored high score at 0x4079 is most-significant first (endian: big)."
+  ],
+  "cpu": "8080",
+  "endian": "little",
+  "memory_layout": [
+    {
+      "label": "ROM",
+      "address": "0x0000",
+      "size": "0x2800",
+      "type": "rom"
+    },
+    {
+      "label": "RAM",
+      "address": "0x3E00",
+      "size": "0x200",
+      "type": "ram"
+    },
+    {
+      "label": "NVRAM",
+      "address": "0x4000",
+      "size": "0x100",
+      "type": "nvram"
+    }
+  ]
+}

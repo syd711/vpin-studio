@@ -1,0 +1,246 @@
+[
+ {
+  "label": "P1 Score",
+  "section": ""
+ },
+ {
+  "label": "Credits",
+  "section": ""
+ },
+ {
+  "label": "current_ball",
+  "section": ""
+ },
+ {
+  "label": "Balls Played",
+  "section": ""
+ },
+ {
+  "label": "Tilted",
+  "section": ""
+ },
+ {
+  "label": "Game Over",
+  "section": ""
+ },
+ {
+  "label": "Extra Balls",
+  "section": ""
+ },
+ {
+  "label": "Tilt Warnings",
+  "section": ""
+ },
+ {
+  "label": "LEFT COINS",
+  "section": "Audits"
+ },
+ {
+  "label": "CENTER COINS",
+  "section": "Audits"
+ },
+ {
+  "label": "RIGHT COINS",
+  "section": "Audits"
+ },
+ {
+  "label": "PAID CREDITS",
+  "section": "Audits"
+ },
+ {
+  "label": "TOTAL PLAYS",
+  "section": "Audits"
+ },
+ {
+  "label": "TOTAL FREE",
+  "section": "Audits"
+ },
+ {
+  "label": "REPLAY AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "SPECIAL AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "MATCH AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "H.S.T.D. CREDITS",
+  "section": "Audits"
+ },
+ {
+  "label": "EXTRA BALLS",
+  "section": "Audits"
+ },
+ {
+  "label": "MINUTES OF PLAY",
+  "section": "Audits"
+ },
+ {
+  "label": "BALLS PLAYED",
+  "section": "Audits"
+ },
+ {
+  "label": "REPLAY1 AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "REPLAY2 AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "REPLAY3 AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "REPLAY4 AWARDS",
+  "section": "Audits"
+ },
+ {
+  "label": "1 PLAYER GAMES",
+  "section": "Audits"
+ },
+ {
+  "label": "2 PLAYER GAMES",
+  "section": "Audits"
+ },
+ {
+  "label": "3 PLAYER GAMES",
+  "section": "Audits"
+ },
+ {
+  "label": "4 PLAYER GAMES",
+  "section": "Audits"
+ },
+ {
+  "label": "BURN-IN CYCLES",
+  "section": "Audits"
+ },
+ {
+  "label": "SPELL WAR",
+  "section": "Audits"
+ },
+ {
+  "label": "SPELL KNIGHT",
+  "section": "Audits"
+ },
+ {
+  "label": "UPPER RAMP SHOTS",
+  "section": "Audits"
+ },
+ {
+  "label": "EXTRA BALL LIT",
+  "section": "Audits"
+ },
+ {
+  "label": "RAMP EXTRA BALLS",
+  "section": "Audits"
+ },
+ {
+  "label": "2 BALL MULTIBALL",
+  "section": "Audits"
+ },
+ {
+  "label": "MILLION VIA WAR",
+  "section": "Audits"
+ },
+ {
+  "label": "3 BALL MULTIBALL",
+  "section": "Audits"
+ },
+ {
+  "label": "JACKPOTS AWARDED",
+  "section": "Audits"
+ },
+ {
+  "label": "RANSOMS AWARDED",
+  "section": "Audits"
+ },
+ {
+  "label": "H.S. RESET COUNTER",
+  "section": "Audits"
+ },
+ {
+  "label": "0.0-0.4 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "0.5-0.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "1.0-1.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "2.0-2.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "3.0-3.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "4.0-5.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "6.0-7.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "8.0-99.9 MIL. SCORE",
+  "section": "Audits"
+ },
+ {
+  "label": "WHEEL SPINS",
+  "section": "Audits"
+ },
+ {
+  "label": "LEFT DRAINS",
+  "section": "Audits"
+ },
+ {
+  "label": "KICKBACKS",
+  "section": "Audits"
+ },
+ {
+  "label": "RIGHT DRAINS",
+  "section": "Audits"
+ },
+ {
+  "label": "Greatest Hero 1 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 1 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 2 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 2 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 3 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 3 Score",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 4 Initials",
+  "section": "high_scores"
+ },
+ {
+  "label": "Greatest Hero 4 Score",
+  "section": "high_scores"
+ }
+]

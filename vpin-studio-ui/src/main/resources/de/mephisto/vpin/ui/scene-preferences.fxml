@@ -60,6 +60,11 @@
                                     <Tooltip text="%pref.vr.vr_settings" />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="achievementsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAchievements" styleClass="preference-button" text="%pref.achievements.achievements_settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.achievements.achievements_settings" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="%pref.inputs.vpin_studio_frontend_preferences">
                                  <font>
                                     <Font size="13.0" />

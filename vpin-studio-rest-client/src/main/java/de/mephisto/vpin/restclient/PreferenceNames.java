@@ -88,6 +88,7 @@ public interface PreferenceNames {
   String VR_SETTINGS = "vrSettings";
   String WOVP_SETTINGS = "wovpSettings";
   String DOF_TESTER_SETTINGS = "dofTesterSettings";
+  String ACHIEVEMENTS_SETTINGS = "achievementsSettings";
 
   static Class<? extends JsonSettings> getClassFromKey(String key) {
     return switch (key) {
@@ -121,6 +122,7 @@ public interface PreferenceNames {
       case PreferenceNames.VPXZ_SETTINGS -> VPXZSettings.class;
       case PreferenceNames.VR_SETTINGS -> VRSettings.class;
       case PreferenceNames.DOF_TESTER_SETTINGS -> DOFTesterSettings.class;
+      case PreferenceNames.ACHIEVEMENTS_SETTINGS -> de.mephisto.vpin.restclient.achievements.AchievementsSettings.class;
       case PreferenceNames.DISCORD_CLIENT_SETTINGS -> DiscordClientSettings.class;
       default -> throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
     };
