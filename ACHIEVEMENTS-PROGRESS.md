@@ -75,7 +75,7 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
 - Server-side texts (condition tooltips, achievement titles) are English only. UI texts incl. badge names/descriptions
   and progress texts are translated for en/de/es/fr/it/pt.
 - [x] Mania caching + rate limit (2026-11-23, vpin-mania `AchievementService`, tested against the local dev DB,
-  **not deployed yet**): global/ROM leaderboards and rarity cached 10 min (Laravel file cache); a sync drops the
+  deployed to production 2026-11-23): global/ROM leaderboards and rarity cached 10 min (Laravel file cache); a sync drops the
   entries it changes (ROM board + rarity of changed ROMs, global board only on new unlocks); merge setting changes
   and account deletions drop everything (generation counter); visibility/blocking show up after 10 min. Unchanged
   progress rows are no longer rewritten (keeps UpdatedAt, the ROM board tie breaker), stored counts are read with
@@ -100,8 +100,9 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
     icon `pausemenu/achievements.png` (generated from todo.png), setting `PauseMenuSettings.showAchievements` (default
     on, Preferences > Pause Menu). Entry only for games with a ROM when achievements are enabled and a player tracks
     them (admin player first). Shows table progress, last tracked game (highlights + unlocks) and the next achievements.
-    Compiled; not yet checked visually (needs a server restart, test with GET api/v1/system/pausemenu/test/{gameId}/{sec}).
-  - [ ] 14 VPX 10.8.1 score-server multiplayer/live unlocks, 15 AWEditor custom achievements, 16 Mania web views.
+    Checked visually 2026-11-23 (GET api/v1/system/pausemenu/test/237/30 with a test game of che_cho, ok).
+  - [ ] 14 VPX 10.8.1 score-server multiplayer/live unlocks, 15 AWEditor custom achievements.
+  - 16 Mania web views: deferred (decision 2026-11-23: later, once users are using achievements).
 - Firebase "claim" of a Player ID that was never claimed succeeds with any key (same as in the Watcher).
 
 ## Notes
