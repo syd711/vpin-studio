@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,13 +35,7 @@ public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
 
   @FXML
-  private Tab discordTab;
-
-  @FXML
-  private Tab buildInUsersTab;
-
-  @FXML
-  private TabPane tabPane;
+  private BorderPane playersRoot;
 
   @FXML
   private Label noScoreLabel;
@@ -70,7 +65,6 @@ public class PlayersController implements Initializable, StudioFXController {
   private CheckBox loadScoreList;
 
   private BuiltInPlayersController builtInPlayersController;
-  private DiscordPlayersController discordPlayersController;
 
   private Optional<PlayerRepresentation> selection = Optional.empty();
 
@@ -83,7 +77,7 @@ public class PlayersController implements Initializable, StudioFXController {
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    updateForTabSelection(player);
+    updateBreadCrumb(player);
     validationError.setVisible(false);
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
@@ -119,28 +113,14 @@ public class PlayersController implements Initializable, StudioFXController {
     }
   }
 
-  private void updateForTabSelection(Optional<PlayerRepresentation> player) {
-    int index = tabPane.getSelectionModel().selectedIndexProperty().get();
-    if (index == 0) {
-      if (player.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players"), player.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
-      }
-
-      playerCountLabel.setText(Messages.get("dialog.players_count", builtInPlayersController.getCount()));
+  private void updateBreadCrumb(Optional<PlayerRepresentation> player) {
+    if (player.isPresent()) {
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players"), player.get().getName()));
     }
     else {
-      if (player.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players"), player.get().getName()));
-      }
-      else {
-        NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
-      }
-
-      playerCountLabel.setText(Messages.get("dialog.players_count", discordPlayersController.getCount()));
+      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
     }
+    playerCountLabel.setText(Messages.get("dialog.players_count", builtInPlayersController.getCount()));
   }
 
 
@@ -156,25 +136,10 @@ public class PlayersController implements Initializable, StudioFXController {
       Parent builtInRoot = loader.load();
       builtInPlayersController = loader.getController();
       builtInPlayersController.setPlayersController(this);
-      buildInUsersTab.setContent(builtInRoot);
+      playersRoot.setCenter(builtInRoot);
     } catch (IOException e) {
       LOG.error("failed to load buildIn players: " + e.getMessage(), e);
     }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(DiscordPlayersController.class.getResource("tab-discord-users.fxml"));
-      loader.setResources(Messages.getBundle());
-      Parent builtInRoot = loader.load();
-      discordPlayersController = loader.getController();
-      discordPlayersController.setPlayersController(this);
-      discordTab.setContent(builtInRoot);
-    } catch (IOException e) {
-      LOG.error("failed to load buildIn players: " + e.getMessage(), e);
-    }
-
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshTabSelection(t1);
-    });
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     loadScoreList.setSelected(uiSettings.isShowPlayerScores());
@@ -185,41 +150,18 @@ public class PlayersController implements Initializable, StudioFXController {
       updateSelection(this.selection);
     });
 
-    updateForTabSelection(Optional.empty());
-  }
-
-  private void refreshTabSelection(Number t1) {
-    if (t1.intValue() == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
-      Optional<PlayerRepresentation> selection = builtInPlayersController.getSelection();
-      updateSelection(selection);
-    }
-    else {
-      NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("players.players.discord_players")));
-      Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
-      updateSelection(selection);
-    }
-  }
-
-  private StudioFXController getActiveController() {
-    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-      return switch (selectedIndex) {
-          case 0 -> builtInPlayersController;
-          case 1 -> discordPlayersController;
-          default -> null;
-      };
+    updateBreadCrumb(Optional.empty());
   }
 
   @Override
   public void onKeyEvent(KeyEvent event) {
-    StudioFXController activeController = getActiveController();
-    if (activeController != null) {
-      activeController.onKeyEvent(event);
+    if (builtInPlayersController != null) {
+      builtInPlayersController.onKeyEvent(event);
     }
   }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+    updateSelection(builtInPlayersController.getSelection());
   }
 }
