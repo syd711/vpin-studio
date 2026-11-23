@@ -1,11 +1,13 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.AchievementsMenuItemController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.achievements.AchievementsSettings;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -85,6 +87,11 @@ public class PauseMenuItemsFactory {
       pauseMenuItems.add(item);
     }
 
+    if (pauseMenuSettings.isShowAchievements() && isAchievementsAvailable(game)) {
+      item = new PauseMenuItem(PauseMenuItemTypes.achievements, Messages.get("pausemenu.items_factory.achievements"), Messages.get("pausemenu.items_factory.achievements_of_this_table"), new Image(PauseMenu.class.getResourceAsStream("achievements.png")));
+      pauseMenuItems.add(item);
+    }
+
     //only load the media of those screens that are not the highscore card screen or if no highscore card screen is set
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
       if (pauseMenuSettings.isShowInfoCard()) {
@@ -110,6 +117,23 @@ public class PauseMenuItemsFactory {
     }
 
     return pauseMenuItems;
+  }
+
+  /**
+   * The achievements entry needs a ROM and a player that tracks achievements.
+   */
+  private static boolean isAchievementsAvailable(@NonNull GameRepresentation game) {
+    try {
+      if (AchievementsMenuItemController.romOf(game) == null) {
+        return false;
+      }
+      AchievementsSettings settings = client.getJsonPreference(PreferenceNames.ACHIEVEMENTS_SETTINGS, AchievementsSettings.class);
+      return settings.isEnabled() && AchievementsMenuItemController.trackedPlayer() != null;
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to check achievements for the pause menu: {}", e.getMessage());
+      return false;
+    }
   }
 
   private static void createTutorialEntries(GameRepresentation game, PauseMenuSettings pauseMenuSettings, List<PauseMenuItem> pauseMenuItems) {

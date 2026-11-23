@@ -26,9 +26,17 @@ achievements; tables whose map was added after the release get their achievement
 | Tab | Content |
 |---|---|
 | Overview | Level, unlocked achievements, cloud rank, recent unlocks, latest scores, cabinet/cloud ranking, badges, closest to unlock |
-| Tables | Progress per table (filters: in progress, completed, not started, no NVRAM map), achievements of a table with rarity, cloud top 5 |
+| Tables | Progress per table (filters: in progress, completed, not started, no NVRAM map), achievements of a table with rarity, cloud top 5. **Played games** lists the tracked games of the table with highlights (Power/Precision/Fun, derived from the audit changes like in the Watcher), the achievements unlocked in that game and all audit changes |
 | Badges | Level table, prestige, all badges with progress; choose the badge shown next to your name on the leaderboards |
 | Leaderboards | Global top 50 (different achievements) and top 25 per table (VPin Mania) |
+
+## Pause menu
+
+The pause menu has an **Achievements** entry (Preferences > Pause Menu > "Show achievements of the table", on by
+default). It shows the progress of the table, the highlights and unlocks of the last tracked game and the next
+achievements. The player is the administrative player if it tracks achievements, otherwise the first tracked player.
+The running game is evaluated when the table is exited, so it is not part of the view yet. There is no overlay after
+the table exit; the existing notifications show new unlocks.
 
 ## VPin Mania
 

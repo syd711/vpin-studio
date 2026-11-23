@@ -10,7 +10,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 public class AchievementsSettings extends JsonSettings {
   private boolean enabled = true;
   private boolean cloudSyncEnabled = true;
-  private boolean notificationsEnabled = true;
   private int minSessionSeconds = 60;
 
   public boolean isEnabled() {
@@ -27,14 +26,6 @@ public class AchievementsSettings extends JsonSettings {
 
   public void setCloudSyncEnabled(boolean cloudSyncEnabled) {
     this.cloudSyncEnabled = cloudSyncEnabled;
-  }
-
-  public boolean isNotificationsEnabled() {
-    return notificationsEnabled;
-  }
-
-  public void setNotificationsEnabled(boolean notificationsEnabled) {
-    this.notificationsEnabled = notificationsEnabled;
   }
 
   public int getMinSessionSeconds() {

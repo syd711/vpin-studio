@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.achievements;
 
 import de.mephisto.vpin.restclient.achievements.AchievementInfo;
+import de.mephisto.vpin.restclient.achievements.AchievementSessionDetails;
+import de.mephisto.vpin.restclient.achievements.AchievementSessionInfo;
 import de.mephisto.vpin.restclient.achievements.AchievementsMigrationRequest;
 import de.mephisto.vpin.restclient.achievements.AchievementsMigrationResult;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
@@ -110,6 +112,18 @@ public class AchievementsServiceIntegrationTest extends AbstractVPinServerTest {
 
       TableAchievementsDetails global = queryService.getTableDetails(tracked.getId(), AchievementsQueryService.GLOBAL);
       assertThat(global.achievements).hasSize(ruleStore.getGlobalRules().size());
+
+      List<AchievementSessionInfo> sessions = queryService.getSessions(tracked.getId(), rom, 10);
+      assertThat(sessions).hasSize(1);
+      AchievementSessionInfo session = sessions.get(0);
+      assertThat(session.unlocks).isEqualTo(unlocks.size());
+      assertThat(session.durationSec).isEqualTo(700);
+      assertThat(queryService.getSessions(untracked.getId(), rom, 10)).isEmpty();
+      AchievementSessionDetails sessionDetails = queryService.getSessionDetails(tracked.getId(), session.id);
+      assertThat(sessionDetails.unlocks).hasSize(unlocks.size());
+      assertThat(sessionDetails.deltas).isNotEmpty().allSatisfy((k, v) -> assertThat(v).isEqualTo(30L));
+      assertThat(sessionDetails.highlights.keySet()).containsExactly("Power", "Precision", "Fun");
+      assertThat(queryService.getSessionDetails(untracked.getId(), session.id)).isNull();
 
       // a second identical game does not unlock anything new
       achievementsService.evaluateGame(game, rom, start, end, Instant.now().minusSeconds(700), Instant.now(), 700);

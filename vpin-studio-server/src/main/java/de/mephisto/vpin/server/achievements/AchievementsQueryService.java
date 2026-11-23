@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.achievements;
 
 import de.mephisto.vpin.restclient.achievements.AchievementInfo;
+import de.mephisto.vpin.restclient.achievements.AchievementSessionDetails;
+import de.mephisto.vpin.restclient.achievements.AchievementSessionInfo;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievementsDetails;
@@ -12,6 +14,7 @@ import de.mephisto.vpin.server.achievements.model.AchievementUnlockRepository;
 import de.mephisto.vpin.server.achievements.progression.BadgeEvaluator;
 import de.mephisto.vpin.server.achievements.progression.LevelCalculator;
 import de.mephisto.vpin.server.achievements.progression.RarityTier;
+import de.mephisto.vpin.server.achievements.progression.SessionHighlights;
 import de.mephisto.vpin.server.achievements.rules.AchievementRule;
 import de.mephisto.vpin.server.achievements.rules.PlayerProgress;
 import de.mephisto.vpin.server.achievements.rules.RuleCondition;
@@ -22,6 +25,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -378,5 +382,85 @@ public class AchievementsQueryService {
       details.table.unlocked = unlockedCount;
     }
     return details;
+  }
+
+  //------------------------------------------- Sessions --------------------------------------------------------------
+
+  /**
+   * The tracked games of a player, newest first.
+   *
+   * @param rom   only games of this ROM, all games if null
+   * @param limit maximum number of games
+   */
+  @NonNull
+  public List<AchievementSessionInfo> getSessions(long playerId, @Nullable String rom, int limit) {
+    List<AchievementSession> sessions = rom != null ? sessionRepository.findByRom(rom.toLowerCase()) : sessionRepository.findAll();
+    List<AchievementSessionInfo> result = new ArrayList<>();
+    for (AchievementSession s : sessions) {
+      Integer unlocks = playerUnlocks(s).get(String.valueOf(playerId));
+      if (unlocks != null) {
+        result.add(toSessionInfo(s, unlocks));
+      }
+    }
+    result.sort(Comparator.comparing((AchievementSessionInfo s) -> s.startedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+    return result.size() > limit ? new ArrayList<>(result.subList(0, Math.max(0, limit))) : result;
+  }
+
+  /**
+   * A tracked game with highlights, the achievements the player unlocked in it and the audit changes.
+   */
+  @Nullable
+  public AchievementSessionDetails getSessionDetails(long playerId, long sessionId) {
+    AchievementSession s = sessionRepository.findById(sessionId).orElse(null);
+    if (s == null) {
+      return null;
+    }
+    Integer unlocks = playerUnlocks(s).get(String.valueOf(playerId));
+    if (unlocks == null) {
+      return null;
+    }
+    AchievementSessionDetails details = new AchievementSessionDetails();
+    details.session = toSessionInfo(s, unlocks);
+
+    Map<String, Long> deltas = AchievementStateStore.read(s.getDeltas(), new TypeReference<>() {
+    });
+    if (deltas == null) {
+      deltas = new LinkedHashMap<>();
+    }
+    details.highlights = SessionHighlights.analyze(deltas, details.session.score);
+    deltas.entrySet().stream()
+        .filter(e -> e.getValue() != null && e.getValue() > 0)
+        .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+        .forEach(e -> details.deltas.put(e.getKey(), e.getValue()));
+
+    unlockRepository.findByPlayerIdAndSessionId(playerId, sessionId).stream()
+        .sorted(Comparator.comparing(AchievementUnlock::getTitle))
+        .forEach(u -> details.unlocks.add(toInfo(u)));
+    return details;
+  }
+
+  private AchievementSessionInfo toSessionInfo(AchievementSession s, int unlocks) {
+    AchievementSessionInfo info = new AchievementSessionInfo();
+    info.id = s.getId();
+    info.gameId = s.getGameId();
+    info.rom = s.getRom();
+    info.tableName = gameIndex.tableName(s.getRom());
+    info.startedAt = s.getStartedAt() != null ? Date.from(s.getStartedAt()) : null;
+    info.endedAt = s.getEndedAt() != null ? Date.from(s.getEndedAt()) : null;
+    info.durationSec = s.getDurationSec();
+    info.playerCount = s.getPlayerCount();
+    info.unlocks = unlocks;
+    info.score = SessionHighlights.score(AchievementStateStore.read(s.getEndAudits(), new TypeReference<Map<String, Object>>() {
+    }));
+    return info;
+  }
+
+  /**
+   * playerId -> number of unlocks in the session, the players that were credited with the game.
+   */
+  private static Map<String, Integer> playerUnlocks(AchievementSession s) {
+    Map<String, Integer> m = AchievementStateStore.read(s.getPlayerUnlocks(), new TypeReference<>() {
+    });
+    return m != null ? m : Map.of();
   }
 }

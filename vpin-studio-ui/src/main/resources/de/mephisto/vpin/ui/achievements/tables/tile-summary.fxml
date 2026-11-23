@@ -39,6 +39,10 @@
                      <font>
                         <Font size="14.0" />
                      </font></Button>
+                  <Button fx:id="sessionsBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onSessions" text="%achievements.played_games">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                   <Button fx:id="leaderboardBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onLeaderboard" text="%achievements.show_leaderboard">
                      <font>
                         <Font size="14.0" />

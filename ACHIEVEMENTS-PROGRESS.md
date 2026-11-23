@@ -29,8 +29,9 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
 - [x] 1.5 Player dialog checkbox "Track achievements", i18n (en + de; es/fr/it/pt fall back to en). Docs: `documentation/achievements/README.md`
 
 ## Phase 2 — Notifications
-- [x] 2.1 Achievement/badge/level-up notifications via NotificationService (in AchievementsService.notifyPlayer,
-      setting `notificationsEnabled`)
+- [x] 2.1 Achievement/badge/level-up notifications via NotificationService (in AchievementsService.notifyPlayer)
+- [x] 2.2 Toggle lives in the Notifications preferences ("Achievements" section, `NotificationSettings.achievementsNotification`,
+      default on); the old `AchievementsSettings.notificationsEnabled` checkbox on the Achievements page was removed
 
 ## Phase 3 — Mania cloud + migration
 - [x] 3.1 Mania backend (`C:\workspace-php\vpin-mania`): schema block at end of `server/sql/create_schema.sql`,
@@ -49,7 +50,7 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
       `yyyy-MM-dd HH:mm:ss` UTC like all Mania endpoints), table pre-selection/sorting, "no data yet" for ROMs without
       rules, duplicate widget titles, badge tooltips. Test data removed from both dev DBs afterwards.
 
-## Status: all phases implemented. Nothing is committed (Studio, vpin-mania-rest-client, vpin-mania).
+## Status: phases 0-3 implemented and committed (Studio 5.8.0, vpin-mania-rest-client 2.1.0, vpin-mania, java-pinmame-nvmaps 1.0.1).
 
 ## TODOs / follow-ups (instead of questions)
 - [x] Deploy: Mania schema + PHP code and vpin-mania-rest-client 2.1.0 deployed to production (2026-11-23).
@@ -73,16 +74,34 @@ Code: `vpin-studio-server/.../server/achievements/{nvram,rules,progression}`, DT
   (whole menu hidden); the page is reachable via the gear button in the Achievements view.
 - Server-side texts (condition tooltips, achievement titles) are English only. UI texts incl. badge names/descriptions
   and progress texts are translated for en/de/es/fr/it/pt.
-- Mania leaderboards/rarity are computed per request; add caching if load becomes an issue. No rate limit on sync yet.
+- [x] Mania caching + rate limit (2026-11-23, vpin-mania `AchievementService`, tested against the local dev DB,
+  **not deployed yet**): global/ROM leaderboards and rarity cached 10 min (Laravel file cache); a sync drops the
+  entries it changes (ROM board + rarity of changed ROMs, global board only on new unlocks); merge setting changes
+  and account deletions drop everything (generation counter); visibility/blocking show up after 10 min. Unchanged
+  progress rows are no longer rewritten (keeps UpdatedAt, the ROM board tie breaker), stored counts are read with
+  one query. Accounts/summaries only loaded for the returned entries. Sync + import: 60 requests per cabinet per
+  10 min, then 429 + Retry-After (Studio keeps the unlocks pending and retries with the next sync).
 - Speed Demon: achievements are evaluated at the end of a game, so "3 unlocks within 5 minutes" counts games of at most
   5 minutes with 3+ unlocks.
 - [x] Library bug in java-pinmame-nvmaps `NVRamMapping.unpackOffset` fixed in C:\workspace\java-pinmame-nvmaps
-  (uncommitted, installed locally as 1.0-SNAPSHOT). Affects 135 maps with `offset` (e.g. System 11 player count stored
+  (released as 1.0.1, used by the Studio server). Affects 135 maps with `offset` (e.g. System 11 player count stored
   as players-1, so the multiplayer check was wrong there). Library test expectation for bcats_l5 player count 0 -> 1.
   Pre-existing, unrelated failures: library PinemhiRamParserTest (4) + NVRamParserCompareTest, Studio
   NvRamOutputToScoreTextTest (3).
-- Phase 4 (not done, optional): post-game overlay/highlights, VPX 10.8.1 score-server multiplayer/live unlocks,
-  AWEditor custom achievements, Mania web views.
+- Phase 4 (optional):
+  - [x] 13a Session highlights + "Played games" dialog (2026-11-23): `progression/SessionHighlights` ports
+    HIGHLIGHT_RULES/EVENT_KEYWORDS/_build_events_from_deltas/analyze_session (`SessionHighlightsTest`, expected values
+    produced with the Watcher code). REST `GET achievements/player/{id}/sessions?rom=&limit=` and
+    `.../session/{sessionId}`; UI `AchievementsSessionsDialog` (button "Played games" in the Tables tab summary tile,
+    shown when the player has tracked games of the table). Best Ball is not supported (needs live ball tracking,
+    item 14). Integration test extended; UI compiled but not yet checked in the running app (dev DB has no sessions).
+  - [x] 13b Pause menu entry instead of an overlay (decision 2026-11-23: pause menu, configurable, **no overlay after
+    game exit**): `PauseMenuItemTypes.achievements`, `AchievementsMenuItemController` + `menu-achievements-view.fxml`,
+    icon `pausemenu/achievements.png` (generated from todo.png), setting `PauseMenuSettings.showAchievements` (default
+    on, Preferences > Pause Menu). Entry only for games with a ROM when achievements are enabled and a player tracks
+    them (admin player first). Shows table progress, last tracked game (highlights + unlocks) and the next achievements.
+    Compiled; not yet checked visually (needs a server restart, test with GET api/v1/system/pausemenu/test/{gameId}/{sec}).
+  - [ ] 14 VPX 10.8.1 score-server multiplayer/live unlocks, 15 AWEditor custom achievements, 16 Mania web views.
 - Firebase "claim" of a Player ID that was never claimed succeeds with any key (same as in the Watcher).
 
 ## Notes

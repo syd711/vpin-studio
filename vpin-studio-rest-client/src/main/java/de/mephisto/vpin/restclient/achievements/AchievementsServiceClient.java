@@ -46,6 +46,16 @@ public class AchievementsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "achievements/player/" + playerId + "/table/" + URLEncoder.encode(rom, StandardCharsets.UTF_8), TableAchievementsDetails.class);
   }
 
+  public List<AchievementSessionInfo> getSessions(long playerId, @Nullable String rom, int limit) {
+    String params = "?limit=" + limit + (rom != null ? "&rom=" + URLEncoder.encode(rom, StandardCharsets.UTF_8) : "");
+    AchievementSessionInfo[] sessions = getRestClient().get(API + "achievements/player/" + playerId + "/sessions" + params, AchievementSessionInfo[].class);
+    return sessions != null ? Arrays.asList(sessions) : Collections.emptyList();
+  }
+
+  public AchievementSessionDetails getSession(long playerId, long sessionId) {
+    return getRestClient().get(API + "achievements/player/" + playerId + "/session/" + sessionId, AchievementSessionDetails.class);
+  }
+
   public boolean selectBadge(long playerId, @Nullable String badgeId) {
     try {
       String param = badgeId != null ? "?badge=" + URLEncoder.encode(badgeId, StandardCharsets.UTF_8) : "";

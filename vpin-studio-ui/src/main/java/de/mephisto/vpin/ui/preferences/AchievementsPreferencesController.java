@@ -31,8 +31,6 @@ public class AchievementsPreferencesController implements Initializable {
   @FXML
   private CheckBox enabledCheckbox;
   @FXML
-  private CheckBox notificationsCheckbox;
-  @FXML
   private CheckBox cloudCheckbox;
   @FXML
   private VBox playersBox;
@@ -51,14 +49,9 @@ public class AchievementsPreferencesController implements Initializable {
       settings = new AchievementsSettings();
     }
     enabledCheckbox.setSelected(settings.isEnabled());
-    notificationsCheckbox.setSelected(settings.isNotificationsEnabled());
     cloudCheckbox.setSelected(settings.isCloudSyncEnabled());
     enabledCheckbox.selectedProperty().addListener((obs, o, n) -> {
       settings.setEnabled(n);
-      save();
-    });
-    notificationsCheckbox.selectedProperty().addListener((obs, o, n) -> {
-      settings.setNotificationsEnabled(n);
       save();
     });
     cloudCheckbox.selectedProperty().addListener((obs, o, n) -> {

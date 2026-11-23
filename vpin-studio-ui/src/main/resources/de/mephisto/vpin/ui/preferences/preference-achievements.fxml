@@ -11,9 +11,9 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.AchievementsPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <VBox spacing="6.0">
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" spacing="6.0" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="%pref.achievements.title" textFill="WHITE" />
                   <Label styleClass="preference-description" text="%pref.achievements.description" textFill="WHITE" wrapText="true" maxWidth="620.0" />
@@ -24,7 +24,6 @@
                      </VBox.margin>
                   </Label>
                   <CheckBox fx:id="enabledCheckbox" styleClass="preference-checkbox" text="%pref.achievements.enabled" textFill="WHITE" />
-                  <CheckBox fx:id="notificationsCheckbox" styleClass="preference-checkbox" text="%pref.achievements.notifications" textFill="WHITE" />
                   <CheckBox fx:id="cloudCheckbox" styleClass="preference-checkbox" text="%pref.achievements.cloud" textFill="WHITE" />
                   <Label styleClass="preference-description" text="%pref.achievements.cloud_description" textFill="WHITE" wrapText="true" maxWidth="620.0" />
 
@@ -52,7 +51,7 @@
                   </Button>
                </children>
                <padding>
-                  <Insets right="12.0" />
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
             </VBox>
          </content>

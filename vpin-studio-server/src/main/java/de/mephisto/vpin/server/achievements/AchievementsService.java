@@ -29,6 +29,7 @@ import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerLifecycleListener;
@@ -417,10 +418,11 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
   //------------------------------------------- Notifications ---------------------------------------------------------
 
   private void notifyPlayer(@Nullable Game game, Player player, List<AchievementUnlock> created, List<BadgeInfo> newBadges, @Nullable LevelInfo levelUp) {
-    if (!settings.isNotificationsEnabled()) {
-      return;
-    }
     try {
+      NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+      if (notificationSettings != null && !notificationSettings.isAchievementsNotification()) {
+        return;
+      }
       File wheel = game != null ? frontendService.getWheelImage(game) : null;
       String gameName = game != null ? game.getGameDisplayName() : "";
       String who = player.getName() != null ? player.getName() : player.getInitials();

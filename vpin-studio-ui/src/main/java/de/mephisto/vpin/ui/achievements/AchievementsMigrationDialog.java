@@ -1,15 +1,18 @@
 package de.mephisto.vpin.ui.achievements;
 
+import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.AchievementsMigrationRequest;
 import de.mephisto.vpin.restclient.achievements.AchievementsMigrationResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -22,11 +25,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
@@ -34,9 +38,13 @@ import static de.mephisto.vpin.ui.achievements.AchievementsUI.*;
 /**
  * Wizard for the one-time migration of VPX Achievement Watcher data ("claim once, then read").
  */
-public class AchievementsMigrationDialog {
+public class AchievementsMigrationDialog implements Initializable, DialogController {
 
-  private final Stage stage = new Stage();
+  private static final String FONT_STYLE = "-fx-font-size: 14px;";
+
+  @FXML
+  private BorderPane root;
+
   private final ComboBox<PlayerRepresentation> playerCombo = new ComboBox<>();
   private final RadioButton firebaseRadio = new RadioButton(Messages.get("achievements.migration.source_cloud"));
   private final RadioButton localRadio = new RadioButton(Messages.get("achievements.migration.source_local"));
@@ -48,22 +56,24 @@ public class AchievementsMigrationDialog {
   private final VBox resultBox = new VBox(4);
 
   public static void open() {
-    new AchievementsMigrationDialog().stage.showAndWait();
+    Stage stage = Dialogs.createStudioDialogStage(AchievementsMigrationDialog.class, "dialog-achievements-migration.fxml",
+        Messages.get("achievements.migration.title"));
+    stage.showAndWait();
   }
 
-  private AchievementsMigrationDialog() {
-    stage.initOwner(Studio.stage);
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setTitle(Messages.get("achievements.migration.title"));
+  public AchievementsMigrationDialog() {
+  }
 
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
     VBox content = new VBox(10);
     content.setPadding(new Insets(16));
-    content.setStyle("-fx-background-color: #222222;");
+    content.setStyle(FONT_STYLE);
     content.setPrefWidth(640);
 
     Label intro = muted(Messages.get("achievements.migration.intro"));
     intro.setWrapText(true);
-    content.getChildren().addAll(headline(Messages.get("achievements.migration.title")), intro);
+    content.getChildren().add(intro);
 
     playerCombo.setConverter(new StringConverter<>() {
       @Override
@@ -83,8 +93,8 @@ public class AchievementsMigrationDialog {
     firebaseRadio.setToggleGroup(sources);
     localRadio.setToggleGroup(sources);
     firebaseRadio.setSelected(true);
-    firebaseRadio.setStyle("-fx-text-fill: white;");
-    localRadio.setStyle("-fx-text-fill: white;");
+    firebaseRadio.setStyle(FONT_STYLE + " -fx-text-fill: white;");
+    localRadio.setStyle(FONT_STYLE + " -fx-text-fill: white;");
     sources.selectedToggleProperty().addListener((obs, o, n) -> updateFields());
 
     pidField.setPromptText("e.g. ab12");
@@ -97,7 +107,7 @@ public class AchievementsMigrationDialog {
       if (current.exists()) {
         chooser.setInitialDirectory(current);
       }
-      File dir = chooser.showDialog(stage);
+      File dir = chooser.showDialog(getStage());
       if (dir != null) {
         folderField.setText(dir.getAbsolutePath());
       }
@@ -123,7 +133,7 @@ public class AchievementsMigrationDialog {
 
     Label folderHint = muted(Messages.get("achievements.migration.folder_hint"));
     folderHint.setWrapText(true);
-    Label warning = colored(Messages.get("achievements.migration.warning"), ORANGE, 13, false);
+    Label warning = colored(Messages.get("achievements.migration.warning"), ORANGE, 14, false);
     warning.setWrapText(true);
     content.getChildren().addAll(folderHint, warning);
 
@@ -134,7 +144,10 @@ public class AchievementsMigrationDialog {
     content.getChildren().add(resultBox);
 
     Button close = new Button(Messages.get("achievements.migration.close"));
-    close.setOnAction(e -> stage.close());
+    close.getStyleClass().add("default-button");
+    close.setOnAction(e -> getStage().close());
+    previewBtn.getStyleClass().add("default-button");
+    importBtn.getStyleClass().add("submit-button");
     previewBtn.setOnAction(e -> run(true));
     importBtn.setOnAction(e -> run(false));
     importBtn.setDisable(true);
@@ -142,11 +155,11 @@ public class AchievementsMigrationDialog {
     buttons.setAlignment(Pos.CENTER_RIGHT);
     content.getChildren().add(buttons);
 
-    BorderPane root = new BorderPane(content);
-    root.getStyleClass().add("base-component");
-    Scene scene = new Scene(root);
-    scene.getStylesheets().add(Studio.class.getResource("stylesheet.css").toExternalForm());
-    stage.setScene(scene);
+    for (Control c : new Control[]{playerCombo, pidField, keyField, folderField, browse, previewBtn, importBtn, close}) {
+      c.setStyle(FONT_STYLE);
+    }
+
+    root.setCenter(content);
 
     updateFields();
     JFXFuture.supplyAsync(() -> client.getPlayerService().getPlayers()).thenAcceptLater(players -> {
@@ -163,6 +176,20 @@ public class AchievementsMigrationDialog {
         folderField.setText(folder);
       }
     });
+  }
+
+  private Stage getStage() {
+    return (Stage) root.getScene().getWindow();
+  }
+
+  private void sizeToScene() {
+    if (root.getScene() != null && root.getScene().getWindow() != null) {
+      root.getScene().getWindow().sizeToScene();
+    }
+  }
+
+  @Override
+  public void onDialogCancel() {
   }
 
   private void updateFields() {
@@ -206,7 +233,7 @@ public class AchievementsMigrationDialog {
     resultBox.getChildren().clear();
     if (result == null) {
       resultBox.getChildren().add(muted(message));
-      stage.sizeToScene();
+      sizeToScene();
       return;
     }
     resultBox.getChildren().add(colored(result.message, result.success ? GREEN : "#FF6B5A", 14, true));
@@ -222,10 +249,10 @@ public class AchievementsMigrationDialog {
       }
     }
     for (String w : result.warnings) {
-      Label l = colored("\u26A0 " + w, ORANGE, 13, false);
+      Label l = colored("\u26A0 " + w, ORANGE, 14, false);
       l.setWrapText(true);
       resultBox.getChildren().add(l);
     }
-    stage.sizeToScene();
+    sizeToScene();
   }
 }

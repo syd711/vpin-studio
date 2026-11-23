@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.achievements;
 
+import de.mephisto.vpin.restclient.achievements.AchievementSessionDetails;
+import de.mephisto.vpin.restclient.achievements.AchievementSessionInfo;
 import de.mephisto.vpin.restclient.achievements.AchievementsMigrationRequest;
 import de.mephisto.vpin.restclient.achievements.AchievementsMigrationResult;
 import de.mephisto.vpin.restclient.achievements.AchievementsSyncResult;
@@ -55,6 +57,22 @@ public class AchievementsResource {
   @GetMapping("/player/{playerId}/table/{rom}")
   public TableAchievementsDetails getTable(@PathVariable("playerId") long playerId, @PathVariable("rom") String rom) {
     return queryService.getTableDetails(playerId, rom);
+  }
+
+  @GetMapping("/player/{playerId}/sessions")
+  public List<AchievementSessionInfo> getSessions(@PathVariable("playerId") long playerId,
+                                                  @RequestParam(value = "rom", required = false) String rom,
+                                                  @RequestParam(value = "limit", defaultValue = "100") int limit) {
+    return queryService.getSessions(playerId, rom, limit);
+  }
+
+  @GetMapping("/player/{playerId}/session/{sessionId}")
+  public AchievementSessionDetails getSession(@PathVariable("playerId") long playerId, @PathVariable("sessionId") long sessionId) {
+    AchievementSessionDetails details = queryService.getSessionDetails(playerId, sessionId);
+    if (details == null) {
+      throw new ResponseStatusException(NOT_FOUND, "No game " + sessionId + " found for player " + playerId);
+    }
+    return details;
   }
 
   @PutMapping("/player/{playerId}/badge")

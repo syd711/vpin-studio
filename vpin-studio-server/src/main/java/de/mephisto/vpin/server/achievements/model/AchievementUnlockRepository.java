@@ -14,5 +14,7 @@ public interface AchievementUnlockRepository extends JpaRepository<AchievementUn
 
   List<AchievementUnlock> findByPlayerIdAndSyncedAtIsNull(long playerId);
 
+  List<AchievementUnlock> findByPlayerIdAndSessionId(long playerId, Long sessionId);
+
   void deleteByPlayerId(long playerId);
 }

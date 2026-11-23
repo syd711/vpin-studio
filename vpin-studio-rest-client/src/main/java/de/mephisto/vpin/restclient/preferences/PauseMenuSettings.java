@@ -40,6 +40,7 @@ public class PauseMenuSettings extends JsonSettings {
   private boolean showWovpScores = true;
   private boolean showTutorials = true;
   private boolean showTodos = false;
+  private boolean showAchievements = true;
   private boolean showRules = true;
   private boolean showInfoCard = true;
 
@@ -95,6 +96,14 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setShowInfoCard(boolean showInfoCard) {
     this.showInfoCard = showInfoCard;
+  }
+
+  public boolean isShowAchievements() {
+    return showAchievements;
+  }
+
+  public void setShowAchievements(boolean showAchievements) {
+    this.showAchievements = showAchievements;
   }
 
   public boolean isShowTodos() {

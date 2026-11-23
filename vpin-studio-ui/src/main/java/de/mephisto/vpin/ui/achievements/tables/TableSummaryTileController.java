@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.achievements.tables;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
+import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievements;
 import de.mephisto.vpin.restclient.achievements.TableAchievementsDetails;
 import de.mephisto.vpin.ui.NavigationController;
@@ -9,6 +10,7 @@ import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.achievements.AchievementsController;
+import de.mephisto.vpin.ui.achievements.AchievementsSessionsDialog;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -51,6 +53,8 @@ public class TableSummaryTileController {
   private VBox buttonsBox;
   @FXML
   private Button leaderboardBtn;
+  @FXML
+  private Button sessionsBtn;
 
   private AchievementsController controller;
   private TableAchievements table;
@@ -90,6 +94,7 @@ public class TableSummaryTileController {
 
     show(buttonsBox, !global && t.gameId > 0);
     show(leaderboardBtn, t.hasMap && t.total > 0 && isManiaAvailable());
+    show(sessionsBtn, t.hasMap && t.lastPlayed != null);
   }
 
   private void renderWheel(TableAchievements t, boolean global) {
@@ -121,6 +126,14 @@ public class TableSummaryTileController {
   private void onOpen() {
     if (table != null) {
       NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(table.gameId));
+    }
+  }
+
+  @FXML
+  private void onSessions() {
+    PlayerAchievements p = controller.getCurrent();
+    if (table != null && p != null) {
+      AchievementsSessionsDialog.open(p.playerId, table.rom, table.gameName);
     }
   }
 
