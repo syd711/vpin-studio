@@ -18,6 +18,7 @@ A cabinet CPU will be slower. Benchmark sources: `PollBench.java`, `WinBench.jav
 | 5 | Pause menu blocking the FX thread, leftovers after close | Low (menu lag, not VPX FPS) | Fixed |
 | 6 | File watchers | Low | Open (minor waste) |
 | 7 | InputEventService per-keystroke work | Low | Fixed |
+| 8 | Hidden maintenance video decoding forever | Medium, always on after first trigger (~0.4 core idle) | Fixed |
 
 ### 1. Highscore card on table launch (fixed)
 - `DefaultTableAndFrontendStatusChangeListenerImpl#showTableStartupScreens` (Popper launches) ->
@@ -105,3 +106,14 @@ All on the "Game Launch Thread" while VPX loads:
 - Verification on a cabinet: leftover `vlc.exe` after a few games, server log entries `Showing highscore card` /
   `VLC is playing`, per-thread CPU in Process Explorer.
 - Pre-existing test failures (unrelated): `FrontendStatusServiceTest.notifyFrontendLaunch/Exit_failingListenerDoesNotBlockLaterListeners`.
+
+### 8. Hidden maintenance video (fixed, 2026-11-23)
+- Idle server at ~2.4% total CPU (0.4 core on 16 threads). Java threads only accounted for ~2% of that; the rest were
+  native threads started by `msmpeg2vdec.dll` (H.264 decoder), ~17 recreated every few seconds = a looping video.
+- `SystemService#setMaintenanceMode(false)` is called by `FrontendService`, `GamesResource`, `RecorderService`.
+  `ServerFX#setMaintenanceVisible(false)` with no stage yet *created* the maintenance stage; `MaintenanceController`
+  starts `maintenance.mp4` muted with `cycleCount(-1)`, never shown. Hiding the stage never stopped the player either.
+- Fix: `false` without a stage is a no-op; hiding disposes the player (`MaintenanceController#dispose`) and drops the
+  stage; plain 2D scene (no depth buffer/AA).
+- Diagnosis technique: compare process CPU vs. `jcmd Thread.print -e` cpu= deltas; if they differ, sample OS threads
+  and resolve start addresses (`NtQueryInformationThread` class 9) to modules.
