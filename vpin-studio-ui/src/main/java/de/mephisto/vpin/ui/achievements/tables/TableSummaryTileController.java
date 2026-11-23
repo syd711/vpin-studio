@@ -56,6 +56,8 @@ public class TableSummaryTileController {
   @FXML
   private Button sessionsBtn;
 
+  private static final int WHEEL_SIZE = 112;
+
   private AchievementsController controller;
   private TableAchievements table;
 
@@ -105,11 +107,11 @@ public class TableSummaryTileController {
       return;
     }
     wheelBox.setStyle("");
-    wheelBox.getChildren().add(new ImageView(new Image(Studio.class.getResourceAsStream("avatar-blank.png"), 74, 74, true, true)));
+    wheelBox.getChildren().add(new ImageView(new Image(Studio.class.getResourceAsStream("avatar-blank.png"), WHEEL_SIZE, WHEEL_SIZE, true, true)));
     int gameId = t.gameId;
     JFXFuture.supplyAsync(() -> {
           try (InputStream in = client.getWheelIcon(gameId, true)) {
-            return in != null ? new Image(in, 74, 74, true, true) : null;
+            return in != null ? new Image(in, WHEEL_SIZE, WHEEL_SIZE, true, true) : null;
           }
           catch (Exception e) {
             return null;

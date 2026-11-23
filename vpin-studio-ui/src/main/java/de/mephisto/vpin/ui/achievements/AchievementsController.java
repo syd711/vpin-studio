@@ -19,8 +19,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.ToolBar;
+import javafx.scene.layout.BorderPane;
 import javafx.util.StringConverter;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -50,7 +53,19 @@ public class AchievementsController implements Initializable, StudioFXController
   @FXML
   private Tab leaderboardsTab;
   @FXML
+  private BorderPane overviewPane;
+  @FXML
+  private BorderPane tablesPane;
+  @FXML
+  private BorderPane badgesPane;
+  @FXML
+  private BorderPane leaderboardsPane;
+  @FXML
+  private ToolBar toolbar;
+  @FXML
   private ComboBox<PlayerAchievements> playerCombo;
+  @FXML
+  private Separator syncSeparator;
   @FXML
   private Button syncBtn;
   @FXML
@@ -75,6 +90,9 @@ public class AchievementsController implements Initializable, StudioFXController
     }
 
     syncBtn.setVisible(Features.MANIA_ENABLED);
+    syncBtn.setManaged(Features.MANIA_ENABLED);
+    syncSeparator.setVisible(Features.MANIA_ENABLED);
+    syncSeparator.setManaged(Features.MANIA_ENABLED);
 
     playerCombo.setConverter(new StringConverter<>() {
       @Override
@@ -95,12 +113,38 @@ public class AchievementsController implements Initializable, StudioFXController
         loadPlayer(n.playerId);
       }
     });
-    tabPane.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> refreshSelectedTab());
+    tabPane.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
+      attachToolbar();
+      refreshSelectedTab();
+    });
+    attachToolbar();
+  }
+
+  /**
+   * The toolbar is shared by all tabs, so it is moved into the top of the currently selected tab.
+   */
+  private void attachToolbar() {
+    Tab tab = tabPane.getSelectionModel().getSelectedItem();
+    BorderPane pane = tab == tablesTab ? tablesPane
+        : tab == badgesTab ? badgesPane
+        : tab == leaderboardsTab ? leaderboardsPane
+        : overviewPane;
+    for (BorderPane p : List.of(overviewPane, tablesPane, badgesPane, leaderboardsPane)) {
+      if (p != pane && p.getTop() == toolbar) {
+        p.setTop(null);
+      }
+    }
+    if (pane.getTop() != toolbar) {
+      pane.setTop(toolbar);
+    }
   }
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.achievements")));
+    if (options != null && options.getModel() instanceof String rom) {
+      showTable(rom);
+    }
     reload();
   }
 

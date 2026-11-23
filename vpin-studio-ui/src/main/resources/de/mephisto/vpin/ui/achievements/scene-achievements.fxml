@@ -4,8 +4,10 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -14,17 +16,30 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.AchievementsController">
-   <top>
-      <HBox alignment="CENTER_LEFT" spacing="8.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="statusLabel" textFill="#bdbdbd" />
-            <Region HBox.hgrow="ALWAYS" />
-            <Label text="%achievements.player" textFill="#bdbdbd">
+   <fx:define>
+      <!-- shared by all tabs, moved into the top of the selected tab by the controller -->
+      <ToolBar fx:id="toolbar" prefHeight="40.0">
+         <items>
+            <Button mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+               </graphic>
                <font>
                   <Font size="14.0" />
-               </font></Label>
+               </font>
+               <tooltip>
+                  <Tooltip text="%achievements.reload" />
+               </tooltip>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Label text="%achievements.player" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
             <ComboBox fx:id="playerCombo" prefWidth="240.0" />
-            <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync">
+            <Separator fx:id="syncSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
                </graphic>
@@ -32,28 +47,27 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" onAction="#onReload">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%achievements.reload" />
-               </tooltip>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#onSettings">
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusLabel" textFill="#bdbdbd">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
                <tooltip>
                   <Tooltip text="%achievements.settings" />
                </tooltip>
             </Button>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="8.0" left="12.0" right="12.0" top="4.0" />
-         </BorderPane.margin>
-      </HBox>
-   </top>
+         </items>
+      </ToolBar>
+   </fx:define>
    <center>
       <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
@@ -62,7 +76,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-award" iconSize="18" />
                </graphic>
                <content>
-                  <fx:include fx:id="overview" source="overview/tab-overview.fxml" />
+                  <BorderPane fx:id="overviewPane">
+                     <center>
+                        <fx:include fx:id="overview" source="overview/tab-overview.fxml" />
+                     </center>
+                  </BorderPane>
                </content>
             </Tab>
             <Tab fx:id="tablesTab" closable="false" text="%achievements.tab.tables">
@@ -70,7 +88,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" iconSize="18" />
                </graphic>
                <content>
-                  <fx:include fx:id="tables" source="tables/tab-tables.fxml" />
+                  <BorderPane fx:id="tablesPane">
+                     <center>
+                        <fx:include fx:id="tables" source="tables/tab-tables.fxml" />
+                     </center>
+                  </BorderPane>
                </content>
             </Tab>
             <Tab fx:id="badgesTab" closable="false" text="%achievements.tab.badges">
@@ -78,7 +100,11 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2s-star-outline" iconSize="18" />
                </graphic>
                <content>
-                  <fx:include fx:id="badges" source="badges/tab-badges.fxml" />
+                  <BorderPane fx:id="badgesPane">
+                     <center>
+                        <fx:include fx:id="badges" source="badges/tab-badges.fxml" />
+                     </center>
+                  </BorderPane>
                </content>
             </Tab>
             <Tab fx:id="leaderboardsTab" closable="false" text="%achievements.tab.leaderboards">
@@ -86,12 +112,16 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="18" />
                </graphic>
                <content>
-                  <fx:include fx:id="leaderboards" source="leaderboards/tab-leaderboards.fxml" />
+                  <BorderPane fx:id="leaderboardsPane">
+                     <center>
+                        <fx:include fx:id="leaderboards" source="leaderboards/tab-leaderboards.fxml" />
+                     </center>
+                  </BorderPane>
                </content>
             </Tab>
          </tabs>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" />
+            <Insets bottom="12.0" left="12.0" right="12.0" top="4.0" />
          </BorderPane.margin>
       </TabPane>
    </center>

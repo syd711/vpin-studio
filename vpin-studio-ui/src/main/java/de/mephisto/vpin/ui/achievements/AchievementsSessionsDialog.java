@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -197,7 +198,11 @@ public class AchievementsSessionsDialog implements Initializable, DialogControll
       AchievementInfo a = d.unlocks.get(i);
       HBox row = row(i, false);
       row.getChildren().addAll(icon("rom".equals(a.scope) ? "mdi2t-trophy-outline" : "mdi2e-earth", ORANGE, 18),
-          text(a.displayTitle != null ? a.displayTitle : a.title), spacer(), rarityChip(a.rarity));
+          text(a.displayTitle != null ? a.displayTitle : a.title), spacer());
+      Node chip = rarityChip(a.rarity);
+      if (chip != null) {
+        row.getChildren().add(chip);
+      }
       unlocked.getChildren().add(row);
     }
     detailsBox.getChildren().add(unlocked);

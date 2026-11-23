@@ -11,9 +11,9 @@
 
 <VBox spacing="8.0" style="-fx-background-color: #2A2A2A; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableSummaryTileController">
    <children>
-      <HBox alignment="CENTER_LEFT" spacing="18.0">
+      <HBox alignment="CENTER_LEFT" maxHeight="112.0" minHeight="112.0" prefHeight="112.0" spacing="18.0">
          <children>
-            <StackPane fx:id="wheelBox" maxHeight="74.0" maxWidth="74.0" minHeight="74.0" minWidth="74.0" />
+            <StackPane fx:id="wheelBox" maxHeight="112.0" maxWidth="112.0" minHeight="112.0" minWidth="112.0" prefHeight="112.0" prefWidth="112.0" />
             <VBox spacing="3.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" />
@@ -33,7 +33,7 @@
                   <HBox fx:id="distributionBox" spacing="10.0" />
                </children>
             </VBox>
-            <VBox fx:id="buttonsBox" spacing="6.0">
+            <VBox fx:id="buttonsBox" alignment="CENTER" spacing="6.0">
                <children>
                   <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onOpen" text="%achievements.open_in_tables">
                      <font>

@@ -8,6 +8,9 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.wovp.WOVPSettings;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
@@ -186,6 +189,12 @@ public class TableOverviewContextMenu {
     resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
     resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
     ctxMenu.getItems().add(resetRatingsItem);
+
+    MenuItem achievementsItem = new MenuItem(Messages.get("tables.context_menu.show_achievements"));
+    achievementsItem.setGraphic(WidgetFactory.createIcon("mdi2t-trophy-outline"));
+    achievementsItem.setDisable(multiSelection || StringUtils.isEmpty(game.getRom()));
+    achievementsItem.setOnAction(actionEvent -> NavigationController.navigateTo(NavigationItem.Achievements, new NavigationOptions(game.getRom())));
+    ctxMenu.getItems().add(achievementsItem);
 
     if (Features.MANIA_ENABLED && client.getEmulatorService().isVpxGame(game)) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
