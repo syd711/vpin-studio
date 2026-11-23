@@ -78,8 +78,8 @@ public class TableAchievementsTileController implements Initializable {
       prog.getChildren().addAll(progress(a.getProgressPct(), BLUE, 4), colored(a.progressCurrent + " / " + a.progressTarget, "#9A9A9A", 11, false));
       titleBox.getChildren().add(prog);
     }
-    Label when = muted(a.unlocked ? date(a.unlockedAt) : "—");
-    when.setMinWidth(100);
+    Label when = muted(a.unlocked ? dateTime(a.unlockedAt) : "—");
+    when.setMinWidth(145);
     HBox rarity = new HBox();
     rarity.setMinWidth(90);
     Node chip = rarityChip(a.rarity);

@@ -22,7 +22,11 @@ import javafx.scene.shape.Circle;
 import org.jspecify.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -353,8 +357,23 @@ public final class AchievementsUI {
     if (date == null) {
       return "—";
     }
-    return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
+    return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault())
+        .format(date.toInstant().atZone(ZoneId.systemDefault()));
   }
+
+  public static String dateTime(@Nullable Date date) {
+    if (date == null) {
+      return "—";
+    }
+    return DATE_TIME_FORMAT.format(date.toInstant().atZone(ZoneId.systemDefault()));
+  }
+
+  /**
+   * Localized short date/time, but with a 4-digit year (the SHORT style uses 2-digit years).
+   */
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern(
+      DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.SHORT, FormatStyle.SHORT, IsoChronology.INSTANCE, Locale.getDefault())
+          .replaceAll("(?<!y)yy(?!y)", "yyyy"), Locale.getDefault());
 
   public static String number(long value) {
     return String.format(Locale.getDefault(), "%,d", value);

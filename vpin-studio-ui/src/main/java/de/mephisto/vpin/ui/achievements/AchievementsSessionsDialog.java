@@ -20,14 +20,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.jspecify.annotations.Nullable;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -274,10 +270,6 @@ public class AchievementsSessionsDialog implements Initializable, DialogControll
     catch (MissingResourceException e) {
       return fallback;
     }
-  }
-
-  private static String dateTime(@Nullable Date date) {
-    return date == null ? "—" : new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(date);
   }
 
   private static String duration(long sec) {
