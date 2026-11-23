@@ -6,8 +6,9 @@ import de.mephisto.vpin.restclient.achievements.LevelInfo;
 import java.util.List;
 
 /**
- * Port of the Achievement Watcher's {@code compute_player_level}: 10 levels, one prestige star per 2000
- * achievements (max 5), the level count starts again after each prestige.
+ * Based on the Achievement Watcher's {@code compute_player_level}: 10 levels, one prestige star per 2000
+ * achievements (max 5). Unlike the AW the level count does not start again after a prestige: once
+ * "VPX Elite" is reached it is kept and further achievements only earn stars.
  */
 public final class LevelCalculator {
 
@@ -36,7 +37,8 @@ public final class LevelCalculator {
     int prestige = Math.min(total / PRESTIGE_THRESHOLD, MAX_PRESTIGE);
     info.prestige = prestige;
     info.prestigeDisplay = "★".repeat(prestige) + "☆".repeat(MAX_PRESTIGE - prestige);
-    int effective = total - prestige * PRESTIGE_THRESHOLD;
+    // no cycling: the level is always derived from the total
+    int effective = total;
     info.effective = effective;
 
     LevelDefinition current = LEVELS.get(0);

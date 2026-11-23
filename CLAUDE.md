@@ -347,6 +347,7 @@ User docs: `documentation/achievements/README.md`.
 - Players without a Mania account are tracked locally; unlocks upload once linked. Merged Mania players
   share the union of unlocks.
 - Known AW bugs intentionally not ported (rarity badges, hot streak, night owl, tally over absolute audits).
+- Levels do not cycle after a prestige (AW restarts at Rookie): VPX Elite is kept, stars still come every 2000.
 
 ### Release step
 

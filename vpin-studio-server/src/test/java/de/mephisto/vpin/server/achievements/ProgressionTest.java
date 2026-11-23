@@ -26,6 +26,9 @@ public class ProgressionTest {
     });
     for (Map<String, Object> e : expected) {
       int total = ((Number) e.get("total")).intValue();
+      if (total >= LevelCalculator.PRESTIGE_THRESHOLD) {
+        continue; // the AW restarts the level count after a prestige, we keep VPX Elite (see levelsDoNotCycle)
+      }
       LevelInfo lv = LevelCalculator.compute(total);
       assertThat(lv.level).as("level for " + total).isEqualTo(((Number) e.get("level")).intValue());
       assertThat(lv.name).isEqualTo(e.get("label"));
@@ -38,6 +41,31 @@ public class ProgressionTest {
       assertThat(lv.fullyMaxed).isEqualTo(e.get("fully_maxed"));
       assertThat(lv.progressPct).as("progress for " + total).isEqualTo(((Number) e.get("progress_pct")).doubleValue());
     }
+  }
+
+  @Test
+  void levelsDoNotCycle() {
+    LevelInfo elite = LevelCalculator.compute(2000);
+    assertThat(elite.level).isEqualTo(10);
+    assertThat(elite.name).isEqualTo("VPX Elite");
+    assertThat(elite.prestige).isEqualTo(1);
+    assertThat(elite.prestigeDisplay).isEqualTo("★☆☆☆☆");
+    assertThat(elite.effective).isEqualTo(2000);
+    assertThat(elite.maxLevel).isTrue();
+    assertThat(elite.fullyMaxed).isFalse();
+    assertThat(elite.progressPct).isEqualTo(100d);
+    assertThat(elite.nextName).isNull();
+
+    LevelInfo mid = LevelCalculator.compute(4500);
+    assertThat(mid.level).isEqualTo(10);
+    assertThat(mid.prestige).isEqualTo(2);
+
+    LevelInfo maxed = LevelCalculator.compute(10000);
+    assertThat(maxed.level).isEqualTo(10);
+    assertThat(maxed.prestige).isEqualTo(5);
+    assertThat(maxed.fullyMaxed).isTrue();
+
+    assertThat(LevelCalculator.compute(12500).prestige).isEqualTo(5);
   }
 
   @Test
