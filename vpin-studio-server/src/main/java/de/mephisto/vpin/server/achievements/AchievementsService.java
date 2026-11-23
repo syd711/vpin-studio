@@ -34,7 +34,6 @@ import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
-import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
@@ -204,7 +203,7 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
   public void tableLaunched(TableStatusChangedEvent event) {
     try {
       Game game = event.getGame();
-      if (!settings.isEnabled() || TableStatusChangedOrigin.ORIGIN_STUDIO.equals(event.getOrigin())) {
+      if (!settings.isEnabled()) {
         return;
       }
       String rom = AchievementGameIndex.romOf(game);

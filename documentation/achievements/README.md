@@ -10,7 +10,7 @@ achievements; tables whose map was added after the release get their achievement
 
 ## How it works
 
-- When a table is launched from the frontend, VPin Studio reads the audits of the table's `.nv` file.
+- When a table is launched (from the frontend or from VPin Studio), VPin Studio reads the audits of the table's `.nv` file.
   When the table is exited (and the game lasted at least 60 seconds), the audits are read again and the
   achievement rules are evaluated.
 - Every game is credited to **all players with "Track achievements" enabled** (player settings, or
