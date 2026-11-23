@@ -346,6 +346,29 @@ public class FolderLookupServiceTest {
   // ---- VPX 10.8.1 layout of a single table, e.g. after "Move Table" ----
 
   @Test
+  void perTableFolder_legacyEmulator_colorizationIsAlsoLookedUpInSharedAltColorFolder() {
+    // VPX only reads serum/<rom> and vni/<rom> next to the table when it colorizes through its plugins,
+    // VPinMAME/DmdDevice keep using the shared altcolor folder
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    File tableFolder = new File(gamesFolder, "Twister (1996)");
+    File mameFolder = tempDir.resolve("VPinMAME").toFile();
+    GameEmulator emulator = legacyEmulator();
+    lenient().when(emulator.getGamesFolder()).thenReturn(gamesFolder);
+    when(emulator.getMameFolder()).thenReturn(mameFolder);
+    Game game = mockGame(emulator);
+    when(game.getGameFolder()).thenReturn(tableFolder);
+    folderLookupService.createPerTableFileStructure(tableFolder);
+
+    assertThat(folderLookupService.getAltColorFolders(game, "twst_405")).containsExactly(
+        new File(tableFolder, "serum/twst_405"),
+        new File(tableFolder, "vni/twst_405"),
+        new File(mameFolder, "altcolor/twst_405"));
+    // new files are still written next to the table
+    assertThat(folderLookupService.getSerumFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "serum/twst_405"));
+    assertThat(folderLookupService.getVniFolder(game, "twst_405")).isEqualTo(new File(tableFolder, "vni/twst_405"));
+  }
+
+  @Test
   void perTableFolder_legacyEmulator_filesAreNextToTheTable() {
     File gamesFolder = tempDir.resolve("Tables").toFile();
     File tableFolder = new File(gamesFolder, "Twister (1996)");
@@ -396,6 +419,28 @@ public class FolderLookupServiceTest {
     tableNvRam.createNewFile();
     sharedNvRam.setLastModified(System.currentTimeMillis() - 60_000);
     assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(tableNvRam);
+  }
+
+  @Test
+  void nvRamIsResolvedFromRegistryFolderWithoutMameDirectoryOrPinMameFolder() throws Exception {
+    // VPinMAME not installed inside the VPX folder (e.g. a separate VPX 10.8.1 installation): the emulator has no
+    // mame directory, the table folder has no pinmame folder, but the registry knows the shared nvram folder
+    File gamesFolder = tempDir.resolve("Tables").toFile();
+    File tableFolder = new File(gamesFolder, "Twister (1996)");
+    tableFolder.mkdirs();
+    File sharedNvRamFolder = tempDir.resolve("VPinMAME/nvram").toFile();
+    sharedNvRamFolder.mkdirs();
+    File sharedNvRam = new File(sharedNvRamFolder, "twst_405.nv");
+    sharedNvRam.createNewFile();
+
+    GameEmulator emulator = mock(GameEmulator.class);
+    lenient().when(emulator.getGamesFolder()).thenReturn(gamesFolder);
+    when(vPinMameService.getNvRamFolder()).thenReturn(sharedNvRamFolder);
+    Game game = mockGame(emulator);
+    lenient().when(game.getGameFolder()).thenReturn(tableFolder);
+    when(game.getRom()).thenReturn("twst_405");
+
+    assertThat(folderLookupService.getNvRamFile(game)).isEqualTo(sharedNvRam);
   }
 
   @Test

@@ -103,13 +103,24 @@ public class FolderLookupService {
 
   /**
    * All folders that may hold the colorization of a ROM: one folder in the legacy layout,
-   * the Serum and the VNI folder next to the table otherwise.
+   * the Serum and the VNI folder next to the table otherwise. Tables in the per table layout on a
+   * Windows installation may also be colorized from the shared VPinMAME altcolor folder, since VPX only
+   * reads the folders next to the table when the colorization runs through its plugins, while
+   * VPinMAME/DmdDevice keeps using the shared folder.
    */
   @NonNull
   public List<File> getAltColorFolders(@NonNull Game game, String subfolder) {
     File serum = getSerumFolder(game, subfolder);
     File vni = getVniFolder(game, subfolder);
-    return serum.equals(vni) ? List.of(serum) : List.of(serum, vni);
+    if (serum.equals(vni)) {
+      return List.of(serum);
+    }
+
+    GameEmulator emulator = game.getEmulator();
+    if (emulator != null && isPreferLegacyFileStructure(emulator) && getLegacyMameFolder(emulator) != null) {
+      return List.of(serum, vni, getLegacyAltColorFolder(emulator, subfolder));
+    }
+    return List.of(serum, vni);
   }
 
   /**
@@ -118,8 +129,12 @@ public class FolderLookupService {
    * has no ".vpx" file association to detect it from, e.g. for a portable or non-default installation.
    */
   private File getLegacyAltColorFolder(@NonNull GameEmulator emulator, String subfolder) {
-    File mameFolder = !StringUtils.isEmpty(emulator.getMameDirectory()) ? emulator.getMameFolder() : vPinMameService.getMameFolder();
-    return new File(new File(mameFolder, "altcolor"), subfolder);
+    return new File(new File(getLegacyMameFolder(emulator), "altcolor"), subfolder);
+  }
+
+  @Nullable
+  private File getLegacyMameFolder(@NonNull GameEmulator emulator) {
+    return !StringUtils.isEmpty(emulator.getMameDirectory()) ? emulator.getMameFolder() : vPinMameService.getMameFolder();
   }
 
   @NonNull
@@ -455,10 +470,13 @@ public class FolderLookupService {
     }
 
     if (!isPerTableFileStructure(game)) {
-      if (emulator.getMameDirectory() == null) {
+      // the registry folder of VPinMAME first, since the emulator has no mame directory when VPinMAME is not
+      // installed in the VPX installation folder, e.g. for a separate VPX 10.8.1 installation
+      File legacyNvRamFolder = getLegacyNvRamFolder(emulator);
+      if (legacyNvRamFolder == null) {
         return null;
       }
-      return resolveNvRamFile(game, getNvRamFolder(game));
+      return resolveNvRamFile(game, legacyNvRamFolder);
     }
 
     File nvRamFile = resolveNvRamFile(game, getNvRamFolder(game));

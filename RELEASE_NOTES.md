@@ -1,3 +1,14 @@
+## Release Notes 5.7.3
+
+### Changes
+
+- **Critical Performance Fixes**: Fixed one additional performance issue caused by the maintenance mode screen loader.
+- **VPX 10.8.1/10.9**: 
+  - Fixed ALT color files in the shared VPinMAME "altcolor" folder not being detected for tables in the per-table folder layout, which caused false "ALT color missing" validation errors.
+  - Fixed highscores of nvram based tables not being read when VPinMAME is not installed inside the VPX installation folder, unless a "pinmame\nvram" folder was created next to the table.
+
+--- 
+
 ## Release Notes 5.7.2
 
 ### Changes

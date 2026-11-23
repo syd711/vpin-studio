@@ -33,6 +33,9 @@ public class BeanBinder<T> {
 
   private boolean paused;
 
+  /** true while the controls are refreshed from a newly set bean, so that control listeners do not write back into the bean */
+  private boolean settingBean;
+
   public void addListener(BindingChangedListener listener) {
     this.listeners.add(listener);
   }
@@ -47,11 +50,18 @@ public class BeanBinder<T> {
     // notify all setters that a bean has been set
     if (runSetters) {
       boolean oldPause = paused;
+      boolean oldSettingBean = settingBean;
       paused = true;
-      for (Runnable r : onBeanSet) {
-        r.run();
+      settingBean = true;
+      try {
+        for (Runnable r : onBeanSet) {
+          r.run();
+        }
       }
-      paused = oldPause;
+      finally {
+        paused = oldPause;
+        settingBean = oldSettingBean;
+      }
     }
   }
 
@@ -108,22 +118,14 @@ public class BeanBinder<T> {
   }
 
   public <U> void bindComboBox(ComboBox<U> comboBox, String property, String defaultValue, Function<U, ?> mapper) {
-    // set while the combo is refreshed from the bean, so that the refresh does not write back into the bean
-    boolean[] updatingFromBean = {false};
+    // skipped while the controls are refreshed from a new bean: value changes triggered by the refresh (including
+    // the ones caused by bindComboBoxList replacing the items) must not be written back into the new bean
     comboBox.valueProperty().addListener((observableValue, s, t1) -> {
-      if (!updatingFromBean[0]) {
+      if (!settingBean) {
         setProperty(property, t1 != null ? mapper.apply(t1): null);
       }
     });
-    onBeanSet.add(() -> {
-      updatingFromBean[0] = true;
-      try {
-        comboBox.setValue(resolveComboBoxValue(comboBox, property, getProperty(property, defaultValue), mapper));
-      }
-      finally {
-        updatingFromBean[0] = false;
-      }
-    });
+    onBeanSet.add(() -> comboBox.setValue(resolveComboBoxValue(comboBox, property, getProperty(property, defaultValue), mapper)));
   }
 
   @SuppressWarnings("unchecked")
