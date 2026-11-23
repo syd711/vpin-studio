@@ -1,0 +1,182 @@
+name: Build VPX Plugins
+
+# Builds the two Visual Pinball X 10.8.1+ plugins the achievements use for per game tracking and live unlocks and
+# publishes them as a pre-release "vpx-plugins-*" (never "latest", the Studio updater only looks at the latest
+# release):
+#
+#   * score-server by superhac (https://github.com/superhac/score-server), patched for the 10.8.1 plugin API
+#     and extended by the messages round_start + nvram_snapshot (.github/vpx-plugins/patch_score_server.py)
+#   * the PinMAME plugin of VPX with superhac's "GetController" change
+#     (https://github.com/vpinball/vpinball/commit/c1ca14346fc30c1ff883a28cf15ec0197a818a94)
+#
+# The Studio server installs the newest vpx-plugins-* release whose VPX version matches the installed VPX
+# (VpxPluginInstaller). Re-run this workflow with the new VPX tag when VPX ships a new PinMAME plugin.
+# Both plugins are GPLv3+, their sources are the repositories above plus the patch scripts in .github/vpx-plugins.
+
+on:
+  workflow_dispatch:
+    inputs:
+      vpx_ref:
+        description: "vpinball/vpinball tag or commit to build against (10.8.1+)"
+        required: true
+        default: "v10.8.1-5436-af26b2d93"
+      score_server_ref:
+        description: "superhac/score-server branch or commit"
+        required: true
+        default: "main"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+    steps:
+      - name: Enable long paths for git
+        run: git config --global core.longpaths true
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Install MSYS2 build tools (as the VPX CI)
+        run: |
+          /c/msys64/usr/bin/bash.exe -l -c "pacman -S --noconfirm make diffutils nasm bison git autoconf automake libtool"
+          /c/msys64/usr/bin/bash.exe -l -c "pacman -S --noconfirm mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-zlib mingw-w64-ucrt-x86_64-libwinpthread mingw-w64-ucrt-x86_64-libiconv mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-tools"
+
+      - name: Checkout VPin Studio (patch scripts)
+        uses: actions/checkout@v6
+        with:
+          path: studio
+          sparse-checkout: .github/vpx-plugins
+
+      - name: Checkout Visual Pinball X
+        uses: actions/checkout@v6
+        with:
+          repository: vpinball/vpinball
+          ref: ${{ github.event.inputs.vpx_ref }}
+          path: vpinball
+
+      - name: Checkout score-server (with NVRAM maps)
+        uses: actions/checkout@v6
+        with:
+          repository: superhac/score-server
+          ref: ${{ github.event.inputs.score_server_ref }}
+          path: vpinball/plugins/score-server
+          submodules: true
+
+      - name: Patch score-server
+        run: python studio/.github/vpx-plugins/patch_score_server.py vpinball/plugins/score-server/score-server.cpp
+
+      - name: Patch PinMAME plugin and register score-server
+        working-directory: vpinball
+        run: python ../studio/.github/vpx-plugins/patch_pinmame_plugin.py
+
+      - name: Read VPX version
+        id: ver
+        working-directory: vpinball
+        run: |
+          MAJ=$(grep -Eo "VP_VERSION_MAJOR\s+[0-9]+" src/core/vpversion.h | grep -Eo "[0-9]+")
+          MIN=$(grep -Eo "VP_VERSION_MINOR\s+[0-9]+" src/core/vpversion.h | grep -Eo "[0-9]+")
+          REV=$(grep -Eo "VP_VERSION_REV\s+[0-9]+" src/core/vpversion.h | grep -Eo "[0-9]+")
+          echo "short=${MAJ}.${MIN}.${REV}" >> $GITHUB_OUTPUT
+          echo "VPX ${MAJ}.${MIN}.${REV}"
+
+      - name: Restore third-party cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: vpinball/external
+          key: vpx-plugins-external-${{ hashFiles('vpinball/platforms/config.sh', 'vpinball/platforms/windows-x64/external.sh') }}
+
+      - name: Build third-party libraries
+        working-directory: vpinball
+        run: BUILD_TYPE=Release ./platforms/windows-x64/external.sh
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Save third-party cache
+        uses: actions/cache/save@v4
+        with:
+          path: vpinball/external
+          key: vpx-plugins-external-${{ hashFiles('vpinball/platforms/config.sh', 'vpinball/platforms/windows-x64/external.sh') }}
+
+      - name: Build plugins
+        working-directory: vpinball
+        run: |
+          cmake -DRENDERER=BGFX -DPLATFORM=windows -DARCH=x64 -G "Visual Studio 18 2026" -A x64 -B build
+          cmake --build build --config Release --target PinMAMEPlugin ScoreServerPlugin --parallel
+
+      - name: Package
+        id: pkg
+        run: |
+          set -e
+          OUT=out/package
+          mkdir -p "$OUT/score-server" "$OUT/pinmame"
+          PL=vpinball/build/Release/plugins
+          ls -R "$PL" | head -50
+          cp "$PL/score-server/plugin-score-server64.dll" "$OUT/score-server/"
+          cp "$PL/score-server/plugin.cfg" "$OUT/score-server/"
+          cp -r "$PL/score-server/nvram-maps" "$OUT/score-server/" || true
+          rm -rf "$OUT/score-server/nvram-maps/.git" "$OUT/score-server/nvram-maps/.gitattributes" "$OUT/score-server/nvram-maps/.github"
+          cp "$PL/pinmame/plugin-pinmame64.dll" "$OUT/pinmame/"
+          SS_SHA=$(git -C vpinball/plugins/score-server rev-parse --short HEAD)
+          VPX_SHA=$(git -C vpinball rev-parse --short HEAD)
+          PM_HASH=$(sha256sum "$OUT/pinmame/plugin-pinmame64.dll" | cut -d' ' -f1)
+          SS_HASH=$(sha256sum "$OUT/score-server/plugin-score-server64.dll" | cut -d' ' -f1)
+          TAG="vpx-plugins-${{ steps.ver.outputs.short }}-${VPX_SHA}-r${{ github.run_number }}"
+          cat > "$OUT/README.txt" <<EOF
+          VPX plugins for the VPin Studio achievements (installed by the VPin Studio server).
+
+          score-server  superhac, https://github.com/superhac/score-server (commit ${SS_SHA}), GPLv3+
+          pinmame       Visual Pinball X, https://github.com/vpinball/vpinball (commit ${VPX_SHA}), GPLv3+
+                        with https://github.com/vpinball/vpinball/commit/c1ca14346fc30c1ff883a28cf15ec0197a818a94
+
+          Patches and build: https://github.com/${{ github.repository }}/tree/${{ github.sha }}/.github/vpx-plugins
+          EOF
+          cat > out/vpx-plugins-manifest.json <<EOF
+          {
+            "tag": "${TAG}",
+            "vpx_version": "${{ steps.ver.outputs.short }}",
+            "vpx_ref": "${{ github.event.inputs.vpx_ref }}",
+            "vpx_commit": "${VPX_SHA}",
+            "score_server_commit": "${SS_SHA}",
+            "pinmame_patch": "c1ca14346fc30c1ff883a28cf15ec0197a818a94",
+            "files": {
+              "pinmame/plugin-pinmame64.dll": "${PM_HASH}",
+              "score-server/plugin-score-server64.dll": "${SS_HASH}"
+            }
+          }
+          EOF
+          cp out/vpx-plugins-manifest.json "$OUT/manifest.json"
+          (cd "$OUT" && 7z a -r ../vpx-plugins-win64.zip .)
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          cat out/vpx-plugins-manifest.json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpx-plugins-win64
+          path: |
+            out/vpx-plugins-win64.zip
+            out/vpx-plugins-manifest.json
+
+      - name: Publish pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.pkg.outputs.tag }}
+          name: "VPX plugins ${{ steps.ver.outputs.short }} (score-server + PinMAME)"
+          prerelease: true
+          make_latest: false
+          body: |
+            VPX ${{ steps.ver.outputs.short }} plugins for the VPin Studio achievements (built from `${{ github.event.inputs.vpx_ref }}`).
+            Installed by the VPin Studio server when "Live tracking" is enabled in the achievements preferences.
+
+            - **score-server** by [superhac](https://github.com/superhac/score-server), patched for the VPX 10.8.1 plugin API
+            - **PinMAME plugin** with superhac's `GetController` change ([c1ca143](https://github.com/vpinball/vpinball/commit/c1ca14346fc30c1ff883a28cf15ec0197a818a94))
+
+            Both plugins are GPLv3+, see `.github/vpx-plugins` for the patches.
+          files: |
+            out/vpx-plugins-win64.zip
+            out/vpx-plugins-manifest.json
