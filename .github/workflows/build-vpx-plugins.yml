@@ -86,11 +86,25 @@ jobs:
 
       # VPX targets VS 2026, whose MSVC 14.52 fails on bgfx/bimg's bundled dav1d (C7780 __has_include_next).
       # Build with VS 2022 instead. The windows-2025 label now maps to the VS 2026 only image, windows-2022 still ships VS 2022.
+      # The generator is also hardcoded in the build scripts of downloaded dependencies (libdmdutil -> libzedmd, ...),
+      # so a cmake wrapper on the PATH rewrites it for every nested cmake call.
       - name: Use the VS 2022 generator
         working-directory: vpinball
         run: |
           sed -i 's/Visual Studio 18 2026/Visual Studio 17 2022/g' platforms/windows-x64/external.sh
-          grep -c "Visual Studio 17 2022" platforms/windows-x64/external.sh
+          REAL_CMAKE="$(command -v cmake)"
+          SHIM_DIR="$(cygpath -u "$RUNNER_TEMP")/cmake-shim"
+          mkdir -p "$SHIM_DIR"
+          cat > "$SHIM_DIR/cmake" <<EOF
+          #!/bin/bash
+          args=()
+          for a in "\$@"; do args+=("\${a//Visual Studio 18 2026/Visual Studio 17 2022}"); done
+          exec "${REAL_CMAKE}" "\${args[@]}"
+          EOF
+          chmod +x "$SHIM_DIR/cmake"
+          cygpath -w "$SHIM_DIR" >> "$GITHUB_PATH"
+          echo "real cmake: ${REAL_CMAKE}"
+          "$SHIM_DIR/cmake" --version
 
       - name: Restore third-party cache
         id: cache
