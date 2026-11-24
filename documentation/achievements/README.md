@@ -14,7 +14,8 @@ achievements; tables whose map was added after the release get their achievement
   When the table is exited (and the game lasted at least 60 seconds), the audits are read again and the
   achievement rules are evaluated.
 - Every game is credited to **all players with "Track achievements" enabled** (player settings, or
-  VPin Mania settings > Achievements). Games with more than one player only count for the global achievements.
+  VPin Studio preferences > Achievements). Games with more than one player only count for the global achievements
+  (see [Multiplayer games](#multiplayer-games)).
 - Per-table achievements are created the first time the `.nv` file of a ROM can be read (same rules as the
   Achievement Watcher). There are also 122 global achievements (totals, manufacturers, played tables).
 - Players get levels (10 levels, prestige stars every 2,000 achievements) and 31 badges. The playtime badges use the
@@ -23,7 +24,7 @@ achievements; tables whose map was added after the release get their achievement
 
 ## Live tracking (VPX 10.8.1+)
 
-VPin Studio preferences > VPin Mania > Achievements > **Enable live tracking** (off by default, Windows and 64 bit
+VPin Studio preferences > Achievements > **Enable live tracking** (off by default, Windows and 64 bit
 VPX only). VPin Studio then installs two VPX plugins and enables them in `VPinballX.ini`:
 
 - the [score-server](https://github.com/superhac/score-server) plugin by superhac, which reports players, balls,
@@ -44,6 +45,37 @@ The plugins are built for one VPX version (`.github/workflows/build-vpx-plugins.
 is done after VPX was closed. When a VPX update replaces the PinMAME plugin with a newer official one, the live
 tracking stays off until a plugin build for that version is released. Without the plugins (or when they are not
 connected), tables are tracked as described above.
+
+## Multiplayer games
+
+The NVRAM audits are totals of the whole machine, they cannot tell which player did what. So games with more than
+one player are handled differently:
+
+| | Single player game | Multiplayer game |
+|---|---|---|
+| Global achievements (totals, play time, played tables, manufacturers, …) | ✅ | ✅ |
+| Per-table achievements | ✅ | ❌ not evaluated |
+| Best values per table (progress towards per-table achievements) | ✅ | ❌ not updated |
+| Achievements during the game (live tracking) | ✅ from ball 2 on | ❌ |
+
+Live achievements start with ball 2 because another player can still join during ball 1; whether the game was a
+multiplayer game is checked again when it ends.
+
+How the number of players is detected:
+
+- **With live tracking:** reported by the score-server plugin (the highest player number reported, or the highest
+  player who scored any points).
+- **Without live tracking:** the `player_count` of the NVRAM map, read from the `.nv` file when the table is exited.
+  If the map of the ROM has no player count, the game counts as a single player game. As the whole table session is
+  evaluated, only the player count of the last game is known: a 2 player game followed by a single player game in the
+  same session counts as a single player game (including the audits of the 2 player game).
+
+Every game is still credited to all players with "Track achievements" enabled, there is no "active player". If two
+tracked players play a 2 player game together, both get the same global achievements and neither gets per-table
+achievements. The scores of all players are stored with the game and shown in the **Played games** dialog
+(live tracking only).
+
+Unlike the Achievement Watcher, VPin Studio does not evaluate per-table achievements for multiplayer games.
 
 ## Views
 
@@ -70,7 +102,7 @@ tracked locally only.
 
 ## Migration from the Achievement Watcher
 
-VPin Mania settings > Achievements > *Migrate Achievement Watcher data...*:
+VPin Studio preferences > Achievements > *Migrate Achievement Watcher data…*:
 
 - **Achievement Watcher cloud**: enter the Player ID and the Recovery Key (Watcher: System > General, or the backup
   ZIP). VPin Studio verifies the ownership once (the Watcher's "claim") and reads the data. Afterwards the Watcher can
