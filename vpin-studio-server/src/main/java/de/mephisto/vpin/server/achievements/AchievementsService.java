@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.achievements;
 
+import de.mephisto.vpin.commons.fx.achievements.BadgeMedal;
 import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -37,6 +38,7 @@ import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.util.ServerMessages;
 import de.mephisto.vpin.server.players.PlayerLifecycleListener;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -60,7 +62,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -77,6 +82,8 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
 
   private static final long NV_FLUSH_TIMEOUT_MS = 10_000;
   private static final long ALX_CACHE_MS = 5 * 60 * 1000;
+  private static final double BADGE_NOTIFICATION_SIZE = 750; // size of the notification image view
+  private static final String UI_BUNDLE = "de/mephisto/vpin/ui/messages/messages";
 
   @Autowired
   private PreferencesService preferencesService;
@@ -813,25 +820,48 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
       if (notificationSettings != null && !notificationSettings.isAchievementsNotification()) {
         return;
       }
+      // shown on the cabinet, so always in the local UI language
+      Locale locale = ServerMessages.resolveLocalLocale();
       File wheel = game != null ? frontendService.getWheelImage(game) : null;
       String gameName = game != null ? game.getGameDisplayName() : "";
       String who = player.getName() != null ? player.getName() : player.getInitials();
       if (!created.isEmpty()) {
         String first = AchievementKeys.displayTitle(created.get(0).getTitle(), created.get(0).getRom());
-        String text = created.size() == 1 ? first : first + " +" + (created.size() - 1) + " more";
-        notificationService.showNotification(NotificationFactory.createNotification(wheel, gameName,
-            "🏆 " + who + ": " + created.size() + " achievement" + (created.size() > 1 ? "s" : "") + " unlocked", text));
+        String text = created.size() == 1 ? first : ServerMessages.get("achievements.notification.more", locale, first, created.size() - 1);
+        String title = created.size() == 1
+            ? ServerMessages.get("achievements.notification.unlocked_one", locale, who)
+            : ServerMessages.get("achievements.notification.unlocked_many", locale, who, created.size());
+        notificationService.showNotification(NotificationFactory.createNotification(wheel, gameName, "🏆 " + title, text));
       }
       for (BadgeInfo badge : newBadges) {
-        notificationService.showNotification(NotificationFactory.createNotification(wheel, gameName, "🏅 " + who + ": badge unlocked", badge.name));
+        Notification n = NotificationFactory.createNotification(null, gameName,
+            "🏅 " + ServerMessages.get("achievements.notification.badge", locale, who), badgeName(badge, locale));
+        String category = badge.category;
+        n.setGraphic(() -> BadgeMedal.create(category, true, BADGE_NOTIFICATION_SIZE));
+        notificationService.showNotification(n);
       }
       if (levelUp != null) {
-        Notification n = NotificationFactory.createNotification(wheel, gameName, "⭐ " + who + ": level up!", "Level " + levelUp.level + " – " + levelUp.name);
+        Notification n = NotificationFactory.createNotification(wheel, gameName,
+            "⭐ " + ServerMessages.get("achievements.notification.level_up", locale, who),
+            ServerMessages.get("achievements.notification.level", locale, levelUp.level, levelUp.name));
         notificationService.showNotification(n);
       }
     }
     catch (Exception e) {
       LOG.warn("Achievements: failed to show notification: {}", e.getMessage());
+    }
+  }
+
+  /**
+   * Localized badge name from the UI bundle (the badge names are translated there), falls back to the English name.
+   */
+  private static String badgeName(BadgeInfo badge, Locale locale) {
+    try {
+      ResourceBundle bundle = ResourceBundle.getBundle(UI_BUNDLE, locale, ResourceBundle.Control.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+      return bundle.getString("achievements.badge." + badge.id + ".name");
+    }
+    catch (MissingResourceException e) {
+      return badge.name;
     }
   }
 

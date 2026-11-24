@@ -1,8 +1,10 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class Notification {
 
@@ -17,6 +19,16 @@ public class Notification {
   private boolean desktopMode;
   private boolean showOnEmulatorExit = true;
   private String rotation = "auto";
+  /** optional graphic, rendered on the FX thread and shown instead of {@link #image} */
+  private Supplier<Node> graphic;
+
+  public Supplier<Node> getGraphic() {
+    return graphic;
+  }
+
+  public void setGraphic(Supplier<Node> graphic) {
+    this.graphic = graphic;
+  }
 
   public String getRotation() {
     return rotation;

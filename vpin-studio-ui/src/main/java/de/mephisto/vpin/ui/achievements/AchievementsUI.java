@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.achievements;
 
+import de.mephisto.vpin.commons.fx.achievements.BadgeMedal;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.achievements.BadgeInfo;
 import de.mephisto.vpin.restclient.achievements.PlayerAchievements;
@@ -53,13 +54,9 @@ public final class AchievementsUI {
   public static final Map<String, String> RARITY_COLORS = Map.of(
       "Common", "#EDEDED", "Uncommon", "#5CC46A", "Rare", "#5AA9FF", "Epic", "#C77DFF", "Legendary", "#DD9646");
 
-  public static final Map<String, String> CATEGORY_COLORS = Map.of(
-      "Milestones", "#DD9646", "Prestige", "#E3B930", "Exploration", "#5CC46A", "Playtime", "#5AA9FF",
-      "Special", "#FF6B5A", "Rarity", "#C77DFF", "Cloud & Level", "#7FB2FF");
+  public static final Map<String, String> CATEGORY_COLORS = BadgeMedal.CATEGORY_COLORS;
 
-  public static final Map<String, String> CATEGORY_ICONS = Map.of(
-      "Milestones", "mdi2s-star", "Prestige", "mdi2c-crown", "Exploration", "mdi2m-map-marker", "Playtime", "mdi2c-clock-outline",
-      "Special", "mdi2f-fire", "Rarity", "mdi2d-diamond-stone", "Cloud & Level", "mdi2c-cloud-outline");
+  public static final Map<String, String> CATEGORY_ICONS = BadgeMedal.CATEGORY_ICONS;
 
   private AchievementsUI() {
   }
@@ -193,19 +190,7 @@ public final class AchievementsUI {
    * A round badge medal: filled with the category color when earned, dashed outline when locked.
    */
   public static StackPane medal(String category, boolean earned, double size) {
-    String color = CATEGORY_COLORS.getOrDefault(category, BLUE);
-    StackPane medal = new StackPane();
-    medal.setMinSize(size, size);
-    medal.setPrefSize(size, size);
-    medal.setMaxSize(size, size);
-    if (earned) {
-      medal.setStyle("-fx-background-color: " + color + "; -fx-background-radius: " + size + ";");
-    }
-    else {
-      medal.setStyle("-fx-background-color: #222222; -fx-background-radius: " + size + "; -fx-border-radius: " + size + "; -fx-border-color: #4A4A4A; -fx-border-style: dashed;");
-    }
-    medal.getChildren().add(icon(CATEGORY_ICONS.getOrDefault(category, "mdi2s-star"), earned ? "#111111" : "#6E6E6E", (int) (size * 0.55)));
-    return medal;
+    return BadgeMedal.create(category, earned, size);
   }
 
   /**

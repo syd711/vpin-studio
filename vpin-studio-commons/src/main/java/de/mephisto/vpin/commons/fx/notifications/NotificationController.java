@@ -7,10 +7,13 @@ import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +72,34 @@ public class NotificationController implements Initializable {
     }
   }
 
+  /**
+   * Snapshots the optional notification graphic (e.g. a badge medal), must run on the FX thread.
+   */
+  private static Image renderGraphic(Notification notification) {
+    if (notification.getGraphic() == null) {
+      return null;
+    }
+    try {
+      Node node = notification.getGraphic().get();
+      if (node == null) {
+        return null;
+      }
+      SnapshotParameters parameters = new SnapshotParameters();
+      parameters.setFill(Color.TRANSPARENT);
+      return node.snapshot(parameters, null);
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to render notification graphic: {}", e.getMessage());
+      return null;
+    }
+  }
+
   public void setNotification(Notification notification) {
-    if (notification.getImage() != null) {
+    Image graphicImage = renderGraphic(notification);
+    if (graphicImage != null) {
+      logoImageView.setImage(graphicImage);
+    }
+    else if (notification.getImage() != null) {
       logoImageView.setImage(notification.getImage());
     }
     else {

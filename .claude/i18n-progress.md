@@ -89,6 +89,8 @@ local UI language. Jobs that capture a `locale` field at creation use `ServerMes
 
 ## Log
 
+- 2026-11-24: achievement notifications (batch `server_achievement_notifications.py`, 6 keys, Java changed by hand): always in the
+  local UI language (`ServerMessages.resolveLocalLocale()`); badge names are read from the UI bundle (`achievements.badge.<id>.name`).
 - 2026-11-01: `vpin-studio-server` (batch `server.py`, 133 keys, 140 replacements in 38 files): rom2altsound errors,
   job errors (backup, vpxz, DOF sync, recorder), media conversion results + built-in command names, Discord settings
   validation, Freezy/DOF/DOFLinx component summaries, emulator setup validation, uploads, highscore status texts,
