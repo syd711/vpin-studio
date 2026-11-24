@@ -18,6 +18,8 @@ public class VpxPluginStatus {
   public String state = DISABLED;
   /** the plugins are installed and enabled */
   public boolean ready;
+  /** the plugin files are present in the VPX plugins folder (enabled or not), offers the uninstall */
+  public boolean installed;
   /** the score-server plugin is connected right now (a table is played) */
   public boolean connected;
   /** English details for the states failed and rebuild_needed */

@@ -87,6 +87,13 @@ public class AchievementsServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "achievements/vpxplugins", java.util.Map.of(), VpxPluginStatus.class);
   }
 
+  /**
+   * Removes the VPX plugins of the live tracking and restores the official PinMAME plugin.
+   */
+  public VpxPluginStatus uninstallVpxPlugins() {
+    return getRestClient().post(API + "achievements/vpxplugins/uninstall", java.util.Map.of(), VpxPluginStatus.class);
+  }
+
   public AchievementsMigrationResult migrate(@NonNull AchievementsMigrationRequest request) {
     return getRestClient().post(API + "achievements/migration", request, AchievementsMigrationResult.class);
   }

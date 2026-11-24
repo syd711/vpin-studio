@@ -62,6 +62,22 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
+                        <Button fx:id="liveOpenFolderBtn" mnemonicParsing="false" onAction="#onLiveOpenFolder" text="%pref.achievements.live_open_folder">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="liveUninstallBtn" mnemonicParsing="false" onAction="#onLiveUninstall" text="%pref.achievements.live_uninstall">
+                           <graphic>
+                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
                         <Label fx:id="liveStatusLabel" maxWidth="480.0" textFill="#bdbdbd" wrapText="true">
                            <font>
                               <Font size="14.0" />

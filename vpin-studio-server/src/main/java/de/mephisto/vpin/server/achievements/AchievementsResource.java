@@ -101,6 +101,11 @@ public class AchievementsResource {
     return achievementsService.installPlugins();
   }
 
+  @PostMapping("/vpxplugins/uninstall")
+  public VpxPluginStatus uninstallVpxPlugins() {
+    return achievementsService.uninstallPlugins();
+  }
+
   @GetMapping("/migration/watcherfolder")
   public String getDefaultWatcherFolder() {
     return migrationService.findDefaultWatcherFolder();

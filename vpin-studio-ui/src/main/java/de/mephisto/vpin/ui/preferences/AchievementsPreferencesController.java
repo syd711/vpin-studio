@@ -1,17 +1,21 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.achievements.AchievementsSettings;
 import de.mephisto.vpin.restclient.achievements.VpxPluginStatus;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.achievements.AchievementsMigrationDialog;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.achievements.AchievementsUI;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -19,8 +23,10 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -44,13 +50,54 @@ public class AchievementsPreferencesController implements Initializable {
   @FXML
   private Button liveInstallBtn;
   @FXML
+  private Button liveOpenFolderBtn;
+  @FXML
+  private Button liveUninstallBtn;
+  @FXML
   private Label liveStatusLabel;
 
   private AchievementsSettings settings;
+  private File pluginsFolder;
 
   @FXML
   private void onLiveInstall() {
     installPlugins();
+  }
+
+  @FXML
+  private void onLiveOpenFolder() {
+    if (pluginsFolder != null) {
+      SystemUtil.openFolder(pluginsFolder);
+    }
+  }
+
+  @FXML
+  private void onLiveUninstall() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, Messages.get("pref.achievements.live_uninstall_title"),
+        Messages.get("pref.achievements.live_uninstall_text"), null, Messages.get("pref.achievements.live_uninstall"));
+    if (result.isEmpty() || !result.get().equals(ButtonType.OK)) {
+      return;
+    }
+    // switched off first, otherwise the server installs the plugins again on the next start
+    liveCheckbox.setSelected(false);
+    liveInstallBtn.setDisable(true);
+    liveUninstallBtn.setDisable(true);
+    liveStatusLabel.setStyle("");
+    liveStatusLabel.setText(Messages.get("pref.achievements.live_uninstalling"));
+    JFXFuture.supplyAsync(() -> client.getAchievementsService().uninstallVpxPlugins())
+        .thenAcceptLater(status -> {
+          showLiveStatus(status);
+          // the live tracking is off now, so the state alone would hide why nothing was removed
+          if (status != null && status.detail != null
+              && (VpxPluginStatus.BUSY.equals(status.state) || VpxPluginStatus.FAILED.equals(status.state))) {
+            liveStatusLabel.setText(status.detail);
+            liveStatusLabel.setStyle("-fx-text-fill: #FF9800;");
+          }
+        })
+        .onErrorLater(e -> {
+          liveUninstallBtn.setDisable(false);
+          liveStatusLabel.setText(e.getMessage());
+        });
   }
 
   @FXML
@@ -88,6 +135,10 @@ public class AchievementsPreferencesController implements Initializable {
       }
     });
     liveInstallBtn.setDisable(!settings.isLiveTrackingEnabled());
+    liveOpenFolderBtn.managedProperty().bind(liveOpenFolderBtn.visibleProperty());
+    liveOpenFolderBtn.setVisible(false);
+    liveUninstallBtn.managedProperty().bind(liveUninstallBtn.visibleProperty());
+    liveUninstallBtn.setVisible(false);
     refreshLiveStatus();
     refreshPlayers();
   }
@@ -111,6 +162,9 @@ public class AchievementsPreferencesController implements Initializable {
 
   private void showLiveStatus(VpxPluginStatus status) {
     liveInstallBtn.setDisable(!settings.isLiveTrackingEnabled());
+    updateOpenFolderButton(status);
+    liveUninstallBtn.setDisable(false);
+    liveUninstallBtn.setVisible(status != null && status.installed);
     if (status == null) {
       liveStatusLabel.setText("");
       return;
@@ -124,6 +178,21 @@ public class AchievementsPreferencesController implements Initializable {
     liveStatusLabel.setText(text);
     liveStatusLabel.setStyle("-fx-text-fill: " + (VpxPluginStatus.READY.equals(state) ? "#5CC46A"
         : VpxPluginStatus.DISABLED.equals(state) ? "#BDBDBD" : "#FF9800") + ";");
+  }
+
+  /**
+   * The plugins folder lives on the cabinet, so the button is only offered for a local server once the plugins are
+   * installed.
+   */
+  private void updateOpenFolderButton(VpxPluginStatus status) {
+    pluginsFolder = null;
+    if (status != null && status.installedTag != null && status.vpxFolder != null && client.getSystemService().isLocal()) {
+      File folder = new File(status.vpxFolder, "plugins");
+      if (folder.isDirectory()) {
+        pluginsFolder = folder;
+      }
+    }
+    liveOpenFolderBtn.setVisible(pluginsFolder != null);
   }
 
   private void save() {

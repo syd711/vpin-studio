@@ -122,20 +122,33 @@ public class VpxPluginInstaller {
    */
   @NonNull
   public VpxPluginStatus uninstall() {
+    return uninstall(false);
+  }
+
+  /**
+   * Restores the official PinMAME plugin and disables the score-server plugin.
+   *
+   * @param removeFiles also deletes the score-server plugin folder and the backup of the official PinMAME plugin
+   *                    (uninstall button), otherwise the files are kept for a quick re-activation
+   */
+  @NonNull
+  public VpxPluginStatus uninstall(boolean removeFiles) {
     lock.lock();
     try {
       VpxPluginStatus result = new VpxPluginStatus();
       result.state = VpxPluginStatus.DISABLED;
       ObjectNode state = loadState();
-      String vpxFolder = state.path("vpxFolder").asString("");
-      if (vpxFolder.isEmpty() || !new File(vpxFolder).isDirectory()) {
+      File vpxFolder = resolveVpxFolder(state);
+      if (vpxFolder == null) {
         status = result;
         return result;
       }
-      result.vpxFolder = vpxFolder;
+      result.vpxFolder = vpxFolder.getAbsolutePath();
       if (isVpxRunning()) {
         result.state = VpxPluginStatus.BUSY;
-        result.detail = "VPX is running, the official PinMAME plugin is restored after VPX was closed.";
+        result.detail = removeFiles
+            ? "VPX is running, close VPX to uninstall the plugins."
+            : "VPX is running, the official PinMAME plugin is restored after VPX was closed.";
         status = result;
         return result;
       }
@@ -145,9 +158,20 @@ public class VpxPluginInstaller {
         Files.copy(backup.toPath(), pmDll.toPath(), StandardCopyOption.REPLACE_EXISTING);
         LOG.info("Restored the official PinMAME plugin {}", pmDll.getAbsolutePath());
       }
-      File ini = VpxIni.find(appData(), new File(vpxFolder), state.path("vpxVersion").asString(null));
+      File ini = VpxIni.find(appData(), vpxFolder, state.path("vpxVersion").asString(null));
       if (ini != null) {
         VpxIni.setPluginEnabled(ini, SCORE_SERVER_ID, false);
+      }
+      if (removeFiles) {
+        File ssDir = new File(vpxFolder, "plugins/" + SCORE_SERVER_FOLDER);
+        if (ssDir.exists()) {
+          FileUtils.deleteDirectory(ssDir);
+          LOG.info("Deleted the score-server plugin {}", ssDir.getAbsolutePath());
+        }
+        // the backup is only obsolete once the official plugin is back in place
+        if (backup.isFile() && pmDll.isFile() && !strings(state.get("patchedShas")).contains(sha256(pmDll))) {
+          Files.delete(backup.toPath());
+        }
       }
       state.remove("installedTag");
       saveState(state);
@@ -165,6 +189,30 @@ public class VpxPluginInstaller {
     finally {
       lock.unlock();
     }
+  }
+
+  /**
+   * @return true if the score-server plugin files are present in the VPX plugins folder (also when disabled)
+   */
+  public boolean isInstalled() {
+    File vpxFolder = resolveVpxFolder(loadState());
+    return vpxFolder != null && new File(vpxFolder, "plugins/" + SCORE_SERVER_FOLDER + "/" + SCORE_SERVER_DLL).isFile();
+  }
+
+  /**
+   * The installation the plugins were written to, the current VPX installation if the state got lost.
+   */
+  @Nullable
+  private File resolveVpxFolder(ObjectNode state) {
+    String vpxFolder = state.path("vpxFolder").asString("");
+    if (!vpxFolder.isEmpty() && new File(vpxFolder).isDirectory()) {
+      return new File(vpxFolder);
+    }
+    if (!OSUtil.isWindows()) {
+      return null;
+    }
+    GameEmulator emulator = findVpxEmulator();
+    return emulator != null && emulator.getInstallationFolder().isDirectory() ? emulator.getInstallationFolder() : null;
   }
 
   //------------------------------------------- Installation ----------------------------------------------------------

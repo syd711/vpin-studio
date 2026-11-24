@@ -526,7 +526,18 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
   public VpxPluginStatus getLiveTrackingStatus() {
     VpxPluginStatus status = pluginInstaller.getStatus();
     status.connected = scoreServer.isConnected();
+    status.installed = pluginInstaller.isInstalled();
     return status;
+  }
+
+  /**
+   * Removes the VPX plugins and restores the official PinMAME plugin. The client switches the live tracking off
+   * before, otherwise the plugins would be installed again on the next start.
+   */
+  @NonNull
+  public VpxPluginStatus uninstallPlugins() {
+    pluginInstaller.uninstall(true);
+    return getLiveTrackingStatus();
   }
 
   /**
@@ -577,7 +588,7 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
       scoreServer.stop();
       live = null;
       if (wasEnabled) {
-        executor.submit(pluginInstaller::uninstall);
+        executor.submit(() -> pluginInstaller.uninstall(false));
       }
     }
   }
