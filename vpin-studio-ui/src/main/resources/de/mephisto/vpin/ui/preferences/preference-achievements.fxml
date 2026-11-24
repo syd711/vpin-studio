@@ -52,42 +52,54 @@
                      </font>
                   </CheckBox>
                   <Label maxWidth="620.0" styleClass="checkbox-description" text="%pref.achievements.live_enabled_description" textFill="WHITE" wrapText="true" />
-                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                  <VBox spacing="3.0">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                      <children>
-                        <Button fx:id="liveInstallBtn" mnemonicParsing="false" onAction="#onLiveInstall" text="%pref.achievements.live_install">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
-                           </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="liveOpenFolderBtn" mnemonicParsing="false" onAction="#onLiveOpenFolder" text="%pref.achievements.live_open_folder">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                           </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="liveUninstallBtn" mnemonicParsing="false" onAction="#onLiveUninstall" text="%pref.achievements.live_uninstall">
-                           <graphic>
-                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                           </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Button>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                           <children>
+                              <Button fx:id="liveInstallBtn" mnemonicParsing="false" onAction="#onLiveInstall" text="%pref.achievements.live_install">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="liveUpdateVpxBtn" mnemonicParsing="false" onAction="#onLiveUpdateVpx" text="%pref.achievements.live_update_vpx">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="liveOpenFolderBtn" mnemonicParsing="false" onAction="#onLiveOpenFolder" text="%pref.achievements.live_open_folder">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="liveUninstallBtn" mnemonicParsing="false" onAction="#onLiveUninstall" text="%pref.achievements.live_uninstall">
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
                         <Label fx:id="liveStatusLabel" maxWidth="480.0" textFill="#bdbdbd" wrapText="true">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                      </children>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </HBox>
+                  </VBox>
 
                   <Label styleClass="preference-subtitle" text="%pref.achievements.players">
                      <VBox.margin>

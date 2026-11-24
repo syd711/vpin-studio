@@ -161,7 +161,7 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
   @FXML
   public final void onFolder() {
-    String folder = component.getTargetFolder();
+    String folder = getTargetFolder();
     if (/*client.getSystemService().isLocal() &&*/ StringUtils.isNotBlank(folder)) {
       openFolder(new File(folder));
     }
@@ -193,6 +193,13 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
   protected void editFile(File file) {
     Dialogs.editFile(file);
+  }
+
+  /**
+   * @return the folder the tab works on, the component folder by default
+   */
+  protected String getTargetFolder() {
+    return component.getTargetFolder();
   }
 
   abstract protected ComponentType getComponentType();

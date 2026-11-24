@@ -87,4 +87,18 @@ public class VpxIniTest {
     assertThat(VpxIni.sameRevision("10.8.2.1", "10.8.1")).isFalse();
     assertThat(VpxIni.sameRevision(null, "10.8.1")).isFalse();
   }
+
+  @Test
+  public void checksPluginBuildCompatibility() {
+    // 10.8.1 beta build 3788 crashes with plugins built against build 5436
+    assertThat(VpxIni.isPluginCompatible("10.8.1.3788", "10.8.1.5436")).isFalse();
+    assertThat(VpxIni.isPluginCompatible("10.8.1.5436", "10.8.1.5436")).isTrue();
+    assertThat(VpxIni.isPluginCompatible("10.8.1.5500", "10.8.1.5436")).isTrue();
+    assertThat(VpxIni.isPluginCompatible("10.8.2.5500", "10.8.1.5436")).isFalse();
+    // unknown plugin build: only an installation without build number is accepted
+    assertThat(VpxIni.isPluginCompatible("10.8.1.3788", "10.8.1")).isFalse();
+    assertThat(VpxIni.isPluginCompatible("10.8.1", "10.8.1")).isTrue();
+    assertThat(VpxIni.isPluginCompatible("10.8.1", "10.8.1.5436")).isFalse();
+    assertThat(VpxIni.isPluginCompatible(null, "10.8.1.5436")).isFalse();
+  }
 }

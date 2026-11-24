@@ -10,6 +10,8 @@ public class VpxPluginStatus {
   public static final String VPX_OLD = "vpx_old";
   public static final String NO_BUILD = "no_build";
   public static final String REBUILD_NEEDED = "rebuild_needed";
+  /** the plugin build requires a newer VPX (build) than the installed one, see {@link #requiredVpxVersion} */
+  public static final String VPX_UPDATE_NEEDED = "vpx_update_needed";
   public static final String BUSY = "busy";
   public static final String FAILED = "failed";
   public static final String READY = "ready";
@@ -28,4 +30,6 @@ public class VpxPluginStatus {
   public String vpxFolder;
   /** tag of the installed plugin build, e.g. vpx-plugins-10.8.1-af26b2d-r3 */
   public String installedTag;
+  /** the VPX version the newest plugin build requires (state vpx_update_needed), e.g. 10.8.1.5436 */
+  public String requiredVpxVersion;
 }

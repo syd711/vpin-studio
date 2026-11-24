@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.util.OSUtil;
+import de.mephisto.vpin.server.achievements.scoreserver.VpxIni;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
@@ -65,6 +67,22 @@ public class VPXService implements InitializingBean {
       }
     }
     return false;
+  }
+
+  /**
+   * @return the VPinballX.ini the given VPX emulator uses (it depends on its version and folder), the default ini if
+   * the emulator has none (yet) or on other platforms than Windows
+   */
+  public File getVPXFile(@Nullable GameEmulator emulator) {
+    if (emulator != null && emulator.isVpxEmulator() && OSUtil.isWindows()) {
+      String appData = System.getenv("APPDATA");
+      File appDataFolder = appData != null ? new File(appData) : new File(System.getProperty("user.home"), "AppData/Roaming");
+      File ini = VpxIni.find(appDataFolder, emulator.getInstallationFolder(), emulator.getEmulatorVersion());
+      if (ini != null) {
+        return ini;
+      }
+    }
+    return getVPXFile();
   }
 
   public File getVPXFile() {

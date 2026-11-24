@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -59,6 +61,8 @@ public class VpxPluginInstaller {
   private static final String ZIP_ASSET = "vpx-plugins-win64.zip";
   private static final String MANIFEST_ASSET = "vpx-plugins-manifest.json";
   private static final String MIN_VPX_VERSION = "10.8.1";
+  /** vpinball release tags: v10.8.1-5436-af26b2d93 */
+  private static final Pattern VPX_REF_PATTERN = Pattern.compile("v?(\\d+\\.\\d+\\.\\d+)-(\\d+)-.*");
 
   public static final String SCORE_SERVER_ID = "ScoreServer";
   public static final String PINMAME_ID = "PinMAME";
@@ -242,6 +246,7 @@ public class VpxPluginInstaller {
     PackageLookup lookup = findPackage(state, version);
     Package pkg = lookup.pkg();
     if (pkg == null) {
+      rollbackIncompatible(state, version);
       return noPackage(res, version, lookup.newestOther());
     }
     InstallPlan plan = InstallPlan.create(vpxFolder, pkg, state);
@@ -278,6 +283,19 @@ public class VpxPluginInstaller {
     res.ready = true;
     res.installedTag = plan.tag();
     return res;
+  }
+
+  /**
+   * Plugins installed before the build check (or for another VPX build) can stop VPX from starting: the official
+   * PinMAME plugin is restored and the score-server disabled.
+   */
+  private void rollbackIncompatible(ObjectNode state, String version) {
+    String installedTag = state.path("installedTag").asString("");
+    if (installedTag.isEmpty() || isVpxRunning()) {
+      return;
+    }
+    LOG.warn("The installed VPX plugins {} do not match VPX {}, restoring the official PinMAME plugin.", installedTag, version);
+    uninstall(false);
   }
 
   private static boolean isSupportedVersion(@Nullable String version) {
@@ -465,8 +483,8 @@ public class VpxPluginInstaller {
         if (manifest == null) {
           continue;
         }
-        String buildVersion = manifest.path("vpx_version").asString("");
-        if (VpxIni.sameRevision(version, buildVersion)) {
+        String buildVersion = pluginVpxVersion(manifest);
+        if (VpxIni.isPluginCompatible(version, buildVersion)) {
           pkg = download(release, manifest);
           break;
         }
@@ -484,8 +502,29 @@ public class VpxPluginInstaller {
     return new PackageLookup(pkg, newestOther);
   }
 
+  /**
+   * @return the VPX version the plugins were built against including the build number ("10.8.1.5436"), taken from
+   * "vpx_build" or the "vpx_ref" tag (v10.8.1-5436-af26b2d93), only major.minor.revision if neither is available
+   */
+  static String pluginVpxVersion(JsonNode manifest) {
+    String version = manifest.path("vpx_version").asString("");
+    String build = manifest.path("vpx_build").asString("");
+    if (build.isEmpty()) {
+      Matcher m = VPX_REF_PATTERN.matcher(manifest.path("vpx_ref").asString(""));
+      if (m.matches() && VpxIni.sameRevision(version, m.group(1))) {
+        build = m.group(2);
+      }
+    }
+    return build.isEmpty() ? version : version + "." + build;
+  }
+
   private static VpxPluginStatus noPackage(VpxPluginStatus res, String version, @Nullable String newestOther) {
-    if (newestOther != null) {
+    if (newestOther != null && VpxIni.compareVersion(version, newestOther) < 0) {
+      // the installed VPX is older than the plugin build, updating VPX helps
+      res.state = VpxPluginStatus.VPX_UPDATE_NEEDED;
+      res.requiredVpxVersion = newestOther;
+    }
+    else if (newestOther != null) {
       res.state = VpxPluginStatus.REBUILD_NEEDED;
       res.detail = "VPX " + version + " is installed, the newest plugin build is for VPX " + newestOther + ".";
     }
@@ -578,7 +617,7 @@ public class VpxPluginInstaller {
     try {
       File folder = new File(cache);
       JsonNode manifest = mapper.readTree(new File(folder, "manifest.json"));
-      if (VpxIni.sameRevision(version, manifest.path("vpx_version").asString("")) && verify(folder, manifest)) {
+      if (VpxIni.isPluginCompatible(version, pluginVpxVersion(manifest)) && verify(folder, manifest)) {
         return new Package(manifest, folder);
       }
     }
@@ -701,6 +740,7 @@ public class VpxPluginInstaller {
     c.vpxVersion = s.vpxVersion;
     c.vpxFolder = s.vpxFolder;
     c.installedTag = s.installedTag;
+    c.requiredVpxVersion = s.requiredVpxVersion;
     return c;
   }
 }

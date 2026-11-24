@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -30,6 +31,9 @@ public class ComponentService implements InitializingBean {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @Autowired
   private VPinMAMEComponent vPinMAMEComponent;
@@ -117,6 +121,17 @@ public class ComponentService implements InitializingBean {
     return getComponentFacade(type).getTargetFolder();
   }
 
+  /**
+   * Components like VPX can be installed into other folders than the component folder, e.g. for multiple VPX emulators.
+   */
+  private boolean isEffectiveTargetFolder(@NonNull ComponentType type, @NonNull File folder) {
+    File effective = getEffectiveTargetFolder(type);
+    if (effective == null) {
+      return true;
+    }
+    return effective.getAbsoluteFile().toPath().normalize().equals(folder.getAbsoluteFile().toPath().normalize());
+  }
+
   public boolean ignoreVersion(@NonNull ComponentType type, @NonNull String version) {
     Optional<Component> byType = componentRepository.findByType(type);
     if (byType.isPresent()) {
@@ -165,7 +180,7 @@ public class ComponentService implements InitializingBean {
 
           install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames(), componentFacade.getDiffList());
           boolean diff = install.isDiffering();
-          if (!diff) {
+          if (!diff && isEffectiveTargetFolder(type, targetFolder)) {
             component.setInstalledVersion(githubRelease.getTag());
             LOG.info("Applied current version \"{} for {}", githubRelease.getTag(), component.getType());
           }
@@ -230,9 +245,14 @@ public class ComponentService implements InitializingBean {
       //we have a real installation from here on
       install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       if (install.getStatus() == null) {
-        //unzipping was successful
-        component.setInstalledVersion(githubRelease.getTag());
-        componentRepository.saveAndFlush(component);
+        //unzipping was successful, the version is only tracked for the component folder, not for other VPX emulators
+        if (isEffectiveTargetFolder(type, targetFolder)) {
+          component.setInstalledVersion(githubRelease.getTag());
+          componentRepository.saveAndFlush(component);
+        }
+        if (type.equals(ComponentType.vpinball)) {
+          emulatorService.refreshVpxVersions();
+        }
 
         //execute optional post processing
         componentFacade.postProcess(releaseArtifact, install);

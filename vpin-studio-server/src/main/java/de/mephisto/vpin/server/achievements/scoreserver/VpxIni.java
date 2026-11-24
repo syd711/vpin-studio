@@ -223,6 +223,27 @@ public class VpxIni {
     return true;
   }
 
+  /**
+   * The VPX plugin API changed several times during the 10.8.1 betas, a plugin only loads into the VPX build it was
+   * compiled against or a newer one of the same revision (a 10.8.1 build 5436 plugin crashes VPX 10.8.1 build 3788).
+   *
+   * @param installed the installed VPX version, e.g. "10.8.1.3788"
+   * @param plugin    the VPX version the plugin was built against, e.g. "10.8.1.5436"
+   * @return true if both are the same major.minor.revision and the installed build is not older than the plugin
+   * build. An unknown build number (only three segments) is only accepted if both are unknown.
+   */
+  public static boolean isPluginCompatible(@Nullable String installed, @Nullable String plugin) {
+    if (!sameRevision(installed, plugin)) {
+      return false;
+    }
+    int installedBuild = segment(installed.trim().split("\\."), 3);
+    int pluginBuild = segment(plugin.trim().split("\\."), 3);
+    if (pluginBuild == 0) {
+      return installedBuild == 0;
+    }
+    return installedBuild >= pluginBuild;
+  }
+
   private static int segment(String[] parts, int i) {
     if (i >= parts.length) {
       return 0;

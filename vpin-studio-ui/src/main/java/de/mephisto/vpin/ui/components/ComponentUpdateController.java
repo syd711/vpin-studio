@@ -57,6 +57,12 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
 
   private boolean localInstallOnly = true;
 
+  /**
+   * Overrides the component folder as installation target, e.g. the folder of another VPX emulator
+   */
+  @Nullable
+  private String targetFolder;
+
   @FXML
   private void onFetch() {
     ComponentType type = component.getType();
@@ -64,7 +70,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     install.setComponent(type);
     install.setReleaseTag("-latest-");
     install.setArtifactName("-latest-");
-    install.setTargetFolder(component.getTargetFolder());
+    install.setTargetFolder(getTargetFolder());
 
     ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.checking_status_for", type), install);
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -107,7 +113,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         install.setComponent(type);
         install.setReleaseTag(release.getTag());
         install.setArtifactName(artifact);
-        install.setTargetFolder(component.getTargetFolder());
+        install.setTargetFolder(getTargetFolder());
   
         ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.component_check_for", type), install);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -150,7 +156,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         install.setComponent(type);
         install.setReleaseTag(release.getTag());
         install.setArtifactName(artifact);
-        install.setTargetFolder(component.getTargetFolder());
+        install.setTargetFolder(getTargetFolder());
 
         ComponentInstallProgressModel model = new ComponentInstallProgressModel(install, simulate);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
@@ -180,6 +186,17 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
   public void refreshComponent(ComponentRepresentation component) {
     this.component = component;
     refresh(releasesCombo.getValue(), artifactCombo.getValue());
+  }
+
+  public void setTargetFolder(@Nullable String targetFolder) {
+    if (!Objects.equals(this.targetFolder, targetFolder)) {
+      this.targetFolder = targetFolder;
+      textArea.setText("");
+    }
+  }
+
+  private String getTargetFolder() {
+    return targetFolder != null ? targetFolder : component.getTargetFolder();
   }
 
   public void setLocalInstallOnly(boolean localInstallOnly) {

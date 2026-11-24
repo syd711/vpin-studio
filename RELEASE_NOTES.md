@@ -31,3 +31,7 @@ A huge shoutout to @Solters for building the original tool and helping with this
 ### Changes
 
 - **Players**: Removed the "Discord Players" tab. The players view now only shows the built-in players.
+- **System Manager**: The Visual Pinball updates tab has a new emulator selection when multiple VPX emulators are
+  configured. Release checks, simulations and installations as well as the "VPinballX.ini" button work on the
+  selected emulator, so every VPX installation can be updated separately.
+- **System Manager**: The overview lists the installed version of every configured VPX emulator.

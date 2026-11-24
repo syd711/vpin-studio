@@ -171,6 +171,18 @@ public class EmulatorService implements InitializingBean, PreferenceChangedListe
     }
   }
 
+  /**
+   * Re-reads the executable versions of the VPX emulators, e.g. after a VPX update was installed into one of them.
+   */
+  public void refreshVpxVersions() {
+    for (GameEmulator emulator : getGameEmulators()) {
+      if (emulator.isVpxEmulator()) {
+        emulator.setEmulatorVersion(EmulatorVersion.resolve(emulator));
+        emulator.setPerTableFileStructureSupported(emulator.isPerTableFileStructure() || EmulatorVersion.isVpxPerTableFileLayoutSupported(emulator.getEmulatorVersion()));
+      }
+    }
+  }
+
   private void loadEmulator(GameEmulator emulator) {
     try {
       File mameFolder = new File(emulator.getInstallationDirectory(), "VPinMAME");

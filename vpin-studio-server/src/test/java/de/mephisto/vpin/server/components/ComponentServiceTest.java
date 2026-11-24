@@ -28,6 +28,8 @@ public class ComponentServiceTest {
   @Mock
   private SystemService systemService;
   @Mock
+  private de.mephisto.vpin.server.emulators.EmulatorService emulatorService;
+  @Mock
   private VPinMAMEComponent vPinMAMEComponent;
   @Mock
   private VpxComponent vpxComponent;

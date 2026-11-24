@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       vpx_ref:
-        description: "vpinball/vpinball tag or commit to build against (10.8.1+)"
+        description: "vpinball/vpinball release tag to build against (10.8.1+, e.g. v10.8.1-5436-af26b2d93)"
         required: true
         default: "v10.8.1-5436-af26b2d93"
       score_server_ref:
@@ -126,6 +126,9 @@ jobs:
           PM_HASH=$(sha256sum "$OUT/pinmame/plugin-pinmame64.dll" | cut -d' ' -f1)
           SS_HASH=$(sha256sum "$OUT/score-server/plugin-score-server64.dll" | cut -d' ' -f1)
           TAG="vpx-plugins-${{ steps.ver.outputs.short }}-${VPX_SHA}-r${{ github.run_number }}"
+          # the plugin API changed during the 10.8.1 betas: the installer only uses a build for this VPX build or newer
+          VPX_BUILD=$(echo "${{ github.event.inputs.vpx_ref }}" | sed -nE 's/^v?[0-9]+\.[0-9]+\.[0-9]+-([0-9]+)-.*/\1/p')
+          if [ -z "$VPX_BUILD" ]; then echo "vpx_ref must be a release tag like v10.8.1-5436-af26b2d93"; exit 1; fi
           cat > "$OUT/README.txt" <<EOF
           VPX plugins for the VPin Studio achievements (installed by the VPin Studio server).
 
@@ -139,6 +142,7 @@ jobs:
           {
             "tag": "${TAG}",
             "vpx_version": "${{ steps.ver.outputs.short }}",
+            "vpx_build": "${VPX_BUILD}",
             "vpx_ref": "${{ github.event.inputs.vpx_ref }}",
             "vpx_commit": "${VPX_SHA}",
             "score_server_commit": "${SS_SHA}",

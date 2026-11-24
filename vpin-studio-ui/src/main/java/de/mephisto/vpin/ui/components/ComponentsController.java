@@ -350,7 +350,27 @@ public class ComponentsController implements Initializable, StudioFXController, 
           emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
         }
       }
+      else if (options.getModel() instanceof ComponentType componentType) {
+        rootTabPane.getSelectionModel().select(TAB_UPDATES);
+        Tab tab = getComponentTab(componentType);
+        if (tab != null && tabPane.getTabs().contains(tab)) {
+          tabPane.getSelectionModel().select(tab);
+        }
+      }
     }
+  }
+
+  private Tab getComponentTab(ComponentType componentType) {
+    return switch (componentType) {
+      case vpinball -> vpxTab;
+      case vpinmame -> mameTab;
+      case b2sbackglass -> b2sTab;
+      case freezy -> freezyTab;
+      case flexdmd -> flexDMDTab;
+      case doflinx -> doflinxTab;
+      case dof -> dofTab;
+      default -> null;
+    };
   }
 
   @Override

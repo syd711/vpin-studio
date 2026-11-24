@@ -64,6 +64,12 @@ public class ComponentSummaryController implements Initializable {
 
   private ComponentRepresentation component;
 
+  /**
+   * Set when another folder than the component folder is selected, e.g. another VPX emulator
+   */
+  private String overrideFolder;
+  private String overrideVersion;
+
   @FXML
   public void onHyperlink(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
@@ -137,6 +143,16 @@ public class ComponentSummaryController implements Initializable {
     }
   }
 
+  /**
+   * Shows the given folder and its version instead of the component ones, null resets to the component.
+   * The version buttons are hidden then as the component version is only tracked for the component folder.
+   */
+  protected void setTargetOverride(String folder, String version) {
+    this.overrideFolder = folder;
+    this.overrideVersion = version;
+    refreshComponent(component);
+  }
+
   protected void setComponent(AbstractComponentTab componentTab, ComponentRepresentation component) {
       refreshComponent(component);
   }
@@ -179,6 +195,15 @@ public class ComponentSummaryController implements Initializable {
       folderResetBtn.setVisible(!StringUtils.isEmpty(component.getTargetFolderOverride()));
 
       githubLink.setText(component.getUrl());
+
+      if (overrideFolder != null) {
+        folderLabel.setText(overrideFolder);
+        installedVersionLabel.setText(overrideVersion != null ? overrideVersion : "?");
+        setVersionBtn.setVisible(false);
+        resetVersionBtn.setVisible(false);
+        folderBtn.setVisible(false);
+        folderResetBtn.setVisible(false);
+      }
     }
   }
 

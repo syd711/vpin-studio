@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import org.jspecify.annotations.Nullable;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpinmame.VPinMameRomAliasService;
@@ -100,7 +101,7 @@ public class TextEditService {
           break;
         }
         case VPinballXIni: {
-          File init = vpxService.getVPXFile();
+          File init = vpxService.getVPXFile(getVpxEmulator(textEditorFile));
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
           textEditorFile.setContent(iniText);
@@ -239,7 +240,7 @@ public class TextEditService {
           return textEditorFile;
         }
         case VPinballXIni: {
-          File f = vpxService.getVPXFile();
+          File f = vpxService.getVPXFile(getVpxEmulator(textEditorFile));
           String[] lines = textEditorFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
@@ -258,5 +259,19 @@ public class TextEditService {
       LOG.error("Error reading text file: {}", e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
+  }
+
+  /**
+   * The VPX emulator whose VPinballX.ini is edited, null for the default ini
+   */
+  @Nullable
+  private GameEmulator getVpxEmulator(TextEditorFile textEditorFile) {
+    if (textEditorFile.getEmulatorId() > 0) {
+      GameEmulator emulator = emulatorService.getGameEmulator(textEditorFile.getEmulatorId());
+      if (emulator != null && emulator.isVpxEmulator()) {
+        return emulator;
+      }
+    }
+    return null;
   }
 }

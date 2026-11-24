@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -16,17 +17,26 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.*;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ComponentShortSummaryController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentShortSummaryController.class);
+
+  /** vpinball release tags: v10.8.1-5436-af26b2d93 */
+  private static final Pattern VPX_TAG_PATTERN = Pattern.compile("v?(\\d+\\.\\d+\\.\\d+)(?:-(\\d+))?.*");
 
 
   @FXML
@@ -43,6 +53,9 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
 
   @FXML
   private Hyperlink link;
+
+  @FXML
+  private GridPane emulatorsGrid;
 
   private ComponentRepresentation component;
 
@@ -76,12 +89,70 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
     }
     latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
 
+    emulatorsGrid.getChildren().clear();
+    if (component.getType().equals(ComponentType.vpinball)) {
+      // uncached, the versions of the emulators change with an installation
+      JFXFuture.supplyAsync(() -> client.getEmulatorService().getGameEmulatorsUncached().stream()
+              .filter(GameEmulatorRepresentation::isVpxEmulator).toList())
+          .thenAcceptLater(emulators -> refreshEmulators(component, emulators));
+    }
+
     if (component.getType().equals(ComponentType.doflinx)) {
       preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);
     }
     else if (component.getType().equals(ComponentType.dof)) {
       preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
     }
+  }
+
+  /**
+   * Lists the installed version of every VPX emulator, the component version is only tracked for one folder.
+   */
+  private void refreshEmulators(ComponentRepresentation component, List<GameEmulatorRepresentation> emulators) {
+    emulatorsGrid.getChildren().clear();
+    int row = 0;
+    for (GameEmulatorRepresentation emulator : emulators) {
+      Label nameLabel = new Label(Messages.get("components.component_short_summary_panel.emulator_version", emulator.getName()));
+      nameLabel.getStyleClass().add("default-text");
+      nameLabel.setMinHeight(30);
+
+      String version = emulator.getEmulatorVersion();
+      Label versionLabel = new Label(StringUtils.isEmpty(version) ? "?" : version);
+      versionLabel.setFont(Font.font(14));
+      versionLabel.getStyleClass().add("default-text");
+      if (!StringUtils.isEmpty(version) && component.getLatestReleaseVersion() != null) {
+        versionLabel.getStyleClass().add(isLatestVpxVersion(version, component.getLatestReleaseVersion()) ? "green-label" : "orange-label");
+      }
+      if (!StringUtils.isEmpty(emulator.getInstallationDirectory())) {
+        versionLabel.setTooltip(new javafx.scene.control.Tooltip(emulator.getInstallationDirectory()));
+      }
+
+      emulatorsGrid.add(nameLabel, 0, row);
+      emulatorsGrid.add(versionLabel, 2, row);
+      row++;
+    }
+  }
+
+  /**
+   * @param exeVersion the file version of the VPX executable, e.g. "10.8.1.5436"
+   * @param releaseTag the vpinball release tag, e.g. "v10.8.1-5436-af26b2d93"
+   */
+  static boolean isLatestVpxVersion(String exeVersion, String releaseTag) {
+    Matcher m = VPX_TAG_PATTERN.matcher(releaseTag.trim());
+    if (!m.matches()) {
+      return false;
+    }
+    String[] exe = exeVersion.trim().split("\\.");
+    String[] tag = m.group(2) != null ? (m.group(1) + "." + m.group(2)).split("\\.") : m.group(1).split("\\.");
+    if (exe.length < tag.length) {
+      return false;
+    }
+    for (int i = 0; i < tag.length; i++) {
+      if (!exe[i].equals(tag[i])) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override

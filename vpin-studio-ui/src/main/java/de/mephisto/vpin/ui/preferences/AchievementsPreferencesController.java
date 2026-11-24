@@ -6,8 +6,13 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.achievements.AchievementsSettings;
 import de.mephisto.vpin.restclient.achievements.VpxPluginStatus;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.achievements.AchievementsMigrationDialog;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.achievements.AchievementsUI;
 import de.mephisto.vpin.ui.util.SystemUtil;
@@ -54,6 +59,8 @@ public class AchievementsPreferencesController implements Initializable {
   @FXML
   private Button liveUninstallBtn;
   @FXML
+  private Button liveUpdateVpxBtn;
+  @FXML
   private Label liveStatusLabel;
 
   private AchievementsSettings settings;
@@ -69,6 +76,17 @@ public class AchievementsPreferencesController implements Initializable {
     if (pluginsFolder != null) {
       SystemUtil.openFolder(pluginsFolder);
     }
+  }
+
+  /**
+   * The installed VPX is too old for the plugins: opens the Visual Pinball updates of the System Manager.
+   */
+  @FXML
+  private void onLiveUpdateVpx() {
+    if (PreferencesController.instance != null) {
+      PreferencesController.instance.closePreferences();
+    }
+    NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(ComponentType.vpinball));
   }
 
   @FXML
@@ -132,6 +150,7 @@ public class AchievementsPreferencesController implements Initializable {
         // the server restores the official PinMAME plugin in the background
         liveInstallBtn.setDisable(true);
         liveStatusLabel.setText(Messages.get("pref.achievements.live_state.disabled"));
+        liveUpdateVpxBtn.setVisible(false);
       }
     });
     liveInstallBtn.setDisable(!settings.isLiveTrackingEnabled());
@@ -139,6 +158,8 @@ public class AchievementsPreferencesController implements Initializable {
     liveOpenFolderBtn.setVisible(false);
     liveUninstallBtn.managedProperty().bind(liveUninstallBtn.visibleProperty());
     liveUninstallBtn.setVisible(false);
+    liveUpdateVpxBtn.managedProperty().bind(liveUpdateVpxBtn.visibleProperty());
+    liveUpdateVpxBtn.setVisible(false);
     refreshLiveStatus();
     refreshPlayers();
   }
@@ -170,8 +191,10 @@ public class AchievementsPreferencesController implements Initializable {
       return;
     }
     String state = settings.isLiveTrackingEnabled() ? status.state : VpxPluginStatus.DISABLED;
+    liveUpdateVpxBtn.setVisible(VpxPluginStatus.VPX_UPDATE_NEEDED.equals(state) || VpxPluginStatus.VPX_OLD.equals(state));
     String text = Messages.get("pref.achievements.live_state." + state,
-        status.installedTag != null ? status.installedTag : "", status.vpxVersion != null ? status.vpxVersion : "");
+        status.installedTag != null ? status.installedTag : "", status.vpxVersion != null ? status.vpxVersion : "",
+        status.requiredVpxVersion != null ? status.requiredVpxVersion : "");
     if (status.detail != null && (VpxPluginStatus.FAILED.equals(state) || VpxPluginStatus.REBUILD_NEEDED.equals(state))) {
       text += System.lineSeparator() + status.detail;
     }
