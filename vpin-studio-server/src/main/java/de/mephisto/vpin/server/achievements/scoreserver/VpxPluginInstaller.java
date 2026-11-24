@@ -36,6 +36,9 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,12 +54,19 @@ import java.util.zip.ZipInputStream;
  * The newest build for the installed VPX revision is used. The official PinMAME plugin is backed up and restored when
  * the live tracking is switched off. When a VPX update replaces the PinMAME plugin by a new official version, the
  * live tracking stays off until a new plugin build is released.
+ * <p>
+ * {@link #ensure()} is cheap enough to be called periodically: the release list is cached for an hour, the manifests
+ * of the releases are kept (a tag is never rebuilt) and nothing is copied when the hashes match.
  */
 @Service
 public class VpxPluginInstaller {
   private static final Logger LOG = LoggerFactory.getLogger(VpxPluginInstaller.class);
 
-  private static final String RELEASES_API = "https://api.github.com/repos/syd711/vpin-studio/releases?per_page=30";
+  private static final String RELEASES_API = "https://api.github.com/repos/syd711/vpin-studio/releases";
+  static final int RELEASES_PER_PAGE = 100;
+  /** the plugin builds are pre-releases between the regular releases, the whole list is searched */
+  private static final int MAX_RELEASE_PAGES = 10;
+  static final long RELEASE_CACHE_MS = TimeUnit.HOURS.toMillis(1);
   private static final String TAG_PREFIX = "vpx-plugins-";
   private static final String ZIP_ASSET = "vpx-plugins-win64.zip";
   private static final String MANIFEST_ASSET = "vpx-plugins-manifest.json";
@@ -83,6 +93,12 @@ public class VpxPluginInstaller {
   private final ReentrantLock lock = new ReentrantLock();
   private volatile VpxPluginStatus status = new VpxPluginStatus();
 
+  /** the vpx-plugins-* releases, newest first, null if never fetched successfully; guarded by the lock */
+  private List<JsonNode> releases;
+  private long releasesCheckedAt;
+  /** manifest per release tag */
+  private final Map<String, JsonNode> manifests = new ConcurrentHashMap<>();
+
   @NonNull
   public VpxPluginStatus getStatus() {
     return status;
@@ -94,19 +110,34 @@ public class VpxPluginInstaller {
   }
 
   /**
-   * Installs or repairs the plugins and enables them in VPinballX.ini. Nothing is changed while VPX is running.
+   * Installs or repairs the plugins and enables them in VPinballX.ini. Nothing is changed while VPX is running. Uses
+   * the cached release list (periodic check).
    */
   @NonNull
   public VpxPluginStatus ensure() {
+    return ensure(false);
+  }
+
+  /**
+   * Installs or repairs the plugins and enables them in VPinballX.ini. Nothing is changed while VPX is running.
+   *
+   * @param refresh reads the release list from GitHub again (explicit installation, live tracking switched on)
+   */
+  @NonNull
+  public VpxPluginStatus ensure(boolean refresh) {
     // an installation started in the background (setting changed) is waited for
     lock.lock();
     try {
-      status = doEnsure();
-      if (status.ready) {
-        LOG.info("VPX plugins ready: {} ({})", status.installedTag, status.vpxFolder);
-      }
-      else {
-        LOG.info("VPX plugins not ready: {} {}", status.state, status.detail != null ? status.detail : "");
+      VpxPluginStatus previous = status;
+      status = doEnsure(refresh);
+      // the check runs periodically, only changes are logged
+      if (refresh || isChanged(previous, status)) {
+        if (status.ready) {
+          LOG.info("VPX plugins ready: {} ({})", status.installedTag, status.vpxFolder);
+        }
+        else {
+          LOG.info("VPX plugins not ready: {} {}", status.state, status.detail != null ? status.detail : "");
+        }
       }
       return status;
     }
@@ -119,6 +150,11 @@ public class VpxPluginInstaller {
     finally {
       lock.unlock();
     }
+  }
+
+  private static boolean isChanged(VpxPluginStatus a, VpxPluginStatus b) {
+    return !Objects.equals(a.state, b.state) || !Objects.equals(a.installedTag, b.installedTag)
+        || !Objects.equals(a.detail, b.detail) || !Objects.equals(a.vpxVersion, b.vpxVersion);
   }
 
   /**
@@ -221,7 +257,7 @@ public class VpxPluginInstaller {
 
   //------------------------------------------- Installation ----------------------------------------------------------
 
-  private VpxPluginStatus doEnsure() throws Exception {
+  private VpxPluginStatus doEnsure(boolean refresh) throws Exception {
     VpxPluginStatus res = new VpxPluginStatus();
     if (!OSUtil.isWindows()) {
       res.state = VpxPluginStatus.NOT_SUPPORTED;
@@ -243,7 +279,7 @@ public class VpxPluginInstaller {
     }
 
     ObjectNode state = loadState();
-    PackageLookup lookup = findPackage(state, version);
+    PackageLookup lookup = findPackage(state, version, refresh);
     Package pkg = lookup.pkg();
     if (pkg == null) {
       rollbackIncompatible(state, version);
@@ -474,11 +510,11 @@ public class VpxPluginInstaller {
    * Looks up the newest plugin build for the given VPX revision, falls back to the cached package when GitHub is not
    * reachable.
    */
-  private PackageLookup findPackage(ObjectNode state, String version) {
+  private PackageLookup findPackage(ObjectNode state, String version, boolean refresh) {
     Package pkg = null;
     String newestOther = null;
     try {
-      for (JsonNode release : fetchReleases()) {
+      for (JsonNode release : releases(refresh)) {
         JsonNode manifest = fetchManifest(release);
         if (manifest == null) {
           continue;
@@ -494,7 +530,7 @@ public class VpxPluginInstaller {
       }
     }
     catch (Exception e) {
-      LOG.warn("Failed to fetch the VPX plugin releases: {}", e.getMessage());
+      LOG.warn("Failed to download the VPX plugins: {}", e.getMessage());
     }
     if (pkg == null) {
       pkg = cachedPackage(state, version);
@@ -535,16 +571,46 @@ public class VpxPluginInstaller {
   }
 
   /**
+   * Called with the lock held.
+   *
+   * @param refresh ignores the cached list
+   * @return the vpx-plugins-* releases, newest first; the last known list (or none) when GitHub is not reachable
+   */
+  List<JsonNode> releases(boolean refresh) {
+    long now = System.currentTimeMillis();
+    if (refresh || now - releasesCheckedAt >= RELEASE_CACHE_MS) {
+      // a failed request waits for the next interval as well, an offline cabinet is not asked on every check
+      releasesCheckedAt = now;
+      try {
+        releases = fetchReleases();
+      }
+      catch (Exception e) {
+        LOG.warn("Failed to fetch the VPX plugin releases: {}", e.getMessage());
+      }
+    }
+    return releases != null ? releases : List.of();
+  }
+
+  /**
+   * Reads all pages of the release list: the plugin builds are pre-releases that can be older than the last regular
+   * releases.
+   *
    * @return the vpx-plugins-* releases, newest first
    */
   private List<JsonNode> fetchReleases() throws Exception {
-    JsonNode json = mapper.readTree(get(RELEASES_API));
     List<JsonNode> result = new ArrayList<>();
-    if (json != null && json.isArray()) {
+    for (int page = 1; page <= MAX_RELEASE_PAGES; page++) {
+      JsonNode json = mapper.readTree(get(RELEASES_API + "?per_page=" + RELEASES_PER_PAGE + "&page=" + page));
+      if (json == null || !json.isArray() || json.isEmpty()) {
+        break;
+      }
       for (JsonNode r : json) {
         if (r.path("tag_name").asString("").startsWith(TAG_PREFIX) && !r.path("draft").asBoolean(false)) {
           result.add(r);
         }
+      }
+      if (json.size() < RELEASES_PER_PAGE) {
+        break;
       }
     }
     result.sort((a, b) -> b.path("published_at").asString("").compareTo(a.path("published_at").asString("")));
@@ -553,12 +619,21 @@ public class VpxPluginInstaller {
 
   @Nullable
   private JsonNode fetchManifest(JsonNode release) {
+    String tag = release.path("tag_name").asString("");
+    JsonNode cached = manifests.get(tag);
+    if (cached != null) {
+      return cached;
+    }
     String url = assetUrl(release, MANIFEST_ASSET);
     if (url == null) {
       return null;
     }
     try {
-      return mapper.readTree(get(url));
+      JsonNode manifest = mapper.readTree(get(url));
+      if (manifest != null && !tag.isEmpty()) {
+        manifests.put(tag, manifest);
+      }
+      return manifest;
     }
     catch (Exception e) {
       LOG.warn("Failed to read the manifest of {}: {}", release.path("tag_name").asString(""), e.getMessage());
@@ -660,7 +735,10 @@ public class VpxPluginInstaller {
     }
   }
 
-  private byte[] get(String url) throws Exception {
+  /**
+   * Package visible for tests.
+   */
+  byte[] get(String url) throws Exception {
     HttpRequest request = HttpRequest.newBuilder(URI.create(url))
         .timeout(Duration.ofSeconds(120))
         .header("User-Agent", "VPin-Studio")

@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
+import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.server.achievements.scoreserver.VpxIni;
+import de.mephisto.vpin.server.emulators.EmulatorVersion;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -12,6 +14,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -298,24 +301,52 @@ public class VPXService implements InitializingBean {
 
   public boolean play(@Nullable Game game, @Nullable String altExe, @Nullable String option) {
     if (game != null) {
-      return vpxCommandLineService.execute(game, altExe, launchParameters(option, OSUtil.isWindows()));
+      boolean windows = OSUtil.isWindows();
+      boolean minimized = windows && !EmulatorVersion.isVpxPerTableFileLayoutSupported(getLaunchExeVersion(game, altExe));
+      return vpxCommandLineService.execute(game, altExe, launchParameters(option, windows, minimized));
     }
     return false;
   }
 
   /**
+   * @return the file version of the executable the game is launched with, the version of the emulator if it can't be read
+   */
+  @Nullable
+  private String getLaunchExeVersion(@NonNull Game game, @Nullable String altExe) {
+    File exe = vpxCommandLineService.getLaunchExe(game, altExe);
+    if (exe != null && exe.isFile()) {
+      try {
+        String version = FileVersion.fetch(exe);
+        if (!StringUtils.isEmpty(version) && !version.startsWith("0.")) {
+          return version;
+        }
+      }
+      catch (Throwable e) {
+        LOG.warn("Failed to read the version of \"{}\": {}", exe.getAbsolutePath(), e.getMessage());
+      }
+    }
+    return game.getEmulator() != null ? game.getEmulator().getEmulatorVersion() : null;
+  }
+
+  /**
    * Standalone builds have no editor window, so they do not know -Minimized (nor -Primary)
    * and exit with "Invalid Parameter" when they get one.
+   * VPX 10.8.1+ is launched without -Minimized.
    */
-  static String[] launchParameters(@Nullable String option, boolean windows) {
+  static String[] launchParameters(@Nullable String option, boolean windows, boolean minimized) {
     String command = "cameraMode".equals(option) ? "-PovEdit" : "-Play";
     if (!windows) {
       return new String[]{command};
     }
-    if ("primary".equals(option)) {
-      return new String[]{"-Minimized", "-Primary", command};
+    List<String> params = new ArrayList<>();
+    if (minimized) {
+      params.add("-Minimized");
     }
-    return new String[]{"-Minimized", command};
+    if ("primary".equals(option)) {
+      params.add("-Primary");
+    }
+    params.add(command);
+    return params.toArray(new String[0]);
   }
 
   public boolean waitForPlayer() {

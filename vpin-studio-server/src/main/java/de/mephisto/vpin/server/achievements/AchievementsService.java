@@ -71,6 +71,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Achievement tracking (port of the VPX Achievement Watcher): snapshots the audits of the .nv file when a table is
@@ -120,12 +122,24 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
   private static final long LIVE_EVAL_MS = 2000;
   /** the live NVRAM is searched in the .nv file with the first snapshots only */
   private static final int MAX_ALIGN_ATTEMPTS = 20;
+  /**
+   * interval of the VPX plugin check: notices VPX updates and new plugin builds while the server is running (the
+   * release list itself is only read from GitHub once an hour)
+   */
+  private static final long PLUGIN_CHECK_MINUTES = 15;
+  /** VPX is still shutting down when the table exit is reported, the plugin check waits for it */
+  private static final long PLUGIN_CHECK_AFTER_EXIT_SECONDS = 15;
 
   private volatile ScoreServerClient scoreServer = new ScoreServerClient(new ScoreServerListener());
   /** the table played with live tracking, null if none */
   private volatile LiveTable live;
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> new Thread(r, "Achievements Evaluation"));
+  private final ScheduledExecutorService pluginCheckScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+    Thread t = new Thread(r, "Achievements VPX Plugin Check");
+    t.setDaemon(true);
+    return t;
+  });
   private final Map<Integer, ActiveSession> activeSessions = new ConcurrentHashMap<>();
   private final List<AchievementsChangeListener> listeners = new CopyOnWriteArrayList<>();
   private AchievementsSettings settings = new AchievementsSettings();
@@ -244,10 +258,8 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     Game game = event.getGame();
-    if (settings.isLiveTrackingEnabled() && VpxPluginStatus.BUSY.equals(pluginInstaller.getStatus().state)) {
-      // the plugins could not be installed while VPX was running
-      executor.submit(pluginInstaller::ensure);
-    }
+    // VPX could have been updated, or a pending installation (VPX was running) can be done now
+    pluginCheckScheduler.schedule(this::checkPlugins, PLUGIN_CHECK_AFTER_EXIT_SECONDS, TimeUnit.SECONDS);
     ActiveSession session = activeSessions.remove(game.getId());
     if (session == null) {
       return;
@@ -548,7 +560,7 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
     if (!settings.isLiveTrackingEnabled()) {
       return getLiveTrackingStatus();
     }
-    pluginInstaller.ensure();
+    pluginInstaller.ensure(true);
     return getLiveTrackingStatus();
   }
 
@@ -579,10 +591,9 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
   }
 
   private void applyLiveTracking(boolean wasEnabled) {
-    boolean enabled = settings.isEnabled() && settings.isLiveTrackingEnabled() && OSUtil.isWindows();
-    if (enabled) {
+    if (isLiveTrackingActive()) {
       scoreServer.start();
-      executor.submit(pluginInstaller::ensure);
+      executor.submit(() -> pluginInstaller.ensure(true));
     }
     else {
       scoreServer.stop();
@@ -590,6 +601,26 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
       if (wasEnabled) {
         executor.submit(() -> pluginInstaller.uninstall(false));
       }
+    }
+  }
+
+  private boolean isLiveTrackingActive() {
+    return settings.isEnabled() && settings.isLiveTrackingEnabled() && OSUtil.isWindows();
+  }
+
+  /**
+   * Periodic and after-table-exit check of the VPX plugins: installs a new plugin build, notices a VPX update that
+   * replaced the PinMAME plugin, retries an installation postponed because VPX was running. Skipped while a table
+   * is played, nothing could be copied anyway.
+   */
+  private void checkPlugins() {
+    try {
+      if (isLiveTrackingActive() && activeSessions.isEmpty() && !VpxPluginInstaller.isVpxRunning()) {
+        executor.submit(() -> pluginInstaller.ensure());
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Achievements: VPX plugin check failed: {}", e.getMessage());
     }
   }
 
@@ -984,6 +1015,7 @@ public class AchievementsService implements TableStatusChangeListener, Preferenc
     frontendStatusService.addTableStatusChangeListener(this);
     playerService.addPlayerLifecycleListener(this);
     applyLiveTracking(false);
+    pluginCheckScheduler.scheduleWithFixedDelay(this::checkPlugins, PLUGIN_CHECK_MINUTES, PLUGIN_CHECK_MINUTES, TimeUnit.MINUTES);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }
