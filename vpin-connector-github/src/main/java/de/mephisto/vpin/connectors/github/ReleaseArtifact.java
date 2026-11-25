@@ -43,14 +43,32 @@ public class ReleaseArtifact {
     return name;
   }
 
+  /**
+   * Provides the archive file of this artifact, e.g. from a local cache, downloading it when needed.
+   */
+  @FunctionalInterface
+  public interface ArchiveSupplier {
+    @NonNull
+    File get(@NonNull ReleaseArtifactActionLog log) throws Exception;
+  }
+
+  /**
+   * Downloads this artifact into the given file, an existing file is replaced.
+   */
+  @NonNull
+  public File download(@NonNull File targetFile, @NonNull ReleaseArtifactActionLog log) throws Exception {
+    return new Downloader(this.getUrl(), log).download(targetFile);
+  }
+
   public ReleaseArtifactActionLog diff(@NonNull File sourceArchive, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles,  @NonNull String... names) {
+    return diff(log -> sourceArchive.exists() ? sourceArchive : download(sourceArchive, log), targetFolder, rootFileIndicators, excludedFiles, includedFiles, names);
+  }
+
+  public ReleaseArtifactActionLog diff(@NonNull ArchiveSupplier archiveSupplier, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles,  @NonNull String... names) {
     long start = System.currentTimeMillis();
     ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(false, true);
     try {
-      if (!sourceArchive.exists()) {
-        sourceArchive = new Downloader(this.getUrl(), installLog).download(sourceArchive);
-      }
-
+      File sourceArchive = archiveSupplier.get(installLog);
       if (!sourceArchive.exists()) {
         installLog.setStatus("Archive download failed for " + this + " failed, cancelling diff.");
         throw new UnsupportedOperationException("Archive download failed for " + this + " failed, cancelling diff.");
@@ -106,18 +124,44 @@ public class ReleaseArtifact {
     return installLog;
   }
 
+  /**
+   * Downloads the artifact into a temporary file and simulates the installation.
+   */
   public ReleaseArtifactActionLog simulateInstall(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
-    return install(targetFolder, true, rootFileIndicators, excludedFiles, includedFiles);
+    return install(this::downloadTemp, true, true, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
   }
 
+  /**
+   * Downloads the artifact into a temporary file and installs it.
+   */
   public ReleaseArtifactActionLog install(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
-    return install(targetFolder, false, rootFileIndicators, excludedFiles, includedFiles);
+    return install(this::downloadTemp, true, false, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
   }
 
-  private ReleaseArtifactActionLog install(@NonNull File targetFolder, boolean simulate, @NonNull List<String> rootFileIndicators, List<String> excludedFiles, List<String> includedFiles) {
+  /**
+   * Simulates the installation of the supplied archive, the archive is kept.
+   */
+  public ReleaseArtifactActionLog simulateInstall(@NonNull ArchiveSupplier archiveSupplier, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
+    return install(archiveSupplier, false, true, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
+  }
+
+  /**
+   * Installs the supplied archive, the archive is kept.
+   */
+  public ReleaseArtifactActionLog install(@NonNull ArchiveSupplier archiveSupplier, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
+    return install(archiveSupplier, false, false, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
+  }
+
+  @NonNull
+  private File downloadTemp(@NonNull ReleaseArtifactActionLog log) throws Exception {
+    return new Downloader(this.getUrl(), log).download(null);
+  }
+
+  private ReleaseArtifactActionLog install(@NonNull ArchiveSupplier archiveSupplier, boolean deleteArchive, boolean simulate, @NonNull File targetFolder,
+                                           @NonNull List<String> rootFileIndicators, List<String> excludedFiles, List<String> includedFiles) {
     ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(simulate, false);
     try {
-      File archive = new Downloader(this.getUrl(), installLog).download(null);
+      File archive = archiveSupplier.get(installLog);
       if (!archive.exists()) {
         installLog.setStatus("Archive download failed for " + this + " failed, cancelling installation.");
         throw new UnsupportedOperationException("Archive download failed for " + this + " failed, cancelling installation.");
@@ -131,11 +175,11 @@ public class ReleaseArtifact {
         handler.unzip(targetFolder);
       }
 
-      if (!archive.delete()) {
-        installLog.setStatus("Failed to delete download artifact \"" + archive.getAbsolutePath() + "\"");
-        throw new UnsupportedOperationException("Failed to delete download artifact \"" + archive.getAbsolutePath() + "\"");
-      }
-      else {
+      if (deleteArchive) {
+        if (!archive.delete()) {
+          installLog.setStatus("Failed to delete download artifact \"" + archive.getAbsolutePath() + "\"");
+          throw new UnsupportedOperationException("Failed to delete download artifact \"" + archive.getAbsolutePath() + "\"");
+        }
         installLog.log("Deleted downloaded artifact \"" + archive.getAbsolutePath() + "\"");
       }
 

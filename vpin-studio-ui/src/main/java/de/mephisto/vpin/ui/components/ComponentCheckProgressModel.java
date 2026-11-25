@@ -20,10 +20,15 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
   private final static Logger LOG = LoggerFactory.getLogger(ComponentCheckProgressModel.class);
 
   private final Iterator<ComponentInstallation> iterator;
+  private final boolean refresh;
 
-  public ComponentCheckProgressModel(String title, ComponentInstallation installation) {
+  /**
+   * @param refresh reloads the release information from GitHub before the comparison
+   */
+  public ComponentCheckProgressModel(String title, ComponentInstallation installation, boolean refresh) {
     super(title);
     this.iterator = Arrays.asList(installation).iterator();
+    this.refresh = refresh;
   }
 
   @Override
@@ -54,7 +59,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
   @Override
   public void processNext(ProgressResultModel progressResultModel, ComponentInstallation next) {
     try {
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, true);
+      ComponentActionLogRepresentation check = client.getComponentService().check(next, refresh);
       progressResultModel.getResults().add(check);
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);

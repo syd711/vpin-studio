@@ -20,7 +20,7 @@
                       <Insets bottom="6.0" />
                   </BorderPane.margin>
                <center>
-                  <TabPane fx:id="rootTabPane" BorderPane.alignment="CENTER">
+                  <TabPane fx:id="rootTabPane" styleClass="tabs-dark-content" BorderPane.alignment="CENTER">
                      <tabs>
                         <Tab closable="false" text="%components.components.updates">
                            <content>

@@ -146,7 +146,8 @@ public class GithubReleaseFactory {
         LOG.info("No releases found for " + url);
       }
     } catch (IOException e) {
-      LOG.error("Failed to load release page: " + e.getMessage(), e);
+      // rethrown, the caller decides how to report it (e.g. offline is not worth a stack trace)
+      LOG.warn("Failed to load release page {}: {}", url, e.toString());
       throw e;
     }
     return result;

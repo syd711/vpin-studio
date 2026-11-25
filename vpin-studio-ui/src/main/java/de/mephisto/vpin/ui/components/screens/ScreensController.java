@@ -554,7 +554,7 @@ public class ScreensController implements Initializable {
       if (stacked) {
         Label badge = new Label("+" + (members.size() - 1));
         badge.setMinWidth(Region.USE_PREF_SIZE);
-        badge.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: " + COLOR_MAP_BACKGROUND + "; -fx-background-color: " + color
+        badge.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + COLOR_MAP_BACKGROUND + "; -fx-background-color: " + color
             + "; -fx-background-radius: 8; -fx-padding: 0 5 0 5;");
         box.getChildren().add(badge);
       }

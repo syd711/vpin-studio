@@ -59,11 +59,11 @@ public class ComponentsResource {
     return componentService.setTargetFolder(type, body.get("targetFolder"));
   }
 
-  @PostMapping("/check/{forceDownload}")
+  @PostMapping("/check/{refresh}")
   public ComponentActionLogRepresentation check(@RequestBody ComponentInstallation installation,
-                                                @PathVariable("forceDownload") boolean forceDownload) {
-    ReleaseArtifactActionLog log = componentService.check(installation.getComponent(), installation.getReleaseTag(), 
-        installation.getArtifactName(), installation.getTargetFolder(), forceDownload);
+                                                @PathVariable("refresh") boolean refresh) {
+    ReleaseArtifactActionLog log = componentService.check(installation.getComponent(), installation.getReleaseTag(),
+        installation.getArtifactName(), installation.getTargetFolder(), refresh);
     return toActionLog(log);
   }
 

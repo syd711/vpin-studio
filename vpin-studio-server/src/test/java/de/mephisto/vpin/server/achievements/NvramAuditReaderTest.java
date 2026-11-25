@@ -58,4 +58,14 @@ public class NvramAuditReaderTest {
         + ", equal numeric values " + same + "/" + numeric + ", players=" + snapshot.playerCount());
     assertThat(snapshot.audits().keySet()).containsAll(watcher.keySet().stream().filter(k -> watcher.get(k) instanceof Number).toList());
   }
+
+  /**
+   * bbb108/bbb109 have a list valued "recent_scores" entry in the game state, which failed to parse in nvmaps 1.0.1.
+   */
+  @Test
+  void testListValuedGameState() throws Exception {
+    net.nvrams.mapping.map.NVRamMapParser parser = new net.nvrams.mapping.map.NVRamMapParser(new File("../resources/maps").getAbsolutePath() + File.separator);
+    assertThat(parser.getMap("bbb109").getGameState().getPlayerCount()).isNotNull();
+    assertThat(parser.getMap("bbb108").getGameState().getPlayerCount()).isNotNull();
+  }
 }

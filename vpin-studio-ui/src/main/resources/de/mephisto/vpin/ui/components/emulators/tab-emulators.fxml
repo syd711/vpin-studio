@@ -5,182 +5,187 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<!-- Emulators tab: emulator list, settings of the selected emulator, its launch and exit scripts. -->
 <BorderPane fx:id="emulatorRoot" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsController">
+   <padding>
+      <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+   </padding>
    <center>
-      <BorderPane>
-         <center>
-            <ScrollPane fx:id="emuScrollPane" hbarPolicy="NEVER">
-               <content>
-                  <VBox fx:id="emuScrollRoot">
+      <HBox spacing="14.0" BorderPane.alignment="CENTER">
+         <children>
+            <!-- emulator list -->
+            <VBox maxWidth="290.0" minWidth="290.0" prefWidth="290.0" styleClass="sm-panel">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                     <padding>
+                        <Insets bottom="10.0" left="14.0" right="10.0" top="10.0" />
+                     </padding>
                      <children>
-                        <VBox fx:id="emuScrollChild">
+                        <Label styleClass="sm-title" text="%components.components.emulators" />
+                        <Label fx:id="countLabel" styleClass="sm-small" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="reloadBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%components.emulators.reload" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="createBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCreate" styleClass="sm-button, sm-button-icon">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%components.emulators.emulators.create_a_new_emulator_configuration" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <StackPane VBox.vgrow="ALWAYS">
+                     <children>
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll">
+                           <content>
+                              <VBox fx:id="listBox" spacing="2.0">
+                                 <padding>
+                                    <Insets bottom="10.0" left="8.0" right="8.0" top="8.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                        <Label fx:id="listStatusLabel" styleClass="sm-hint" text="%components.emulators.emulators.loading_emulators" textAlignment="CENTER" wrapText="true">
+                           <padding>
+                              <Insets left="18.0" right="18.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+
+            <!-- settings of the selected emulator -->
+            <VBox maxWidth="430.0" minWidth="430.0" prefWidth="430.0" styleClass="sm-panel">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sm-divider">
+                     <padding>
+                        <Insets bottom="10.0" left="18.0" right="10.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="emulatorNameLabel" styleClass="default-title" text="%components.emulators.emulators.emulator_name">
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Label fx:id="emulatorIdLabel" layoutX="10.0" layoutY="10.0" text="%components.emulators.emulators.emulator_id" textFill="WHITE" />
-                              <VBox>
+                              <Label fx:id="emulatorNameLabel" styleClass="sm-title" />
+                              <Label fx:id="emulatorIdLabel" styleClass="sm-small" />
+                           </children>
+                        </VBox>
+                        <Label fx:id="statusPill" minWidth="-Infinity" styleClass="sm-pill" />
+                        <Button fx:id="duplicateBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDuplicate" styleClass="sm-button, sm-button-icon">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%components.emulators.emulators.duplicate_the_selected_emulator" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="deleteBtn" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-button, sm-button-icon">
+                           <graphic>
+                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2d-delete-outline" iconSize="16" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%components.emulators.emulators.delete_selected_emulator" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+                     <content>
+                        <VBox spacing="22.0">
+                           <padding>
+                              <Insets bottom="18.0" left="18.0" right="18.0" top="16.0" />
+                           </padding>
+                           <children>
+                              <!-- validation error of the selected emulator -->
+                              <HBox fx:id="validationBox" spacing="12.0" styleClass="sm-alert">
+                                 <padding>
+                                    <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                                 </padding>
                                  <children>
-                                    <GridPane hgap="6.0" vgap="3.0">
-                                      <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" />
-                                          <ColumnConstraints hgrow="ALWAYS" minWidth="400.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
+                                    <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                                        <children>
-                                          <Label styleClass="default-text" text="%backups.backup_source_folder.enabled" />
-                                          <Label styleClass="default-text" text="%components.emulators.emulators.name_folder_safe" GridPane.rowIndex="1" />
-                                          <Label styleClass="default-text" text="%backglass.directb2s_sidebar.display_name" GridPane.rowIndex="2" />
-                                          <Label fx:id="descriptionLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%components.emulators.emulators.description" GridPane.rowIndex="3" />
-                                          <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%components.emulators.emulators.launch_folder" GridPane.rowIndex="4" />
-                                          <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="%components.emulators.emulators.games_folder" GridPane.rowIndex="5" />
-                                          <Label fx:id="customField2Label" styleClass="default-text" text="%components.emulators.emulators.file_extension" GridPane.rowIndex="6" />
-                                          <Label fx:id="customField1Label" layoutX="10.0" layoutY="136.0" styleClass="default-text" text="%components.emulators.emulators.media_folder" GridPane.rowIndex="7" />
-                                          <Label fx:id="romsFolderLabel" layoutX="10.0" layoutY="166.0" styleClass="default-text" text="%components.emulators.emulators.roms_folder" GridPane.rowIndex="8" />
-      
-                                                      <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="%components.emulators.emulators.emulator_is_active" textFill="WHITE" GridPane.columnIndex="1" />
-                                          <TextField fx:id="safeNameField" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="descriptionField" layoutX="213.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="launchFolderField" layoutX="213.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="gamesFolderField" layoutX="213.0" layoutY="78.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="customField2" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="customField1" layoutX="213.0" layoutY="144.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="romsFolderField" layoutX="213.0" layoutY="178.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-      
-                                                      <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label fx:id="validationTitle" styleClass="sm-alert-title" wrapText="true" />
+                                          <Label fx:id="validationText" styleClass="sm-alert-text" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+
+                              <VBox fx:id="generalSection" spacing="12.0">
+                                 <children>
+                                    <Label styleClass="sm-caption" text="%components.emulators.general" />
+                                    <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%components.emulators.emulators.emulator_is_active" />
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label styleClass="sm-small" text="%components.emulators.name" />
+                                          <TextField fx:id="nameField" styleClass="sm-text-field" />
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label styleClass="sm-small" text="%components.emulators.safe_name" />
+                                          <TextField fx:id="safeNameField" styleClass="sm-text-field" />
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="descriptionBox" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="sm-small" text="%components.emulators.description" />
+                                          <TextField fx:id="descriptionField" styleClass="sm-text-field" />
+                                       </children>
+                                    </VBox>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label fx:id="customField2Label" styleClass="sm-small" text="%components.emulators.file_extension" />
+                                          <TextField fx:id="customField2" styleClass="sm-text-field" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+
+                              <VBox fx:id="foldersSection" spacing="12.0">
+                                 <children>
+                                    <Label styleClass="sm-caption" text="%components.emulators.folders" />
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label styleClass="sm-small" text="%components.emulators.launch_folder" />
+                                          <HBox spacing="6.0">
                                              <children>
-                                                <Button fx:id="selectFolderButtonLaunch" mnemonicParsing="false" onAction="#onSelectFolderLaunch" prefHeight="26.0" prefWidth="110.0" text="%backups.backup_download.select_folder">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button fx:id="openFolderButtonLaunch" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="folder-component" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
+                                                <TextField fx:id="launchFolderField" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectFolderButtonLaunch" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderLaunch" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
+                                                      <Tooltip text="%components.emulators.select_folder" />
                                                    </tooltip>
                                                 </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                                             <children>
-                                                <Button fx:id="selectFolderButtonGames" mnemonicParsing="false" onAction="#onSelectFolderGames" prefHeight="26.0" prefWidth="110.0" text="%backups.backup_download.select_folder">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button fx:id="openFolderButtonGames" mnemonicParsing="false" onAction="#onFolderGames" styleClass="folder-component" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
+                                                <Button fx:id="openFolderButtonLaunch" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
-                                                   </tooltip>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
-                                             <children>
-                                                <Button fx:id="selectFolderButtonMedia" mnemonicParsing="false" onAction="#onSelectFolderMedia" prefHeight="26.0" prefWidth="110.0" text="%backups.backup_download.select_folder">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button fx:id="openFolderButtonMedia" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="folder-component" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
-                                                   </tooltip>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
-                                             <children>
-                                                <Button fx:id="selectFolderButtonRoms" mnemonicParsing="false" onAction="#onSelectFolderRoms" prefHeight="26.0" prefWidth="110.0" text="%backups.backup_download.select_folder">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button fx:id="openFolderButtonRoms" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="folder-component" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
                                                    <tooltip>
                                                       <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
@@ -189,102 +194,132 @@
                                              </children>
                                           </HBox>
                                        </children>
-                                       <VBox.margin>
-                                          <Insets bottom="24.0" />
-                                       </VBox.margin>
-                                    </GridPane>
+                                    </VBox>
+                                    <VBox spacing="6.0">
+                                       <children>
+                                          <Label styleClass="sm-small" text="%components.emulators.games_folder" />
+                                          <HBox spacing="6.0">
+                                             <children>
+                                                <TextField fx:id="gamesFolderField" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectFolderButtonGames" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderGames" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%components.emulators.select_folder" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="openFolderButtonGames" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderGames" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="customField1Box" spacing="6.0">
+                                       <children>
+                                          <Label fx:id="customField1Label" styleClass="sm-small" text="%components.emulators.media_folder" />
+                                          <HBox spacing="6.0">
+                                             <children>
+                                                <TextField fx:id="customField1" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectFolderButtonMedia" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderMedia" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%components.emulators.select_folder" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="openFolderButtonMedia" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="romsFolderBox" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="sm-small" text="%components.emulators.roms_folder" />
+                                          <HBox spacing="6.0">
+                                             <children>
+                                                <TextField fx:id="romsFolderField" styleClass="sm-text-field" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectFolderButtonRoms" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSelectFolderRoms" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-dots-horizontal" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%components.emulators.select_folder" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="openFolderButtonRoms" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="16" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%components.emulators.emulators.open_the_folder_on_the_local_system_if" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
-                              <TabPane fx:id="tabPane" minHeight="320.0" tabClosingPolicy="UNAVAILABLE">
-                                <tabs>
-                                  <Tab fx:id="startScriptTab" text="%components.emulators.emulators.launch_script" />
-                                    <Tab fx:id="vrStartScriptTab" text="%components.emulators.emulators.vr_launch_script" />
-                                  <Tab fx:id="exitScriptTab" text="%components.emulators.emulators.exit_script" />
-                                </tabs>
-                              </TabPane>
                            </children>
-                           <VBox.margin>
-                              <Insets left="12.0" />
-                           </VBox.margin>
                         </VBox>
+                     </content>
+                  </ScrollPane>
+
+                  <!-- actions -->
+                  <HBox spacing="8.0" styleClass="sm-footer">
+                     <padding>
+                        <Insets bottom="14.0" left="18.0" right="18.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <Button fx:id="saveBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onSave" styleClass="sm-accent-button" text="%components.emulators.save_changes" HBox.hgrow="ALWAYS">
+                           <graphic>
+                              <FontIcon iconColor="#1A1305" iconLiteral="mdi2c-content-save" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%components.emulators.emulators.saves_the_current_emulator_changes" />
+                           </tooltip>
+                        </Button>
                      </children>
-                  </VBox>
-               </content>
-            </ScrollPane>
-         </center>
-         <top>
-            <ToolBar prefWidth="200.0" BorderPane.alignment="CENTER">
-              <items>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                  <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="%backups.backup_source_folder.save" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <tooltip>
-                        <Tooltip text="%components.emulators.emulators.saves_the_current_emulator_changes" />
-                     </tooltip>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-save" iconSize="18" />
-                     </graphic>
-                  </Button>
-              </items>
-            </ToolBar>
-         </top>
-      </BorderPane>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- scripts -->
+            <VBox fx:id="scriptsPanel" styleClass="sm-panel" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="8.0">
+                     <padding>
+                        <Insets left="14.0" right="12.0" top="10.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="sm-title" text="%components.emulators.scripts" />
+                     </children>
+                  </HBox>
+                  <TabPane fx:id="tabPane" styleClass="sm-tabs" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                     <tabs>
+                        <Tab fx:id="startScriptTab" text="%components.emulators.emulators.launch_script" />
+                        <Tab fx:id="vrStartScriptTab" text="%components.emulators.emulators.vr_launch_script" />
+                        <Tab fx:id="exitScriptTab" text="%components.emulators.emulators.exit_script" />
+                     </tabs>
+                  </TabPane>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </center>
-   <left>
-      <BorderPane fx:id="tableRoot" BorderPane.alignment="CENTER">
-         <top>
-            <ToolBar BorderPane.alignment="CENTER">
-              <items>
-                 <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
-                    <font>
-                       <Font size="14.0" />
-                    </font>
-                    <graphic>
-                       <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                    </graphic>
-                    <tooltip>
-                       <Tooltip text="%components.emulators.emulator_script.reload_screen_settings" />
-                    </tooltip>
-                 </Button>
-                  <Separator fx:id="firstSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <tooltip>
-                        <Tooltip text="%components.emulators.emulators.create_a_new_emulator_configuration" />
-                     </tooltip>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="duplicateBtn" mnemonicParsing="false" onAction="#onDuplicate" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%components.emulators.emulators.duplicate_the_selected_emulator" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%components.emulators.emulators.delete_selected_emulator" />
-                     </tooltip>
-                  </Button>
-              </items>
-            </ToolBar>
-         </top>
-      </BorderPane>
-   </left>
 </BorderPane>

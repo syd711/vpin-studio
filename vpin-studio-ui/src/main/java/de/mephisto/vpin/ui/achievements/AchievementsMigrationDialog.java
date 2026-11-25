@@ -241,7 +241,7 @@ public class AchievementsMigrationDialog implements Initializable, DialogControl
       sizeToScene();
       return;
     }
-    resultBox.getChildren().add(colored(result.message, result.success ? GREEN : "#FF6B5A", 14, true));
+    resultBox.getChildren().add(colored(result.message, result.success ? GREEN : RED, 14, true));
     if (result.success) {
       resultBox.getChildren().add(text(Messages.get("achievements.migration.summary",
           result.watcherPlayerName != null ? result.watcherPlayerName : "-", result.firebasePid != null ? result.firebasePid : "-",

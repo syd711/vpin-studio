@@ -91,9 +91,9 @@ public class ToyContainerController implements Initializable {
     this.toy = toy;
 
     filenameLabel.setText(toy);
-    filenameLabel.setStyle("-fx-font-size: 15px;-fx-font-weight: bold;");
+    filenameLabel.setStyle("-fx-font-size: 16px;-fx-font-weight: bold;");
     sizeLabel.setText("---");
-    sizeLabel.setStyle("-fx-font-size: 13px");
+    sizeLabel.setStyle("-fx-font-size: 14px");
   }
 
   @Override

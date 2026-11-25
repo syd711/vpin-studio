@@ -54,13 +54,13 @@
                <children>
                   <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label fx:id="tableNameLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                        <Label fx:id="tableNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" />
                         <Label fx:id="tableMetaLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
                      </children>
                   </VBox>
                   <VBox style="-fx-background-color: #161616;">
                      <children>
-                        <Label style="-fx-font-size: 11px; -fx-text-fill: #9A9A9A;" text="%achievements.your_rank" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #9A9A9A;" text="%achievements.your_rank" />
                         <Label fx:id="ownRankLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" />
                      </children>
                      <padding>
@@ -69,7 +69,7 @@
                   </VBox>
                   <VBox style="-fx-background-color: #161616;">
                      <children>
-                        <Label style="-fx-font-size: 11px; -fx-text-fill: #9A9A9A;" text="%achievements.your_progress" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #9A9A9A;" text="%achievements.your_progress" />
                         <Label fx:id="ownProgressLabel" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #DD9646;" />
                      </children>
                      <padding>

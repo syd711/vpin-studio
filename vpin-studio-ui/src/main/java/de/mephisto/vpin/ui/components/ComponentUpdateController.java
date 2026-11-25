@@ -204,7 +204,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
     install.setArtifactName("-latest-");
     install.setTargetFolder(getTargetFolder());
 
-    ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.checking_status_for", type), install);
+    ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.checking_status_for", type), install, true);
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       showLog((ComponentActionLogRepresentation) resultModel.getResults().getFirst(), LogType.COMPARISON, null);
@@ -246,7 +246,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         install.setArtifactName(artifact);
         install.setTargetFolder(getTargetFolder());
 
-        ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.component_check_for", type), install);
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel(Messages.get("dialog.component_check_for", type), install, false);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {

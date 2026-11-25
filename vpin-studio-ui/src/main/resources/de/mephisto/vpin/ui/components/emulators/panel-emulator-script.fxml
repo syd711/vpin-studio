@@ -2,47 +2,39 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" style="-fx-background-color: #111111;" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorScriptPanelController">
-   <left>
-      <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
-         <center>
-            <ListView fx:id="keywordList" prefHeight="400.0" prefWidth="200.0" />
-         </center>
-         <top>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <items>
-                  <Button fx:id="insertBtn" mnemonicParsing="false" onAction="#onInsert" text="%components.emulators.emulator_script.insert" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-paste" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%components.emulators.emulator_script.reload_screen_settings" />
-                     </tooltip>
-                  </Button>
-               </items>
-            </ToolBar>
-         </top>
-      </BorderPane>
-   </left>
+<!-- Script editor of a frontend emulator: placeholder list and script text. -->
+<HBox fx:id="root" spacing="12.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorScriptPanelController">
    <padding>
-      <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+      <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
    </padding>
-   <center>
-      <TextArea fx:id="scriptText" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets left="12.0" />
-         </BorderPane.margin>
-      </TextArea>
-   </center>
-</BorderPane>
+   <children>
+      <VBox maxWidth="200.0" minWidth="200.0" prefWidth="200.0" spacing="8.0">
+         <children>
+            <Label styleClass="sm-caption" text="%components.emulators.placeholders" />
+            <ListView fx:id="keywordList" styleClass="sm-keyword-list" VBox.vgrow="ALWAYS" />
+            <Button fx:id="insertBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInsert" styleClass="sm-button" text="%components.emulators.emulator_script.insert">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-paste" iconSize="16" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%components.emulators.insert_placeholder" />
+               </tooltip>
+            </Button>
+         </children>
+      </VBox>
+      <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label styleClass="sm-caption" text="%components.emulators.script" />
+            <TextArea fx:id="scriptText" styleClass="sm-script-text" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </children>
+</HBox>

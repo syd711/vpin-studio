@@ -77,29 +77,20 @@
                   </GridPane>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" text="%pref.update_manager.install_latest_version" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <Button fx:id="mameCheckBtn" mnemonicParsing="false" onAction="#onMameInstall" styleClass="sm-button" text="%pref.update_manager.install_latest_version">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-up-bold-hexagon-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" text="%components.component_summary_panel.set_as_installed_version" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <Button fx:id="mameSetVersionBtn" mnemonicParsing="false" onAction="#onMameVersionSet" styleClass="sm-button, sm-button-small" text="%components.component_summary_panel.set_as_installed_version">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-hexagon-slice-6" iconSize="16" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%components.component_summary_panel.this_will_set_the_latest_available_version_as" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" text="%pref.update_manager.check_installation" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <Button fx:id="checkMameBtn" mnemonicParsing="false" onAction="#onMameCheck" styleClass="sm-button" text="%pref.update_manager.check_installation">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                            </graphic>

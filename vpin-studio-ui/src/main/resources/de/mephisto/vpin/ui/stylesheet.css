@@ -748,53 +748,111 @@
 }
 
 /**
- * Tabs
+ * Tabs: flat folder tabs (see UI-STYLEGUIDE.md). The header strip is one step lighter than the content,
+ * the selected tab has the content color so it merges with the page below.
+ * -sm-tab-strip / -sm-tab-content are looked up from the nearest .root or .subpanel ancestor.
  */
-.tab-pane .tab-header-area .tab-header-background {
+.root {
+    -sm-tab-strip: #2A2A2A;
+    -sm-tab-content: #222222;
+}
+
+.subpanel, .subpanel-tabbed {
+    -sm-tab-strip: #333333;
+    -sm-tab-content: #2A2A2A;
+}
+
+/* tab pane on a subpanel whose tab content is a #222222 page (System Manager) */
+.tab-pane.tabs-dark-content {
+    -sm-tab-content: #222222;
 }
 
 .tab-pane {
-    -fx-tab-min-height:30px;
+    -fx-tab-min-height: 34px;
 }
 
-.tab{
-    -fx-background-insets: 0 1 0 1,0,0;
-}
-.tab-pane .tab {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color:-fx-base-5;
+.tab-pane > .tab-header-area {
+    -fx-padding: 0;
 }
 
-.tab-pane .tab:selected {
-    -fx-text-background-color: #DDDDDD;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: #111111;
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: -sm-tab-strip;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6 6 0 0;
+    -fx-border-color: transparent;
+    -fx-effect: null;
 }
 
-.tab .tab-label {
+.tab-pane > .tab-header-area > .headers-region {
+    -fx-padding: 8 12 0 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0 1 0 1;
+    -fx-background-radius: 5 5 0 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0 12 0 12;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover {
+    -fx-background-color: #3D3D3D;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: -sm-tab-content;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label {
     -fx-alignment: CENTER;
-    -fx-text-fill: -fx-font-2;
+    -fx-text-fill: #BDBDBD;
     -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-graphic-text-gap: 6;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label {
+    -fx-text-fill: white;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label {
+    -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
-.tab:selected .tab-label {
-    -fx-alignment: CENTER;
-    -fx-text-fill:-fx-font-1;
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label .ikonli-font-icon {
+    -fx-icon-color: #BDBDBD;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab:hover .tab-label .ikonli-font-icon,
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label .ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
+.tab-pane > .tab-header-area > .headers-region > .tab .focus-indicator,
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button {
+    -fx-background-color: transparent;
+    -fx-padding: 8 8 0 8;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button > .arrow {
+    -fx-background-color: #BDBDBD;
+}
+
+.tab-pane > .tab-header-area > .control-buttons-tab > .container > .tab-down-button:hover > .arrow {
+    -fx-background-color: white;
 }
 
 .tab-pane .sub-tab {
-    -fx-tab-min-height:30px;
+    -fx-tab-min-height: 30px;
     -fx-background-color: -fx-base-6;
 }
-
-.tab-pane .sub-tab .tab {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -fx-base-5;
-}
-
-
-
 
 /**
  * Table View
@@ -1647,7 +1705,8 @@
     -fx-text-fill: #DD9646;
 }
 
-.sm-button {
+/* the default System Manager button, also used for every button in an .sm-actionbar */
+.sm-button, .sm-actionbar .button {
     -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-background-color: #333333;
@@ -1658,12 +1717,19 @@
     -fx-cursor: hand;
 }
 
-.sm-button:hover {
+.sm-button:hover, .sm-actionbar .button:hover {
     -fx-background-color: #3D3D3D;
 }
 
 .sm-button-icon {
     -fx-padding: 5 7 5 7;
+}
+
+/* secondary inline actions (e.g. "Set as installed"), same look, fits next to 12px text and pills */
+.sm-button-small {
+    -fx-font-size: 12px;
+    -fx-padding: 3 9 3 9;
+    -fx-graphic-text-gap: 5;
 }
 
 .sm-link, .sm-link:hover, .sm-link:visited {
@@ -1782,21 +1848,6 @@
     -fx-spacing: 8;
 }
 
-.sm-actionbar .button {
-    -fx-font-size: 14px;
-    -fx-text-fill: white;
-    -fx-background-color: #333333;
-    -fx-background-radius: 4;
-    -fx-border-color: #444444;
-    -fx-border-radius: 4;
-    -fx-padding: 5 12 5 12;
-    -fx-cursor: hand;
-}
-
-.sm-actionbar .button:hover {
-    -fx-background-color: #3D3D3D;
-}
-
 .sm-actionbar .separator {
     -fx-padding: 0 4 0 4;
 }
@@ -1813,20 +1864,6 @@
 
 .sm-accent-button:hover {
     -fx-background-color: #E8A55C;
-}
-
-.sm-ghost-button {
-    -fx-font-size: 14px;
-    -fx-text-fill: #BDBDBD;
-    -fx-background-color: transparent;
-    -fx-background-radius: 4;
-    -fx-padding: 4 8 4 8;
-    -fx-cursor: hand;
-}
-
-.sm-ghost-button:hover {
-    -fx-background-color: #333333;
-    -fx-text-fill: white;
 }
 
 .sm-section-header {
@@ -1945,8 +1982,16 @@
 }
 
 /* underlined tabs of the System Manager components */
+.tab-pane.sm-tabs {
+    -fx-tab-min-height: 30px;
+}
+
 .tab-pane.sm-tabs > .tab-header-area {
     -fx-padding: 4 12 0 12;
+}
+
+.tab-pane.sm-tabs > .tab-header-area > .headers-region {
+    -fx-padding: 0;
 }
 
 .tab-pane.sm-tabs > .tab-header-area > .tab-header-background {
@@ -1981,4 +2026,58 @@
 
 .tab-pane.sm-tabs > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-color: transparent;
+}
+
+/* System Manager emulators tab */
+.sm-pill-error {
+    -fx-background-color: #3A1C1F;
+    -fx-text-fill: #FF6B70;
+}
+
+.check-box.sm-text {
+    -fx-text-fill: white;
+}
+
+.sm-keyword-list, .sm-keyword-list > .virtual-flow > .clipped-container > .sheet {
+    -fx-background-color: #161616;
+}
+
+.sm-keyword-list {
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: #3A3A3A;
+    -fx-border-radius: 4;
+    -fx-padding: 2;
+}
+
+.sm-keyword-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-family: "Consolas", "monospace";
+    -fx-font-size: 14px;
+    -fx-padding: 4 8 4 8;
+}
+
+.sm-keyword-list .list-cell:filled:hover {
+    -fx-background-color: #262626;
+}
+
+.sm-keyword-list .list-cell:filled:selected {
+    -fx-background-color: #3A3A3A;
+    -fx-text-fill: white;
+}
+
+.sm-script-text, .sm-script-text .content {
+    -fx-background-color: #161616;
+}
+
+.sm-script-text {
+    -fx-control-inner-background: #161616;
+    -fx-font-family: "Consolas", "monospace";
+    -fx-font-size: 14px;
+    -fx-text-fill: #E0E0E0;
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: #3A3A3A;
+    -fx-border-radius: 4;
 }

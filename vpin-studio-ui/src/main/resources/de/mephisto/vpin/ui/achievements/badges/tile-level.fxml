@@ -15,7 +15,7 @@
             <StackPane fx:id="circleBox" />
             <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="nameLabel" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                  <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" />
                   <StackPane fx:id="progressBox" />
                   <Label fx:id="nextLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
                </children>
@@ -43,7 +43,7 @@
                <children>
                   <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="%achievements.prestige" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Label fx:id="prestigeLabel" style="-fx-font-size: 15px; -fx-text-fill: #DD9646;" />
+                  <Label fx:id="prestigeLabel" style="-fx-font-size: 14px; -fx-text-fill: #DD9646;" />
                </children>
             </HBox>
             <Label style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" text="%achievements.prestige_info" wrapText="true" />

@@ -48,7 +48,9 @@ public final class AchievementsUI {
   public static final String ORANGE = "#DD9646";
   public static final String BLUE = "#7FB2FF";
   public static final String GREEN = "#5CC46A";
+  public static final String RED = "#FF6B70";
   public static final String MUTED = "#BDBDBD";
+  public static final String DISABLED = "#7A7A7A";
   public static final String TRACK = "#161616";
 
   public static final Map<String, String> RARITY_COLORS = Map.of(
@@ -155,7 +157,7 @@ public final class AchievementsUI {
 
   public static Label chip(String text, String color) {
     Label l = new Label(text);
-    l.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 8 2 8; -fx-border-color: " + color + "; -fx-text-fill: " + color + ";");
+    l.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 2 8 2 8; -fx-border-color: " + color + "; -fx-text-fill: " + color + ";");
     return l;
   }
 

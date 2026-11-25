@@ -140,6 +140,8 @@ public class GameServiceClient { ... }
 - FXML files in: `src/main/resources/de/mephisto/vpin/ui/`
 - Controllers: `*Controller.java`
 - CSS styling in resources
+- **Visual rules (colors, font sizes, buttons, pills, reusable tiles): `UI-STYLEGUIDE.md`** — follow it for every new or
+  reworked view; `sm-*` classes live at the end of `vpin-studio-ui/.../ui/stylesheet.css`
 
 ```java
 // Controller pattern

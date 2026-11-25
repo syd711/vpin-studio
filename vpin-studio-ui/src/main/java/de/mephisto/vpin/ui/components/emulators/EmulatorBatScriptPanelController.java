@@ -8,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ public class EmulatorBatScriptPanelController implements Initializable, IEmulato
   private TextField parametersField;
 
   @FXML
-  private VBox infoContainer;
+  private Pane infoContainer;
 
   private Optional<GameEmulatorScript> script;
 

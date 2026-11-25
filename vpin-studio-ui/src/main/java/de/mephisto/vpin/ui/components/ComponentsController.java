@@ -289,7 +289,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
             install.setComponent(componentType);
             install.setReleaseTag("-latest-");
             install.setArtifactName("-latest-");
-            install.setTargetFolder(System.getProperty("java.io.tmpdir"));
+            install.setTargetFolder("-any-");
             ComponentActionLogRepresentation check = client.getComponentService().check(install, false);
             if (!StringUtils.isEmpty(check.getStatus())) {
               LOG.error("Failed to check component " + componentType + ": " + check.getStatus());

@@ -52,9 +52,14 @@ public class ComponentServiceClient extends VPinStudioClientService {
     }
   }
 
-  public ComponentActionLogRepresentation check(ComponentInstallation installation, boolean forceDownload) throws Exception {
+  /**
+   * Compares the release artifact with the installation, a target folder "-any-" only checks for new releases.
+   *
+   * @param refresh reloads the release information from GitHub first
+   */
+  public ComponentActionLogRepresentation check(ComponentInstallation installation, boolean refresh) throws Exception {
     try {
-      return getRestClient().post(API + "components/check/" + forceDownload, installation, ComponentActionLogRepresentation.class);
+      return getRestClient().post(API + "components/check/" + refresh, installation, ComponentActionLogRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed execute update diff: " + e.getMessage(), e);
       throw new Exception("Diff failed");

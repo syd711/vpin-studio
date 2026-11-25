@@ -32,7 +32,7 @@
             <StackPane fx:id="selectedMedalBox" />
             <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="selectedNameLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                  <Label fx:id="selectedNameLabel" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" />
                   <Label fx:id="selectedDescriptionLabel" style="-fx-font-size: 14px; -fx-text-fill: #BDBDBD;" />
                   <Label fx:id="selectedStateLabel" />
                </children>

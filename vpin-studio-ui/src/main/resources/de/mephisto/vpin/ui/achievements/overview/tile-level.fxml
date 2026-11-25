@@ -15,8 +15,8 @@
                <children>
                   <HBox alignment="BASELINE_LEFT" spacing="10.0">
                      <children>
-                        <Label fx:id="nameLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;" />
-                        <Label fx:id="prestigeLabel" style="-fx-font-size: 15px; -fx-text-fill: #DD9646;" />
+                        <Label fx:id="nameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" />
+                        <Label fx:id="prestigeLabel" style="-fx-font-size: 14px; -fx-text-fill: #DD9646;" />
                      </children>
                   </HBox>
                   <StackPane fx:id="progressBox" />

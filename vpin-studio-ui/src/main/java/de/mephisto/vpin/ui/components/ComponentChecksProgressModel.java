@@ -26,11 +26,11 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
   private final static Logger LOG = LoggerFactory.getLogger(ComponentChecksProgressModel.class);
 
   private final Iterator<ComponentInstallation> iterator;
-  private final boolean forceDownload;
+  private final boolean refresh;
 
-  public ComponentChecksProgressModel(boolean forceDownload) {
+  public ComponentChecksProgressModel(boolean refresh) {
     super(Messages.get("dialog.fetching_latest_github_releases"));
-    this.forceDownload = forceDownload;
+    this.refresh = refresh;
     ArrayList<ComponentInstallation> installs = new ArrayList<>();
     for (ComponentType type : ComponentType.getValues()) {
       ComponentInstallation install = new ComponentInstallation();
@@ -75,7 +75,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
         return;
       }
 
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, forceDownload);
+      ComponentActionLogRepresentation check = client.getComponentService().check(next, refresh);
       progressResultModel.getResults().add(check.getStatus());
       if (!StringUtils.isEmpty(check.getStatus())) {
         LOG.error("Failed to check component " + next + ": " + check.getStatus());

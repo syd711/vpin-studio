@@ -18,8 +18,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +63,10 @@ public class ComponentService implements InitializingBean {
   @Autowired
   private DOFComponent dofComponent;
 
-  private Map<ComponentType, List<GithubRelease>> releaseCache = new HashMap<>();
+  @Autowired
+  private ComponentArchiveCache archiveCache;
+
+  private final Map<ComponentType, List<GithubRelease>> releaseCache = new ConcurrentHashMap<>();
 
   public List<Component> getComponents() {
     List<Component> result = new ArrayList<>();
@@ -152,50 +159,87 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
+  /**
+   * Target folder value for checks that only refresh the release information, without comparing an installation.
+   */
+  public static final String ANY_TARGET_FOLDER = "-any-";
+
+  /**
+   * Compares the given release artifact with the installation in the target folder.
+   *
+   * @param refresh reloads the release information from GitHub first. The downloaded archives are cached per
+   *                release, so they are not downloaded again.
+   */
   public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
-                                        String targetDirectory, boolean forceDownload) {
+                                        String targetDirectory, boolean refresh) {
     Component component = getComponent(type);
     ComponentFacade componentFacade = getComponentFacade(type);
-    if (targetDirectory != null) {
-      if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
-        loadReleases(component);
-
-        ReleaseArtifactActionLog install = null;
-        List<GithubRelease> githubReleases = getCached(component);
-        Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
-        GithubRelease githubRelease = githubReleases.getFirst();
-        if (first.isPresent()) {
-          githubRelease = first.get();
-        }
-
-        if (githubRelease != null) {
-          ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
-          File targetFolder = new File(targetDirectory);
-
-          File folder = systemService.getComponentArchiveFolder(type);
-          File artifactArchive = new File(folder, releaseArtifact.getName());
-          if (artifactArchive.exists() && forceDownload) {
-            artifactArchive.delete();
-          }
-
-          install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames(), componentFacade.getDiffList());
-          boolean diff = install.isDiffering();
-          if (!diff && isEffectiveTargetFolder(type, targetFolder)) {
-            component.setInstalledVersion(githubRelease.getTag());
-            LOG.info("Applied current version \"{} for {}", githubRelease.getTag(), component.getType());
-          }
-
-          component.setLastCheck(Instant.now());
-          componentRepository.saveAndFlush(component);
-        }
-        else {
-          throw new UnsupportedOperationException(type + " release for tag \"" + tag + "\" not found.");
-        }
-
-        return install;
-      }
+    if (targetDirectory == null) {
+      return new ReleaseArtifactActionLog(false, true);
     }
-    return new ReleaseArtifactActionLog(false, true);
+
+    // release check only, e.g. "check for updates" of the overview
+    if (ANY_TARGET_FOLDER.equals(targetDirectory)) {
+      if (refresh || StringUtils.isEmpty(component.getLatestReleaseVersion())) {
+        loadReleases(component);
+        component.setLastCheck(Instant.now());
+        componentRepository.saveAndFlush(component);
+      }
+      return new ReleaseArtifactActionLog(false, true);
+    }
+
+    boolean reloadAllowed = true;
+    if (refresh) {
+      loadReleases(component);
+      // a failed refresh (e.g. offline) must not be retried within the same check
+      reloadAllowed = false;
+    }
+
+    GithubRelease githubRelease = findRelease(component, tag, reloadAllowed);
+    if (githubRelease == null) {
+      ReleaseArtifactActionLog log = new ReleaseArtifactActionLog(false, true);
+      log.setStatus("No release information available for " + type + ", the GitHub release page could not be loaded.");
+      return log;
+    }
+
+    ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
+    if (releaseArtifact == null) {
+      throw new UnsupportedOperationException(type + " release artifact \"" + artifact + "\" not found for " + githubRelease.getTag() + ".");
+    }
+
+    File targetFolder = new File(targetDirectory);
+    ReleaseArtifactActionLog install = releaseArtifact.diff(archiveCache.supplier(type, githubRelease, releaseArtifact), targetFolder,
+        componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames(), componentFacade.getDiffList());
+    if (install.getStatus() != null) {
+      archiveCache.invalidate(type, githubRelease, releaseArtifact);
+    }
+    else if (!install.isDiffering() && isEffectiveTargetFolder(type, targetFolder)) {
+      component.setInstalledVersion(githubRelease.getTag());
+      LOG.info("Applied current version \"{}\" for {}", githubRelease.getTag(), component.getType());
+    }
+
+    component.setLastCheck(Instant.now());
+    componentRepository.saveAndFlush(component);
+    return install;
+  }
+
+  /**
+   * The release with the given tag, "-latest-" or an unknown tag resolve to the latest release.
+   * An unknown tag reloads the releases once, the tag may have been published after the last check.
+   */
+  @Nullable
+  private GithubRelease findRelease(@NonNull Component component, @NonNull String tag, boolean reloadAllowed) {
+    List<GithubRelease> githubReleases = reloadAllowed ? getCached(component) : releaseCache.getOrDefault(component.getType(), List.of());
+    Optional<GithubRelease> match = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
+    if (match.isEmpty() && !"-latest-".equals(tag) && reloadAllowed) {
+      loadReleases(component);
+      githubReleases = releaseCache.getOrDefault(component.getType(), List.of());
+      match = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
+    }
+    if (match.isPresent()) {
+      return match.get();
+    }
+    return githubReleases.isEmpty() ? null : githubReleases.getFirst();
   }
 
   @Nullable
@@ -226,43 +270,70 @@ public class ComponentService implements InitializingBean {
     Component component = getComponent(type);
     List<GithubRelease> githubReleases = getCached(component);
     Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
-    if (first.isPresent()) {
-      ReleaseArtifactActionLog install = null;
-      GithubRelease githubRelease = first.get();
-      ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
-      ComponentFacade componentFacade = getComponentFacade(type);
-      File targetFolder = new File(targetDirectory);
-      if (simulate) {
-        return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
-      }
-
-      if (type.equals(ComponentType.b2sbackglass)) {
-        systemService.killProcesses("DFOLinx");
-      }
-
-      componentFacade.preProcess(releaseArtifact, install);
-
-      //we have a real installation from here on
-      install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
-      if (install.getStatus() == null) {
-        //unzipping was successful, the version is only tracked for the component folder, not for other VPX emulators
-        if (isEffectiveTargetFolder(type, targetFolder)) {
-          component.setInstalledVersion(githubRelease.getTag());
-          componentRepository.saveAndFlush(component);
-        }
-        if (type.equals(ComponentType.vpinball)) {
-          emulatorService.refreshVpxVersions();
-        }
-
-        //execute optional post processing
-        componentFacade.postProcess(releaseArtifact, install);
-      }
-
-      return install;
-    }
-    else {
+    if (first.isEmpty()) {
       throw new UnsupportedOperationException(type + " release for tag \"" + tag + "\" not found.");
     }
+
+    GithubRelease githubRelease = first.get();
+    ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
+    if (releaseArtifact == null) {
+      throw new UnsupportedOperationException(type + " release artifact \"" + artifact + "\" not found for " + tag + ".");
+    }
+
+    ComponentFacade componentFacade = getComponentFacade(type);
+    File targetFolder = new File(targetDirectory);
+    ReleaseArtifact.ArchiveSupplier archive = archiveCache.supplier(type, githubRelease, releaseArtifact);
+    if (simulate) {
+      ReleaseArtifactActionLog log = releaseArtifact.simulateInstall(archive, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
+      if (log.getStatus() != null) {
+        archiveCache.invalidate(type, githubRelease, releaseArtifact);
+      }
+      return log;
+    }
+
+    // download before stopping running processes, so they are not stopped during the download
+    ReleaseArtifactActionLog download = new ReleaseArtifactActionLog(false, false);
+    File archiveFile;
+    try {
+      archiveFile = archive.get(download);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to download {} for {}: {}", artifact, type, e.getMessage(), e);
+      if (download.getStatus() == null) {
+        download.setStatus(e.getMessage());
+      }
+      return download;
+    }
+
+    if (type.equals(ComponentType.b2sbackglass)) {
+      systemService.killProcesses("DFOLinx");
+    }
+
+    componentFacade.preProcess(releaseArtifact, download);
+
+    //we have a real installation from here on
+    ReleaseArtifactActionLog install = releaseArtifact.install(log -> {
+      log.getLogs().addAll(download.getLogs());
+      return archiveFile;
+    }, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
+    if (install.getStatus() == null) {
+      //unzipping was successful, the version is only tracked for the component folder, not for other VPX emulators
+      if (isEffectiveTargetFolder(type, targetFolder)) {
+        component.setInstalledVersion(githubRelease.getTag());
+        componentRepository.saveAndFlush(component);
+      }
+      if (type.equals(ComponentType.vpinball)) {
+        emulatorService.refreshVpxVersions();
+      }
+
+      //execute optional post processing
+      componentFacade.postProcess(releaseArtifact, install);
+    }
+    else {
+      archiveCache.invalidate(type, githubRelease, releaseArtifact);
+    }
+
+    return install;
   }
 
   private void loadReleases(Component component) {
@@ -277,6 +348,9 @@ public class ComponentService implements InitializingBean {
       }
       componentRepository.saveAndFlush(component);
       this.releaseCache.put(component.getType(), githubReleases);
+    }
+    catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
+      LOG.warn("Failed to load releases for {}, GitHub is not reachable: {}", component, e.toString());
     }
     catch (IOException e) {
       LOG.error("Failed to initialize release for {}: {}", component, e.getMessage(), e);
@@ -302,7 +376,7 @@ public class ComponentService implements InitializingBean {
       loadReleases(component);
     }
 
-    return this.releaseCache.get(component.getType());
+    return this.releaseCache.getOrDefault(component.getType(), List.of());
   }
 
   public ComponentFacade getComponentFacade(ComponentType type) {
