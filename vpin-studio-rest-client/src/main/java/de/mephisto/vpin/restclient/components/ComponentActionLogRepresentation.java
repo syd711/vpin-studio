@@ -2,6 +2,9 @@ package de.mephisto.vpin.restclient.components;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ComponentActionLogRepresentation {
   private String logsSummary;
   private String diffSummary;
@@ -11,6 +14,27 @@ public class ComponentActionLogRepresentation {
   private boolean diff;
 
   private String summary;
+
+  /** the compared files, only filled for comparisons */
+  private List<ComponentDiffEntryRepresentation> diffEntries = new ArrayList<>();
+  /** true if the comparison found a difference in one of the version relevant files */
+  private boolean differing;
+
+  public List<ComponentDiffEntryRepresentation> getDiffEntries() {
+    return diffEntries;
+  }
+
+  public void setDiffEntries(List<ComponentDiffEntryRepresentation> diffEntries) {
+    this.diffEntries = diffEntries;
+  }
+
+  public boolean isDiffering() {
+    return differing;
+  }
+
+  public void setDiffering(boolean differing) {
+    this.differing = differing;
+  }
 
   public String getSummary() {
     return summary;

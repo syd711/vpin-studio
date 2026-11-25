@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.components;
 
+import de.mephisto.vpin.connectors.github.DiffEntry;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.*;
@@ -138,6 +139,15 @@ public class ComponentsResource {
     representation.setDiff(log.isDiff());
     representation.setDiffSummary(log.toDiffString());
     representation.setSummary(log.getSummary());
+    representation.setDiffering(log.isDiffering());
+    for (DiffEntry diffEntry : log.getDiffEntries()) {
+      ComponentDiffEntryRepresentation entry = new ComponentDiffEntryRepresentation();
+      entry.setFile(diffEntry.getFile());
+      entry.setState(diffEntry.getState().name());
+      entry.setInstalledSize(diffEntry.getSourceSize());
+      entry.setReleaseSize(diffEntry.getTargetSize());
+      representation.getDiffEntries().add(entry);
+    }
     return representation;
   }
 }

@@ -16,7 +16,7 @@
 <StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabMameController">
     <BorderPane>
         <top>
-            <ToolBar BorderPane.alignment="CENTER">
+            <ToolBar BorderPane.alignment="CENTER" styleClass="sm-actionbar">
                 <items>
                <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
                   <font>
@@ -54,29 +54,17 @@
             </ToolBar>
         </top>
         <center>
-         <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
-            <content>
-                  <VBox styleClass="subpanel-tabbed">
-                      <children>
-                          <VBox fx:id="componentSummaryPane" />
-                          <VBox fx:id="componentCustomValues" layoutX="10.0" layoutY="10.0" />
-                          <BorderPane fx:id="componentInstallerPane" />
-                          <VBox styleClass="info-container">
-                              <VBox.margin>
-                                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                              </VBox.margin>
-                              <children>
-                                  <Label styleClass="default-text" text="%components.mame.after_updating_to_the_latest_vpin_mame_version" />
-                                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="%components.mame.press_the_install_button_in_the_vpin_mame" />
-                              </children>
-                              <padding>
-                                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                              </padding>
-                          </VBox>
-                      </children>
-                  </VBox>
-            </content>
-         </ScrollPane>
+           <BorderPane fx:id="componentInstallerPane" BorderPane.alignment="CENTER" />
         </center>
     </BorderPane>
+    <fx:define>
+        <!-- moved into the split view by AbstractComponentTab -->
+        <VBox fx:id="componentCustomValues" />
+        <VBox fx:id="componentHint">
+            <children>
+                <Label text="%components.mame.after_updating_to_the_latest_vpin_mame_version" />
+                <Label text="%components.mame.press_the_install_button_in_the_vpin_mame" />
+            </children>
+        </VBox>
+    </fx:define>
 </StackPane>

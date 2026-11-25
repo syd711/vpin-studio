@@ -13,14 +13,11 @@ import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -46,10 +43,11 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   public Separator folderSeparator;
 
   @FXML
-  public VBox componentSummaryPane;
-
-  @FXML
   private VBox componentCustomValues;
+
+  /** optional component specific instructions, shown below the install buttons */
+  @FXML
+  private VBox componentHint;
 
   protected ComponentRepresentation component;
   protected ComponentUpdateController componentUpdateController;
@@ -110,13 +108,24 @@ abstract public class AbstractComponentTab implements StudioEventListener {
     try {
       FXMLLoader loader = new FXMLLoader(ComponentSummaryController.class.getResource("component-summary-panel.fxml"));
       loader.setResources(Messages.getBundle());
-      Parent builtInRoot = loader.load();
+      loader.load();
       componentSummaryController = loader.getController();
-      componentSummaryPane.getChildren().add(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
+
+    // left column of the split view: version, installer, installation and the component specific details
+    VBox left = componentUpdateController.getLeftContent();
+    left.getChildren().setAll(componentSummaryController.getVersionSection(), componentUpdateController.getInstallerSection(),
+        componentSummaryController.getInstallationSection());
+    if (componentCustomValues != null) {
+      componentCustomValues.setSpacing(10);
+      componentCustomValues.managedProperty().bind(componentCustomValues.visibleProperty());
+      componentCustomValues.setVisible(false);
+      left.getChildren().add(componentCustomValues);
+    }
+    componentUpdateController.setHint(componentHint);
 
     JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(getComponentType()))
         .thenAcceptLater(comp -> {
@@ -130,7 +139,8 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   }
 
   public void clearCustomValues() {
-    componentCustomValues.getChildren().removeAll(componentCustomValues.getChildren());
+    componentCustomValues.getChildren().clear();
+    componentCustomValues.setVisible(false);
   }
 
   protected ComponentSummaryEntryController addCustomValue(ComponentSummaryEntry entry) {
@@ -141,15 +151,13 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       ComponentSummaryEntryController controller = loader.getController();
 
       if (componentCustomValues.getChildren().isEmpty()) {
-        Label label = new Label(Messages.get("components.abstract_component_tab.installation_details"));
-        label.getStyleClass().add("preference-subtitle");
-        HBox box = new HBox(label);
-        box.setAlignment(Pos.CENTER_LEFT);
-        box.setPadding(new Insets(12, 12, 12, 12));
-        componentCustomValues.getChildren().add(box);
+        Label label = new Label(Messages.get("components.abstract_component_tab.installation_details").toUpperCase());
+        label.getStyleClass().add("sm-caption");
+        componentCustomValues.getChildren().add(label);
       }
 
       componentCustomValues.getChildren().add(builtInRoot);
+      componentCustomValues.setVisible(true);
       controller.refresh(entry);
       return controller;
     }

@@ -2,46 +2,104 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <StackPane fx:id="stack" prefWidth="700.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabOverviewController">
-    <BorderPane>
-        <top>
-            <ToolBar BorderPane.alignment="CENTER">
-                <items>
-                    <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onVersionRefresh" text="%components.overview.refresh_version_information" textFill="WHITE">
-                        <font>
-                            <Font size="14.0" />
-                        </font>
-                        <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
-                        </graphic>
-                    </Button>
-                </items>
-            </ToolBar>
-        </top>
-      <center>
-         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-               <Insets />
-            </BorderPane.margin>
-            <content>
-                  <VBox fx:id="componentList" styleClass="subpanel-tabbed">
-                      <padding>
-                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                      </padding>
-                  </VBox>
-            </content>
-         </ScrollPane>
-      </center>
-    </BorderPane>
+   <children>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll">
+         <content>
+            <VBox spacing="16.0">
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+               <children>
+                  <!-- use at your own risk -->
+                  <HBox fx:id="hint" spacing="14.0" styleClass="sm-alert">
+                     <padding>
+                        <Insets bottom="14.0" left="16.0" right="12.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <StackPane maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="18" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="sm-alert-title" text="%components.overview.risk_title" />
+                              <Label styleClass="sm-alert-text" text="%components.overview.risk_instructions" wrapText="true">
+                                 <graphic>
+                                    <Label styleClass="sm-alert-text" text="•" />
+                                 </graphic>
+                              </Label>
+                              <Label styleClass="sm-alert-text" text="%components.overview.risk_simulator" wrapText="true">
+                                 <graphic>
+                                    <Label styleClass="sm-alert-text" text="•" />
+                                 </graphic>
+                              </Label>
+                              <Label styleClass="sm-alert-text" text="%components.overview.risk_feedback" wrapText="true">
+                                 <graphic>
+                                    <Label styleClass="sm-alert-text" text="•" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox alignment="TOP_RIGHT" spacing="10.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
+                                 <graphic>
+                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                              <Region VBox.vgrow="ALWAYS" />
+                              <HBox spacing="6.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#onDiscord" styleClass="sm-alert-button" text="%components.overview.discord" />
+                                    <Button mnemonicParsing="false" onAction="#onGitHub" styleClass="sm-alert-button" text="%components.overview.github_issues" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <!-- status row -->
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <Label fx:id="statusLabel" styleClass="sm-pill, sm-pill-large, sm-pill-unknown" text="%components.components.loading_component_information">
+                           <graphic>
+                              <FontIcon fx:id="statusIcon" iconColor="#BDBDBD" iconLiteral="mdi2c-check-bold" iconSize="16" />
+                           </graphic>
+                        </Label>
+                        <Label fx:id="lastCheckedLabel" styleClass="sm-small" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onVersionRefresh" styleClass="sm-button" text="%components.overview.check_for_updates">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+
+                  <!-- component cards -->
+                  <GridPane fx:id="componentGrid" hgap="14.0" vgap="14.0">
+                     <columnConstraints>
+                        <ColumnConstraints percentWidth="33.333333" />
+                        <ColumnConstraints percentWidth="33.333333" />
+                        <ColumnConstraints percentWidth="33.333333" />
+                     </columnConstraints>
+                  </GridPane>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
 </StackPane>

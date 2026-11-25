@@ -4,146 +4,196 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentUpdateController">
-   <center>
-      <VBox BorderPane.alignment="CENTER">
+<!-- Split view of a component tab: settings and actions on the left, the log of the last action on the right. -->
+<HBox spacing="14.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentUpdateController">
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="12.0" />
+   </padding>
+   <children>
+      <!-- left column -->
+      <VBox maxWidth="390.0" minWidth="390.0" prefWidth="390.0" styleClass="sm-panel">
          <children>
-            <BorderPane>
-               <center>
-                  <VBox>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="leftContent" spacing="22.0">
+                     <padding>
+                        <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                     </padding>
                      <children>
-                        <Label styleClass="preference-subtitle" text="%components.component_update_panel.installer" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <GridPane hgap="3.0" vgap="3.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="770.4000732421875" minWidth="10.0" prefWidth="450.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <!-- installer section, the version and installation sections are added around it by the tab -->
+                        <VBox fx:id="installerSection" spacing="12.0">
                            <children>
-                              <Label fx:id="usersLabel1" text="%components.component_update_panel.release" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                              <Label styleClass="sm-caption" text="%components.tab.installer" />
+                              <VBox spacing="6.0">
                                  <children>
-                                    <ComboBox fx:id="releasesCombo" />
-                                    <Button mnemonicParsing="false" onAction="#onFetch" text="%components.component_update_panel.refresh" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
-                                       </tooltip>
-                                    </Button>
+                                    <Label styleClass="sm-small" text="%components.tab.release" />
+                                    <HBox spacing="8.0">
+                                       <children>
+                                          <ComboBox fx:id="releasesCombo" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                                          <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onFetch" styleClass="sm-button, sm-button-icon">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
+                                             </tooltip>
+                                          </Button>
+                                       </children>
+                                    </HBox>
                                  </children>
-                              </HBox>
-                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              </VBox>
+                              <VBox spacing="6.0">
                                  <children>
-                                    <ComboBox fx:id="artifactCombo" />
-                                    <Button fx:id="checkBtn" mnemonicParsing="false" onAction="#onCheck" text="%components.component_update_panel.compare_with_installation" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-compare-horizontal" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
-                                       </tooltip>
-                                    </Button>
+                                    <Label styleClass="sm-small" text="%components.tab.artifact" />
+                                    <ComboBox fx:id="artifactCombo" maxWidth="Infinity" />
                                  </children>
-                              </HBox>
-                              <Label fx:id="usersLabel11" layoutX="10.0" layoutY="15.0" text="%components.component_update_panel.release_artifact" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <TextArea fx:id="releaseNotes" prefHeight="100.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextArea>
-                              <Label styleClass="default-text" text="%components.component_update_panel.release_notes" textFill="WHITE" GridPane.rowIndex="2" GridPane.valignment="TOP">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                                 <GridPane.margin>
-                                    <Insets top="3.0" />
-                                 </GridPane.margin>
-                              </Label>
+                              </VBox>
+                              <Button fx:id="checkBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCheck" styleClass="sm-button" text="%components.tab.compare_with_installation">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-compare-horizontal" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="%components.component_update_panel.checks_the_installation_against_the_selected_version" wrapText="true" />
+                                 </tooltip>
+                              </Button>
+                              <VBox spacing="8.0" styleClass="sm-inset">
+                                 <padding>
+                                    <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                                 </padding>
+                                 <children>
+                                    <Button fx:id="releaseNotesToggle" maxWidth="Infinity" mnemonicParsing="false" onAction="#onToggleReleaseNotes" styleClass="sm-section-header">
+                                       <graphic>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                             <children>
+                                                <FontIcon fx:id="releaseNotesChevron" iconColor="#BDBDBD" iconLiteral="mdi2c-chevron-right" iconSize="18" />
+                                                <Label styleClass="sm-text" text="%components.tab.release_notes" />
+                                                <Region HBox.hgrow="ALWAYS" />
+                                                <Label fx:id="releaseNotesState" styleClass="sm-small" />
+                                             </children>
+                                          </HBox>
+                                       </graphic>
+                                    </Button>
+                                    <TextArea fx:id="releaseNotes" editable="false" prefRowCount="10" wrapText="true" />
+                                 </children>
+                              </VBox>
                            </children>
-                        </GridPane>
+                        </VBox>
                      </children>
                   </VBox>
-               </center>
-               <right>
-                  <VBox prefWidth="400.0" BorderPane.alignment="CENTER" />
-               </right>
-            </BorderPane>
-            <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="%components.component_update_panel.log" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <StackPane fx:id="loaderStack">
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
+               </content>
+            </ScrollPane>
+
+            <!-- actions -->
+            <VBox spacing="10.0" styleClass="sm-footer">
+               <padding>
+                  <Insets bottom="14.0" left="18.0" right="18.0" top="14.0" />
+               </padding>
                <children>
-                  <TextArea fx:id="textArea" editable="false" prefHeight="350.0" prefWidth="900.0">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </TextArea>
+                  <HBox spacing="8.0">
+                     <children>
+                        <Button fx:id="simBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="sm-button" text="%components.tab.simulate" HBox.hgrow="ALWAYS">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-flask-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%components.component_update_panel.simulate_installation" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="installBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onInstall" styleClass="sm-accent-button" text="%components.component_update_panel.start_installation" HBox.hgrow="ALWAYS">
+                           <graphic>
+                              <FontIcon fx:id="installIcon" iconColor="#1A1305" iconLiteral="mdi2d-download" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hintRow" spacing="8.0">
+                     <children>
+                        <FontIcon iconColor="#9A9A9A" iconLiteral="mdi2i-information-outline" iconSize="16" />
+                        <VBox fx:id="hintBox" spacing="4.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+
+      <!-- log -->
+      <VBox styleClass="sm-panel" HBox.hgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sm-divider">
+               <padding>
+                  <Insets bottom="10.0" left="14.0" right="12.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="sm-title" text="%components.component_update_panel.log" />
+                  <Label fx:id="logMetaLabel" minWidth="-Infinity" styleClass="sm-small" />
+                  <HBox fx:id="filterBox" alignment="CENTER_LEFT" spacing="6.0" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="searchField" prefWidth="170.0" promptText="%components.tab.filter_files" styleClass="sm-text-field" />
+                  <ToggleButton fx:id="groupToggle" minWidth="-Infinity" mnemonicParsing="false" selected="true" styleClass="sm-filter-pill" text="%components.tab.group">
+                     <graphic>
+                        <FontIcon iconColor="#BDBDBD" iconLiteral="mdi2f-format-list-group" iconSize="16" />
+                     </graphic>
+                  </ToggleButton>
+                  <Button fx:id="copyBtn" mnemonicParsing="false" onAction="#onCopyLog" styleClass="sm-button, sm-button-icon">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="16" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%components.tab.copy_log" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClearLog" styleClass="sm-button, sm-button-icon">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-delete-outline" iconSize="16" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%components.tab.clear_log" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+
+            <!-- outcome of the last action -->
+            <HBox fx:id="banner" alignment="CENTER_LEFT" spacing="14.0" styleClass="sm-banner">
+               <padding>
+                  <Insets bottom="12.0" left="14.0" right="14.0" top="12.0" />
+               </padding>
+               <children>
+                  <FontIcon fx:id="bannerIcon" iconColor="#DD9646" iconLiteral="mdi2a-alert-outline" iconSize="22" />
+                  <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="bannerTitle" styleClass="sm-alert-title" wrapText="true" />
+                        <Label fx:id="bannerText" styleClass="sm-hint" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <StackPane VBox.vgrow="ALWAYS">
+               <children>
+                  <ListView fx:id="diffList" styleClass="sm-log" />
+                  <TextArea fx:id="textArea" editable="false" styleClass="sm-log-text" wrapText="false" />
+                  <Label fx:id="emptyLabel" styleClass="sm-hint" text="%components.tab.log_empty" textAlignment="CENTER" wrapText="true">
+                     <padding>
+                        <Insets left="24.0" right="24.0" />
+                     </padding>
+                  </Label>
                </children>
             </StackPane>
          </children>
       </VBox>
-   </center>
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
-   <bottom>
-      <HBox alignment="CENTER_RIGHT" spacing="12.0" BorderPane.alignment="CENTER_RIGHT">
-         <children>
-            <Button fx:id="simBtn" mnemonicParsing="false" onAction="#onInstallSimulate" styleClass="default-text" text="%components.component_update_panel.simulate_installation">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-test-tube" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="installer-button" text="%components.component_update_panel.start_installation">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-         </children>
-         <BorderPane.margin>
-            <Insets top="6.0" />
-         </BorderPane.margin>
-      </HBox>
-   </bottom>
-</BorderPane>
+   </children>
+</HBox>

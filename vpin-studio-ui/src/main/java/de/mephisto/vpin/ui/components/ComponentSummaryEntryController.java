@@ -26,15 +26,12 @@ public class ComponentSummaryEntryController implements Initializable {
   private VBox root;
 
   public void refresh(ComponentSummaryEntry entry) {
-    String key = entry.getName();
-    if (!key.endsWith(":")) {
-      key += ":";
-    }
+    String key = StringUtils.removeEnd(StringUtils.trimToEmpty(entry.getName()), ":");
 
     titleLabel.setText(key);
     valueLabel.setText(entry.getValue());
     description.setVisible(!StringUtils.isEmpty(entry.getDescription()));
-    description.setText("(" + entry.getDescription() + ")");
+    description.setText(entry.getDescription());
 
     if (!entry.isValid()) {
       String color = WidgetFactory.ERROR_COLOR;
@@ -48,11 +45,6 @@ public class ComponentSummaryEntryController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    description.visibleProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (!t1) {
-        root.setPrefHeight(28);
-        root.setMinHeight(28);
-      }
-    });
+    description.managedProperty().bind(description.visibleProperty());
   }
 }

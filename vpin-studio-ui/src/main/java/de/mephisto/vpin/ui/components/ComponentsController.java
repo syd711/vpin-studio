@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
@@ -11,7 +9,6 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
@@ -21,16 +18,13 @@ import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
 import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -104,9 +98,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
   @FXML
   private VBox componentLoader;
 
-  @FXML
-  private Pane hint;
-
   private boolean initialized = false;
   private EmulatorsController emulatorsController;
 
@@ -114,27 +105,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
   public ComponentsController() {
   }
 
-
-  @FXML
-  public void onDismiss() {
-    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, Messages.get("dialog.hide_this_warning"), Messages.get("dialog.hide_warning"), Messages.get("dialog.select_the_checkbox_below_if_you_do_2"), null, Messages.get("dialog.do_not_show_again"), false);
-    if (!confirmationResult.isApplyClicked()) {
-      hint.setVisible(false);
-    }
-
-    if (!confirmationResult.isApplyClicked() && confirmationResult.isChecked()) {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      uiSettings.setHideComponentWarning(true);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    }
-  }
-
-  @FXML
-  public void onHyperlink(ActionEvent event) {
-    Hyperlink link = (Hyperlink) event.getSource();
-    String linkText = link.getText();
-    Studio.browse(linkText);
-  }
 
   private void updateForTabSelection(int index) {
     if (index == 0) {
@@ -202,11 +172,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
     componentLoader.managedProperty().bindBidirectional(componentLoader.visibleProperty());
     tabPane.setVisible(false);
 
-    tabPane.setTabMaxWidth(100);
-    tabPane.setTabMinWidth(100);
-
-    hint.setVisible(false);
-    hint.managedProperty().bindBidirectional(hint.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
@@ -286,7 +251,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
       refreshView(t1);
     });
 
-    preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);
   }
 
@@ -375,13 +339,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.UI_SETTINGS)) {
-      JFXFuture.supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class))
-        .thenAcceptLater(uiSettings -> {
-          hint.setVisible(!uiSettings.isHideComponentWarning());
-        });
-    }
-    else if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
+    if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
       JFXFuture.supplyAsync(() -> client.getDofLinxService().isValid())
       .thenAcceptLater(isDofLinxValid -> {
         if (isDofLinxValid) {

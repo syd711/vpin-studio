@@ -16,7 +16,7 @@
 <StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabFlexDMDController">
     <BorderPane>
         <top>
-            <ToolBar BorderPane.alignment="CENTER">
+            <ToolBar BorderPane.alignment="CENTER" styleClass="sm-actionbar">
             <items>
                <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="%components.b2s.open_folder" textFill="WHITE">
                   <font>
@@ -42,30 +42,17 @@
             </ToolBar>
         </top>
         <center>
-         <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
-            <content>
-                  <VBox styleClass="subpanel-tabbed">
-                      <children>
-                          <VBox fx:id="componentSummaryPane" />
-                          <VBox fx:id="componentCustomValues" layoutX="10.0" layoutY="10.0" />
-                          <BorderPane fx:id="componentInstallerPane" />
-
-                     <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
-                        <children>
-                           <Label styleClass="default-text" text="%components.flexdmd.the_installer_will_extract_the_latest_flexdmd_files" />
-                           <Label styleClass="default-text" text="%components.flexdmd.after_updating_to_the_latest_version_the_installer" />
-                        </children>
-                        <padding>
-                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                        </padding>
-                        <VBox.margin>
-                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                        </VBox.margin>
-                     </VBox>
-                      </children>
-                  </VBox>
-            </content>
-         </ScrollPane>
+           <BorderPane fx:id="componentInstallerPane" BorderPane.alignment="CENTER" />
         </center>
     </BorderPane>
+    <fx:define>
+        <!-- moved into the split view by AbstractComponentTab -->
+        <VBox fx:id="componentCustomValues" />
+        <VBox fx:id="componentHint">
+            <children>
+                <Label text="%components.flexdmd.the_installer_will_extract_the_latest_flexdmd_files" />
+                <Label text="%components.flexdmd.after_updating_to_the_latest_version_the_installer" />
+            </children>
+        </VBox>
+    </fx:define>
 </StackPane>
