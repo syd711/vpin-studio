@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.components;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
+import de.mephisto.vpin.restclient.components.ComponentProgressRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.emulators.EmulatorService;
@@ -25,6 +26,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.restclient.components.ComponentProgressRepresentation.*;
 
 @Service
 public class ComponentService implements InitializingBean {
@@ -67,6 +70,16 @@ public class ComponentService implements InitializingBean {
   private ComponentArchiveCache archiveCache;
 
   private final Map<ComponentType, List<GithubRelease>> releaseCache = new ConcurrentHashMap<>();
+
+  private final ComponentProgressTracker progressTracker = new ComponentProgressTracker();
+
+  /**
+   * The progress of the running check, simulation or installation of the given component.
+   */
+  @NonNull
+  public ComponentProgressRepresentation getProgress(@NonNull ComponentType type) {
+    return progressTracker.getProgress(type);
+  }
 
   public List<Component> getComponents() {
     List<Component> result = new ArrayList<>();
@@ -172,6 +185,20 @@ public class ComponentService implements InitializingBean {
    */
   public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
                                         String targetDirectory, boolean refresh) {
+    ComponentProgressTracker.Operation operation = ANY_TARGET_FOLDER.equals(targetDirectory)
+        ? progressTracker.start(type, PHASE_FETCH)
+        : refresh ? progressTracker.start(type, PHASE_FETCH, PHASE_DOWNLOAD, PHASE_COMPARE)
+        : progressTracker.start(type, PHASE_DOWNLOAD, PHASE_COMPARE);
+    try {
+      return check(type, tag, artifact, targetDirectory, refresh, operation);
+    }
+    finally {
+      progressTracker.finish(type, operation);
+    }
+  }
+
+  private ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
+                                         String targetDirectory, boolean refresh, ComponentProgressTracker.Operation operation) {
     Component component = getComponent(type);
     ComponentFacade componentFacade = getComponentFacade(type);
     if (targetDirectory == null) {
@@ -181,6 +208,7 @@ public class ComponentService implements InitializingBean {
     // release check only, e.g. "check for updates" of the overview
     if (ANY_TARGET_FOLDER.equals(targetDirectory)) {
       if (refresh || StringUtils.isEmpty(component.getLatestReleaseVersion())) {
+        operation.phase(PHASE_FETCH);
         loadReleases(component);
         component.setLastCheck(Instant.now());
         componentRepository.saveAndFlush(component);
@@ -190,6 +218,7 @@ public class ComponentService implements InitializingBean {
 
     boolean reloadAllowed = true;
     if (refresh) {
+      operation.phase(PHASE_FETCH);
       loadReleases(component);
       // a failed refresh (e.g. offline) must not be retried within the same check
       reloadAllowed = false;
@@ -208,7 +237,7 @@ public class ComponentService implements InitializingBean {
     }
 
     File targetFolder = new File(targetDirectory);
-    ReleaseArtifactActionLog install = releaseArtifact.diff(archiveCache.supplier(type, githubRelease, releaseArtifact), targetFolder,
+    ReleaseArtifactActionLog install = releaseArtifact.diff(archiveCache.supplier(type, githubRelease, releaseArtifact), operation, targetFolder,
         componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames(), componentFacade.getDiffList());
     if (install.getStatus() != null) {
       archiveCache.invalidate(type, githubRelease, releaseArtifact);
@@ -267,6 +296,18 @@ public class ComponentService implements InitializingBean {
   @NonNull
   public ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
                                           String targetDirectory, boolean simulate) {
+    ComponentProgressTracker.Operation operation = progressTracker.start(type, PHASE_DOWNLOAD, simulate ? PHASE_SIMULATE : PHASE_EXTRACT);
+    try {
+      return install(type, tag, artifact, targetDirectory, simulate, operation);
+    }
+    finally {
+      progressTracker.finish(type, operation);
+    }
+  }
+
+  @NonNull
+  private ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact,
+                                           String targetDirectory, boolean simulate, ComponentProgressTracker.Operation operation) {
     Component component = getComponent(type);
     List<GithubRelease> githubReleases = getCached(component);
     Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
@@ -284,7 +325,7 @@ public class ComponentService implements InitializingBean {
     File targetFolder = new File(targetDirectory);
     ReleaseArtifact.ArchiveSupplier archive = archiveCache.supplier(type, githubRelease, releaseArtifact);
     if (simulate) {
-      ReleaseArtifactActionLog log = releaseArtifact.simulateInstall(archive, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
+      ReleaseArtifactActionLog log = releaseArtifact.simulateInstall(archive, operation, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       if (log.getStatus() != null) {
         archiveCache.invalidate(type, githubRelease, releaseArtifact);
       }
@@ -292,7 +333,7 @@ public class ComponentService implements InitializingBean {
     }
 
     // download before stopping running processes, so they are not stopped during the download
-    ReleaseArtifactActionLog download = new ReleaseArtifactActionLog(false, false);
+    ReleaseArtifactActionLog download = new ReleaseArtifactActionLog(false, false, operation);
     File archiveFile;
     try {
       archiveFile = archive.get(download);
@@ -315,7 +356,7 @@ public class ComponentService implements InitializingBean {
     ReleaseArtifactActionLog install = releaseArtifact.install(log -> {
       log.getLogs().addAll(download.getLogs());
       return archiveFile;
-    }, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
+    }, operation, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
     if (install.getStatus() == null) {
       //unzipping was successful, the version is only tracked for the component folder, not for other VPX emulators
       if (isEffectiveTargetFolder(type, targetFolder)) {

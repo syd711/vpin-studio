@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.DMDPreferencesController">
    <center>
@@ -93,7 +94,10 @@
                            </GridPane.margin>
                         </Button>
 
-                        <Label fx:id="networkStreamErrorLabel" styleClass="error-message" text="%pref.dmd.invalid_url_press_update_to_set_the_vpin" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label styleClass="sm-field-error" fx:id="networkStreamErrorLabel" text="%pref.dmd.invalid_url_press_update_to_set_the_vpin" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <graphic>
+                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                           </graphic>
                            <font>
                               <Font size="14.0" />
                            </font>

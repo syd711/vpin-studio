@@ -151,66 +151,43 @@
             <Insets />
          </BorderPane.margin>
          <center>
-            <BorderPane fx:id="validationError">
+            <BorderPane fx:id="validationError" styleClass="sm-alert">
                <center>
-                  <VBox BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="3.0" left="12.0" top="3.0" />
-                     </BorderPane.margin>
+                  <HBox spacing="12.0">
                      <children>
-                        <BorderPane>
-                           <left>
-                              <Label fx:id="validationErrorLabel" text="%tables.tables_overview.loading_tables" textFill="WHITE" BorderPane.alignment="CENTER">
-                                    <font>
-                                       <Font name="System Bold" size="14.0" />
-                                    </font>
-                              </Label>
-                           </left>
-                           <right>
-                              <HBox BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" textFill="WHITE">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
-                                       </graphic>
-                                    </Hyperlink>
-                                    <Hyperlink onAction="#onDismissAll" text="%backglass.directb2s_admin.dismiss_all" textFill="WHITE">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove" iconSize="18" />
-                                       </graphic>
-                                    </Hyperlink>
-                                    <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="ghost-button-tiny">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
-                                       </tooltip>
-                                    </Button>
-                                 </children>
-                                 <BorderPane.margin>
-                                    <Insets right="6.0" />
-                                 </BorderPane.margin>
-                              </HBox>
-                           </right>
-                        </BorderPane>
-                        <Label fx:id="validationErrorText" textFill="WHITE">
-                              <font>
-                                 <Font name="System" size="14.0" />
-                              </font>
-                        </Label>
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="validationErrorLabel" text="%tables.tables_overview.loading_tables" styleClass="sm-alert-title" wrapText="true" />
+                              <Label fx:id="validationErrorText" styleClass="sm-alert-text" wrapText="true" />
+                           </children>
+                        </VBox>
+                        <HBox alignment="TOP_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="dismissBtn" mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-button" text="%backglass.directb2s_admin.dismiss">
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onDismissAll" styleClass="sm-alert-button" text="%backglass.directb2s_admin.dismiss_all">
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="sm-alert-button">
+                                 <graphic>
+                                    <FontIcon iconColor="#F3D6D7" iconLiteral="mdi2c-cog" iconSize="16" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
                      </children>
-                  </VBox>
+                  </HBox>
                </center>
+               <padding>
+                  <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+               </padding>
             </BorderPane>
          </center>
          <top>

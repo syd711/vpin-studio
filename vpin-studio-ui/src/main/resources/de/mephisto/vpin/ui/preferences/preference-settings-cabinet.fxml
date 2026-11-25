@@ -152,7 +152,7 @@
                               <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                            </GridPane.margin>
                            <children>
-                              <Button fx:id="shutdownBtn" mnemonicParsing="false" onAction="#onShutdown" styleClass="error-title" text="%pref.settings_cabinet.shutdown_system" textFill="WHITE">
+                              <Button fx:id="shutdownBtn" mnemonicParsing="false" onAction="#onShutdown" styleClass="sm-danger-button" text="%pref.settings_cabinet.shutdown_system">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

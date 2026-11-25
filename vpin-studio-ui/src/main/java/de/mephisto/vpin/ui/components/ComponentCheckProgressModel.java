@@ -43,7 +43,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return false;
   }
 
   @Override
@@ -59,8 +59,10 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentInstalla
   @Override
   public void processNext(ProgressResultModel progressResultModel, ComponentInstallation next) {
     try {
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, refresh);
-      progressResultModel.getResults().add(check);
+      try (ComponentProgressPoller poller = new ComponentProgressPoller(next.getComponent(), progressResultModel)) {
+        ComponentActionLogRepresentation check = client.getComponentService().check(next, refresh);
+        progressResultModel.getResults().add(check);
+      }
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);
       Platform.runLater(() -> {

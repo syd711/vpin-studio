@@ -14,6 +14,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1024.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.InstallationDialogController">
    <top>
@@ -174,12 +177,25 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="24.0" />
                </BorderPane.margin>
                <top>
-                  <VBox fx:id="validationError" BorderPane.alignment="CENTER">
+                  <VBox fx:id="validationError" styleClass="sm-alert" BorderPane.alignment="CENTER">
                      <children>
-                        <Label fx:id="validationErrorLabel" text="%competitions.discord_competition_edit.label" />
+                        <HBox spacing="12.0">
+                           <children>
+                              <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                                 <children>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                 </children>
+                              </StackPane>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="validationErrorLabel" styleClass="sm-alert-title" wrapText="true" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
                      </padding>
                   </VBox>
                </top>

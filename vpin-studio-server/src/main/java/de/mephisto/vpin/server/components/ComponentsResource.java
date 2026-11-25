@@ -39,6 +39,11 @@ public class ComponentsResource {
     return toComponentRepresentation(componentService.getComponent(type));
   }
 
+  @GetMapping("/progress/{type}")
+  public ComponentProgressRepresentation getProgress(@PathVariable("type") ComponentType type) {
+    return componentService.getProgress(type);
+  }
+
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return componentService.clearCache();

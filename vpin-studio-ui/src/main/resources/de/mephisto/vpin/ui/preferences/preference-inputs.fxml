@@ -14,6 +14,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.StackPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.InputPreferencesController">
    <center>
@@ -120,19 +122,27 @@
 
                      </children>
                   </GridPane>
-                  <HBox fx:id="fullScreenWarning" prefWidth="200.0" styleClass="error-container">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
+                  <HBox fx:id="fullScreenWarning" spacing="12.0" styleClass="sm-alert">
                      <children>
-                        <VBox>
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
                            <children>
-                              <Label styleClass="error-title" text="%pref.inputs.true_fullscreen_enabled" wrapText="true" />
-                              <Label styleClass="error-message" text="%pref.inputs.one_of_the_emulator_configurations_contains_the_entry" wrapText="true" />
-                              <Label layoutX="10.0" layoutY="30.0" styleClass="error-message" text="%pref.inputs.this_will_avoid_any_vpin_studio_overlay_from" wrapText="true" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="%pref.inputs.true_fullscreen_enabled" styleClass="sm-alert-title" wrapText="true" />
+                              <Label text="%pref.inputs.one_of_the_emulator_configurations_contains_the_entry" styleClass="sm-alert-text" wrapText="true" />
+                              <Label text="%pref.inputs.this_will_avoid_any_vpin_studio_overlay_from" styleClass="sm-alert-text" wrapText="true" />
                            </children>
                         </VBox>
                      </children>
+                     <padding>
+                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="0.0" left="0.0" right="0.0" top="24.0" />
+                     </VBox.margin>
                   </HBox>
                </children>
                <padding>

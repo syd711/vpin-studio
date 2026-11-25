@@ -18,7 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -69,7 +69,7 @@ public class Rom2AltSoundDialogController implements Initializable, DialogContro
   private Label targetFolderLabel;
 
   @FXML
-  private VBox errorBox;
+  private HBox errorBox;
 
   @FXML
   private Label errorText;

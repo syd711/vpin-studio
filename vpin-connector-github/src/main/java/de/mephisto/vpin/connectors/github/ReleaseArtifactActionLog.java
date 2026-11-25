@@ -21,10 +21,38 @@ public class ReleaseArtifactActionLog {
   private final boolean diff;
   private boolean differing = false;
   private String summary;
+  private ReleaseArtifactProgressListener progressListener;
 
   public ReleaseArtifactActionLog(boolean simulate, boolean diff) {
     this.simulated = simulate;
     this.diff = diff;
+  }
+
+  public ReleaseArtifactActionLog(boolean simulate, boolean diff, ReleaseArtifactProgressListener progressListener) {
+    this(simulate, diff);
+    this.progressListener = progressListener;
+  }
+
+  public ReleaseArtifactProgressListener getProgressListener() {
+    return progressListener;
+  }
+
+  public void setProgressListener(ReleaseArtifactProgressListener progressListener) {
+    this.progressListener = progressListener;
+  }
+
+  /**
+   * Notifies the progress listener, failures of the listener never cancel the action.
+   */
+  public void progress(ReleaseArtifactProgressListener.Phase phase, long done, long total) {
+    if (progressListener != null) {
+      try {
+        progressListener.onProgress(phase, done, total);
+      }
+      catch (Exception e) {
+        LOG.warn("Progress listener failed: {}", e.getMessage());
+      }
+    }
   }
 
   public String getSummary() {

@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backups.dialogs.TablesBackupDialogController">
    <top>
@@ -368,59 +369,32 @@
             </BorderPane>
          </center>
          <top>
-            <BorderPane fx:id="hint" styleClass="error-container">
-               <left>
-                  <VBox BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </BorderPane.margin>
-                     <children>
-                        <Label>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="bi-exclamation-octagon-fill" iconSize="28" />
-                           </graphic>
-                           <VBox.margin>
-                              <Insets left="6.0" top="6.0" />
-                           </VBox.margin>
-                        </Label>
-                     </children>
-                  </VBox>
-               </left>
+            <BorderPane fx:id="hint" styleClass="sm-alert">
                <center>
-                  <VBox BorderPane.alignment="CENTER">
+                  <HBox spacing="12.0">
                      <children>
-                        <Label styleClass="error-title" text="%backups.tables_backup.attention" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="%backups.tables_backup.backups_are_intended_for_personal_use_only_do" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="30.0" styleClass="error-title" text="%backups.tables_backup.value_the_authors_work_by_only_downloading_tables" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label styleClass="error-title" text="%backups.tables_backup.abuse_may_result_into_a_deletion_of_this" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="%backups.tables_backup.attention" styleClass="sm-alert-title" wrapText="true" />
+                              <Label text="%backups.tables_backup.backups_are_intended_for_personal_use_only_do" styleClass="sm-alert-text" wrapText="true" />
+                              <Label text="%backups.tables_backup.value_the_authors_work_by_only_downloading_tables" styleClass="sm-alert-text" wrapText="true" />
+                              <Label text="%backups.tables_backup.abuse_may_result_into_a_deletion_of_this" styleClass="sm-alert-text" wrapText="true" />
+                           </children>
+                        </VBox>
                      </children>
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                     <padding>
-                        <Insets bottom="12.0" right="12.0" top="12.0" />
-                     </padding>
-                  </VBox>
+                  </HBox>
                </center>
+               <padding>
+                  <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+               </padding>
+               <BorderPane.margin>
+                  <Insets bottom="0.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
             </BorderPane>
          </top>
       </BorderPane>

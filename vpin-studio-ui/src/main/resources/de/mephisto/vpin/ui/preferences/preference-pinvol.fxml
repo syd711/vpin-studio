@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PinVolPreferencesController">
    <center>
@@ -91,7 +92,10 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label fx:id="pinvolFolderErrorLabel" styleClass="error-message" text="%pref.pinvol.invalid_pinvol_installation_folder_no_pinvol_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
+                              <Label styleClass="sm-field-error" fx:id="pinvolFolderErrorLabel" text="%pref.pinvol.invalid_pinvol_installation_folder_no_pinvol_exe_file" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true">
+                                 <graphic>
+                                    <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                                 </graphic>
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -125,15 +129,31 @@
                               <Insets bottom="6.0" />
                            </VBox.margin>
                         </Label>
-                        <VBox fx:id="errorContainer" styleClass="error-container">
+                        <VBox fx:id="errorContainer" styleClass="sm-alert">
                            <children>
-                              <Label styleClass="error-title" text="%pref.pinvol.frontend_volume_control_enabled" wrapText="true" />
-                              <Label layoutX="22.0" layoutY="16.0" styleClass="error-message" text="%pref.pinvol.the_system_volume_control_is_enabled_in_the" wrapText="true" />
-                              <Label layoutX="22.0" layoutY="36.0" styleClass="error-message" text="%pref.pinvol.this_will_conflict_with_the_pinvol_settings" wrapText="true" />
-                              <Label layoutX="22.0" layoutY="56.0" styleClass="error-message" text="%pref.pinvol.disable_the_auto_start_or_the_frontend_setting" wrapText="true" />
+                              <HBox spacing="12.0">
+                                 <children>
+                                    <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                                       <children>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                       </children>
+                                    </StackPane>
+                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label text="%pref.pinvol.frontend_volume_control_enabled" styleClass="sm-alert-title" wrapText="true" />
+                                          <Label text="%pref.pinvol.the_system_volume_control_is_enabled_in_the" styleClass="sm-alert-text" wrapText="true" />
+                                          <Label text="%pref.pinvol.this_will_conflict_with_the_pinvol_settings" styleClass="sm-alert-text" wrapText="true" />
+                                          <Label text="%pref.pinvol.disable_the_auto_start_or_the_frontend_setting" styleClass="sm-alert-text" wrapText="true" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
                            </children>
+                           <padding>
+                              <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                           </padding>
                            <VBox.margin>
-                              <Insets left="28.0" />
+                              <Insets bottom="0.0" left="28.0" right="0.0" top="0.0" />
                            </VBox.margin>
                         </VBox>
                         <HBox spacing="6.0">

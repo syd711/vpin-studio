@@ -75,6 +75,13 @@ public class ComponentServiceClient extends VPinStudioClientService {
     }
   }
 
+  /**
+   * The progress of the running check, simulation or installation of the given component.
+   */
+  public ComponentProgressRepresentation getProgress(ComponentType type) {
+    return getRestClient().get(API + "components/progress/" + type.name(), ComponentProgressRepresentation.class);
+  }
+
   public boolean clearCache() {
     return getRestClient().get(API + "components/clearcache", Boolean.class);
   }

@@ -14,23 +14,49 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
 
 <BorderPane fx:id="pupRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarDMDController">
     <center>
         <VBox BorderPane.alignment="CENTER">
             <children>
-            <VBox fx:id="errorBox" styleClass="error-container">
+            <VBox fx:id="errorBox" styleClass="sm-alert">
                <children>
-                  <BorderPane>
-                     <left>
-                        <Label fx:id="errorTitle" nodeOrientation="LEFT_TO_RIGHT" styleClass="error-title" text="%competitions.discord_competition_edit.label" wrapText="true" BorderPane.alignment="CENTER" />
-                     </left>
-                     <right>
-                        <Hyperlink onAction="#onDismiss" text="%backglass.directb2s_admin.dismiss" BorderPane.alignment="CENTER" />
-                     </right>
-                  </BorderPane>
-                  <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="%competitions.discord_competition_edit.label" wrapText="true" />
+                  <HBox spacing="12.0">
+                     <children>
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="errorTitle" maxWidth="1.7976931348623157E308" styleClass="sm-alert-title" wrapText="true" />
+                              <Label fx:id="errorText" styleClass="sm-alert-text" wrapText="true" />
+                           </children>
+                        </VBox>
+                        <HBox alignment="TOP_RIGHT" spacing="6.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onDismiss" styleClass="sm-alert-close">
+                                 <graphic>
+                                    <FontIcon iconColor="#E6C3C5" iconLiteral="mdi2c-close" iconSize="16" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%backglass.directb2s_admin.dismiss" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
                </children>
+               <padding>
+                  <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="12.0" left="0.0" right="0.0" top="0.0" />
+               </VBox.margin>
             </VBox>
             <VBox fx:id="dataBox">
                <children>

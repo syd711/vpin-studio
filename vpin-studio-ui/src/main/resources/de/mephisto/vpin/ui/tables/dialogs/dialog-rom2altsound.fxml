@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -100,11 +101,19 @@
                      </children>
                   </GridPane>
       
-                              <VBox fx:id="errorBox" styleClass="error-container">
+                  <HBox fx:id="errorBox" spacing="12.0" styleClass="sm-alert">
                      <children>
-                        <Label fx:id="errorText" styleClass="error-message" text="-" wrapText="true" />
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                           </children>
+                        </StackPane>
+                        <Label fx:id="errorText" maxWidth="1.7976931348623157E308" styleClass="sm-alert-text" text="-" wrapText="true" HBox.hgrow="ALWAYS" />
                      </children>
-                  </VBox>
+                     <padding>
+                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                     </padding>
+                  </HBox>
       
                               <!-- the main options of the original UI that make sense for one ROM -->
                   <Label styleClass="default-title" text="%tables.rom2altsound.options" />

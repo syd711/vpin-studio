@@ -55,8 +55,8 @@ Rules:
 - Dedicated palettes exist **only** for: rarity (`RARITY_COLORS`: Common `#EDEDED`, Uncommon `#5CC46A`, Rare `#5AA9FF`,
   Epic `#C77DFF`, Legendary `#DD9646`), badge categories (`BadgeMedal.CATEGORY_COLORS`) and the gold/silver/bronze
   rank medals (`AchievementsUI.rank()`). Reuse those maps, don't copy their values.
-- The red alert box (`sm-alert`) is for real risk warnings only, not for regular validation errors (use `sm-banner-error`
-  or an `sm-pill-error`).
+- Every error message box is an `sm-alert` (see section 5a). Never use a filled red background (`#FF3333`, the removed
+  `error-container` / `error-message` / `error-title` classes or the `#validationError` / `#validationContainer` id styles).
 
 ## 2. Typography
 
@@ -91,6 +91,7 @@ There are exactly these button types. Don't use the default JavaFX button style 
 | `sm-button, sm-button-icon` | same, square padding `5 7` | Icon-only actions (refresh, copy) next to inputs |
 | `sm-button, sm-button-small` | same look, 12px, padding `3 9` | Secondary inline actions next to small text / pills, e.g. "Set as installed", "Reset version", "Ignore version" |
 | `sm-accent-button` | orange fill `#DD9646`, dark text `#1A1305`, bold, padding `8 14` | The **one** primary action of a panel (install, save) — at most one per panel, usually in the `sm-footer` |
+| `sm-danger-button` | `#3A1C1F` fill, `#6E2B30` border (`#FF6B70` on hover, fill `#4A2326`), `#FF6B70` bold 14px text and icons, padding `5 12` | Destructive actions (restart server, shutdown system, delete cabinet) and buttons flagging a problem (asset filter with excluded assets). Never a filled bright red. |
 | `sm-alert-button` / `sm-alert-close` | transparent with red border | Only inside `sm-alert` |
 | `sm-filter-pill` (ToggleButton) | round outline, 12px, selected = `#333333` fill | Filters / toggles in a panel header |
 | `sm-chip` | round `#222222` with border, 12px | Small clickable tags (e.g. screen shortcuts) |
@@ -98,6 +99,36 @@ There are exactly these button types. Don't use the default JavaFX button style 
 | `sm-section-header` | transparent, hand cursor | Collapsible section header (chevron + `sm-text` + `sm-small` state) |
 
 Borderless text buttons are not used any more (the former `sm-ghost-button` was removed).
+
+### Text inputs
+
+Every `TextField`, `PasswordField` and `TextArea` is dark — styled globally via `.text-input` in `stylesheet.css`,
+no class needed: `#161616` fill, `#444444` 1px border, radius 4, white 14px text, `#7A7A7A` prompt text,
+`#7A7A7A` border when focused, `#333366` selection. Don't override it with inline white backgrounds.
+`sm-text-field` is the same look and stays valid for explicitness. Full-width log / script areas use
+`sm-log-text` / `sm-script-text`.
+
+`ComboBox`, `DatePicker` and `ColorPicker` (`.combo-box-base`) use the same dark box: `#161616` fill, `#444444` border,
+radius 4, white 14px text, `#BDBDBD` arrow (white on hover), `#1C1C1C` on hover, `#7A7A7A` border when focused or open.
+The popup list is `#161616` with white cells and `#333366` for hover / selection. Editable combos have no extra
+inner box — the editor is transparent inside the combo's border.
+
+`Spinner` uses the same box with a transparent editor; the arrow buttons are transparent with `#BDBDBD` arrows
+(white arrow + `#333333` fill on hover). `CheckBox` boxes are `#161616` with a `#444444` border (radius 3,
+`#7A7A7A` on hover/focus) and a white check mark; `RadioButton` circles look the same with a white dot and have
+the same outer size as the check box (~21px at 14px font) — keep both in sync when changing paddings.
+`ScrollBar`: 10px, no arrow buttons, transparent track, rounded `#444444` thumb (`#5A5A5A` hover, `#7A7A7A` drag).
+`ToggleButton` has the `sm-button` look (`#333333`, `#444444` border, `#3D3D3D` hover); selected = `#333366` fill
+with an `#8C8CE0` border. `sm-filter-pill` toggles keep their round outline look.
+`Slider`: `#161616` track with `#444444` border, round `#BDBDBD` thumb (white on hover/drag, `#8C8CE0` border when
+focused), tick marks `#444444`, tick labels 12px `#9A9A9A`.
+`ListView`: `#161616` box with `#444444` border (radius 4, `#7A7A7A` when focused), transparent white 14px cells with
+padding `4 8`, `#262626` hover, `#3A3A3A` + bold for the selected row, `#7A7A7A` placeholder text. No striping.
+`TreeView` looks the same as `ListView`, with `#BDBDBD` disclosure arrows (white on hover).
+`sm-log` / `sm-keyword-list` refine this look; the striped `AchievementsUI.row()` lists are built from VBoxes.
+`ProgressBar`: `#161616` track with `#444444` border (radius 4), flat `#8C8CE0` bar inset by 2px.
+`AchievementsUI.progress()` remains the borderless variant for colored progress inside tiles. All of these are global — no style class needed; disabled
+controls are dimmed to 60 % opacity.
 
 ## 5. Badges, pills and status text
 
@@ -112,6 +143,52 @@ Borderless text buttons are not used any more (the former `sm-ghost-button` was 
 | Count badge | filled round label, 12px bold, padding `0 5` | "+N" counters, e.g. stacked screens on the monitor map |
 
 Always pick the pill variant by meaning (OK/warn/error/unknown); never color a pill per component or per item.
+
+## 5a. Error messages
+
+All error containers in the Studio use the Screen Manager layout (`screens/tab-screens.fxml`,
+`emulators/tab-emulators.fxml`). Don't build another variant.
+
+**Error box** (`sm-alert`) — validation errors of a table / sidebar section / view, failed checks in dialogs,
+configuration conflicts:
+
+```xml
+<HBox fx:id="errorBox" spacing="12.0" styleClass="sm-alert">          <!-- VBox/BorderPane: wrap the same HBox -->
+   <children>
+      <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+         <children>
+            <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+         </children>
+      </StackPane>
+      <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label fx:id="errorTitle" styleClass="sm-alert-title" wrapText="true" />
+            <Label fx:id="errorText" styleClass="sm-alert-text" wrapText="true" />
+         </children>
+      </VBox>
+      <HBox alignment="TOP_RIGHT" spacing="6.0"><!-- optional actions --></HBox>
+   </children>
+   <padding><Insets bottom="10.0" left="12.0" right="12.0" top="10.0" /></padding>
+</HBox>
+```
+
+- Colors: `#34191B` fill, `#6E2B30` border, radius 6; round `#E5484D` icon (24px, 14px `mdi2e-exclamation-thick`);
+  title 14px bold white (`sm-alert-title`), text 14px `#E6C3C5` (`sm-alert-text`). Several messages = several
+  `sm-alert-text` labels (or bullet labels as in `tab-overview.fxml`). A box with only one line may skip the title.
+- Actions sit top right: dismiss = `sm-alert-close` with `mdi2c-close` 16px `#E6C3C5` and a tooltip; text or icon
+  actions ("Dismiss All", validator settings cog) = `sm-alert-button` (icons `#F3D6D7`, 16px). No hyperlinks.
+- Page-level risk warnings (`tab-overview.fxml`) are the same box with a 30px icon and padding `14 12 14 16`.
+- The box must line up with the content around it: give it the same left / right inset as its siblings (in dialogs
+  usually `VBox.margin` / `BorderPane.margin` `left="12" right="12"`) — never let it run edge to edge while the
+  rest of the dialog is indented. Spacing to the following content: 12 (sidebars / dialogs), 14 above split views.
+- Examples: table sidebars (`scene-tables-sidebar-*.fxml`), table overview / backglass manager validation bar,
+  `dialog-table-delete.fxml`, `dialog-new-emulator.fxml`, `preference-pinvol.fxml`.
+
+**Inline field error** (`sm-field-error`) — a short message directly next to / below a single form field
+(invalid folder, invalid URL): Label, 14px `#FF6B70`, with a `mdi2a-alert-circle-outline` 16px `#FF6B70` graphic,
+`wrapText="true"`, no background.
+
+**Error tag** in a list or table cell: `sm-pill, sm-pill-error`. Result line above a log: `sm-banner-error`.
 
 ## 6. Tiles and layout building blocks
 
@@ -164,6 +241,7 @@ Always pick the pill variant by meaning (OK/warn/error/unknown); never color a p
 1. Page background stays the default; content goes into `sm-tile` cards or `sm-panel` split views.
 2. Only colors from section 1, only font sizes from section 2.
 3. Status = pill/banner variant by meaning; at most one `sm-accent-button` per panel.
-4. No default-styled or borderless buttons; small inline actions use `sm-button-small`.
-5. Long text wraps (`wrapText="true"`), all text from the resource bundles (see i18n rules), "…" instead of "...".
-6. Never rebuild nodes from size listeners during layout — defer with `Platform.runLater`.
+4. Errors = `sm-alert` box (or `sm-field-error` next to a field), never a filled red background.
+5. No default-styled or borderless buttons; small inline actions use `sm-button-small`.
+6. Long text wraps (`wrapText="true"`), all text from the resource bundles (see i18n rules), "…" instead of "...".
+7. Never rebuild nodes from size listeners during layout — defer with `Platform.runLater`.

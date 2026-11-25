@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDeleteController">
    <top>
@@ -315,19 +316,30 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
             </BorderPane>
-            <BorderPane fx:id="validationContainer">
-               <top>
-                  <Label fx:id="validationTitle" text="%tables.table_delete.different_versions_a_selected_table_have_been_found" textFill="WHITE" BorderPane.alignment="TOP_LEFT" />
-               </top>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
+            <BorderPane fx:id="validationContainer" styleClass="sm-alert">
+               <center>
+                  <HBox spacing="12.0">
+                     <children>
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="validationTitle" text="%tables.table_delete.different_versions_a_selected_table_have_been_found" styleClass="sm-alert-title" wrapText="true" />
+                              <Label fx:id="validationDescription" text="%tables.table_delete.the_default_backup_folder_contains_no_backup_of" styleClass="sm-alert-text" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </center>
                <padding>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                  <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
                </padding>
-               <bottom>
-                  <Label fx:id="validationDescription" text="%tables.table_delete.the_default_backup_folder_contains_no_backup_of" textFill="WHITE" BorderPane.alignment="CENTER_LEFT" />
-               </bottom>
+               <VBox.margin>
+                  <Insets bottom="0.0" left="12.0" right="12.0" top="0.0" />
+               </VBox.margin>
             </BorderPane>
          </children>
       </VBox>

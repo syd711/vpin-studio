@@ -1,6 +1,7 @@
 package de.mephisto.vpin.connectors.github;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,12 +62,12 @@ public class ReleaseArtifact {
   }
 
   public ReleaseArtifactActionLog diff(@NonNull File sourceArchive, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles,  @NonNull String... names) {
-    return diff(log -> sourceArchive.exists() ? sourceArchive : download(sourceArchive, log), targetFolder, rootFileIndicators, excludedFiles, includedFiles, names);
+    return diff(log -> sourceArchive.exists() ? sourceArchive : download(sourceArchive, log), null, targetFolder, rootFileIndicators, excludedFiles, includedFiles, names);
   }
 
-  public ReleaseArtifactActionLog diff(@NonNull ArchiveSupplier archiveSupplier, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles,  @NonNull String... names) {
+  public ReleaseArtifactActionLog diff(@NonNull ArchiveSupplier archiveSupplier, @Nullable ReleaseArtifactProgressListener progressListener, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles,  @NonNull String... names) {
     long start = System.currentTimeMillis();
-    ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(false, true);
+    ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(false, true, progressListener);
     try {
       File sourceArchive = archiveSupplier.get(installLog);
       if (!sourceArchive.exists()) {
@@ -128,28 +129,28 @@ public class ReleaseArtifact {
    * Downloads the artifact into a temporary file and simulates the installation.
    */
   public ReleaseArtifactActionLog simulateInstall(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
-    return install(this::downloadTemp, true, true, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
+    return install(this::downloadTemp, null, true, true, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
   }
 
   /**
    * Downloads the artifact into a temporary file and installs it.
    */
   public ReleaseArtifactActionLog install(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
-    return install(this::downloadTemp, true, false, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
+    return install(this::downloadTemp, null, true, false, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
   }
 
   /**
    * Simulates the installation of the supplied archive, the archive is kept.
    */
-  public ReleaseArtifactActionLog simulateInstall(@NonNull ArchiveSupplier archiveSupplier, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
-    return install(archiveSupplier, false, true, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
+  public ReleaseArtifactActionLog simulateInstall(@NonNull ArchiveSupplier archiveSupplier, @Nullable ReleaseArtifactProgressListener progressListener, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
+    return install(archiveSupplier, progressListener, false, true, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
   }
 
   /**
    * Installs the supplied archive, the archive is kept.
    */
-  public ReleaseArtifactActionLog install(@NonNull ArchiveSupplier archiveSupplier, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
-    return install(archiveSupplier, false, false, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
+  public ReleaseArtifactActionLog install(@NonNull ArchiveSupplier archiveSupplier, @Nullable ReleaseArtifactProgressListener progressListener, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
+    return install(archiveSupplier, progressListener, false, false, targetFolder, rootFileIndicators, excludedFiles, includedFiles);
   }
 
   @NonNull
@@ -157,9 +158,9 @@ public class ReleaseArtifact {
     return new Downloader(this.getUrl(), log).download(null);
   }
 
-  private ReleaseArtifactActionLog install(@NonNull ArchiveSupplier archiveSupplier, boolean deleteArchive, boolean simulate, @NonNull File targetFolder,
+  private ReleaseArtifactActionLog install(@NonNull ArchiveSupplier archiveSupplier, @Nullable ReleaseArtifactProgressListener progressListener, boolean deleteArchive, boolean simulate, @NonNull File targetFolder,
                                            @NonNull List<String> rootFileIndicators, List<String> excludedFiles, List<String> includedFiles) {
-    ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(simulate, false);
+    ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(simulate, false, progressListener);
     try {
       File archive = archiveSupplier.get(installLog);
       if (!archive.exists()) {

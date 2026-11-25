@@ -50,7 +50,7 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentInstal
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return false;
   }
 
   @Override
@@ -70,11 +70,13 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentInstal
   public void processNext(ProgressResultModel progressResultModel, ComponentInstallation next) {
     try {
       ComponentActionLogRepresentation install = null;
-      if (simulate) {
-        install = client.getComponentService().simulate(next);
-      }
-      else {
-        install = client.getComponentService().install(next);
+      try (ComponentProgressPoller poller = new ComponentProgressPoller(next.getComponent(), progressResultModel)) {
+        if (simulate) {
+          install = client.getComponentService().simulate(next);
+        }
+        else {
+          install = client.getComponentService().install(next);
+        }
       }
       progressResultModel.getResults().add(install);
     } catch (Exception e) {

@@ -139,31 +139,35 @@
                         </Button>
                     </items>
                 </ToolBar>
-                        <HBox fx:id="warningBox" alignment="CENTER_LEFT" managed="false" spacing="12.0" styleClass="error-container" visible="false">
-                            <children>
-                                <Label>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="bi-exclamation-triangle-fill" iconSize="24" />
-                                    </graphic>
-                                </Label>
-                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                                    <children>
-                                        <Label fx:id="submitScoresWarningLabel" managed="false" styleClass="error-title" text="%competitions.competitions_mania.warning_submit_scores_disabled" textFill="WHITE" visible="false" wrapText="true" />
-                                        <Label fx:id="participationWarningLabel" managed="false" styleClass="error-title" text="%competitions.competitions_mania.warning_participation_disabled" textFill="WHITE" visible="false" wrapText="true" />
-                                    </children>
-                                </VBox>
-                                <Button mnemonicParsing="false" onAction="#onOpenSettings" textFill="WHITE">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
-                                    </graphic>
-                                </Button>
-                            </children>
-                            <VBox.margin>
-                                <Insets bottom="6.0" top="6.0" />
-                            </VBox.margin>
+                        <HBox fx:id="warningBox" managed="false" spacing="12.0" styleClass="sm-alert" visible="false">
+                           <children>
+                              <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                                 <children>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                 </children>
+                              </StackPane>
+                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="submitScoresWarningLabel" managed="false" text="%competitions.competitions_mania.warning_submit_scores_disabled" visible="false" styleClass="sm-alert-title" wrapText="true" />
+                                    <Label fx:id="participationWarningLabel" managed="false" text="%competitions.competitions_mania.warning_participation_disabled" visible="false" styleClass="sm-alert-title" wrapText="true" />
+                                 </children>
+                              </VBox>
+                              <HBox alignment="TOP_RIGHT" spacing="6.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#onOpenSettings" styleClass="sm-alert-button">
+                                       <graphic>
+                                          <FontIcon iconColor="#F3D6D7" iconLiteral="mdi2c-cog" iconSize="16" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets bottom="6.0" left="0.0" right="0.0" top="6.0" />
+                           </VBox.margin>
                         </HBox>
                     </children>
                 </VBox>

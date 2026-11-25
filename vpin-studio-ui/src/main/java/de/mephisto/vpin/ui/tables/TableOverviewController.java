@@ -335,7 +335,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Separator assetManagerSeparator;
 
   @FXML
-  private Hyperlink dismissBtn;
+  private Button dismissBtn;
 
   @FXML
   private ToolBar toolbar;

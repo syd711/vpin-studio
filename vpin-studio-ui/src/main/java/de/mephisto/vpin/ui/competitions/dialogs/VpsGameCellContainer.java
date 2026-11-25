@@ -60,8 +60,7 @@ public class VpsGameCellContainer extends HBox {
 
     if (games.isEmpty()) {
       Label label = new Label(Messages.get("competitions.vps_game_cell.no_matching_table_installed"));
-      label.setStyle("-fx-padding: 3 6 3 6;" + customStyles);
-      label.getStyleClass().add("error-title");
+      label.getStyleClass().addAll("sm-pill", "sm-pill-error");
       column.getChildren().add(label);
     }
     else if (games.size() > 1) {

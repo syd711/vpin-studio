@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.BackglassPreferencesController">
    <center>
@@ -41,7 +42,10 @@
 
             <VBox>
                <children>
-                  <Label fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" styleClass="error-title" text="%pref.backglass.no_backglass_server_found" textFill="WHITE" wrapText="true">
+                  <Label styleClass="sm-field-error" fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" text="%pref.backglass.no_backglass_server_found" wrapText="true">
+                     <graphic>
+                        <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                     </graphic>
                      <VBox.margin>
                         <Insets left="79.0" top="3.0" />
                      </VBox.margin>

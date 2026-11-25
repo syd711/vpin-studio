@@ -71,7 +71,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="error-title" text="%pref.settings_server.restart_server" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" styleClass="sm-danger-button" text="%pref.settings_server.restart_server" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane fx:id="root" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController">
     <top>
@@ -352,10 +353,22 @@
                                                 <Insets bottom="3.0" />
                                              </VBox.margin>
                                           </HBox>
-                                          <HBox fx:id="errorContainer" styleClass="error-container">
+                                          <HBox fx:id="errorContainer" spacing="12.0" styleClass="sm-alert">
                                              <children>
-                                                <Label fx:id="errorLabel" styleClass="error-title" text="%competitions.discord_competition_edit.label" />
+                                                <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                                                   <children>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                                                   </children>
+                                                </StackPane>
+                                                <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label fx:id="errorLabel" styleClass="sm-alert-title" wrapText="true" />
+                                                   </children>
+                                                </VBox>
                                              </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                                             </padding>
                                           </HBox>
                                        </children>
                                     </VBox>

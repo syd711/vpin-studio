@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +74,11 @@ public class ArchiveHandler {
       boolean skipRoot = isRootSkipped();
 
       byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(archiveFile);
+      ReleaseArtifactProgressListener.Phase phase = diff ? ReleaseArtifactProgressListener.Phase.COMPARE
+          : simulate ? ReleaseArtifactProgressListener.Phase.SIMULATE : ReleaseArtifactProgressListener.Phase.EXTRACT;
+      long archiveSize = archiveFile.length();
+      installLog.progress(phase, 0, archiveSize);
+      InputStream fileInputStream = new ProgressInputStream(new FileInputStream(archiveFile), phase, archiveSize);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
 
@@ -105,6 +111,7 @@ public class ArchiveHandler {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
+      installLog.progress(phase, archiveSize, archiveSize);
     }
     catch (Exception e) {
       installLog.setStatus("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
@@ -251,6 +258,59 @@ public class ArchiveHandler {
   private void unzipFile(File newFile, ZipInputStream zis, byte[] buffer) throws IOException {
     if (!simulate) {
       doUnzip(newFile, zis, buffer);
+    }
+  }
+
+  /**
+   * Reports the bytes read from the archive file as progress of the current phase.
+   */
+  private class ProgressInputStream extends FilterInputStream {
+    private static final long REPORT_INTERVAL = 256 * 1024;
+
+    private final ReleaseArtifactProgressListener.Phase phase;
+    private final long total;
+    private long read = 0;
+    private long reported = 0;
+
+    ProgressInputStream(InputStream in, ReleaseArtifactProgressListener.Phase phase, long total) {
+      super(in);
+      this.phase = phase;
+      this.total = total;
+    }
+
+    @Override
+    public int read() throws IOException {
+      int b = super.read();
+      if (b != -1) {
+        count(1);
+      }
+      return b;
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+      int n = super.read(b, off, len);
+      if (n > 0) {
+        count(n);
+      }
+      return n;
+    }
+
+    @Override
+    public long skip(long n) throws IOException {
+      long skipped = super.skip(n);
+      if (skipped > 0) {
+        count(skipped);
+      }
+      return skipped;
+    }
+
+    private void count(long n) {
+      read += n;
+      if (read - reported >= REPORT_INTERVAL) {
+        reported = read;
+        installLog.progress(phase, read, total);
+      }
     }
   }
 

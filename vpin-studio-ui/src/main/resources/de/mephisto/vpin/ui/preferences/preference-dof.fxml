@@ -71,7 +71,10 @@
                            </children>
                         </HBox>
                         <Label styleClass="default-text" text="%backups.backup_source_folder.folder" wrapText="true" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="%pref.dof.invalid_folder_no_directoutput_dll_or_directoutputcomobject_" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label styleClass="sm-field-error" fx:id="dofFolderErrorLabel" text="%pref.dof.invalid_folder_no_directoutput_dll_or_directoutputcomobject_" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <graphic>
+                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                           </graphic>
                            <font>
                               <Font size="14.0" />
                            </font>

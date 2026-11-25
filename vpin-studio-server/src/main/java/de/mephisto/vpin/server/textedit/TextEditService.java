@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -77,10 +74,7 @@ public class TextEditService {
         case DmdDeviceIni: {
           File mameFolder = vPinMameService.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
-          Path filePath = init.toPath();
-          String iniText = Files.readString(filePath);
-          //Remove BOM
-          iniText = iniText.replace("\uFEFF", "");
+          String iniText = TextFileContent.read(init).text();
           textEditorFile.setContent(iniText);
           textEditorFile.setPath(init.getAbsolutePath());
           textEditorFile.setSize(init.length());
@@ -90,10 +84,7 @@ public class TextEditService {
         }
         case DOFLinxINI: {
           File init = dofLinxService.getDOFLinxINI();
-          Path filePath = init.toPath();
-          String iniText = Files.readString(filePath);
-          //Remove BOM
-          iniText = iniText.replace("\uFEFF", "");
+          String iniText = TextFileContent.read(init).text();
           textEditorFile.setContent(iniText);
           textEditorFile.setPath(init.getAbsolutePath());
           textEditorFile.setSize(init.length());
@@ -102,8 +93,7 @@ public class TextEditService {
         }
         case VPinballXIni: {
           File init = vpxService.getVPXFile(getVpxEmulator(textEditorFile));
-          Path filePath = init.toPath();
-          String iniText = Files.readString(filePath);
+          String iniText = TextFileContent.read(init).text();
           textEditorFile.setContent(iniText);
           textEditorFile.setPath(init.getAbsolutePath());
           textEditorFile.setSize(init.length());
@@ -130,7 +120,7 @@ public class TextEditService {
           if (!f.exists()) {
             throw new UnsupportedOperationException("No such file: " + f.getAbsolutePath());
           }
-          String iniText = Files.readString(f.toPath());
+          String iniText = TextFileContent.read(f).text();
           textEditorFile.setContent(iniText);
           textEditorFile.setPath(f.getAbsolutePath());
           textEditorFile.setSize(f.length());
@@ -233,7 +223,7 @@ public class TextEditService {
           String[] lines = textEditorFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
-          FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+          TextFileContent.write(f, content);
           LOG.info("Written {}", f.getAbsolutePath());
           textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
           textEditorFile.setSize(textEditorFile.getContent().getBytes().length);
@@ -244,7 +234,7 @@ public class TextEditService {
           String[] lines = textEditorFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
-          FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+          TextFileContent.write(f, content);
           LOG.info("Written {}", f.getAbsolutePath());
           textEditorFile.setLastModified(OffsetDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault()));
           textEditorFile.setSize(textEditorFile.getContent().getBytes().length);

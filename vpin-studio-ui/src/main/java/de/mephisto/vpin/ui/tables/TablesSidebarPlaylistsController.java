@@ -71,7 +71,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   private Node dataRoot;
 
   @FXML
-  private Hyperlink dismissLink;
+  private Button dismissLink;
 
   @FXML
   private Button assetManagerBtn;

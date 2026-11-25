@@ -74,7 +74,10 @@
                   </GridPane>
                   <VBox>
                      <children>
-                        <Label fx:id="validationError" text=" " textFill="WHITE" wrapText="true">
+                        <Label styleClass="sm-field-error" fx:id="validationError" text=" " wrapText="true">
+                           <graphic>
+                              <FontIcon iconColor="#FF6B70" iconLiteral="mdi2a-alert-circle-outline" iconSize="16" />
+                           </graphic>
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>

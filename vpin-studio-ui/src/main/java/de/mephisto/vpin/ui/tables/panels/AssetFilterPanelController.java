@@ -82,9 +82,9 @@ public class AssetFilterPanelController implements Initializable {
     }
 
     assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection"));
-    assetFilterBtn.getStyleClass().remove("error-title");
+    assetFilterBtn.getStyleClass().remove("sm-danger-button");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
-      assetFilterBtn.getStyleClass().add("error-title");
+      assetFilterBtn.getStyleClass().add("sm-danger-button");
       if (uploaderAnalysis.getExclusions().size() == 1) {
         assetFilterBtn.setText(Messages.get("tables.table_upload.filter_selection_excluded_asset", uploaderAnalysis.getExclusions().size()));
       }

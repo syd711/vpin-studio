@@ -75,6 +75,7 @@ public class Downloader {
         throw new UnsupportedOperationException("Download of " + downloadUrl + " failed with HTTP " + responseCode);
       }
       expectedLength = connection.getContentLengthLong();
+      installLog.progress(ReleaseArtifactProgressListener.Phase.DOWNLOAD, 0, expectedLength);
 
       try (InputStream in = new BufferedInputStream(connection.getInputStream());
            OutputStream out = new FileOutputStream(tmp)) {
@@ -83,6 +84,7 @@ public class Downloader {
         while ((bytesRead = in.read(dataBuffer)) != -1) {
           out.write(dataBuffer, 0, bytesRead);
           read += bytesRead;
+          installLog.progress(ReleaseArtifactProgressListener.Phase.DOWNLOAD, read, expectedLength);
         }
       }
     }
