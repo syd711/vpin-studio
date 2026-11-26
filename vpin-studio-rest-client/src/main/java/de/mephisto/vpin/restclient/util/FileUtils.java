@@ -72,6 +72,51 @@ public class FileUtils {
     return file.startsWith(path);
   }
 
+  /**
+   * Returns true if the given relative path (e.g. a folder name read from a table script or a ROM name)
+   * resolves to a location strictly below the folder it is resolved against: not blank, not absolute,
+   * no ".." segments and not only consisting of "." segments.
+   */
+  public static boolean isSafeRelativePath(@Nullable String path) {
+    if (path == null || path.isBlank()) {
+      return false;
+    }
+    String p = path.trim().replace('\\', '/');
+    if (p.startsWith("/") || p.matches("^[a-zA-Z]:.*")) {
+      return false;
+    }
+    boolean hasName = false;
+    for (String segment : p.split("/")) {
+      if (segment.equals("..")) {
+        return false;
+      }
+      if (!segment.isEmpty() && !segment.equals(".")) {
+        hasName = true;
+      }
+    }
+    return hasName;
+  }
+
+  /**
+   * Returns true if the given file or folder resolves to a location strictly below the given parent folder.
+   * The parent folder itself, anything outside of it and unresolvable paths return false.
+   * Use this before deleting a folder whose name has been derived from table data (script, ROM name, etc.).
+   */
+  public static boolean isStrictlyBelow(@Nullable File parent, @Nullable File fileOrFolder) {
+    if (parent == null || fileOrFolder == null) {
+      return false;
+    }
+    try {
+      java.nio.file.Path base = parent.getCanonicalFile().toPath();
+      java.nio.file.Path target = fileOrFolder.getCanonicalFile().toPath();
+      return !target.equals(base) && target.startsWith(base);
+    }
+    catch (IOException e) {
+      LOG.warn("Failed to resolve \"{}\" against \"{}\": {}", fileOrFolder, parent, e.getMessage());
+      return false;
+    }
+  }
+
   public static boolean isTempFile(File file) {
     String filename = file.getName();
     return Strings.CI.endsWith(filename, "tmp")

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.dmd;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.vpinmame.VPinMameService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -54,16 +57,8 @@ public class DMDService implements InitializingBean {
     }
     File tablesFolder = game.getGameFile().getParentFile();
     File dmdFolder = new File(tablesFolder, projectFolder);
-    try {
-      Path base = tablesFolder.getCanonicalFile().toPath();
-      Path target = dmdFolder.getCanonicalFile().toPath();
-      if (target.equals(base) || !target.startsWith(base)) {
-        LOG.warn("Ignoring invalid DMD project folder \"{}\" of {}, resolves to \"{}\"", projectFolder, game, target);
-        return null;
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Failed to resolve DMD project folder \"{}\" of {}: {}", projectFolder, game, e.getMessage());
+    if (!FileUtils.isStrictlyBelow(tablesFolder, dmdFolder)) {
+      LOG.warn("Ignoring invalid DMD project folder \"{}\" of {}, it is not a subfolder of \"{}\"", projectFolder, game, tablesFolder.getAbsolutePath());
       return null;
     }
     return dmdFolder;
@@ -76,6 +71,9 @@ public class DMDService implements InitializingBean {
       if (dmdPackage != null && dmdPackage.isValid()) {
         File dir = getDmdFolder(game);
         if (dir != null && dir.exists()) {
+          if (!isDeletableDmdFolder(game, dir)) {
+            return false;
+          }
           return SystemUtil.deleteFileOrFolder(dir);
         }
       }
@@ -84,6 +82,29 @@ public class DMDService implements InitializingBean {
       LOG.error("Failed to delete DMD directory for {}: {}", game, e.getMessage(), e);
     }
     return false;
+  }
+
+  /**
+   * Final safety check before a DMD folder is deleted: it must be a folder strictly below the folder of the
+   * table file and must not contain any table files (e.g. the folder of another table).
+   */
+  private boolean isDeletableDmdFolder(@NonNull Game game, @NonNull File dir) {
+    File tableFolder = game.getGameFile().getParentFile();
+    if (!dir.isDirectory() || !FileUtils.isStrictlyBelow(tableFolder, dir)) {
+      LOG.error("Refusing to delete DMD folder \"{}\" of {}, it is not a subfolder of \"{}\"", dir.getAbsolutePath(), game, tableFolder.getAbsolutePath());
+      return false;
+    }
+    try (Stream<Path> walk = Files.walk(dir.toPath())) {
+      if (walk.anyMatch(p -> Strings.CI.endsWith(p.getFileName().toString(), ".vpx"))) {
+        LOG.error("Refusing to delete DMD folder \"{}\" of {}, it contains table files", dir.getAbsolutePath(), game);
+        return false;
+      }
+    }
+    catch (IOException e) {
+      LOG.error("Refusing to delete DMD folder \"{}\" of {}, failed to check its content: {}", dir.getAbsolutePath(), game, e.getMessage());
+      return false;
+    }
+    return true;
   }
 
   @Nullable

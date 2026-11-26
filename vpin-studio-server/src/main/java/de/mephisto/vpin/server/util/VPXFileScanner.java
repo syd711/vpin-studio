@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.util;
 
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
@@ -875,20 +876,9 @@ public class VPXFileScanner {
    * The DMD project folder must be a sub folder of the tables folder, never the tables folder itself or anything outside.
    */
   static boolean isValidDMDProjectFolder(String folder) {
-    if (StringUtils.isBlank(folder)) {
-      return false;
-    }
-    String f = folder.trim().replace('\\', '/');
-    if (f.startsWith("/") || f.matches("^[a-zA-Z]:.*")) {
-      return false;
-    }
-    for (String segment : f.split("/")) {
-      if (segment.equals("..")) {
-        return false;
-      }
-    }
-    return !StringUtils.strip(f, "./").isEmpty();
+    return FileUtils.isSafeRelativePath(folder);
   }
+
 
   private static void lineSearchScript(List<String> includedScripts, String line, EvaluationContext evalctxt) {
     if (Strings.CI.contains(line, "GetTextFile")) {

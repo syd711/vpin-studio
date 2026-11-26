@@ -163,6 +163,16 @@ public class DMDServiceTest {
   }
 
   @Test
+  void delete_refusesFolderContainingTables() throws IOException {
+    Path otherTable = Files.createDirectory(tempDir.resolve("OtherTable"));
+    Files.createFile(otherTable.resolve("other.vpx"));
+    Game game = buildGame(DMDPackageTypes.FlexDMD, "OtherTable");
+
+    assertThat(service.delete(game)).isFalse();
+    assertThat(otherTable.resolve("other.vpx").toFile()).exists();
+  }
+
+  @Test
   void delete_returnsTrueAndRemovesFolderWhenExists() throws IOException {
     Path dmdDir = tempDir.resolve("ToDelete");
     Files.createDirectory(dmdDir);
