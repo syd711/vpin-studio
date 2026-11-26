@@ -76,11 +76,19 @@ public class SystemUtil {
 
   /**
    * Deletes a file or folder, moving it to the OS trash/recycle bin by default. Falls back to a
-   * permanent delete if the trash is not supported on the current platform or the move fails.
+   * permanent delete only if the trash is not supported on the current platform, or if the move
+   * fails on a non-Windows system. On Windows, a failed move to the trash is never followed by a
+   * permanent delete.
    */
   public static boolean deleteFileOrFolder(@Nullable File fileOrFolder) {
     if (fileOrFolder == null || !fileOrFolder.exists()) {
       return true;
+    }
+
+    String name = fileOrFolder.getName();
+    if (name.isEmpty() || name.equals(".") || name.equals("..")) {
+      LOG.error("Refusing to delete \"{}\", the path does not point to a dedicated file or folder", fileOrFolder.getAbsolutePath());
+      return false;
     }
 
     try {
@@ -89,10 +97,18 @@ public class SystemUtil {
           LOG.info("Moved \"{}\" to trash", fileOrFolder.getAbsolutePath());
           return true;
         }
+        if (OSUtil.isWindows()) {
+          LOG.error("Failed to move \"{}\" to trash, skipped deletion", fileOrFolder.getAbsolutePath());
+          return false;
+        }
         LOG.warn("Failed to move \"{}\" to trash, deleting permanently instead", fileOrFolder.getAbsolutePath());
       }
     }
     catch (Exception e) {
+      if (OSUtil.isWindows()) {
+        LOG.error("Failed to move \"{}\" to trash, skipped deletion: {}", fileOrFolder.getAbsolutePath(), e.getMessage());
+        return false;
+      }
       LOG.warn("Failed to move \"{}\" to trash, deleting permanently instead: {}", fileOrFolder.getAbsolutePath(), e.getMessage());
     }
 
