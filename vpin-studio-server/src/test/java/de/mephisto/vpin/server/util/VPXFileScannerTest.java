@@ -162,4 +162,18 @@ public class VPXFileScannerTest {
       assertEquals(expected, result.getGameName(), "RomSet " + romSet);
     }
   }
+
+  @Test
+  public void testIsValidDMDProjectFolder() {
+    assertTrue(VPXFileScanner.isValidDMDProjectFolder("MyTable.FlexDMD"));
+    assertTrue(VPXFileScanner.isValidDMDProjectFolder("DMDs\\MyTable"));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder(null));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder(""));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder("."));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder(".\\"));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder(".."));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder("..\\Other"));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder("C:\\vPinball"));
+    assertFalse(VPXFileScanner.isValidDMDProjectFolder("/tmp"));
+  }
 }

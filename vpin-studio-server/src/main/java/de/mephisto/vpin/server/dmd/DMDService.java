@@ -42,9 +42,31 @@ public class DMDService implements InitializingBean {
   @Autowired
   private VPinMameService vPinMameService;
 
+  /**
+   * Returns the DMD project folder of the game, or null if the configured project folder does not
+   * resolve to a real subfolder of the table folder (e.g. ".", "..", empty or absolute paths).
+   */
+  @Nullable
   public File getDmdFolder(Game game) {
+    String projectFolder = game.getDMDProjectFolder();
+    if (StringUtils.isBlank(projectFolder)) {
+      return null;
+    }
     File tablesFolder = game.getGameFile().getParentFile();
-    return new File(tablesFolder, game.getDMDProjectFolder());
+    File dmdFolder = new File(tablesFolder, projectFolder);
+    try {
+      Path base = tablesFolder.getCanonicalFile().toPath();
+      Path target = dmdFolder.getCanonicalFile().toPath();
+      if (target.equals(base) || !target.startsWith(base)) {
+        LOG.warn("Ignoring invalid DMD project folder \"{}\" of {}, resolves to \"{}\"", projectFolder, game, target);
+        return null;
+      }
+    }
+    catch (IOException e) {
+      LOG.warn("Failed to resolve DMD project folder \"{}\" of {}: {}", projectFolder, game, e.getMessage());
+      return null;
+    }
+    return dmdFolder;
   }
 
 
@@ -53,7 +75,7 @@ public class DMDService implements InitializingBean {
       DMDPackage dmdPackage = getDMDPackage(game);
       if (dmdPackage != null && dmdPackage.isValid()) {
         File dir = getDmdFolder(game);
-        if (dir.exists()) {
+        if (dir != null && dir.exists()) {
           return SystemUtil.deleteFileOrFolder(dir);
         }
       }
@@ -70,10 +92,10 @@ public class DMDService implements InitializingBean {
       DMDPackage dmdPackage = new DMDPackage();
       dmdPackage.setDmdPackageTypes(game.getDMDType());
 
-      if (StringUtils.isNotEmpty(game.getDMDProjectFolder())) {
+      File dmdFolder = getDmdFolder(game);
+      if (dmdFolder != null) {
         dmdPackage.setName(game.getDMDProjectFolder());
 
-        File dmdFolder = getDmdFolder(game);
         if (dmdFolder.exists()) {
           dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
           try {
@@ -106,7 +128,7 @@ public class DMDService implements InitializingBean {
   }
 
   public void installDMDPackage(@NonNull File archive, UploaderAnalysis analysis, @NonNull Game game) {
-    File dmdFolder = game.getDMDProjectFolder() != null ? getDmdFolder(game) :
+    File dmdFolder = StringUtils.isNotBlank(game.getDMDProjectFolder()) ? getDmdFolder(game) :
         analysis.getDMDPath() != null ? new File(game.getGameFile().getParentFile(), analysis.getDMDPath()) :
             null;
 

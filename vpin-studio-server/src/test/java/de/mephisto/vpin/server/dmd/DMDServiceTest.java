@@ -57,6 +57,28 @@ public class DMDServiceTest {
     assertThat(folder.getParentFile()).isEqualTo(tempDir.toFile());
   }
 
+  @Test
+  void getDmdFolder_returnsNullForTablesFolderItself() throws IOException {
+    assertThat(service.getDmdFolder(buildGame(DMDPackageTypes.FlexDMD, "."))).isNull();
+    assertThat(service.getDmdFolder(buildGame(DMDPackageTypes.FlexDMD, ".\\"))).isNull();
+    assertThat(service.getDmdFolder(buildGame(DMDPackageTypes.FlexDMD, ""))).isNull();
+  }
+
+  @Test
+  void getDmdFolder_returnsNullForFolderOutsideTablesFolder() throws IOException {
+    assertThat(service.getDmdFolder(buildGame(DMDPackageTypes.FlexDMD, ".."))).isNull();
+    assertThat(service.getDmdFolder(buildGame(DMDPackageTypes.FlexDMD, "../Other"))).isNull();
+  }
+
+  @Test
+  void delete_neverDeletesTablesFolder() throws IOException {
+    Game game = buildGame(DMDPackageTypes.FlexDMD, ".");
+
+    assertThat(service.delete(game)).isFalse();
+    assertThat(tempDir.toFile()).exists();
+    assertThat(tempDir.resolve("game.vpx").toFile()).exists();
+  }
+
   // ---- getDMDPackage ----
 
   @Test

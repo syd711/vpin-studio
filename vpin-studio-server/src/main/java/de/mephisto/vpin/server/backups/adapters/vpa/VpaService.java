@@ -258,7 +258,7 @@ public class VpaService implements InitializingBean {
       DMDPackage dmdPackage = dmdService.getDMDPackage(game);
       if (dmdPackage != null && dmdPackage.isValid()) {
         File dmdFolder = dmdService.getDmdFolder(game);
-        if (dmdFolder.exists()) {
+        if (dmdFolder != null && dmdFolder.exists()) {
           List<File> archiveFiles = new ArrayList<>();
           dmdPackage.setModificationDate(OffsetDateTime.ofInstant(Instant.ofEpochMilli(dmdFolder.lastModified()), ZoneId.systemDefault()));
           if (!zipFile(jobDescriptor, dmdFolder, "DMD/" + dmdPackage.getName() + "/", zipOut)) {

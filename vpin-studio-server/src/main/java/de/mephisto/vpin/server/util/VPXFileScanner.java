@@ -825,7 +825,12 @@ public class VPXFileScanner {
 
       // cf UltraDMD_Options.vbs
       result.setDMDType("UltraDMD");
-      evalctxt.onEvaluateString(folder, res -> result.setDMDProjectFolder(res + ".UltraDMD"));
+      evalctxt.onEvaluateString(folder, res -> {
+        String prjFolder = res + ".UltraDMD";
+        if (isValidDMDProjectFolder(prjFolder)) {
+          result.setDMDProjectFolder(prjFolder);
+        }
+      });
     }
   }
 
@@ -843,7 +848,7 @@ public class VPXFileScanner {
       int quoteIdx = upToFolder.lastIndexOf('"');
       if (quoteIdx != -1) {
         String folder = upToFolder.substring(quoteIdx + 1);
-        if (!StringUtils.isEmpty(folder)) {
+        if (isValidDMDProjectFolder(folder)) {
           result.setDMDProjectFolder(folder);
         }
       }
@@ -859,9 +864,30 @@ public class VPXFileScanner {
           res = StringUtils.substring(res, 2);
           res = Strings.CI.removeEnd(res, "/");
         }
-        result.setDMDProjectFolder(res);
+        if (isValidDMDProjectFolder(res)) {
+          result.setDMDProjectFolder(res);
+        }
       });
     }
+  }
+
+  /**
+   * The DMD project folder must be a sub folder of the tables folder, never the tables folder itself or anything outside.
+   */
+  static boolean isValidDMDProjectFolder(String folder) {
+    if (StringUtils.isBlank(folder)) {
+      return false;
+    }
+    String f = folder.trim().replace('\\', '/');
+    if (f.startsWith("/") || f.matches("^[a-zA-Z]:.*")) {
+      return false;
+    }
+    for (String segment : f.split("/")) {
+      if (segment.equals("..")) {
+        return false;
+      }
+    }
+    return !StringUtils.strip(f, "./").isEmpty();
   }
 
   private static void lineSearchScript(List<String> includedScripts, String line, EvaluationContext evalctxt) {
