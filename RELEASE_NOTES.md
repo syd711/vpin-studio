@@ -9,7 +9,7 @@
   - On Windows, files are no longer deleted permanently when moving them to the recycle bin fails. The deletion is skipped instead.
   - Resources that are still used by other tables (ROM, nvram, PUP pack, DMD folder, ALTSound, ALT color, music, MAME cfg, backglass, ini files, etc.) are no longer deleted. This applies especially to VPX 10.8.1/10.9 tables located directly in the tables folder, where the "altsound", "serum", "vni", "music" and "pinmame" folders are shared by all of these tables.
   - Table folders are only deleted when they are a subfolder of the tables folder and no other table is located in them.
-- **Critical Performance Fixes**: Fixed one additional performance issue caused by the maintenance mode screen loader.
+- **Critical Performance Fixes**: Fixed one remaining CPU performance issue caused by the maintenance mode screen loader.
 - **VPX 10.8.1/10.9**: 
   - Fixed ALT color files in the shared VPinMAME "altcolor" folder not being detected for tables in the per-table folder layout, which caused false "ALT color missing" validation errors.
   - Fixed highscores of nvram based tables not being read when VPinMAME is not installed inside the VPX installation folder, unless a "pinmame\nvram" folder was created next to the table.
