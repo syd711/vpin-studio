@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.music;
 
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -73,6 +74,12 @@ public class MusicService {
     if (musicFolder == null || !musicFolder.exists()) {
       return Collections.emptyList();
     }
+    // the game music folder is derived from the table script, it must be the music folder or below
+    File musicRoot = folderLookupService.getMusicFolder(game);
+    if (musicRoot != null && !musicFolder.getAbsoluteFile().equals(musicRoot.getAbsoluteFile()) && !FileUtils.isStrictlyBelow(musicRoot, musicFolder)) {
+      LOG.warn("Ignoring music folder \"{}\" of {}, it is not located in \"{}\"", musicFolder.getAbsolutePath(), game, musicRoot);
+      return Collections.emptyList();
+    }
     String assetsStr = game.getAssets();
     if (StringUtils.isBlank(assetsStr)) {
       return Collections.emptyList();
@@ -96,6 +103,15 @@ public class MusicService {
             finalAssetPath = normalizedAsset;
         }
 
+        // asset paths come from the table script and must never point outside the music folder
+        if (!FileUtils.isSafeRelativePath(finalAssetPath)) {
+          continue;
+        }
+        // a pure wildcard like "*.mp3" (e.g. from 'track & ".mp3"') would match every file of the (shared) music folder
+        if (finalAssetPath.contains("*") && StringUtils.isEmpty(StringUtils.remove(FilenameUtils.getBaseName(finalAssetPath), '*')) && !finalAssetPath.contains("/")) {
+          continue;
+        }
+
         // Now evaluate using the cleaned finalAssetPath
         if (!finalAssetPath.contains("*")) {
         File f = new File(musicFolder, finalAssetPath);
@@ -103,8 +119,11 @@ public class MusicService {
           result.add(f);
         }
       } else {
-        try (Stream<Path> walk = Files.walk(root)) {
+        // "*" must not match across folders, so the depth of the pattern and the file must be the same
+        int depth = StringUtils.countMatches(finalAssetPath, '/');
+        try (Stream<Path> walk = Files.walk(root, depth + 1)) {
           walk.filter(p -> !Files.isDirectory(p))
+              .filter(p -> root.relativize(p).getNameCount() == depth + 1)
               .filter(p -> FilenameUtils.wildcardMatch(root.relativize(p).toString().replace('\\', '/'), finalAssetPath))
               .map(Path::toFile)
               .filter(f -> !result.contains(f))

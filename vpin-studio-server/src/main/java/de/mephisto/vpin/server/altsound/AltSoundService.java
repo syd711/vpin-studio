@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpinmame.VPinMameOptions;
 import de.mephisto.vpin.server.converter.AudioExtractor;
 import de.mephisto.vpin.server.emulators.EmulatorService;
@@ -99,6 +100,12 @@ public class AltSoundService implements InitializingBean {
   public boolean delete(@NonNull Game game) {
     File folder = getAltSoundFolder(game);
     if (folder != null && folder.exists()) {
+      // the folder name is derived from the ROM name, it must never resolve to the altsound folder itself or anything above
+      File altSoundRoot = folderLookupService.getAltSoundFolder(game, "x").getParentFile();
+      if (!FileUtils.isStrictlyBelow(altSoundRoot, folder)) {
+        LOG.error("Refusing to delete ALTSound folder \"{}\", it is not a subfolder of \"{}\"", folder.getAbsolutePath(), altSoundRoot.getAbsolutePath());
+        return false;
+      }
       altSoundFolder2AltSound.remove(folder.getAbsolutePath().toLowerCase());
       LOG.info("Deleting ALTSound folder {}", folder.getAbsolutePath());
       if (SystemUtil.deleteFileOrFolder(folder)) {

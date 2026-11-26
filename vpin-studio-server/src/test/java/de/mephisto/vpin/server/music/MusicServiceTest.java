@@ -133,6 +133,41 @@ public class MusicServiceTest {
   }
 
   @Test
+  void getMp3Files_skipsRootPureWildcard(@TempDir Path tempDir) throws IOException {
+    Files.createFile(tempDir.resolve("other.mp3"));
+    Path sub = Files.createDirectory(tempDir.resolve("OtherTable"));
+    Files.createFile(sub.resolve("theme.mp3"));
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
+    game.setAssets("*.mp3");
+
+    assertTrue(musicService.getMp3Files(game).isEmpty());
+  }
+
+  @Test
+  void getMp3Files_wildcardDoesNotMatchAcrossFolders(@TempDir Path tempDir) throws IOException {
+    Files.createFile(tempDir.resolve("track1.mp3"));
+    Path sub = Files.createDirectory(tempDir.resolve("OtherTable"));
+    Files.createFile(sub.resolve("track2.mp3"));
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());
+    game.setAssets("track*.mp3");
+
+    List<File> result = musicService.getMp3Files(game);
+
+    assertEquals(1, result.size());
+    assertEquals("track1.mp3", result.get(0).getName());
+  }
+
+  @Test
+  void getMp3Files_skipsAssetsOutsideMusicFolder(@TempDir Path tempDir) throws IOException {
+    Path music = Files.createDirectory(tempDir.resolve("music"));
+    Files.createFile(tempDir.resolve("outside.mp3"));
+    when(folderLookupService.getGameMusicFolder(game)).thenReturn(music.toFile());
+    game.setAssets("../outside.mp3");
+
+    assertTrue(musicService.getMp3Files(game).isEmpty());
+  }
+
+  @Test
   void getMp3Files_deduplicatesFiles(@TempDir Path tempDir) throws IOException {
     Files.createFile(tempDir.resolve("intro.mp3"));
     when(folderLookupService.getGameMusicFolder(game)).thenReturn(tempDir.toFile());

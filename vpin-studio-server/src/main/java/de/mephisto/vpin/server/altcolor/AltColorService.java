@@ -136,7 +136,8 @@ public class AltColorService implements InitializingBean {
         if (folders.stream().anyMatch(File::exists)) {
           break;
         }
-        if (!StringUtils.isEmpty(name)) {
+        // the name is used as subfolder, it must never resolve to the altcolor folder itself or anything above
+        if (de.mephisto.vpin.restclient.util.FileUtils.isSafeRelativePath(name)) {
           folders = folderLookupService.getAltColorFolders(game, name);
         }
       }
