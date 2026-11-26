@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsEntry;
 import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
+import de.mephisto.vpin.ui.tables.vps.VpsSection;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
@@ -490,9 +491,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
 
     if (!entries.isEmpty()) {
-      VBox rows = addSectionHeader(dataRoot, title);
-      rows.getChildren().clear();
-      rows.getChildren().addAll(entries);
+      VpsSection section = addSectionHeader(dataRoot, title, diffTypes);
+      section.setEntries(entries);
     }
   }
 
@@ -511,7 +511,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       return;
     }
 
-    VBox rows = addSectionHeader(dataRoot, title);
+    VpsSection section = addSectionHeader(dataRoot, title, diffTypes);
 
     // load in Thread as getGameByVpsTable() uses getGamesCached(-1) and that may take a while...
     new Thread(() -> {
@@ -568,29 +568,14 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       }
 
       // now refresh UI
-      Platform.runLater(() -> {
-        rows.getChildren().clear();
-        if (!entries.isEmpty()) {
-          rows.getChildren().addAll(entries);
-        }
-      });
+      Platform.runLater(() -> section.setEntries(entries));
     }).start();
   }
 
-  private static VBox addSectionHeader(VBox dataRoot, String title) {
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarVpsController.class.getResource("section-vps.fxml"));
-      loader.setResources(Messages.getBundle());
-      Pane section = loader.load();
-      Label label = (Label) section.getChildren().getFirst();
-      label.setText(title);
-      dataRoot.getChildren().add(section);
-      return (VBox) section.getChildren().get(2);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load VPS sidebar section: {}", e.getMessage(), e);
-    }
-    return null;
+  private static VpsSection addSectionHeader(VBox dataRoot, String title, VpsDiffTypes diffTypes) {
+    VpsSection section = new VpsSection(title, diffTypes);
+    dataRoot.getChildren().add(section);
+    return section;
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

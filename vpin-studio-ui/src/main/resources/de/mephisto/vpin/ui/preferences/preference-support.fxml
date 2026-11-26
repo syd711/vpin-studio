@@ -55,7 +55,7 @@
                   <Insets left="-5.0" top="3.0" />
                </VBox.margin>
             </Hyperlink>
-            <Button mnemonicParsing="false" onAction="#onZipDownload" text="%pref.support.zip_log_files" styleClass="c-text-white">
+            <Button mnemonicParsing="false" onAction="#onZipDownload" text="%pref.support.zip_log_files" styleClass="sm-button, c-text-white">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>

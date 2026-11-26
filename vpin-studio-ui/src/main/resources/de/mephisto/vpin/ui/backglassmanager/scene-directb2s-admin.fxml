@@ -5,243 +5,171 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerController">
-    <top>
-        <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-            <items>
-                <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
-                    </tooltip>
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
-                    </graphic>
-                </Button>
-                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
-                    </tooltip>
-                </Button>
-                <Separator layoutX="281.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <StackPane alignment="CENTER_RIGHT">
-                    <children>
-                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="%backglass.directb2s_admin.search_backglass">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </TextField>
-                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button, c-text-white">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <graphic>
-                                <FontIcon styleClass="c-icon-panel" iconLiteral="mdi2c-close-thick" iconSize="18" />
-                            </graphic>
-                        </Button>
-                    </children>
-                </StackPane>
-                <Separator layoutX="1116.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <ComboBox fx:id="emulatorCombo" prefWidth="190.0" />
-            <Button fx:id="emulatorBtn" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="c-text-white">
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-controller" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
-               </tooltip>
-            </Button>
-            <Separator layoutX="868.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-
-                <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
-
-                <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-
-                <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" styleClass="c-text-white">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.upload_a_new_backglass" />
-                    </tooltip>
-                </Button>
-            <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" styleClass="c-text-white">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="%backglass.directb2s_admin.rename_the_backglass_including_versions" />
-               </tooltip>
-            </Button>
-                <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <SplitMenuButton fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor" styleClass="c-text-white">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onResBulkEdit" text="%backglass.directb2s_admin.res_bulk_edit">
-                            <graphic>
-                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-monitor-screenshot" iconSize="14" />
-                            </graphic>
-                        </MenuItem>
-                    </items>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.open_res_editor" />
-                    </tooltip>
-                </SplitMenuButton>
-                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="%backglass.directb2s_admin.dmd_position" styleClass="c-text-white">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target-variant" iconSize="18" />
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
-                    </tooltip>
-                </Button>
-                <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onVpsOpen" styleClass="link-component, c-text-white">
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
-                    </graphic>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.open_table_information_on_vps" />
-                    </tooltip>
-                </Button>
-                <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
-                    <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="%backglass.directb2s_admin.open_ini_file" />
-                    </tooltip>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Button>
-            </items>
-        </ToolBar>
-    </top>
-    <center>
-      <SplitPane fx:id="splitPane" dividerPositions="0.8" styleClass="accordion-container">
+   <center>
+      <SplitPane fx:id="splitPane" dividerPositions="0.62" styleClass="sm-split">
          <items>
-                <StackPane fx:id="loaderStack">
-                    <children>
-                  <BorderPane>
-                     <center>
-                              <StackPane fx:id="tableStack" style="-fx-background-color: -c-panel;">
-                                  <children>
-                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked">
-                                          <columns>
-                                              <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
-                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.backglass" />
-                                              <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.directb2s" />
-                                              <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.table_match" />
-                                              <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.fulldmd" />
-                                              <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.grill" />
-                                              <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.score" />
-                                              <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
-                                              <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.frame" />
-                                              <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />
-                                          </columns>
-                                      </TableView>
-                                  </children>
-                              </StackPane>
-                     </center>
-                     <bottom>
-                            <BorderPane BorderPane.alignment="CENTER">
-                                <top>
-                                    <Label fx:id="labelCount" styleClass="c-text-white" BorderPane.alignment="TOP_RIGHT">
-                                    <BorderPane.margin>
-                                            <Insets bottom="3.0" />
-                                    </BorderPane.margin>
-                                    </Label>
-                                </top>
-                           <center>
-                                    <BorderPane fx:id="validationError" styleClass="sm-alert" BorderPane.alignment="CENTER">
-                                       <center>
-                                          <HBox spacing="12.0">
-                                             <children>
-                                                <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
-                                                   <children>
-                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
-                                                   </children>
-                                                </StackPane>
-                                                <VBox spacing="2.0" HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <Label fx:id="validationErrorLabel" text="%backglass.directb2s_admin.loading_backglasses" styleClass="sm-alert-title" wrapText="true" />
-                                                      <Label fx:id="validationErrorText" styleClass="sm-alert-text" wrapText="true" />
-                                                   </children>
-                                                </VBox>
-                                                <HBox alignment="TOP_RIGHT" spacing="6.0">
-                                                   <children>
-                                                      <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="sm-alert-button">
-                                                         <graphic>
-                                                            <FontIcon styleClass="c-icon-error-text-light" iconLiteral="mdi2c-cog" iconSize="16" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
-                                                         </tooltip>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </HBox>
-                                       </center>
-                                       <padding>
-                                          <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
-                                       </padding>
-                                    </BorderPane>
-                           </center>
-                           <BorderPane.margin>
-                              <Insets right="12.0" top="6.0" />
-                           </BorderPane.margin>
-                            </BorderPane>
-                     </bottom>
-                  </BorderPane>
-                    </children>
-                </StackPane>
-                  <fx:include fx:id="backglassManagerSideBar" minWidth="700.0" source="scene-directb2s-sidebar.fxml" />
+            <!-- backglass list -->
+            <VBox spacing="10.0" styleClass="sm-panel">
+               <children>
+                  <HBox alignment="CENTER_LEFT" styleClass="sm-actionbar">
+                     <children>
+                        <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button-icon">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2f-filter-menu-outline" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button-icon">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
+                           </tooltip>
+                        </Button>
+                        <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <TextField fx:id="searchTextField" minWidth="140.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%backglass.directb2s_admin.search_backglass" />
+                              <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-close-thick" iconSize="18" styleClass="c-icon-muted" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </StackPane>
+                        <ComboBox fx:id="emulatorCombo" prefWidth="180.0" />
+                        <Button fx:id="emulatorBtn" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="sm-button-icon">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2c-controller" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
+                           </tooltip>
+                        </Button>
+                        <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="170.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" styleClass="sm-actionbar">
+                     <children>
+                        <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="%common.upload">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2u-upload" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.upload_a_new_backglass" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="%backglass.directb2s_admin.rename">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2s-square-edit-outline" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.rename_the_backglass_including_versions" />
+                           </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="30.0" />
+                        <SplitMenuButton fx:id="resBtn" mnemonicParsing="false" onAction="#onResEdit" text="%backglass.directb2s_admin.res_editor">
+                           <items>
+                              <MenuItem mnemonicParsing="false" onAction="#onResBulkEdit" text="%backglass.directb2s_admin.res_bulk_edit">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2m-monitor-screenshot" iconSize="14" styleClass="c-icon-white" />
+                                 </graphic>
+                              </MenuItem>
+                           </items>
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2i-image-edit-outline" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.open_res_editor" />
+                           </tooltip>
+                        </SplitMenuButton>
+                        <Button fx:id="dmdPositionBtn" mnemonicParsing="false" onAction="#onDMDPosition" text="%backglass.directb2s_admin.dmd_position">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2t-target-variant" iconSize="18" styleClass="c-icon-white" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
+                           </tooltip>
+                        </Button>
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <Label fx:id="labelCount" styleClass="sm-hint" />
+                     </children>
+                     <padding>
+                        <Insets />
+                     </padding>
+                  </HBox>
+
+                  <!-- status summary of the listed backglasses -->
+                  <HBox fx:id="statusSummary" alignment="CENTER_LEFT" spacing="18.0">
+                     <children>
+                        <Label fx:id="statusReadyLabel" styleClass="sm-hint">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2c-circle" iconSize="10" styleClass="c-icon-ok" />
+                           </graphic>
+                        </Label>
+                        <Label fx:id="statusAttentionLabel" styleClass="sm-hint">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2c-circle" iconSize="10" styleClass="c-icon-error" />
+                           </graphic>
+                        </Label>
+                        <Label fx:id="statusDisabledLabel" styleClass="sm-hint">
+                           <graphic>
+                              <FontIcon iconLiteral="mdi2c-circle" iconSize="10" styleClass="c-icon-disabled" />
+                           </graphic>
+                        </Label>
+                     </children>
+                  </HBox>
+
+                  <StackPane fx:id="loaderStack" VBox.vgrow="ALWAYS">
+                     <children>
+                        <StackPane fx:id="tableStack">
+                           <children>
+                              <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked">
+                                 <columns>
+                                    <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.status" />
+                                    <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.backglass" />
+                                    <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.directb2s" />
+                                    <TableColumn fx:id="tableColumn" minWidth="70" prefWidth="90.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.table_match" />
+                                    <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.fulldmd" />
+                                    <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.grill" />
+                                    <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.score" />
+                                    <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.res" />
+                                    <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="%backglass.directb2s_admin.frame" />
+                                    <TableColumn fx:id="emulatorColumn" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="%backglass.directb2s_admin.emulator" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </StackPane>
+               </children>
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="2.0" />
+               </padding>
+            </VBox>
+
+            <fx:include fx:id="backglassManagerSideBar" minWidth="480.0" source="scene-directb2s-sidebar.fxml" />
          </items>
       </SplitPane>
-    </center>
+   </center>
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="12.0" />
+   </padding>
 </BorderPane>

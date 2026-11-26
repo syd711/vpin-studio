@@ -6,734 +6,581 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitMenuButton?>
-<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
-   <center>
-      <ScrollPane styleClass="base-component" stylesheets="@../stylesheet.css">
-          <content>
-            <BorderPane styleClass="accordion-container">
-               <top>
-                      <VBox fx:id="versionPane" BorderPane.alignment="CENTER">
-                          <children>
-                          <VBox fx:id="noneActiveInfo" styleClass="info-container">
-                              <children>
-                              <Label text="%backglass.directb2s_sidebar.none_of_the_backglasses_is_currently_activated" styleClass="c-text-white">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font>
-                                  <padding>
-                                      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                  </padding>
-                              </Label>
-                              </children>
-                              <VBox.margin>
-                              <Insets bottom="12.0" right="6.0" top="6.0" />
-                              </VBox.margin>
-                          </VBox>
-      
-                          <Label text="%backglass.directb2s_sidebar.version" styleClass="c-text-white">
-                              <font>
-                                  <Font name="System Bold" size="14.0" />
-                              </font>
-                              <VBox.margin>
-                                  <Insets bottom="12.0" />
-                              </VBox.margin>
-                          </Label>
-      
-                        <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--">
-                    </Label>
-                          <ComboBox fx:id="directB2SCombo" prefHeight="30.0" />
-      
-                                      <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="%backglass.directb2s_sidebar.active_backglass" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                              <VBox.margin>
-                                  <Insets top="12.0" />
-                              </VBox.margin>
-                          </CheckBox>
-                          <VBox spacing="24.0" styleClass="accordion-container">
-                              <children>
-                  
-                                  <HBox spacing="24.0">
-                                      <children>
-                                          <VBox spacing="6.0">
-                                              <children>
-                                                  <Label text="%backglass.directb2s_sidebar.background_preview" styleClass="c-text-white">
-                                                      <font>
-                                                          <Font name="System Bold" size="14.0" />
-                                                      </font>
-                                                  </Label>
-                                                  <BorderPane fx:id="thumbnailImagePane" maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
-                                                      <bottom>
-                                                          <BorderPane BorderPane.alignment="BOTTOM_LEFT">
-                                                              <BorderPane.margin>
-                                                                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                                              </BorderPane.margin>
-                                                              <left>
-                                                                  <Label fx:id="resolutionLabel" styleClass="c-text-white" BorderPane.alignment="CENTER" />
-                                                              </left>
-                                                              <right>
-                                                                  <HBox spacing="3.0">
-                                                                      <Button fx:id="downloadBackglassBtn" mnemonicParsing="false" onAction="#onBackglassDownload" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                          <graphic>
-                                                                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="14" />
-                                                                          </graphic>
-                                                                          <tooltip>
-                                                                              <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_backglass_image_and_save_it_on" wrapText="true" />
-                                                                          </tooltip>
-                                                                      </Button>
-                                                                      <SplitMenuButton fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                          <items>
-                                                                              <MenuItem mnemonicParsing="false" onAction="#onBackglassBulkImport" text="%backglass.bulk_import">
-                                                                                  <graphic>
-                                                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-multiple" iconSize="14" />
-                                                                                  </graphic>
-                                                                              </MenuItem>
-                                                                          </items>
-                                                                          <graphic>
-                                                                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-plus" iconSize="14" />
-                                                                          </graphic>
-                                                                          <tooltip>
-                                                                              <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_backglass_image_and_use_it_as" wrapText="true" />
-                                                                          </tooltip>
-                                                                      </SplitMenuButton>
-                                                                  </HBox>
-                                                              </right>
-                                                          </BorderPane>
-                                                      </bottom>
-                                                      <center>
-                                                          <ImageView fx:id="thumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                                                              <BorderPane.margin>
-                                                                  <Insets top="12.0" />
-                                                              </BorderPane.margin>
-                                                          </ImageView>
-                                                      </center>
-                                                      <padding>
-                                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                                      </padding>
-                                                  </BorderPane>
-                                              </children>
-                                          </VBox>
-                                          <Pane fx:id="loaderStackImages">
-                                              <VBox spacing="6.0">
-                                                  <children>
-                                                      <Label text="%backglass.directb2s_sidebar.dmd_preview" styleClass="c-text-white">
-                                                          <font>
-                                                              <Font name="System Bold" size="14.0" />
-                                                          </font>
-                                                      </Label>
-                                                      <BorderPane fx:id="dmdThumbnailImagePane" maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
-                                                          <center>
-                                                              <ImageView fx:id="dmdThumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <BorderPane.margin>
-                                                                      <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                                                  </BorderPane.margin>
-                                                              </ImageView>
-                                                          </center>
-                                                          <bottom>
-                                                              <BorderPane BorderPane.alignment="BOTTOM_LEFT">
-                                                                  <BorderPane.margin>
-                                                                      <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                                                  </BorderPane.margin>
-                                                                  <left>
-                                                                      <Label fx:id="dmdResolutionLabel" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                          <padding>
-                                                                              <Insets left="3.0" />
-                                                                          </padding>
-                                                                      </Label>
-                                                                  </left>
-                                                                  <right>
-                                                                      <HBox spacing="3.0">
-                                                                          <Button fx:id="uploadDMDBtn" mnemonicParsing="false" onAction="#onDMDUpload" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                              <graphic>
-                                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="14" />
-                                                                              </graphic>
-                                                               <tooltip>
-                                                                  <Tooltip text="%backglass.directb2s_sidebar.uploads_a_new_image_used_as_dmd_background" />
-                                                               </tooltip>
-                                                                          </Button>
-                                                                          <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                              <graphic>
-                                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="14" />
-                                                                              </graphic>
-                                                                              <tooltip>
-                                                                                <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_dmd_image_and_save_it_on" wrapText="true" />
-                                                                              </tooltip>
-                                                                          </Button>
-                                                                          <SplitMenuButton fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                              <items>
-                                                                                  <MenuItem mnemonicParsing="false" onAction="#onDMDBulkImport" text="%backglass.bulk_import">
-                                                                                      <graphic>
-                                                                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-multiple" iconSize="14" />
-                                                                                      </graphic>
-                                                                                  </MenuItem>
-                                                                              </items>
-                                                                              <graphic>
-                                                                                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2i-image-plus" iconSize="14" />
-                                                                              </graphic>
-                                                                              <tooltip>
-                                                                                  <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_dmd_image_and_use_it_as" wrapText="true" />
-                                                                              </tooltip>
-                                                                          </SplitMenuButton>
-                                                                          <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                                                              <graphic>
-                                                                                  <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="14" />
-                                                                              </graphic>
-                                                                              <tooltip>
-                                                                                  <Tooltip onCloseRequest="#onBackglassDelete" text="%backglass.directb2s_sidebar.delete_backglass_file" />
-                                                                              </tooltip>
-                                                                          </Button>
-                                                                      </HBox>
-                                                                  </right>
-                                                              </BorderPane>
-                                                          </bottom>
-                                                          <padding>
-                                                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                                          </padding>
-                                                      </BorderPane>
-                                                  </children>
-                                              </VBox>
-                                          </Pane>
-                                      </children>
-                                  </HBox>
-                              </children>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                          </VBox>
-                          </children>
-                     <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </BorderPane.margin>
-                      </VBox>
-               </top>
-               <center>
-                  <BorderPane BorderPane.alignment="CENTER">
-                     <left>
-                              <VBox BorderPane.alignment="CENTER">
-                                  <children>
-                                    <GridPane hgap="6.0" vgap="3.0">
-                                        <columnConstraints>
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                        </columnConstraints>
-                                        <rowConstraints>
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        </rowConstraints>
-                                        <children>
-                                            <Label text="%backglass.directb2s_sidebar.backglass_settings" styleClass="c-text-white">
-                                                <font>
-                                                    <Font name="System Bold" size="14.0" />
-                                                </font>
-                                            </Label>
+<VBox fx:id="root" styleClass="sm-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
+   <children>
+      <!-- header: name, version selector, activation and file actions -->
+      <HBox spacing="8.0" styleClass="sm-divider">
+         <children>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="sm-caption" text="%backglass.sidebar.caption" />
+                  <Label fx:id="titleLabel" styleClass="vps-sidebar-title" text="-" wrapText="true" />
+                  <Label fx:id="directB2SLabel" styleClass="sm-hint" text="-" />
+                  <ComboBox fx:id="directB2SCombo" maxWidth="1.7976931348623157E308" />
+               </children>
+            </VBox>
+            <HBox fx:id="headerActions" alignment="TOP_RIGHT" spacing="8.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" styleClass="sm-button">
+                     <children>
+                        <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%backglass.sidebar.active">
+                           <tooltip>
+                              <Tooltip text="%backglass.directb2s_sidebar.active_backglass" />
+                           </tooltip>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, sm-button-icon, folder-component">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2f-folder-open" iconSize="18" styleClass="c-icon-white" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%backglass.sidebar.open_file" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onVpsOpen" styleClass="sm-button, sm-button-icon, link-component">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2o-open-in-new" iconSize="18" styleClass="c-icon-white" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="%backglass.directb2s_admin.open_table_information_on_vps" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="14.0" left="18.0" right="18.0" top="16.0" />
+         </padding>
+      </HBox>
 
-                                            <Label text="%backglass.directb2s_sidebar.grill_visibility" styleClass="c-text-white" GridPane.rowIndex="1">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="120.0" text="%backglass.directb2s_sidebar.backglass_hidden" styleClass="c-text-white" GridPane.rowIndex="2">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="15.0" text="%backglass.directb2s_sidebar.b2s_dmd_hidden" styleClass="c-text-white" GridPane.rowIndex="3">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="49.0" text="%backglass.directb2s_sidebar.dmd_visibility" styleClass="c-text-white" GridPane.rowIndex="4">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="83.0" text="%backglass.directb2s_sidebar.mode" styleClass="c-text-white" GridPane.rowIndex="5">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="83.0" text="%backglass.directb2s_sidebar.skip_lamp_frames" styleClass="c-text-white" GridPane.rowIndex="6">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="116.0" text="%backglass.directb2s_sidebar.skip_gi_frames" styleClass="c-text-white" GridPane.rowIndex="7">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="150.0" text="%backglass.directb2s_sidebar.skip_solenoid_frames" styleClass="c-text-white" GridPane.rowIndex="8">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="184.0" text="%backglass.directb2s_sidebar.skip_led_frames" styleClass="c-text-white" GridPane.rowIndex="9">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="251.0" text="%backglass.directb2s_sidebar.used_led_type" styleClass="c-text-white" GridPane.rowIndex="10">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="352.0" text="%backglass.directb2s_sidebar.led_bulb_light_on" styleClass="c-text-white" GridPane.rowIndex="11">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="385.0" text="%backglass.directb2s_sidebar.glowing" styleClass="c-text-white" GridPane.rowIndex="12">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="251.0" text="%backglass.directb2s_sidebar.background" styleClass="c-text-white" GridPane.rowIndex="13">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="385.0" text="%backglass.directb2s_sidebar.start_as_exe" styleClass="c-text-white" GridPane.rowIndex="14">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="452.0" text="%backglass.directb2s_sidebar.start_as_exe_server_default" styleClass="c-text-white" GridPane.rowIndex="15">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="284.0" text="%backglass.directb2s_sidebar.bring_forms" styleClass="c-text-white" GridPane.rowIndex="16">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            <Label layoutX="10.0" layoutY="284.0" text="%backglass.directb2s_sidebar.no_focus" styleClass="c-text-white" GridPane.rowIndex="17">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                            </Label>
-                                            
-                                            <ComboBox fx:id="hideGrill" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                            <CheckBox fx:id="hideB2SBackglass" layoutX="162.0" layoutY="120.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                            <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                            <ComboBox fx:id="hideDMD" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                            <ComboBox fx:id="dualModes" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                            <Spinner fx:id="skipLampFrames" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                            <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                            <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                            <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                            <ComboBox fx:id="usedLEDType" layoutX="176.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                            <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                                            <ComboBox fx:id="glowing" layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                                            <ComboBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                                            <ComboBox fx:id="startAsExe" layoutX="162.0" layoutY="386.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                                            <CheckBox fx:id="startAsExeServer" disable="true" layoutX="196.0" layoutY="453.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-                                            <ComboBox fx:id="formToPosition" layoutX="173.0" layoutY="117.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-                                            <CheckBox fx:id="formNoFocus" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="versionPane" spacing="14.0">
+               <children>
+                  <!-- validation error of the selected backglass -->
+                  <HBox fx:id="validationError" spacing="12.0" styleClass="sm-alert">
+                     <children>
+                        <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                           <children>
+                              <FontIcon iconLiteral="mdi2e-exclamation-thick" iconSize="14" styleClass="c-icon-white" />
+                           </children>
+                        </StackPane>
+                        <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="validationErrorLabel" styleClass="sm-alert-title" wrapText="true" />
+                              <Label fx:id="validationErrorText" styleClass="sm-alert-text" wrapText="true" />
+                           </children>
+                        </VBox>
+                        <HBox alignment="TOP_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="validationUploadDmdBtn" mnemonicParsing="false" onAction="#onDMDUpload" styleClass="sm-alert-button" text="%backglass.sidebar.upload_dmd" />
+                              <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="sm-alert-button">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-cog" iconSize="16" styleClass="c-icon-error-text-light" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%backglass.directb2s_admin.open_validators_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                     </padding>
+                  </HBox>
 
-                                            <Label GridPane.columnIndex="2" GridPane.rowIndex="6">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                                <graphic>
-                                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                </graphic>
-                                                <tooltip>
-                                                    <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
-                                                </tooltip>
-                                            </Label>
-                                            <Label layoutX="540.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                                <graphic>
-                                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                </graphic>
-                                                <tooltip>
-                                                    <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
-                                                </tooltip>
-                                            </Label>
-                                            <Label layoutX="540.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                                <graphic>
-                                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                </graphic>
-                                                <tooltip>
-                                                    <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
-                                                </tooltip>
-                                            </Label>
-                                            <Label layoutX="540.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
-                                                <font>
-                                                    <Font size="14.0" />
-                                                </font>
-                                                <graphic>
-                                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                </graphic>
-                                                <tooltip>
-                                                    <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
-                                                </tooltip>
-                                            </Label>
-                                        </children>
-                                    </GridPane>
-                                  </children>
-                           <BorderPane.margin>
-                              <Insets right="24.0" />
-                           </BorderPane.margin>
-                              </VBox>
-                     </left>
-                     <center>
-                              <VBox BorderPane.alignment="CENTER">
-                                  <children>
-                                      <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                          <children>
-                                              <Label text="%backglass.directb2s_sidebar.matching_table" styleClass="c-text-white">
-                                                  <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label>
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                                  <graphic>
-                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                  </graphic>
-                                                  <tooltip>
-                                                      <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.even_if_fuzzy_name_matching_is_enabled_for" wrapText="true" />
-                                                  </tooltip>
-                                              </Label>
-                                          </children>
-                                      </HBox>
-                                      <ToolBar styleClass="floating-toolbar">
-                                          <items>           
-                                              <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="c-text-white">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                                  <graphic>
-                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                                                  </graphic>
-                                                  <tooltip>
-                                                      <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
-                                                  </tooltip>
-                                              </Button>
-                                              <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                                  <graphic>
-                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
-                                                  </graphic>
-                                                  <tooltip>
-                                                      <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
-                                                  </tooltip>
-                                              </Button>
-                                              <Button fx:id="gameLaunchBtn" mnemonicParsing="false" onAction="#onGameLaunch" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                                  <graphic>
-                                                      <FontIcon styleClass="c-icon-success-light" iconLiteral="mdi2p-play" iconSize="18" />
-                                                  </graphic>
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                                  <tooltip>
-                                                      <Tooltip text="%backglass.directb2s_sidebar.launch_game" />
-                                                  </tooltip>
-                                              </Button>
-                                          </items>
-                                          <VBox.margin>
-                                              <Insets top="12.0" />
-                                          </VBox.margin>
-                                      </ToolBar>
-                                      <GridPane hgap="6.0" vgap="3.0">
-                                          <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" />
-                                              <ColumnConstraints hgrow="SOMETIMES" />
-                                          </columnConstraints>
-                                          <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          </rowConstraints>
-                                          <children>
-                                              <Label text="%backglass.directb2s_sidebar.display_name" styleClass="c-text-white">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="gameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" />
-                                              <Label text="%backglass.directb2s_sidebar.file_name" styleClass="c-text-white" GridPane.rowIndex="1">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="gameFilenameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      
-                                                                <Label text="%backglass.directb2s_sidebar.emulator_name" styleClass="c-text-white" GridPane.rowIndex="2">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="emulatorNameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label layoutX="10.0" layoutY="76.0" text="%backglass.directb2s_sidebar.game_id" styleClass="c-text-white" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
+                  <!-- no version of the backglass is active -->
+                  <HBox fx:id="noneActiveInfo" alignment="CENTER_LEFT" spacing="10.0" styleClass="sm-inset">
+                     <children>
+                        <FontIcon iconLiteral="mdi2a-alert-outline" iconSize="18" styleClass="c-icon-warn" />
+                        <Label styleClass="sm-text" text="%backglass.directb2s_sidebar.none_of_the_backglasses_is_currently_activated" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                     </padding>
+                  </HBox>
+
+                  <!-- background and DMD image tiles -->
+                  <GridPane hgap="14.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                     </columnConstraints>
+                     <children>
+                        <VBox spacing="10.0" styleClass="sm-tile">
+                           <children>
+                              <Label styleClass="sm-caption" text="%backglass.sidebar.caption_background" />
+                              <StackPane fx:id="thumbnailImagePane" minHeight="200.0" prefHeight="200.0" styleClass="sm-inset">
+                                 <children>
+                                    <ImageView fx:id="thumbnailImage" fitHeight="190.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true" />
+                                    <Label fx:id="thumbnailEmptyLabel" styleClass="sm-hint" text="%backglass.directb2s_sidebar.no_image_data_available" wrapText="true">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2i-image-off-outline" iconSize="18" styleClass="c-icon-subtle" />
+                                       </graphic>
                                     </Label>
-                                    <Label fx:id="gameIdLabel" layoutX="223.0" layoutY="76.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                          </children>
-                                          <VBox.margin>
-                                              <Insets right="12.0" top="6.0" />
-                                          </VBox.margin>
-                                      </GridPane>
-      
-                                                        <Label text="%backglass.directb2s_sidebar.directb2s_file" styleClass="c-text-white">
-                                          <font>
-                                              <Font name="System Bold" size="14.0" />
-                                          </font>
-                                          <VBox.margin>
-                                              <Insets top="24.0" />
-                                          </VBox.margin>
-                                      </Label>
-                                      <ToolBar layoutX="10.0" layoutY="42.0" styleClass="floating-toolbar">
-                                          <VBox.margin>
-                                              <Insets top="12.0" />
-                                          </VBox.margin>
-                                          <items>
-                                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                                  <graphic>
-                                                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
-                                                  </graphic>
-                                                  <tooltip>
-                                                      <Tooltip text="%backglass.directb2s_sidebar.reload_the_backglass" />
-                                                  </tooltip>
-                                              </Button>
-                                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onBackglassDelete" styleClass="c-text-white">
-                                                  <graphic>
-                                                      <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                                  </graphic>
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Button>
-                                          </items>
-                                      </ToolBar>
-                                      <GridPane hgap="6.0" vgap="3.0">
-                                          <columnConstraints>
-                                              <ColumnConstraints hgrow="SOMETIMES" />
-                                              <ColumnConstraints hgrow="SOMETIMES" />
-                                          </columnConstraints>
-                                          <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                              <RowConstraints prefHeight="30.0" />
-                                              <RowConstraints prefHeight="30.0" />
-                                          </rowConstraints>
-                                          <children>
-                                              <Label text="%backglass.directb2s_sidebar.name" styleClass="c-text-white">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="nameLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-           
-                                                                <Label text="%backglass.directb2s_sidebar.file_name" styleClass="c-text-white" GridPane.rowIndex="1">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="filenameLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-      
-                                                                <Label text="%backglass.directb2s_sidebar.table_type" styleClass="c-text-white" GridPane.rowIndex="2">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="typeLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.author" styleClass="c-text-white" GridPane.rowIndex="3">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="authorLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.artwork" styleClass="c-text-white" GridPane.rowIndex="4">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="artworkLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.grill_height" styleClass="c-text-white" GridPane.rowIndex="5">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="grillLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.full_dmd" styleClass="c-text-white" GridPane.rowIndex="6">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="fullDmdLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.b2s_data_elements" styleClass="c-text-white" GridPane.rowIndex="7">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="b2sElementsLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.score_elements" styleClass="c-text-white" GridPane.rowIndex="8">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="scoresLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.bulbs" styleClass="c-text-white" GridPane.rowIndex="9">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="bulbsLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.number_of_players" styleClass="c-text-white" GridPane.rowIndex="10">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="playersLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.file_size" styleClass="c-text-white" GridPane.rowIndex="11">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="filesizeLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                                <Label text="%backglass.directb2s_sidebar.modification_date" styleClass="c-text-white" GridPane.rowIndex="12">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-                                              <Label fx:id="modificationDateLabel" text="-" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                                                  <font>
-                                                      <Font size="14.0" />
-                                                  </font>
-                                              </Label>
-            
-                                                            </children>
-                                          <VBox.margin>
-                                              <Insets right="12.0" top="6.0" />
-                                          </VBox.margin>
-                                      </GridPane>
-                                  </children>
+                                    <ProgressIndicator fx:id="thumbnailProgress" maxHeight="36.0" maxWidth="36.0" />
+                                 </children>
+                              </StackPane>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label fx:id="resolutionLabel" maxWidth="1.7976931348623157E308" styleClass="sm-small" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="downloadBackglassBtn" mnemonicParsing="false" onAction="#onBackglassDownload" styleClass="sm-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2d-download" iconSize="16" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_backglass_image_and_save_it_on" wrapText="true" />
+                                       </tooltip>
+                                    </Button>
+                                    <SplitMenuButton fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" styleClass="sm-button, sm-button-icon">
+                                       <items>
+                                          <MenuItem mnemonicParsing="false" onAction="#onBackglassBulkImport" text="%backglass.bulk_import">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2i-image-multiple" iconSize="14" styleClass="c-icon-white" />
+                                             </graphic>
+                                          </MenuItem>
+                                       </items>
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2i-image-plus" iconSize="16" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_backglass_image_and_use_it_as" wrapText="true" />
+                                       </tooltip>
+                                    </SplitMenuButton>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                           </padding>
+                        </VBox>
+
+                        <VBox spacing="10.0" styleClass="sm-tile" GridPane.columnIndex="1">
+                           <children>
+                              <Label styleClass="sm-caption" text="%backglass.sidebar.caption_full_dmd" />
+                              <StackPane fx:id="loaderStackImages">
+                                 <children>
+                                    <StackPane fx:id="dmdThumbnailImagePane" minHeight="200.0" prefHeight="200.0" styleClass="sm-inset">
+                                       <children>
+                                          <ImageView fx:id="dmdThumbnailImage" fitHeight="190.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true" />
+                                          <VBox fx:id="dmdEmptyBox" alignment="CENTER" spacing="10.0">
+                                             <children>
+                                                <FontIcon iconLiteral="mdi2i-image-off-outline" iconSize="26" styleClass="c-icon-subtle" />
+                                                <Label fx:id="dmdEmptyLabel" styleClass="sm-hint" text="%backglass.sidebar.no_dmd_image" wrapText="true" />
+                                                <Button fx:id="uploadDMDEmptyBtn" mnemonicParsing="false" onAction="#onDMDUpload" styleClass="sm-button" text="%backglass.sidebar.upload_image">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2u-upload" iconSize="18" styleClass="c-icon-white" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.uploads_a_new_image_used_as_dmd_background" wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </VBox>
+                                          <ProgressIndicator fx:id="dmdThumbnailProgress" maxHeight="36.0" maxWidth="36.0" />
+                                       </children>
+                                    </StackPane>
+                                 </children>
+                              </StackPane>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label fx:id="dmdResolutionLabel" maxWidth="1.7976931348623157E308" styleClass="sm-small" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="uploadDMDBtn" mnemonicParsing="false" onAction="#onDMDUpload" styleClass="sm-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2u-upload" iconSize="16" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.uploads_a_new_image_used_as_dmd_background" wrapText="true" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" styleClass="sm-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2d-download" iconSize="16" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_dmd_image_and_save_it_on" wrapText="true" />
+                                       </tooltip>
+                                    </Button>
+                                    <SplitMenuButton fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" styleClass="sm-button, sm-button-icon">
+                                       <items>
+                                          <MenuItem mnemonicParsing="false" onAction="#onDMDBulkImport" text="%backglass.bulk_import">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2i-image-multiple" iconSize="14" styleClass="c-icon-white" />
+                                             </graphic>
+                                          </MenuItem>
+                                       </items>
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2i-image-plus" iconSize="16" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="400.0" text="%backglass.directb2s_sidebar.export_the_dmd_image_and_use_it_as" wrapText="true" />
+                                       </tooltip>
+                                    </SplitMenuButton>
+                                    <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" styleClass="sm-danger-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2d-delete-outline" iconSize="16" styleClass="c-icon-error" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%dialog.delete_dmd_image" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </GridPane>
+
+                  <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                        <!-- ============================== Settings ============================== -->
+                        <Tab text="%backglass.sidebar.tab_settings">
+                           <content>
+                              <VBox spacing="14.0">
+                                 <children>
+                                    <!-- Visibility -->
+                                    <VBox styleClass="sm-tile">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                                             <children>
+                                                <Label styleClass="sm-title" text="%backglass.sidebar.visibility" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
+                                             </padding>
+                                          </HBox>
+                                          <GridPane hgap="12.0" vgap="12.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" prefWidth="240.0" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.grill" />
+                                                <ComboBox fx:id="hideGrill" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.dmd" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="hideDMD" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.background" GridPane.rowIndex="2" />
+                                                <ComboBox fx:id="startBackground" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.dual_mode" GridPane.rowIndex="3" />
+                                                <ComboBox fx:id="dualModes" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.hide_backglass" GridPane.rowIndex="4" />
+                                                <CheckBox fx:id="hideB2SBackglass" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.hide_b2s_dmd" GridPane.rowIndex="5" />
+                                                <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                             </padding>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+
+                                    <!-- Frame skipping -->
+                                    <VBox styleClass="sm-tile">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                                             <children>
+                                                <Label styleClass="sm-title" text="%backglass.sidebar.frame_skipping" />
+                                                <Label>
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.only_enabled_for_backglasses_with_illuminations" wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Label styleClass="sm-small" text="%backglass.sidebar.frame_skipping_hint" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
+                                             </padding>
+                                          </HBox>
+                                          <GridPane hgap="12.0" vgap="6.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label styleClass="sm-small" text="%backglass.sidebar.lamps" />
+                                                <Label styleClass="sm-small" text="%backglass.sidebar.gi" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-small" text="%backglass.sidebar.solenoids" GridPane.columnIndex="2" />
+                                                <Label styleClass="sm-small" text="%backglass.sidebar.leds" GridPane.columnIndex="3" />
+                                                <Spinner fx:id="skipLampFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipGIFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipSolenoidFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipLEDFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                             </padding>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+
+                                    <!-- LEDs & glow -->
+                                    <VBox styleClass="sm-tile">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                                             <children>
+                                                <Label styleClass="sm-title" text="%backglass.sidebar.leds_glow" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
+                                             </padding>
+                                          </HBox>
+                                          <GridPane hgap="12.0" vgap="12.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" prefWidth="240.0" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.led_type" />
+                                                <ComboBox fx:id="usedLEDType" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.glowing" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="glowing" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.led_bulb_light_on" GridPane.rowIndex="2" />
+                                                <CheckBox fx:id="lightBulbOn" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                             </padding>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+
+                                    <!-- Launch -->
+                                    <VBox styleClass="sm-tile">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                                             <children>
+                                                <Label styleClass="sm-title" text="%backglass.sidebar.launch" />
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Label fx:id="startAsExeServerLabel" styleClass="sm-small" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
+                                             </padding>
+                                          </HBox>
+                                          <GridPane hgap="12.0" vgap="12.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                                <ColumnConstraints halignment="RIGHT" hgrow="NEVER" prefWidth="240.0" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.start_as_exe" />
+                                                <ComboBox fx:id="startAsExe" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.bring_forms" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="formToPosition" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label styleClass="sm-text" text="%backglass.sidebar.no_focus" GridPane.rowIndex="2" />
+                                                <CheckBox fx:id="formNoFocus" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                             </padding>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets top="14.0" />
+                                 </padding>
                               </VBox>
-                     </center>
-                     <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </BorderPane.margin>
-                  </BorderPane>
-               </center>
-            </BorderPane>
-          </content>
+                           </content>
+                        </Tab>
+
+                        <!-- ============================== Matching table ============================== -->
+                        <Tab text="%backglass.sidebar.tab_matching_table">
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <VBox styleClass="sm-tile">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                                             <children>
+                                                <Label styleClass="sm-title" text="%backglass.sidebar.tab_matching_table" />
+                                                <Label>
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="%backglass.directb2s_sidebar.even_if_fuzzy_name_matching_is_enabled_for" wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="18" styleClass="c-icon-white" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2t-table-edit" iconSize="18" styleClass="c-icon-white" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="gameLaunchBtn" mnemonicParsing="false" onAction="#onGameLaunch" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2p-play" iconSize="18" styleClass="c-icon-ok" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%backglass.directb2s_sidebar.launch_game" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="16.0" right="12.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <GridPane hgap="16.0" styleClass="sm-inset" vgap="10.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="NEVER" />
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.display_name" />
+                                                <Label fx:id="gameLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.file_name" GridPane.rowIndex="1" />
+                                                <Label fx:id="gameFilenameLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.emulator_name" GridPane.rowIndex="2" />
+                                                <Label fx:id="emulatorNameLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.game_id" GridPane.rowIndex="3" />
+                                                <Label fx:id="gameIdLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                                             </padding>
+                                             <VBox.margin>
+                                                <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                             </VBox.margin>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets top="14.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </Tab>
+
+                        <!-- ============================== DirectB2S file ============================== -->
+                        <Tab text="%backglass.sidebar.tab_directb2s_file">
+                           <content>
+                              <VBox>
+                                 <children>
+                                    <VBox styleClass="sm-tile">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-divider">
+                                             <children>
+                                                <Label styleClass="sm-title" text="%backglass.sidebar.tab_directb2s_file" />
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%backglass.directb2s_sidebar.reload_the_backglass" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onBackglassDelete" styleClass="sm-danger-button, sm-button-icon">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2d-delete-outline" iconSize="18" styleClass="c-icon-error" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="%backglass.directb2s_sidebar.delete_backglass_file" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="16.0" right="12.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <GridPane hgap="16.0" styleClass="sm-inset" vgap="10.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="NEVER" />
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.name" />
+                                                <Label fx:id="nameLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.file_name" GridPane.rowIndex="1" />
+                                                <Label fx:id="filenameLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.table_type" GridPane.rowIndex="2" />
+                                                <Label fx:id="typeLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.author" GridPane.rowIndex="3" />
+                                                <Label fx:id="authorLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.artwork" GridPane.rowIndex="4" />
+                                                <Label fx:id="artworkLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.grill_height" GridPane.rowIndex="5" />
+                                                <Label fx:id="grillLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.full_dmd" GridPane.rowIndex="6" />
+                                                <Label fx:id="fullDmdLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.b2s_data_elements" GridPane.rowIndex="7" />
+                                                <Label fx:id="b2sElementsLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.score_elements" GridPane.rowIndex="8" />
+                                                <Label fx:id="scoresLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.bulbs" GridPane.rowIndex="9" />
+                                                <Label fx:id="bulbsLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.number_of_players" GridPane.rowIndex="10" />
+                                                <Label fx:id="playersLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.file_size" GridPane.rowIndex="11" />
+                                                <Label fx:id="filesizeLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                                <Label styleClass="sm-hint" text="%backglass.directb2s_sidebar.modification_date" GridPane.rowIndex="12" />
+                                                <Label fx:id="modificationDateLabel" styleClass="sm-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                                             </padding>
+                                             <VBox.margin>
+                                                <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                             </VBox.margin>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets top="14.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children>
+               <padding>
+                  <Insets bottom="18.0" left="18.0" right="18.0" top="16.0" />
+               </padding>
+            </VBox>
+         </content>
       </ScrollPane>
-   </center>
-</BorderPane>
+   </children>
+</VBox>

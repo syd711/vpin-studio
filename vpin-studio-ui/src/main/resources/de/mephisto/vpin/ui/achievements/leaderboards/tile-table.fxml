@@ -40,7 +40,7 @@
                   </Button>
                </children>
             </StackPane>
-            <Button mnemonicParsing="false" onAction="#onSearch" text="%achievements.search">
+            <Button mnemonicParsing="false" onAction="#onSearch" text="%achievements.search" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
                </font></Button>

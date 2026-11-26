@@ -85,7 +85,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="%pref.client.select.folder" styleClass="c-text-white">
+                                    <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="%pref.client.select.folder" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -112,7 +112,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Button fx:id="dropInMoveTargetButton" mnemonicParsing="false" onAction="#onDropInMoveTargetFolderSelection" text="%pref.client.select.folder" styleClass="c-text-white">
+                                          <Button fx:id="dropInMoveTargetButton" mnemonicParsing="false" onAction="#onDropInMoveTargetFolderSelection" text="%pref.client.select.folder" styleClass="sm-button, c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -479,7 +479,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="folder-component, c-text-white" text="%pref.client.network.test" GridPane.columnIndex="2">
+                              <Button fx:id="winNetworkShareTestBtn" mnemonicParsing="false" onAction="#onWinShareTest" styleClass="sm-button, folder-component, c-text-white" text="%pref.client.network.test" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -511,7 +511,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onHideReset" text="%pref.client.dialogs.restore" styleClass="c-text-white">
+                  <Button mnemonicParsing="false" onAction="#onHideReset" text="%pref.client.dialogs.restore" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -520,7 +520,7 @@
                      </VBox.margin>
                   </Button>
                   <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description, c-text-white" text="%pref.client.dialogs.restore_hint" wrapText="true" />
-                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="%pref.client.dialogs.reset" styleClass="c-text-white">
+                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="%pref.client.dialogs.reset" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

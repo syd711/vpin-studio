@@ -257,7 +257,7 @@
       </BorderPane>
    </right>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
             <TextField fx:id="searchText" prefWidth="180.0" promptText="%tables.editors.editor_altsound.entry_search">
                <font>
@@ -274,7 +274,7 @@
                </padding>
             </Label>
             <ComboBox fx:id="filenameFilterCombo" layoutX="296.0" layoutY="11.0" prefWidth="200.0" />
-            <Button fx:id="editFileBtn" layoutX="1059.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFileEdit" styleClass="c-text-white">
+            <Button fx:id="editFileBtn" layoutX="1059.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFileEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -295,7 +295,7 @@
                </padding>
             </Label>
             <ComboBox fx:id="typeFilterCombo" layoutX="74.0" layoutY="11.0" prefWidth="120.0" />
-            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" styleClass="c-text-white">
+            <Button fx:id="editGroupBtn" layoutX="1232.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSampleTypes" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -316,7 +316,7 @@
                </padding>
             </Label>
             <ComboBox fx:id="profilesCombo" layoutX="535.0" layoutY="11.0" prefHeight="30.0" prefWidth="140.0" />
-            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" styleClass="c-text-white">
+            <Button fx:id="addBtn" mnemonicParsing="false" onAction="#onProfileAdd" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -327,7 +327,7 @@
                   <Tooltip text="%tables.editors.editor_altsound2.add_new_ducking_profile" />
                </tooltip>
             </Button>
-            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" styleClass="c-text-white">
+            <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onProfileEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -338,7 +338,7 @@
                   <Tooltip text="%tables.editors.editor_altsound2.edit_ducking_profile" />
                </tooltip>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" styleClass="c-text-danger">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onProfileDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>

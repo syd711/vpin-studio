@@ -32,7 +32,7 @@
          <left>
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinemhi_ui.re_start_pinemhi_monitor" styleClass="c-text-white">
+                  <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinemhi_ui.re_start_pinemhi_monitor" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -40,7 +40,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-restart" />
                      </graphic>
                   </Button>
-                  <Button fx:id="stopBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onStop" text="%pref.pinemhi_ui.stop_pinemhi_monitor" styleClass="c-text-white">
+                  <Button fx:id="stopBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onStop" text="%pref.pinemhi_ui.stop_pinemhi_monitor" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -84,7 +84,7 @@
                         </Label>
                         <ColorPicker fx:id="backgroundColorSelector" layoutX="157.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label layoutX="306.0" layoutY="14.0" styleClass="preference-description, c-text-white" text="%pref.pinemhi_ui.select_the_overlay_background_color_here" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Button mnemonicParsing="false" onAction="#onFontSelect" prefHeight="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button mnemonicParsing="false" onAction="#onFontSelect" prefHeight="30.0" prefWidth="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>

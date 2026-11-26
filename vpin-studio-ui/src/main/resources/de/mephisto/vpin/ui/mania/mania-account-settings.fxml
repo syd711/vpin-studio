@@ -46,7 +46,7 @@
                               <Label styleClass="default-text" text="%mania.mania_account_settings.cabinet_uuid" />
                               <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#onIdCopy">
+                                    <Button mnemonicParsing="false" onAction="#onIdCopy" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                        </graphic>

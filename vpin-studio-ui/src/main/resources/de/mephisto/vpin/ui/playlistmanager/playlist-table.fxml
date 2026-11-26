@@ -31,7 +31,7 @@
       </StackPane>
    </center>
    <top>
-      <ToolBar>
+      <ToolBar styleClass="floating-toolbar">
          <items>
             <StackPane alignment="CENTER_RIGHT">
                <children>
@@ -53,7 +53,7 @@
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <ComboBox fx:id="allEmulatorsCombo" prefWidth="150.0" promptText="%playlistmanager.playlist_table.all_emulators" />
             <Separator fx:id="emulatorsSeparator" layoutX="214.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="addBtn" layoutX="400.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" styleClass="c-text-white">
+            <Button fx:id="addBtn" layoutX="400.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -64,7 +64,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="c-text-white">
+            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>

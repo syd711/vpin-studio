@@ -34,7 +34,7 @@
                                     <right>
                                         <HBox fx:id="hbox_PlayField" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_PlayField" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_PlayField" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -45,17 +45,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_PlayField" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_PlayField" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_PlayField" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_PlayField" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_PlayField" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_PlayField" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -78,7 +78,7 @@
                                     <right>
                                         <HBox fx:id="hbox_GameHelp" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_GameHelp" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_GameHelp" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -89,17 +89,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_GameHelp" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_GameHelp" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_GameHelp" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_GameHelp" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_GameHelp" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_GameHelp" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -123,7 +123,7 @@
                                     <right>
                                         <HBox fx:id="hbox_GameInfo" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_GameInfo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_GameInfo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -134,17 +134,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_GameInfo" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_GameInfo" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_GameInfo" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_GameInfo" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_GameInfo" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_GameInfo" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -167,7 +167,7 @@
                                     <right>
                                         <HBox fx:id="hbox_DMD" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_DMD" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_DMD" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -178,22 +178,22 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_DMD" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_DMD" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_DMD" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_DMD" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_DMD" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_DMD" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="btn_dmdPos_DMD" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="c-text-white">
+                                    <Button fx:id="btn_dmdPos_DMD" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target-variant" />
                                        </graphic>
@@ -219,7 +219,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Topper" spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_Topper" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Topper" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -230,17 +230,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_Topper" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Topper" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_Topper" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_Topper" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Topper" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_Topper" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -263,7 +263,7 @@
                                     <right>
                                         <HBox fx:id="hbox_BackGlass" spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_BackGlass" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_BackGlass" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -274,22 +274,22 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_BackGlass" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_BackGlass" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_BackGlass" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_BackGlass" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_BackGlass" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_BackGlass" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="btn_dmdPos_Backglass" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="c-text-white">
+                                    <Button fx:id="btn_dmdPos_Backglass" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target-variant" />
                                        </graphic>
@@ -315,7 +315,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Loading" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Loading" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Loading" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -326,17 +326,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_Loading" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Loading" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_Loading" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_Loading" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Loading" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_Loading" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -359,7 +359,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Menu" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Menu" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Menu" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -370,22 +370,22 @@
                                     <left>
                               <HBox spacing="1.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_Menu" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Menu" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_Menu" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_Menu" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Menu" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_Menu" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="btn_dmdPos_Apron" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="c-text-white">
+                                    <Button fx:id="btn_dmdPos_Apron" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target-variant" />
                                        </graphic>
@@ -411,7 +411,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Other2" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Other2" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Other2" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -422,17 +422,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_Other2" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Other2" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_Other2" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_Other2" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Other2" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_Other2" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -455,7 +455,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Wheel" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Wheel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Wheel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -466,17 +466,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_Wheel" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Wheel" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_Wheel" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_Wheel" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Wheel" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_Wheel" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -499,7 +499,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Logo" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Logo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Logo" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -510,17 +510,17 @@
                                     <left>
                               <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                  <children>
-                                                <Button fx:id="btn_edit_Logo" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Logo" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_view_Logo" mnemonicParsing="false" onAction="#onMediaViewClick">
+                                                <Button fx:id="btn_view_Logo" mnemonicParsing="false" onAction="#onMediaViewClick" styleClass="sm-button, sm-button-icon">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" />
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="btn_delete_Logo" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                    <Button fx:id="btn_delete_Logo" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
@@ -540,7 +540,7 @@
                                     <right>
                                         <HBox fx:id="hbox_AudioLaunch" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_AudioLaunch" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_AudioLaunch" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -551,12 +551,12 @@
                                     <left>
                                         <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_edit_AudioLaunch" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_AudioLaunch" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_delete_AudioLaunch" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                                <Button fx:id="btn_delete_AudioLaunch" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                                 <graphic>
                                                     <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                                 </graphic>
@@ -589,7 +589,7 @@
                                     <right>
                                         <HBox fx:id="hbox_Audio" spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_Audio" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="folder-component">
+                                                <Button fx:id="btn_Audio" mnemonicParsing="false" onAction="#onMediaFolderOpenClick" styleClass="sm-button, sm-button-icon, folder-component">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
                                                     </graphic>
@@ -600,12 +600,12 @@
                                     <left>
                                         <HBox spacing="3.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Button fx:id="btn_edit_Audio" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                                                <Button fx:id="btn_edit_Audio" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="btn_delete_Audio" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="c-text-danger">
+                                                <Button fx:id="btn_delete_Audio" mnemonicParsing="false" onAction="#onMediaDeleteClick" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                                 <graphic>
                                                     <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" />
                                                 </graphic>

@@ -87,7 +87,7 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="288.0" styleClass="preference-description, c-text-white" text="%pref.settings_server.for_generating_highscore_cards_backglass_previews_and_compet" wrapText="true" />
-                  <Button layoutX="34.0" layoutY="596.0" mnemonicParsing="false" onAction="#onMediaIndex" text="%pref.settings_server.regenerate_media_cache">
+                  <Button layoutX="34.0" layoutY="596.0" mnemonicParsing="false" onAction="#onMediaIndex" text="%pref.settings_server.regenerate_media_cache" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -106,7 +106,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onBackup" text="%pref.settings_server.create_backup">
+                        <Button mnemonicParsing="false" onAction="#onBackup" text="%pref.settings_server.create_backup" styleClass="sm-button">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -114,7 +114,7 @@
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-save-cog-outline" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onRestore" text="%pref.restore_backup.restore_backup">
+                        <Button mnemonicParsing="false" onAction="#onRestore" text="%pref.restore_backup.restore_backup" styleClass="sm-button">
                            <font>
                               <Font size="14.0" />
                            </font>

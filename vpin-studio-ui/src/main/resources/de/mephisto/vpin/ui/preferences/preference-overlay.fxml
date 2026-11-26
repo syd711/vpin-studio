@@ -111,7 +111,7 @@
                            </font>
                         </TextField>
                         <Label text="%pref.overlay.you_can_use_this_field_to_add_urls" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="5" GridPane.valignment="TOP" />
-                        <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                        <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="sm-button, sm-button-icon, link-component" GridPane.columnIndex="3" GridPane.rowIndex="4">
                            <graphic>
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                            </graphic>

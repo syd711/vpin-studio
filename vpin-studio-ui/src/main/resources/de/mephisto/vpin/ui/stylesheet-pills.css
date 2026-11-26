@@ -103,3 +103,41 @@
     -fx-background-color: -c-control;
     -fx-border-color: -c-border-strong;
 }
+
+/* VPS: small square source tag ("IPDB"), entry count of a download section and the link pill of a download entry */
+.vps-tag {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-muted;
+    -fx-background-color: -c-control;
+    -fx-background-radius: 4;
+    -fx-padding: 2 6 2 6;
+}
+
+.vps-count {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-muted;
+    -fx-background-color: -c-control;
+    -fx-background-radius: 11;
+    -fx-padding: 0 7 0 7;
+}
+
+.vps-link-pill {
+    -fx-background-color: -c-panel;
+    -fx-background-radius: 13;
+    -fx-border-color: -c-border;
+    -fx-border-radius: 13;
+    -fx-padding: 3 8 3 9;
+    -fx-cursor: hand;
+}
+
+.vps-link-pill:hover {
+    -fx-background-color: -c-control;
+}
+
+.vps-link-pill-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-white;
+}

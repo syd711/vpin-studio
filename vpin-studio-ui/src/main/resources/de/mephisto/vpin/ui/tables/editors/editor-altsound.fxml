@@ -263,7 +263,7 @@
       </BorderPane>
    </right>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
             <TextField fx:id="searchText" promptText="%tables.editors.editor_altsound.entry_search">
                <font>

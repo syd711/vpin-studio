@@ -81,7 +81,7 @@
                   <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
                   <Label fx:id="tableComboLabel" managed="false" styleClass="default-text" text="%tables.base_upload.table" visible="false" />
                   <ComboBox fx:id="tableCombo" managed="false" prefHeight="30.0" prefWidth="310.0" visible="false" GridPane.columnIndex="1" />
-                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>

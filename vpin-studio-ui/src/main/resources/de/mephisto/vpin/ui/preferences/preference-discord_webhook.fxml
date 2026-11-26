@@ -59,7 +59,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="%pref.discord_webhook.send_test_message" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTest" text="%pref.discord_webhook.send_test_message" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets top="3.0" />
                      </GridPane.margin>

@@ -26,7 +26,7 @@
          <right>
              <HBox alignment="CENTER_RIGHT" spacing="3.0">
                  <children>
-                     <Button fx:id="eyeBtn" mnemonicParsing="false" >
+                     <Button fx:id="eyeBtn" mnemonicParsing="false"  styleClass="sm-button, sm-button-icon">
                          <font>
                              <Font size="10.0" />
                          </font>
@@ -268,7 +268,7 @@
                                   <Insets top="3.0" />
                                 </HBox.margin>
                             </ComboBox>
-                            <Button fx:id="frameUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
+                            <Button fx:id="frameUploadBtn" mnemonicParsing="false" onAction="#onUploadButton" styleClass="sm-button, sm-button-icon">
                                 <graphic>
                                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                 </graphic>

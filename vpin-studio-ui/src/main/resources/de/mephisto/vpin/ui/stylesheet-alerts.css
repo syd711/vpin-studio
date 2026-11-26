@@ -48,6 +48,7 @@
 
 .sm-alert-close {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-padding: 4;
     -fx-cursor: hand;
 }

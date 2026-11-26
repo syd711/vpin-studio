@@ -178,7 +178,7 @@
     -fx-font-size : 12px;
 }
 
-.action-selected {
+.action-selected, .action-selected:hover {
     -fx-text-fill: -c-white;
     -fx-background-color: -c-danger;
     -fx-border-color: -c-danger-darker;

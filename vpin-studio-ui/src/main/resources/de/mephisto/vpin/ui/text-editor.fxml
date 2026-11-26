@@ -29,7 +29,7 @@
               </BorderPane>
           </center>
          <top>
-            <ToolBar BorderPane.alignment="CENTER">
+            <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
@@ -46,7 +46,7 @@
             <Insets bottom="6.0" left="6.0" right="6.0" />
          </padding>
          <right>
-            <ToolBar nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" BorderPane.alignment="CENTER">
+            <ToolBar styleClass="floating-toolbar" nodeOrientation="RIGHT_TO_LEFT" orientation="VERTICAL" BorderPane.alignment="CENTER">
               <items>
                   <BorderPane />
               </items>

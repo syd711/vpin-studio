@@ -52,9 +52,9 @@
       </StackPane>
    </center>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
+            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -65,7 +65,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -97,7 +97,7 @@
             <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
 
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" />
-            <Button fx:id="tableDataBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" styleClass="c-text-white">
+            <Button fx:id="tableDataBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -108,7 +108,7 @@
                   <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                </tooltip>
             </Button>
-            <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
+            <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                </graphic>
@@ -120,7 +120,7 @@
                </tooltip>
             </Button>
             <Separator layoutX="333.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component, c-text-white" text="%vps.vps_tables.open_table">
+            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, link-component, c-text-white" text="%vps.vps_tables.open_table">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
                </graphic>

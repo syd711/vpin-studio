@@ -78,7 +78,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -89,7 +89,7 @@
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -123,9 +123,9 @@
                      </children>
                   </StackPane>
 
-                  <ToolBar minHeight="-Infinity">
+                  <ToolBar styleClass="floating-toolbar" minHeight="-Infinity">
                      <items>
-                        <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" styleClass="c-text-white">
+                        <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -136,7 +136,7 @@
                               <Tooltip text="%tables.dmd_position.zoom_out" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#onZoomIn" styleClass="c-text-white">
+                        <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#onZoomIn" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -147,7 +147,7 @@
                               <Tooltip text="%tables.dmd_position.zoom_in" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="zoomFitBtn" mnemonicParsing="false" onAction="#onZoomFit" styleClass="c-text-white">
+                        <Button fx:id="zoomFitBtn" mnemonicParsing="false" onAction="#onZoomFit" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -178,7 +178,7 @@
                         <children>
                            <Label fx:id="noFullDMDLabel" styleClass="default-text, c-text-white" text="%tables.dmd_position.no_full_dmd_image_present_in_the_backglass" />
                            <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="%tables.dmd_position.you_can_upload_or_drop_a_full_dmd" />
-                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file">
+                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" styleClass="sm-button">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -192,7 +192,7 @@
                         <children>
                            <Label fx:id="activateDMDImageLabel" styleClass="default-text, c-text-white" text="%tables.dmd_position.the_full_dmd_image_present_in_the_backglass" />
                            <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="%tables.dmd_position.you_can_show_the_backglass_dmd_image" />
-                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="%tables.dmd_position.show_b2s_dmd">
+                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="%tables.dmd_position.show_b2s_dmd" styleClass="sm-button">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -207,13 +207,13 @@
                         <children>
                            <Label fx:id="useFullDMDMediaLabel" styleClass="default-text, c-text-white" text="%tables.dmd_position.or_use_full_dmd_media" />
                            <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description, c-text-white" text="%tables.dmd_position.full_dmd_media_is_present_you_can_keep" />
-                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.keep_frontend_full_dmd_on">
+                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.keep_frontend_full_dmd_on" styleClass="sm-button">
                               <font>
                                  <Font size="14.0" />
                               </font>
                            </Button>
                            <Label fx:id="grabFullDMDMediaDescr" styleClass="preference-description, c-text-white" text="%tables.dmd_position.or_you_can_grab_the_full_dmd_apron" />
-                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.grab_frontend_image">
+                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.grab_frontend_image" styleClass="sm-button">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -321,7 +321,7 @@
                                     <Insets bottom="12.0" top="6.0" />
                                  </VBox.margin>
                               </HBox>
-                              <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="%tables.dmd_position.reset_to_backglass_scores_positions" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                              <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="%tables.dmd_position.reset_to_backglass_scores_positions" styleClass="sm-button, c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -428,7 +428,7 @@
                         <Label styleClass="default-text" text="%tables.dmd_position.height" GridPane.rowIndex="3" />
                         <Spinner fx:id="heightSpinner" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                        <Button fx:id="centerXBtn" mnemonicParsing="false" onAction="#onCenterX" text="%tables.dmd_position.center_horizontally" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                        <Button fx:id="centerXBtn" mnemonicParsing="false" onAction="#onCenterX" text="%tables.dmd_position.center_horizontally" styleClass="sm-button, c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -493,7 +493,7 @@
                         <Label styleClass="default-text" text="%tables.dmd_position.margin" GridPane.rowIndex="0" />
                         <Spinner fx:id="marginSpinner" amountToStepBy="1" initialValue="0" max="20" min="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="%tables.dmd_position.auto_position" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="%tables.dmd_position.auto_position" styleClass="sm-button, c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

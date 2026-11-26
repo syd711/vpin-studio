@@ -27,7 +27,7 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_privacy_settings.submit_your_highscores_to_rank_them_on_vpin" />
                         <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_privacy_settings.the_highscore_submission_to_vpin_mania_net_is" />
-                        <Button fx:id="syncScoresBtn" mnemonicParsing="false" onAction="#onHighscoreSync" text="%mania.mania_privacy_settings.synchronize_highscores" styleClass="c-text-white">
+                        <Button fx:id="syncScoresBtn" mnemonicParsing="false" onAction="#onHighscoreSync" text="%mania.mania_privacy_settings.synchronize_highscores" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -65,7 +65,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </VBox>
-                        <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="%mania.mania_privacy_settings.synchronize_ratings" styleClass="c-text-white">
+                        <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="%mania.mania_privacy_settings.synchronize_ratings" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>

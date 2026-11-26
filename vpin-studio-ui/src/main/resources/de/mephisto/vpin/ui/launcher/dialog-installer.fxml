@@ -58,7 +58,7 @@
    <center>
       <BorderPane fx:id="main" BorderPane.alignment="CENTER">
          <bottom>
-            <ToolBar fx:id="toolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
+            <ToolBar styleClass="floating-toolbar" fx:id="toolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
                 <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="submit-button, c-text-white" text="%launcher.installer.install_service">
                      <font>
@@ -150,7 +150,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="installationFolderBtn" layoutX="625.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstallationFolderBtn" text="%backups.backup_download.select_folder" GridPane.columnIndex="2">
+                        <Button fx:id="installationFolderBtn" layoutX="625.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstallationFolderBtn" text="%backups.backup_download.select_folder" GridPane.columnIndex="2" styleClass="sm-button">
                            <font>
                               <Font size="14.0" />
                            </font>

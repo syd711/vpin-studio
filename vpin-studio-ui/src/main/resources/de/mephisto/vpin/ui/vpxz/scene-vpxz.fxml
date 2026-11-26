@@ -44,9 +44,9 @@
       </StackPane>
    </center>
    <top>
-          <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
+          <ToolBar styleClass="floating-toolbar" fx:id="toolbar" BorderPane.alignment="CENTER">
               <items>
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -75,7 +75,7 @@
                   <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-            <Button fx:id="installBtn" layoutX="511.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInstall" text="%vpxz.vpxz.install_on_device" styleClass="c-text-white">
+            <Button fx:id="installBtn" layoutX="511.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInstall" text="%vpxz.vpxz.install_on_device" styleClass="sm-button, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -86,7 +86,7 @@
                   <Tooltip text="%backups.backups.uploads_an_archive_bundle_so_it_can_be" />
                </tooltip>
             </Button>
-            <Button fx:id="deleteDeviceBtn" layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDeviceDelete" text="%vpxz.vpxz.delete_from_device" styleClass="c-text-danger">
+            <Button fx:id="deleteDeviceBtn" layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDeviceDelete" text="%vpxz.vpxz.delete_from_device" styleClass="sm-danger-button, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
@@ -95,7 +95,7 @@
                </graphic>
             </Button>
             <Separator layoutX="500.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="addVpxzButton" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXZUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
+                  <Button fx:id="addVpxzButton" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXZUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -106,7 +106,7 @@
                           <Tooltip text="%backups.backups.uploads_an_archive_bundle_so_it_can_be" />
                       </tooltip>
                   </Button>
-                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" styleClass="c-text-white">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" styleClass="sm-button, c-text-white">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -118,7 +118,7 @@
                       </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDelete" text="%backups.backups.delete" styleClass="c-text-danger">
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVpxzDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -127,7 +127,7 @@
                       </graphic>
                   </Button>
                   <Separator fx:id="endSeparator" layoutX="806.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component, c-text-white" text="%backups.backups.open">
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="sm-button, folder-component, c-text-white" text="%backups.backups.open">
                       <font>
                           <Font size="14.0" />
                       </font>

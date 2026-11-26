@@ -201,10 +201,13 @@
    </bottom>
    <top>
       <VBox BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="12.0" />
+         </BorderPane.margin>
          <children>
-            <ToolBar fx:id="toolbar" prefHeight="40.0">
+            <ToolBar fx:id="toolbar" styleClass="sm-actionbar">
                <items>
-                  <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" styleClass="c-text-white">
+                  <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -215,7 +218,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                            <Font size="14.0" />
                      </font>
@@ -246,7 +249,7 @@
                   </StackPane>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
                   <ComboBox fx:id="emulatorCombo" prefWidth="190.0" promptText="%recorder.recorder.all_vpx_tables" />
-                  <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="c-text-white">
+                  <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-controller" iconSize="18" />
                      </graphic>
@@ -257,7 +260,7 @@
                         <Tooltip text="%backglass.directb2s_admin.open_emulator_manager" />
                      </tooltip>
                   </Button>
-                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorReload" styleClass="c-text-white">
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorReload" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -271,7 +274,7 @@
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
       
                   <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="%tables.tables_overview.select_playlist" />
-                  <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="c-text-white">
+                  <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
                      </graphic>
@@ -284,7 +287,7 @@
                   </Button>
       
                   <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" styleClass="c-text-white">
+                  <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" styleClass="sm-button, sm-button-icon, c-text-white">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
                      </graphic>
@@ -295,7 +298,7 @@
                         <Tooltip text="%tables.tables_overview.asset_manager_view_ctrl_m" />
                      </tooltip>
                   </Button>
-                  <SplitMenuButton fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="c-text-white">
+                  <SplitMenuButton fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                      <items>
                         <MenuItem fx:id="bulkImporterItem" mnemonicParsing="false" onAction="#onBulkImporter" text="%tables.tables_overview.bulk_importer">
                            <graphic>
@@ -313,7 +316,7 @@
                         <Tooltip text="%tables.tables_overview.asset_manager_ctrl_i" />
                      </tooltip>
                   </SplitMenuButton>
-                  <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="c-text-white">
+                  <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -324,7 +327,7 @@
                         <Tooltip text="%components.doftester.dof_tester.edit_table_data_ctrl_o" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" styleClass="c-text-white">
+                  <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -336,7 +339,7 @@
                      </tooltip>
                   </Button>
                   <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
+                  <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button">
                      <font>
                            <Font size="14.0" />
                      </font>
@@ -347,10 +350,10 @@
                            <Tooltip text="%competitions.competitions_iscored.kill_all_emulator_and_frontend_processes_ctrl_k" />
                      </tooltip>
                   </Button>
-                  <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
+                  <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                         <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                        <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onBackup" styleClass="c-text-white">
+                        <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onBackup" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -361,7 +364,7 @@
                               <Tooltip text="%tables.tables_overview.backup_the_selected_tables" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="vpxzBtn" mnemonicParsing="false" onAction="#onVpxz" styleClass="c-text-white">
+                        <Button fx:id="vpxzBtn" mnemonicParsing="false" onAction="#onVpxz" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                                  <Font size="14.0" />
                            </font>
@@ -372,7 +375,7 @@
                               <Tooltip text="%tables.tables_overview.package_the_table_into_vpxz_file" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" styleClass="c-text-white">
+                        <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -383,7 +386,7 @@
                               <Tooltip text="%tables.tables_overview.import_existing_game_files_into_frontend" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
+                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button">
                            <font>
                                  <Font size="14.0" />
                            </font>
@@ -396,10 +399,10 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
+                  <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                         <Separator fx:id="mappingSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                        <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
+                        <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan" styleClass="sm-button, sm-button-icon">
                            <items>
                               <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="%tables.tables_overview.scan_all">
                                  <graphic>
@@ -417,7 +420,7 @@
                               <Font size="14.0" />
                            </font>
                         </SplitMenuButton>
-                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" styleClass="c-text-white">
+                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" styleClass="sm-button, sm-button-icon, c-text-white">
                            <items>
                               <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="%tables.tables_overview.validate_all">
                                  <graphic>
@@ -439,7 +442,7 @@
                   </HBox>
                </items>
             </ToolBar>
-            <ToolBar fx:id="secondaryToolbar" prefHeight="40.0" prefWidth="200.0" />
+            <ToolBar fx:id="secondaryToolbar" styleClass="sm-actionbar" />
          </children>
       </VBox>
    </top>

@@ -1,5 +1,6 @@
 /**
- * Toolbars and action bars
+ * Toolbars and action bars: every ToolBar uses floating-toolbar (flat, no border, radius 6), except the ones in the
+ * table sidebars (scene-tables-sidebar-*.fxml) and the sm-actionbar of the System Manager tabs / table overview.
  */
 .main-toolbar {
     -fx-background-color: -fx-base-6;
@@ -11,6 +12,19 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 6 6 6 6;
     -fx-background-color: -c-panel;
+}
+
+/* buttons in a floating toolbar get the height of the combo boxes next to them */
+.floating-toolbar .button, .floating-toolbar .menu-button, .floating-toolbar .split-menu-button, .floating-toolbar .toggle-button,
+.floating-toolbar-inverted .button, .floating-toolbar-inverted .menu-button, .floating-toolbar-inverted .split-menu-button, .floating-toolbar-inverted .toggle-button {
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
+}
+
+/* except the clear button laid over a search field */
+.floating-toolbar .button.ghost-icon-button, .floating-toolbar-inverted .button.ghost-icon-button {
+    -fx-min-height: 0;
+    -fx-pref-height: -1;
 }
 
 .floating-toolbar-inverted {

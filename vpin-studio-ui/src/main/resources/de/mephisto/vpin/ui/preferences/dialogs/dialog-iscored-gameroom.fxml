@@ -474,7 +474,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%pref.iscored_gameroom.validate" styleClass="c-text-white" GridPane.columnIndex="2">
+                              <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%pref.iscored_gameroom.validate" styleClass="sm-button, c-text-white" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

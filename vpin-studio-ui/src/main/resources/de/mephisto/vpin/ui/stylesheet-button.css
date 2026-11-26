@@ -1,8 +1,68 @@
-.ghost-icon-button {
+/**
+ * Default look of every Button, MenuButton and SplitMenuButton (see UI-STYLEGUIDE.md "Buttons"): the sm-button look,
+ * so that no control falls back to the JavaFX default style. Placed first: every button class below (ghost-*, sm-*, …)
+ * overrides it. No font size and no height here: those come with sm-button / the toolbars, a FXML <Font> stays valid.
+ */
+.button, .menu-button, .split-menu-button {
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-control;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-cursor: hand;
+}
+
+.button:hover, .menu-button:hover, .menu-button:showing {
+    -fx-background-color: -c-control-hover;
+}
+
+.button:disabled, .menu-button:disabled, .split-menu-button:disabled {
+    -fx-opacity: 0.6;
+}
+
+.menu-button > .label {
+    -fx-text-fill: -c-white;
+    -fx-padding: 5 4 5 12;
+}
+
+.menu-button > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5 10 5 4;
+}
+
+.menu-button > .arrow-button > .arrow,
+.split-menu-button > .arrow-button > .arrow {
+    -fx-background-color: -c-white;
+}
+
+/* the arrow part of a SplitMenuButton is divided by a border line, both parts get their own hover */
+.split-menu-button > .label {
+    -fx-text-fill: -c-white;
+    -fx-background-color: transparent;
+    -fx-background-radius: 4 0 0 4;
+    -fx-padding: 5 10 5 12;
+}
+
+.split-menu-button > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 4 4 0;
+    -fx-border-color: transparent transparent transparent -c-border;
+    -fx-padding: 5 8 5 8;
+}
+
+.split-menu-button > .label:hover,
+.split-menu-button > .arrow-button:hover {
+    -fx-background-color: -c-control-hover;
+}
+
+.ghost-icon-button, .ghost-icon-button:hover {
     -fx-font-color: -fx-base-1;
     -fx-font-size : 12px;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
+    -fx-padding: 4;
     -fx-text-fill: -fx-font-2;
 }
 
@@ -15,7 +75,7 @@
     -fx-text-fill: -fx-font-2;
 }
 
-.ghost-button-default {
+.ghost-button-default, .ghost-button-default:hover {
     -fx-font-color: -fx-font-2;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
@@ -102,7 +162,7 @@
     -fx-cursor: hand;
 }
 
-.table-media-button-selected {
+.table-media-button-selected, .table-media-button-selected:hover {
     -fx-font-color: -c-warm-white;
     -fx-background-color: -c-black;
     -fx-border-style: solid solid solid solid;
@@ -152,7 +212,7 @@
     -fx-cursor: hand;
 }
 
-.bar-button-selected {
+.bar-button-selected, .bar-button-selected:hover {
     -fx-background-color: -fx-font-hover;
     -fx-background-color: -c-highlight;
     -fx-text-fill: -c-warm-white;
@@ -184,7 +244,7 @@
     -fx-cursor: hand;
 }
 
-.vps-table-button-selected {
+.vps-table-button-selected, .vps-table-button-selected:hover {
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
@@ -221,7 +281,7 @@
     -fx-cursor: hand;
 }
 
-.installer-button-selected {
+.installer-button-selected, .installer-button-selected:hover {
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
@@ -313,7 +373,7 @@
     -fx-padding: 2 4 2 4;
 }
 
-.vps-badge-button {
+.vps-badge-button, .vps-badge-button:hover {
     -fx-font-color: -c-white;
     -fx-font-weight : bold;
     -fx-font-size : 14px;
@@ -360,6 +420,9 @@
     -fx-border-color: -c-border;
     -fx-border-radius: 4;
     -fx-padding: 5 12 5 12;
+    /* same height as a .combo-box-base (stylesheet-combobox.css), so buttons and combos line up in a row */
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-cursor: hand;
 }
 
@@ -367,37 +430,62 @@
     -fx-background-color: -c-control-hover;
 }
 
-.sm-button-icon {
+.sm-button-icon, .sm-actionbar .button.sm-button-icon {
     -fx-padding: 5 7 5 7;
+}
+
+/* sm-button on a MenuButton / SplitMenuButton: the label and arrow parts carry the padding (see top of this file) */
+.sm-button.menu-button, .sm-button.split-menu-button {
+    -fx-padding: 0;
+}
+
+.sm-button-icon.split-menu-button > .label {
+    -fx-padding: 5 7 5 7;
+}
+
+/* SplitMenuButtons in an .sm-actionbar: global split-menu-button look (top of this file) plus the sm-button font and height */
+.sm-actionbar .split-menu-button, .sm-actionbar .menu-button {
+    -fx-font-size: 14px;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
+}
+
+/* the clear button laid over a search field keeps its ghost look */
+.sm-actionbar .button.ghost-icon-button, .sm-actionbar .button.ghost-icon-button:hover {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4;
+    -fx-min-height: 0;
+    -fx-pref-height: -1;
 }
 
 /* colored "open" variants of sm-button, same meaning as in the tables sidebar (large: icon + text, small: sm-button-icon):
    folder-component = opens a folder (yellow), external-component = starts a system program (green),
    link-component = opens a website or file (blue) */
-.sm-button.folder-component, .sm-actionbar .button.folder-component {
+.button.folder-component, .menu-button.folder-component, .split-menu-button.folder-component {
     -fx-background-color: -c-folder;
     -fx-border-color: -c-folder-border;
 }
 
-.sm-button.folder-component:hover, .sm-actionbar .button.folder-component:hover {
+.button.folder-component:hover, .menu-button.folder-component:hover {
     -fx-background-color: -c-folder-hover;
 }
 
-.sm-button.external-component, .sm-actionbar .button.external-component {
+.button.external-component, .menu-button.external-component, .split-menu-button.external-component {
     -fx-background-color: -c-green;
     -fx-border-color: -c-green-border;
 }
 
-.sm-button.external-component:hover, .sm-actionbar .button.external-component:hover {
+.button.external-component:hover, .menu-button.external-component:hover {
     -fx-background-color: -c-green-hover;
 }
 
-.sm-button.link-component, .sm-actionbar .button.link-component {
+.button.link-component, .menu-button.link-component, .split-menu-button.link-component {
     -fx-background-color: -c-link-base;
     -fx-border-color: -c-link-base-border;
 }
 
-.sm-button.link-component:hover, .sm-actionbar .button.link-component:hover {
+.button.link-component:hover, .menu-button.link-component:hover {
     -fx-background-color: -c-link-base-hover;
 }
 
@@ -405,6 +493,8 @@
 .sm-button-small {
     -fx-font-size: 12px;
     -fx-padding: 3 9 3 9;
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
     -fx-graphic-text-gap: 5;
 }
 
@@ -414,7 +504,9 @@
     -fx-text-fill: -c-on-warn;
     -fx-background-color: -c-warn;
     -fx-background-radius: 4;
-    -fx-padding: 8 14 8 14;
+    -fx-padding: 5 14 5 14;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-cursor: hand;
 }
 
@@ -423,7 +515,7 @@
 }
 
 /* destructive actions (restart server, shutdown, delete) and actions flagging a problem */
-.sm-danger-button {
+.sm-danger-button, .sm-actionbar .button.sm-danger-button {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: -c-error;
@@ -432,12 +524,19 @@
     -fx-border-color: -c-error-border;
     -fx-border-radius: 4;
     -fx-padding: 5 12 5 12;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-cursor: hand;
 }
 
-.sm-danger-button:hover {
+.sm-danger-button:hover, .sm-actionbar .button.sm-danger-button:hover {
     -fx-background-color: -c-error-hover;
     -fx-border-color: -c-error;
+}
+
+/* icon-only delete / stop buttons */
+.sm-danger-button.sm-button-icon, .sm-actionbar .button.sm-danger-button.sm-button-icon {
+    -fx-padding: 5 7 5 7;
 }
 
 .sm-danger-button .ikonli-font-icon {

@@ -74,9 +74,9 @@
                      <children>
                         <BorderPane>
                            <top>
-                              <ToolBar prefWidth="200.0" BorderPane.alignment="CENTER">
+                              <ToolBar styleClass="floating-toolbar" prefWidth="200.0" BorderPane.alignment="CENTER">
                                 <items>
-                                    <Button fx:id="assetViewBtn" mnemonicParsing="false" onAction="#onAssetPreview" styleClass="c-text-white">
+                                    <Button fx:id="assetViewBtn" mnemonicParsing="false" onAction="#onAssetPreview" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -87,7 +87,7 @@
                                           <Tooltip text="%cards.template_editor.display_the_image_of_the_card_as_it" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" prefHeight="29.0" prefWidth="0.0" styleClass="c-text-white">
+                                    <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" prefHeight="29.0" prefWidth="0.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                                        </graphic>
@@ -99,7 +99,7 @@
                                        </tooltip>
                                     </Button>
                                     <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                    <Button fx:id="assetDeleteBtn" mnemonicParsing="false" onAction="#onAssetDelete" styleClass="c-text-danger">
+                                    <Button fx:id="assetDeleteBtn" mnemonicParsing="false" onAction="#onAssetDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -134,7 +134,7 @@
             </BorderPane>
     </right>
     <top>
-        <ToolBar BorderPane.alignment="CENTER">
+        <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
             <items>
                 <StackPane alignment="CENTER_LEFT">
                     <children>
@@ -166,7 +166,7 @@
                     </padding>
                 </Label>
                 <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" styleClass="c-text-white">
+                <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" styleClass="sm-button, sm-button-icon, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -179,7 +179,7 @@
                 </Button>
                 <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
 
-                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onExport" styleClass="c-text-white">
+                <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onExport" styleClass="sm-button, sm-button-icon, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -190,7 +190,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                     </graphic>
                 </Button>
-                <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" styleClass="c-text-white">
+                <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" styleClass="sm-button, sm-button-icon, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -202,7 +202,7 @@
                     </graphic>
                 </Button>
 
-                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" styleClass="c-text-white">
+                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" styleClass="sm-button, sm-button-icon, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -213,7 +213,7 @@
                         <Tooltip text="%cards.template_editor.rename_the_selected_template" />
                     </tooltip>
                 </Button>
-                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
+                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -222,7 +222,7 @@
                     </graphic>
                 </Button>
                 <Separator layoutX="485.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" styleClass="c-text-white">
+                <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" styleClass="sm-button, sm-button-icon, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -245,7 +245,7 @@
                         <Tooltip text="%cards.template_editor.writes_the_given_image_for_the_selected_screen" />
                      </tooltip>
                   </Button>
-                <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" styleClass="c-text-white">
+                <Button fx:id="generateBtn" layoutX="565.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGenerate" styleClass="sm-button, sm-button-icon, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -256,7 +256,7 @@
                         <Tooltip text="%cards.template_editor.writes_the_given_image_for_the_selected_screen" />
                     </tooltip>
                 </Button>
-                <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text="%cards.template_editor.generate_all" styleClass="c-text-white">
+                <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text="%cards.template_editor.generate_all" styleClass="sm-button, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -265,7 +265,7 @@
                     </graphic>
                 </Button>
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component, c-text-white">
+                <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="sm-button, sm-button-icon, folder-component, c-text-white">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -279,7 +279,7 @@
                 <HBox fx:id="mediaPlayerControl" spacing="6.0">
                     <children>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button mnemonicParsing="false" onAction="#onStart" styleClass="external-component, c-text-danger">
+                        <Button mnemonicParsing="false" onAction="#onStart" styleClass="sm-danger-button, sm-button-icon, external-component, c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -290,7 +290,7 @@
                                 <Tooltip text="%cards.template_editor.run_the_overlay_animation_if_it_is_a" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>

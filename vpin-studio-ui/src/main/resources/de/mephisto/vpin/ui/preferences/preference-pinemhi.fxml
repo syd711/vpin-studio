@@ -52,7 +52,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                      <children>
-                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinemhi_ui.re_start_pinemhi_monitor" styleClass="c-text-white">
+                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinemhi_ui.re_start_pinemhi_monitor" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -60,7 +60,7 @@
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-restart" />
                            </graphic>
                         </Button>
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%pref.pinemhi_ui.stop_pinemhi_monitor" styleClass="c-text-white">
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%pref.pinemhi_ui.stop_pinemhi_monitor" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -68,7 +68,7 @@
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-skull-crossbones-outline" />
                            </graphic>
                         </Button>
-                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="external-component, c-text-white" text="%pref.pinemhi.edit_pinemhi_ini" visible="false">
+                        <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" styleClass="sm-button, external-component, c-text-white" text="%pref.pinemhi.edit_pinemhi_ini" visible="false">
                            <graphic>
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" />
                            </graphic>
@@ -86,7 +86,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onUIEdit" text="%pref.pinemhi.edit_pinemhi_display_settings" styleClass="c-text-white">
+                  <Button mnemonicParsing="false" onAction="#onUIEdit" text="%pref.pinemhi.edit_pinemhi_display_settings" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

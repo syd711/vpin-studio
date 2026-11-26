@@ -179,7 +179,7 @@
                                                       </TextField>
                                                       <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                          <children>
-                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" styleClass="c-text-white">
+                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" styleClass="sm-button, c-text-white">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -266,7 +266,7 @@
                                                 </Label>
                                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                                                    <children>
-                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" styleClass="c-text-white">
+                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" styleClass="sm-button, c-text-white">
                                                          <items>
                                                             <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
                                                                <graphic>
@@ -288,7 +288,7 @@
                                                             <Tooltip text="%tables.table_data.tries_to_resolve_the_matching_vps_table_and" />
                                                          </tooltip>
                                                       </SplitMenuButton>
-                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="%cards.template_editor_background.reset" styleClass="c-text-white">
+                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="%cards.template_editor_background.reset" styleClass="sm-button, c-text-white">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -371,7 +371,7 @@
                                                       </Label>
                                                       <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
                                                          <children>
-                                                            <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
+                                                            <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="sm-button, sm-button-icon, link-component">
                                                                <graphic>
                                                                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                                                </graphic>
@@ -394,7 +394,7 @@
                                                                   <Insets />
                                                                </HBox.margin>
                                                                <children>
-                                                                  <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                                                  <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion" styleClass="sm-button, sm-button-icon">
                                                                      <graphic>
                                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                                                      </graphic>
@@ -405,7 +405,7 @@
                                                                         <Tooltip text="%mania.mania_account_settings.copy_vps_table_version_url" />
                                                                      </tooltip>
                                                                   </Button>
-                                                                  <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
+                                                                  <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="sm-button, sm-button-icon, link-component">
                                                                      <graphic>
                                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                                                                      </graphic>
@@ -469,7 +469,7 @@
                                                    <right>
                                                       <HBox BorderPane.alignment="CENTER_RIGHT">
                                                          <children>
-                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" styleClass="c-text-white">
+                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" styleClass="sm-button, c-text-white">
                                                                <items>
                                                                   <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%tables.table_data.auto_fill_all">
                                                                      <graphic>
@@ -637,7 +637,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Button fx:id="idpdBtn" mnemonicParsing="false" onAction="#onIdpdProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                                      <Button fx:id="idpdBtn" mnemonicParsing="false" onAction="#onIdpdProperty" styleClass="sm-button, sm-button-icon, link-component" GridPane.columnIndex="2" GridPane.rowIndex="10">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -659,7 +659,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Button mnemonicParsing="false" onAction="#onUrlProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="11">
+                                                      <Button mnemonicParsing="false" onAction="#onUrlProperty" styleClass="sm-button, sm-button-icon, link-component" GridPane.columnIndex="2" GridPane.rowIndex="11">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -717,7 +717,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="14">
+                                                      <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="sm-button, sm-button-icon, link-component" GridPane.columnIndex="2" GridPane.rowIndex="14">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -1099,7 +1099,7 @@
                               <Insets right="3.0" />
                            </HBox.margin>
                         </CheckBox>
-                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -1110,7 +1110,7 @@
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>

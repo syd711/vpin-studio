@@ -179,7 +179,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
+            <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -188,7 +188,7 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
                </font>
@@ -197,12 +197,12 @@
                </graphic>
             </Button>
             <Separator layoutX="100.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" styleClass="c-text-white">
+            <Button fx:id="restoreBtn" mnemonicParsing="false" onAction="#onRestore" text="%backups.backup_restore.restore" styleClass="sm-button, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>

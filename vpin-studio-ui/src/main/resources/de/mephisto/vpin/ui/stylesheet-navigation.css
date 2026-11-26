@@ -53,10 +53,19 @@
 /**
  * Window Toolbar
  */
+/* window title bar buttons (minimize / maximize / pin / close): keep their own look, undo the global .button
+   defaults of stylesheet-button.css (values = the former JavaFX default) */
 .header-button {
     -fx-background-color: -fx-base-7;
+    -fx-background-insets: 0 0 -1 0;
+    -fx-background-radius: 3;
     -fx-border-style: hidden hidden hidden hidden;
+    -fx-border-width: 0;
     -fx-text-fill: -c-text-soft;
+}
+
+.header-button:disabled {
+    -fx-opacity: 0.4;
 }
 
 .header-button:hover {

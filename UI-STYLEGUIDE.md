@@ -105,14 +105,18 @@ field labels above inputs are `sm-small`.
 
 ## 4. Buttons
 
-There are exactly these button types. Don't use the default JavaFX button style inside the redesigned views.
+There are exactly these button types. Every `Button`, `MenuButton` and `SplitMenuButton` gets one of them in its
+`styleClass` (icon-only buttons: `sm-button, sm-button-icon`; icon-only delete / stop: `sm-danger-button, sm-button-icon`).
+As a safety net, a button without any class (e.g. created in Java) already gets the `sm-button` colors from the
+global `.button` / `.menu-button` / `.split-menu-button` rules at the top of `stylesheet-button.css` — but not its 14px font
+and 30px height, so always set the class. `sm-button` on a MenuButton / SplitMenuButton works too (padding moves to its parts).
 
 | Class | Look | Use |
 |-------|------|-----|
 | `sm-button` | `#333333` fill, `#444444` border, white 14px, padding `5 12` | Default action, also every button in an `sm-actionbar` (styled automatically) |
 | `sm-button, sm-button-icon` | same, square padding `5 7` | Icon-only actions (refresh, copy) next to inputs |
 | `sm-button, sm-button-small` | same look, 12px, padding `3 9` | Secondary inline actions next to small text / pills, e.g. "Set as installed", "Reset version", "Ignore version" |
-| `sm-accent-button` | orange fill `#DD9646`, dark text `#1A1305`, bold, padding `8 14` | The **one** primary action of a panel (install, save) — at most one per panel, usually in the `sm-footer` |
+| `sm-accent-button` | orange fill `#DD9646`, dark text `#1A1305`, bold, padding `5 14` | The **one** primary action of a panel (install, save) — at most one per panel, usually in the `sm-footer` |
 | `sm-danger-button` | `#3A1C1F` fill, `#6E2B30` border (`#FF6B70` on hover, fill `#4A2326`), `#FF6B70` bold 14px text and icons, padding `5 12` | Destructive actions (restart server, shutdown system, delete cabinet) and buttons flagging a problem (asset filter with excluded assets). Never a filled bright red. |
 | `sm-button, folder-component` | `#CC9933` fill (yellow), white text and icon | Opens a **folder** in the file explorer, icon `mdi2f-folder-open` |
 | `sm-button, external-component` | `#338800` fill (green), white text and icon | Starts a **system program** (setup exe, config tool), icon `mdi2o-open-in-new` |
@@ -128,6 +132,11 @@ in an `sm-actionbar` the `sm-button` class is implied; small variant = `sm-butto
 e.g. the open-folder buttons next to the emulator folder fields. Choosing a folder (`…` / "Change folder") stays a plain `sm-button`.
 
 Borderless text buttons are not used any more (the former `sm-ghost-button` was removed).
+
+**Control height:** buttons and combo boxes share one height so they line up in a row: `sm-button` (also
+`sm-button-icon`), `sm-accent-button`, `sm-danger-button`, the buttons of an `sm-actionbar` / `floating-toolbar` and every
+`.combo-box-base` (ComboBox, DatePicker, ColorPicker) are **30px** high; `sm-button-small` is 24px. The clear button over a
+search field (`ghost-icon-button`) keeps its computed size. Change all of them together.
 
 ### Text inputs
 
@@ -148,7 +157,8 @@ inner box — the editor is transparent inside the combo's border.
 the same outer size as the check box (~21px at 14px font) — keep both in sync when changing paddings.
 `ScrollBar`: 10px, no arrow buttons, transparent track, rounded `#444444` thumb (`#5A5A5A` hover, `#7A7A7A` drag).
 `ToggleButton` has the `sm-button` look (`#333333`, `#444444` border, `#3D3D3D` hover); selected = `#333366` fill
-with an `#8C8CE0` border. `sm-filter-pill` toggles keep their round outline look.
+with an `#8C8CE0` border. Add `sm-button` for the 30px height. A Button showing an "on" state uses `toggle-button-selected`
+(same look); a ToggleButton flagging a problem (maintenance mode) adds `sm-danger-button`. `sm-filter-pill` toggles keep their round outline look.
 `Slider`: `#161616` track with `#444444` border, round `#BDBDBD` thumb (white on hover/drag, `#8C8CE0` border when
 focused), tick marks `#444444`, tick labels 12px `#9A9A9A`.
 `ListView`: `#161616` box with `#444444` border (radius 4, `#7A7A7A` when focused), transparent white 14px cells with
@@ -272,7 +282,21 @@ configuration conflicts:
   `#3D2B17` fill with orange icon and bold label; count badge in warn colors; Settings / Collapse pinned at the bottom.
   The preference navigations (`scene-preferences.fxml`, `mania/scene-mania-preferences.fxml`) use the same look:
   `pref-nav` ScrollPane panel (no border), `preference-section` captions, `preference-button` items (`preference-button-selected`).
-- **Action bar** (`sm-actionbar`): top bar of a component tab; any Button inside gets the `sm-button` look automatically.
+- **Toolbars**: every `ToolBar` gets `styleClass="floating-toolbar"` (flat `#222222`, no border, radius 6; `floating-toolbar-inverted`
+  on a `#222222` background). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
+- **Action bar** (`sm-actionbar`): top bar of a component tab and of the table overview; any Button and SplitMenuButton
+  inside gets the `sm-button` look automatically. Destructive buttons add `sm-danger-button`, the clear button of a
+  search field keeps `ghost-icon-button`.
+
+### VPS sidebar (`vps/scene-vps-tables-sidebar.fxml`)
+- `sm-panel` with a `sm-divider` header: `sm-caption` "TABLE DETAILS", 20px `vps-sidebar-title` name, `sm-hint`
+  "Manufacturer · Year · Type", `sm-button-icon` actions top right.
+- Feature pills = `sm-pill-ok` (`sm-pill-unknown` when filtered out); facts in a two-column `sm-inset, vps-facts` grid
+  of `vps-fact` cells (`sm-caption` key + `sm-text` value); IPDB row = `sm-inset` with `vps-tag` + `sm-link`.
+- Download sections (`tables/vps/VpsSection`, also used by the tables sidebar and the VPS assets dialog): collapsible
+  `vps-section` card, header = 18px icon + title + `vps-count` + chevron, skeleton bars while loading; rows
+  (`VpsEntry`) = orange Consolas `vps-entry-version` + authors (green `vps-entry-installed` link when installed) +
+  `vps-link-pill` (source dot, abbreviation, arrow) and an `sm-small` "Updated …" line.
 
 ## 7. Checklist for a new view
 

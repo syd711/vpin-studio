@@ -29,7 +29,7 @@
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
                <children>
-                  <Button fx:id="eyeBtn" mnemonicParsing="false" >
+                  <Button fx:id="eyeBtn" mnemonicParsing="false"  styleClass="sm-button, sm-button-icon">
                     <font>
                         <Font size="10.0" />
                     </font>

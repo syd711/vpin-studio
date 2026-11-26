@@ -50,7 +50,7 @@
                   <Insets />
                </VBox.margin>
             </GridPane>
-            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="%tables.pinvol_settings.save_settings" styleClass="c-text-white">
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="%tables.pinvol_settings.save_settings" styleClass="sm-button, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -93,7 +93,7 @@
                   <Spinner fx:id="tableVolRearSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onDefaults" text="%tables.pinvol_settings.apply_defaults" styleClass="c-text-white">
+                        <Button mnemonicParsing="false" onAction="#onDefaults" text="%tables.pinvol_settings.apply_defaults" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>

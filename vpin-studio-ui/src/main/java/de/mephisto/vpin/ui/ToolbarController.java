@@ -179,10 +179,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   public void maintenanceEnabled(boolean b) {
     if (maintenanceBtn.isVisible()) {
       if (b) {
-        maintenanceBtn.getStyleClass().add("action-selected");
+        maintenanceBtn.getStyleClass().add("sm-danger-button");
       }
       else {
-        maintenanceBtn.getStyleClass().remove("action-selected");
+        maintenanceBtn.getStyleClass().remove("sm-danger-button");
       }
     }
   }

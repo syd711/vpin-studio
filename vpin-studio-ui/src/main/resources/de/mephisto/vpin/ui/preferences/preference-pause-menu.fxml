@@ -320,7 +320,7 @@
                                  </children>
                               </HBox>
                               <Label styleClass="default-headline" text="%pref.pause_menu.testing" wrapText="true" GridPane.rowIndex="5" />
-                              <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" text="%pref.pause_menu.test_pause_menu" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                              <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" text="%pref.pause_menu.test_pause_menu" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -440,7 +440,7 @@
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
                                           <Label styleClass="checkbox-description, c-text-white" text="%pref.pause_menu.http_host_8089_api_v1_recorder_screenshot_latest" wrapText="true" />
-                                          <Button mnemonicParsing="false" onAction="#onCopy">
+                                          <Button mnemonicParsing="false" onAction="#onCopy" styleClass="sm-button, sm-button-icon">
                                              <graphic>
                                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="12" />
                                              </graphic>
@@ -451,7 +451,7 @@
                                                 <Tooltip text="%mania.mania_account_settings.copy_vps_table_version_url" />
                                              </tooltip>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#onScreenshotOpen" styleClass="external-component">
+                                          <Button mnemonicParsing="false" onAction="#onScreenshotOpen" styleClass="sm-button, sm-button-icon, external-component">
                                              <graphic>
                                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="14" />
                                              </graphic>

@@ -73,7 +73,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#onFileSelect" text="%players.player_edit.select_image">
+                              <Button mnemonicParsing="false" onAction="#onFileSelect" text="%players.player_edit.select_image" styleClass="sm-button">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>

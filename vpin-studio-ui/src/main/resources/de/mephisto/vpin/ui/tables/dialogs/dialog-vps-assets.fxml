@@ -33,7 +33,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
+                  <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, sm-button-icon, link-component">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                      </graphic>

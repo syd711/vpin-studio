@@ -24,7 +24,7 @@
          <right>
              <HBox alignment="CENTER_RIGHT" spacing="3.0">
                  <children>
-                     <Button fx:id="eyeBtn" mnemonicParsing="false">
+                     <Button fx:id="eyeBtn" mnemonicParsing="false" styleClass="sm-button, sm-button-icon">
                          <font>
                              <Font size="10.0" />
                          </font>
@@ -75,7 +75,7 @@
                     <right>
                       <HBox spacing="3.0" BorderPane.alignment="CENTER">
                           <children>
-                            <Button mnemonicParsing="false" onAction="#onFontTableSelect">
+                            <Button mnemonicParsing="false" onAction="#onFontTableSelect" styleClass="sm-button, sm-button-icon">
                                 <font>
                                   <Font size="14.0" />
                                 </font>
@@ -83,7 +83,7 @@
                                   <FontIcon styleClass="c-icon-white" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
                                 </graphic>
                             </Button>
-                            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTableApplyAll">
+                            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTableApplyAll" styleClass="sm-button, sm-button-icon">
                                 <font>
                                   <Font size="14.0" />
                                 </font>

@@ -36,9 +36,9 @@
                 </StackPane>
             </center>
             <top>
-                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+                        <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -65,7 +65,7 @@
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="%competitions.competitions_discord.add" styleClass="c-text-white">
+                        <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="%competitions.competitions_discord.add" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -73,7 +73,7 @@
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
-                        <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
+                        <Button fx:id="editBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -81,7 +81,7 @@
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
-                        <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="%competitions.competitions_discord.duplicate" styleClass="c-text-white">
+                        <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="%competitions.competitions_discord.duplicate" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -90,7 +90,7 @@
                             </graphic>
                         </Button>
                   <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="%competitions.competitions_discord.finish" styleClass="c-text-white">
+                        <Button fx:id="finishBtn" layoutX="610.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFinish" text="%competitions.competitions_discord.finish" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -99,7 +99,7 @@
                             </graphic>
                         </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>

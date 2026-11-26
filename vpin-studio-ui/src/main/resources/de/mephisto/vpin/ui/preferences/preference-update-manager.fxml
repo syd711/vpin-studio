@@ -98,7 +98,7 @@
                               <Tooltip prefWidth="300.0" text="%pref.update_manager.checks_the_installation_files_for_possible_arrows_and" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component, c-text-white" text="%components.mame.vpin_mame_setup">
+                        <Button fx:id="mameBtn" mnemonicParsing="false" onAction="#onMameSetup" styleClass="sm-button, external-component, c-text-white" text="%components.mame.vpin_mame_setup">
                            <font>
                               <Font size="14.0" />
                            </font>

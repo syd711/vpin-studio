@@ -258,7 +258,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button mnemonicParsing="false" onAction="#onFileSelect" text="%players.player_edit.select_image" styleClass="c-text-white" GridPane.columnIndex="1">
+                  <Button mnemonicParsing="false" onAction="#onFileSelect" text="%players.player_edit.select_image" styleClass="sm-button, c-text-white" GridPane.columnIndex="1">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
@@ -273,7 +273,7 @@
                   </Label>
                   <HBox alignment="BASELINE_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%cards.template_editor_background.reset" styleClass="c-text-white">
+                        <Button layoutX="360.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%cards.template_editor_background.reset" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -25,10 +25,10 @@
             <Insets />
          </BorderPane.margin>
          <top>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
                   <ComboBox fx:id="monitoringModeCombo" prefWidth="200.0" />
-                <Button mnemonicParsing="false" onAction="#zoomIn" styleClass="c-text-white">
+                <Button mnemonicParsing="false" onAction="#zoomIn" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -36,7 +36,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-magnify-plus" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#zoomOut" styleClass="c-text-white">
+                  <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#zoomOut" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -45,7 +45,7 @@
                      </graphic>
                   </Button>
                   <Separator layoutX="297.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScreenshot" styleClass="c-text-white">
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScreenshot" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -57,7 +57,7 @@
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" styleClass="c-text-white">
+                  <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="%components.components.screens" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -76,7 +76,7 @@
                         </ComboBox>
                      </children>
                   </HBox>
-                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" styleClass="c-text-white">
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

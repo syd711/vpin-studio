@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataTabScriptOptionsController">
-   <ToolBar prefHeight="40.0" prefWidth="200.0">
+   <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0">
      <items>
    
        <!-- Reset to defaults -->

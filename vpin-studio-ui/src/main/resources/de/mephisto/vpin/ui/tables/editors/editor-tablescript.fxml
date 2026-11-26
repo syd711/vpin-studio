@@ -19,7 +19,7 @@
         </BorderPane>
     </center>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
@@ -33,14 +33,14 @@
       </ToolBar>
    </top>
    <bottom>
-      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="1233.0" BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="1233.0" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClose" text="%update_info.close" styleClass="c-text-white">
+            <Button fx:id="closeBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClose" text="%update_info.close" styleClass="sm-button, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="115.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSave" text="%backups.backup_source_folder.save" styleClass="c-text-white" visible="false">
+            <Button fx:id="saveBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="115.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSave" text="%backups.backup_source_folder.save" styleClass="sm-button, c-text-white" visible="false">
                <font>
                   <Font size="14.0" />
                </font>
@@ -48,7 +48,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-save" />
                </graphic>
             </Button>
-          <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" text="%tables.table_data.save_close" styleClass="c-text-white" visible="false">
+          <Button fx:id="saveAndCloseBtn" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onSaveAndClose" text="%tables.table_data.save_close" styleClass="sm-button, c-text-white" visible="false">
                <font>
                   <Font size="14.0" />
                </font>

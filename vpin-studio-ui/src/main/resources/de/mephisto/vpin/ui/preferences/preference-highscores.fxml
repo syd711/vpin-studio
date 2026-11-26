@@ -88,7 +88,7 @@
                         <Insets top="6.0" />
                      </VBox.margin></Label>
             <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description, c-text-white" text="%pref.highscores.you_can_download_all_available_resetted_nvrams_again_e_g" wrapText="true" />
-            <Button mnemonicParsing="false" onAction="#onNvRamReset" text="%pref.highscores.download_nvrams">
+            <Button mnemonicParsing="false" onAction="#onNvRamReset" text="%pref.highscores.download_nvrams" styleClass="sm-button">
                <VBox.margin>
                   <Insets top="6.0" />
                </VBox.margin>

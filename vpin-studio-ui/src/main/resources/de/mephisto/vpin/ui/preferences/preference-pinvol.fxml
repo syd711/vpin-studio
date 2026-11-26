@@ -85,7 +85,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="%backups.backup_download.select_folder">
+                                    <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolder" text="%backups.backup_download.select_folder" styleClass="sm-button">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -161,7 +161,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                            <children>
-                              <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="%pref.pinvol.open_pinvol_ui">
+                              <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, external-component" text="%pref.pinvol.open_pinvol_ui">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -169,7 +169,7 @@
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinvol.re_start_pinvol">
+                              <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="%pref.pinvol.re_start_pinvol" styleClass="sm-button">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -177,7 +177,7 @@
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-restart" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%pref.pinvol.stop_pinvol" styleClass="c-text-white">
+                              <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="%pref.pinvol.stop_pinvol" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -229,7 +229,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button mnemonicParsing="false" onAction="#onVolumeApply" text="%pref.pinvol.apply_now" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button mnemonicParsing="false" onAction="#onVolumeApply" text="%pref.pinvol.apply_now" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

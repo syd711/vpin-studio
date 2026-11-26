@@ -116,7 +116,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button fx:id="settingsBtn" mnemonicParsing="false" onAction="#onSettings" text="%backups.backup_restore.settings" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Button fx:id="settingsBtn" mnemonicParsing="false" onAction="#onSettings" text="%backups.backup_restore.settings" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -35,15 +35,15 @@
             </VBox>
             <VBox fx:id="buttonsBox" alignment="CENTER" spacing="6.0">
                <children>
-                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onOpen" text="%achievements.open_in_tables">
+                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onOpen" text="%achievements.open_in_tables" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font></Button>
-                  <Button fx:id="sessionsBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onSessions" text="%achievements.played_games">
+                  <Button fx:id="sessionsBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onSessions" text="%achievements.played_games" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font></Button>
-                  <Button fx:id="leaderboardBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onLeaderboard" text="%achievements.show_leaderboard">
+                  <Button fx:id="leaderboardBtn" maxWidth="Infinity" mnemonicParsing="false" onAction="#onLeaderboard" text="%achievements.show_leaderboard" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font></Button>

@@ -27,9 +27,9 @@
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
-            <ToolBar>
+            <ToolBar styleClass="floating-toolbar">
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSourceAdd" text="%competitions.competitions_discord.add" styleClass="c-text-white">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSourceAdd" text="%competitions.competitions_discord.add" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -37,7 +37,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
+                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%competitions.competitions_discord.edit" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -46,7 +46,7 @@
                      </graphic>
                   </Button>
                   <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
+                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                      <font>
                         <Font size="14.0" />
                      </font>

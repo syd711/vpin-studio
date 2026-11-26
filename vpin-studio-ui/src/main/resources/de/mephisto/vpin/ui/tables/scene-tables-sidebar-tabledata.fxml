@@ -82,17 +82,17 @@
                                  </font>
                               </Label>
                               <HBox spacing="3.0" GridPane.columnIndex="2">
-                                  <Button fx:id="iniFileUploadBtn" mnemonicParsing="false" onAction="#onIniUpload">
+                                  <Button fx:id="iniFileUploadBtn" mnemonicParsing="false" onAction="#onIniUpload" styleClass="sm-button, sm-button-icon">
                                       <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="16" />
                                       </graphic>
                                   </Button>
-                                 <Button fx:id="iniFileEditBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onIniEdit">
+                                 <Button fx:id="iniFileEditBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onIniEdit" styleClass="sm-button, sm-button-icon">
                                     <graphic>
                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="16" />
                                     </graphic>
                                  </Button>
-                                 <Button fx:id="iniFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onIniDelete" styleClass="c-text-danger">
+                                 <Button fx:id="iniFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onIniDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                     <graphic>
                                         <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="16" text="󰧧" />
                                     </graphic>
@@ -100,17 +100,17 @@
                               </HBox>
                               <HBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
-                                    <Button fx:id="resFileUploadBtn" mnemonicParsing="false" onAction="#onResUpload">
+                                    <Button fx:id="resFileUploadBtn" mnemonicParsing="false" onAction="#onResUpload" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="16" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="resFileEditBtn" mnemonicParsing="false" onAction="#onResEdit">
+                                    <Button fx:id="resFileEditBtn" mnemonicParsing="false" onAction="#onResEdit" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="16" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="resFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onResDelete" styleClass="c-text-danger">
+                                    <Button fx:id="resFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onResDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                            <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="16" text="󰧧" />
                                        </graphic>
@@ -119,17 +119,17 @@
                               </HBox>
                               <HBox spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="povFileUploadBtn" mnemonicParsing="false" onAction="#onPovUpload">
+                                    <Button fx:id="povFileUploadBtn" mnemonicParsing="false" onAction="#onPovUpload" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="16" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="povFileEditBtn" mnemonicParsing="false" onAction="#onPovEdit">
+                                    <Button fx:id="povFileEditBtn" mnemonicParsing="false" onAction="#onPovEdit" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="16" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="povFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPovDelete" styleClass="c-text-danger">
+                                    <Button fx:id="povFileDeleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPovDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                            <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="16" text="󰧧" />
                                        </graphic>
@@ -148,7 +148,7 @@
                               </Label>
                               <HBox fx:id="vrIniFileButtons" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="vrIniFileCreateBtn" mnemonicParsing="false" onAction="#onVrIniCreate">
+                                    <Button fx:id="vrIniFileCreateBtn" mnemonicParsing="false" onAction="#onVrIniCreate" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="16" />
                                        </graphic>
@@ -156,12 +156,12 @@
                                           <Tooltip text="%tables.tables_sidebar_tabledata.vr_ini_create" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="vrIniFileEditBtn" mnemonicParsing="false" onAction="#onVrIniEdit">
+                                    <Button fx:id="vrIniFileEditBtn" mnemonicParsing="false" onAction="#onVrIniEdit" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="16" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="vrIniFileDeleteBtn" mnemonicParsing="false" onAction="#onVrIniDelete" styleClass="c-text-danger">
+                                    <Button fx:id="vrIniFileDeleteBtn" mnemonicParsing="false" onAction="#onVrIniDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="16" />
                                        </graphic>
@@ -774,7 +774,7 @@
               <ToolBar fx:id="toolbar">
                   <items>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                      <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
+                      <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="%competitions.competitions_discord.edit" styleClass="sm-button, c-text-white">
                           <font>
                               <Font size="14.0" />
                           </font>
@@ -782,7 +782,7 @@
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                           </graphic>
                       </Button>
-                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" styleClass="c-text-white">
+                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="%tables.autofill_settings.auto_fill" styleClass="sm-button, c-text-white">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="%tables.table_data.auto_fill_all">
                            <graphic>
@@ -801,7 +801,7 @@
               </ToolBar>
             <ToolBar>
                <items>
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="c-text-white">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -809,7 +809,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" styleClass="c-text-white">
+                  <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="%tables.table_data.fix_version" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

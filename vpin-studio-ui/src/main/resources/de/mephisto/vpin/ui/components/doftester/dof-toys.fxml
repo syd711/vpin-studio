@@ -18,9 +18,9 @@
     <center>
     </center>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button mnemonicParsing="false" onAction="#onDOFSettings">
+            <Button mnemonicParsing="false" onAction="#onDOFSettings" styleClass="sm-button, sm-button-icon">
                <font>
                   <Font size="14.0" />
                </font>

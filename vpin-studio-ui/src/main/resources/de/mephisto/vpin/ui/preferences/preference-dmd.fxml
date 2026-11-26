@@ -85,7 +85,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="networkUrlUpdateBtn" mnemonicParsing="false" onAction="#onNetworkUrlUpdate" text="%update_info.update" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="networkUrlUpdateBtn" mnemonicParsing="false" onAction="#onNetworkUrlUpdate" text="%update_info.update" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="sm-button">
                            <font>
                               <Font size="14.0" />
                            </font>

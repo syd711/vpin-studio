@@ -112,7 +112,7 @@
                               </HBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="2">
                                  <children>
-                                    <Button fx:id="openTablesFolderBtn" mnemonicParsing="false" onAction="#onTablesFolderOpen" styleClass="external-component">
+                                    <Button fx:id="openTablesFolderBtn" mnemonicParsing="false" onAction="#onTablesFolderOpen" styleClass="sm-button, sm-button-icon, external-component">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
@@ -155,7 +155,7 @@
                               </Label>
                               <HBox fx:id="vbsSettingsBox" alignment="CENTER_RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#onVbsSettings">
+                                    <Button mnemonicParsing="false" onAction="#onVbsSettings" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                                        </graphic>
@@ -284,7 +284,7 @@
                               </TextArea>
                               <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                  <children>
-                                    <Button fx:id="openTableRulesBtn" mnemonicParsing="false" onAction="#onShowTableRules" styleClass="external-component">
+                                    <Button fx:id="openTableRulesBtn" mnemonicParsing="false" onAction="#onShowTableRules" styleClass="sm-button, sm-button-icon, external-component">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
@@ -296,7 +296,7 @@
                               </VBox>
                               <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
                                  <children>
-                                    <Button fx:id="openTableDescriptionBtn" mnemonicParsing="false" onAction="#onShowTableDescription" styleClass="external-component">
+                                    <Button fx:id="openTableDescriptionBtn" mnemonicParsing="false" onAction="#onShowTableDescription" styleClass="sm-button, sm-button-icon, external-component">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                                        </graphic>
@@ -318,7 +318,7 @@
                               </Label>
                               <VBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                                  <children>
-                                    <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" styleClass="c-text-white">
+                                    <Button fx:id="screenshotBtn" mnemonicParsing="false" onAction="#onScreenshot" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-refresh" iconSize="18" />
                                        </graphic>
@@ -326,7 +326,7 @@
                                           <Tooltip text="%tables.table_data_tab_scoredata.open_the_tables_folder_of_vpx" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="viewScreenshotBtn" mnemonicParsing="false" onAction="#onScreenshotView">
+                                    <Button fx:id="viewScreenshotBtn" mnemonicParsing="false" onAction="#onScreenshotView" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
@@ -360,7 +360,7 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="uploadVbsBtn" mnemonicParsing="false" onAction="#onVbsUpload" text="%backups.backup_upload.upload">
+            <Button fx:id="uploadVbsBtn" mnemonicParsing="false" onAction="#onVbsUpload" text="%backups.backup_upload.upload" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
                </font>
@@ -369,7 +369,7 @@
                </graphic>
             </Button>
             <Separator layoutX="630.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <SplitMenuButton fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%tables.tables_sidebar_scriptdata.edit_script">
+            <SplitMenuButton fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="%tables.tables_sidebar_scriptdata.edit_script" styleClass="sm-button">
               <items>
                 <MenuItem fx:id="editInternalBtn" mnemonicParsing="false" onAction="#onEditInternal" text="%tables.tables_sidebar_scriptdata.edit_script_internal_editor">
                      <graphic>
@@ -399,7 +399,7 @@
                </graphic>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" styleClass="c-text-white">
+            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onScan" text="%tables.tables_sidebar_highscores.scan" styleClass="sm-button, c-text-white">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onScanAll" text="%tables.tables_overview.scan_all">
                      <graphic>
@@ -422,7 +422,7 @@
                </font>
             </SplitMenuButton>
             <Separator layoutX="120.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="vpSaveEditBtn" layoutX="136.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component, c-text-white" text="%tables.tables_sidebar_highscores.vpreg_stg">
+            <Button fx:id="vpSaveEditBtn" layoutX="136.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="sm-button, external-component, c-text-white" text="%tables.tables_sidebar_highscores.vpreg_stg">
                <font>
                   <Font size="14.0" />
                </font>

@@ -117,9 +117,9 @@
     </StackPane>
    </center>
    <top>
-      <ToolBar BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
         <items>
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -133,7 +133,7 @@
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="%recorder.recorder.all_vpx_tables" />
             <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>

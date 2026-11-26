@@ -45,9 +45,12 @@
     -fx-text-fill: -c-white;
 }
 
-/* combo boxes, date pickers and color pickers: same dark box as the text inputs */
+/* combo boxes, date pickers and color pickers: same dark box as the text inputs,
+   30px high like the sm-button family (stylesheet-button.css) and the buttons of a floating toolbar */
 .combo-box-base {
     -fx-font-size: 14px;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-background-color: -c-inset;
     -fx-background-insets: 0;
     -fx-background-radius: 4;

@@ -77,7 +77,7 @@
                   </HBox>
                   <Label styleClass="default-text" text="%tables.bam_cfg_upload.bam_cfg_file" GridPane.rowIndex="1" />
                   <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%tables.bam_cfg_upload.game" />
-                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>

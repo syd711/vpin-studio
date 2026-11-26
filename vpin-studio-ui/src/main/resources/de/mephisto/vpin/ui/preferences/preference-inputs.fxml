@@ -83,7 +83,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%pref.inputs.configure_controller_inputs" styleClass="c-text-white">
+                              <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%pref.inputs.configure_controller_inputs" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

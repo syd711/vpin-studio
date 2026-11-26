@@ -33,7 +33,7 @@
                         <Insets bottom="6.0" right="6.0" />
                      </BorderPane.margin>
                      <children>
-                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" styleClass="c-text-white" visible="false">
+                        <Button fx:id="updateBtn" mnemonicParsing="false" onAction="#onUpdate" styleClass="sm-button, sm-button-icon, c-text-white" visible="false">
                            <graphic>
                               <FontIcon styleClass="c-icon-success-dark" iconLiteral="mdi2a-arrow-down-bold" iconSize="18" />
                            </graphic>
@@ -47,7 +47,7 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <ToggleButton fx:id="vrModeButton" mnemonicParsing="false" onAction="#onVrToggle" text="%toolbar.vr_mode">
+                        <ToggleButton fx:id="vrModeButton" mnemonicParsing="false" styleClass="sm-button" onAction="#onVrToggle" text="%toolbar.vr_mode">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -55,7 +55,7 @@
                               <FontIcon styleClass="c-icon-icon-inactive" iconLiteral="mdi2c-circle-slice-8" iconSize="18" />
                            </graphic>
                         </ToggleButton>
-                        <ToggleButton fx:id="maintenanceBtn" mnemonicParsing="false" onAction="#onMaintenance" text="%toolbar.maintenance_mode">
+                        <ToggleButton fx:id="maintenanceBtn" mnemonicParsing="false" styleClass="sm-button" onAction="#onMaintenance" text="%toolbar.maintenance_mode">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -63,7 +63,7 @@
                               <Font size="14.0" />
                            </font>
                         </ToggleButton>
-                        <MenuButton fx:id="jobBtn" mnemonicParsing="false" text="%toolbar.no_active_jobs">
+                        <MenuButton fx:id="jobBtn" mnemonicParsing="false" styleClass="sm-button" text="%toolbar.no_active_jobs">
                            <tooltip>
                               <Tooltip text="%toolbar.job_overview" />
                            </tooltip>
@@ -81,7 +81,7 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
-                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" text="%toolbar.drop_in_assets">
+                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" styleClass="sm-button" text="%toolbar.drop_in_assets">
                            <tooltip>
                               <Tooltip text="%toolbar.shows_the_available_assets_to_install" />
                            </tooltip>
@@ -92,7 +92,7 @@
                               <FontIcon styleClass="c-icon-success-light" iconLiteral="mdi2a-asterisk" iconSize="18" visible="false" />
                            </graphic>
                         </MenuButton>
-                        <Button fx:id="monitorBtn" layoutX="533.0" layoutY="12.0" mnemonicParsing="false" onAction="#toggleMonitor" styleClass="c-text-white">
+                        <Button fx:id="monitorBtn" layoutX="533.0" layoutY="12.0" mnemonicParsing="false" onAction="#toggleMonitor" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -103,7 +103,7 @@
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-monitor-multiple" iconSize="18" />
                            </graphic>
                         </Button>
-                        <Button fx:id="frontendMenuBtn" mnemonicParsing="false" onAction="#onFrontendMenu" styleClass="c-text-white">
+                        <Button fx:id="frontendMenuBtn" mnemonicParsing="false" onAction="#onFrontendMenu" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -111,7 +111,7 @@
                               <Tooltip text="%toolbar.open_frontend_configuration" />
                            </tooltip>
                         </Button>
-                        <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" styleClass="c-text-white">
+                        <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" styleClass="sm-button, sm-button-icon, c-text-white">
                           <items>
 
                               <MenuItem fx:id="muteSystemEntry" mnemonicParsing="false" onAction="#onMute" text="%toolbar.mute_system">

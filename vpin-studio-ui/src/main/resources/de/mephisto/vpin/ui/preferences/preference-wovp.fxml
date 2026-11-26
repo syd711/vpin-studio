@@ -95,7 +95,7 @@
                               <Label styleClass="default-text" text="%pref.wovp.api_key_player_1" wrapText="true" />
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
                                  <children>
-                                    <Button fx:id="testBtn1" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
+                                    <Button fx:id="testBtn1" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -129,7 +129,7 @@
                               </TextField>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
-                                    <Button fx:id="testBtn2" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
+                                    <Button fx:id="testBtn2" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -139,7 +139,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="testBtn3" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
+                                    <Button fx:id="testBtn3" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -149,7 +149,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="testBtn4" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
+                                    <Button fx:id="testBtn4" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -159,7 +159,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                  <children>
-                                    <Button fx:id="testBtn5" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="c-text-white">
+                                    <Button fx:id="testBtn5" mnemonicParsing="false" onAction="#onApiKeyTest" text="%pref.wovp.test_api_key" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -169,7 +169,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="0">
                                  <children>
-                                    <Button fx:id="upBtn1" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="upBtn1" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
@@ -177,7 +177,7 @@
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn1" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="downBtn1" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
@@ -189,7 +189,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                  <children>
-                                    <Button fx:id="upBtn2" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="upBtn2" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
@@ -197,7 +197,7 @@
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn2" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="downBtn2" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
@@ -209,7 +209,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                  <children>
-                                    <Button fx:id="upBtn3" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="upBtn3" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
@@ -217,7 +217,7 @@
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn3" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="downBtn3" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
@@ -229,7 +229,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="upBtn4" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="upBtn4" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
@@ -237,7 +237,7 @@
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn4" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="downBtn4" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
@@ -249,7 +249,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                                  <children>
-                                    <Button fx:id="upBtn5" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="upBtn5" mnemonicParsing="false" onAction="#onMoveUp" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-up" iconSize="16" />
                                        </graphic>
@@ -257,7 +257,7 @@
                                           <Tooltip text="%pref.wovp.move_api_key_up" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="downBtn5" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="c-text-white">
+                                    <Button fx:id="downBtn5" mnemonicParsing="false" onAction="#onMoveDown" prefHeight="30.0" prefWidth="34.0" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="bi-arrow-down" iconSize="16" />
                                        </graphic>
@@ -267,7 +267,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <Button fx:id="invalidateAllBtn" layoutX="534.0" layoutY="145.0" mnemonicParsing="false" onAction="#onClearCache" text="%competitions.competitions_discord.clear_cache" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

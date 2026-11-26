@@ -9,7 +9,7 @@
 
 <HBox fx:id="root" alignment="CENTER_LEFT" spacing="2.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.UploadsButtonController">
    <children>
-      <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
+      <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload" styleClass="sm-button, sm-button-icon">
          <items>
             <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="%tables.uploads_btn.upload_alt_color_file">
                <graphic>

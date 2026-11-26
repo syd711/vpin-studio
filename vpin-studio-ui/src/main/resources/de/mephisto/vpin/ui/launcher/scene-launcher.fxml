@@ -62,13 +62,13 @@
    <center>
       <BorderPane fx:id="main" styleClass="base-component" BorderPane.alignment="CENTER">
          <top>
-            <ToolBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
+            <ToolBar styleClass="floating-toolbar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
                   <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="574.0">
                      <right>
                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#onConnect" text="%launcher.launcher.connect" styleClass="c-text-white">
+                              <Button fx:id="connectBtn" mnemonicParsing="false" onAction="#onConnect" text="%launcher.launcher.connect" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -76,7 +76,7 @@
                                     <FontIcon styleClass="c-icon-white" iconLiteral="bi-box-arrow-up-right" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="%launcher.launcher.new_connection" styleClass="c-text-white">
+                              <Button fx:id="newConnectionBtn" mnemonicParsing="false" onAction="#onNewConnection" text="%launcher.launcher.new_connection" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -89,7 +89,7 @@
                                     <Insets left="3.0" right="3.0" />
                                  </HBox.margin>
                               </Separator>
-                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" styleClass="c-text-white">
+                              <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onConnectionRefresh" styleClass="sm-button, sm-button-icon, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -110,7 +110,7 @@
                      <left>
                         <HBox fx:id="installContainer" alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%launcher.installer.install_service" styleClass="c-text-white">
+                              <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%launcher.installer.install_service" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

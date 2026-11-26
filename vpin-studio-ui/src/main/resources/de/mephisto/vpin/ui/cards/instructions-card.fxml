@@ -55,7 +55,7 @@
                               </Label>
                            </children>
                         </StackPane>                
-                        <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
+                        <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="sm-button, sm-button-icon, link-component">
                            <graphic>
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                            </graphic>
@@ -79,7 +79,7 @@
                <right>
                   <HBox spacing="3.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="prevBtn" mnemonicParsing="false" onAction="#onPrevImage">
+                        <Button fx:id="prevBtn" mnemonicParsing="false" onAction="#onPrevImage" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -90,7 +90,7 @@
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#onNextImage">
+                        <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#onNextImage" styleClass="sm-button, sm-button-icon">
                            <font>
                               <Font size="14.0" />
                            </font>

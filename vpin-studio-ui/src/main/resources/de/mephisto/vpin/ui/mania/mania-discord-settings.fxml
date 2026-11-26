@@ -30,7 +30,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button mnemonicParsing="false" onAction="#onOpenManiaSettings" text="%mania.mania_discord_settings.open_vpin_mania_settings" styleClass="c-text-white">
+                        <Button mnemonicParsing="false" onAction="#onOpenManiaSettings" text="%mania.mania_discord_settings.open_vpin_mania_settings" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -90,7 +90,7 @@
                         <Label styleClass="checkbox-description, c-text-white" text="%mania.mania_discord_settings.apply_challenge_badge_description2" />
                         <VBox spacing="3.0">
                            <children>
-                              <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" styleClass="c-text-white">
+                              <Button fx:id="addDiscordBotBtn" mnemonicParsing="false" onAction="#onAddDiscordBot" text="%mania.mania_discord_settings.add_bot_to_discord_server" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

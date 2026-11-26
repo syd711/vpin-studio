@@ -40,7 +40,7 @@
                <right>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onRestore" styleClass="c-text-white">
+                        <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onRestore" styleClass="sm-button, sm-button-icon, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>

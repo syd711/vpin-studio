@@ -40,8 +40,8 @@
             <VBox alignment="CENTER_RIGHT" spacing="6.0">
                <children>
                   <Label fx:id="displayBadgeLabel" style="-fx-font-size: 14px; -fx-text-fill: -c-muted;" />
-                  <Button fx:id="showBadgeBtn" mnemonicParsing="false" onAction="#onShowBadge" text="%achievements.show_next_to_name" />
-                  <Button fx:id="hideBadgeBtn" mnemonicParsing="false" onAction="#onHideBadge" text="%achievements.hide_next_to_name" />
+                  <Button fx:id="showBadgeBtn" mnemonicParsing="false" onAction="#onShowBadge" text="%achievements.show_next_to_name"  styleClass="sm-button"/>
+                  <Button fx:id="hideBadgeBtn" mnemonicParsing="false" onAction="#onHideBadge" text="%achievements.hide_next_to_name"  styleClass="sm-button"/>
                </children>
             </VBox>
          </children>

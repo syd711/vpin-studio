@@ -100,7 +100,7 @@
                                 </Tab>
                             </tabs>
                         </TabPane>
-                        <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">
+                        <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT" styleClass="sm-button, sm-button-icon">
                             <StackPane.margin>
                                 <Insets right="3.0" top="6.0" />
                             </StackPane.margin>
@@ -114,7 +114,7 @@
                                 <Tooltip text="%competitions.competitions.toggle_sidebar_f3" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT">
+                        <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT" styleClass="sm-button, sm-button-icon">
                             <font>
                                 <Font size="14.0" />
                             </font>

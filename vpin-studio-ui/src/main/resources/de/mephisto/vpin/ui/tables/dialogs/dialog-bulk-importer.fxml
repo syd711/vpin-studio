@@ -183,7 +183,7 @@
             <Insets bottom="6.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
-            <ToolBar prefHeight="40.0">
+            <ToolBar styleClass="floating-toolbar" prefHeight="40.0">
                <items>
                   <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" styleClass="default-button">
                      <graphic>

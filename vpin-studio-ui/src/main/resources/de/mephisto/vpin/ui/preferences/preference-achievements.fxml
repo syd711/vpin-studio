@@ -59,7 +59,7 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                            <children>
-                              <Button fx:id="liveInstallBtn" mnemonicParsing="false" onAction="#onLiveInstall" text="%pref.achievements.live_install">
+                              <Button fx:id="liveInstallBtn" mnemonicParsing="false" onAction="#onLiveInstall" text="%pref.achievements.live_install" styleClass="sm-button">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                                  </graphic>
@@ -67,7 +67,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="liveUpdateVpxBtn" mnemonicParsing="false" onAction="#onLiveUpdateVpx" text="%pref.achievements.live_update_vpx">
+                              <Button fx:id="liveUpdateVpxBtn" mnemonicParsing="false" onAction="#onLiveUpdateVpx" text="%pref.achievements.live_update_vpx" styleClass="sm-button">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-update" iconSize="18" />
                                  </graphic>
@@ -75,7 +75,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="liveOpenFolderBtn" mnemonicParsing="false" onAction="#onLiveOpenFolder" text="%pref.achievements.live_open_folder">
+                              <Button fx:id="liveOpenFolderBtn" mnemonicParsing="false" onAction="#onLiveOpenFolder" text="%pref.achievements.live_open_folder" styleClass="sm-button">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                  </graphic>
@@ -83,7 +83,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="liveUninstallBtn" mnemonicParsing="false" onAction="#onLiveUninstall" text="%pref.achievements.live_uninstall">
+                              <Button fx:id="liveUninstallBtn" mnemonicParsing="false" onAction="#onLiveUninstall" text="%pref.achievements.live_uninstall" styleClass="sm-danger-button">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                  </graphic>
@@ -115,7 +115,7 @@
                      </VBox.margin>
                   </Label>
                   <Label maxWidth="620.0" styleClass="preference-description, c-text-white" text="%pref.achievements.migration_description" wrapText="true" />
-                  <Button mnemonicParsing="false" onAction="#onMigrate" text="%pref.achievements.migrate">
+                  <Button mnemonicParsing="false" onAction="#onMigrate" text="%pref.achievements.migrate" styleClass="sm-button">
                      <graphic>
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cloud-download-outline" iconSize="18" />
                      </graphic>

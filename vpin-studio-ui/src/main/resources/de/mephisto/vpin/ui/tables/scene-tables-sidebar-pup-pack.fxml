@@ -143,7 +143,7 @@
                               <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
                                     <ComboBox fx:id="optionsCombo" prefHeight="30.0" prefWidth="200.0" />
-                                    <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="%tables.table_data_tab_scoredata.apply" styleClass="c-text-white">
+                                    <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="%tables.table_data_tab_scoredata.apply" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -396,7 +396,7 @@
          <children>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
-                  <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
+                  <Button fx:id="uploadBtn" layoutX="145.0" layoutY="11.0" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -405,7 +405,7 @@
                      </graphic>
                   </Button>
                   <Separator layoutX="233.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -413,7 +413,7 @@
                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -425,7 +425,7 @@
             </ToolBar>
             <ToolBar>
               <items>
-                  <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component, c-text-white" text="%tables.tables_sidebar_pup_pack.pup_pack_editor">
+                  <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="sm-button, external-component, c-text-white" text="%tables.tables_sidebar_pup_pack.pup_pack_editor">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="%tables.tables_sidebar_pup_pack.pup_pack_screen_tweaker">
                            <graphic>

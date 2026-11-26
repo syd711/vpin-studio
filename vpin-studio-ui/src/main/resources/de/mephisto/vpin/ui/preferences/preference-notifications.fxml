@@ -115,7 +115,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button fx:id="testButton" mnemonicParsing="false" onAction="#onNotificationTest" text="%pref.notifications.test_notification" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Button fx:id="testButton" mnemonicParsing="false" onAction="#onNotificationTest" text="%pref.notifications.test_notification" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>

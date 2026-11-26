@@ -30,9 +30,9 @@
       </HBox>
    </center>
    <top>
-      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
@@ -44,7 +44,7 @@
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <Button mnemonicParsing="false" onAction="#onStatsEdit" styleClass="c-text-white">
+            <Button mnemonicParsing="false" onAction="#onStatsEdit" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>

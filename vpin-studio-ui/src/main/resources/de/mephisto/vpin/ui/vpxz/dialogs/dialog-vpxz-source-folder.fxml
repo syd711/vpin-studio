@@ -84,7 +84,7 @@
                   </CheckBox>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" styleClass="c-text-white">
+                        <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_download.select_folder" styleClass="sm-button, c-text-white">
                            <font>
                               <Font size="14.0" />
                            </font>

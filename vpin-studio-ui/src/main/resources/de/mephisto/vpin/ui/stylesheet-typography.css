@@ -35,3 +35,29 @@
 .sm-version-warn {
     -fx-text-fill: -c-warn;
 }
+
+/* VPS sidebar: 20px display name of the selected table, orange monospaced version of a download entry */
+.vps-sidebar-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-white;
+}
+
+.vps-entry-version {
+    -fx-font-family: "Consolas";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-warn;
+}
+
+.hyperlink.vps-entry-installed, .hyperlink.vps-entry-installed:hover {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-ok;
+    -fx-underline: false;
+    -fx-padding: 0;
+}
+
+.hyperlink.vps-entry-installed:hover {
+    -fx-underline: true;
+}

@@ -32,7 +32,7 @@
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description, c-text-white" text="%pref.vps.settings_for_the_virtual_pinball_spreadsheet_integration" wrapText="true" />
             <VBox>
                <children>
-                  <Button mnemonicParsing="false" onAction="#onReload" text="%pref.vps.update_vps_database" styleClass="c-text-white">
+                  <Button mnemonicParsing="false" onAction="#onReload" text="%pref.vps.update_vps_database" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

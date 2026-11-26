@@ -89,7 +89,7 @@
                         <Label styleClass="default-text" text="%pref.vr.dmddevice_ini_vr" wrapText="true" GridPane.rowIndex="1" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="%pref.vr.upload">
+                              <Button mnemonicParsing="false" onAction="#onDMDDeviceIniUpload" text="%pref.vr.upload" styleClass="sm-button">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -97,7 +97,7 @@
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEditDmdDeviceIni" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
+                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEditDmdDeviceIni" text="%competitions.competitions_discord.edit" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -110,7 +110,7 @@
                         <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="%pref.vr.vpinballx_ini_vr" wrapText="true" GridPane.rowIndex="3" />
                         <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="%pref.vr.upload">
+                              <Button mnemonicParsing="false" onAction="#onVPinballXIniUpload" text="%pref.vr.upload" styleClass="sm-button">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -118,7 +118,7 @@
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="editBtn1" mnemonicParsing="false" onAction="#onEditVPinballXIni" text="%competitions.competitions_discord.edit" styleClass="c-text-white">
+                              <Button fx:id="editBtn1" mnemonicParsing="false" onAction="#onEditVPinballXIni" text="%competitions.competitions_discord.edit" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -140,7 +140,7 @@
                   </GridPane>
                   <Label layoutX="34.0" layoutY="195.0" styleClass="preference-subtitle" text="%pref.vr.vr_mode_switch" wrapText="true" />
                   <Label layoutX="34.0" layoutY="234.0" styleClass="preference-description, c-text-white" text="%pref.vr.the_vr_mode_can_also_be_toggled_via" wrapText="true" />
-                  <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%pref.inputs.configure_controller_inputs" styleClass="c-text-white">
+                  <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="%pref.inputs.configure_controller_inputs" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>

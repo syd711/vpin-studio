@@ -180,7 +180,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" styleClass="c-text-white" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" styleClass="sm-button, c-text-white" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -295,7 +295,7 @@
                                     </VBox>
                                  </content>
                               </ScrollPane>
-                              <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" styleClass="c-text-white">
+                              <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" styleClass="sm-button, c-text-white">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

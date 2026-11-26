@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.vps;
 
-import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -14,35 +13,29 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.vps.VpsUtil;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpsEntry extends HBox {
-  private final static Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
+public class VpsEntry extends VBox {
   private final VpsTable table;
   private final VpsTableVersion tableVersion;
   private final GameRepresentation game;
@@ -69,197 +62,152 @@ public class VpsEntry extends HBox {
     this.update = update;
     this.installed = installed;
     this.isFiltered = isFiltered;
-    this.setAlignment(Pos.CENTER_LEFT);
+    this.getStyleClass().add("vps-entry");
+    this.setSpacing(4);
 
-    if (table != null) {
-      this.setStyle("-fx-padding: 3px 0 0 0;");
-    }
-    else {
-      this.setStyle("-fx-padding: 6px 0 0 0;");
-    }
-    // Version box
-    HBox versionBox = new HBox(3);
-    versionBox.setPrefWidth(100);
-    versionBox.setAlignment(Pos.CENTER_LEFT);
+    // first line: version, authors, table format, update marker, link pill
+    HBox line = new HBox(8);
+    line.setAlignment(Pos.CENTER_LEFT);
 
     if (Features.MANIA_ENABLED && table != null && tableVersion != null) {
       Button copyBtn = new Button();
+      copyBtn.getStyleClass().addAll("sm-button", "sm-button-small");
       FontIcon icon = WidgetFactory.createIcon("mdi2c-content-copy");
       icon.setIconSize(12);
       copyBtn.setGraphic(icon);
-      copyBtn.setOnAction(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-          String vpsTableUrl = VPS.getVpsTableUrl(table.getId(), tableVersion.getId());
-          javafx.scene.input.Clipboard clipboard = Clipboard.getSystemClipboard();
-          ClipboardContent content = new ClipboardContent();
-          content.putString(vpsTableUrl);
-          clipboard.setContent(content);
-        }
-      });
-      versionBox.getChildren().add(copyBtn);
+      copyBtn.setTooltip(new Tooltip(Messages.get("vps.vps_tables_sidebar.copy_vps_link")));
+      copyBtn.setOnAction(event -> copy(VPS.getVpsTableUrl(table.getId(), tableVersion.getId())));
+      line.getChildren().add(copyBtn);
     }
 
-    Label versionLabel = WidgetFactory.createDefaultLabel(version);
-    versionLabel.setStyle("-fx-padding: 0 0 0 3px;-fx-font-size: 14px;");
     if (!StringUtils.isEmpty(version)) {
+      Label versionLabel = new Label(version);
+      versionLabel.getStyleClass().add("vps-entry-version");
+      versionLabel.setMinWidth(Region.USE_PREF_SIZE);
+      versionLabel.setMaxWidth(110);
       versionLabel.setTooltip(new Tooltip(version));
-    }
-    versionBox.getChildren().add(versionLabel);
-
-    this.getChildren().add(versionBox);
-
-    // Author section
-    HBox authorBox = new HBox(6);
-    authorBox.setAlignment(Pos.CENTER_LEFT);
-    authorBox.setPrefWidth(266);
-    this.getChildren().add(authorBox);
-
-    if (tableVersion != null) {
-      Label typeLabel = new Label();
-      typeLabel.setMinWidth(34);
-      if (tableVersion.getTableFormat() != null) {
-        typeLabel.setTextAlignment(TextAlignment.CENTER);
-        typeLabel.setAlignment(Pos.CENTER);
-        typeLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 12px; -fx-text-fill: " + ThemeColors.WHITE + ";-fx-background-color: " + VpsUtil.getColor(tableVersion.getTableFormat()) + ";");
-        typeLabel.setText(tableVersion.getTableFormat());
-      }
-      authorBox.getChildren().add(typeLabel);
+      line.getChildren().add(versionLabel);
     }
 
     if (authors != null && !authors.isEmpty()) {
-      if (installed) {
-        Hyperlink hyperlink = new Hyperlink(String.join(", ", authors));
-        hyperlink.setTooltip(new Tooltip(String.join(", ", authors)));
-        hyperlink.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: " + ThemeColors.SUCCESS_LIGHT + ";");
-        hyperlink.setOnAction(new EventHandler<ActionEvent>() {
-          @Override
-          public void handle(ActionEvent event) {
-            NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
-          }
-        });
-        authorBox.getChildren().add(hyperlink);
+      String authorText = String.join(", ", authors);
+      if (installed && game != null) {
+        Hyperlink hyperlink = new Hyperlink(authorText);
+        hyperlink.getStyleClass().add("vps-entry-installed");
+        hyperlink.setTooltip(new Tooltip(authorText));
+        hyperlink.setOnAction(event -> NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId())));
+        hyperlink.setMinWidth(0);
+        line.getChildren().add(hyperlink);
       }
       else {
-        authorBox.getChildren().add(spacer(1));
-        Label authorLabel = WidgetFactory.createDefaultLabel("");
-        authorLabel.setText(String.join(", ", authors));
-        authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
-        authorBox.getChildren().add(authorLabel);
+        Label authorLabel = new Label(authorText);
+        authorLabel.getStyleClass().add("sm-text");
+        authorLabel.setTooltip(new Tooltip(authorText));
+        authorLabel.setMinWidth(0);
+        line.getChildren().add(authorLabel);
       }
+    }
+
+    Region spacer = new Region();
+    spacer.setMinWidth(4);
+    HBox.setHgrow(spacer, Priority.ALWAYS);
+    line.getChildren().add(spacer);
+
+    if (tableVersion != null && tableVersion.getTableFormat() != null) {
+      Label typeLabel = new Label(tableVersion.getTableFormat());
+      typeLabel.getStyleClass().addAll("sm-pill", "sm-pill-unknown");
+      typeLabel.setMinWidth(Region.USE_PREF_SIZE);
+      line.getChildren().add(typeLabel);
+    }
+
+    if (update != null) {
+      Label updateLabel = new Label();
+      updateLabel.setGraphic(WidgetFactory.createUpdateIcon());
+      updateLabel.setTooltip(new Tooltip(Messages.get("dialog.update_available_details", update)));
+      updateLabel.setMinWidth(Region.USE_PREF_SIZE);
+      line.getChildren().add(updateLabel);
     }
 
     if (link != null) {
-      String abb = VpsUtil.abbreviate(link);
-      String color = VpsUtil.getColor(abb);
-      Button button = new Button(abb);
-      button.getStyleClass().add("vps-button");
-      button.setStyle("-fx-background-color: " + color + ";");
-      button.setPrefWidth(70);
-      button.setTooltip(new Tooltip(link));
-      button.setOnAction(event -> {
-        Studio.browse(link);
-      });
-
-      FontIcon fontIcon = new FontIcon();
-      fontIcon.setIconSize(14);
-      ThemeColors.setIconColor(fontIcon, ThemeColors.WHITE);
-      fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
-      button.setGraphic(fontIcon);
-
-      // add context menu on VPS button
-      ContextMenu menu = new ContextMenu();
-      MenuItem vpsItem = new MenuItem(Messages.get("dialog.vps_open_link"));
-      vpsItem.setOnAction(actionEvent -> Studio.browse(link));
-      menu.getItems().add(vpsItem);
-      MenuItem copyItem = new MenuItem(Messages.get("dialog.vps_copy_link"));
-      copyItem.setOnAction(actionEvent -> {
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
-        content.putString(link);
-        clipboard.setContent(content);
-      });
-      menu.getItems().add(copyItem);
-
-      if (game != null) {
-        MenuItem addTodoItem = new MenuItem(Messages.get("dialog.vps_add_todo_link"));
-        addTodoItem.setOnAction(actionEvent -> {
-          String notes = StringUtils.defaultString(game.getComment());
-          if (notes.length() > 0) {
-            notes = notes + "\n";
-          }
-          notes += "//TODO " + link;
-          game.setComment(notes);
-          client.getGameService().saveGame(game);
-          EventManager.getInstance().notifyTableChange(game.getId(), null);
-        });
-        menu.getItems().add(addTodoItem);
-      }
-      else if (table != null) {
-        MenuItem addTodoItem = new MenuItem(Messages.get("dialog.vps_add_todo_link"));
-        addTodoItem.setOnAction(actionEvent -> {
-          String notes = StringUtils.defaultString(table.getComment());
-          if (notes.length() > 0) {
-            notes = notes + "\n";
-          }
-          notes += "//TODO " + link;
-          table.setComment(notes);
-          client.getVpsService().saveVpsData(table);
-          EventManager.getInstance().notifyVpsTableChange(table.getId());
-        });
-        menu.getItems().add(addTodoItem);
-      }
-      button.setContextMenu(menu);
-
-      Label label = new Label();
-      label.setPrefWidth(20);
-      List<Node> children = new ArrayList<>();
-      if (update != null) {
-        FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        label.setGraphic(updateIcon);
-        label.setTooltip(new Tooltip(Messages.get("dialog.update_available_details", update)));
-      }
-      children.add(label);
-
-      if (abb.equals("Dropbox")) {
-        children.add(button);
-      }
-      else if (abb.equals("Mega")) {
-        children.add(spacer(5));
-        button.setPrefWidth(60);
-        children.add(button);
-        children.add(spacer(5));
-      }
-      else {
-        children.add(spacer(10));
-        button.setPrefWidth(50);
-        children.add(button);
-        children.add(spacer(10));
-      }
-
-      this.getChildren().addAll(children);
-    }
-    else {
-      Label spacer = new Label();
-      spacer.setPrefWidth(90);
-      this.getChildren().add(spacer);
+      line.getChildren().add(createLinkPill(link));
     }
 
-    // Add change date at the end
-    String date = "unknown";
+    this.getChildren().add(line);
+
+    // second line: change date
+    String date = Messages.get("tables.section_vps.unknown");
     if (changeDate != null) {
       date = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(Instant.ofEpochMilli(changeDate).atZone(ZoneId.systemDefault()).toLocalDate());
     }
-    Label changedLabel = WidgetFactory.createDefaultLabel(date);
-    changedLabel.setPrefWidth(100);
-    changedLabel.setStyle("-fx-padding: 0 3px 0 0;-fx-font-size: 14px;");
-    changedLabel.setAlignment(Pos.CENTER_RIGHT);
-    changedLabel.setContentDisplay(ContentDisplay.RIGHT);
+    Label changedLabel = new Label(Messages.get("tables.section_vps.updated", date));
+    changedLabel.getStyleClass().add("sm-small");
     this.getChildren().add(changedLabel);
 
     this.setDisable(!isFiltered);
   }
 
+  private Button createLinkPill(String link) {
+    String abb = VpsUtil.abbreviate(link);
+
+    Circle dot = new Circle(3, Color.web(VpsUtil.getColor(abb)));
+    Label text = new Label(abb);
+    text.getStyleClass().add("vps-link-pill-text");
+    FontIcon arrow = new FontIcon("mdi2a-arrow-top-right");
+    arrow.setIconSize(14);
+    arrow.getStyleClass().add("c-icon-muted");
+    HBox content = new HBox(6, dot, text, arrow);
+    content.setAlignment(Pos.CENTER_LEFT);
+
+    Button button = new Button();
+    button.setGraphic(content);
+    button.getStyleClass().add("vps-link-pill");
+    button.setMinWidth(Region.USE_PREF_SIZE);
+    button.setTooltip(new Tooltip(link));
+    button.setOnAction(event -> Studio.browse(link));
+
+    ContextMenu menu = new ContextMenu();
+    MenuItem vpsItem = new MenuItem(Messages.get("dialog.vps_open_link"));
+    vpsItem.setOnAction(actionEvent -> Studio.browse(link));
+    menu.getItems().add(vpsItem);
+    MenuItem copyItem = new MenuItem(Messages.get("dialog.vps_copy_link"));
+    copyItem.setOnAction(actionEvent -> copy(link));
+    menu.getItems().add(copyItem);
+
+    if (game != null) {
+      MenuItem addTodoItem = new MenuItem(Messages.get("dialog.vps_add_todo_link"));
+      addTodoItem.setOnAction(actionEvent -> {
+        game.setComment(appendTodo(game.getComment(), link));
+        client.getGameService().saveGame(game);
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      });
+      menu.getItems().add(addTodoItem);
+    }
+    else if (table != null) {
+      MenuItem addTodoItem = new MenuItem(Messages.get("dialog.vps_add_todo_link"));
+      addTodoItem.setOnAction(actionEvent -> {
+        table.setComment(appendTodo(table.getComment(), link));
+        client.getVpsService().saveVpsData(table);
+        EventManager.getInstance().notifyVpsTableChange(table.getId());
+      });
+      menu.getItems().add(addTodoItem);
+    }
+    button.setContextMenu(menu);
+    return button;
+  }
+
+  private static String appendTodo(String comment, String link) {
+    String notes = StringUtils.defaultString(comment);
+    if (!notes.isEmpty()) {
+      notes = notes + "\n";
+    }
+    return notes + "//TODO " + link;
+  }
+
+  private static void copy(String text) {
+    ClipboardContent content = new ClipboardContent();
+    content.putString(text);
+    Clipboard.getSystemClipboard().setContent(content);
+  }
   public static Label spacer(int width) {
     Label spacer = new Label("");
     spacer.setPrefWidth(width);

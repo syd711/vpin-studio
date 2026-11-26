@@ -82,7 +82,7 @@
                   <Label text="%tables.propper_renaming.determines_the_base_name_of_all_media_assets" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
-            <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onApply" text="%tables.table_data_tab_scoredata.apply" styleClass="c-text-white">
+            <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onApply" text="%tables.table_data_tab_scoredata.apply" styleClass="sm-button, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>

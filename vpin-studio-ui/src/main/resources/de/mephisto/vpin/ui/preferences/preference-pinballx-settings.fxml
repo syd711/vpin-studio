@@ -83,7 +83,7 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" styleClass="c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Button mnemonicParsing="false" onAction="#onConnectionTest" text="%pref.pinballx_settings.test_connection" styleClass="sm-button, c-text-white" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>

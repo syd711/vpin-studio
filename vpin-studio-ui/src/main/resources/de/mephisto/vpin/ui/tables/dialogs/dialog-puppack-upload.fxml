@@ -49,7 +49,7 @@
                                         <Font size="14.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" GridPane.columnIndex="2">
+                                <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" styleClass="sm-button">
                                     <font>
                                         <Font size="14.0" />
                                     </font>

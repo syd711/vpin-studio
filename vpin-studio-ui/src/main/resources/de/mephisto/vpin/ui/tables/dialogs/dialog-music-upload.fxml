@@ -53,7 +53,7 @@
                         <Label styleClass="default-text" text="%tables.music_upload.music_bundle_file" GridPane.rowIndex="1" />
                         <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="%cards.highscore_cards.emulator" />
                         <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="sm-button">
                            <font>
                               <Font size="14.0" />
                            </font>

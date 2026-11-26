@@ -65,7 +65,7 @@
                               <Insets />
                            </GridPane.margin>
                            <children>
-                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onTokenEdit" text="%competitions.competitions_discord.edit">
+                              <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onTokenEdit" text="%competitions.competitions_discord.edit" styleClass="sm-button">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -73,7 +73,7 @@
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="%cards.template_editor_background.reset" styleClass="c-text-danger">
+                              <Button fx:id="resetBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReset" text="%cards.template_editor_background.reset" styleClass="sm-danger-button, c-text-danger">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -140,7 +140,7 @@
                         </Label>
                         <ComboBox fx:id="channelCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <ComboBox fx:id="serverCombo" layoutX="212.0" layoutY="72.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" />
-                        <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%pref.discord_bot.validate_settings" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="%pref.discord_bot.validate_settings" GridPane.columnIndex="1" GridPane.rowIndex="6" styleClass="sm-button">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -206,7 +206,7 @@
                            <children>
                               <HBox alignment="CENTER_LEFT" spacing="6.0">
                                  <children>
-                                    <Button fx:id="selectUsersBtn" mnemonicParsing="false" onAction="#onUserSelect" text="%pref.discord_bot.select_users" styleClass="c-text-white">
+                                    <Button fx:id="selectUsersBtn" mnemonicParsing="false" onAction="#onUserSelect" text="%pref.discord_bot.select_users" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

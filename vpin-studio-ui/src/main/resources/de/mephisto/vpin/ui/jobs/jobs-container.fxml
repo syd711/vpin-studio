@@ -57,7 +57,7 @@
    <right>
       <ToolBar fx:id="actionToolbar" styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen">
+            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, sm-button-icon">
                <font>
                   <Font size="13.0" />
                </font>
@@ -68,7 +68,7 @@
                   <Tooltip text="%dropins.dropin_container.open_folder" />
                </tooltip>
             </Button>
-            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
+            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
@@ -95,7 +95,7 @@
             <Insets left="3.0" right="3.0" top="3.0" />
          </BorderPane.margin>
          <right>
-            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" BorderPane.alignment="CENTER">
+            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" BorderPane.alignment="CENTER" styleClass="sm-button, sm-button-icon">
                <font>
                   <Font size="10.0" />
                </font>

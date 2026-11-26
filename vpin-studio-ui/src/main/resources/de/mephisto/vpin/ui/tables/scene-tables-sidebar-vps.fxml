@@ -160,7 +160,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Button fx:id="openTableLinkBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component">
+                                          <Button fx:id="openTableLinkBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, sm-button-icon, link-component">
                                              <graphic>
                                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                              </graphic>
@@ -189,7 +189,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                              <children>
-                                                <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
+                                                <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="sm-button, sm-button-icon, link-component">
                                                    <graphic>
                                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" iconSize="18" />
                                                    </graphic>
@@ -200,7 +200,7 @@
                                                       <Tooltip text="%pref.overlay.download_table" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                                <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion" styleClass="sm-button, sm-button-icon">
                                                    <graphic>
                                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
                                                    </graphic>
@@ -337,7 +337,7 @@
          <children>
             <ToolBar>
               <items>
-                <Button mnemonicParsing="false" onAction="#onUpdate">
+                <Button mnemonicParsing="false" onAction="#onUpdate" styleClass="sm-button, sm-button-icon">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -349,7 +349,7 @@
                      </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" />
-                  <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" styleClass="c-text-white">
+                  <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -360,7 +360,7 @@
                         <Tooltip text="%tables.table_data.resets_the_assigned_vps_table_mapping" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" styleClass="c-text-white">
+                  <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" styleClass="sm-button, c-text-white">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -368,7 +368,7 @@
                         <Tooltip text="%tables.tables_sidebar_vps.reset_vps_updates_indicators_in_the_overview_for" />
                      </tooltip>
                   </Button>
-                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" styleClass="c-text-white">
+                  <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoMatch" text="%tables.table_data.auto_match" styleClass="sm-button, c-text-white">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="%tables.table_data.auto_match_all">
                            <graphic>

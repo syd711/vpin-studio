@@ -93,7 +93,7 @@
             <Insets top="12.0" />
          </VBox.margin>
       </ScrollPane>
-      <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" styleClass="c-text-white">
+      <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="%tables.table_upload.filter_selection" styleClass="sm-button, c-text-white">
          <font>
             <Font size="14.0" />
          </font>

@@ -65,7 +65,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <Button mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_upload.select_files">
+                              <Button mnemonicParsing="false" onAction="#onFileSelect" text="%backups.backup_upload.select_files" styleClass="sm-button">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

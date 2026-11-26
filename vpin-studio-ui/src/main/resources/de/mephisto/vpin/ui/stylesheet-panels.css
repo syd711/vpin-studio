@@ -37,8 +37,21 @@
     -fx-background-color: -c-selected;
 }
 
-.sm-section-header {
+/* split view built from a SplitPane (backglass manager): transparent, the divider is the 14px gap between the panels */
+.split-pane.sm-split {
     -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.split-pane.sm-split > .split-pane-divider {
+    -fx-background-color: transparent;
+    -fx-padding: 0 7 0 7;
+}
+
+.sm-section-header, .sm-section-header:hover {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
     -fx-padding: 0;
     -fx-cursor: hand;
 }
@@ -54,4 +67,60 @@
 .sm-score-tile-shade {
     -fx-background-color: -c-darkest;
     -fx-opacity: 0.55;
+}
+
+/* VPS sidebar (vps/scene-vps-tables-sidebar.fxml) and the VPS download sections (tables/vps/VpsSection) */
+.vps-facts {
+    -fx-background-radius: 6;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 6;
+}
+
+.vps-fact {
+    -fx-padding: 10 12 10 12;
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.vps-fact-left {
+    -fx-border-color: transparent -c-selected -c-selected transparent;
+    -fx-border-width: 0 1 1 0;
+}
+
+.vps-fact-last {
+    -fx-border-width: 0;
+}
+
+.vps-fact-left.vps-fact-last {
+    -fx-border-color: transparent -c-selected transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.vps-section {
+    -fx-background-color: -c-footer;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 6;
+}
+
+.vps-section-header {
+    -fx-cursor: hand;
+}
+
+.vps-section-header:hover {
+    -fx-background-color: -c-inset-hover;
+    -fx-background-radius: 6 6 0 0;
+}
+
+.vps-entry {
+    -fx-padding: 10 14 10 14;
+    -fx-border-color: -c-selected transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.vps-skeleton {
+    -fx-background-color: -c-control;
+    -fx-background-radius: 4;
+    -fx-min-height: 10;
+    -fx-pref-height: 10;
 }

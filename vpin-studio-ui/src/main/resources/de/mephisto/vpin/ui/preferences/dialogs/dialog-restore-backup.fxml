@@ -58,7 +58,7 @@
                      </children>
                   </HBox>
                   <Label styleClass="default-text" text="%pref.restore_backup.backup_file" wrapText="true" />
-                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2">
+                  <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" GridPane.columnIndex="2" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>

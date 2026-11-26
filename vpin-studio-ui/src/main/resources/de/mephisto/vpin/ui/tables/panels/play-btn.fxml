@@ -7,10 +7,10 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<HBox fx:id="root" spacing="2.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PlayButtonController">
+<HBox fx:id="root" alignment="CENTER_LEFT" spacing="2.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PlayButtonController">
    <children>
-      <ComboBox fx:id="launchCombo" prefWidth="210.0" styleClass="external-component" />
-      <Button fx:id="launchBtn" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component, c-text-white">
+      <ComboBox fx:id="launchCombo" prefWidth="210.0" />
+      <Button fx:id="launchBtn" mnemonicParsing="false" onAction="#onPlay" styleClass="sm-button, sm-button-icon, external-component, c-text-white">
          <graphic>
               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2p-play" iconSize="18" />
          </graphic>

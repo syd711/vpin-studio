@@ -1,34 +1,23 @@
 package de.mephisto.vpin.ui.tables.vps;
 
-import de.mephisto.vpin.ui.util.ThemeColors;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 
+/**
+ * Comment line below a {@link VpsEntry}.
+ */
 public class VpsEntryComment extends HBox {
 
   public VpsEntryComment(String comment) {
-    this.setAlignment(Pos.BASELINE_LEFT);
-    this.setStyle("-fx-padding: 0 0 3px 0;");
+    this.getStyleClass().add("vps-entry-comment");
+    this.setPadding(new Insets(0, 14, 10, 14));
 
-    this.getChildren().add(spacer(100));
-
-    Label commentLabel = WidgetFactory.createDefaultLabel(comment.trim());
-    commentLabel.setStyle("-fx-font-size: 12px;-fx-font-color: " + ThemeColors.WARM_GRAY + ";-fx-text-fill: " + ThemeColors.WARM_GRAY + ";");
-    commentLabel.setPrefWidth(306);
+    Label commentLabel = new Label(comment.trim());
+    commentLabel.getStyleClass().add("sm-small");
+    commentLabel.setWrapText(true);
     commentLabel.setTooltip(new Tooltip(comment));
     this.getChildren().add(commentLabel);
-
-
-    this.getChildren().add(spacer(70));
-    this.getChildren().add(spacer(100));
-  }
-
-  public static Label spacer(int width) {
-    Label spacer = new Label("");
-    spacer.setPrefWidth(width);
-    return spacer;
   }
 }

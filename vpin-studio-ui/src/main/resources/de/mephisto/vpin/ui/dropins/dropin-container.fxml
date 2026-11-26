@@ -53,7 +53,7 @@
    <right>
       <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install">
+            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="%dropins.dropin_container.install" styleClass="sm-button">
                <tooltip>
                   <Tooltip prefWidth="300.0" text="%components.doftester.toy_container.updates_can_only_be_installed_when_vpin_studio" wrapText="true" />
                </tooltip>
@@ -62,7 +62,7 @@
                </font>
             </Button>
             <Separator fx:id="installSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="c-text-danger">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
@@ -73,7 +73,7 @@
                   <Tooltip text="%dropins.dropin_container.delete_table_and_assets" />
                </tooltip>
             </Button>
-            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
+            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, sm-button-icon, folder-component">
                <font>
                   <Font size="13.0" />
                </font>

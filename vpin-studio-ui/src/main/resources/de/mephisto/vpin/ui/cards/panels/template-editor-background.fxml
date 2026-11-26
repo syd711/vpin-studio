@@ -30,7 +30,7 @@
          <right>
             <HBox alignment="CENTER_RIGHT" spacing="3.0">
                <children>
-                  <Button fx:id="eyeBtn" mnemonicParsing="false">
+                  <Button fx:id="eyeBtn" mnemonicParsing="false" styleClass="sm-button, sm-button-icon">
                      <font>
                         <Font size="10.0" />
                      </font>
@@ -105,9 +105,9 @@
                               </ImageView>
                            </center>
                            <top>
-                              <ToolBar BorderPane.alignment="CENTER">
+                              <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
                                  <items>
-                                    <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
+                                    <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                        </graphic>
@@ -115,7 +115,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="%cards.template_editor_background.view">
+                                    <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="%cards.template_editor_background.view" styleClass="sm-button">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
@@ -123,7 +123,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="%cards.template_editor_background.reset" styleClass="c-text-danger">
+                                    <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="%cards.template_editor_background.reset" styleClass="sm-danger-button, c-text-danger">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -175,7 +175,7 @@
                                     <Insets top="3.0" />
                                  </HBox.margin>
                               </ComboBox>
-                              <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
+                              <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton" styleClass="sm-button, sm-button-icon">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>

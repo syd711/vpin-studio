@@ -470,7 +470,7 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload">
+          <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="%backups.backup_upload.upload" styleClass="sm-button">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                </graphic>
@@ -479,7 +479,7 @@
                </font>
             </Button>
             <Separator layoutX="274.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
                </font>
@@ -487,7 +487,7 @@
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="c-text-danger">
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="%backups.backups.delete" styleClass="sm-danger-button, c-text-danger">
                <font>
                   <Font size="14.0" />
                </font>
@@ -496,7 +496,7 @@
                </graphic>
             </Button>
             <Separator layoutX="176.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="dmdPositionBtn" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="c-text-white">
+            <Button fx:id="dmdPositionBtn" mnemonicParsing="false" onAction="#onDMDPosition" styleClass="sm-button, sm-button-icon, c-text-white">
                <font>
                   <Font size="14.0" />
                </font>
@@ -507,7 +507,7 @@
                   <Tooltip text="%backglass.directb2s_admin.adjust_dmd_position" />
                </tooltip>
             </Button>
-            <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">
+            <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" styleClass="sm-button, sm-button-icon">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" iconSize="18" />
                </graphic>
@@ -516,7 +516,7 @@
                </font>
             </Button>
             <Separator layoutX="290.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager">
+            <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" styleClass="sm-button">
                <font>
                   <Font size="14.0" />
                </font>

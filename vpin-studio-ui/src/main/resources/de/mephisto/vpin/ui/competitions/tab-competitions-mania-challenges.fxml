@@ -41,9 +41,9 @@
             <top>
                 <VBox BorderPane.alignment="CENTER">
                     <children>
-                <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <ToolBar styleClass="floating-toolbar" fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -73,7 +73,7 @@
                             </children>
                         </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="c-text-white">
+                        <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -84,7 +84,7 @@
                                 <Tooltip text="%backglass.directb2s_sidebar.edit_table_data" />
                             </tooltip>
                         </Button>
-                        <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
+                        <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -96,7 +96,7 @@
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="eventLogBtn" mnemonicParsing="false" onAction="#onEventLog" styleClass="c-text-white">
+                        <Button fx:id="eventLogBtn" mnemonicParsing="false" onAction="#onEventLog" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -108,7 +108,7 @@
                             </tooltip>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <MenuButton fx:id="participationBtn" mnemonicParsing="false" text="%competitions.competitions_mania.participation" styleClass="c-text-white">
+                        <MenuButton fx:id="participationBtn" mnemonicParsing="false" text="%competitions.competitions_mania.participation" styleClass="sm-button, c-text-white">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -126,7 +126,7 @@
                             </items>
                         </MenuButton>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="c-text-danger">
+                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" styleClass="sm-danger-button, sm-button-icon, c-text-danger">
                             <font>
                                 <Font size="14.0" />
                             </font>

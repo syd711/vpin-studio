@@ -25,7 +25,7 @@
                             <right>
                                 <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsScreenValidators">
+                                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsScreenValidators" styleClass="sm-button, sm-button-icon">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
@@ -96,7 +96,7 @@
                                                 <Tooltip text="%tables.tables_sidebar.directb2s_folder" />
                                             </tooltip>
                                         </Button>
-                                        <Button mnemonicParsing="false" onAction="#onPrefsBackglass">
+                                        <Button mnemonicParsing="false" onAction="#onPrefsBackglass" styleClass="sm-button, sm-button-icon">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
@@ -262,7 +262,7 @@
                                                 <Font size="10.0" />
                                             </font>
                                         </Button>
-                                        <Button mnemonicParsing="false" onAction="#onPrefsHighscore">
+                                        <Button mnemonicParsing="false" onAction="#onPrefsHighscore" styleClass="sm-button, sm-button-icon">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
@@ -288,7 +288,7 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button mnemonicParsing="false" onAction="#onPrefsMame">
+                                        <Button mnemonicParsing="false" onAction="#onPrefsMame" styleClass="sm-button, sm-button-icon">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
@@ -324,7 +324,7 @@
                                             <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
                                         </tooltip>
                                     </Button>
-                                    <Button mnemonicParsing="false" onAction="#onVpsPrefs">
+                                    <Button mnemonicParsing="false" onAction="#onVpsPrefs" styleClass="sm-button, sm-button-icon">
                                         <font>
                                             <Font size="10.0" />
                                         </font>
@@ -364,7 +364,7 @@
                                               <Font size="10.0" />
                                           </font>
                                       </Button>
-                              <Button mnemonicParsing="false" onAction="#onScriptEdit">
+                              <Button mnemonicParsing="false" onAction="#onScriptEdit" styleClass="sm-button, sm-button-icon">
                                  <font>
                                     <Font size="10.0" />
                                  </font>

@@ -1,5 +1,7 @@
-.toggle-button-selected {
-    -fx-background-color: -c-highlight-translucent;
+/* a Button showing an "on" state (e.g. the cabinet monitor button): same look as a selected ToggleButton */
+.toggle-button-selected, .toggle-button-selected:hover {
+    -fx-background-color: -c-primary;
+    -fx-border-color: -c-info;
 }
 
 .toggle-selected {
@@ -76,6 +78,18 @@
 
 .toggle-button:selected:focused {
     -fx-border-color: -c-info;
+}
+
+/* a ToggleButton flagging a problem while selected (maintenance mode): sm-danger-button look, see stylesheet-button.css */
+.toggle-button.sm-danger-button, .toggle-button.sm-danger-button:hover, .toggle-button.sm-danger-button:selected {
+    -fx-text-fill: -c-error;
+    -fx-background-color: -c-error-bg;
+    -fx-border-color: -c-error-border;
+}
+
+.toggle-button.sm-danger-button:selected:hover {
+    -fx-background-color: -c-error-hover;
+    -fx-border-color: -c-error;
 }
 
 .toggle-button:disabled {

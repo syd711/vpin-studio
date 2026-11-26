@@ -18,9 +18,9 @@
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.AchievementsController">
    <fx:define>
       <!-- shared by all tabs, moved into the top of the selected tab by the controller -->
-      <ToolBar fx:id="toolbar" prefHeight="40.0">
+      <ToolBar styleClass="floating-toolbar" fx:id="toolbar" prefHeight="40.0">
          <items>
-            <Button mnemonicParsing="false" onAction="#onReload" styleClass="c-text-white">
+            <Button mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
@@ -39,7 +39,7 @@
             </Label>
             <ComboBox fx:id="playerCombo" prefWidth="240.0" />
             <Separator fx:id="syncSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync" styleClass="c-text-white">
+            <Button fx:id="syncBtn" mnemonicParsing="false" onAction="#onSync" text="%achievements.sync" styleClass="sm-button, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-sync" iconSize="18" />
                </graphic>
@@ -48,7 +48,7 @@
                </font>
             </Button>
             <Separator fx:id="tableSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="c-text-white">
+            <Button fx:id="openTableBtn" mnemonicParsing="false" onAction="#onOpenTable" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-edit" iconSize="18" />
                </graphic>
@@ -59,7 +59,7 @@
                   <Tooltip text="%backglass.directb2s_sidebar.show_table_in_table_overview" />
                </tooltip>
             </Button>
-            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="c-text-white">
+            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
                </graphic>
@@ -70,7 +70,7 @@
                   <Tooltip text="%dialog.asset_manager" />
                </tooltip>
             </Button>
-            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onDataManager" styleClass="c-text-white">
+            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onDataManager" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
@@ -88,7 +88,7 @@
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onSettings" styleClass="c-text-white">
+            <Button mnemonicParsing="false" onAction="#onSettings" styleClass="sm-button, sm-button-icon, c-text-white">
                <graphic>
                   <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                </graphic>

@@ -23,8 +23,6 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.tables.validation.BackglassValidationTexts;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.util.WaitProgressModel;
@@ -39,7 +37,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -75,13 +72,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button uploadBtn;
 
   @FXML
-  private Button openBtn;
-
-  @FXML
   private Button renameBtn;
-
-  @FXML
-  private Button vpsOpenBtn;
 
   @FXML
   private Button dmdPositionBtn;
@@ -128,11 +119,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   //-------------
 
   @FXML
-  private BorderPane validationError;
+  private Label statusReadyLabel;
   @FXML
-  private Label validationErrorLabel;
+  private Label statusAttentionLabel;
   @FXML
-  private Label validationErrorText;
+  private Label statusDisabledLabel;
 
   //-------------
 
@@ -258,8 +249,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
   }
 
-  @FXML
-  private void onOpen() {
+  public void onOpen() {
     DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(selectedItem.getEmulatorId());
@@ -274,8 +264,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
   }
 
-  @FXML
-  private void onVpsOpen() {
+  public void onVpsOpen() {
     GameRepresentation game = getGameFromSelection();
     if (game != null) {
       VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
@@ -317,12 +306,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         setItems(data.stream().filter(d -> d.getEmulatorId() == emulator.getId()).collect(Collectors.toList()));
       }
       endReload();
+      // load the details of all backglasses, the status summary needs their validation state
+      models.forEach(DirectB2SModel::isLoaded);
     });
-  }
-
-  @FXML
-  private void onValidationSettings() {
-    PreferencesController.open("validators_backglass");
   }
 
   public void refreshEmulators() {
@@ -361,8 +347,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     EventManager.getInstance().addListener(this);
 
     this.clearBtn.setVisible(false);
-
-    this.openBtn.setVisible(client.getSystemService().isLocal());
 
     bindTable();
 
@@ -567,18 +551,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       NavigationController.setBreadCrumb(List.of(Messages.get("tables.tables.backglasses")));
     }
 
-    setValidationVisible(false);
-    validationErrorLabel.setText("");
-    validationErrorText.setText("");
-
     this.dmdPositionBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
-    this.openBtn.setDisable(true);
     this.renameBtn.setDisable(true);
-    this.vpsOpenBtn.setDisable(true);
 
     // load the sidebar
     backglassManagerSideBarController.setData(model != null ? model.getBean() : null);
+    backglassManagerSideBarController.setValidation(model != null ? model.getValidationCode() : -1, model);
 
     // empty game sidebar section while loading game
     backglassManagerSideBarController.resetGame();
@@ -599,24 +578,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         dmdPositionBtn.setDisable(!emulator.isVpxEmulator());
         resBtn.setDisable(emulator.isFxEmulator());
         uploadBtn.setDisable(false);
-        openBtn.setDisable(false);
         renameBtn.setDisable(false);
-        vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
 
         // Pass Game to sidebar so that it also updates the Game section
         backglassManagerSideBarController.setGame(game, model.isGameAvailable());
       });
-
-      int validationCode = model.getValidationCode();
-      if (validationCode > 0) {
-        setValidationVisible(true);
-        LocalizedValidation validationMessage = BackglassValidationTexts.validate(validationCode, model);
-        validationErrorLabel.setText(validationMessage.getLabel());
-        validationErrorText.setText(validationMessage.getText());
-      }
-      else {
-        setValidationVisible(false);
-      }
     }
   }
 
@@ -656,10 +622,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         return;
       }
     }
-  }
-
-  public void setValidationVisible(boolean visible) {
-    validationError.setVisible(visible);
   }
 
   //------------------------------------------------
@@ -729,7 +691,44 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   protected DirectB2SModel toModel(DirectB2S b2s) {
-    return new DirectB2SModel(b2s);
+    DirectB2SModel model = new DirectB2SModel(b2s);
+    // the status summary depends on the lazily loaded validation state
+    model.addListener(o -> debouncer.debounce("statusSummary", this::applyStatusSummary, 200, true));
+    return model;
+  }
+
+  @Override
+  protected void applyTableCount() {
+    super.applyTableCount();
+    applyStatusSummary();
+  }
+
+  /**
+   * Ready / needs attention / disabled counts of the listed backglasses. Backglasses whose validation is not
+   * loaded yet are only counted when disabled.
+   */
+  private void applyStatusSummary() {
+    int ready = 0;
+    int attention = 0;
+    int disabled = 0;
+    if (filteredModels != null) {
+      for (DirectB2SModel model : filteredModels) {
+        if (!model.getBean().isEnabled()) {
+          disabled++;
+        }
+        else if (model.loaded) {
+          if (model.getValidationCode() > 0) {
+            attention++;
+          }
+          else {
+            ready++;
+          }
+        }
+      }
+    }
+    statusReadyLabel.setText(Messages.get("backglass.directb2s_admin.status_ready", ready));
+    statusAttentionLabel.setText(Messages.get("backglass.directb2s_admin.status_attention", attention));
+    statusDisabledLabel.setText(Messages.get("backglass.directb2s_admin.status_disabled", disabled));
   }
 
   protected GameRepresentation getGameFromSelection() {

@@ -40,7 +40,7 @@
    <right>
       <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
          <items>
-            <Button mnemonicParsing="false" onAction="#onTest" text="%components.doftester.toy_container.test">
+            <Button mnemonicParsing="false" onAction="#onTest" text="%components.doftester.toy_container.test" styleClass="sm-button">
                <tooltip>
                   <Tooltip prefWidth="300.0" text="%components.doftester.toy_container.updates_can_only_be_installed_when_vpin_studio" wrapText="true" />
                </tooltip>

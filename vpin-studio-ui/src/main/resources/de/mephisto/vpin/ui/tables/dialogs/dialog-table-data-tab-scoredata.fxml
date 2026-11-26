@@ -29,7 +29,7 @@
             </Label>
          </left>
          <right>
-            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%tables.table_data_tab_scoredata.reset_highscore" styleClass="c-text-danger" BorderPane.alignment="CENTER">
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="%tables.table_data_tab_scoredata.reset_highscore" styleClass="sm-danger-button, c-text-danger" BorderPane.alignment="CENTER">
                <graphic>
                   <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2r-reload-alert" iconSize="18" text="󱄋" />
                </graphic>
@@ -146,7 +146,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="%tables.table_data_tab_scoredata.apply" GridPane.columnIndex="2">
+                  <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="%tables.table_data_tab_scoredata.apply" GridPane.columnIndex="2" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -168,7 +168,7 @@
                         <Font size="14.0" />
                      </font>
                   </TextField>
-                  <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="%tables.table_data_tab_scoredata.apply" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="%tables.table_data_tab_scoredata.apply" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="sm-button">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -214,7 +214,7 @@
                      <top>
                         <HBox spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="%tables.table_data_tab_scoredata.apply">
+                              <Button fx:id="applyHsBtn" mnemonicParsing="false" onAction="#onHsApply" text="%tables.table_data_tab_scoredata.apply" styleClass="sm-button">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -222,7 +222,7 @@
                                     <Tooltip prefWidth="300.0" text="%tables.table_data_tab_scoredata.apply_scanned_highscore_file_name_to_popper_to" wrapText="true" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="openHsFileBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="folder-component">
+                              <Button fx:id="openHsFileBtn" mnemonicParsing="false" onAction="#onEMHighscore" styleClass="sm-button, sm-button-icon, folder-component">
                                  <graphic>
                                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                  </graphic>
@@ -237,7 +237,7 @@
                         </HBox>
                      </top>
                      <bottom>
-                        <Button mnemonicParsing="false" onAction="#onTableScan" text="%tables.table_data_tab_scoredata.scan_table" styleClass="c-text-white" BorderPane.alignment="CENTER">
+                        <Button mnemonicParsing="false" onAction="#onTableScan" text="%tables.table_data_tab_scoredata.scan_table" styleClass="sm-button, c-text-white" BorderPane.alignment="CENTER">
                            <graphic>
                               <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                            </graphic>

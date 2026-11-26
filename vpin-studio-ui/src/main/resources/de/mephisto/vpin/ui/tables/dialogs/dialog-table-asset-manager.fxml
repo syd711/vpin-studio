@@ -55,7 +55,7 @@
                                     <ImageView fx:id="frontendImage" fitHeight="60.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
                                  </right>
                               </BorderPane>
-                              <ToolBar>
+                              <ToolBar styleClass="floating-toolbar">
                                  <items>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
@@ -83,7 +83,7 @@
                                           <Insets right="3.0" />
                                        </padding>
                                     </HBox>
-                                    <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" styleClass="c-text-white">
+                                    <Button fx:id="searchBtn" mnemonicParsing="false" onAction="#onSearch" text="" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -91,11 +91,11 @@
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-search-web" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <MenuButton fx:id="assetSourceMenuButton" mnemonicParsing="false" prefWidth="200">
+                                    <MenuButton fx:id="assetSourceMenuButton" mnemonicParsing="false" prefWidth="200" styleClass="sm-button">
                                        <font>
                                           <Font size="14.0" />
                                        </font></MenuButton>
-                                    <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit">
+                                    <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit" styleClass="sm-button, sm-button-icon">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -106,7 +106,7 @@
                                           <Tooltip text="%tables.table_asset_manager_embedded.configure_asset_source" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" styleClass="c-text-white">
+                                    <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -129,7 +129,7 @@
                                        <bottom>
                                           <HBox alignment="CENTER" spacing="6.0" BorderPane.alignment="CENTER">
                                              <children>
-                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" styleClass="c-text-white">
+                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="%backups.backup_download.download" styleClass="sm-button, c-text-white">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -140,7 +140,7 @@
                                                       <Insets bottom="3.0" />
                                                    </HBox.margin>
                                                 </Button>
-                                                <Button fx:id="webPreviewBtn" mnemonicParsing="false" onAction="#onWebPreview" styleClass="link-component" text="%backglass.res_generator.preview">
+                                                <Button fx:id="webPreviewBtn" mnemonicParsing="false" onAction="#onWebPreview" styleClass="sm-button, link-component" text="%backglass.res_generator.preview">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -169,9 +169,9 @@
                                     <Insets bottom="6.0" top="6.0" />
                                  </VBox.margin>
                               </Label>
-                              <ToolBar fx:id="installedAssetsToolbar" prefWidth="500">
+                              <ToolBar styleClass="floating-toolbar" fx:id="installedAssetsToolbar" prefWidth="500">
                                  <items>
-                                    <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component, c-text-white">
+                                    <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="sm-button, sm-button-icon, folder-component, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -183,7 +183,7 @@
                                        </tooltip>
                                     </Button>
                                     <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                    <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="%backups.backup_upload.upload" styleClass="c-text-white">
+                                    <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="%backups.backup_upload.upload" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -191,7 +191,7 @@
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2u-upload" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="%backups.backup_download.download" styleClass="c-text-white">
+                                    <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="%backups.backup_download.download" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -199,7 +199,7 @@
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2d-download" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetDefault" text="%tables.table_asset_manager.set_as_default" styleClass="c-text-white">
+                                    <Button fx:id="setDefaultBtn" mnemonicParsing="false" onAction="#onSetDefault" text="%tables.table_asset_manager.set_as_default" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -210,7 +210,7 @@
                                           <Tooltip text="%tables.table_asset_manager_embedded.use_this_file_as_default_asset_file" />
                                        </tooltip>
                                     </Button>
-                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="%tables.table_asset_manager.rename" styleClass="c-text-white">
+                                    <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="%tables.table_asset_manager.rename" styleClass="sm-button, c-text-white">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                        </graphic>
@@ -222,7 +222,7 @@
                                        </font>
                                     </Button>
                                     <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                    <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="c-text-white">
+                                    <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="%competitions.competitions.reload" styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -231,12 +231,12 @@
                                        </graphic>
                                     </Button>
                                     <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                    <Button fx:id="viewBtn" mnemonicParsing="false" onAction="#onView">
+                                    <Button fx:id="viewBtn" mnemonicParsing="false" onAction="#onView" styleClass="sm-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
+                                    <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" styleClass="sm-danger-button, sm-button-icon">
                                        <graphic>
                                           <FontIcon styleClass="c-icon-danger" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                        </graphic>
@@ -256,7 +256,7 @@
                                           </MenuItem>
                                        </items>
                                     </SplitMenuButton>
-                                    <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" styleClass="c-text-white">
+                                    <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -267,7 +267,7 @@
                                           <Tooltip text="%tables.table_asset_manager.open_help" />
                                        </tooltip>
                                     </Button>
-                                    <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " styleClass="c-text-white">
+                                    <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -278,7 +278,7 @@
                                           <Tooltip text="%tables.table_asset_manager_embedded.converts_the_selected_media_item_depending_on_its" />
                                        </tooltip>
                                     </MenuButton>
-                                    <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#onInfo" styleClass="c-text-white">
+                                    <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#onInfo" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -290,7 +290,7 @@
                                        </tooltip>
                                     </Button>
                                     <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                    <MenuButton fx:id="addToPlaylistBtn" mnemonicParsing="false" text=" " styleClass="c-text-white">
+                                    <MenuButton fx:id="addToPlaylistBtn" mnemonicParsing="false" text=" " styleClass="sm-button, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -305,7 +305,7 @@
                                           <MenuItem mnemonicParsing="false" onAction="#onPlaylistAddAmd" text="%tables.table_asset_manager_embedded.add_blank_video_amd" />
                                        </items>
                                     </MenuButton>
-                                    <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" styleClass="c-text-white">
+                                    <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" styleClass="sm-button, sm-button-icon, c-text-white">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -336,7 +336,7 @@
                      <right>
                         <HBox spacing="3.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                              <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious" styleClass="sm-button, sm-button-icon">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -347,7 +347,7 @@
                                     <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                                  </tooltip>
                               </Button>
-                              <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                              <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext" styleClass="sm-button, sm-button-icon">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -372,7 +372,7 @@
                                              </font>
                                           </Label>
                                           <ComboBox fx:id="tablesCombo" prefWidth="407.0" />
-                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="%tables.table_asset_manager.vps_assets" styleClass="c-text-white">
+                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="%tables.table_asset_manager.vps_assets" styleClass="sm-button, c-text-white">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
