@@ -2,6 +2,13 @@
 
 ### Changes
 
+- **Critical Bugfix: Deleting a table could delete the complete tables folder.**
+  - **Since version 4.1.0**, the DMD folder of a table is read from the table script (FlexDMD/UltraDMD "ProjectFolder"). If a script set this to the current folder (e.g. `"."`), deleting the table with the DMD option enabled deleted the whole tables folder, and with it the other tables. Up to 5.6.x this was a permanent delete, since 5.7.0 the folder was moved to the recycle bin, but deleted permanently if that failed (e.g. because a file was in use).
+  - The DMD folder is now only deleted when it is a subfolder below the table file and does not contain any table files.
+  - The same protection was added for ALTSound, ALT color and music files, whose folders and file names are also derived from the table script or ROM name. A music pattern like `"*.mp3"` no longer matches all files of the music folder.
+  - On Windows, files are no longer deleted permanently when moving them to the recycle bin fails. The deletion is skipped instead.
+  - Resources that are still used by other tables (ROM, nvram, PUP pack, DMD folder, ALTSound, ALT color, music, MAME cfg, backglass, ini files, etc.) are no longer deleted. This applies especially to VPX 10.8.1/10.9 tables located directly in the tables folder, where the "altsound", "serum", "vni", "music" and "pinmame" folders are shared by all of these tables.
+  - Table folders are only deleted when they are a subfolder of the tables folder and no other table is located in them.
 - **Critical Performance Fixes**: Fixed one additional performance issue caused by the maintenance mode screen loader.
 - **VPX 10.8.1/10.9**: 
   - Fixed ALT color files in the shared VPinMAME "altcolor" folder not being detected for tables in the per-table folder layout, which caused false "ALT color missing" validation errors.
