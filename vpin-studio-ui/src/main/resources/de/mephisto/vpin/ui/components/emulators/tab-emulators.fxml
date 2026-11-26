@@ -183,7 +183,7 @@
                                                       <Tooltip text="%components.emulators.select_folder" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonLaunch" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="sm-button, sm-button-icon">
+                                                <Button fx:id="openFolderButtonLaunch" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="sm-button, sm-button-icon, folder-component">
                                                    <graphic>
                                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
@@ -209,7 +209,7 @@
                                                       <Tooltip text="%components.emulators.select_folder" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonGames" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderGames" styleClass="sm-button, sm-button-icon">
+                                                <Button fx:id="openFolderButtonGames" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderGames" styleClass="sm-button, sm-button-icon, folder-component">
                                                    <graphic>
                                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
@@ -235,7 +235,7 @@
                                                       <Tooltip text="%components.emulators.select_folder" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonMedia" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="sm-button, sm-button-icon">
+                                                <Button fx:id="openFolderButtonMedia" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="sm-button, sm-button-icon, folder-component">
                                                    <graphic>
                                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>
@@ -261,7 +261,7 @@
                                                       <Tooltip text="%components.emulators.select_folder" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonRoms" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="sm-button, sm-button-icon">
+                                                <Button fx:id="openFolderButtonRoms" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="sm-button, sm-button-icon, folder-component">
                                                    <graphic>
                                                       <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" iconSize="16" />
                                                    </graphic>

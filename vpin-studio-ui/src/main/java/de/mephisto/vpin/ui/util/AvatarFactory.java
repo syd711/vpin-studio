@@ -12,22 +12,26 @@ import java.io.InputStream;
 public class AvatarFactory {
 
   public static ImageView create(InputStream in) {
+    return create(in, UIDefaults.DEFAULT_AVATARSIZE);
+  }
+
+  public static ImageView create(InputStream in, double size) {
     if (in == null) {
       in = Studio.class.getResourceAsStream("avatar-blank.png");
     }
 
     Image image = new Image(in);
     ImageView imageView = new ImageView(image);
-    imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
+    imageView.setFitWidth(size);
     imageView.setPreserveRatio(true);
     imageView.setSmooth(true);
 
     Rectangle clip = new Rectangle();
-    clip.setWidth(UIDefaults.DEFAULT_AVATARSIZE);
-    clip.setHeight(UIDefaults.DEFAULT_AVATARSIZE);
+    clip.setWidth(size);
+    clip.setHeight(size);
 
-    clip.setArcHeight(UIDefaults.DEFAULT_AVATARSIZE);
-    clip.setArcWidth(UIDefaults.DEFAULT_AVATARSIZE);
+    clip.setArcHeight(size);
+    clip.setArcWidth(size);
     clip.setStroke(Color.web(ThemeColors.WHITE));
     clip.setStrokeWidth(0);
     imageView.setClip(clip);

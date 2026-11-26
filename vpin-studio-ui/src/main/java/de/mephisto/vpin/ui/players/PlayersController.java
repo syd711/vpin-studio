@@ -56,10 +56,7 @@ public class PlayersController implements Initializable, StudioFXController {
   private Label playerScoreLabel;
 
   @FXML
-  private Label playerCountLabel;
-
-  @FXML
-  private TitledPane highscoresTitledPane;
+  private Label scoreCountLabel;
 
   @FXML
   private CheckBox loadScoreList;
@@ -82,7 +79,8 @@ public class PlayersController implements Initializable, StudioFXController {
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
-    playerScoreLabel.setText(Messages.get("players.players.player_highscores"));
+    scoreCountLabel.setVisible(false);
+    playerScoreLabel.setText(player.map(PlayerRepresentation::getName).orElse(Messages.get("players.players.player_highscores")));
     if (player.isPresent()) {
       PlayerRepresentation p = player.get();
       if (StringUtils.isEmpty(p.getInitials())) {
@@ -102,10 +100,11 @@ public class PlayersController implements Initializable, StudioFXController {
         errorTextLabel.setText(Messages.get("players.players.duplicate_initials_message", p.getName(), p.getDuplicatePlayerName()));
       }
 
-      playerScoreLabel.setText(Messages.get("players.players.player_highscores_for", player.get().getName()));
-
       Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel));
+        ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel, count -> {
+          scoreCountLabel.setText(Messages.get("players.players.scores_count", count));
+          scoreCountLabel.setVisible(count > 0);
+        }));
       });
     }
     else {
@@ -120,7 +119,6 @@ public class PlayersController implements Initializable, StudioFXController {
     else {
       NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
     }
-    playerCountLabel.setText(Messages.get("dialog.players_count", builtInPlayersController.getCount()));
   }
 
 
@@ -128,7 +126,10 @@ public class PlayersController implements Initializable, StudioFXController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList(Messages.get("navigation.players"), Messages.get("navigation.build_in_players")));
     validationError.setVisible(false);
-    noScoreLabel.managedProperty().bindBidirectional(noScoreLabel.visibleProperty());
+    validationError.managedProperty().bind(validationError.visibleProperty());
+    noScoreLabel.managedProperty().bind(noScoreLabel.visibleProperty());
+    scoreCountLabel.managedProperty().bind(scoreCountLabel.visibleProperty());
+    scoreCountLabel.setVisible(false);
 
     try {
       FXMLLoader loader = new FXMLLoader(BuiltInPlayersController.class.getResource("tab-builtin-users.fxml"));

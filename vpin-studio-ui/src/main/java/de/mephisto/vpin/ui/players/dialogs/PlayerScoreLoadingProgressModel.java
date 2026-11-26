@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
@@ -28,14 +29,16 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
   private List<PlayerRepresentation> players;
   private final VBox highscoreList;
   private final Label noScoreLabel;
+  private final Consumer<Integer> onLoaded;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerScoreLoadingProgressModel(PlayerRepresentation playerRepresentation, VBox highscoreList, Label noScoreLabel) {
+  public PlayerScoreLoadingProgressModel(PlayerRepresentation playerRepresentation, VBox highscoreList, Label noScoreLabel, Consumer<Integer> onLoaded) {
     super(Messages.get("players.players.loading_player_highscores"));
     this.players = Arrays.asList(playerRepresentation);
     this.highscoreList = highscoreList;
     this.noScoreLabel = noScoreLabel;
+    this.onLoaded = onLoaded;
     this.playerIterator = players.iterator();
   }
 
@@ -77,13 +80,11 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
 
     Platform.runLater(() -> {
       highscoreList.getChildren().removeAll(highscoreList.getChildren());
-      highscoreList.getStyleClass().remove("media-container");
       if (playerScores.getScores().isEmpty()) {
         noScoreLabel.setVisible(true);
         noScoreLabel.setText(Messages.get("players.players.no_highscores_found_for_this_player"));
       }
       else {
-        highscoreList.getStyleClass().add("media-container");
         noScoreLabel.setVisible(false);
         for (ScoreRepresentation playerScore : playerScores.getScores()) {
           GameRepresentation game = client.getGameService().getGameCached(playerScore.getGameId());
@@ -104,6 +105,7 @@ public class PlayerScoreLoadingProgressModel extends ProgressModel<PlayerReprese
           }
         }
       }
+      onLoaded.accept(highscoreList.getChildren().size());
     });
   }
 }

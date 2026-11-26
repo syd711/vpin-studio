@@ -92,7 +92,9 @@
     -c-edit-button: #5555FF;
     -c-edit-button-hover: #7777FF;
     -c-focus-border: #5080FF;
-    -c-link-base: #3399FF;
+    -c-link-base: #3399FF;                  /* buttons opening a website or file */
+    -c-link-base-hover: #4DA6FF;
+    -c-link-base-border: #66B3FF;
     -c-danger: #FF3333;                     /* delete actions, invalid values */
     -c-danger-dark: #CC3333;
     -c-danger-darker: #990000;
@@ -105,7 +107,7 @@
     -c-success-light: #66FF66;
     -c-success-dark: #03A905;
     -c-success-darker: #11AA11;
-    -c-green: #338800;
+    -c-green: #338800;                      /* buttons starting a system program */
     -c-green-hover: #339900;
     -c-green-border: #33AA00;
     -c-feature: #338033;                    /* selected VPS feature badge */
@@ -118,7 +120,9 @@
     -c-amber: #FF9800;
     -c-orange-named: #FFA500;
     -c-yellow-light: #FFFF66;
-    -c-folder: #CC9933;
+    -c-folder: #CC9933;                     /* buttons opening a folder */
+    -c-folder-hover: #D9A640;
+    -c-folder-border: #E0AD4D;
     -c-cyan: #00C4EC;
     -c-teal: #008080;
     -c-wol: #B2DFEE;                        /* wake on LAN button */
@@ -188,6 +192,7 @@
 .c-text-white { -fx-text-fill: -c-white; }
 .c-icon-danger { -fx-icon-color: -c-danger; }
 .c-icon-disabled { -fx-icon-color: -c-disabled; }
+.c-icon-ok { -fx-icon-color: -c-ok; }
 .c-icon-error { -fx-icon-color: -c-error; }
 .c-icon-error-text { -fx-icon-color: -c-error-text; }
 .c-icon-error-text-light { -fx-icon-color: -c-error-text-light; }

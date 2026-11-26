@@ -9,11 +9,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="rootStack" alignment="CENTER_LEFT" prefWidth="0.0" styleClass="tile" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.WidgetPlayerScoreController">
+<!-- rounded tile: the sm-panel fill and border are on the stack, the table background image is set on the inner
+     pane by the controller (clipped to the same radius) -->
+<StackPane fx:id="rootStack" alignment="CENTER_LEFT" prefWidth="0.0" styleClass="sm-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.WidgetPlayerScoreController">
    <children>
-      <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="550.0">
+      <BorderPane fx:id="root">
          <padding>
-            <Insets top="6.0" />
+            <Insets bottom="6.0" left="6.0" right="6.0" top="12.0" />
          </padding>
          <left>
             <ImageView fx:id="wheelImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_LEFT">
@@ -40,7 +42,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="nameLabel" text="..." styleClass="c-text-white">
+                        <Label fx:id="nameLabel" text="…" styleClass="c-text-white">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -49,8 +51,8 @@
                   </HBox>
                   <VBox alignment="CENTER_RIGHT">
                      <children>
-                        <Label fx:id="scoreLabel" text="..." styleClass="c-text-white" />
-                        <Label fx:id="changeDateLabel" text="..." styleClass="c-text-white">
+                        <Label fx:id="scoreLabel" text="…" styleClass="c-text-white" />
+                        <Label fx:id="changeDateLabel" text="…" styleClass="c-text-white">
                            <font>
                               <Font size="10.0" />
                            </font>
@@ -63,6 +65,6 @@
       </BorderPane>
    </children>
    <padding>
-      <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+      <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
    </padding>
 </StackPane>

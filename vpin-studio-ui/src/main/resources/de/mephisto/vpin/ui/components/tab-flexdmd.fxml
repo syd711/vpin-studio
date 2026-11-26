@@ -35,7 +35,7 @@
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-laptop" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                </Button>
             </items>

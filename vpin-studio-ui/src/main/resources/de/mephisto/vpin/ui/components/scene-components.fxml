@@ -12,13 +12,10 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentsController">
    <center>
-      <BorderPane fx:id="root" styleClass="subpanel">
+      <BorderPane fx:id="root">
       
           <center>
               <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
-                  <BorderPane.margin>
-                      <Insets bottom="6.0" />
-                  </BorderPane.margin>
                <center>
                   <TabPane fx:id="rootTabPane" styleClass="tabs-dark-content" BorderPane.alignment="CENTER">
                      <tabs>
@@ -100,9 +97,6 @@
                </center>
               </BorderPane>
           </center>
-         <padding>
-            <Insets bottom="6.0" left="12.0" right="12.0" top="12.0" />
-         </padding>
          <BorderPane.margin>
             <Insets bottom="12.0" right="12.0" />
          </BorderPane.margin>

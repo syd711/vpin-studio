@@ -54,3 +54,74 @@
     -fx-font-weight: bold;
     -fx-background-color: -c-highlight-translucent;
  }
+
+/**
+ * Flat table inside a tile (Players): caption headers, divider lines instead of striping,
+ * selected row in the navigation selection color.
+ */
+.sm-table {
+    -fx-background-color: -c-tile;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+}
+.sm-table .column-header-background {
+    -fx-background-color: transparent;
+}
+.sm-table .column-header-background .filler,
+.sm-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-size: 38;
+}
+.sm-table .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-subtle;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 12 0 12;
+}
+.sm-table .table-row-cell,
+.sm-table .table-row-cell:odd,
+.sm-table .table-row-cell:even {
+    -fx-cell-size: 60px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.sm-table .table-row-cell:empty {
+    -fx-border-color: transparent;
+}
+.sm-table .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 12 0 12;
+    -fx-border-color: transparent;
+}
+.sm-table:row-selection .table-row-cell:filled:hover,
+.sm-table:row-selection .table-row-cell:filled:focused:hover {
+    -fx-background-color: -c-control;
+    -fx-font-weight: normal;
+}
+.sm-table .table-row-cell:filled:selected,
+.sm-table:focused .table-row-cell:filled:selected,
+.sm-table:focused .table-row-cell:filled:focused:selected,
+.sm-table:focused .table-row-cell:filled:focused:selected:hover,
+.sm-table:row-selection .table-row-cell:filled:selected:hover {
+    -fx-background-color: -c-warn-bg;
+    -fx-text-background-color: -c-white;
+    -fx-font-weight: normal;
+}
+/* the display name column */
+.sm-table .table-cell.sm-table-bold {
+    -fx-font-weight: bold;
+}
+/* the initials column */
+.sm-table .table-cell.sm-table-mono {
+    -fx-font-family: "Consolas";
+}
+.sm-table .placeholder .label {
+    -fx-text-fill: -c-muted;
+}

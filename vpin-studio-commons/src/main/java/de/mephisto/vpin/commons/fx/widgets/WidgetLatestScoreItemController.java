@@ -56,6 +56,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    roundCorners(root, TILE_RADIUS);
   }
 
   public void setData(GameRepresentation game, FrontendMediaRepresentation gameMedia, ScoreRepresentation score) {

@@ -36,7 +36,7 @@
          <center>
             <StackPane>
                <children>
-                  <TabPane fx:id="tabPane">
+                  <TabPane fx:id="tabPane" styleClass="sm-tabs" tabClosingPolicy="UNAVAILABLE">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>

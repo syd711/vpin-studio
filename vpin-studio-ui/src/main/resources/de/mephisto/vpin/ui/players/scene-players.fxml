@@ -4,111 +4,78 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.PlayersController">
 
-    <center>
-        <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
-            <center>
-                <BorderPane fx:id="playersRoot" BorderPane.alignment="CENTER">
-                    <BorderPane.margin>
-                        <Insets left="12.0" right="12.0" top="12.0" />
-                    </BorderPane.margin>
-                </BorderPane>
-            </center>
-         <BorderPane.margin>
-            <Insets right="12.0" />
-         </BorderPane.margin>
-         <bottom>
-            <BorderPane BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <center>
-                  <BorderPane fx:id="validationError" styleClass="sm-alert">
-                     <center>
-                        <HBox spacing="12.0">
-                           <children>
-                              <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
-                                 <children>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
-                                 </children>
-                              </StackPane>
-                              <VBox spacing="2.0" HBox.hgrow="ALWAYS">
-                                 <children>
-                                    <Label fx:id="errorTitleLabel" text="%players.players.duplicate_initials" styleClass="sm-alert-title" wrapText="true" />
-                                    <Label fx:id="errorTextLabel" styleClass="sm-alert-text" wrapText="true" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </HBox>
-                     </center>
-                     <padding>
-                        <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
-                     </padding>
-                  </BorderPane>
-               </center>
-               <top>
-                  <Label fx:id="playerCountLabel" text="%competitions.discord_competition_edit.label" BorderPane.alignment="TOP_RIGHT" />
-               </top>
-            </BorderPane>
-         </bottom>
-        </BorderPane>
-    </center>
-   <right>
-      <VBox prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+   <center>
+      <VBox spacing="14.0" BorderPane.alignment="CENTER">
          <children>
-            <TitledPane fx:id="highscoresTitledPane" animated="false" styleClass="c-text-white">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <content>
-                  <ScrollPane hbarPolicy="NEVER" maxHeight="1.7976931348623157E308">
-                     <content>
-                        <BorderPane>
-                           <center>
-                              <VBox fx:id="highscoreList" spacing="6.0" />
-                           </center>
-                           <top>
-                              <Label fx:id="noScoreLabel" text="%players.players.no_highscores_found_for_this_player" styleClass="c-text-white" BorderPane.alignment="TOP_LEFT">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <BorderPane.margin>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                 </BorderPane.margin>
-                              </Label>
-                           </top>
-                        </BorderPane>
-                     </content>
-                  </ScrollPane>
-               </content>
-               <graphic>
-                  <BorderPane prefWidth="550.0">
-                     <left>
-                        <Label fx:id="playerScoreLabel" text="%players.players.player_highscores" BorderPane.alignment="CENTER" />
-                     </left>
-                     <right>
-                        <CheckBox fx:id="loadScoreList" mnemonicParsing="false" text="%players.players.load_score_list" BorderPane.alignment="CENTER">
-                           <font>
-                              <Font size="11.0" />
-                           </font>
-                        </CheckBox>
-                     </right>
-                  </BorderPane>
-               </graphic>
-            </TitledPane>
+            <BorderPane fx:id="playersRoot" VBox.vgrow="ALWAYS" />
+            <HBox fx:id="validationError" spacing="12.0" styleClass="sm-alert">
+               <children>
+                  <StackPane maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" styleClass="sm-alert-icon">
+                     <children>
+                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-exclamation-thick" iconSize="14" />
+                     </children>
+                  </StackPane>
+                  <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="errorTitleLabel" text="%players.players.duplicate_initials" styleClass="sm-alert-title" wrapText="true" />
+                        <Label fx:id="errorTextLabel" styleClass="sm-alert-text" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+               </padding>
+            </HBox>
          </children>
          <BorderPane.margin>
-            <Insets />
+            <Insets right="14.0" />
          </BorderPane.margin>
+      </VBox>
+   </center>
+   <right>
+      <!-- fixed width: score widget (600) + scroll bar + horizontal padding (32) -->
+      <VBox minWidth="646.0" prefWidth="646.0" maxWidth="646.0" spacing="14.0" styleClass="sm-tile" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="highscoresCaptionLabel" text="%players.players.highscores_caption" styleClass="sm-caption" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label fx:id="playerScoreLabel" text="%players.players.player_highscores" style="-fx-font-size: 20px; -fx-font-weight: bold;" styleClass="c-text-white" />
+                              <Label fx:id="scoreCountLabel" styleClass="sm-pill, sm-pill-unknown" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <CheckBox fx:id="loadScoreList" mnemonicParsing="false" text="%players.players.load_score_list" styleClass="sm-text" />
+               </children>
+            </HBox>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label fx:id="noScoreLabel" text="%players.players.no_highscores_found_for_this_player" styleClass="sm-hint" wrapText="true" />
+                        <VBox fx:id="highscoreList" spacing="10.0" />
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+         <padding>
+            <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+         </padding>
       </VBox>
    </right>
    <padding>

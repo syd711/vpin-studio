@@ -36,6 +36,9 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
   private StackPane rootStack;
 
   @FXML
+  private BorderPane root;
+
+  @FXML
   private ImageView wheelImageView;
 
   @FXML
@@ -60,6 +63,8 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    // the background image is set on the inner pane, inside the 1px border of the tile
+    roundCorners(root, TILE_RADIUS - 1);
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
@@ -98,7 +103,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
             BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
             BackgroundSize.DEFAULT);
-        rootStack.setBackground(new Background(myBI));
+        root.setBackground(new Background(myBI));
       });
     });
   }
@@ -146,7 +151,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       BackgroundImage myBI = new BackgroundImage(backgroundImage,
           BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
           BackgroundSize.DEFAULT);
-      rootStack.setBackground(new Background(myBI));
+      root.setBackground(new Background(myBI));
     }
   }
 }

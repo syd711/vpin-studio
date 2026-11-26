@@ -103,11 +103,18 @@ There are exactly these button types. Don't use the default JavaFX button style 
 | `sm-button, sm-button-small` | same look, 12px, padding `3 9` | Secondary inline actions next to small text / pills, e.g. "Set as installed", "Reset version", "Ignore version" |
 | `sm-accent-button` | orange fill `#DD9646`, dark text `#1A1305`, bold, padding `8 14` | The **one** primary action of a panel (install, save) — at most one per panel, usually in the `sm-footer` |
 | `sm-danger-button` | `#3A1C1F` fill, `#6E2B30` border (`#FF6B70` on hover, fill `#4A2326`), `#FF6B70` bold 14px text and icons, padding `5 12` | Destructive actions (restart server, shutdown system, delete cabinet) and buttons flagging a problem (asset filter with excluded assets). Never a filled bright red. |
+| `sm-button, folder-component` | `#CC9933` fill (yellow), white text and icon | Opens a **folder** in the file explorer, icon `mdi2f-folder-open` |
+| `sm-button, external-component` | `#338800` fill (green), white text and icon | Starts a **system program** (setup exe, config tool), icon `mdi2o-open-in-new` |
+| `sm-button, link-component` | `#3399FF` fill (blue), white text and icon | Opens a **website or file** (ini editor), files use icon `mdi2c-card-text-outline` |
 | `sm-alert-button` / `sm-alert-close` | transparent with red border | Only inside `sm-alert` |
 | `sm-filter-pill` (ToggleButton) | round outline, 12px, selected = `#333333` fill | Filters / toggles in a panel header |
 | `sm-chip` | round `#222222` with border, 12px | Small clickable tags (e.g. screen shortcuts) |
 | `sm-link` (Hyperlink) | `#7FB2FF`, underline on hover | External links, with `mdi2o-open-in-new` 14px icon |
 | `sm-section-header` | transparent, hand cursor | Collapsible section header (chevron + `sm-text` + `sm-small` state) |
+
+The three "open" colors mean the same everywhere (tables sidebar uses the plain classes). Large variant = icon (18px) + text,
+in an `sm-actionbar` the `sm-button` class is implied; small variant = `sm-button, sm-button-icon, <color class>` with a 16px icon,
+e.g. the open-folder buttons next to the emulator folder fields. Choosing a folder (`…` / "Change folder") stays a plain `sm-button`.
 
 Borderless text buttons are not used any more (the former `sm-ghost-button` was removed).
 

@@ -38,12 +38,12 @@
                      <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                </Button>
-               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="external-component, c-text-white" text="%components.freezy.dmddevice_ini">
+               <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="link-component, c-text-white" text="%components.freezy.dmddevice_ini">
                   <font>
                      <Font size="14.0" />
                   </font>
                   <graphic>
-                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                     <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                   </graphic>
                   <tooltip>
                      <Tooltip text="%components.freezy.open_dmddevice_ini" />

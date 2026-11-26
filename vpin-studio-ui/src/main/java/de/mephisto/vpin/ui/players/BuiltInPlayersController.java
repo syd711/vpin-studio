@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.players;
 
-import de.mephisto.vpin.ui.util.ThemeColors;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
@@ -14,6 +13,8 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.AvatarFactory;
+import de.mephisto.vpin.ui.achievements.AchievementsUI;
+import org.kordamp.ikonli.javafx.FontIcon;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -42,6 +43,7 @@ import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class BuiltInPlayersController extends BasePlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
+  private final static double AVATAR_SIZE = 44;
 
   @FXML
   private Button editBtn;
@@ -72,6 +74,9 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
   @FXML
   private StackPane tableStack;
+
+  @FXML
+  private Label playerCountLabel;
 
   private Parent playersLoadingOverlay;
 
@@ -111,6 +116,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
         }
 
         this.searchTextField.setDisable(false);
+        playerCountLabel.setText(Messages.get("dialog.players_count", getCount()));
 
         tableStack.getChildren().remove(playersLoadingOverlay);
         tableView.setVisible(true);
@@ -227,37 +233,40 @@ public class BuiltInPlayersController extends BasePlayersController implements I
     }
 
 
+    for (TableColumn<PlayerRepresentation, ?> column : tableView.getColumns()) {
+      column.setText(column.getText().toUpperCase());
+    }
+
     maniaPlayerColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getManiaAccountUuid()) && Features.MANIA_ENABLED) {
         try {
           Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(value.getManiaAccountUuid());
           if (accountByUuid != null) {
-            Label label = new Label();
-            label.setGraphic(WidgetFactory.createCheckIcon());
-            return new SimpleObjectProperty<>(label);
+            return new SimpleObjectProperty<>(pill(Messages.get("players.builtin_users.linked"), "sm-pill-ok", "mdi2c-check"));
           }
         }
         catch (Exception e) {
-          Label label = new Label();
-          label.setGraphic(WidgetFactory.createExclamationIcon());
+          Label label = pill(Messages.get("players.builtin_users.link_error"), "sm-pill-error", "mdi2a-alert-circle-outline");
           label.setTooltip(new Tooltip(e.getMessage()));
           Features.MANIA_ENABLED = false;
           return new SimpleObjectProperty<>(label);
         }
       }
-      return null;
+      Label label = new Label(Messages.get("players.builtin_users.not_linked"));
+      label.getStyleClass().add("sm-hint");
+      return new SimpleObjectProperty<>(label);
     });
 
     adminColumn.setVisible(true);
     adminColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.isAdministrative()) {
-        Label label = new Label();
-        label.setGraphic(WidgetFactory.createCheckIcon());
-        return new SimpleObjectProperty<>(label);
+        return new SimpleObjectProperty<>(pill(Messages.get("players.builtin_users.default"), "sm-pill-ok", "mdi2c-check"));
       }
-      return null;
+      Label label = new Label("—");
+      label.getStyleClass().add("sm-hint");
+      return new SimpleObjectProperty<>(label);
     });
 
     nameColumn.setCellValueFactory(cellData -> {
@@ -268,18 +277,17 @@ public class BuiltInPlayersController extends BasePlayersController implements I
     avatarColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (value.getAvatar() == null) {
-        return new SimpleObjectProperty<>("");
+        return new SimpleObjectProperty<>(AchievementsUI.initials(value.getInitials(), AVATAR_SIZE));
       }
 
-      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAssetService().getAsset(AssetType.AVATAR, value.getAvatar().getUuid())));
+      return new SimpleObjectProperty<>(AvatarFactory.create(client.getAssetService().getAsset(AssetType.AVATAR, value.getAvatar().getUuid()), AVATAR_SIZE));
     });
 
     initialsColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
-        Label label = new Label(value.getInitials());
-        String color = ThemeColors.DANGER;
-        label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
+        Label label = pill(value.getInitials(), "sm-pill-error", "mdi2a-alert-circle-outline");
+        label.setTooltip(new Tooltip(Messages.get("players.players.duplicate_initials")));
         return new SimpleObjectProperty(label);
       }
 
@@ -342,6 +350,16 @@ public class BuiltInPlayersController extends BasePlayersController implements I
         maniaPlayerColumn.setVisible(!StringUtils.isEmpty(settings.getCabinetUuid()));
       }
     }
+  }
+
+  private static Label pill(String text, String variant, String iconLiteral) {
+    Label label = new Label(text);
+    label.getStyleClass().addAll("sm-pill", variant);
+    FontIcon icon = new FontIcon(iconLiteral);
+    icon.setIconSize(12);
+    icon.getStyleClass().add(variant.equals("sm-pill-ok") ? "c-icon-ok" : "c-icon-error");
+    label.setGraphic(icon);
+    return label;
   }
 
   @Override
