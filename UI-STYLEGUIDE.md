@@ -340,6 +340,15 @@ Every `Accordion` / `TitledPane` gets this look automatically, it was taken from
   (+ `sm-small` hint right), body grid of `sm-text` labels and right-aligned 240px controls, or an `sm-inset` fact grid
   (`sm-hint` keys, `sm-text` values).
 
+### Media recorder (`recorder/scene-recorder.fxml`, `recorder/panels/screen-recorder-panel.fxml`)
+- Same split view as the backglass manager: table list with two `sm-actionbar` rows (filter / reload / search /
+  emulator / playlist, then the screens menu, auto-select, table actions, `sm-danger-button` "Start" (recording stays red), play button,
+  `sm-danger-button` stop and the `sm-hint` selection count right-aligned), then the table.
+- Settings `sm-panel`: `sm-divider` header (`sm-caption` + `sm-hint`, preview refresh spinner right), then one `sm-tile`
+  card per enabled screen: `sm-divider` header (muted monitor icon, `sm-title` screen name, `sm-small` resolution),
+  option rows (150px `sm-text` label, help icon tooltips, `sm-button-small` "Edit command") and an `sm-caption`
+  "PREVIEW" `sm-inset` that is hidden when the card is narrower than 560px. No enabled screen = `sm-inset` info row. The tab has no sidebar, so `TablesController` hides the sidebar toggle.
+
 ### Designer (`cards/scene-highscore-cards.fxml`, `cards/panels/template-editor.fxml`)
 - Three borderless `sm-tile`s (like the Achievements and Players tiles) in an `sm-split`: table list (search field `designer-search` with a 18px `mdi2m-magnify` icon,
   filter / reload icon buttons, emulator combo with a muted "Emulator" prefix, two columns TABLE / TEMPLATE where custom

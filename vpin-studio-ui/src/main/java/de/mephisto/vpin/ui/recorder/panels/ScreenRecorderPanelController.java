@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.RecorderController;
 import de.mephisto.vpin.ui.recorder.RecorderDialogs;
@@ -16,12 +15,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,10 @@ public class ScreenRecorderPanelController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorderPanelController.class);
 
   private final static List<RecordingWriteMode> RECORD_MODE_LIST = Arrays.asList(RecordingWriteMode.ifMissing, RecordingWriteMode.overwrite, RecordingWriteMode.append);
-  public static final int PREVIEW_WIDTH_THRESHOLD = 1600;
+  /** the preview is only shown when the card is at least this wide (options column + a useful preview) */
+  private static final double PREVIEW_MIN_CARD_WIDTH = 560;
+  private static final double PREVIEW_MAX_WIDTH = 480;
+  private static final double PREVIEW_MAX_HEIGHT = 240;
 
   @FXML
   private Pane root;
@@ -48,7 +51,7 @@ public class ScreenRecorderPanelController implements Initializable {
   private Pane preview;
 
   @FXML
-  private AnchorPane anchorPreview;
+  private StackPane previewBox;
 
   @FXML
   private ImageView imageView;
@@ -57,10 +60,7 @@ public class ScreenRecorderPanelController implements Initializable {
   private Label screenName;
 
   @FXML
-  private Label previewTitle;
-
-  @FXML
-  private Label previewLabel;
+  private Label resolutionLabel;
 
   @FXML
   private Button settingsBtn;
@@ -78,9 +78,6 @@ public class ScreenRecorderPanelController implements Initializable {
   private CheckBox rotationCheckbox;
 
   @FXML
-  private CheckBox audioCheckbox;
-
-  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
@@ -93,9 +90,6 @@ public class ScreenRecorderPanelController implements Initializable {
   private Pane fpsPanel;
 
   @FXML
-  private Pane audioPanel;
-
-  @FXML
   private ComboBox<RecordingWriteMode> recordModeComboBox;
 
   private FrontendPlayerDisplay recordingScreen;
@@ -106,23 +100,15 @@ public class ScreenRecorderPanelController implements Initializable {
   }
 
   public void setData(RecorderController recorderController, FrontendPlayerDisplay recordingScreen) {
-    audioPanel.setVisible(false);
-
-    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (!root.isVisible()) {
-          return;
-        }
-        root.prefWidthProperty().set(newValue.intValue() - 1040);
-      }
-    });
-
     this.recordingScreen = recordingScreen;
     screenName.setText(recordingScreen.getScreen().name());
     if (recordingScreen.getScreen().name().equalsIgnoreCase("Menu")) {
       screenName.setText(recordingScreen.getScreen().name() + "/FullDMD");
     }
+    resolutionLabel.setText(Messages.get("recorder.screen.resolution", recordingScreen.getWidth(), recordingScreen.getHeight()));
+
+    // the preview takes the space next to the options and is hidden when the card gets too narrow
+    root.widthProperty().addListener((obs, oldValue, newValue) -> Platform.runLater(this::refresh));
 
     recordModeComboBox.setItems(FXCollections.observableList(RECORD_MODE_LIST));
     recordModeComboBox.setConverter(new StringConverter<RecordingWriteMode>() {
@@ -248,18 +234,6 @@ public class ScreenRecorderPanelController implements Initializable {
       }
     });
 
-    audioCheckbox.setSelected(option.isRecordAudio());
-    audioCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      if (s != null) {
-        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
-        if (option2 != null) {
-          option2.setRecordAudio(t1);
-          client.getPreferenceService().setJsonPreference(s);
-        }
-      }
-    });
-
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 3600, option.getRecordingDuration());
     factory.setConverter(new StringConverter<Integer>() {
       @Override public String toString(Integer v)   { return v == null ? "3" : v.toString(); }
@@ -310,31 +284,18 @@ public class ScreenRecorderPanelController implements Initializable {
       return;
     }
 
-    previewTitle.setText(Messages.get("recorder.screen_recorder_panel.screen_preview", recordingScreen.getWidth(), recordingScreen.getHeight()));
+    boolean showPreview = root.getWidth() >= PREVIEW_MIN_CARD_WIDTH;
+    if (preview.isVisible() != showPreview) {
+      preview.setVisible(showPreview);
+    }
 
-    preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
-    // RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-
-    if (preview.isVisible()) {
-      double w = preview.widthProperty().get();
-      double h = preview.heightProperty().get();
-      if (h > 300) {
-        h = 300;
-        w = h * 16 / 9;
+    if (showPreview) {
+      Insets insets = previewBox.getInsets();
+      double width = Math.min(PREVIEW_MAX_WIDTH, preview.getWidth() - insets.getLeft() - insets.getRight());
+      if (width <= 0) {
+        return;
       }
-
-      if (w > 500) {
-        w = 500;
-        h = w * 9 / 16;
-      }
-
-      double width = w - 12;
-      double height = width * 9 / 16;
-
-
-      preview.setPrefWidth(w);
-      preview.setPrefHeight(h * 8 / 16);
-
+      double height = Math.min(PREVIEW_MAX_HEIGHT, width * 9 / 16);
       imageView.setFitWidth(width);
       imageView.setFitHeight(height);
 
@@ -347,14 +308,14 @@ public class ScreenRecorderPanelController implements Initializable {
     root.setVisible(b);
   }
 
+  public boolean isVisible() {
+    return root.isVisible();
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     root.managedProperty().bindBidirectional(root.visibleProperty());
     preview.managedProperty().bindBidirectional(preview.visibleProperty());
-    previewLabel.managedProperty().bindBidirectional(previewLabel.visibleProperty());
-
-    imageView.managedProperty().bindBidirectional(imageView.visibleProperty());
-    audioPanel.managedProperty().bindBidirectional(audioPanel.visibleProperty());
     fpsPanel.managedProperty().bindBidirectional(fpsPanel.visibleProperty());
     rotationPanel.managedProperty().bindBidirectional(rotationPanel.visibleProperty());
   }

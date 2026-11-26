@@ -46,7 +46,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
@@ -85,10 +84,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
-  private BorderPane root;
+  private VBox recordingOptions;
 
   @FXML
-  private VBox recordingOptions;
+  private Node noScreensInfo;
 
   @FXML
   private Button reloadBtn;
@@ -115,7 +114,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
 
   @FXML
-  private ToolBar toolbar;
+  private HBox actionBar;
 
   private Map<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> screenColumns;
 
@@ -420,6 +419,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize(Messages.get("dialog.noun_table"), Messages.get("dialog.noun_tables"), new RecorderColumnSorter(this));
     recordingOptions.setFillWidth(true);
+    noScreensInfo.managedProperty().bind(noScreensInfo.visibleProperty());
 
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -465,6 +465,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         options.add(opt);
       }
     }
+    refreshNoScreensInfo();
+
     // get only the options that have a valid RecordingScreen and ignore all other ones
     recorderSettings.setRecordingScreenOptions(options);
     client.getPreferenceService().setJsonPreference(recorderSettings);
@@ -594,8 +596,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
       playButtonController.setDisable(true);
-      int i = toolbar.getItems().indexOf(stopBtn);
-      toolbar.getItems().add(i, playBtnRoot);
+      int i = actionBar.getChildren().indexOf(stopBtn);
+      actionBar.getChildren().add(i, playBtnRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load play button: " + e.getMessage(), e);
@@ -735,6 +737,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       screenRecorderPanelController.setVisible(recorderSettings.
           isEnabled(screenRecorderPanelController.getScreen()));
     }
+    refreshNoScreensInfo();
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
 
@@ -750,6 +753,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       }
     }
     tableView.refresh();
+  }
+
+  private void refreshNoScreensInfo() {
+    noScreensInfo.setVisible(screenRecorderPanelControllers.stream().noneMatch(ScreenRecorderPanelController::isVisible));
   }
 
   public void refreshScreens() {

@@ -40,6 +40,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
@@ -434,6 +435,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
+
+      // the media recorder has no sidebar: hide the toggle and move the settings button into its place
+      boolean showSidebarToggle = selectedTab != TAB_RECORDER;
+      toggleSidebarBtn.setVisible(showSidebarToggle);
+      StackPane.setMargin(tableSettingsBtn, new Insets(10, showSidebarToggle ? 54 : 14, 0, 0));
     });
   }
 
