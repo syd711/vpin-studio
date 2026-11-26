@@ -2,14 +2,24 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- fixed width: widget (600) + horizontal padding (32), the score items of the widget have a fixed size -->
+<!-- fixed width: score tile (600) + horizontal padding (32); the rows are the same score tiles as in the players view
+     (players/widget-highscore.fxml) -->
 <VBox maxHeight="Infinity" maxWidth="632.0" minWidth="632.0" prefWidth="632.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLatestScoresTileController">
    <children>
       <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%widgets.widget_latest_scores.latest_highscores" />
-      <!-- the widget title is hidden by the controller -->
-      <fx:include fx:id="latestScores" source="/de/mephisto/vpin/commons/fx/widgets/widget-latest-scores.fxml" VBox.vgrow="ALWAYS" />
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="Infinity" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox spacing="10.0">
+               <children>
+                  <Label fx:id="statusLabel" styleClass="sm-hint" text="%widgets.widget_latest_scores.loading_latest_scores" wrapText="true" />
+                  <VBox fx:id="scoresBox" spacing="10.0" />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
    </children>
    <padding>
       <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />

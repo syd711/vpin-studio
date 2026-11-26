@@ -15,12 +15,6 @@
     -fx-background-radius: 6px 6px 0 0;
 }
 
-.main-toolbar {
-    -fx-background-color: -fx-base-6;
-    -fx-border-radius: 12 12 12 12;
-    -fx-base : -fx-base-7;
-}
-
 /**
  * Breadcrumb
  */

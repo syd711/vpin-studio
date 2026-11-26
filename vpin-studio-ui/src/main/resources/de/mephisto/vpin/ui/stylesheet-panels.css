@@ -1,0 +1,57 @@
+/**
+ * Panels and surfaces: tiles, panels, inset boxes, dividers, footers, selectable list rows
+ */
+.sm-tile {
+    -fx-background-color: -c-tile;
+    -fx-background-radius: 6;
+}
+
+/* panels on a -c-tile subpanel, e.g. the Screens tab */
+.sm-panel {
+    -fx-background-color: -c-panel;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 6;
+}
+
+.sm-inset {
+    -fx-background-color: -c-inset;
+    -fx-background-radius: 4;
+}
+
+.sm-divider {
+    -fx-border-color: transparent transparent -c-selected transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.sm-list-row {
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.sm-list-row:hover {
+    -fx-background-color: -c-control;
+}
+
+.sm-list-row-selected, .sm-list-row-selected:hover {
+    -fx-background-color: -c-selected;
+}
+
+.sm-section-header {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.sm-footer {
+    -fx-background-color: -c-footer;
+    -fx-background-radius: 0 0 6 6;
+    -fx-border-color: -c-selected transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* score tile (players section, widget-highscore.fxml): darkens the table background image behind the text */
+.sm-score-tile-shade {
+    -fx-background-color: -c-darkest;
+    -fx-opacity: 0.55;
+}

@@ -1,0 +1,82 @@
+/**
+ * Alerts (error boxes), inline field errors and status banners
+ */
+.sm-alert {
+    -fx-background-color: -c-error-banner;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-error-border;
+    -fx-border-radius: 6;
+}
+
+.sm-alert-icon {
+    -fx-background-color: -c-error-icon;
+    -fx-background-radius: 15;
+}
+
+.sm-alert-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-white;
+}
+
+.sm-alert-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-error-text;
+}
+
+/* inline error below / next to a form field (icon graphic mdi2a-alert-circle-outline c-icon-error 16px) */
+.sm-field-error {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-error;
+    -fx-graphic-text-gap: 6;
+}
+
+.sm-alert-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-error-text-light;
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-error-border;
+    -fx-border-radius: 4;
+    -fx-padding: 4 10 4 10;
+    -fx-cursor: hand;
+}
+
+.sm-alert-button:hover {
+    -fx-background-color: -c-error-hover;
+}
+
+.sm-alert-close {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+    -fx-cursor: hand;
+}
+
+.sm-alert-close:hover {
+    -fx-background-color: -c-error-hover;
+    -fx-background-radius: 4;
+}
+
+.sm-banner {
+    -fx-border-width: 0 0 1 0;
+}
+
+.sm-banner-ok {
+    -fx-background-color: -c-ok-banner;
+    -fx-border-color: transparent transparent -c-ok-bg transparent;
+}
+
+.sm-banner-warn {
+    -fx-background-color: -c-warn-banner;
+    -fx-border-color: transparent transparent -c-warn-bg transparent;
+}
+
+.sm-banner-error {
+    -fx-background-color: -c-error-banner;
+    -fx-border-color: transparent transparent -c-error-border transparent;
+}
+
+.sm-banner-info {
+    -fx-background-color: -c-info-banner;
+    -fx-border-color: transparent transparent -c-info-border transparent;
+}

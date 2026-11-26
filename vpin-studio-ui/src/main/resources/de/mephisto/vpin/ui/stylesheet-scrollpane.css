@@ -56,3 +56,18 @@
 .virtual-flow > .corner {
     -fx-background-color: transparent;
 }
+
+.sm-map {
+    -fx-background-color: -c-inset;
+    -fx-background: -c-inset;
+    -fx-background-radius: 0 0 6 6;
+}
+
+.sm-map > .viewport {
+    -fx-background-color: -c-inset;
+}
+
+.sm-transparent-scroll, .sm-transparent-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}

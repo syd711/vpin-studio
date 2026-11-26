@@ -1,0 +1,37 @@
+/**
+ * Text classes for labels (see UI-STYLEGUIDE.md "Font sizes")
+ */
+.sm-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-white;
+}
+
+.sm-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-white;
+}
+
+.sm-hint {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-muted;
+}
+
+.sm-small {
+    -fx-font-size: 12px;
+    -fx-text-fill: -c-subtle;
+}
+
+.sm-caption {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-subtle;
+}
+
+.sm-version-ok {
+    -fx-text-fill: -c-ok;
+}
+
+.sm-version-warn {
+    -fx-text-fill: -c-warn;
+}

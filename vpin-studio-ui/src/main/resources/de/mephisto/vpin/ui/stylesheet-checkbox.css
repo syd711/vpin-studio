@@ -53,3 +53,7 @@
     -fx-background-insets: 0;
     -fx-background-radius: 3;
 }
+
+.check-box.sm-text {
+    -fx-text-fill: -c-white;
+}

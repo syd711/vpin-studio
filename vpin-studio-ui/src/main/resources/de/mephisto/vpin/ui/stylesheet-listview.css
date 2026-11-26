@@ -44,3 +44,66 @@
 .list-view:disabled {
     -fx-opacity: 0.6;
 }
+
+/* log viewer (System Manager) */
+.sm-log, .sm-log > .virtual-flow > .clipped-container > .sheet {
+    -fx-background-color: -c-inset;
+}
+
+.sm-log {
+    -fx-background-radius: 0 0 6 6;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.sm-log .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.sm-log .list-cell:filled:hover {
+    -fx-background-color: -c-inset-hover;
+}
+
+.sm-log-row {
+    -fx-border-color: transparent transparent -c-panel transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.sm-log-group {
+    -fx-background-color: -c-footer;
+    -fx-border-color: transparent transparent -c-panel-border transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cursor: hand;
+}
+
+.sm-keyword-list, .sm-keyword-list > .virtual-flow > .clipped-container > .sheet {
+    -fx-background-color: -c-inset;
+}
+
+.sm-keyword-list {
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 4;
+    -fx-padding: 2;
+}
+
+.sm-keyword-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -c-text-light;
+    -fx-font-family: "Consolas", "monospace";
+    -fx-font-size: 14px;
+    -fx-padding: 4 8 4 8;
+}
+
+.sm-keyword-list .list-cell:filled:hover {
+    -fx-background-color: -c-row-hover;
+}
+
+.sm-keyword-list .list-cell:filled:selected {
+    -fx-background-color: -c-selected;
+    -fx-text-fill: -c-white;
+}

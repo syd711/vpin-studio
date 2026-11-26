@@ -52,7 +52,7 @@
 
 /**
  * Text inputs: every TextField / PasswordField / TextArea is dark (-c-inset, -c-border border), same as sm-text-field.
- * Placed before the sm-* section so that sm-log-text / sm-script-text can still override it.
+ * Placed before sm-text-field / sm-log-text / sm-script-text (end of this file) so that they can still override it.
  * Combo boxes / date pickers / color pickers use the same dark box (see below).
  */
 .text-input {
@@ -85,4 +85,42 @@
 /* search field with a magnifier icon on the left and a clear button on the right (Players) */
 .text-field.sm-search-field {
     -fx-padding: 5 30 5 32;
+}
+
+.sm-text-field {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-white;
+    -fx-prompt-text-fill: -c-disabled;
+    -fx-background-color: -c-inset;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-border;
+    -fx-border-radius: 4;
+}
+
+.sm-log-text, .sm-log-text .content {
+    -fx-background-color: -c-inset;
+}
+
+.sm-log-text {
+    -fx-control-inner-background: -c-inset;
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-text-light;
+    -fx-background-radius: 0 0 6 6;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+.sm-script-text, .sm-script-text .content {
+    -fx-background-color: -c-inset;
+}
+
+.sm-script-text {
+    -fx-control-inner-background: -c-inset;
+    -fx-font-family: "Consolas", "monospace";
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-text-light;
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 4;
 }

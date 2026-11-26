@@ -125,19 +125,6 @@
     -fx-font-size: 14;
 }
 
-.floating-toolbar {
-    -fx-border-style: hidden hidden hidden hidden;
-    -fx-background-radius: 6 6 6 6;
-    -fx-background-color: -c-panel;
-}
-
-
-.floating-toolbar-inverted {
-    -fx-border-style: hidden hidden hidden hidden;
-    -fx-background-radius: 6 6 6 6;
-    -fx-background-color: -c-darkest;
-}
-
 .external-component .arrow {
     -fx-background-color: -c-white;
 }

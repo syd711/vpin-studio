@@ -1,0 +1,31 @@
+/**
+ * Toolbars and action bars
+ */
+.main-toolbar {
+    -fx-background-color: -fx-base-6;
+    -fx-border-radius: 12 12 12 12;
+    -fx-base : -fx-base-7;
+}
+
+.floating-toolbar {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: -c-panel;
+}
+
+.floating-toolbar-inverted {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: -c-darkest;
+}
+
+/* action bar on top of a tab (System Manager component tabs); its buttons get the sm-button look, see stylesheet-button.css */
+.sm-actionbar {
+    -fx-background-color: transparent;
+    -fx-padding: 12 0 0 0;
+    -fx-spacing: 8;
+}
+
+.sm-actionbar .separator {
+    -fx-padding: 0 4 0 4;
+}

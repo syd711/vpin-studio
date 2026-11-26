@@ -24,4 +24,9 @@
 @import "stylesheet-spinner.css";
 @import "stylesheet-datepicker.css";
 @import "stylesheet-combobox.css";
-@import "stylesheet-system-manager.css";
+/* generic sm-* building blocks, last so that they win over the widget defaults above */
+@import "stylesheet-panels.css";
+@import "stylesheet-typography.css";
+@import "stylesheet-pills.css";
+@import "stylesheet-alerts.css";
+@import "stylesheet-toolbars.css";

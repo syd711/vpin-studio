@@ -347,3 +347,99 @@
     -fx-font-size: 14px;
     -fx-border-color: -c-highlight;
 }
+
+/**
+ * sm-* buttons (see UI-STYLEGUIDE.md "Buttons")
+ */
+/* the default System Manager button, also used for every button in an .sm-actionbar */
+.sm-button, .sm-actionbar .button {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-control;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-border;
+    -fx-border-radius: 4;
+    -fx-padding: 5 12 5 12;
+    -fx-cursor: hand;
+}
+
+.sm-button:hover, .sm-actionbar .button:hover {
+    -fx-background-color: -c-control-hover;
+}
+
+.sm-button-icon {
+    -fx-padding: 5 7 5 7;
+}
+
+/* colored "open" variants of sm-button, same meaning as in the tables sidebar (large: icon + text, small: sm-button-icon):
+   folder-component = opens a folder (yellow), external-component = starts a system program (green),
+   link-component = opens a website or file (blue) */
+.sm-button.folder-component, .sm-actionbar .button.folder-component {
+    -fx-background-color: -c-folder;
+    -fx-border-color: -c-folder-border;
+}
+
+.sm-button.folder-component:hover, .sm-actionbar .button.folder-component:hover {
+    -fx-background-color: -c-folder-hover;
+}
+
+.sm-button.external-component, .sm-actionbar .button.external-component {
+    -fx-background-color: -c-green;
+    -fx-border-color: -c-green-border;
+}
+
+.sm-button.external-component:hover, .sm-actionbar .button.external-component:hover {
+    -fx-background-color: -c-green-hover;
+}
+
+.sm-button.link-component, .sm-actionbar .button.link-component {
+    -fx-background-color: -c-link-base;
+    -fx-border-color: -c-link-base-border;
+}
+
+.sm-button.link-component:hover, .sm-actionbar .button.link-component:hover {
+    -fx-background-color: -c-link-base-hover;
+}
+
+/* secondary inline actions (e.g. "Set as installed"), same look, fits next to 12px text and pills */
+.sm-button-small {
+    -fx-font-size: 12px;
+    -fx-padding: 3 9 3 9;
+    -fx-graphic-text-gap: 5;
+}
+
+.sm-accent-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-on-warn;
+    -fx-background-color: -c-warn;
+    -fx-background-radius: 4;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.sm-accent-button:hover {
+    -fx-background-color: -c-warn-hover;
+}
+
+/* destructive actions (restart server, shutdown, delete) and actions flagging a problem */
+.sm-danger-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-error;
+    -fx-background-color: -c-error-bg;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-error-border;
+    -fx-border-radius: 4;
+    -fx-padding: 5 12 5 12;
+    -fx-cursor: hand;
+}
+
+.sm-danger-button:hover {
+    -fx-background-color: -c-error-hover;
+    -fx-border-color: -c-error;
+}
+
+.sm-danger-button .ikonli-font-icon {
+    -fx-icon-color: -c-error;
+}

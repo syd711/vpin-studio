@@ -12,3 +12,16 @@
     -fx-text-fill: -c-white;
     -fx-base : -c-link-base;
 }
+
+/* plain blue link without underline, underlined on hover */
+.sm-link, .sm-link:hover, .sm-link:visited {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-link;
+    -fx-underline: false;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.sm-link:hover {
+    -fx-underline: true;
+}

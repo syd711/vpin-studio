@@ -19,7 +19,7 @@
 <!-- Split view of a component tab: settings and actions on the left, the log of the last action on the right. -->
 <HBox spacing="14.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentUpdateController">
    <padding>
-      <Insets bottom="14.0" left="16.0" right="16.0" top="12.0" />
+      <Insets top="12.0" />
    </padding>
    <children>
       <!-- left column -->

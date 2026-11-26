@@ -4,9 +4,14 @@ Visual rules for the redesigned views (Achievements, System Manager). New or rew
 so that colors, sizes, badges and buttons stay the same everywhere. **Reuse an existing token or class before
 adding a new one**; a new color or font size needs a reason that none of the existing ones covers.
 
-- CSS classes: `sm-*` in `vpin-studio-ui/src/main/resources/de/mephisto/vpin/ui/stylesheet-system-manager.css`.
+- CSS classes: `sm-*` in `vpin-studio-ui/src/main/resources/de/mephisto/vpin/ui/`.
   `stylesheet.css` only `@import`s one file per widget type (`stylesheet-textfield.css`, `stylesheet-tabpane.css`, …);
-  put new rules into the matching file. The import order is the cascade order, keep containers (combo box, date
+  put new rules into the matching file. Control classes go into the control's file (`sm-button*` → `-button`,
+  `sm-text-field`/`sm-log-text`/`sm-script-text` → `-textfield`, `sm-log`/`sm-keyword-list` → `-listview`,
+  `sm-link` → `-hyperlink`, `sm-map`/`sm-transparent-scroll` → `-scrollpane`); the generic building blocks have their
+  own files, imported last: `-panels` (tile, panel, inset, divider, footer, list row), `-typography` (title, text,
+  hint, small, caption, version), `-pills` (pills, chips, filter pills), `-alerts` (alerts, field errors, banners),
+  `-toolbars` (action bar, main / floating toolbar). The import order is the cascade order, keep containers (combo box, date
   picker, spinner) after the controls they contain
 - **Colors are only defined in `stylesheet-colors.css`** as `-c-*` tokens (`-c-error`, `-c-tile`, …). CSS and inline
   styles use the tokens, FXML uses the classes `c-text-<token>`, `c-icon-<token>` and `c-fill-<token>` instead of the
