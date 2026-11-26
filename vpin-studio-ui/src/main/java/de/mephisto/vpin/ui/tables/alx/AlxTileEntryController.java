@@ -25,10 +25,19 @@ public class AlxTileEntryController implements Initializable {
   @FXML
   private Label valueLabel;
 
+  /**
+   * Fills the tile and sizes it to a column of the given stage (used by dialogs with a fixed column layout).
+   */
   public void refresh(@NonNull Stage stage, @NonNull AlxTileEntry entry) {
     double v = AlxFactory.calculateColumnWidth(stage);
     root.setPrefWidth(v - 24);
+    refresh(entry);
+  }
 
+  /**
+   * Fills the tile, the width is given by the parent.
+   */
+  public void refresh(@NonNull AlxTileEntry entry) {
     titleLabel.setText(entry.getTitle());
     valueLabel.setText(entry.getValue());
     descriptionLabel.setText(entry.getDescription());
@@ -36,6 +45,5 @@ public class AlxTileEntryController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
   }
 }

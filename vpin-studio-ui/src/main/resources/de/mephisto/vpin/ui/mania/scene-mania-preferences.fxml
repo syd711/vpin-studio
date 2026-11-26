@@ -21,14 +21,14 @@
                      <content>
                         <VBox fx:id="navigationBox" spacing="2.0">
                            <children>
-                              <VBox fx:id="maniaGroup">
+                              <VBox fx:id="maniaGroup" spacing="2.0">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="%mania.mania_preferences.cabinet">
                                     </Label>
                                     <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="%mania.mania_preferences.cabinet_settings" />
                                  </children>
                               </VBox>
-                              <VBox fx:id="menuItemsPanel">
+                              <VBox fx:id="menuItemsPanel" spacing="2.0">
                                  <children>
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" fx:id="privacySettingsBtn" onAction="#onPrivacySettings" styleClass="preference-button" text="%mania.mania_preferences.data_privacy_settings" />
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" fx:id="discordSettingsBtn" onAction="#onDiscordSettings" styleClass="preference-button" text="%mania.mania_preferences.discord_settings" />

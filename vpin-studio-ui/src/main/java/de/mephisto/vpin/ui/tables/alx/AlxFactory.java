@@ -6,12 +6,10 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
-import eu.hansolo.tilesfx.Tile;
+import de.mephisto.vpin.ui.util.ThemeColors;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
@@ -31,7 +29,8 @@ public class AlxFactory {
 
   private final static int COLUMN_COUNT = 5;
 
-  private static final List<Color> colors = Arrays.asList(Tile.DARK_BLUE, Tile.RED, Tile.ORANGE, Tile.GREEN, Tile.MAGENTA, Tile.PINK.grayscale(), Tile.DARK_BLUE);
+  /** one bar color per chart, the length carries the value */
+  private static final String BAR_COLOR = ThemeColors.INFO;
 
   public static double calculateColumnWidth(Stage stage) {
     if (stage.getTitle().startsWith("VPin Studio")) {
@@ -62,7 +61,7 @@ public class AlxFactory {
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_time_played"), Messages.get("tables.alx.alx_factory.total_emulation_time_of_all_tables"), totalTimeFormatted));
+      controller.refresh(new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_time_played"), Messages.get("tables.alx.alx_factory.total_emulation_time_of_all_tables"), totalTimeFormatted));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -80,7 +79,7 @@ public class AlxFactory {
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_scores_created"), Messages.get("pausemenu.tile_factory.total_amount_of_recorded_scores"), String.valueOf(total)));
+      controller.refresh(new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_scores_created"), Messages.get("pausemenu.tile_factory.total_amount_of_recorded_scores"), String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -99,7 +98,7 @@ public class AlxFactory {
       loader.setResources(Messages.getBundle());
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry(Messages.get("tables.alx.alx_factory.total_highscores_created"), Messages.get("tables.alx.alx_factory.total_amount_of_times_a_1_score_has_been_created"), String.valueOf(total)));
+      controller.refresh(new AlxTileEntry(Messages.get("tables.alx.alx_factory.total_highscores_created"), Messages.get("tables.alx.alx_factory.total_amount_of_times_a_1_score_has_been_created"), String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -129,7 +128,7 @@ public class AlxFactory {
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
       String dateString = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(start);
-      controller.refresh(stage, new AlxTileEntry(Messages.get("tables.alx.alx_factory.avg_playtime_week"), Messages.get("tables.alx.alx_factory.average_time_played_every_week_starting", dateString), time));
+      controller.refresh(new AlxTileEntry(Messages.get("tables.alx.alx_factory.avg_playtime_week"), Messages.get("tables.alx.alx_factory.average_time_played_every_week_starting", dateString), time));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -149,7 +148,7 @@ public class AlxFactory {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
 
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(stage, new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_games_played"),
+      controller.refresh(new AlxTileEntry(Messages.get("pausemenu.tile_factory.total_games_played"),
               FrontendUtil.replaceName(Messages.get("tables.alx.alx_factory.total_number_of_table_launches_from_frontend"), frontend),
               String.valueOf(total)));
       root.getChildren().add(builtInRoot);
@@ -172,29 +171,22 @@ public class AlxFactory {
         maxValue = entry.getScores();
       }
     }
-
-    int counter = 0;
     for (TableAlxEntry alxEntry : statEntries) {
       if (alxEntry.getScores() == 0) {
         continue;
       }
 
       int percentage = (int) (alxEntry.getScores() * 100 / maxValue);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, BAR_COLOR, alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(stage, entry);
+        controller.refresh(entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
-      }
-      counter++;
-
-      if (counter >= colors.size()) {
-        counter = 0;
       }
     }
   }
@@ -208,11 +200,10 @@ public class AlxFactory {
 
 
     int rowCount = 0;
-    int counter = 0;
     for (TableAlxEntry alxEntry : statEntries) {
 
       String lastPlayed = alxEntry.getLastPlayed() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(alxEntry.getLastPlayed()) : "-";
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), lastPlayed, 100, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), lastPlayed, -1, BAR_COLOR, alxEntry.getGameId());
       rowCount++;
 
       //limit to 20 rows.
@@ -225,16 +216,10 @@ public class AlxFactory {
         loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(stage, entry);
+        controller.refresh(entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
-      }
-
-      counter++;
-
-      if (counter >= colors.size()) {
-        counter = 0;
       }
 
     }
@@ -253,8 +238,6 @@ public class AlxFactory {
         maxValue = entry.getTimePlayedSecs();
       }
     }
-
-    int counter = 0;
     for (TableAlxEntry alxEntry : statEntries) {
       if (alxEntry.getTimePlayedSecs() <= 0) {
         continue;
@@ -262,21 +245,16 @@ public class AlxFactory {
 
       int percentage = (int) (alxEntry.getTimePlayedSecs() * 100 / maxValue);
       String durationText = DurationFormatUtils.formatDuration(alxEntry.getTimePlayedSecs() * 1000, "HH 'hours', mm 'minutes'", false);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, BAR_COLOR, alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(stage, entry);
+        controller.refresh(entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
-      }
-      counter++;
-
-      if (counter >= colors.size()) {
-        counter = 0;
       }
     }
   }
@@ -294,29 +272,22 @@ public class AlxFactory {
         maxValue = mostPlayedEntry.getNumberOfPlays();
       }
     }
-
-    int counter = 0;
     for (TableAlxEntry alxEntry : mostPlayedEntries) {
       if (alxEntry.getNumberOfPlays() <= 0) {
         continue;
       }
 
       int percentage = (int) (alxEntry.getNumberOfPlays() * 100 / maxValue);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, BAR_COLOR, alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         loader.setResources(Messages.getBundle());
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(stage, entry);
+        controller.refresh(entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
-      }
-      counter++;
-
-      if (counter >= colors.size()) {
-        counter = 0;
       }
     }
   }

@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="root" styleClass="sm-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
+<VBox styleClass="sm-panel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
    <children>
       <!-- header: name, version selector, activation and file actions -->
       <HBox spacing="8.0" styleClass="sm-divider">
@@ -35,17 +35,13 @@
                   <ComboBox fx:id="directB2SCombo" maxWidth="1.7976931348623157E308" />
                </children>
             </VBox>
-            <HBox fx:id="headerActions" alignment="TOP_RIGHT" spacing="8.0">
+            <HBox alignment="TOP_RIGHT" spacing="8.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" styleClass="sm-button">
-                     <children>
-                        <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%backglass.sidebar.active">
-                           <tooltip>
-                              <Tooltip text="%backglass.directb2s_sidebar.active_backglass" />
-                           </tooltip>
-                        </CheckBox>
-                     </children>
-                  </HBox>
+                  <CheckBox fx:id="activateCheckbox" maxHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="sm-text, sm-header-checkbox" text="%backglass.sidebar.active">
+                     <tooltip>
+                        <Tooltip text="%backglass.directb2s_sidebar.active_backglass" />
+                     </tooltip>
+                  </CheckBox>
                   <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="sm-button, sm-button-icon, folder-component">
                      <graphic>
                         <FontIcon iconLiteral="mdi2f-folder-open" iconSize="18" styleClass="c-icon-white" />
@@ -128,7 +124,7 @@
                         <VBox spacing="10.0" styleClass="sm-tile">
                            <children>
                               <Label styleClass="sm-caption" text="%backglass.sidebar.caption_background" />
-                              <StackPane fx:id="thumbnailImagePane" minHeight="200.0" prefHeight="200.0" styleClass="sm-inset">
+                              <StackPane fx:id="thumbnailImagePane" minHeight="200.0" minWidth="0.0" prefHeight="200.0" styleClass="sm-inset">
                                  <children>
                                     <ImageView fx:id="thumbnailImage" fitHeight="190.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true" />
                                     <Label fx:id="thumbnailEmptyLabel" styleClass="sm-hint" text="%backglass.directb2s_sidebar.no_image_data_available" wrapText="true">
@@ -176,15 +172,15 @@
                         <VBox spacing="10.0" styleClass="sm-tile" GridPane.columnIndex="1">
                            <children>
                               <Label styleClass="sm-caption" text="%backglass.sidebar.caption_full_dmd" />
-                              <StackPane fx:id="loaderStackImages">
+                              <StackPane fx:id="loaderStackImages" minWidth="0.0">
                                  <children>
-                                    <StackPane fx:id="dmdThumbnailImagePane" minHeight="200.0" prefHeight="200.0" styleClass="sm-inset">
+                                    <StackPane fx:id="dmdThumbnailImagePane" minHeight="200.0" minWidth="0.0" prefHeight="200.0" styleClass="sm-inset">
                                        <children>
                                           <ImageView fx:id="dmdThumbnailImage" fitHeight="190.0" fitWidth="240.0" pickOnBounds="true" preserveRatio="true" />
                                           <VBox fx:id="dmdEmptyBox" alignment="CENTER" spacing="10.0">
                                              <children>
                                                 <FontIcon iconLiteral="mdi2i-image-off-outline" iconSize="26" styleClass="c-icon-subtle" />
-                                                <Label fx:id="dmdEmptyLabel" styleClass="sm-hint" text="%backglass.sidebar.no_dmd_image" wrapText="true" />
+                                                <Label styleClass="sm-hint" text="%backglass.sidebar.no_dmd_image" wrapText="true" />
                                                 <Button fx:id="uploadDMDEmptyBtn" mnemonicParsing="false" onAction="#onDMDUpload" styleClass="sm-button" text="%backglass.sidebar.upload_image">
                                                    <graphic>
                                                       <FontIcon iconLiteral="mdi2u-upload" iconSize="18" styleClass="c-icon-white" />
@@ -252,7 +248,7 @@
                      </children>
                   </GridPane>
 
-                  <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
+                  <TabPane styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
                      <tabs>
                         <!-- ============================== Settings ============================== -->
                         <Tab text="%backglass.sidebar.tab_settings">
@@ -329,10 +325,10 @@
                                                 <Label styleClass="sm-small" text="%backglass.sidebar.gi" GridPane.columnIndex="1" />
                                                 <Label styleClass="sm-small" text="%backglass.sidebar.solenoids" GridPane.columnIndex="2" />
                                                 <Label styleClass="sm-small" text="%backglass.sidebar.leds" GridPane.columnIndex="3" />
-                                                <Spinner fx:id="skipLampFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
-                                                <Spinner fx:id="skipGIFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Spinner fx:id="skipSolenoidFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <Spinner fx:id="skipLEDFrames" editable="true" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipLampFrames" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipGIFrames" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipSolenoidFrames" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <Spinner fx:id="skipLEDFrames" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />

@@ -281,7 +281,9 @@ configuration conflicts:
   12px bold `#9A9A9A` section captions, items = 18px icon (`#BDBDBD`) + 14px label, `#333333` hover, selected =
   `#3D2B17` fill with orange icon and bold label; count badge in warn colors; Settings / Collapse pinned at the bottom.
   The preference navigations (`scene-preferences.fxml`, `mania/scene-mania-preferences.fxml`) use the same look:
-  `pref-nav` ScrollPane panel (no border), `preference-section` captions, `preference-button` items (`preference-button-selected`).
+  `pref-nav` ScrollPane panel (280px, same border as the sidebar), `preference-section` captions, `preference-button`
+  items without icons (`preference-button-selected`). The rules are scoped `.pref-nav .button.preference-button` so the
+  global `.button` / `.scroll-pane` defaults (imported later) do not override them.
 - **Toolbars**: every `ToolBar` gets `styleClass="floating-toolbar"` (flat `#222222`, no border, radius 6; `floating-toolbar-inverted`
   on a `#222222` background). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
 - **Action bar** (`sm-actionbar`): top bar of a component tab and of the table overview; any Button and SplitMenuButton
@@ -297,6 +299,18 @@ configuration conflicts:
   `vps-section` card, header = 18px icon + title + `vps-count` + chevron, skeleton bars while loading; rows
   (`VpsEntry`) = orange Consolas `vps-entry-version` + authors (green `vps-entry-installed` link when installed) +
   `vps-link-pill` (source dot, abbreviation, arrow) and an `sm-small` "Updated …" line.
+
+### Backglass manager (`backglassmanager/scene-directb2s-admin.fxml`, `scene-directb2s-sidebar.fxml`)
+- Split view as `SplitPane` with `sm-split` (transparent, the divider is the 14px gap) holding two `sm-panel`s.
+- List panel: two `sm-actionbar` HBox rows (filters / search / emulator / playlist, then the backglass actions + `sm-hint`
+  count right-aligned), a status summary row of `sm-hint` labels with a 10px `mdi2c-circle` dot
+  (`c-icon-ok` ready, `c-icon-error` needs attention, `c-icon-disabled` disabled), then the table.
+- Sidebar: `sm-divider` header like the VPS sidebar (`sm-caption`, 20px `vps-sidebar-title`, `sm-hint` file name or a version
+  combo, "Active" check box in an `sm-button` box + colored icon buttons); then the `sm-alert` of the selected backglass,
+  two `sm-tile` image tiles (`sm-caption`, `sm-inset` image box with an empty state, `sm-small` resolution +
+  `sm-button-icon` actions) and `primary-tabs` whose pages are `sm-tile` cards: `sm-divider` header with `sm-title`
+  (+ `sm-small` hint right), body grid of `sm-text` labels and right-aligned 240px controls, or an `sm-inset` fact grid
+  (`sm-hint` keys, `sm-text` values).
 
 ## 7. Checklist for a new view
 

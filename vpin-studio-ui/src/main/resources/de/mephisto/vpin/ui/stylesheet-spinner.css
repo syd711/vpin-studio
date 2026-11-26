@@ -8,6 +8,14 @@
     -fx-border-radius: 4;
 }
 
+/* the indeterminate ProgressIndicator (busy circle) also has a ".spinner" child region: keep it borderless and transparent */
+.progress-indicator > .spinner {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
 .spinner:focused,
 .spinner:contains-focus {
     -fx-border-color: -c-disabled;

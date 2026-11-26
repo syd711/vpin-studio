@@ -57,3 +57,11 @@
 .check-box.sm-text {
     -fx-text-fill: -c-white;
 }
+
+/* plain check box in a header row of sm-buttons: no fill, no border, same 30px height so it lines up */
+.check-box.sm-header-checkbox {
+    -fx-background-color: transparent;
+    -fx-padding: 5 4 5 0;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
+}

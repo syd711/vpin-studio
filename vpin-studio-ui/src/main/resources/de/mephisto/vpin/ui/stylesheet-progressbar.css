@@ -18,3 +18,13 @@
 .progress-bar:disabled {
     -fx-opacity: 0.6;
 }
+
+/* flat rounded bar of a statistics row (Table Statistics): -c-inset track, the bar color is set inline from ThemeColors */
+.sm-bar-track {
+    -fx-background-color: -c-inset;
+    -fx-background-radius: 4;
+}
+
+.sm-bar {
+    -fx-background-radius: 4;
+}

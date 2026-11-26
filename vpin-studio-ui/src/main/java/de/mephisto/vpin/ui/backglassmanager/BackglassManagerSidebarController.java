@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.validation.BackglassValidationCode;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassBulkImportType;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
@@ -21,8 +23,10 @@ import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.models.*;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
+import de.mephisto.vpin.ui.tables.validation.BackglassValidationTexts;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.JFXHelper;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
@@ -39,7 +43,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -69,7 +73,6 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
-import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 /**
  *
@@ -80,6 +83,24 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
+
+  @FXML
+  private Label titleLabel;
+
+  @FXML
+  private Button openBtn;
+
+  @FXML
+  private Button vpsOpenBtn;
+
+  @FXML
+  private HBox validationError;
+  @FXML
+  private Label validationErrorLabel;
+  @FXML
+  private Label validationErrorText;
+  @FXML
+  private Button validationUploadDmdBtn;
 
   @FXML
   private Label nameLabel;
@@ -130,16 +151,31 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Pane loaderStackImages;
 
   @FXML
-  private BorderPane thumbnailImagePane;
+  private StackPane thumbnailImagePane;
 
   @FXML
   private ImageView thumbnailImage;
 
   @FXML
-  private BorderPane dmdThumbnailImagePane;
+  private Label thumbnailEmptyLabel;
+
+  @FXML
+  private ProgressIndicator thumbnailProgress;
+
+  @FXML
+  private StackPane dmdThumbnailImagePane;
 
   @FXML
   private ImageView dmdThumbnailImage;
+
+  @FXML
+  private VBox dmdEmptyBox;
+
+  @FXML
+  private Button uploadDMDEmptyBtn;
+
+  @FXML
+  private ProgressIndicator dmdThumbnailProgress;
 
   @FXML
   private Pane noneActiveInfo;
@@ -202,7 +238,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private ComboBox<B2SStartAsExe> startAsExe;
 
   @FXML
-  private CheckBox startAsExeServer;
+  private Label startAsExeServerLabel;
 
   @FXML
   private ComboBox<B2SGlowing> glowing;
@@ -482,6 +518,21 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     getBackglassManagerController().onBackglassReload(e);
   }
 
+  @FXML
+  private void onOpen() {
+    getBackglassManagerController().onOpen();
+  }
+
+  @FXML
+  private void onVpsOpen() {
+    getBackglassManagerController().onVpsOpen();
+  }
+
+  @FXML
+  private void onValidationSettings() {
+    PreferencesController.open("validators_backglass");
+  }
+
   //------------------------------------------------ EVENT CASCADING ---
 
   @Override
@@ -490,13 +541,22 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     directB2SCombo.managedProperty().bindBidirectional(directB2SCombo.visibleProperty());
     directB2SLabel.managedProperty().bindBidirectional(directB2SLabel.visibleProperty());
     noneActiveInfo.managedProperty().bindBidirectional(noneActiveInfo.visibleProperty());
+    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
+    validationUploadDmdBtn.managedProperty().bindBidirectional(validationUploadDmdBtn.visibleProperty());
+    openBtn.managedProperty().bindBidirectional(openBtn.visibleProperty());
+    activateCheckbox.managedProperty().bindBidirectional(activateCheckbox.visibleProperty());
+    openBtn.setVisible(client.getSystemService().isLocal());
+    validationError.setVisible(false);
+
+    // the images follow the width of their tiles (two tiles share the sidebar width)
+    thumbnailImage.fitWidthProperty().bind(thumbnailImagePane.widthProperty().subtract(16));
+    dmdThumbnailImage.fitWidthProperty().bind(dmdThumbnailImagePane.widthProperty().subtract(16));
 
     if (!Features.MEDIA_ENABLED) {
-      HBox bgtoolbar = (HBox) this.useAsMediaBackglassBtn.getParent();
-      bgtoolbar.getChildren().remove(useAsMediaBackglassBtn);
-
-      HBox dmdtoolbar = (HBox) this.useAsMediaDMDBtn.getParent();
-      dmdtoolbar.getChildren().remove(useAsMediaDMDBtn);
+      useAsMediaBackglassBtn.setVisible(false);
+      useAsMediaBackglassBtn.setManaged(false);
+      useAsMediaDMDBtn.setVisible(false);
+      useAsMediaDMDBtn.setManaged(false);
     }
 
     activateCheckbox.selectedProperty().addListener(activationChangeListener);
@@ -709,13 +769,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
     downloadBackglassBtn.setDisable(true);
     uploadDMDBtn.setDisable(true);
+    uploadDMDEmptyBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
 
-    thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
-    JFXHelper.setImageDisabled(thumbnailImage, false);
-    dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
-    JFXHelper.setImageDisabled(dmdThumbnailImage, false);
+    showBackgroundImage(null, false);
+    showDmdImage(null, false);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -724,8 +783,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     deleteBtn.setDisable(true);
 
     if (directB2SData != null) {
-      thumbnailImagePane.setCenter(new ProgressIndicator());
-      dmdThumbnailImagePane.setCenter(new ProgressIndicator());
+      showBackgroundImage(null, true);
+      showDmdImage(null, true);
 
       loadImages(directB2SData.getEmulatorId(), directB2SData.getFilename());
 
@@ -775,6 +834,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       gameIdLabel.setText("-");
 
       // depend on the game selection
+      vpsOpenBtn.setDisable(true);
       useAsMediaBackglassBtn.setDisable(true);
       useAsMediaDMDBtn.setDisable(true);
   
@@ -802,6 +862,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);
+      vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
 
       dataManagerBtn.setDisable(false);
       tableNavigateBtn.setDisable(false);
@@ -821,6 +882,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     this.directb2s = model;
     this.refreshingCounter = 1;
 
+    titleLabel.setText(model != null ? model.getName() : "-");
+    openBtn.setDisable(model == null);
+
     // maintain current selection if possible
     directB2SCombo.getItems().clear();
     if (model != null) {
@@ -831,7 +895,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       versionPane.setVisible(true);
       noneActiveInfo.setVisible(!model.isEnabled());
-      activateCheckbox.setVisible(true);
+      // choosing the active version only makes sense when there is more than one
+      activateCheckbox.setVisible(versions.size() > 1);
 
       if (versions.size() > 1) {
         directB2SCombo.setVisible(true);
@@ -855,6 +920,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
     else {
       versionPane.setVisible(false);
+      activateCheckbox.setVisible(false);
     }
 
     refreshTableData(null);
@@ -908,6 +974,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     formToPosition.setDisable(true);
     formNoFocus.setDisable(true);
     formNoFocus.setSelected(false);
+    startAsExeServerLabel.setText("");
 
     if (gameId > 0) {
       JFXFuture.supplyAllAsync(
@@ -920,8 +987,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             DirectB2ServerSettings serverSettings = (DirectB2ServerSettings) objs[1];
 
             boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
-            startAsExeServer.setSelected(serverLaunchAsExe);
-            startAsExeServer.setDisable(true);
+            startAsExeServerLabel.setText(Messages.get(serverLaunchAsExe ? "backglass.sidebar.server_default_exe_on" : "backglass.sidebar.server_default_exe_off"));
 
             startAsExe.setDisable(false);
             startAsExe.setValue(TablesSidebarDirectB2SController.START_AS_EXE.stream().filter(v -> v.getId() == tableSettings.getStartAsEXE()).findFirst().get());
@@ -986,22 +1052,16 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             return;
           }
 
+          showBackgroundImage(_thumbnail, false);
           if (_thumbnail != null) {
-            thumbnailImage.setImage(_thumbnail);
-            thumbnailImagePane.setCenter(thumbnailImage);
             downloadBackglassBtn.setDisable(false);
-            if (tableSettings.isHideB2SBackglass()) {
+            if (tableSettings != null && tableSettings.isHideB2SBackglass()) {
               resolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.backglass_hidden_2"));
               JFXHelper.setImageDisabled(thumbnailImage, true);
             }
             else {
-              resolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.resolution", (int) _thumbnail.getWidth(), (int) _thumbnail.getHeight()));
+              resolutionLabel.setText(Messages.get("backglass.sidebar.resolution", (int) _thumbnail.getWidth(), (int) _thumbnail.getHeight()));
             }
-          }
-          else {
-            thumbnailImage.setImage(null);
-            thumbnailImagePane.setCenter(null);
-            resolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.no_image_data_available"));
           }
         });
 
@@ -1019,26 +1079,65 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           }
 
           uploadDMDBtn.setDisable(false);
+          uploadDMDEmptyBtn.setDisable(false);
+          showDmdImage(_dmdThumbnail, false);
           if (_dmdThumbnail != null) {
-            dmdThumbnailImage.setImage(_dmdThumbnail);
-            dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
             downloadDMDBtn.setDisable(false);
             deleteDMDBtn.setDisable(false);
-            if (tableSettings.isHideB2SDMD()) {
+            if (tableSettings != null && tableSettings.isHideB2SDMD()) {
               dmdResolutionLabel.setText(Messages.get("backglass.directb2s_admin_filter.b2s_dmd_hidden"));
               JFXHelper.setImageDisabled(dmdThumbnailImage, true);
             } else {
-              dmdResolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.resolution", (int) _dmdThumbnail.getWidth(), (int) _dmdThumbnail.getHeight()));
+              dmdResolutionLabel.setText(Messages.get("backglass.sidebar.resolution", (int) _dmdThumbnail.getWidth(), (int) _dmdThumbnail.getHeight()));
             }
             fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? Messages.get("common.yes") : Messages.get("common.no"));
           }
           else {
-            dmdThumbnailImage.setImage(null);
-            dmdThumbnailImagePane.setCenter(null);
-            dmdResolutionLabel.setText(Messages.get("backglass.directb2s_sidebar.no_dmd_background_available"));
+            dmdResolutionLabel.setText("");
             fullDmdLabel.setText(Messages.get("common.no"));
           }
         });
+  }
+
+  /**
+   * Shows the background image, the loading indicator or the "no image" hint
+   */
+  private void showBackgroundImage(@Nullable Image image, boolean loading) {
+    thumbnailImage.setImage(image);
+    JFXHelper.setImageDisabled(thumbnailImage, false);
+    thumbnailImage.setVisible(image != null);
+    thumbnailProgress.setVisible(loading);
+    thumbnailEmptyLabel.setVisible(image == null && !loading);
+  }
+
+  /**
+   * Shows the DMD image, the loading indicator or the empty state with its upload button
+   */
+  private void showDmdImage(@Nullable Image image, boolean loading) {
+    dmdThumbnailImage.setImage(image);
+    JFXHelper.setImageDisabled(dmdThumbnailImage, false);
+    dmdThumbnailImage.setVisible(image != null);
+    dmdThumbnailProgress.setVisible(loading);
+    dmdEmptyBox.setVisible(image == null && !loading);
+  }
+
+  /**
+   * Shows the first validation error of the selected backglass, with an upload action for missing / wrong DMD images
+   */
+  protected void setValidation(int validationCode, @Nullable DirectB2SModel model) {
+    if (validationCode > 0 && model != null) {
+      LocalizedValidation validationMessage = BackglassValidationTexts.validate(validationCode, model);
+      validationErrorLabel.setText(validationMessage.getLabel());
+      validationErrorText.setText(validationMessage.getText());
+      validationUploadDmdBtn.setVisible(validationCode == BackglassValidationCode.CODE_NO_FULLDMD
+          || validationCode == BackglassValidationCode.CODE_WRONG_FULLDMD_RATIO);
+      validationError.setVisible(true);
+    }
+    else {
+      validationErrorLabel.setText("");
+      validationErrorText.setText("");
+      validationError.setVisible(false);
+    }
   }
 
   public void setVisible(boolean visible) {

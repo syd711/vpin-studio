@@ -29,25 +29,64 @@
 /**
  * Preferences
  */
-/* Preference navigation, same look as the main navigation sidebar (nav-*) */
-.pref-nav, .pref-nav > .viewport {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-}
-
-.pref-nav {
+/* Preference navigation (scene-preferences.fxml, mania/scene-mania-preferences.fxml): same look as the main
+   navigation sidebar (nav-*), without icons. The selectors carry the .scroll-pane / .button class so that they win
+   over the widget defaults of stylesheet-scrollpane.css and stylesheet-button.css, which are imported later. */
+.scroll-pane.pref-nav {
     -fx-min-width: 280px;
     -fx-pref-width: 280px;
     -fx-max-width: 280px;
     -fx-background-color: -c-panel;
+    -fx-background: -c-panel;
     -fx-background-insets: 0;
     -fx-background-radius: 6;
+    -fx-border-color: -c-selected;
+    -fx-border-radius: 6;
     -fx-padding: 0 6 10 10;
 }
 
-.pref-nav:focused {
+.scroll-pane.pref-nav:focused {
     -fx-background-color: -c-panel;
     -fx-background-insets: 0;
+}
+
+.scroll-pane.pref-nav > .viewport {
+    -fx-background-color: transparent;
+}
+
+.pref-nav .label.preference-section {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-subtle;
+    -fx-padding: 14 12 4 12;
+    -fx-max-width: 10000px;
+}
+
+.pref-nav .button.preference-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-text-fill: -c-white;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 9 12 9 12;
+    -fx-max-width: 10000px;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.pref-nav .button.preference-button:hover {
+    -fx-background-color: -c-control;
+}
+
+.pref-nav .button.preference-button-selected,
+.pref-nav .button.preference-button-selected:hover {
+    -fx-background-color: -c-warn-bg;
+    -fx-font-weight: bold;
 }
 
 /**

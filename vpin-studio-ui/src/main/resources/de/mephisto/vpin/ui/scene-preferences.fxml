@@ -87,7 +87,7 @@
                                     <Tooltip text="%pref.notifications.notifications" />
                                  </tooltip>
                               </Button>
-                              <VBox fx:id="frontendPreferences">
+                              <VBox fx:id="frontendPreferences" spacing="2.0">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="%pref.pinballx_settings.frontend_preferences">
                                     </Label>

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.alx;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -15,8 +14,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -38,13 +35,10 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 import de.mephisto.vpin.commons.utils.i18n.Messages;
 
 public class AlxController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlxController.class);
-  private final Debouncer debouncer = new Debouncer();
-  public static final int DEBOUNCE_MS = 200;
 
   @FXML
   private StackPane loaderStack;
@@ -138,19 +132,6 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     client.getPreferenceService().addListener(this);
     NavigationController.setBreadCrumb(List.of(Messages.get("navigation.analytics")));
 
-    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (tablesController != null && tablesController.isTabStatisticsSelected()) {
-          debouncer.debounce("prefWidth", () -> {
-            Platform.runLater(() -> {
-              refreshAlxData();
-            });
-          }, DEBOUNCE_MS);
-        }
-      }
-    });
-
     EventManager.getInstance().addListener(this);
   }
 
@@ -165,12 +146,6 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       scoresWidget.getChildren().clear();
       LastPlayedWidget.getChildren().clear();
 
-
-      double v = AlxFactory.calculateColumnWidth(Studio.stage);
-      col1.setPrefWidth(v);
-      col2.setPrefWidth(v);
-      col3.setPrefWidth(v);
-      col4.setPrefWidth(v);
 
       reloadBtn.setDisable(true);
       deleteBtn.setDisable(true);
@@ -216,12 +191,6 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     deleteBtn.setDisable(false);
 
     try {
-      double v = AlxFactory.calculateColumnWidth(stage);
-      col1.setPrefWidth(v);
-      col2.setPrefWidth(v);
-      col3.setPrefWidth(v);
-      col4.setPrefWidth(v);
-
       List<TableAlxEntry> entries = alxSummary.getEntries();
 
       AlxFactory.createMostPlayed(Studio.stage, mostPlayedWidget, entries);

@@ -2,26 +2,15 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxTileEntryController">
-    <children>
-        <Label fx:id="titleLabel" styleClass="default-title" text="-" />
-        <Label fx:id="descriptionLabel" styleClass="default-text" text="-" wrapText="true" />
-        <HBox alignment="CENTER">
-            <children>
-                <Label fx:id="valueLabel" text="-" styleClass="c-text-white">
-                    <font>
-                        <Font size="72.0" />
-                    </font>
-                </Label>
-            </children>
-        </HBox>
-    </children>
-    <padding>
-        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-    </padding>
+<VBox fx:id="root" spacing="4.0" styleClass="sm-tile" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxTileEntryController">
+   <children>
+      <Label fx:id="titleLabel" styleClass="sm-title" text="-" wrapText="true" />
+      <Label fx:id="valueLabel" styleClass="sm-kpi-value" text="-" />
+      <Label fx:id="descriptionLabel" styleClass="sm-hint" text="-" wrapText="true" />
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+   </padding>
 </VBox>

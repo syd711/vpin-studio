@@ -2,46 +2,27 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxBarEntryController">
-   <center>
-      <HBox fx:id="parent" prefHeight="10.0" BorderPane.alignment="CENTER">
+<VBox fx:id="root" spacing="5.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxBarEntryController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <StackPane fx:id="barStack" alignment="CENTER_LEFT">
-               <children>
-                  <HBox fx:id="bar" />
-                  <Label fx:id="valueLabel" text="%competitions.discord_competition_edit.label" styleClass="c-text-white">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                     <padding>
-                        <Insets left="6.0" />
-                     </padding>
-                  </Label>
-               </children>
-            </StackPane>
+            <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minWidth="0.0" styleClass="sm-text" text="-" HBox.hgrow="ALWAYS" />
+            <Label fx:id="valueLabel" minWidth="-Infinity" styleClass="sm-text-bold" text="-" />
          </children>
-         <BorderPane.margin>
-            <Insets bottom="6.0" />
-         </BorderPane.margin>
       </HBox>
-   </center>
-   <top>
-      <BorderPane BorderPane.alignment="CENTER">
-         <left>
-            <Label fx:id="titleLabel" contentDisplay="RIGHT" text="-" styleClass="c-text-white" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-         </left>
-         <padding>
-            <Insets top="3.0" />
-         </padding>
-      </BorderPane>
-   </top>
-</BorderPane>
+      <Label fx:id="subLabel" managed="false" styleClass="sm-hint" text="-" visible="false" />
+      <StackPane fx:id="barStack" alignment="CENTER_LEFT" maxHeight="8.0" minHeight="8.0" minWidth="0.0" prefHeight="8.0" styleClass="sm-bar-track">
+         <children>
+            <Region fx:id="bar" maxHeight="8.0" minHeight="8.0" prefHeight="8.0" styleClass="sm-bar" />
+         </children>
+      </StackPane>
+   </children>
+   <padding>
+      <Insets bottom="6.0" left="8.0" right="8.0" top="6.0" />
+   </padding>
+</VBox>

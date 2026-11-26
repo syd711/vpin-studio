@@ -61,3 +61,16 @@
 .hyperlink.vps-entry-installed:hover {
     -fx-underline: true;
 }
+/* big number of a KPI tile, see AchievementsUI.big() */
+.sm-kpi-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Monospaced';
+    -fx-text-fill: -c-white;
+}
+
+.sm-text-bold {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-white;
+}
