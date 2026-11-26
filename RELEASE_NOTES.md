@@ -37,9 +37,12 @@ answer questions about your cabinet, e.g. "Which tables have no ROM?" or "Which 
   default. The page shows the endpoint URL and the command to add the cabinet to Claude Code:
   `claude mcp add --transport http vpin-studio http://<cabinet>:8089/mcp`
 - **Tools**: List emulators, search tables (by name or ROM, only with issues, disabled or with VPS updates), table
-  details including validation issues, the highscores of a table and the latest highscores of the cabinet.
-- **Read-only**: The tools only read data, they do not change anything on the cabinet. Like the REST API, the
-  endpoint has no password, so everyone in your network can use it while it is enabled.
+  details including validation issues, backglass versions, the highscores of a table and the latest highscores of
+  the cabinet.
+- **Read-only mode**: On by default, the assistant can then only look up data. When switched off, it can also
+  enable or disable tables, update ratings, tags and notes, launch tables and delete tables or backglasses. The
+  assistant is told to ask for confirmation before deleting anything.
+- Like the REST API, the endpoint has no password, so everyone in your network can use it while it is enabled.
 
 ### Changes
 

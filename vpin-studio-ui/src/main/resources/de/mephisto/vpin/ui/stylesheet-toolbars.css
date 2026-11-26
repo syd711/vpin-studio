@@ -33,6 +33,13 @@
     -fx-background-color: -c-darkest;
 }
 
+/* floating toolbar without its own strip: the controls sit directly on the tile, aligned with the content below
+   (toolbars of the tabs of a "tile-tabs" section, e.g. Competitions) */
+.floating-toolbar.floating-toolbar-transparent {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 12 0;
+}
+
 /* action bar on top of a tab (System Manager component tabs); its buttons get the sm-button look, see stylesheet-button.css */
 .sm-actionbar {
     -fx-background-color: transparent;

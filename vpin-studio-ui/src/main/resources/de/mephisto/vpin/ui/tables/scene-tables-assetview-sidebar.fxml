@@ -2,19 +2,25 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="assetSidebarVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesAssetViewSidebarController">
    <children>
       <TitledPane fx:id="titledPaneDefaultBackground" collapsible="false" maxHeight="1.7976931348623157E308">
          <graphic>
-            <BorderPane maxHeight="1.7976931348623157E308">
-               <left>
-                  <Label text="%cards.template_editor.asset_manager" BorderPane.alignment="CENTER" />
-               </left>
-            </BorderPane>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <FontIcon iconLiteral="mdi2m-movie-edit-outline" iconSize="18" styleClass="c-icon-muted" />
+                  <Label styleClass="sm-collapsible-title" text="%cards.template_editor.asset_manager" />
+               </children>
+            </HBox>
          </graphic>
       </TitledPane>
    </children>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
 </VBox>

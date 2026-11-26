@@ -1,84 +1,123 @@
 /**
- * Accordion & Titled Pane
+ * Accordion & Titled Pane = the common collapsible panel (look taken from the designer layer list).
+ * Collapsed: a transparent row, hover = -c-row-hover. Expanded: a borderless -c-footer card with a 3px orange bar
+ * on its left. Header = optional 18px muted icon + bold sm-collapsible-title label (+ actions right aligned),
+ * chevron in -c-subtle. Accordions get an 8px padding inside their tile.
  */
+
+.accordion {
+    -fx-background-color: transparent;
+}
 
 .titled-pane {
     -fx-text-fill: -c-white;
+    -fx-base: -c-darkest;
+    -fx-background-color: transparent;
     -fx-background-insets: 0;
-    -fx-base : -c-darkest;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+    -fx-border-width: 1 1 1 3;
+    -fx-border-radius: 6;
 }
 
-.titled-pane .title {
+.titled-pane:expanded {
+    -fx-background-color: -c-footer;
+    -fx-border-color: transparent transparent transparent -c-warn;
+}
+
+.titled-pane > .title,
+.accordion > .titled-pane > .title {
     -fx-font-size: 14px;
-    -fx-background-color: -c-tile;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -c-control;
-    -fx-border-width: 1;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 10 8 10 8;
+    -fx-cursor: hand;
 }
 
-.titled-pane *.content {
-    -fx-background-color: -c-control;
+.titled-pane > .title:hover,
+.accordion > .titled-pane > .title:hover {
+    -fx-background-color: -c-row-hover;
+}
+
+.titled-pane:expanded > .title:hover,
+.accordion > .titled-pane:expanded > .title:hover {
+    -fx-background-color: transparent;
+}
+
+.titled-pane > .title > .arrow-button > .arrow,
+.titled-pane:focused > .title > .arrow-button > .arrow {
+    -fx-background-color: -c-subtle;
     -fx-background-insets: 0;
+    -fx-effect: null;
+}
+
+.titled-pane > .content,
+.titled-pane > *.content {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+/* everything directly inside an expanded card stays transparent, so the card color shows through */
+.titled-pane > .content .scroll-pane,
+.titled-pane > .content .scroll-pane > .viewport,
+.titled-pane > .content .accordion-container {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+/* bold header label of a collapsible (a Label in the TitledPane graphic) */
+.sm-collapsible-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-white;
+}
+
+/* the same look for collapsibles built in Java (e.g. tables/vps/VpsSection): a VBox "sm-collapsible" with the
+   pseudo class :expanded, an HBox "sm-collapsible-header" (icon, sm-collapsible-title, …, 16px subtle chevron) */
+.sm-collapsible {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+    -fx-border-width: 1 1 1 3;
+    -fx-border-radius: 6;
+}
+
+.sm-collapsible:expanded {
+    -fx-background-color: -c-footer;
+    -fx-border-color: transparent transparent transparent -c-warn;
+}
+
+.sm-collapsible-header {
+    -fx-background-radius: 6;
+    -fx-padding: 10 8 10 8;
+    -fx-cursor: hand;
+}
+
+.sm-collapsible-header:hover {
+    -fx-background-color: -c-row-hover;
+}
+
+.sm-collapsible:expanded > .sm-collapsible-header:hover {
+    -fx-background-color: transparent;
+}
+
+/* nested in an expanded card, an expanded collapsible goes one step darker to stay visible */
+.titled-pane:expanded > .content .sm-collapsible:expanded {
+    -fx-background-color: -c-inset;
 }
 
 .accordion-container {
     -fx-background-color: -c-control;
 }
 
-/* designer layer list (cards/panels/template-editor.fxml): one row per layer, the expanded layer is a card with an
-   orange bar on its left; headers = icon + name + eye / lock buttons (designer-layer-button) */
-.accordion.designer-layers {
-    -fx-background-color: transparent;
-}
-
-.designer-layers > .titled-pane {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 1 1 1 3;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
-}
-
-.designer-layers > .titled-pane:expanded {
-    -fx-background-color: -c-footer;
-    -fx-border-color: transparent transparent transparent -c-warn;
-}
-
-.designer-layers > .titled-pane > .title {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-    -fx-background-radius: 6;
-    -fx-padding: 10 8 10 8;
-    -fx-cursor: hand;
-}
-
-.designer-layers > .titled-pane > .title:hover {
-    -fx-background-color: -c-row-hover;
-}
-
-.designer-layers > .titled-pane:expanded > .title:hover {
-    -fx-background-color: transparent;
-}
-
-.designer-layers > .titled-pane > .title > .arrow-button > .arrow {
-    -fx-background-color: -c-subtle;
-}
-
-.designer-layers > .titled-pane > .content {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-padding: 0;
-}
-
-.designer-layers > .titled-pane > .content .scroll-pane,
-.designer-layers > .titled-pane > .content .scroll-pane > .viewport,
-.designer-layers .accordion-container {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-border-color: transparent;
-}
-
+/* designer layer list (cards/panels/template-editor.fxml): headers = icon + name + eye / lock buttons
+   (designer-layer-button), hidden layers are struck through */
 .designer-layer-name {
     -fx-font-size: 14px;
     -fx-font-weight: bold;

@@ -17,17 +17,14 @@
     <center>
         <BorderPane BorderPane.alignment="CENTER">
             <center>
-                <StackPane fx:id="editorRootStack" BorderPane.alignment="CENTER">
+                <StackPane fx:id="editorRootStack" styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
                     <children>
-                        <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane fx:id="tabPane" styleClass="primary-tabs, tile-tabs" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="tablesTab" closable="false" text="%tables.alx.alx_delete.all_tables">
                                     <content>
                                         <BorderPane />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
-                                    </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables.all_tables_f2" />
                                     </tooltip>
@@ -36,9 +33,6 @@
                                     <content>
                                         <BorderPane />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" text="" />
-                                    </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables.backglasses_f3" />
                                     </tooltip>
@@ -47,9 +41,6 @@
                                     <content>
                                         <BorderPane />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
-                                    </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables.visual_pinball_spreadsheet_f4" />
                                     </tooltip>
@@ -58,9 +49,6 @@
                                     <content>
                                         <BorderPane />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="bi-graph-up" iconSize="18" text="" />
-                                    </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables.table_statistics_f5" />
                                     </tooltip>
@@ -69,9 +57,6 @@
                                     <content>
                                         <BorderPane />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-archive-outline" iconSize="18" />
-                                    </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables.table_backups_f6" />
                                     </tooltip>
@@ -80,9 +65,6 @@
                                     <content>
                                         <BorderPane />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cellphone" iconSize="18" />
-                                    </graphic>
                                     <tooltip>
                                         <Tooltip text="%tables.tables.vpx_mobile_f7" />
                                     </tooltip>
@@ -91,9 +73,6 @@
                                 <content>
                                     <BorderPane />
                                 </content>
-                                <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2v-video-outline" iconSize="18" />
-                                </graphic>
                                 <tooltip>
                                     <Tooltip text="%tables.tables.media_recorder_f8" />
                                 </tooltip>
@@ -101,31 +80,31 @@
                             </tabs>
                         </TabPane>
                         <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT" styleClass="sm-button, sm-button-icon">
+                            <graphic>
+                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
+                            </graphic>
                             <StackPane.margin>
-                                <Insets right="3.0" top="6.0" />
+                                <Insets right="14.0" top="10.0" />
                             </StackPane.margin>
                             <font>
                                 <Font size="14.0" />
                             </font>
-                            <graphic>
-                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
-                            </graphic>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions.toggle_sidebar_f3" />
                             </tooltip>
                         </Button>
                         <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT" styleClass="sm-button, sm-button-icon">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
                             <graphic>
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
+                            <font>
+                                <Font size="14.0" />
+                            </font>
                             <tooltip>
                                 <Tooltip text="%components.doftester.dof_toys.open_settings" />
                             </tooltip>
                             <StackPane.margin>
-                                <Insets right="43.0" top="6.0" />
+                                <Insets right="54.0" top="10.0" />
                             </StackPane.margin>
                         </Button>
                     </children>
@@ -137,7 +116,7 @@
         </BorderPane>
     </center>
     <right>
-        <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
+        <VBox styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
             <children>
                 <fx:include fx:id="assetViewSideBar" source="scene-tables-assetview-sidebar.fxml" />
                 <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />

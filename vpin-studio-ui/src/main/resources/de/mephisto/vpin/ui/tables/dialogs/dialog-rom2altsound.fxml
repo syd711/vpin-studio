@@ -164,7 +164,15 @@
                      </children>
                   </GridPane>
       
-                              <TitledPane fx:id="advancedPane" animated="false" expanded="false" minHeight="-Infinity" text="%tables.rom2altsound.advanced_options">
+                              <TitledPane fx:id="advancedPane" animated="false" expanded="false" minHeight="-Infinity">
+                                  <graphic>
+                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                          <children>
+                                              <FontIcon iconLiteral="mdi2t-tune-variant" iconSize="18" styleClass="c-icon-muted" />
+                                              <Label styleClass="sm-collapsible-title" text="%tables.rom2altsound.advanced_options" />
+                                          </children>
+                                      </HBox>
+                                  </graphic>
                      <content>
                         <VBox spacing="6.0">
                            <children>

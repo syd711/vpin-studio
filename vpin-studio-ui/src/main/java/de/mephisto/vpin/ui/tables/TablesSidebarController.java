@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.ui.util.CollapsibleHeaders;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -355,6 +356,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
+    CollapsibleHeaders.fill(tableAccordion);
     frontendTitleButtonArea.managedProperty().bindBidirectional(frontendTitleButtonArea.visibleProperty());
     frontendTitleButtonArea.setVisible(SystemUtil.isFolderActionSupported());
     altSoundExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());

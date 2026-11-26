@@ -107,6 +107,16 @@ public class Preferences {
     this.achievementsSettings = achievementsSettings;
   }
 
+  private String mcpSettings;
+
+  public String getMcpSettings() {
+    return mcpSettings;
+  }
+
+  public void setMcpSettings(String mcpSettings) {
+    this.mcpSettings = mcpSettings;
+  }
+
   private String discordClientSettings;
 
   @Column(length = 1024)

@@ -6,6 +6,25 @@
     -fx-background-radius: 6;
 }
 
+/* tile with a hairline border: the wrapping tile of a section (Tables, Competitions, Achievements, Designer) */
+.sm-tile-bordered {
+    -fx-border-color: -c-panel-border;
+    -fx-border-radius: 6;
+}
+
+/* tiles inside a wrapping tile are drawn as panels so they stay visible on the tile background */
+.sm-tile-bordered .sm-tile {
+    -fx-background-color: -c-panel;
+    -fx-border-color: -c-panel-border;
+    -fx-border-radius: 6;
+}
+
+/* ... except tiles on a panel, which keep the tile look */
+.sm-tile-bordered .sm-panel .sm-tile {
+    -fx-background-color: -c-tile;
+    -fx-border-color: transparent;
+}
+
 /* panels on a -c-tile subpanel, e.g. the Screens tab */
 .sm-panel {
     -fx-background-color: -c-panel;
@@ -96,22 +115,6 @@
     -fx-border-width: 0 1 0 0;
 }
 
-.vps-section {
-    -fx-background-color: -c-footer;
-    -fx-background-radius: 6;
-    -fx-border-color: -c-selected;
-    -fx-border-radius: 6;
-}
-
-.vps-section-header {
-    -fx-cursor: hand;
-}
-
-.vps-section-header:hover {
-    -fx-background-color: -c-inset-hover;
-    -fx-background-radius: 6 6 0 0;
-}
-
 .vps-entry {
     -fx-padding: 10 14 10 14;
     -fx-border-color: -c-selected transparent transparent transparent;
@@ -128,6 +131,7 @@
 /* designer (cards/panels/template-editor.fxml) */
 /* the black design area, its background is set in TemplateEditorController */
 .designer-canvas {
+    -fx-background-color: -c-black;
     -fx-background-radius: 0 0 6 6;
 }
 

@@ -18,119 +18,127 @@
 
 <BorderPane fx:id="rootPane" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <center>
-      <SplitPane fx:id="splitPane" dividerPositions="0.24" styleClass="sm-split">
-         <items>
-            <!-- table list -->
-            <VBox minWidth="260.0" prefWidth="440.0" styleClass="sm-tile">
-               <children>
-                  <VBox spacing="10.0" styleClass="sm-divider">
+      <!-- wrapping tile: the Highscore cards / Wheels tabs and the toolbar are set as its top by HighscoreCardsController -->
+      <BorderPane fx:id="designerTile" styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
+         <center>
+            <SplitPane fx:id="splitPane" dividerPositions="0.24" styleClass="sm-split">
+               <items>
+                  <!-- table list -->
+                  <VBox minWidth="260.0" prefWidth="440.0" styleClass="sm-tile">
                      <children>
-                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <VBox spacing="10.0" styleClass="sm-divider">
                            <children>
-                              <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                              <HBox alignment="CENTER_LEFT" spacing="8.0">
                                  <children>
-                                    <TextField fx:id="searchTextField" maxWidth="1.7976931348623157E308" minWidth="120.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%cards.highscore_cards.search_table" styleClass="designer-search" />
-                                    <FontIcon iconLiteral="mdi2m-magnify" iconSize="18" mouseTransparent="true" styleClass="c-icon-subtle">
-                                       <StackPane.margin>
-                                          <Insets left="10.0" />
-                                       </StackPane.margin>
-                                    </FontIcon>
-                                    <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" visible="false" StackPane.alignment="CENTER_RIGHT">
+                                    <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <TextField fx:id="searchTextField" maxWidth="1.7976931348623157E308" minWidth="120.0" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" promptText="%cards.highscore_cards.search_table" styleClass="designer-search" />
+                                          <FontIcon iconLiteral="mdi2m-magnify" iconSize="18" mouseTransparent="true" styleClass="c-icon-subtle">
+                                             <StackPane.margin>
+                                                <Insets left="10.0" />
+                                             </StackPane.margin>
+                                          </FontIcon>
+                                          <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" visible="false" StackPane.alignment="CENTER_RIGHT">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2c-close-thick" iconSize="18" styleClass="c-icon-muted" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </StackPane>
+                                    <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon">
                                        <graphic>
-                                          <FontIcon iconLiteral="mdi2c-close-thick" iconSize="18" styleClass="c-icon-muted" />
+                                          <FontIcon iconLiteral="mdi2f-filter-menu-outline" iconSize="18" styleClass="c-icon-white" />
                                        </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
+                                       </tooltip>
                                     </Button>
                                  </children>
-                              </StackPane>
-                              <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2f-filter-menu-outline" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%backglass.directb2s_admin.toggle_filter_view" />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon">
-                                 <graphic>
-                                    <FontIcon iconLiteral="mdi2r-reload" iconSize="18" styleClass="c-icon-white" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="%backglass.directb2s_admin.reload_all_table_data" />
-                                 </tooltip>
-                              </Button>
+                              </HBox>
+                              <ComboBox fx:id="emulatorCombo" maxWidth="1.7976931348623157E308" />
                            </children>
-                        </HBox>
-                        <ComboBox fx:id="emulatorCombo" maxWidth="1.7976931348623157E308" />
-                     </children>
-                     <padding>
-                        <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
-                     </padding>
-                  </VBox>
+                           <padding>
+                              <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                           </padding>
+                        </VBox>
 
-                  <StackPane fx:id="loaderStack" VBox.vgrow="ALWAYS">
-                     <children>
-                        <StackPane fx:id="tableStack">
+                        <StackPane fx:id="loaderStack" VBox.vgrow="ALWAYS">
                            <children>
-                              <TableView fx:id="tableView">
-                                 <columns>
-                                    <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: CENTER_LEFT;" text="%cards.designer.column_table" />
-                                    <TableColumn fx:id="columnBaseTemplate" minWidth="90.0" prefWidth="120.0" style="-fx-alignment: CENTER_LEFT;" text="%cards.designer.column_template" />
-                                 </columns>
-                                 <columnResizePolicy>
-                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN" />
-                                 </columnResizePolicy>
-                              </TableView>
+                              <StackPane fx:id="tableStack">
+                                 <children>
+                                    <TableView fx:id="tableView">
+                                       <columns>
+                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: CENTER_LEFT;" text="%cards.designer.column_table" />
+                                          <TableColumn fx:id="columnBaseTemplate" minWidth="90.0" prefWidth="120.0" style="-fx-alignment: CENTER_LEFT;" text="%cards.designer.column_template" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                 </children>
+                              </StackPane>
                            </children>
                         </StackPane>
-                     </children>
-                  </StackPane>
 
-                  <!-- actions on the selected table -->
-                  <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="sm-footer">
-                     <children>
-                        <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button, sm-button-icon">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2t-table-edit" iconSize="18" styleClass="c-icon-white" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%cards.highscore_cards.open_table_in_table_overview" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2m-movie-edit-outline" iconSize="18" styleClass="c-icon-white" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%cards.template_editor.asset_manager" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" styleClass="sm-button, sm-button-icon">
-                           <tooltip>
-                              <Tooltip text="%cards.highscore_cards.open_table_on_vpin_mania" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings" styleClass="sm-button, sm-button-icon">
-                           <graphic>
-                              <FontIcon iconLiteral="mdi2c-cog-outline" iconSize="18" styleClass="c-icon-white" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%cards.highscore_cards.open_highscore_card_settings" />
-                           </tooltip>
-                        </Button>
-                        <Pane HBox.hgrow="ALWAYS" />
-                        <Label fx:id="labelCount" styleClass="sm-hint" />
+                        <!-- actions on the selected table -->
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="sm-footer">
+                           <children>
+                              <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2t-table-edit" iconSize="18" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%cards.highscore_cards.open_table_in_table_overview" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2m-movie-edit-outline" iconSize="18" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%cards.template_editor.asset_manager" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" styleClass="sm-button, sm-button-icon">
+                                 <tooltip>
+                                    <Tooltip text="%cards.highscore_cards.open_table_on_vpin_mania" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-cog-outline" iconSize="18" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%cards.highscore_cards.open_highscore_card_settings" />
+                                 </tooltip>
+                              </Button>
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <Label fx:id="labelCount" styleClass="sm-hint" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="14.0" right="14.0" top="10.0" />
+                           </padding>
+                        </HBox>
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="14.0" right="14.0" top="10.0" />
-                     </padding>
-                  </HBox>
-               </children>
-            </VBox>
+                  </VBox>
 
-            <!-- editor: canvas panel + layers panel -->
-            <BorderPane fx:id="templateEditorPane" />
-         </items>
-      </SplitPane>
+                  <!-- editor: canvas panel + layers panel -->
+                  <BorderPane fx:id="templateEditorPane" />
+               </items>
+               <BorderPane.margin>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </BorderPane.margin>
+            </SplitPane>
+         </center>
+      </BorderPane>
    </center>
    <padding>
       <Insets bottom="12.0" right="12.0" />

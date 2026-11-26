@@ -78,6 +78,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   @FXML
   private BorderPane rootPane;
 
+  @FXML
+  private BorderPane designerTile;
+
   private final List<String> ignoreList = new ArrayList<>();
 
 
@@ -254,9 +257,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       TabPane designerTabs = templateEditorController.getTabPane();
       ToolBar designerToolbar = templateEditorController.getToolbar();
       ((Pane) designerTabs.getParent()).getChildren().removeAll(designerTabs, designerToolbar);
-      VBox pageHeader = new VBox(12, designerTabs, designerToolbar);
-      BorderPane.setMargin(pageHeader, new Insets(0, 0, 14, 0));
-      rootPane.setTop(pageHeader);
+      VBox pageHeader = new VBox(14, designerTabs, designerToolbar);
+      VBox.setMargin(designerToolbar, new Insets(0, 16, 0, 16));
+      designerTile.setTop(pageHeader);
     }
     catch (IOException e) {
       LOG.error("failed to load template editor: " + e.getMessage(), e);

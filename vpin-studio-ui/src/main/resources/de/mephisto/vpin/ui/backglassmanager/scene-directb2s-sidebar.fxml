@@ -37,7 +37,7 @@
             </VBox>
             <HBox alignment="TOP_RIGHT" spacing="8.0">
                <children>
-                  <CheckBox fx:id="activateCheckbox" maxHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="sm-text, sm-header-checkbox" text="%backglass.sidebar.active">
+                  <CheckBox fx:id="activateCheckbox" maxHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="sm-text, sm-header-checkbox, sm-accent-checkbox" text="%backglass.sidebar.active">
                      <tooltip>
                         <Tooltip text="%backglass.directb2s_sidebar.active_backglass" />
                      </tooltip>

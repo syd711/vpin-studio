@@ -25,18 +25,12 @@
       <VBox minWidth="420.0" styleClass="sm-tile" HBox.hgrow="ALWAYS">
          <children>
             <!-- page level tabs: moved above all tiles by HighscoreCardsController, like the Achievements / Tables tabs -->
-            <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
+            <TabPane fx:id="tabPane" styleClass="primary-tabs, tile-tabs, tile-tabs-bare" tabClosingPolicy="UNAVAILABLE">
                <tabs>
                   <Tab fx:id="highscoreCardsTab" closable="false" text="%cards.template_editor.highscore_cards">
-                     <graphic>
-                        <FontIcon iconLiteral="mdi2c-card-text-outline" iconSize="18" styleClass="c-icon-white" />
-                     </graphic>
                   </Tab>
                   <!--Tab fx:id="instructionCardsTab" closable="false" text="%cards.template_editor.instruction_cards" /-->
                   <Tab fx:id="wheelsTab" closable="false" text="%cards.template_editor.wheels">
-                     <graphic>
-                        <FontIcon iconLiteral="mdi2a-album" iconSize="18" styleClass="c-icon-white" />
-                     </graphic>
                   </Tab>
                </tabs>
             </TabPane>

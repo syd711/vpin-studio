@@ -13,11 +13,11 @@
     -c-footer: #1C1C1C;                     /* pinned panel footer, log group rows */
     -c-inset-hover: #1E1E1E;                /* hovered row inside an inset box */
     -c-card-background: #212529;            /* rendered highscore cards */
-    -c-panel: #222222;                      /* panels of a split view, page background */
+    -c-panel: #1A1A1A;                      /* panels of a split view, page background */
     -c-row-hover: #262626;                  /* hovered list row */
     -c-separator: #272B2F;                  /* separators, selection panels */
     -c-selection-panel-hover: #272B3F;      /* hovered / selected selection panel */
-    -c-tile: #2A2A2A;                       /* cards / tiles on the page background */
+    -c-tile: #232323;                       /* cards / tiles on the page background */
     -c-panel-border: #2E2E2E;               /* border of a panel inside a panel */
     -c-control: #333333;                    /* buttons, list-row hover, neutral pill */
     -c-bar-button-border: #373737;
@@ -73,12 +73,13 @@
     /* Achievements palettes (rarity, rank medals, striped rows) */
     -c-row-even: #283335;
     -c-row-odd: #303733;
-    -c-table-background: #262626;           /* TableView / TreeTableView background and rows */
+    -c-table-background: -c-tile;           /* TableView / TreeTableView background and rows */
     -c-table-divider: #303030;              /* 1px line between table rows */
     -c-table-hover: #2E2E2E;                /* hovered table row */
     -c-table-selected: #3D3326;             /* selected table row (with a -c-warn bar on the left) */
-    -c-table-header-background: #1A1A1A;    /* table column header row */
-    -c-table-header: #8A8A8A;               /* uppercase column header labels */
+    -c-table-header-background: #121212;    /* table column header row, darker than the rows */
+    -c-table-header-border: #404040;        /* line between header row and the first row */
+    -c-table-header: #B8B8B8;               /* uppercase column header labels */
     -c-rarity-common: #EDEDED;
     -c-rarity-rare: #5AA9FF;
     -c-rarity-epic: #C77DFF;

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minWidth="260.0" prefWidth="280.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableTop5TileController">
+<VBox minWidth="260.0" prefWidth="280.0" spacing="8.0" styleClass="sm-tile" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableTop5TileController">
    <children>
       <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.cloud_top5" />
       <VBox fx:id="rowsBox" spacing="8.0" />

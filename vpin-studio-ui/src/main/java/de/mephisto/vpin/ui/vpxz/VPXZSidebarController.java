@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vpxz;
 
+import de.mephisto.vpin.ui.util.CollapsibleHeaders;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -146,6 +147,7 @@ public class VPXZSidebarController implements Initializable, StudioFXController 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     repositoryAccordion.managedProperty().bindBidirectional(repositoryAccordion.visibleProperty());
+    CollapsibleHeaders.fill(repositoryAccordion);
     repositoryAccordion.setExpandedPane(manifestPane);
     setVPXZDescriptor(Optional.empty());
   }

@@ -38,8 +38,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -247,12 +245,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       backglassManagerController = loader.getController();
       backglassManagerController.setRootController(this);
       backglassManagerTab.setContent(directb2sRoot);
-
-      Image image = new Image(Studio.class.getResourceAsStream("b2s.png"));
-      ImageView view = new ImageView(image);
-      view.setFitWidth(18);
-      view.setFitHeight(18);
-      backglassManagerTab.setGraphic(view);
     }
     catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
@@ -307,12 +299,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
       vpsTablesTab.setContent(repositoryRoot);
-
-      Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
-      ImageView view = new ImageView(image);
-      view.setFitWidth(18);
-      view.setFitHeight(18);
-      vpsTablesTab.setGraphic(view);
     }
     catch (IOException e) {
       LOG.error("failed to load VPS table tab: " + e.getMessage(), e);

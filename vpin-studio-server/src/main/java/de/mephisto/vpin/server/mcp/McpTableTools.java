@@ -38,12 +38,12 @@ public class McpTableTools {
   public List<McpTool> getTools() {
     List<McpTool> tools = new ArrayList<>();
 
-    tools.add(new McpTool("list_emulators", "List emulators",
+    tools.add(McpTool.read("list_emulators", "List emulators",
         "Lists the emulators configured on the cabinet (Visual Pinball X, Future Pinball, MAME, ...) with their id and "
             + "the number of installed tables. Use the id to restrict search_tables to one emulator.",
-        schema(Map.of(), List.of()), true, args -> listEmulators()));
+        schema(Map.of(), List.of()), args -> listEmulators()));
 
-    tools.add(new McpTool("search_tables", "Search tables",
+    tools.add(McpTool.read("search_tables", "Search tables",
         "Searches the installed tables of the cabinet. Without a query all tables are returned (up to the limit). "
             + "The query matches the table name, display name, ROM name and file name (case-insensitive). "
             + "Each result contains the table id needed by the other tools.",
@@ -54,23 +54,23 @@ public class McpTableTools {
                 "onlyDisabled", prop("boolean", "Only return tables that are disabled in the frontend."),
                 "onlyUpdateAvailable", prop("boolean", "Only return tables for which a newer version is listed on the Virtual Pinball Spreadsheet (VPS)."),
                 "limit", prop("integer", "Maximum number of results, default " + DEFAULT_LIMIT + ", maximum " + MAX_LIMIT + ".")),
-            List.of()), true, this::searchTables));
+            List.of()), this::searchTables));
 
-    tools.add(new McpTool("get_table", "Get table details",
+    tools.add(McpTool.read("get_table", "Get table details",
         "Returns all details of a table: files, ROM, highscore configuration, media packs, VPS link, play count, "
             + "rating, tags, notes and the list of current validation issues.",
         schema(Map.of("id", prop("integer", "The table id, see search_tables.")), List.of("id")),
-        true, this::getTable));
+        this::getTable));
 
-    tools.add(new McpTool("get_table_highscores", "Get table highscores",
+    tools.add(McpTool.read("get_table_highscores", "Get table highscores",
         "Returns the current highscore list of a table.",
         schema(Map.of("id", prop("integer", "The table id, see search_tables.")), List.of("id")),
-        true, this::getHighscores));
+        this::getHighscores));
 
-    tools.add(new McpTool("get_recent_highscores", "Get recent highscores",
+    tools.add(McpTool.read("get_recent_highscores", "Get recent highscores",
         "Returns the most recent new highscores across all tables of the cabinet.",
         schema(Map.of("count", prop("integer", "Number of highscores to return, default 10.")), List.of()),
-        true, this::getRecentHighscores));
+        this::getRecentHighscores));
 
     return tools;
   }

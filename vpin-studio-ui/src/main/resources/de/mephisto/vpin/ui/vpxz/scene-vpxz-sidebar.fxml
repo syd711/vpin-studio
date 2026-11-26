@@ -7,6 +7,8 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -17,7 +19,15 @@
     <center>
         <Accordion fx:id="repositoryAccordion">
             <panes>
-                <TitledPane fx:id="manifestPane" layoutX="10.0" layoutY="10.0" text="%backups.backups_sidebar.table_details">
+                <TitledPane fx:id="manifestPane">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <FontIcon iconLiteral="mdi2i-information-outline" iconSize="18" styleClass="c-icon-muted" />
+                                <Label styleClass="sm-collapsible-title" text="%backups.backups_sidebar.table_details" />
+                            </children>
+                        </HBox>
+                    </graphic>
                     <content>
                         <ScrollPane hbarPolicy="NEVER">
                             <content>
@@ -295,7 +305,15 @@
                         </ScrollPane>
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="assetsPane" layoutX="10.0" layoutY="10.0" text="%backups.backups_sidebar.assets">
+                <TitledPane fx:id="assetsPane">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <FontIcon iconLiteral="mdi2f-folder-multiple-outline" iconSize="18" styleClass="c-icon-muted" />
+                                <Label styleClass="sm-collapsible-title" text="%backups.backups_sidebar.assets" />
+                            </children>
+                        </HBox>
+                    </graphic>
                     <content>
                         <ScrollPane hbarPolicy="NEVER">
                             <content>
@@ -405,17 +423,20 @@
                         </ScrollPane>
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="detailsPane" layoutX="10.0" layoutY="10.0" text="%backups.backups_sidebar.file_details">
+                <TitledPane fx:id="detailsPane">
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <FontIcon iconLiteral="mdi2f-file-outline" iconSize="18" styleClass="c-icon-muted" />
+                                <Label styleClass="sm-collapsible-title" text="%backups.backups_sidebar.file_details" />
+                            </children>
+                        </HBox>
+                    </graphic>
                     <content>
                         <ScrollPane hbarPolicy="NEVER">
                             <content>
                                 <VBox>
                                     <children>
-                                        <Label text="%backups.backups_sidebar.file_details">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
                                         <GridPane hgap="6.0" vgap="3.0">
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
@@ -481,6 +502,9 @@
                     </content>
                 </TitledPane>
             </panes>
+            <padding>
+                <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+            </padding>
         </Accordion>
     </center>
 </BorderPane>

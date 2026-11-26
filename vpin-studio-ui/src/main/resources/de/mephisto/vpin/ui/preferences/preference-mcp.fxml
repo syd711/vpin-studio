@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -27,7 +28,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="enabledCheckbox" text="%pref.mcp.enabled" styleClass="c-text-white">
+                  <CheckBox fx:id="enabledCheckbox" styleClass="c-text-white" text="%pref.mcp.enabled">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -39,13 +40,23 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                      <children>
-                        <Label styleClass="sm-small" text="%pref.mcp.url" />
+                        <CheckBox fx:id="readOnlyCheckbox" text="%pref.mcp.read_only" styleClass="c-text-white">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label maxWidth="620.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.read_only_description" wrapText="true" />
+                        <Label styleClass="sm-small" text="%pref.mcp.url">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
                               <TextField fx:id="urlText" editable="false" prefWidth="560.0" styleClass="sm-text-field" />
                               <Button mnemonicParsing="false" onAction="#onCopyUrl" styleClass="sm-button, sm-button-icon">
                                  <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                    <FontIcon iconLiteral="mdi2c-content-copy" iconSize="18" styleClass="c-icon-white" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%pref.mcp.copy" />
@@ -66,7 +77,7 @@
                               <TextField fx:id="commandText" editable="false" prefWidth="560.0" styleClass="sm-text-field" />
                               <Button mnemonicParsing="false" onAction="#onCopyCommand" styleClass="sm-button, sm-button-icon">
                                  <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                    <FontIcon iconLiteral="mdi2c-content-copy" iconSize="18" styleClass="c-icon-white" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%pref.mcp.copy" />
@@ -74,7 +85,11 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Label maxWidth="620.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.host_hint" wrapText="true" />
+                        <Label maxWidth="620.0" text="%pref.mcp.host_hint" wrapText="true">
+                           <styleClass>
+                              <String fx:value="preference-description" />
+                              <String fx:value="c-text-white" />
+                           </styleClass></Label>
 
                         <Label styleClass="preference-subtitle" text="%pref.mcp.tools">
                            <VBox.margin>

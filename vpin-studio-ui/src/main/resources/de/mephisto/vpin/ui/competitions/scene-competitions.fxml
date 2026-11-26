@@ -28,33 +28,24 @@
     <center>
         <BorderPane BorderPane.alignment="CENTER">
             <center>
-                <StackPane BorderPane.alignment="CENTER">
+                <StackPane styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
                     <children>
-                        <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane fx:id="tabPane" styleClass="primary-tabs, tile-tabs" tabClosingPolicy="UNAVAILABLE">
                             <tabs>
                                 <Tab fx:id="offlineTab" closable="false" text="%competitions.competitions.offline_competitions">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="bi-trophy" />
-                                    </graphic>
                                 </Tab>
                                 <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="%competitions.competitions.iscored_subscriptions">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-check" />
-                                    </graphic>
                                 </Tab>
                                 <Tab fx:id="weeklySubscriptionsTab" closable="false" text="%competitions.competitions.wovp_challenges">
                                     <content>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                                     </content>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-calendar-week" />
-                                    </graphic>
                                 </Tab>
                                 <Tab fx:id="maniaChallengesTab" closable="false" text="%competitions.competitions.mania_challenges">
                                     <content>
@@ -64,31 +55,31 @@
                             </tabs>
                         </TabPane>
                         <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT" styleClass="sm-button, sm-button-icon">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
                             <graphic>
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
                             </graphic>
+                            <font>
+                                <Font size="14.0" />
+                            </font>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions.toggle_sidebar_f3" />
                             </tooltip>
                             <StackPane.margin>
-                                <Insets right="3.0" top="6.0" />
+                                <Insets right="14.0" top="10.0" />
                             </StackPane.margin>
                         </Button>
                         <Button fx:id="competitionSettingsBtn" mnemonicParsing="false" onAction="#onCompetitionSettings" StackPane.alignment="TOP_RIGHT" styleClass="sm-button, sm-button-icon">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
                             <graphic>
                                 <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
+                            <font>
+                                <Font size="14.0" />
+                            </font>
                             <tooltip>
                                 <Tooltip text="%competitions.competitions.open_competition_settings" />
                             </tooltip>
                             <StackPane.margin>
-                                <Insets right="43.0" top="6.0" />
+                                <Insets right="54.0" top="10.0" />
                             </StackPane.margin>
                         </Button>
                     </children>
@@ -104,7 +95,15 @@
             <children>
                 <Accordion fx:id="accordion" prefWidth="600.0">
                     <panes>
-                        <TitledPane fx:id="metaDataPane" text="%competitions.competitions.metadata">
+                        <TitledPane fx:id="metaDataPane">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <FontIcon iconLiteral="mdi2i-information-outline" iconSize="18" styleClass="c-icon-muted" />
+                                        <Label styleClass="sm-collapsible-title" text="%competitions.competitions.metadata" />
+                                    </children>
+                                </HBox>
+                            </graphic>
                             <content>
                                 <VBox>
                                     <children>
@@ -227,7 +226,15 @@
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane fx:id="dashboardPane" expanded="false" text="%competitions.competitions.dashboard">
+                        <TitledPane fx:id="dashboardPane" expanded="false">
+                            <graphic>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <FontIcon iconLiteral="mdi2v-view-dashboard-outline" iconSize="18" styleClass="c-icon-muted" />
+                                        <Label styleClass="sm-collapsible-title" text="%competitions.competitions.dashboard" />
+                                    </children>
+                                </HBox>
+                            </graphic>
                             <content>
                                 <BorderPane>
                                     <center>
@@ -257,29 +264,29 @@
                                         <ToolBar styleClass="floating-toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                             <items>
                                                 <Button fx:id="dashboardBtn" mnemonicParsing="false" onAction="#onDashboardOpen" styleClass="sm-button, external-component" text="%competitions.competitions.open_leaderboard">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="16" />
                                                     </graphic>
-                                                </Button>
-                                    <Button fx:id="rulesBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRulesOpen" styleClass="sm-button, external-component" text="%competitions.competitions.open_rules">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="16" />
-                                       </graphic>
-                                    </Button>
-                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="%competitions.competitions.reload" styleClass="sm-button, c-text-white">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
+                                                </Button>
+                                    <Button fx:id="rulesBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRulesOpen" styleClass="sm-button, external-component" text="%competitions.competitions.open_rules">
+                                       <graphic>
+                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="%competitions.competitions.reload" styleClass="sm-button, c-text-white">
                                                     <graphic>
                                                         <FontIcon styleClass="c-icon-white" iconLiteral="mdi2r-reload" iconSize="18" />
                                                     </graphic>
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
                                                 </Button>
                                             </items>
                                             <BorderPane.margin>
@@ -294,6 +301,9 @@
                             </content>
                         </TitledPane>
                     </panes>
+                    <padding>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                    </padding>
                 </Accordion>
             </children>
             <BorderPane.margin>

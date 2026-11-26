@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableAchievementsTileController">
+<VBox spacing="8.0" styleClass="sm-tile" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.tables.TableAchievementsTileController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>

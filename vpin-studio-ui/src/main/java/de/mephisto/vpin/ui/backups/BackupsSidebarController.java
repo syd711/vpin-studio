@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.backups;
 
+import de.mephisto.vpin.ui.util.CollapsibleHeaders;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupFileInfo;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
@@ -185,6 +186,7 @@ public class BackupsSidebarController implements Initializable, StudioFXControll
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     repositoryAccordion.managedProperty().bindBidirectional(repositoryAccordion.visibleProperty());
+    CollapsibleHeaders.fill(repositoryAccordion);
     repositoryAccordion.setExpandedPane(manifestPane);
     setArchiveDescriptor(Optional.empty());
   }

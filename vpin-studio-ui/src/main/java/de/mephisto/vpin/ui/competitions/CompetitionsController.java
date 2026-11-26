@@ -669,12 +669,7 @@ public class CompetitionsController implements Initializable, StudioFXController
       weeklySubscriptionsController.setCompetitionsController(this);
       weeklySubscriptionsTab.setContent(parent);
 
-      Image image = new Image(Studio.class.getResourceAsStream("wovp.png"));
-      ImageView view = new ImageView(image);
-      view.setFitWidth(18);
-      view.setFitHeight(18);
       WOVPSettings wovpSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WOVP_SETTINGS, WOVPSettings.class);
-      weeklySubscriptionsTab.setGraphic(view);
       if (!wovpSettings.isEnabled() || !wovpSettings.isApiKeySet()) {
         tabPane.getTabs().remove(weeklySubscriptionsTab);
       }
@@ -690,12 +685,6 @@ public class CompetitionsController implements Initializable, StudioFXController
       maniaChallengesController = loader.getController();
       maniaChallengesController.setCompetitionsController(this);
       maniaChallengesTab.setContent(parent);
-
-      Image image = new Image(Studio.class.getResourceAsStream("mania.png"));
-      ImageView view = new ImageView(image);
-      view.setFitWidth(18);
-      view.setFitHeight(18);
-      maniaChallengesTab.setGraphic(view);
     }
     catch (IOException e) {
       LOG.error("failed to load mania challenges: " + e.getMessage(), e);

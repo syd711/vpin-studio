@@ -148,6 +148,25 @@
     -fx-text-fill: -c-white;
 }
 
+/* tile-tabs: primary-tabs that are the top of a "sm-tile, sm-tile-bordered" wrapper (Tables, Competitions,
+   Achievements, Designer): the header row and the pages get the tile padding, the divider spans the tile */
+.tab-pane.primary-tabs.tile-tabs > .tab-header-area {
+    -fx-padding: 8 16 0 16;
+}
+
+.tab-pane.primary-tabs.tile-tabs > .tab-header-area > .tab-header-background {
+    -fx-border-color: transparent transparent -c-panel-border transparent;
+}
+
+.tab-pane.primary-tabs.tile-tabs > .tab-content-area {
+    -fx-padding: 14 16 14 16;
+}
+
+/* tabs without pages (Designer): the tile lays out the content below the header itself */
+.tab-pane.primary-tabs.tile-tabs-bare > .tab-content-area {
+    -fx-padding: 0;
+}
+
 .tab-pane.primary-tabs > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-color: transparent;
 }

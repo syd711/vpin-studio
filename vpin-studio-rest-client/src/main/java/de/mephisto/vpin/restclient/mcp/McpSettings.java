@@ -10,6 +10,19 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 public class McpSettings extends JsonSettings {
   private boolean enabled = false;
 
+  /**
+   * Only the tools that read data are offered. When switched off, the AI can also change and delete tables.
+   */
+  private boolean readOnly = true;
+
+  public boolean isReadOnly() {
+    return readOnly;
+  }
+
+  public void setReadOnly(boolean readOnly) {
+    this.readOnly = readOnly;
+  }
+
   public boolean isEnabled() {
     return enabled;
   }

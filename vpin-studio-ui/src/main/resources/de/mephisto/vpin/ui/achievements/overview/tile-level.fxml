@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="Infinity" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLevelTileController">
+<VBox maxHeight="Infinity" spacing="8.0" styleClass="sm-tile" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLevelTileController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="18.0">
          <children>

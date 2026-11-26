@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -103,60 +104,52 @@
       </ToolBar>
    </fx:define>
    <center>
-      <TabPane fx:id="tabPane" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-         <tabs>
-            <Tab fx:id="overviewTab" closable="false" text="%achievements.tab.overview">
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-trophy-award" iconSize="18" />
-               </graphic>
-               <content>
-                  <BorderPane fx:id="overviewPane">
-                     <center>
-                        <fx:include fx:id="overview" source="overview/tab-overview.fxml" />
-                     </center>
-                  </BorderPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tablesTab" closable="false" text="%achievements.tab.tables">
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-table-check" iconSize="18" />
-               </graphic>
-               <content>
-                  <BorderPane fx:id="tablesPane">
-                     <center>
-                        <fx:include fx:id="tables" source="tables/tab-tables.fxml" />
-                     </center>
-                  </BorderPane>
-               </content>
-            </Tab>
-            <Tab fx:id="badgesTab" closable="false" text="%achievements.tab.badges">
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2s-star-outline" iconSize="18" />
-               </graphic>
-               <content>
-                  <BorderPane fx:id="badgesPane">
-                     <center>
-                        <fx:include fx:id="badges" source="badges/tab-badges.fxml" />
-                     </center>
-                  </BorderPane>
-               </content>
-            </Tab>
-            <Tab fx:id="leaderboardsTab" closable="false" text="%achievements.tab.leaderboards">
-               <graphic>
-                  <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-trophy-variant" iconSize="18" />
-               </graphic>
-               <content>
-                  <BorderPane fx:id="leaderboardsPane">
-                     <center>
-                        <fx:include fx:id="leaderboards" source="leaderboards/tab-leaderboards.fxml" />
-                     </center>
-                  </BorderPane>
-               </content>
-            </Tab>
-         </tabs>
+      <StackPane styleClass="sm-tile, sm-tile-bordered" BorderPane.alignment="CENTER">
+         <children>
+            <TabPane fx:id="tabPane" styleClass="primary-tabs, tile-tabs" tabClosingPolicy="UNAVAILABLE">
+               <tabs>
+                  <Tab fx:id="overviewTab" closable="false" text="%achievements.tab.overview">
+                     <content>
+                        <BorderPane fx:id="overviewPane">
+                           <center>
+                              <fx:include fx:id="overview" source="overview/tab-overview.fxml" />
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="tablesTab" closable="false" text="%achievements.tab.tables">
+                     <content>
+                        <BorderPane fx:id="tablesPane">
+                           <center>
+                              <fx:include fx:id="tables" source="tables/tab-tables.fxml" />
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="badgesTab" closable="false" text="%achievements.tab.badges">
+                     <content>
+                        <BorderPane fx:id="badgesPane">
+                           <center>
+                              <fx:include fx:id="badges" source="badges/tab-badges.fxml" />
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="leaderboardsTab" closable="false" text="%achievements.tab.leaderboards">
+                     <content>
+                        <BorderPane fx:id="leaderboardsPane">
+                           <center>
+                              <fx:include fx:id="leaderboards" source="leaderboards/tab-leaderboards.fxml" />
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
          <BorderPane.margin>
             <Insets bottom="12.0" right="12.0" />
          </BorderPane.margin>
-      </TabPane>
+      </StackPane>
    </center>
 </BorderPane>

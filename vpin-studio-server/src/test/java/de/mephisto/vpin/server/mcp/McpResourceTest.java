@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,11 @@ class McpResourceTest {
   @Mock
   private McpTableTools tableTools;
 
+  @Mock
+  private McpManagementTools managementTools;
+
+  private final List<String> deleted = new ArrayList<>();
+
   @InjectMocks
   private McpResource resource;
 
@@ -46,9 +52,14 @@ class McpResourceTest {
     settings.setEnabled(true);
     when(preferencesService.getJsonPreference(PreferenceNames.MCP_SETTINGS, McpSettings.class)).thenReturn(settings);
     when(systemService.getVersion()).thenReturn("1.0.0");
+    Map<String, Object> idSchema = McpTableTools.schema(Map.of("id", McpTableTools.prop("integer", "id")), List.of("id"));
     when(tableTools.getTools()).thenReturn(List.of(
-        new McpTool("echo", "Echo", "Echoes the id", McpTableTools.schema(Map.of("id", McpTableTools.prop("integer", "id")), List.of("id")), true,
-            args -> Map.of("id", args.requireInt("id")))));
+        McpTool.read("echo", "Echo", "Echoes the id", idSchema, args -> Map.of("id", args.requireInt("id")))));
+    when(managementTools.getTools()).thenReturn(List.of(
+        McpTool.delete("remove", "Remove", "Removes the id", idSchema, args -> {
+          deleted.add(String.valueOf(args.requireInt("id")));
+          return Map.of("deleted", true);
+        })));
   }
 
   @Test
@@ -121,6 +132,38 @@ class McpResourceTest {
   void batchesAreAnswered() {
     String body = post(headers(), "[{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"ping\"},{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}]").getBody();
     assertThat(body).startsWith("[").contains("\"id\":1");
+  }
+
+  @Test
+  void readOnlyModeHidesAndBlocksWriteTools() {
+    String list = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}").getBody();
+    assertThat(list).contains("\"echo\"").doesNotContain("\"remove\"");
+
+    String call = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"remove\",\"arguments\":{\"id\":1}}}").getBody();
+    assertThat(call).contains("read-only mode").contains("\"isError\":true");
+    assertThat(deleted).isEmpty();
+
+    String init = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"initialize\",\"params\":{}}").getBody();
+    assertThat(init).contains("read-only mode");
+  }
+
+  @Test
+  void writeModeOffersWriteTools() {
+    settings.setReadOnly(false);
+    String list = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}").getBody();
+    assertThat(list).contains("\"echo\"").contains("\"remove\"").contains("\"destructiveHint\":true");
+
+    String call = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"remove\",\"arguments\":{\"id\":7}}}").getBody();
+    assertThat(call).contains("\"isError\":false");
+    assertThat(deleted).containsExactly("7");
+
+    String init = post(headers(), "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"initialize\",\"params\":{}}").getBody();
+    assertThat(init).contains("ask the user for confirmation");
+  }
+
+  @Test
+  void readOnlyIsTheDefault() {
+    assertThat(new McpSettings().isReadOnly()).isTrue();
   }
 
   private ResponseEntity<String> post(HttpHeaders headers, String body) {

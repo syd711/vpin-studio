@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minWidth="380.0" prefWidth="460.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.leaderboards.LeaderboardsGlobalTileController">
+<VBox minWidth="380.0" prefWidth="460.0" spacing="8.0" styleClass="sm-tile" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.leaderboards.LeaderboardsGlobalTileController">
    <children>
       <VBox spacing="2.0">
          <children>

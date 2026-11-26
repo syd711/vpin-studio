@@ -7,7 +7,7 @@
 
 <!-- fixed width: score tile (600) + horizontal padding (32); the rows are the same score tiles as in the players view
      (players/widget-highscore.fxml) -->
-<VBox maxHeight="Infinity" maxWidth="632.0" minWidth="632.0" prefWidth="632.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLatestScoresTileController">
+<VBox maxHeight="Infinity" maxWidth="632.0" minWidth="632.0" prefWidth="632.0" spacing="8.0" styleClass="sm-tile" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.overview.OverviewLatestScoresTileController">
    <children>
       <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%widgets.widget_latest_scores.latest_highscores" />
       <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="Infinity" styleClass="sm-transparent-scroll" VBox.vgrow="ALWAYS">

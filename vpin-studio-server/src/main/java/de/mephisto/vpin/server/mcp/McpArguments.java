@@ -47,6 +47,13 @@ public class McpArguments {
     return value;
   }
 
+  public boolean requireBoolean(String name) {
+    if (values.get(name) == null) {
+      throw new McpToolException("Missing argument \"" + name + "\".");
+    }
+    return getBoolean(name, false);
+  }
+
   public boolean getBoolean(String name, boolean defaultValue) {
     Object value = values.get(name);
     if (value instanceof Boolean b) {

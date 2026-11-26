@@ -28,12 +28,12 @@
     -fx-padding: 0;
 }
 
-/* header: darker than the rows, separated by a single line, no column dividers */
+/* header: darker than the rows, separated by a single line; short right-edge dividers mark the column resize handles */
 .table-view .column-header-background,
 .tree-table-view .column-header-background {
     -fx-background-color: -c-table-header-background;
     -fx-background-radius: 5 5 0 0;
-    -fx-border-color: transparent transparent -c-table-divider transparent;
+    -fx-border-color: transparent transparent -c-table-header-border transparent;
     -fx-border-width: 0 0 1 0;
 }
 .table-view .column-header-background .filler,
@@ -44,13 +44,18 @@
 .table-view .column-header,
 .tree-table-view .column-header {
     -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
+    -fx-border-color: transparent -c-table-header-border transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-insets: 10 0 10 0;
     -fx-size: 38;
+}
+.table-view .column-header:hover,
+.tree-table-view .column-header:hover {
+    -fx-border-color: transparent -c-border-strong transparent transparent;
 }
 .table-view .column-header:hover .label,
 .tree-table-view .column-header:hover .label {
-    -fx-text-fill: -c-muted;
+    -fx-text-fill: -c-white;
 }
 .table-view .column-header .label,
 .tree-table-view .column-header .label {

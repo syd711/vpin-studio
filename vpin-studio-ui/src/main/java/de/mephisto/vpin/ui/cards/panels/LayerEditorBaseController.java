@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.ui.util.CollapsibleHeaders;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.event.ActionEvent;
@@ -58,8 +59,7 @@ public abstract class LayerEditorBaseController {
     lockBtn.managedProperty().bindBidirectional(lockBtn.visibleProperty());
 
     // the header row spans the whole title, minus the disclosure arrow
-    layerHeader.prefWidthProperty().bind(settingsPane.widthProperty().subtract(44));
-    layerHeader.setMinWidth(0);
+    CollapsibleHeaders.fill(settingsPane);
 
     initBindings(templateEditorController.getBeanBinder());
   }

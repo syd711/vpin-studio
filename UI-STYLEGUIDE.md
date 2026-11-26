@@ -33,8 +33,8 @@ The token names below are the `-c-*` tokens of `stylesheet-colors.css` (e.g. `in
 |-------|-----|-----|
 | inset | `#161616` | Inset boxes inside a tile (`sm-inset`), logs, text areas, progress track (`AchievementsUI.TRACK`), monitor map |
 | footer | `#1C1C1C` | Pinned action footer of a panel (`sm-footer`), log group rows |
-| panel | `#222222` | Panels of a split view (`sm-panel`), chips, selected detail boxes |
-| tile | `#2A2A2A` | Cards / tiles on the page background (`sm-tile`, `AchievementsUI.CARD`) |
+| panel | `#1A1A1A` | Page background, panels of a split view (`sm-panel`), chips, selected detail boxes |
+| tile | `#232323` | Cards / tiles on the page background (`sm-tile`, `AchievementsUI.CARD`) |
 | control | `#333333` | Buttons, list-row hover, neutral pill background |
 | control hover | `#3D3D3D` | Button hover |
 | selected | `#3A3A3A` | Selected list row, borders of panels / dividers |
@@ -45,9 +45,9 @@ with a 3px `#8C8CE0` left border for the selected row (`AchievementsUI.row()`). 
 the `sm-list-row` style inside one view.
 
 Every `TableView` / `TreeTableView` gets the same flat look from `stylesheet-tableview.css` without any class:
-one `-c-table-background #262626` surface for the rows under a darker `-c-table-header-background #1A1A1A` header row,
-uppercase 11px bold `#8A8A8A` header labels (uppercased by `StudioTableViewSkin` / `StudioTreeTableViewSkin`, set via
-`-fx-skin`; no column dividers) with the sort arrow in the accent color `-c-warn`, 42px rows separated by a
+one `-c-table-background` surface (= `-c-tile #232323`) for the rows under a darker `-c-table-header-background #121212` header row (separated by a 1px `-c-table-header-border #404040` line),
+uppercase 11px bold `#B8B8B8` header labels (white on hover) (uppercased by `StudioTableViewSkin` / `StudioTreeTableViewSkin`, set via
+`-fx-skin`; a short 1px `-c-table-header-border` divider on the right edge of each header cell marks the resize handle, `-c-border-strong` on hover) with the sort arrow in the accent color `-c-warn`, 42px rows separated by a
 1px `-c-table-divider` line (no stripes), hover `-c-table-hover`, selected row `-c-table-selected` amber tint with a 3px
 `-c-warn` left bar, check boxes in cells (selection column) in the accent color.
 Don't set a background on the table in FXML. `sm-table` = roomy variant (60px rows, 12px padding); column classes
@@ -131,7 +131,7 @@ and 30px height, so always set the class. `sm-button` on a MenuButton / SplitMen
 | `sm-filter-pill` (ToggleButton) | round outline, 12px, selected = `#333333` fill | Filters / toggles in a panel header |
 | `sm-chip` | round `#222222` with border, 12px | Small clickable tags (e.g. screen shortcuts) |
 | `sm-link` (Hyperlink) | `#7FB2FF`, underline on hover | External links, with `mdi2o-open-in-new` 14px icon |
-| `sm-section-header` | transparent, hand cursor | Collapsible section header (chevron + `sm-text` + `sm-small` state) |
+| `sm-section-header` | transparent, hand cursor | Show / hide toggle of a section inside a card (chevron + `sm-text` + `sm-small` state); whole collapsible panels use the common look of section 6 |
 
 The three "open" colors mean the same everywhere (tables sidebar uses the plain classes). Large variant = icon (18px) + text,
 in an `sm-actionbar` the `sm-button` class is implied; small variant = `sm-button, sm-button-icon, <color class>` with a 16px icon,
@@ -237,6 +237,22 @@ configuration conflicts:
 
 ## 6. Tiles and layout building blocks
 
+### Collapsible panels (`stylesheet-titledpane.css`)
+Every `Accordion` / `TitledPane` gets this look automatically, it was taken from the designer layer list:
+- **Collapsed** = a transparent row on the tile, hover `-c-row-hover`, `-c-subtle` chevron on the left, hand cursor.
+- **Expanded** = a borderless `-c-footer` card (radius 6) with only a 3px orange (`-c-warn`) bar on its left; the content
+  is transparent (scroll panes and `accordion-container` inside included), so the card color shows through.
+- **Header** = a Region in the `graphic`, never the plain `text` attribute (the text can not be made bold):
+  `HBox` (spacing 10, `CENTER_LEFT`) with an 18px `c-icon-muted` icon + `Label` `sm-collapsible-title` (14px bold white),
+  then an `HBox.hgrow` spacer and the actions right-aligned (`sm-button-icon` / the plain open-folder classes, check boxes).
+  Call `CollapsibleHeaders.fill(accordion)` (or `fill(titledPane)`) in the controller so the header spans the pane width.
+- The `Accordion` gets an 8px padding inside its tile; the sidebar around it is an `sm-tile, sm-tile-bordered`. A fixed
+  content width grows the sidebar by 20px (8 + 8 padding, 3 + 1 bar/border), e.g. tables sidebar 620px for 600px panels.
+- Collapsibles built in Java (`tables/vps/VpsSection`) use the same look: VBox `sm-collapsible` with the `:expanded`
+  pseudo class, header HBox `sm-collapsible-header` (padding `10 8`) + `sm-collapsible-title` + 16px `c-icon-subtle`
+  chevron. Nested in an expanded card, an expanded collapsible turns `-c-inset` to stay visible.
+- Designer only (`designer-layers`): eye / lock header buttons, struck-through hidden layers, 12px `-c-subtle` field labels.
+
 ### Achievements view
 - **KPI tile** (`overview/tile-unlocked.fxml`, `tile-cloud-rank.fxml`): `#2A2A2A` card, 16px title, 26px monospace number,
   14px colored delta line below (green for positive progress).
@@ -279,6 +295,11 @@ configuration conflicts:
 - **Inspector** (Screens): `sm-panel` VBox, spacing 16, sections with `sm-caption` headings.
 - **Tabs** (`stylesheet-tabpane.css`): every TabPane in the Studio gets `styleClass="primary-tabs"` — underlined tabs,
   14px bold `#BDBDBD` labels, white when selected/hovered, 2px orange underline.
+  Section tab panes (Tables, Competitions, Achievements, Designer) sit in a `sm-tile, sm-tile-bordered` wrapper (1px
+  `-c-panel-border` hairline) and get `primary-tabs, tile-tabs`: text-only tabs (no icons), header padding `8 16 0 16`,
+  a full-width `-c-panel-border` divider and `14 16 14 16` page padding. Tabs without pages (Designer) add
+  `tile-tabs-bare` and the wrapper lays out the content itself. `sm-tile`s inside the wrapper are drawn as panels
+  (`-c-panel` + hairline) so cards stay visible on the tile background; tiles on an `sm-panel` keep the tile look.
   The only exception is the System Manager's root TabPane, which uses `parent-tabs`: flat folder tabs on a header strip
   one step lighter than the content, 5px top radius, the selected tab takes the content color (`#222222` page inside a
   subpanel) so it merges with the page. Strip/content colors come from `-sm-tab-strip` / `-sm-tab-content`.
@@ -291,7 +312,8 @@ configuration conflicts:
   items without icons (`preference-button-selected`). The rules are scoped `.pref-nav .button.preference-button` so the
   global `.button` / `.scroll-pane` defaults (imported later) do not override them.
 - **Toolbars**: every `ToolBar` gets `styleClass="floating-toolbar"` (flat `#222222`, no border, radius 6; `floating-toolbar-inverted`
-  on a `#222222` background). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
+  on a `#222222` background; add `floating-toolbar-transparent` for a toolbar without its own strip directly on a tile, e.g.
+  the Competitions tabs). Exceptions: the toolbars in the table sidebars (`tables/scene-tables-sidebar-*.fxml`) and `sm-actionbar`.
 - **Action bar** (`sm-actionbar`): top bar of a component tab and of the table overview; any Button and SplitMenuButton
   inside gets the `sm-button` look automatically. Destructive buttons add `sm-danger-button`, the clear button of a
   search field keeps `ghost-icon-button`.
@@ -301,8 +323,8 @@ configuration conflicts:
   "Manufacturer · Year · Type", `sm-button-icon` actions top right.
 - Feature pills = `sm-pill-ok` (`sm-pill-unknown` when filtered out); facts in a two-column `sm-inset, vps-facts` grid
   of `vps-fact` cells (`sm-caption` key + `sm-text` value); IPDB row = `sm-inset` with `vps-tag` + `sm-link`.
-- Download sections (`tables/vps/VpsSection`, also used by the tables sidebar and the VPS assets dialog): collapsible
-  `vps-section` card, header = 18px icon + title + `vps-count` + chevron, skeleton bars while loading; rows
+- Download sections (`tables/vps/VpsSection`, also used by the tables sidebar and the VPS assets dialog): common
+  collapsible (`sm-collapsible`, see "Collapsible panels"), header = 18px icon + title + `vps-count` + chevron, skeleton bars while loading; rows
   (`VpsEntry`) = orange Consolas `vps-entry-version` + authors (green `vps-entry-installed` link when installed) +
   `vps-link-pill` (source dot, abbreviation, arrow) and an `sm-small` "Updated …" line.
 
@@ -323,8 +345,8 @@ configuration conflicts:
   filter / reload icon buttons, emulator combo with a muted "Emulator" prefix, two columns TABLE / TEMPLATE where custom
   designs show an `sm-pill-info` "Custom" pill, `sm-footer` with the table actions and the count), canvas tile and
   a 420px layers tile.
-- Page header like the Achievements view: `primary-tabs` (Highscore cards / Wheels, 18px icons) spanning the whole page,
-  then one `floating-toolbar` with the `sm-segmented` Template / Custom toggle, the template combo and its icon actions,
+- Page header like the Achievements view: text-only `tile-tabs` (Highscore cards / Wheels) at the top of the wrapping
+  tile, then one `floating-toolbar` with the `sm-segmented` Template / Custom toggle, the template combo and its icon actions,
   preview / folder buttons, `sm-button` "Generate this card" and `sm-accent-button` "Generate all" (both live in
   `template-editor.fxml` and are moved above the tiles by `HighscoreCardsController`).
 - Canvas tile: an info row (`c-icon-info` icon + `sm-hint` text, `sm-small` resolution) says what the changes apply to;
@@ -332,10 +354,10 @@ configuration conflicts:
   layer box is orange with an `sm-selection-caption` tag "Name · W × H" (`PositionResizer.setCaption`).
 - **Segmented control** (`sm-segmented`): HBox of ToggleButtons of one ToggleGroup on an inset box, selected =
   `-c-control` fill, bold white (icons orange); always call `SegmentedToggles.keepSelected`.
-- Layers panel: `sm-caption` "LAYERS" + `sm-hint`, then the `designer-layers` Accordion, top layer first. Each header =
-  18px muted icon + bold `designer-layer-name` + bare `designer-layer-button` eye / lock icons (locked = orange
-  `mdi2l-lock-outline`); hidden layers get `designer-layer-hidden` (struck through, `-c-disabled`). The expanded layer is
-  a borderless `-c-footer` card with only a 3px orange left bar; field labels inside are 12px `-c-subtle`, values `sm-text`.
+- Layers panel: `sm-caption` "LAYERS" + `sm-hint`, then the `designer-layers` Accordion (common collapsible panels, see
+  above), top layer first. Each header = 18px muted icon + bold `designer-layer-name` + bare `designer-layer-button` eye /
+  lock icons (locked = orange `mdi2l-lock-outline`); hidden layers get `designer-layer-hidden` (struck through,
+  `-c-disabled`). Field labels inside are 12px `-c-subtle`, values `sm-text`.
   Missing media = dashed `sm-inset, designer-empty-state` box with icon, `sm-hint` text and an `sm-button-small` action.
 
 ## 7. Checklist for a new view
@@ -347,3 +369,4 @@ configuration conflicts:
 5. No default-styled or borderless buttons; small inline actions use `sm-button-small`.
 6. Long text wraps (`wrapText="true"`), all text from the resource bundles (see i18n rules), "…" instead of "...".
 7. Never rebuild nodes from size listeners during layout — defer with `Platform.runLater`.
+8. Collapsible content = `Accordion` / `TitledPane` with an icon + `sm-collapsible-title` graphic header (section 6), no custom styling.

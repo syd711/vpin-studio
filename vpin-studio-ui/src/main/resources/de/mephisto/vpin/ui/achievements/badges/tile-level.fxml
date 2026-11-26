@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" minWidth="340.0" prefWidth="380.0" spacing="8.0" style="-fx-background-color: -c-tile; -fx-background-radius: 6;" visible="false" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.badges.BadgesLevelTileController">
+<VBox fx:id="root" minWidth="340.0" prefWidth="380.0" spacing="8.0" styleClass="sm-tile" visible="false" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.achievements.badges.BadgesLevelTileController">
    <children>
       <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -c-white;" text="%achievements.player_level" />
       <HBox alignment="CENTER_LEFT" spacing="14.0">

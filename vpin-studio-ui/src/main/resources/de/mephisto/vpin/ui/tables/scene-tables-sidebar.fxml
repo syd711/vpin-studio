@@ -9,367 +9,323 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Pane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
-    <center>
-        <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
-            <panes>
-                <TitledPane fx:id="titledPaneMedia" maxHeight="1.7976931348623157E308" prefHeight="1100.0" prefWidth="600.0">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="%tables.tables_sidebar.table_media" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsScreenValidators" styleClass="sm-button, sm-button-icon">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_screen_validators_settings" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                    <BorderPane.margin>
-                                        <Insets left="6.0" />
-                                    </BorderPane.margin>
-                                </HBox>
-                            </right>
-                            <center>
-                                <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" text="%backglass.res_generator.preview" styleClass="c-text-white" BorderPane.alignment="CENTER_RIGHT">
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                </CheckBox>
-                            </center>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneTableData" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%dropins.dropin_container.open_folder" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                            <left>
-                                <Label text="%pref.restore_backup.table_data" BorderPane.alignment="CENTER" />
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPanePlaylists" expanded="false" text="%tables.table_asset_manager.playlists" />
-                <TitledPane fx:id="titledPaneDirectB2s" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="folder-component">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.directb2s_folder" />
-                                            </tooltip>
-                                        </Button>
-                                        <Button mnemonicParsing="false" onAction="#onPrefsBackglass" styleClass="sm-button, sm-button-icon">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_backglass_server_settings" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                            <left>
-                                <Label text="%backglass.directb2s_admin.backglass" BorderPane.alignment="CENTER" />
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneDMD" expanded="false" layoutX="10.0" layoutY="137.0">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="folder-component">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_dmd_folder" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                            <left>
-                                <Label text="%backups.backups.dmd" BorderPane.alignment="CENTER" />
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPanePUPPack" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="folder-component">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_pup_pack_folder" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                            <left>
-                                <Label text="%backups.backup_restore.pup_pack" BorderPane.alignment="CENTER" />
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneAltSound" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="folder-component" BorderPane.alignment="CENTER">
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="%tables.tables_sidebar.alt_sound_folder" />
-                                    </tooltip>
-                                </Button>
-                            </right>
-                            <left>
-                                <Label text="%backups.backup_restore.alt_sound" BorderPane.alignment="CENTER" />
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneAltColor" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="folder-component" BorderPane.alignment="CENTER">
-                                    <graphic>
-                                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="%tables.tables_sidebar.open_alt_color_folder" />
-                                    </tooltip>
-                                    <font>
-                                        <Font size="10.0" />
-                                    </font>
-                                </Button>
-                            </right>
-                            <left>
-                                <Label text="%backups.backup_restore.alt_color" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Label>
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPanePov" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov" styleClass="folder-component">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_point_of_view_pov_folder" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                            <left>
-                                <Label text="%tables.tables_sidebar.table_pov_file_point_of_view" BorderPane.alignment="CENTER" />
-                            </left>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneHighscores" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="%backups.backups.highscores" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <HBox spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
-                                    <children>
-                                        <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="folder-component">
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-folder-open" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_highscore_file_or_folder" />
-                                            </tooltip>
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                        </Button>
-                                        <Button mnemonicParsing="false" onAction="#onPrefsHighscore" styleClass="sm-button, sm-button-icon">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_highscore_settings" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="%components.components.vpin_mame" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <children>
-                                        <Button mnemonicParsing="false" onAction="#onPrefsMame" styleClass="sm-button, sm-button-icon">
-                                            <font>
-                                                <Font size="10.0" />
-                                            </font>
-                                            <graphic>
-                                                <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
-                                            </graphic>
-                                            <tooltip>
-                                                <Tooltip text="%tables.tables_sidebar.open_vpin_mame_settings" />
-                                            </tooltip>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </right>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneVps" expanded="false" layoutX="10.0" layoutY="262.0">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="%pref.vps.virtual_pinball_spreadsheet" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-                                    <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component" BorderPane.alignment="CENTER">
-                                        <font>
-                                            <Font size="10.0" />
-                                        </font>
-                                        <graphic>
-                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-link" />
-                                        </graphic>
-                                        <tooltip>
-                                            <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
-                                        </tooltip>
-                                    </Button>
-                                    <Button mnemonicParsing="false" onAction="#onVpsPrefs" styleClass="sm-button, sm-button-icon">
-                                        <font>
-                                            <Font size="10.0" />
-                                        </font>
-                                        <graphic>
-                                            <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-cog" />
-                                        </graphic>
-                                        <tooltip>
-                                            <Tooltip text="%tables.tables_sidebar.open_vpin_mame_settings" />
-                                        </tooltip>
-                                    </Button>
-                                </HBox>
-                            </right>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-                <TitledPane fx:id="titledPaneScriptDetails" expanded="false">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="%tables.tables_sidebar.script_details" styleClass="c-text-white" BorderPane.alignment="CENTER">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Label>
-                            </left>
-                            <right>
-                        <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+<!-- common collapsible panels (UI-STYLEGUIDE.md, "Collapsible panels"), header widths are bound in TablesSidebarController -->
+<BorderPane maxWidth="620.0" prefWidth="620.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+   <center>
+      <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
+         <panes>
+            <TitledPane fx:id="titledPaneMedia" maxHeight="1.7976931348623157E308" prefHeight="1100.0">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2i-image-multiple-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%tables.tables_sidebar.table_media" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <CheckBox fx:id="mediaPreviewCheckbox" mnemonicParsing="false" selected="true" styleClass="c-text-white" text="%backglass.res_generator.preview" />
+                        <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0">
                            <children>
-                                      <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component">
-                                          <graphic>
-                                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2o-open-in-new" />
-                                          </graphic>
-                                          <tooltip>
-                                              <Tooltip text="%pref.pause_menu.open_script_in_visual_pinball_x" />
-                                          </tooltip>
-                                          <font>
-                                              <Font size="10.0" />
-                                          </font>
-                                      </Button>
-                              <Button mnemonicParsing="false" onAction="#onScriptEdit" styleClass="sm-button, sm-button-icon">
-                                 <font>
-                                    <Font size="10.0" />
-                                 </font>
+                              <Button mnemonicParsing="false" onAction="#onPrefsScreenValidators" styleClass="sm-button, sm-button-icon">
                                  <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-file-document-edit-outline" />
+                                    <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_screen_validators_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneTableData" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2f-file-document-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%pref.restore_backup.table_data" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%dropins.dropin_container.open_folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPanePlaylists" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2p-playlist-play" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%tables.table_asset_manager.playlists" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneDirectB2s" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%backglass.directb2s_admin.backglass" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="directb2sBtn" mnemonicParsing="false" onAction="#onDirectB2S" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.directb2s_folder" />
+                                 </tooltip>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onPrefsBackglass" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_backglass_server_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneDMD" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2d-dots-grid" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%backups.backups.dmd" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="dmdBtn" mnemonicParsing="false" onAction="#onDMD" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_dmd_folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPanePUPPack" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2v-video-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%backups.backup_restore.pup_pack" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="pupBackBtn" mnemonicParsing="false" onAction="#onPupPack" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_pup_pack_folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneAltSound" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2v-volume-high" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%backups.backup_restore.alt_sound" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="altSoundExplorerBtn" mnemonicParsing="false" onAction="#onAltSound" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.alt_sound_folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneAltColor" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2p-palette-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%backups.backup_restore.alt_color" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="altColorExplorerBtn" mnemonicParsing="false" onAction="#onAltColor" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_alt_color_folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPanePov" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2c-camera-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%tables.tables_sidebar.table_pov_file_point_of_view" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_point_of_view_pov_folder" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneHighscores" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2t-trophy-outline" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%backups.backups.highscores" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="nvramExplorerBtn" mnemonicParsing="false" onAction="#onHighscores" styleClass="folder-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-folder-open" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_highscore_file_or_folder" />
+                                 </tooltip>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onPrefsHighscore" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_highscore_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneMame" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2c-chip" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%components.components.vpin_mame" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onPrefsMame" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_vpin_mame_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneVps" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2f-format-list-checkbox" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%pref.vps.virtual_pinball_spreadsheet" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2l-link" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.table_asset_manager_embedded.https_virtual_pinball_spreadsheet_web_app" />
+                                 </tooltip>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onVpsPrefs" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2c-cog" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%tables.tables_sidebar.open_vpin_mame_settings" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+            <TitledPane fx:id="titledPaneScriptDetails" expanded="false">
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <FontIcon iconLiteral="mdi2c-code-braces" iconSize="18" styleClass="c-icon-muted" />
+                        <Label styleClass="sm-collapsible-title" text="%tables.tables_sidebar.script_details" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2o-open-in-new" styleClass="c-icon-white" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%pref.pause_menu.open_script_in_visual_pinball_x" />
+                                 </tooltip>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onScriptEdit" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-file-document-edit-outline" styleClass="c-icon-white" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="%components.doftester.dof_tester.edit_script_with_the_linked_vbs_file_system" />
@@ -377,11 +333,14 @@
                               </Button>
                            </children>
                         </HBox>
-                            </right>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
-            </panes>
-        </Accordion>
-    </center>
+                     </children>
+                  </HBox>
+               </graphic>
+            </TitledPane>
+         </panes>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
+      </Accordion>
+   </center>
 </BorderPane>

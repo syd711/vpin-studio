@@ -56,7 +56,7 @@
                 </StackPane>
             </center>
             <top>
-                <ToolBar styleClass="floating-toolbar" fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <ToolBar styleClass="floating-toolbar, floating-toolbar-transparent" fx:id="toolbar" BorderPane.alignment="CENTER">
                     <items>
                         <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" styleClass="sm-button, sm-button-icon, c-text-white">
                             <font>

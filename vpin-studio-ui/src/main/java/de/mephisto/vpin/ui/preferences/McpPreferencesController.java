@@ -25,6 +25,9 @@ public class McpPreferencesController implements Initializable {
   private CheckBox enabledCheckbox;
 
   @FXML
+  private CheckBox readOnlyCheckbox;
+
+  @FXML
   private Pane connectionPanel;
 
   @FXML
@@ -73,10 +76,20 @@ public class McpPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MCP_SETTINGS, McpSettings.class);
+    if (settings == null) {
+      //servers older than this client don't know the MCP settings
+      settings = new McpSettings();
+    }
 
     enabledCheckbox.setSelected(settings.isEnabled());
     enabledCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       settings.setEnabled(newValue);
+      save();
+    });
+
+    readOnlyCheckbox.setSelected(settings.isReadOnly());
+    readOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      settings.setReadOnly(newValue);
       save();
     });
 
