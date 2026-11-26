@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Service
@@ -184,9 +185,19 @@ public class MusicService {
   }
 
   public boolean delete(Game game) {
+    return delete(game, f -> false);
+  }
+
+  /**
+   * Deletes the music files of the game, except the ones the skip filter matches (e.g. files used by other tables).
+   */
+  public boolean delete(Game game, Predicate<File> skip) {
     List<File> mp3Files = getMp3Files(game);
     boolean result = true;
     for (File mp3File : mp3Files) {
+      if (skip.test(mp3File)) {
+        continue;
+      }
       if (!SystemUtil.deleteFileOrFolder(mp3File)) {
         result = false;
         LOG.warn("Deleted failed for {}", mp3File.getAbsolutePath());

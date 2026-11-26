@@ -116,6 +116,7 @@ public class GameMediaServiceDeleteTest {
     FolderLookupService folderLookupService = new FolderLookupService();
     ReflectionTestUtils.setField(folderLookupService, "vPinMameService", vPinMameService);
     ReflectionTestUtils.setField(vPinMameService, "folderLookupService", folderLookupService);
+    ReflectionTestUtils.setField(service, "folderLookupService", folderLookupService);
 
     // the registry and the DMD device ini are Windows only
     doReturn(true).when(vPinMameService).deleteOptions(any());
@@ -127,6 +128,7 @@ public class GameMediaServiceDeleteTest {
     when(altSoundService.delete(any())).thenReturn(true);
     when(altColorService.delete(any())).thenReturn(true);
     when(musicService.delete(any())).thenReturn(true);
+    when(musicService.delete(any(), any())).thenReturn(true);
     when(backglassService.deleteB2STableSettings(any())).thenReturn(true);
     when(vPinMameRomAliasService.deleteAlias(any(), any())).thenReturn(true);
     when(frontendService.deleteGame(anyInt())).thenReturn(true);
@@ -181,6 +183,48 @@ public class GameMediaServiceDeleteTest {
     service.deleteGame(descriptor);
 
     assertThat(romZip).doesNotExist();
+  }
+
+  @Test
+  void deleteRom_keepsRomUsedByAnotherTable() throws IOException {
+    File romZip = touch(tableFolder, "pinmame/roms/" + ROM + ".zip");
+    Game other = createGame(2, tableFolder, "Twister Remake.vpx");
+    when(gameService.getKnownGames(-1)).thenReturn(List.of(game, other));
+
+    DeleteDescriptor descriptor = tableFilesOnly();
+    descriptor.setDeleteRom(true);
+
+    assertThat(service.deleteGame(descriptor)).isTrue();
+
+    assertThat(romZip).exists();
+    assertThat(new File(tableFolder, "Twister.vpx")).doesNotExist();
+  }
+
+  @Test
+  void deleteRom_deletesRomUsedByTablesDeletedTogether() throws IOException {
+    File romZip = touch(tableFolder, "pinmame/roms/" + ROM + ".zip");
+    Game other = createGame(2, tableFolder, "Twister Remake.vpx");
+    when(gameService.getGame(2)).thenReturn(other);
+    when(gameService.getKnownGames(-1)).thenReturn(List.of(game, other));
+
+    DeleteDescriptor descriptor = tableFilesOnly();
+    descriptor.setGameIds(List.of(1, 2));
+    descriptor.setDeleteRom(true);
+
+    assertThat(service.deleteGame(descriptor)).isTrue();
+
+    assertThat(romZip).doesNotExist();
+  }
+
+  @Test
+  void deleteEverything_keepsTableFileReferencedByAnotherGame() throws IOException {
+    Game duplicate = createGame(2, tableFolder, "Twister.vpx");
+    when(gameService.getKnownGames(-1)).thenReturn(List.of(game, duplicate));
+
+    service.deleteGame(everything());
+
+    assertThat(new File(tableFolder, "Twister.vpx")).exists();
+    assertThat(tableFolder).exists();
   }
 
   // ---- table folder ----

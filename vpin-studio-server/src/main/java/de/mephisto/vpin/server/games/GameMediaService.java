@@ -64,6 +64,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.nio.file.Path;
+import java.util.stream.Stream;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -71,11 +73,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
+import de.mephisto.vpin.server.puppack.PupPack;
+import java.util.stream.Collectors;
+import java.util.function.Function;
+import java.util.Locale;
 import java.time.OffsetDateTime;
 
 @Service
 public class GameMediaService extends MediaService {
   private final static Logger LOG = LoggerFactory.getLogger(GameMediaService.class);
+
+  @Autowired
+  private FolderLookupService folderLookupService;
 
   @Autowired
   private EmulatorService emulatorService;
@@ -784,6 +793,10 @@ public class GameMediaService extends MediaService {
     //collected here, so that the folder is judged when all tables of the folder have been processed
     Map<File, GameEmulator> tableFolders = new LinkedHashMap<>();
 
+    //resources that are still referenced by games which are not deleted must be kept
+    Set<Integer> deletedIds = new HashSet<>(descriptor.getGameIds());
+    List<Game> otherGames = gameService.getKnownGames(-1).stream().filter(g -> !deletedIds.contains(g.getId())).toList();
+
     for (Integer gameId : descriptor.getGameIds()) {
       try {
         Game game = gameService.getGame(gameId);
@@ -794,7 +807,7 @@ public class GameMediaService extends MediaService {
         }
 
         tableFolders.put(game.getGameFile().getParentFile(), game.getEmulator());
-        success &= deleteGameData(descriptor, game);
+        success &= deleteGameData(descriptor, game, otherGames);
       }
       catch (Exception e) {
         LOG.error("Deletion of game {} failed: {}", gameId, e.getMessage(), e);
@@ -804,7 +817,7 @@ public class GameMediaService extends MediaService {
 
     for (Map.Entry<File, GameEmulator> entry : tableFolders.entrySet()) {
       try {
-        success &= deleteTableFolder(entry.getKey(), entry.getValue(), descriptor.isDeleteTableFolder());
+        success &= deleteTableFolder(entry.getKey(), entry.getValue(), descriptor.isDeleteTableFolder(), otherGames);
       }
       catch (Exception e) {
         LOG.error("Deletion of table folder \"{}\" failed: {}", entry.getKey(), e.getMessage(), e);
@@ -821,56 +834,63 @@ public class GameMediaService extends MediaService {
    *
    * @return true if all steps succeeded
    */
-  private boolean deleteGameData(@NonNull DeleteDescriptor descriptor, @NonNull Game game) {
+  private boolean deleteGameData(@NonNull DeleteDescriptor descriptor, @NonNull Game game, @NonNull List<Game> otherGames) {
     boolean success = true;
 
     if (descriptor.isDeleteHighscores()) {
+      //the highscore (e.g. nvram) is ROM based and resetting it would reset the highscore of every table using it
       success &= step(game, "highscores", () -> {
-        highscoreService.deleteHighscore(game);
+        if (!isShared(game, otherGames, "highscore", g -> highscoreService.getHighscoreFile(g))) {
+          highscoreService.deleteHighscore(game);
+        }
         return true;
       });
     }
 
     if (descriptor.isDeleteTable()) {
-      success &= step(game, "table file", () -> SystemUtil.deleteFileOrFolder(game.getGameFile()));
+      success &= step(game, "table file", () -> deleteFileUnlessShared(game, otherGames, "table file", Game::getGameFile));
     }
 
     if (descriptor.isDeleteDirectB2s()) {
       success &= step(game, "default pictures", () -> defaultPictureService.deleteAllPictures(game));
-      for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(game.getDirectB2SFile())) {
-        success &= step(game, "backglass file", () -> SystemUtil.deleteFileOrFolder(sibling));
+      if (!isShared(game, otherGames, "directb2s file", Game::getDirectB2SFile)) {
+        for (File sibling : BackglassNamingHelper.getSiblingBackglassFiles(game.getDirectB2SFile())) {
+          success &= step(game, "backglass file", () -> SystemUtil.deleteFileOrFolder(sibling));
+        }
+        success &= step(game, "directb2s file", () -> SystemUtil.deleteFileOrFolder(game.getDirectB2SFile()));
       }
-      success &= step(game, "directb2s file", () -> SystemUtil.deleteFileOrFolder(game.getDirectB2SFile()));
     }
 
     if (descriptor.isDeleteIni()) {
-      success &= step(game, "ini file", () -> SystemUtil.deleteFileOrFolder(game.getIniFile()));
-      success &= step(game, "VR ini file", () -> SystemUtil.deleteFileOrFolder(game.getVRIniFile()));
+      success &= step(game, "ini file", () -> deleteFileUnlessShared(game, otherGames, "ini file", Game::getIniFile));
+      success &= step(game, "VR ini file", () -> deleteFileUnlessShared(game, otherGames, "VR ini file", Game::getVRIniFile));
     }
 
     if (descriptor.isDeleteBAMCfg()) {
-      success &= step(game, "BAM cfg file", () -> SystemUtil.deleteFileOrFolder(game.getBAMCfgFile()));
+      success &= step(game, "BAM cfg file", () -> deleteFileUnlessShared(game, otherGames, "BAM cfg file", Game::getBAMCfgFile));
     }
 
     if (descriptor.isDeleteRes()) {
-      success &= step(game, "res file", () -> SystemUtil.deleteFileOrFolder(game.getResFile()));
+      success &= step(game, "res file", () -> deleteFileUnlessShared(game, otherGames, "res file", Game::getResFile));
     }
 
     if (descriptor.isDeleteVbs()) {
-      success &= step(game, "vbs file", () -> SystemUtil.deleteFileOrFolder(game.getVBSFile()));
+      success &= step(game, "vbs file", () -> deleteFileUnlessShared(game, otherGames, "vbs file", Game::getVBSFile));
     }
 
     if (descriptor.isDeletePov()) {
-      success &= step(game, "pov file", () -> SystemUtil.deleteFileOrFolder(game.getPOVFile()));
+      success &= step(game, "pov file", () -> deleteFileUnlessShared(game, otherGames, "pov file", Game::getPOVFile));
     }
 
     if (descriptor.isDeletePupPack()) {
-      success &= step(game, "PUP pack", () -> pupPacksService.delete(game));
+      success &= step(game, "PUP pack", () -> isShared(game, otherGames, "PUP pack", this::getPupPackFolder) || pupPacksService.delete(game));
     }
 
     if (descriptor.isDeletePinVol()) {
       success &= step(game, "PinVol", () -> {
-        pinVolService.delete(game);
+        if (!isShared(game, otherGames, "PinVol entry", Game::getGameFile)) {
+          pinVolService.delete(game);
+        }
         return true;
       });
     }
@@ -878,52 +898,69 @@ public class GameMediaService extends MediaService {
     if (descriptor.isDeleteDMDs()) {
       success &= step(game, "DMD package", () -> {
         DMDPackage dmdPackage = dmdService.getDMDPackage(game);
-        return dmdPackage == null || dmdService.delete(game);
+        return dmdPackage == null || isShared(game, otherGames, "DMD package", g -> dmdService.getDmdFolder(g)) || dmdService.delete(game);
       });
     }
 
     if (descriptor.isDeleteAlias() && game.isVpxGame()) {
-      success &= step(game, "ROM alias", () -> VPinMameRomAliasService.deleteAlias(emulatorService.getGameEmulator(game.getEmulatorId()), game.getRomAlias()));
+      success &= step(game, "ROM alias", () -> isShared(game, otherGames, "ROM alias", GameMediaService::getRomAliasKey)
+          || VPinMameRomAliasService.deleteAlias(emulatorService.getGameEmulator(game.getEmulatorId()), game.getRomAlias()));
     }
 
     if (descriptor.isDeleteAltSound()) {
-      success &= step(game, "ALTSound", () -> altSoundService.delete(game));
+      success &= step(game, "ALTSound", () -> isShared(game, otherGames, "ALTSound", g -> altSoundService.getAltSoundFolder(g)) || altSoundService.delete(game));
     }
 
     if (descriptor.isDeleteAltColor()) {
-      success &= step(game, "ALT color", () -> altColorService.delete(game));
+      success &= step(game, "ALT color", () -> isShared(game, otherGames, "ALT color", g -> altColorService.getAltColorFolder(g)) || altColorService.delete(game));
     }
 
     if (descriptor.isDeleteB2STableSettings()) {
       //Only relevant for tables that are located in a separate folder
       success &= step(game, "B2STableSettings file", () -> {
         File b2STableSettingsFile = game.getB2STableSettingsFile();
-        return b2STableSettingsFile == null || !b2STableSettingsFile.exists() || SystemUtil.deleteFileOrFolder(b2STableSettingsFile);
+        return b2STableSettingsFile == null || !b2STableSettingsFile.exists()
+            || isShared(game, otherGames, "B2STableSettings file", Game::getB2STableSettingsFile)
+            || SystemUtil.deleteFileOrFolder(b2STableSettingsFile);
       });
 
-      //Delete the regular entry
-      success &= step(game, "B2STableSettings entry", () -> backglassService.deleteB2STableSettings(game));
+      //Delete the regular entry, it is stored by ROM name
+      success &= step(game, "B2STableSettings entry", () -> isShared(game, otherGames, "B2STableSettings entry", Game::getRom)
+          || backglassService.deleteB2STableSettings(game));
     }
 
     if (descriptor.isDeleteDMDDeviceIni()) {
-      success &= step(game, "DMDDevice.ini entry", () -> vPinMameService.deleteDMDDeviceIniEntry(game));
+      //the entry is stored by ROM name and table name
+      success &= step(game, "DMDDevice.ini entry", () -> isShared(game, otherGames, "DMDDevice.ini entry", Game::getRom)
+          || isShared(game, otherGames, "DMDDevice.ini entry", Game::getTableName)
+          || vPinMameService.deleteDMDDeviceIniEntry(game));
     }
 
     //cfg files belong to MAME
     if (descriptor.isDeleteCfg() && game.isVpxGame()) {
-      success &= step(game, "MAME cfg file", () -> vPinMameService.deleteCfg(game));
+      success &= step(game, "MAME cfg file", () -> isShared(game, otherGames, "MAME cfg file", g -> folderLookupService.getCfgFile(g)) || vPinMameService.deleteCfg(game));
 
       if (!StringUtils.isEmpty(game.getRom())) {
-        success &= step(game, "MAME options", () -> vPinMameService.deleteOptions(game.getRom()));
+        //the options are stored globally by ROM name
+        success &= step(game, "MAME options", () -> isShared(game, otherGames, "MAME options", Game::getRom) || vPinMameService.deleteOptions(game.getRom()));
       }
     }
 
     if (descriptor.isDeleteRom() && !StringUtils.isEmpty(game.getRom())) {
-      success &= step(game, "ROM", () -> vPinMameService.deleteRom(game));
+      success &= step(game, "ROM", () -> isShared(game, otherGames, "ROM", g -> folderLookupService.getRomFile(g)) || vPinMameService.deleteRom(game));
     }
 
     if (descriptor.isDeleteMusic() && game.isVpxGame()) {
-      success &= step(game, "music", () -> musicService.delete(game));
+      success &= step(game, "music", () -> {
+        Set<String> usedByOthers = getMusicFilesUsedByOthers(game, otherGames);
+        return musicService.delete(game, f -> {
+          if (usedByOthers.contains(resourceKey(f))) {
+            LOG.info("Skipped deletion of music file \"{}\", it is also used by another table", f.getAbsolutePath());
+            return true;
+          }
+          return false;
+        });
+      });
     }
 
     success &= step(game, "default background", () -> {
@@ -936,6 +973,105 @@ public class GameMediaService extends MediaService {
     }
 
     return success;
+  }
+
+  //------------------------------------------- shared resources
+
+  private boolean deleteFileUnlessShared(@NonNull Game game, @NonNull List<Game> otherGames, @NonNull String name, @NonNull Function<Game, File> resolver) {
+    File file = resolver.apply(game);
+    if (file == null || !file.exists()) {
+      return true;
+    }
+    return isShared(game, otherGames, name, resolver) || SystemUtil.deleteFileOrFolder(file);
+  }
+
+  /**
+   * Returns true (and logs it) if one of the other games resolves the same resource as the given game,
+   * which means that the resource must not be deleted.
+   */
+  private boolean isShared(@NonNull Game game, @NonNull List<Game> otherGames, @NonNull String name, @NonNull Function<Game, ?> resolver) {
+    Object key = resourceKey(resolve(resolver, game));
+    if (key == null) {
+      return false;
+    }
+    List<String> sharingGames = otherGames.stream()
+        .filter(other -> key.equals(resourceKey(resolve(resolver, other))))
+        .map(Game::getGameDisplayName)
+        .toList();
+    if (!sharingGames.isEmpty()) {
+      LOG.info("Skipped deletion of {} of \"{}\", it is also used by {} other table(s): {}", name, game.getGameDisplayName(), sharingGames.size(),
+          sharingGames.stream().limit(5).collect(Collectors.joining(", ")));
+      return true;
+    }
+    return false;
+  }
+
+  @Nullable
+  private static Object resolve(@NonNull Function<Game, ?> resolver, @NonNull Game game) {
+    try {
+      return resolver.apply(game);
+    }
+    catch (Exception e) {
+      LOG.debug("Failed to resolve resource of {}: {}", game, e.getMessage());
+      return null;
+    }
+  }
+
+  /**
+   * Files are compared by their canonical path, names case insensitive. Comparing case insensitive on
+   * case sensitive file systems only means that a resource is kept more often.
+   */
+  @Nullable
+  static Object resourceKey(@Nullable Object resource) {
+    if (resource instanceof File file) {
+      try {
+        return file.getCanonicalPath().toLowerCase(Locale.ROOT);
+      }
+      catch (IOException e) {
+        return file.getAbsolutePath().toLowerCase(Locale.ROOT);
+      }
+    }
+    if (resource instanceof String value) {
+      return StringUtils.isBlank(value) ? null : StringUtils.deleteWhitespace(value).toLowerCase(Locale.ROOT);
+    }
+    return resource;
+  }
+
+  @Nullable
+  private static String getRomAliasKey(@NonNull Game game) {
+    return StringUtils.isBlank(game.getRomAlias()) ? null : game.getEmulatorId() + ":" + game.getRomAlias();
+  }
+
+  @Nullable
+  private File getPupPackFolder(@NonNull Game game) {
+    PupPack pupPack = pupPacksService.getPupPackCached(game);
+    return pupPack != null ? pupPack.getPupPackFolder() : null;
+  }
+
+  /**
+   * The music files of the games that use the same music folder, e.g. the shared Music folder of the legacy
+   * layout or the music folder in the games folder for tables that are not located in a folder of their own.
+   */
+  @NonNull
+  private Set<String> getMusicFilesUsedByOthers(@NonNull Game game, @NonNull List<Game> otherGames) {
+    Object musicRoot = resourceKey(resolve(g -> folderLookupService.getMusicFolder(g), game));
+    Set<String> result = new HashSet<>();
+    if (musicRoot == null) {
+      return result;
+    }
+    for (Game other : otherGames) {
+      if (other.isVpxGame() && musicRoot.equals(resourceKey(resolve(g -> folderLookupService.getMusicFolder(g), other)))) {
+        try {
+          for (File file : musicService.getMp3Files(other)) {
+            result.add((String) resourceKey(file));
+          }
+        }
+        catch (Exception e) {
+          LOG.warn("Failed to resolve music files of {}: {}", other, e.getMessage());
+        }
+      }
+    }
+    return result;
   }
 
   private boolean deleteFromFrontend(@NonNull DeleteDescriptor descriptor, @NonNull Game game) {
@@ -1029,13 +1165,14 @@ public class GameMediaService extends MediaService {
    *
    * @return false if the folder should have been deleted, but that failed
    */
-  private boolean deleteTableFolder(@Nullable File tableFolder, @Nullable GameEmulator emulator, boolean deleteContent) {
+  private boolean deleteTableFolder(@Nullable File tableFolder, @Nullable GameEmulator emulator, boolean deleteContent, @NonNull List<Game> otherGames) {
     if (tableFolder == null || emulator == null || !tableFolder.exists()) {
       return true;
     }
 
+    //compared canonical, so that paths like "Tables\." or a different case never match as a subfolder
     File gamesFolder = emulator.getGamesFolder();
-    if (tableFolder.equals(gamesFolder)) {
+    if (!FileUtils.isStrictlyBelow(gamesFolder, tableFolder)) {
       return true;
     }
 
@@ -1046,17 +1183,27 @@ public class GameMediaService extends MediaService {
         return true;
       }
 
-      Path games = gamesFolder.toPath().toAbsolutePath().normalize();
-      Path folder = tableFolder.toPath().toAbsolutePath().normalize();
-      if (!folder.startsWith(games) || folder.equals(games)) {
-        LOG.warn("Skipped deletion of \"{}\", it is not a subfolder of the games folder \"{}\"", tableFolder.getAbsolutePath(), gamesFolder.getAbsolutePath());
+      List<String> referencingGames = otherGames.stream()
+          .filter(g -> g.getGameFile() != null && FileUtils.isStrictlyBelow(tableFolder, g.getGameFile()))
+          .map(Game::getGameDisplayName)
+          .toList();
+      if (!referencingGames.isEmpty()) {
+        LOG.info("Kept table folder \"{}\", it is still used by {}", tableFolder.getAbsolutePath(), String.join(", ", referencingGames));
         return true;
       }
 
-      String gameExt = StringUtils.defaultIfEmpty(emulator.getGameExt(), "vpx");
-      File[] otherTables = tableFolder.listFiles((dir, name) -> FilenameUtils.isExtension(name.toLowerCase(), gameExt.toLowerCase()));
-      if (otherTables != null && otherTables.length > 0) {
-        LOG.info("Kept table folder \"{}\", it still contains {} table file(s)", tableFolder.getAbsolutePath(), otherTables.length);
+      String gameExt = StringUtils.defaultIfEmpty(emulator.getGameExt(), "vpx").toLowerCase();
+      try (Stream<Path> walk = Files.walk(tableFolder.toPath())) {
+        long otherTables = walk.filter(Files::isRegularFile)
+            .filter(f -> FilenameUtils.isExtension(f.getFileName().toString().toLowerCase(), gameExt, "vpx"))
+            .count();
+        if (otherTables > 0) {
+          LOG.info("Kept table folder \"{}\", it still contains {} table file(s)", tableFolder.getAbsolutePath(), otherTables);
+          return true;
+        }
+      }
+      catch (IOException e) {
+        LOG.warn("Kept table folder \"{}\", failed to check its content: {}", tableFolder.getAbsolutePath(), e.getMessage());
         return true;
       }
     }
@@ -1068,6 +1215,7 @@ public class GameMediaService extends MediaService {
     LOG.warn("Failed to delete table folder {}", tableFolder.getAbsolutePath());
     return false;
   }
+
 
   //--------------------------------------
   private File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
