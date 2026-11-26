@@ -22,40 +22,30 @@
 <?import javafx.scene.control.ToggleButton?>
 <TitledPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorCanvasController">
    <graphic>
-      <BorderPane prefWidth="250.0">
-         <left>
-            <Label text="%cards.template_editor_canvas.canvas_settings" />
-         </left>
-         <right>
-            <HBox alignment="CENTER_RIGHT" spacing="3.0">
-               <children>
-                  <Button fx:id="eyeBtn" mnemonicParsing="false" styleClass="sm-button, sm-button-icon">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%cards.template_editor_canvas.toggle_canvas_visibility" />
-                     </tooltip>
-                  </Button>
-                  <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
-                     </tooltip>
-                  </ToggleButton>
-               </children>
-            </HBox>
-         </right>
-      </BorderPane>
-   </graphic>
+      <HBox fx:id="layerHeader" alignment="CENTER_LEFT" spacing="10.0" styleClass="designer-layer-header">
+         <children>
+            <FontIcon iconLiteral="mdi2c-checkbox-blank-outline" iconSize="18" styleClass="c-icon-muted" />
+            <Label fx:id="layerNameLabel" styleClass="designer-layer-name" text="%cards.designer.layer_canvas" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="eyeBtn" mnemonicParsing="false" styleClass="designer-layer-button">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2e-eye-outline" iconSize="18" styleClass="c-icon-muted" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%cards.template_editor_canvas.toggle_canvas_visibility" />
+               </tooltip>
+            </Button>
+            <ToggleButton fx:id="lockBtn" mnemonicParsing="false" onAction="#onLockToggle" styleClass="designer-layer-button">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2l-lock-open-variant-outline" iconSize="18" styleClass="c-icon-muted" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
+               </tooltip>
+            </ToggleButton>
+         </children>
+      </HBox>
+  </graphic>
    <content>
       <ScrollPane hbarPolicy="NEVER">
          <content>

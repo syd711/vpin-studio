@@ -205,7 +205,7 @@
             <Insets bottom="12.0" />
          </BorderPane.margin>
          <children>
-            <ToolBar fx:id="toolbar" styleClass="sm-actionbar">
+            <ToolBar fx:id="toolbar" styleClass="sm-actionbar, sm-actionbar-flush">
                <items>
                   <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" styleClass="sm-button, sm-button-icon, c-text-white">
                      <font>
@@ -442,7 +442,7 @@
                   </HBox>
                </items>
             </ToolBar>
-            <ToolBar fx:id="secondaryToolbar" styleClass="sm-actionbar" />
+            <ToolBar fx:id="secondaryToolbar" styleClass="sm-actionbar, sm-actionbar-inset" />
          </children>
       </VBox>
    </top>

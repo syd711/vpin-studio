@@ -124,3 +124,8 @@
     -fx-border-color: -c-selected;
     -fx-border-radius: 4;
 }
+
+/* search field with a magnifier icon on its left (designer table list) */
+.text-field.designer-search {
+    -fx-padding: 4 30 4 34;
+}

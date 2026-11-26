@@ -141,3 +141,9 @@
     -fx-font-weight: bold;
     -fx-text-fill: -c-white;
 }
+
+/* info / selection pill, e.g. "Custom" in the designer table list */
+.sm-pill-info {
+    -fx-background-color: -c-info-border;
+    -fx-text-fill: -c-link;
+}

@@ -5,12 +5,11 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -18,506 +17,415 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
+<BorderPane prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-resizeable-header.fxml" />
    </top>
-   <bottom>
-      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="%backglass.res_generator.cancel" />
-            <Button fx:id="saveGloballyBtn" mnemonicParsing="false" onAction="#onSaveGloballyClick" styleClass="default-button" text="%tables.dmd_position.save_position_globally">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveLocallyBtn" mnemonicParsing="false" onAction="#onSaveLocallyClick" styleClass="submit-button" text="%tables.dmd_position.save_position_locally">
-               <tooltip>
-                  <Tooltip prefWidth="300.0" text="%tables.dmd_position.save_the_current_dmd_position_ctrl_s" wrapText="true" />
-               </tooltip>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="saveCloseLocallyBtn" mnemonicParsing="false" onAction="#onSaveCloseLocallyClick" styleClass="submit-button" text="%tables.dmd_position.save_close_position_locally">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </BorderPane.margin>
-      </HBox>
-   </bottom>
    <center>
-      <BorderPane BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </BorderPane.margin>
+      <BorderPane>
+         <!-- title row: table name, ROM + storage chips, auto-save and prev/next navigation -->
          <top>
-            <BorderPane BorderPane.alignment="TOP_LEFT">
-               <left>
-                  <Label fx:id="titleLabel" styleClass="default-title, c-text-white" text="%backups.tables_backup.title" BorderPane.alignment="CENTER">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </left>
-               <right>
-                  <HBox alignment="CENTER" spacing="6.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="sm-divider" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
+               <children>
+                  <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
+                        <Label fx:id="titleLabel" styleClass="vps-sidebar-title" text="%tables.dmd_position.loading" />
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <HBox fx:id="romPane" alignment="CENTER_LEFT" spacing="6.0" styleClass="sm-pill, sm-pill-unknown">
+                                 <children>
+                                    <Label styleClass="sm-small" text="%tables.dmd_position.chip_rom" />
+                                    <Label fx:id="romLabel" styleClass="sm-caption, c-text-white" text="--" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="tablePositionLabel" styleClass="sm-pill, sm-pill-unknown">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2f-file-cog-outline" iconSize="16" styleClass="c-icon-muted" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                     <children>
+                        <CheckBox fx:id="autosaveCheckbox" minWidth="-Infinity" mnemonicParsing="false" selected="true" styleClass="sm-text, sm-header-checkbox, sm-accent-checkbox" text="%cards.instructions_card.auto_save" />
                         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious" styleClass="sm-button, sm-button-icon">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                            <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="18" styleClass="c-icon-white" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext" styleClass="sm-button, sm-button-icon">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                            <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-forward" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="18" styleClass="c-icon-white" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_next_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
                      </children>
-                     <padding>
-                        <Insets bottom="3.0" left="6.0" right="6.0" top="3.0" />
-                     </padding>
                   </HBox>
-                  </right>
-            </BorderPane>
+               </children>
+            </HBox>
          </top>
-         <center>
-            <VBox>
-               <children>
-                  <StackPane minHeight="-Infinity">
-                     <children>
-                        <TabPane fx:id="tabPane" styleClass="primary-tabs" minHeight="-Infinity">
-                           <tabs>
-                              <Tab fx:id="playfieldTab" closable="false" text="%pref.validators_screens.playfield" />
-                              <Tab fx:id="backglassTab" closable="false" text="%backglass.directb2s_admin.backglass" />
-                              <Tab fx:id="dmdTab" closable="false" text="%backups.backups.dmd" />
-                           </tabs>
-                        </TabPane>
-                     </children>
-                  </StackPane>
 
-                  <ToolBar styleClass="floating-toolbar" minHeight="-Infinity">
-                     <items>
-                        <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" styleClass="sm-button, sm-button-icon, c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-magnify-minus" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%tables.dmd_position.zoom_out" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#onZoomIn" styleClass="sm-button, sm-button-icon, c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2m-magnify-plus" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%tables.dmd_position.zoom_in" />
-                           </tooltip>
-                        </Button>
-                        <Button fx:id="zoomFitBtn" mnemonicParsing="false" onAction="#onZoomFit" styleClass="sm-button, sm-button-icon, c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-fit-to-page-outline" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="%tables.dmd_position.zoom_fit" />
-                           </tooltip>
-                        </Button>
-                        <Label fx:id="zoomLabel" styleClass="default-text" text="100%">
+         <center>
+            <HBox spacing="14.0">
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="12.0" />
+               </padding>
+               <children>
+                  <!-- canvas panel -->
+                  <VBox styleClass="sm-panel" HBox.hgrow="ALWAYS">
+                     <children>
+                        <HBox alignment="BOTTOM_LEFT" spacing="6.0" styleClass="sm-divider">
                            <padding>
-                              <Insets left="6.0" />
+                              <Insets right="12.0" />
                            </padding>
-                        </Label>
-                     </items>
-                  </ToolBar>
-
-      <BorderPane fx:id="parentpane" VBox.vgrow="ALWAYS">
-         <center>
-            <ScrollPane fx:id="canvasScrollPane" prefViewportHeight="770.0" prefViewportWidth="1026.0">
-            <Pane fx:id="imagepane" styleClass="media-parent">
-               <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
-               </ImageView>
-               <VBox fx:id="noFullDMDPane">
-                  <children>
-                     <VBox fx:id="uploadFullDMDImagePane" spacing="3">
-                        <children>
-                           <Label fx:id="noFullDMDLabel" styleClass="default-text, c-text-white" text="%tables.dmd_position.no_full_dmd_image_present_in_the_backglass" />
-                           <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="%tables.dmd_position.you_can_upload_or_drop_a_full_dmd" />
-                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="%backglass.res_generator.select_file" styleClass="sm-button">
-                              <font>
-                                 <Font size="14.0" />
-                              </font>
-                           </Button>
-                        </children>
-                        <VBox.margin>
-                           <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
-                        </VBox.margin>
-                     </VBox>
-                     <VBox fx:id="activateFullDMDImagePane" spacing="3">
-                        <children>
-                           <Label fx:id="activateDMDImageLabel" styleClass="default-text, c-text-white" text="%tables.dmd_position.the_full_dmd_image_present_in_the_backglass" />
-                           <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="%tables.dmd_position.you_can_show_the_backglass_dmd_image" />
-                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="%tables.dmd_position.show_b2s_dmd" styleClass="sm-button">
-                              <font>
-                                 <Font size="14.0" />
-                              </font>
-                           </Button>
-                        </children>
-                        <VBox.margin>
-                           <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
-                        </VBox.margin>
-                     </VBox>
-
-                     <VBox fx:id="useFullDMDMediaPane" spacing="3">
-                        <children>
-                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text, c-text-white" text="%tables.dmd_position.or_use_full_dmd_media" />
-                           <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description, c-text-white" text="%tables.dmd_position.full_dmd_media_is_present_you_can_keep" />
-                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.keep_frontend_full_dmd_on" styleClass="sm-button">
-                              <font>
-                                 <Font size="14.0" />
-                              </font>
-                           </Button>
-                           <Label fx:id="grabFullDMDMediaDescr" styleClass="preference-description, c-text-white" text="%tables.dmd_position.or_you_can_grab_the_full_dmd_apron" />
-                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="%tables.dmd_position.grab_frontend_image" styleClass="sm-button">
-                              <font>
-                                 <Font size="14.0" />
-                              </font>
-                           </Button>
-                        </children>
-                        <VBox.margin>
-                           <Insets bottom="12.0" left="12.0" right="12.0" />
-                        </VBox.margin>
-                     </VBox>
-                  </children>
-               </VBox>
-            </Pane>
-            </ScrollPane>
-         </center>
-         <right>
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="300.0" BorderPane.alignment="TOP_LEFT">
-               <BorderPane.margin>
-                  <Insets left="12.0" />
-               </BorderPane.margin>
-            <VBox prefWidth="280.0">
-               <children>
-                  <Label fx:id="tablePositionLabel" text="--">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </Label>
-                  <HBox fx:id="romPane" spacing="3.0">
-                     <children>
-                        <Label styleClass="default-text" text="%tables.dmd_position.rom_or_alias" />
-                        <Label fx:id="romLabel" text="--">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                  <Label styleClass="default-headline" text="%tables.dmd_position.dmd_type">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <VBox spacing="3.0">
-                     <children>
-                        <ComboBox fx:id="DMDTypeCombo" />
-                        <HBox fx:id="disablePane">
                            <children>
-                              <VBox spacing="3.0">
+                              <TabPane fx:id="tabPane" minHeight="-Infinity" styleClass="primary-tabs" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                                 <tabs>
+                                    <Tab fx:id="playfieldTab" closable="false" text="%pref.validators_screens.playfield" />
+                                    <Tab fx:id="backglassTab" closable="false" text="%backglass.directb2s_admin.backglass" />
+                                    <Tab fx:id="dmdTab" closable="false" text="%backups.backups.dmd" />
+                                 </tabs>
+                              </TabPane>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                                 <padding>
+                                    <Insets bottom="5.0" />
+                                 </padding>
                                  <children>
-                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="%tables.dmd_position.turn_dmd_off_in_vpinmame" styleClass="c-text-white">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="%tables.dmd_position.disable_dmd_in_dmddevice_ini" styleClass="c-text-white">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                 </children>
-                              </VBox>
-                              <Label>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%tables.dmd_position.deactivate_external_dmd_in_vpinmame_settings_and_or" wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="12.0" top="6.0" />
-                           </VBox.margin>
-                        </HBox>
-                        <VBox fx:id="backglassScorePane" spacing="3.0">
-                           <children>
-                              <HBox>
-                                 <children>
-                                    <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="%tables.dmd_position.turn_backglass_scores_off" styleClass="c-text-white">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
+                                    <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#onZoomOut" styleClass="sm-button, sm-button-icon">
                                        <graphic>
-                                          <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                          <FontIcon iconLiteral="mdi2m-magnify-minus-outline" iconSize="18" styleClass="c-icon-white" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="%tables.dmd_position.when_checked_tell_the_backglass_not_to_render" wrapText="true" />
+                                          <Tooltip text="%tables.dmd_position.zoom_out" />
                                        </tooltip>
-                                       <HBox.margin>
-                                          <Insets left="12.0" />
-                                       </HBox.margin>
-                                    </Label>
+                                    </Button>
+                                    <Label fx:id="zoomLabel" alignment="CENTER" minWidth="52.0" styleClass="sm-text" text="100%" />
+                                    <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#onZoomIn" styleClass="sm-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2m-magnify-plus-outline" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%tables.dmd_position.zoom_in" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="zoomFitBtn" mnemonicParsing="false" onAction="#onZoomFit" styleClass="sm-button, sm-button-icon">
+                                       <graphic>
+                                          <FontIcon iconLiteral="mdi2f-fit-to-page-outline" iconSize="18" styleClass="c-icon-white" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="%tables.dmd_position.zoom_fit" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
-                                 <VBox.margin>
-                                    <Insets bottom="12.0" top="6.0" />
-                                 </VBox.margin>
                               </HBox>
-                              <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="%tables.dmd_position.reset_to_backglass_scores_positions" styleClass="sm-button, c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </VBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </VBox>
-
-                  <VBox fx:id="scalingPane">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0">
-                           <children>
-                              <Label styleClass="default-headline" text="%tables.dmd_position.scaling" />
-                              <Label>
-                                 <graphic>
-                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="%tables.dmd_position.scaling_help" wrapText="true" />
-                                 </tooltip>
-                              </Label>
                            </children>
                         </HBox>
-                        <GridPane hgap="6.0" vgap="3.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" prefWidth="150.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints vgrow="SOMETIMES" />
-                              <RowConstraints vgrow="SOMETIMES" />
-                           </rowConstraints>
+
+                        <BorderPane fx:id="parentpane" VBox.vgrow="ALWAYS">
+                           <center>
+                              <ScrollPane fx:id="canvasScrollPane" fitToHeight="true" fitToWidth="true" prefViewportHeight="700.0" prefViewportWidth="940.0" styleClass="sm-map">
+                                 <content>
+                                    <!-- centers the canvas while it is smaller than the viewport -->
+                                    <StackPane minHeight="-Infinity" minWidth="-Infinity" styleClass="sm-map">
+                                       <children>
+                                          <Pane fx:id="imagepane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="media-parent">
+                                             <children>
+                                                <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false" />
+                                                <VBox fx:id="noFullDMDPane" maxWidth="640.0" spacing="22.0">
+                                                   <padding>
+                                                      <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                                                   </padding>
+                                                   <children>
+                                                      <VBox fx:id="uploadFullDMDImagePane" spacing="8.0">
+                                                         <children>
+                                                            <Label fx:id="noFullDMDLabel" styleClass="sm-title" text="%tables.dmd_position.no_full_dmd_image_present_in_the_backglass" wrapText="true" />
+                                                            <Label fx:id="noFullDMDDescr" styleClass="sm-hint" text="%tables.dmd_position.you_can_upload_or_drop_a_full_dmd" wrapText="true" />
+                                                            <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" styleClass="sm-button" text="%backglass.res_generator.select_file">
+                                                               <graphic>
+                                                                  <FontIcon iconLiteral="mdi2u-upload" iconSize="18" styleClass="c-icon-white" />
+                                                               </graphic>
+                                                            </Button>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox fx:id="activateFullDMDImagePane" spacing="8.0">
+                                                         <children>
+                                                            <Label fx:id="activateDMDImageLabel" styleClass="sm-title" text="%tables.dmd_position.the_full_dmd_image_present_in_the_backglass" wrapText="true" />
+                                                            <Label fx:id="activateDMDImageDescr" styleClass="sm-hint" text="%tables.dmd_position.you_can_show_the_backglass_dmd_image" wrapText="true" />
+                                                            <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" styleClass="sm-button" text="%tables.dmd_position.show_b2s_dmd">
+                                                               <graphic>
+                                                                  <FontIcon iconLiteral="mdi2e-eye-outline" iconSize="18" styleClass="c-icon-white" />
+                                                               </graphic>
+                                                            </Button>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox fx:id="useFullDMDMediaPane" spacing="8.0">
+                                                         <children>
+                                                            <Label fx:id="useFullDMDMediaLabel" styleClass="sm-title" text="%tables.dmd_position.or_use_full_dmd_media" wrapText="true" />
+                                                            <Label fx:id="useFullDMDMediaDescr" styleClass="sm-hint" text="%tables.dmd_position.full_dmd_media_is_present_you_can_keep" wrapText="true" />
+                                                            <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" styleClass="sm-button" text="%tables.dmd_position.keep_frontend_full_dmd_on" />
+                                                            <Label fx:id="grabFullDMDMediaDescr" styleClass="sm-hint" text="%tables.dmd_position.or_you_can_grab_the_full_dmd_apron" wrapText="true">
+                                                               <VBox.margin>
+                                                                  <Insets top="6.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" styleClass="sm-button" text="%tables.dmd_position.grab_frontend_image" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </Pane>
+                                       </children>
+                                    </StackPane>
+                                 </content>
+                              </ScrollPane>
+                           </center>
+                        </BorderPane>
+
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="sm-footer">
+                           <padding>
+                              <Insets bottom="8.0" left="14.0" right="14.0" top="8.0" />
+                           </padding>
                            <children>
-                              <Label styleClass="default-text" text="%tables.dmd_position.scale_to_hd" GridPane.rowIndex="0" />
-                              <ComboBox fx:id="scaleToHdCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                              <Label styleClass="default-text" text="%tables.dmd_position.scaler_mode" GridPane.rowIndex="1" />
-                              <ComboBox fx:id="scalerModeCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label maxWidth="1.7976931348623157E308" styleClass="sm-small" text="%tables.dmd_position.canvas_hint" HBox.hgrow="ALWAYS" />
+                              <Label fx:id="positionLabel" minWidth="-Infinity" styleClass="sm-caption" />
                            </children>
-                           <VBox.margin>
-                              <Insets top="8.0" />
-                           </VBox.margin>
-                        </GridPane>
+                        </HBox>
                      </children>
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
                   </VBox>
 
-                  <Label styleClass="default-headline" text="%tables.dmd_position.position">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <VBox fx:id="radioOnPane" spacing="3.0">
-                     <children>
-                        <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="%tables.dmd_position.on_backglass" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="%tables.dmd_position.on_dmd" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <RadioButton fx:id="radioOnPlayfield" mnemonicParsing="false" text="%tables.dmd_position.on_playfield" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="8.0" />
-                     </VBox.margin>
-                  </VBox>
+                  <!-- settings column -->
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minWidth="400.0" prefWidth="400.0" styleClass="sm-transparent-scroll">
+                     <content>
+                        <VBox spacing="14.0">
+                           <children>
+                              <!-- display -->
+                              <VBox spacing="12.0" styleClass="sm-panel">
+                                 <padding>
+                                    <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                 </padding>
+                                 <children>
+                                    <Label styleClass="sm-caption" text="%tables.dmd_position.caption_display" />
+                                    <GridPane hgap="12.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints minWidth="120.0" prefWidth="120.0" />
+                                          <ColumnConstraints hgrow="ALWAYS" />
+                                       </columnConstraints>
+                                       <children>
+                                          <Label styleClass="sm-text" text="%tables.dmd_position.label_dmd_type" />
+                                          <ComboBox fx:id="DMDTypeCombo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                    <HBox fx:id="disablePane" alignment="TOP_LEFT" spacing="8.0">
+                                       <children>
+                                          <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.dmd_position.turn_dmd_off_in_vpinmame" />
+                                                <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" styleClass="sm-text" text="%tables.dmd_position.disable_dmd_in_dmddevice_ini" />
+                                             </children>
+                                          </VBox>
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="18" styleClass="c-icon-muted" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="%tables.dmd_position.deactivate_external_dmd_in_vpinmame_settings_and_or" wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox fx:id="backglassScorePane" spacing="8.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                             <children>
+                                                <CheckBox fx:id="disableBGScoreCheckbox" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-text" text="%tables.dmd_position.turn_backglass_scores_off" HBox.hgrow="ALWAYS" />
+                                                <Label>
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="18" styleClass="c-icon-muted" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="%tables.dmd_position.when_checked_tell_the_backglass_not_to_render" wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <Button fx:id="resetToScoresBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onResetToScores" styleClass="sm-button" text="%tables.dmd_position.reset_to_backglass_scores_positions">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2r-restore" iconSize="18" styleClass="c-icon-white" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </VBox>
+                                    <VBox fx:id="scalingPane">
+                                       <children>
+                                          <GridPane hgap="12.0" vgap="12.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints minWidth="120.0" prefWidth="120.0" />
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                             </columnConstraints>
+                                             <children>
+                                                <Label contentDisplay="RIGHT" graphicTextGap="6.0" styleClass="sm-text" text="%tables.dmd_position.label_scale_to_hd">
+                                                   <graphic>
+                                                      <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="%tables.dmd_position.scaling_help" wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <ComboBox fx:id="scaleToHdCombo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
+                                                <Label styleClass="sm-text" text="%tables.dmd_position.label_scaler_mode" GridPane.rowIndex="1" />
+                                                <ComboBox fx:id="scalerModeCombo" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
 
-                  <GridPane fx:id="spinnersPane" vgap="3.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="64.5999755859375" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="221.39999999999998" minWidth="190.20004882812498" prefWidth="215.80002441406248" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Label styleClass="default-text" text="%pref.pinemhi_ui.x" GridPane.rowIndex="0" />
-                        <Spinner GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="xSpinner" />
+                              <!-- position -->
+                              <VBox spacing="12.0" styleClass="sm-panel">
+                                 <padding>
+                                    <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                 </padding>
+                                 <children>
+                                    <Label styleClass="sm-caption" text="%tables.dmd_position.caption_position_on" />
+                                    <VBox fx:id="radioOnPane">
+                                       <children>
+                                          <HBox spacing="6.0">
+                                             <children>
+                                                <ToggleButton fx:id="radioOnBackglass" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backglass.directb2s_admin.backglass" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="radioOnB2sDMD" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%backups.backups.dmd" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="radioOnPlayfield" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%pref.validators_screens.playfield" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                    <GridPane fx:id="spinnersPane" hgap="12.0" vgap="6.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <children>
+                                          <Label styleClass="sm-small" text="%tables.dmd_position.label_x" />
+                                          <Label styleClass="sm-small" text="%tables.dmd_position.label_y" GridPane.columnIndex="1" />
+                                          <Spinner fx:id="xSpinner" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
+                                          <Spinner fx:id="ySpinner" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label styleClass="sm-small" text="%tables.dmd_position.label_width" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets top="6.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Label styleClass="sm-small" text="%tables.dmd_position.label_height" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <GridPane.margin>
+                                                <Insets top="6.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <Spinner fx:id="widthSpinner" maxWidth="1.7976931348623157E308" GridPane.rowIndex="3" />
+                                          <Spinner fx:id="heightSpinner" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Button fx:id="centerXBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onCenterX" styleClass="sm-button" text="%tables.dmd_position.center_horizontally" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2a-align-horizontal-center" iconSize="18" styleClass="c-icon-white" />
+                                             </graphic>
+                                             <GridPane.margin>
+                                                <Insets top="6.0" />
+                                             </GridPane.margin>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
 
-                        <Label styleClass="default-text" text="%pref.pinemhi_ui.y" GridPane.rowIndex="1" />
-                        <Spinner fx:id="ySpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <!-- force ratio -->
+                              <VBox spacing="12.0" styleClass="sm-panel">
+                                 <padding>
+                                    <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                 </padding>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                       <children>
+                                          <Label maxWidth="1.7976931348623157E308" styleClass="sm-caption" text="%tables.dmd_position.caption_force_ratio" HBox.hgrow="ALWAYS" />
+                                          <Label styleClass="sm-small" text="%tables.dmd_position.force_ratio_hint" />
+                                       </children>
+                                    </HBox>
+                                    <VBox fx:id="ratiosPane">
+                                       <children>
+                                          <HBox spacing="6.0">
+                                             <children>
+                                                <ToggleButton fx:id="ratioOff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="%tables.dmd_position.off" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratio3" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="3:1" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratio4" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="4:1" HBox.hgrow="ALWAYS" />
+                                                <ToggleButton fx:id="ratio8" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sm-button" text="8:1" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
 
-                        <Label styleClass="default-text" text="%tables.dmd_position.width" GridPane.rowIndex="2" />
-                        <Spinner fx:id="widthSpinner" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                        <Label styleClass="default-text" text="%tables.dmd_position.height" GridPane.rowIndex="3" />
-                        <Spinner fx:id="heightSpinner" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-                        <Button fx:id="centerXBtn" mnemonicParsing="false" onAction="#onCenterX" text="%tables.dmd_position.center_horizontally" styleClass="sm-button, c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-align-horizontal-center" iconSize="18" />
-                           </graphic>
-                        </Button>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="8.0" />
-                     </VBox.margin>
-                  </GridPane>
-
-                  <Label styleClass="default-headline" text="%tables.dmd_position.force_ratio">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <VBox fx:id="ratiosPane" spacing="3.0">
-                     <children>
-                        <RadioButton fx:id="ratioOff" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" text="%tables.dmd_position.off" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <RadioButton fx:id="ratio3" mnemonicParsing="false" text="3:1" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <RadioButton fx:id="ratio4" mnemonicParsing="false" text="4:1" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                        <RadioButton fx:id="ratio8" mnemonicParsing="false" text="8:1" styleClass="c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </RadioButton>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="8.0" />
-                     </VBox.margin>
-                  </VBox>
-
-                  <Label styleClass="default-headline" text="%tables.dmd_position.auto_positioning">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <GridPane fx:id="autoPositionPane" vgap="3.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95" minWidth="10.0" prefWidth="60" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Label styleClass="default-text" text="%tables.dmd_position.margin" GridPane.rowIndex="0" />
-                        <Spinner fx:id="marginSpinner" amountToStepBy="1" initialValue="0" max="20" min="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="%tables.dmd_position.auto_position" styleClass="sm-button, c-text-white" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2t-target" iconSize="18" />
-                           </graphic>
-                        </Button>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="8.0" />
-                     </VBox.margin>
-                  </GridPane>
+                              <!-- auto positioning -->
+                              <VBox spacing="12.0" styleClass="sm-panel">
+                                 <padding>
+                                    <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                                 </padding>
+                                 <children>
+                                    <Label styleClass="sm-caption" text="%tables.dmd_position.caption_auto_positioning" />
+                                    <GridPane fx:id="autoPositionPane" hgap="12.0" vgap="12.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints minWidth="120.0" prefWidth="120.0" />
+                                          <ColumnConstraints hgrow="ALWAYS" />
+                                       </columnConstraints>
+                                       <children>
+                                          <Label styleClass="sm-text" text="%tables.dmd_position.label_margin" />
+                                          <Spinner fx:id="marginSpinner" amountToStepBy="1" initialValue="0" max="20" maxWidth="1.7976931348623157E308" min="0" GridPane.columnIndex="1" />
+                                          <Button fx:id="autoPositionBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onAutoPosition" styleClass="sm-button" text="%tables.dmd_position.auto_position" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                             <graphic>
+                                                <FontIcon iconLiteral="mdi2t-target" iconSize="18" styleClass="c-icon-white" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                </children>
-            </VBox>
-            </ScrollPane>
-         </right>
-      </BorderPane>
-
-               </children>
-               <BorderPane.margin>
-                  <Insets top="6.0" />
-               </BorderPane.margin>
-            </VBox>
+            </HBox>
          </center>
       </BorderPane>
    </center>
+
+   <bottom>
+      <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sm-footer" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
+         </padding>
+         <children>
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="sm-button" text="%backglass.res_generator.cancel" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="saveGloballyBtn" mnemonicParsing="false" onAction="#onSaveGloballyClick" styleClass="sm-button" text="%tables.dmd_position.save_as_global_default" />
+            <Button fx:id="saveLocallyBtn" mnemonicParsing="false" onAction="#onSaveLocallyClick" styleClass="sm-button" text="%tables.dmd_position.save_position_locally">
+               <tooltip>
+                  <Tooltip prefWidth="300.0" text="%tables.dmd_position.save_the_current_dmd_position_ctrl_s" wrapText="true" />
+               </tooltip>
+            </Button>
+            <Button fx:id="saveCloseLocallyBtn" mnemonicParsing="false" onAction="#onSaveCloseLocallyClick" styleClass="sm-accent-button" text="%tables.dmd_position.save_close_position_locally" />
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>

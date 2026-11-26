@@ -62,6 +62,11 @@
                                     <Tooltip text="%pref.achievements.achievements_settings" />
                                  </tooltip>
                               </Button>
+                              <Button fx:id="mcpBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMcp" styleClass="preference-button" text="%pref.mcp.settings">
+                                 <tooltip>
+                                    <Tooltip text="%pref.mcp.settings" />
+                                 </tooltip>
+                              </Button>
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="%pref.inputs.vpin_studio_frontend_preferences">
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onControllerSetup" styleClass="preference-button" text="%pref.inputs.controller_setup">

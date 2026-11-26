@@ -44,9 +44,12 @@ Table-like row lists in the Achievements view use `ROW_EVEN #283335` / `ROW_ODD 
 with a 3px `#8C8CE0` left border for the selected row (`AchievementsUI.row()`). Do not mix this striped style with
 the `sm-list-row` style inside one view.
 
-Every `TableView` / `TreeTableView` gets the same striped look from `stylesheet-tableview.css` without any class:
-`#1C1C1C` header band (12px bold `#BDBDBD` labels, column dividers, `#DD9646` sort arrow), 40px rows striped
-`ROW_EVEN` / `ROW_ODD`, hover `#333333`, selected row `-c-table-selected #4A4A7A` with a 3px `#8C8CE0` left bar.
+Every `TableView` / `TreeTableView` gets the same flat look from `stylesheet-tableview.css` without any class:
+one `-c-table-background #262626` surface for the rows under a darker `-c-table-header-background #1A1A1A` header row,
+uppercase 11px bold `#8A8A8A` header labels (uppercased by `StudioTableViewSkin` / `StudioTreeTableViewSkin`, set via
+`-fx-skin`; no column dividers) with the sort arrow in the accent color `-c-warn`, 42px rows separated by a
+1px `-c-table-divider` line (no stripes), hover `-c-table-hover`, selected row `-c-table-selected` amber tint with a 3px
+`-c-warn` left bar, check boxes in cells (selection column) in the accent color.
 Don't set a background on the table in FXML. `sm-table` = roomy variant (60px rows, 12px padding); column classes
 `sm-table-bold`, `sm-table-mono`, `sm-table-center`.
 
@@ -117,6 +120,9 @@ and 30px height, so always set the class. `sm-button` on a MenuButton / SplitMen
 | `sm-button, sm-button-icon` | same, square padding `5 7` | Icon-only actions (refresh, copy) next to inputs |
 | `sm-button, sm-button-small` | same look, 12px, padding `3 9` | Secondary inline actions next to small text / pills, e.g. "Set as installed", "Reset version", "Ignore version" |
 | `sm-accent-button` | orange fill `#DD9646`, dark text `#1A1305`, bold, padding `5 14` | The **one** primary action of a panel (install, save) — at most one per panel, usually in the `sm-footer` |
+| `submit-button` | same as `sm-accent-button` | Primary button of a dialog footer (OK, Save, Save & close); also the commons alert / confirmation dialogs |
+| `default-button` | same as `sm-button` | Secondary buttons of a dialog footer (Cancel, alternative save actions) |
+| `sm-simulate-button` / `sm-install-button` | the original System Manager component tab look: neutral button with padding `5 12` / yellow `-c-warn` fill, dark bold text, no border, padding `8 14`; no fixed height | Only the "Simulate" and "Install <version>" buttons of the System Manager component tabs |
 | `sm-danger-button` | `#3A1C1F` fill, `#6E2B30` border (`#FF6B70` on hover, fill `#4A2326`), `#FF6B70` bold 14px text and icons, padding `5 12` | Destructive actions (restart server, shutdown system, delete cabinet) and buttons flagging a problem (asset filter with excluded assets). Never a filled bright red. |
 | `sm-button, folder-component` | `#CC9933` fill (yellow), white text and icon | Opens a **folder** in the file explorer, icon `mdi2f-folder-open` |
 | `sm-button, external-component` | `#338800` fill (green), white text and icon | Starts a **system program** (setup exe, config tool), icon `mdi2o-open-in-new` |
@@ -153,7 +159,7 @@ inner box — the editor is transparent inside the combo's border.
 
 `Spinner` uses the same box with a transparent editor; the arrow buttons are transparent with `#BDBDBD` arrows
 (white arrow + `#333333` fill on hover). `CheckBox` boxes are `#161616` with a `#444444` border (radius 3,
-`#7A7A7A` on hover/focus) and a white check mark; `RadioButton` circles look the same with a white dot and have
+`#7A7A7A` on hover/focus) and a white check mark; `sm-accent-checkbox` = orange `#DD9646` box with a dark mark when selected (the "Auto-save" check box of dialog headers); `RadioButton` circles look the same with a white dot and have
 the same outer size as the check box (~21px at 14px font) — keep both in sync when changing paddings.
 `ScrollBar`: 10px, no arrow buttons, transparent track, rounded `#444444` thumb (`#5A5A5A` hover, `#7A7A7A` drag).
 `ToggleButton` has the `sm-button` look (`#333333`, `#444444` border, `#3D3D3D` hover); selected = `#333366` fill
@@ -173,7 +179,7 @@ controls are dimmed to 60 % opacity.
 
 | Element | Class / helper | Rule |
 |---------|----------------|------|
-| Status pill | `sm-pill` + `sm-pill-ok` / `-warn` / `-error` / `-unknown` | 12px bold, round, colored text on the tinted background of section 1 |
+| Status pill | `sm-pill` + `sm-pill-ok` / `-warn` / `-error` / `-unknown` / `-info` (link blue on `-c-info-border`, e.g. "Custom" in the designer list) | 12px bold, round, colored text on the tinted background of section 1 |
 | Large status pill | add `sm-pill-large` | 14px, page-level status (Overview status row) with a 16px icon |
 | Version text | `sm-version-ok` / `sm-version-warn` | Colors a version label green / orange, nothing else |
 | Banner | `sm-banner` + `sm-banner-ok` / `-warn` / `-error` / `-info` | Full-width result line on top of a log / list (icon + text) |
@@ -281,7 +287,7 @@ configuration conflicts:
   12px bold `#9A9A9A` section captions, items = 18px icon (`#BDBDBD`) + 14px label, `#333333` hover, selected =
   `#3D2B17` fill with orange icon and bold label; count badge in warn colors; Settings / Collapse pinned at the bottom.
   The preference navigations (`scene-preferences.fxml`, `mania/scene-mania-preferences.fxml`) use the same look:
-  `pref-nav` ScrollPane panel (280px, same border as the sidebar), `preference-section` captions, `preference-button`
+  `pref-nav` ScrollPane panel (280px, like the sidebar but **without border**), `preference-section` captions, `preference-button`
   items without icons (`preference-button-selected`). The rules are scoped `.pref-nav .button.preference-button` so the
   global `.button` / `.scroll-pane` defaults (imported later) do not override them.
 - **Toolbars**: every `ToolBar` gets `styleClass="floating-toolbar"` (flat `#222222`, no border, radius 6; `floating-toolbar-inverted`
@@ -311,6 +317,26 @@ configuration conflicts:
   `sm-button-icon` actions) and `primary-tabs` whose pages are `sm-tile` cards: `sm-divider` header with `sm-title`
   (+ `sm-small` hint right), body grid of `sm-text` labels and right-aligned 240px controls, or an `sm-inset` fact grid
   (`sm-hint` keys, `sm-text` values).
+
+### Designer (`cards/scene-highscore-cards.fxml`, `cards/panels/template-editor.fxml`)
+- Three borderless `sm-tile`s (like the Achievements and Players tiles) in an `sm-split`: table list (search field `designer-search` with a 18px `mdi2m-magnify` icon,
+  filter / reload icon buttons, emulator combo with a muted "Emulator" prefix, two columns TABLE / TEMPLATE where custom
+  designs show an `sm-pill-info` "Custom" pill, `sm-footer` with the table actions and the count), canvas tile and
+  a 420px layers tile.
+- Page header like the Achievements view: `primary-tabs` (Highscore cards / Wheels, 18px icons) spanning the whole page,
+  then one `floating-toolbar` with the `sm-segmented` Template / Custom toggle, the template combo and its icon actions,
+  preview / folder buttons, `sm-button` "Generate this card" and `sm-accent-button` "Generate all" (both live in
+  `template-editor.fxml` and are moved above the tiles by `HighscoreCardsController`).
+- Canvas tile: an info row (`c-icon-info` icon + `sm-hint` text, `sm-small` resolution) says what the changes apply to;
+  the design area below is `-c-black` (`designer-canvas`, background set in `TemplateEditorController`). The selected
+  layer box is orange with an `sm-selection-caption` tag "Name · W × H" (`PositionResizer.setCaption`).
+- **Segmented control** (`sm-segmented`): HBox of ToggleButtons of one ToggleGroup on an inset box, selected =
+  `-c-control` fill, bold white (icons orange); always call `SegmentedToggles.keepSelected`.
+- Layers panel: `sm-caption` "LAYERS" + `sm-hint`, then the `designer-layers` Accordion, top layer first. Each header =
+  18px muted icon + bold `designer-layer-name` + bare `designer-layer-button` eye / lock icons (locked = orange
+  `mdi2l-lock-outline`); hidden layers get `designer-layer-hidden` (struck through, `-c-disabled`). The expanded layer is
+  a borderless `-c-footer` card with only a 3px orange left bar; field labels inside are 12px `-c-subtle`, values `sm-text`.
+  Missing media = dashed `sm-inset, designer-empty-state` box with icon, `sm-hint` text and an `sm-button-small` action.
 
 ## 7. Checklist for a new view
 

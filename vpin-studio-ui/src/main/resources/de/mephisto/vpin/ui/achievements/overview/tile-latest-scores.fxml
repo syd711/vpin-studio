@@ -15,7 +15,7 @@
             <VBox spacing="10.0">
                <children>
                   <Label fx:id="statusLabel" styleClass="sm-hint" text="%widgets.widget_latest_scores.loading_latest_scores" wrapText="true" />
-                  <VBox fx:id="scoresBox" spacing="10.0" />
+                  <VBox fx:id="scoresBox" spacing="4.0" />
                </children>
             </VBox>
          </content>

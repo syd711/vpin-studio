@@ -45,7 +45,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +69,9 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
 
   @FXML
   private TabPane tabPane;
+
+  @FXML
+  private ToolBar toolbar;
 
   @FXML
   private Tab highscoreCardsTab;
@@ -614,20 +617,18 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
   }
 
   private void refreshNagBar(CardTemplate cardTemplate, Optional<GameRepresentation> gameRepresentation) {
-    nagBarLabel.setVisible(gameRepresentation.isPresent());
+    nagBar.setVisible(gameRepresentation.isPresent());
     if (gameRepresentation.isPresent()) {
       if (cardTemplate.isTemplate()) {
-        nagBar.setStyle("-fx-background-color: " + ThemeColors.PRIMARY + ";");
-        nagBarLabel.setText(Messages.get("cards.template_editor.editing_design_for", gameRepresentation.get().getGameDisplayName(), cardTemplate.getName()));
+        nagBarLabel.setText(Messages.get("cards.designer.info_template", cardTemplate.getName()));
       }
       else {
-        nagBar.setStyle("-fx-background-color: " + ThemeColors.TOGGLE_SELECTED + ";");
         Optional<CardTemplate> parent = this.templateCombo.getItems().stream().filter(t -> t.getId().equals(cardTemplate.getParentId())).findFirst();
         if (parent.isEmpty()) {
           parent = this.templateCombo.getItems().stream().filter(t -> t.isDefault()).findFirst();
         }
         if (parent.isPresent()) {
-          nagBarLabel.setText(Messages.get("cards.template_editor.editing_custom_design_for", gameRepresentation.get().getGameDisplayName(), parent.get().getName()));
+          nagBarLabel.setText(Messages.get("cards.designer.info_custom", parent.get().getName()));
         }
         else {
           nagBarLabel.setText(Messages.get("cards.template_editor.no_default_template"));
@@ -831,7 +832,12 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage(Messages.get("cards.template_editor.loading_media"));
 
-      previewStack.setBackground(new Background(new BackgroundFill(Paint.valueOf(ThemeColors.BLACK), null, null)));
+      SegmentedToggles.keepSelected(templateModeBtn, cardModeBtn);
+      nagBar.managedProperty().bind(nagBar.visibleProperty());
+      mediaPlayerControl.managedProperty().bind(mediaPlayerControl.visibleProperty());
+      mediaPlayerControl.setVisible(false);
+
+      previewStack.setBackground(createCanvasBackground());
       previewPanel.setBackground(Background.EMPTY);
       previewOverlayPanel.setBackground(Background.EMPTY);
 
@@ -887,6 +893,14 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  public TabPane getTabPane() {
+    return tabPane;
+  }
+
+  public ToolBar getToolbar() {
+    return toolbar;
+  }
+
   public DesignMode getDesignMode() {
     Tab activeTab = tabPane.getSelectionModel().getSelectedItem();
     if (activeTab == null) {
@@ -921,7 +935,7 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
           templateBeanBinder.setWidth(res.getFirst());
           templateBeanBinder.setHeight(res.get(1));
           // If the resolution changes, the preview must be adjusted
-          resolutionLabel.setText(res.toString());
+          resolutionLabel.setText(Messages.get("cards.designer.resolution", String.valueOf(res.getFirst()), String.valueOf(res.get(1))));
           resizeCardPreview(previewStack.getWidth(), previewStack.getHeight(), true);
           refreshBreadCrumb();
         });
@@ -1062,6 +1076,13 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
     }
   }
 
+  /**
+   * Black background of the design area, the bottom corners follow the tile
+   */
+  private static Background createCanvasBackground() {
+    return new Background(new BackgroundFill(Color.web(ThemeColors.BLACK), new CornerRadii(0, 0, 6, 6, false), Insets.EMPTY));
+  }
+
   //------------------------------------------- SELECTION ---
 
   public void onDragboxEnter(MouseEvent me) {
@@ -1127,6 +1148,8 @@ public class TemplateEditorController implements Initializable, MediaPlayerListe
       dragBox.setAcceptOutsidePart(true, 50);
 
       LayerEditorBaseController controller = layerToController(layer);
+      dragBox.setColor(Color.web(ThemeColors.WARN));
+      dragBox.setCaption(controller.getLayerName());
       controller.bindDragBox(dragBox);
       dragBox.setUserData(layer);
 

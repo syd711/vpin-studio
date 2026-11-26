@@ -1,31 +1,39 @@
 /**
  * Table View and TreeTable View
  *
- * Flat style for every table of the Studio: header band, striped rows in the theme row colors
- * (same as the Achievements row lists), selected row = -c-table-selected with a 3px -c-info bar on the left.
- * Default is the dense variant (40px rows); add "sm-table" for roomy tables (60px rows, Players).
+ * Flat style for every table of the Studio: one dark surface for the rows under a darker header row, uppercase muted header labels
+ * (uppercased by StudioTableViewSkin / StudioTreeTableViewSkin), 1px row dividers instead of stripes,
+ * selected row = amber tint with a 3px -c-warn bar on the left, check boxes in cells in the accent color.
+ * Default is the dense variant (42px rows); add "sm-table" for roomy tables (60px rows, Players).
  */
+
+.table-view {
+    -fx-skin: "de.mephisto.vpin.ui.util.table.StudioTableViewSkin";
+}
+.tree-table-view {
+    -fx-skin: "de.mephisto.vpin.ui.util.table.StudioTreeTableViewSkin";
+}
 
 .table-view,
 .tree-table-view {
     -fx-font-size: 14px;
     -fx-text-fill: -c-white;
     -fx-text-background-color: -c-white;
-    -fx-background-color: -c-tile;
+    -fx-background-color: -c-table-background;
     -fx-background-radius: 6;
-    -fx-border-color: -c-selected;
+    -fx-border-color: -c-panel-border;
     -fx-border-style: solid;
     -fx-border-radius: 6;
     -fx-border-width: 1;
     -fx-padding: 0;
 }
 
-/* header band: darker strip with a strong bottom line, set apart from the rows */
+/* header: darker than the rows, separated by a single line, no column dividers */
 .table-view .column-header-background,
 .tree-table-view .column-header-background {
-    -fx-background-color: -c-footer;
+    -fx-background-color: -c-table-header-background;
     -fx-background-radius: 5 5 0 0;
-    -fx-border-color: transparent transparent -c-border transparent;
+    -fx-border-color: transparent transparent -c-table-divider transparent;
     -fx-border-width: 0 0 1 0;
 }
 .table-view .column-header-background .filler,
@@ -36,40 +44,42 @@
 .table-view .column-header,
 .tree-table-view .column-header {
     -fx-background-color: transparent;
-    -fx-border-color: transparent -c-selected transparent transparent;
-    -fx-border-width: 0 1 0 0;
-    -fx-border-insets: 10 0 10 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
     -fx-size: 38;
 }
-.table-view .column-header:hover,
-.tree-table-view .column-header:hover {
-    -fx-background-color: -c-row-hover;
+.table-view .column-header:hover .label,
+.tree-table-view .column-header:hover .label {
+    -fx-text-fill: -c-muted;
 }
 .table-view .column-header .label,
 .tree-table-view .column-header .label {
-    -fx-font-size: 12px;
+    -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-text-fill: -c-muted;
+    -fx-text-fill: -c-table-header;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 6 0 6;
 }
+/* sort arrow in the accent color */
 .table-view .column-header .arrow,
 .tree-table-view .column-header .arrow {
     -fx-background-color: -c-warn;
+    -fx-padding: 2 3 2 3;
+}
+.table-view .column-header:hover .arrow,
+.tree-table-view .column-header:hover .arrow {
+    -fx-background-color: -c-warn-hover;
 }
 
-/* striped rows */
+/* rows: one surface with a 1px divider */
 .table-row-cell,
 .tree-table-row-cell {
-    -fx-cell-size: 40px;
+    -fx-cell-size: 42px;
     -fx-text-fill: -c-white;
-    -fx-background-color: -c-row-even;
+    -fx-background-color: -c-table-divider, -c-table-background;
+    -fx-background-insets: 0, 0 0 1 0;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-}
-.table-row-cell:odd,
-.tree-table-row-cell:odd {
-    -fx-background-color: -c-row-odd;
 }
 .table-row-cell:empty,
 .tree-table-row-cell:empty {
@@ -92,11 +102,12 @@
 .table-view:row-selection .table-row-cell:filled:focused:hover,
 .tree-table-view:row-selection .tree-table-row-cell:filled:hover,
 .tree-table-view:row-selection .tree-table-row-cell:filled:focused:hover {
-    -fx-background-color: -c-control;
+    -fx-background-color: -c-table-divider, -c-table-hover;
+    -fx-background-insets: 0, 0 0 1 0;
     -fx-font-weight: normal;
 }
 
-/* selected row: -c-table-selected with a 3px -c-info bar on the left,
+/* selected row: amber tint with a 3px -c-warn bar on the left,
    drawn as background layers so the cell content does not shift */
 .table-view .table-row-cell:filled:selected,
 .table-view:focused .table-row-cell:filled:selected,
@@ -108,13 +119,33 @@
 .tree-table-view:focused .tree-table-row-cell:filled:focused:selected,
 .tree-table-view:focused .tree-table-row-cell:filled:focused:selected:hover,
 .tree-table-view:row-selection .tree-table-row-cell:filled:selected:hover {
-    -fx-background-color: -c-info, -c-table-selected;
-    -fx-background-insets: 0, 0 0 0 3;
+    -fx-background-color: -c-table-divider, -c-warn, -c-table-selected;
+    -fx-background-insets: 0, 0 0 1 0, 0 0 1 3;
     -fx-text-background-color: -c-white;
     -fx-font-weight: normal;
 }
 .tree-table-row-cell:filled:selected .tree-disclosure-node .arrow {
     -fx-background-color: -c-white;
+}
+
+/* check boxes inside cells (selection columns): accent box with a dark check mark */
+.table-view .check-box:selected > .box,
+.table-view .check-box:indeterminate > .box,
+.tree-table-view .check-box:selected > .box,
+.tree-table-view .check-box:indeterminate > .box {
+    -fx-background-color: -c-warn;
+    -fx-border-color: -c-warn;
+}
+.table-view .check-box:selected:hover > .box,
+.tree-table-view .check-box:selected:hover > .box {
+    -fx-background-color: -c-warn-hover;
+    -fx-border-color: -c-warn-hover;
+}
+.table-view .check-box:selected > .box > .mark,
+.table-view .check-box:indeterminate > .box > .mark,
+.tree-table-view .check-box:selected > .box > .mark,
+.tree-table-view .check-box:indeterminate > .box > .mark {
+    -fx-background-color: -c-on-warn;
 }
 
 .table-view .placeholder .label,

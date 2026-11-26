@@ -6,6 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
 
@@ -27,6 +29,10 @@ public abstract class LayerEditorBaseController {
   private Button eyeBtn;
   @FXML
   private ToggleButton lockBtn;
+  @FXML
+  private HBox layerHeader;
+  @FXML
+  private Label layerNameLabel;
 
   /**
    * The top accordion
@@ -50,6 +56,10 @@ public abstract class LayerEditorBaseController {
     settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
     settingsPane.managedProperty().bindBidirectional(settingsPane.visibleProperty());
     lockBtn.managedProperty().bindBidirectional(lockBtn.visibleProperty());
+
+    // the header row spans the whole title, minus the disclosure arrow
+    layerHeader.prefWidthProperty().bind(settingsPane.widthProperty().subtract(44));
+    layerHeader.setMinWidth(0);
 
     initBindings(templateEditorController.getBeanBinder());
   }
@@ -102,6 +112,17 @@ public abstract class LayerEditorBaseController {
       icon.setIconLiteral(visible ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
     }
     settingsPane.getContent().setDisable(!visible);
+    settingsPane.getStyleClass().remove("designer-layer-hidden");
+    if (!visible) {
+      settingsPane.getStyleClass().add("designer-layer-hidden");
+    }
+  }
+
+  /**
+   * The display name of the layer, used for the selection tag in the preview
+   */
+  public String getLayerName() {
+    return layerNameLabel != null ? layerNameLabel.getText() : null;
   }
 
   public void bindVisibilityIcon(CardTemplateBinder templateBeanBinder, String property) {
@@ -161,14 +182,9 @@ public abstract class LayerEditorBaseController {
   }
 
   protected void toggleLockButton(boolean lock) {
-    if (lock) {
-      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock", 13, null);
-      lockBtn.setGraphic(icon);
-    }
-    else {
-      FontIcon icon = WidgetFactory.createIcon("mdi2l-lock-open-variant-outline", 13, null);
-      lockBtn.setGraphic(icon);
-    }
+    FontIcon icon = WidgetFactory.createIcon(lock ? "mdi2l-lock-outline" : "mdi2l-lock-open-variant-outline", 18, null);
+    icon.getStyleClass().add(lock ? "c-icon-warn" : "c-icon-muted");
+    lockBtn.setGraphic(icon);
   }
 
   public void bindLockIcon(CardTemplateBinder templateBeanBinder, String property) {

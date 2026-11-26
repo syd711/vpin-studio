@@ -95,3 +95,50 @@
 .toggle-button:disabled {
     -fx-opacity: 0.6;
 }
+
+/* segmented control: an HBox "sm-segmented" holding the ToggleButtons of one ToggleGroup (keep one selected with
+   SegmentedToggles.keepSelected), e.g. Template / Custom and the align buttons of the designer */
+.sm-segmented {
+    -fx-background-color: -c-inset;
+    -fx-background-radius: 6;
+    -fx-border-color: -c-border;
+    -fx-border-radius: 6;
+    -fx-padding: 2;
+    -fx-spacing: 2;
+}
+
+.sm-segmented > .toggle-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-muted;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 4;
+    -fx-padding: 4 12 4 12;
+    -fx-cursor: hand;
+}
+
+.sm-segmented > .toggle-button .ikonli-font-icon {
+    -fx-icon-color: -c-muted;
+}
+
+.sm-segmented > .toggle-button:hover {
+    -fx-background-color: -c-row-hover;
+    -fx-text-fill: -c-white;
+}
+
+.sm-segmented > .toggle-button:selected,
+.sm-segmented > .toggle-button:selected:hover,
+.sm-segmented > .toggle-button:selected:focused {
+    -fx-background-color: -c-control;
+    -fx-border-color: transparent;
+    -fx-text-fill: -c-white;
+    -fx-font-weight: bold;
+}
+
+.sm-segmented > .toggle-button:selected .ikonli-font-icon {
+    -fx-icon-color: -c-warn;
+}
+
+.sm-segmented > .toggle-button:focused {
+    -fx-border-color: transparent;
+}

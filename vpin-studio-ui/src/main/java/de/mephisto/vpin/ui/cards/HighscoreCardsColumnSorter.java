@@ -26,16 +26,15 @@ public class HighscoreCardsColumnSorter implements BaseColumnSorter<GameRepresen
       if (column.equals(highscoreCardsController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getName());
       }
-      else if (column.equals(highscoreCardsController.columnTemplate)) {
+      else if (column.equals(highscoreCardsController.columnBaseTemplate)) {
+        // custom designs first, then by template name
         comp = Comparator.comparing(o -> {
           CardTemplate template = highscoreCardsController.getCardTemplateForGame(o.getGame());
-          return template != null ? String.valueOf(template.isTemplate()) : "";
-        });
-      }
-      else if (column.equals(highscoreCardsController.columnBaseTemplate)) {
-        comp = Comparator.comparing(o -> {
-          CardTemplate template = highscoreCardsController.getBaseCardTemplateForGame(o.getGame());
-          return template != null ? template.getName() : "";
+          if (template != null && !template.isTemplate()) {
+            return "";
+          }
+          CardTemplate baseTemplate = highscoreCardsController.getBaseCardTemplateForGame(o.getGame());
+          return baseTemplate != null ? baseTemplate.getName() : CardTemplate.DEFAULT;
         });
       }
 

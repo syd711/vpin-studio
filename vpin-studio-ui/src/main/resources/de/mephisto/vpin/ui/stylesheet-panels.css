@@ -124,3 +124,24 @@
     -fx-min-height: 10;
     -fx-pref-height: 10;
 }
+
+/* designer (cards/panels/template-editor.fxml) */
+/* the black design area, its background is set in TemplateEditorController */
+.designer-canvas {
+    -fx-background-radius: 0 0 6 6;
+}
+
+.designer-empty-state {
+    -fx-border-color: -c-border;
+    -fx-border-style: segments(4, 4);
+    -fx-border-radius: 4;
+}
+
+/* name and size tag above a selected box in a preview (PositionResizer.setCaption) */
+.sm-selection-caption {
+    -fx-background-color: -c-warn;
+    -fx-background-radius: 3;
+    -fx-text-fill: -c-on-warn;
+    -fx-font-size: 12px;
+    -fx-padding: 1 6 1 6;
+}

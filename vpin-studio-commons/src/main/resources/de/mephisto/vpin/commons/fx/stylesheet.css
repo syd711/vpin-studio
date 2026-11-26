@@ -201,44 +201,48 @@
 /**
  * Common Buttons
  */
-.submit-button {
-    -fx-border-radius: 3px;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: #6666FF;
+/* primary dialog button: orange accent look (-c-warn), same as .submit-button / .sm-accent-button of the Studio UI */
+.button.submit-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1305;
+    -fx-background-color: #DD9646;
+    -fx-background-radius: 4;
+    -fx-border-color: #DD9646;
     -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: #333366;
-    -fx-text-fill: #fff8f8;
-}
-
-.submit-button:hover {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: #4D4DB3;
-    -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: #6666FF;
-    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 4;
+    -fx-padding: 5 14 5 14;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-cursor: hand;
 }
 
-.default-button {
-    -fx-border-radius: 3px;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: #111111;
-    -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: #272b2f;
-    -fx-text-fill: #fff8f8;
+.button.submit-button:hover {
+    -fx-background-color: #E8A55C;
+    -fx-border-color: #E8A55C;
 }
 
-.default-button:hover {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: #4D4DB3;
+.button.submit-button .ikonli-font-icon {
+    -fx-icon-color: #1A1305;
+}
+
+/* secondary dialog button: same as .default-button / .sm-button of the Studio UI */
+.button.default-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #333333;
+    -fx-background-radius: 4;
+    -fx-border-color: #444444;
     -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: -fx-font-hover;
-    -fx-text-fill: #fff8f8;
+    -fx-border-radius: 4;
+    -fx-padding: 5 12 5 12;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-cursor: hand;
+}
+
+.button.default-button:hover {
+    -fx-background-color: #3D3D3D;
 }
 
 .warn-button {

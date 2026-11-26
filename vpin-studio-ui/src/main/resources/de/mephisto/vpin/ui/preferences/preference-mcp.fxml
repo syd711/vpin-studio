@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.McpPreferencesController">
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="850.0" spacing="6.0" styleClass="subpanel">
+               <children>
+                  <Label styleClass="preference-title, c-text-white" text="%pref.mcp.title" />
+                  <Label maxWidth="620.0" styleClass="preference-description, c-text-white" text="%pref.mcp.description" wrapText="true" />
+
+                  <Label styleClass="preference-subtitle" text="%pref.mcp.server">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="enabledCheckbox" text="%pref.mcp.enabled" styleClass="c-text-white">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label maxWidth="620.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.enabled_description" wrapText="true" />
+
+                  <VBox fx:id="connectionPanel" spacing="6.0">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label styleClass="sm-small" text="%pref.mcp.url" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <TextField fx:id="urlText" editable="false" prefWidth="560.0" styleClass="sm-text-field" />
+                              <Button mnemonicParsing="false" onAction="#onCopyUrl" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%pref.mcp.copy" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+
+
+                        <Label styleClass="preference-subtitle" text="%pref.mcp.claude_code">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label maxWidth="620.0" styleClass="preference-description, c-text-white" text="%pref.mcp.claude_code_description" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <TextField fx:id="commandText" editable="false" prefWidth="560.0" styleClass="sm-text-field" />
+                              <Button mnemonicParsing="false" onAction="#onCopyCommand" styleClass="sm-button, sm-button-icon">
+                                 <graphic>
+                                    <FontIcon styleClass="c-icon-white" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="%pref.mcp.copy" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Label maxWidth="620.0" styleClass="checkbox-description, c-text-white" text="%pref.mcp.host_hint" wrapText="true" />
+
+                        <Label styleClass="preference-subtitle" text="%pref.mcp.tools">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label maxWidth="620.0" styleClass="preference-description, c-text-white" text="%pref.mcp.tools_description" wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

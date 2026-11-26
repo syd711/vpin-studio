@@ -21,8 +21,10 @@ import de.mephisto.vpin.ui.tables.panels.BaseGameModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.PositionResizer;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -92,20 +94,20 @@ public class DMDPositionController extends BasePrevNextController {
   private ComboBox<DMDType> DMDTypeCombo;
 
   @FXML
-  private RadioButton ratioOff;
+  private ToggleButton ratioOff;
   @FXML
-  private RadioButton ratio3;
+  private ToggleButton ratio3;
   @FXML
-  private RadioButton ratio4;
+  private ToggleButton ratio4;
   @FXML
-  private RadioButton ratio8;
+  private ToggleButton ratio8;
 
   @FXML
-  private RadioButton radioOnBackglass;
+  private ToggleButton radioOnBackglass;
   @FXML
-  private RadioButton radioOnB2sDMD;
+  private ToggleButton radioOnB2sDMD;
   @FXML
-  private RadioButton radioOnPlayfield;
+  private ToggleButton radioOnPlayfield;
 
   @FXML
   private HBox disablePane;
@@ -172,6 +174,8 @@ public class DMDPositionController extends BasePrevNextController {
 
   @FXML
   private Label zoomLabel;
+  @FXML
+  private Label positionLabel;
 
   private VPinScreen loadedVpinScreen;
 
@@ -508,6 +512,7 @@ public class DMDPositionController extends BasePrevNextController {
     ratio8.setUserData(DMDAspectRatio.ratio8x1);
 
     ratioOff.setSelected(true);
+    SegmentedToggles.keepSelected(ratioOff, ratio3, ratio4, ratio8);
     ratioRadioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
       @Override
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
@@ -579,6 +584,7 @@ public class DMDPositionController extends BasePrevNextController {
     radioOnBackglass.setUserData(VPinScreen.BackGlass);
     radioOnB2sDMD.setToggleGroup(tg);
     radioOnB2sDMD.setUserData(VPinScreen.Menu);
+    SegmentedToggles.keepSelected(radioOnPlayfield, radioOnBackglass, radioOnB2sDMD);
 
     tg.selectedToggleProperty().addListener((obs, o, n) -> {
       // make sure the image of the screen is loaded
@@ -699,6 +705,24 @@ public class DMDPositionController extends BasePrevNextController {
         }, 500);
       });
     });
+  }
+
+  /**
+   * Shows size, position and ratio of the selected frame in the status bar of the canvas
+   */
+  private void bindPositionLabel(@Nullable PositionResizer dragBox) {
+    positionLabel.textProperty().unbind();
+    if (dragBox == null) {
+      positionLabel.setText("");
+      return;
+    }
+    positionLabel.textProperty().bind(Bindings.createStringBinding(() -> {
+      int w = dragBox.getWidth();
+      int h = dragBox.getHeight();
+      String ratio = h > 0 ? String.format(Locale.ROOT, "%.2f", (double) w / h) : "-";
+      return Messages.get("tables.dmd_position.position_info", String.valueOf(w), String.valueOf(h),
+          String.valueOf(dragBox.getX()), String.valueOf(dragBox.getY()), ratio);
+    }, dragBox.xProperty(), dragBox.yProperty(), dragBox.widthProperty(), dragBox.heightProperty()));
   }
 
   private void configureSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
@@ -975,6 +999,7 @@ public class DMDPositionController extends BasePrevNextController {
   private void loadDragBoxes(VPinScreen onScreen, boolean forceRefresh) {
 
     // first delete previous boxes
+    bindPositionLabel(null);
     for (PositionResizer dragBox : dragBoxes) {
       dragBox.removeFromPane(imagepane);
     }
@@ -989,6 +1014,7 @@ public class DMDPositionController extends BasePrevNextController {
 
           // The lime box that is used to position the DMD
           PositionResizer dragBox = new PositionResizer();
+          dragBox.setColor(Color.web(ThemeColors.WARN));
           dragBox.addToPane(imagepane);
           dragBoxes.add(dragBox);
 
@@ -1017,6 +1043,7 @@ public class DMDPositionController extends BasePrevNextController {
               configureSpinner(heightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
 
               selectedZone = (DMDInfoZone) dragBox.getUserData();
+              bindPositionLabel(dragBox);
               // select the radio where the zone is positioned onto
               if (VPinScreen.BackGlass.equals(selectedZone.getOnScreen())) {
                 radioOnBackglass.setSelected(true);
@@ -1029,6 +1056,7 @@ public class DMDPositionController extends BasePrevNextController {
               }
             } else {
               selectedZone = null;
+              bindPositionLabel(null);
 
               // on deselection, update associated zone
               DMDInfoZone dragZone = (DMDInfoZone) dragBox.getUserData();

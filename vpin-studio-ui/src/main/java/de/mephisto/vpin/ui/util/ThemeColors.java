@@ -164,6 +164,14 @@ public final class ThemeColors {
   public static final String VPS_GRAY = hex("-c-vps-gray");
   public static final String VPS_YOUTUBE = hex("-c-vps-youtube");
 
+  // Table Statistics bar colors
+  public static final String CHART_BLUE = hex("-c-chart-blue");
+  public static final String CHART_RED = hex("-c-chart-red");
+  public static final String CHART_ORANGE = hex("-c-chart-orange");
+  public static final String CHART_GREEN = hex("-c-chart-green");
+  public static final String CHART_MAGENTA = hex("-c-chart-magenta");
+  public static final String CHART_GRAY = hex("-c-chart-gray");
+
   // Script editor syntax highlighting
   public static final String SYNTAX_KEYWORD = hex("-c-syntax-keyword");
   public static final String SYNTAX_PAREN = hex("-c-syntax-paren");

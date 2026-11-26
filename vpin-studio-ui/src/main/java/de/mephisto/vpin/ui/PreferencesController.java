@@ -264,6 +264,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onMcp(ActionEvent event) throws IOException {
+    load("preference-mcp.fxml", event);
+  }
+
+  @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
   }

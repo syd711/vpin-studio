@@ -28,6 +28,19 @@ A huge shoutout to @Solters for building the original tool and helping with this
 - **Live tracking (optional, VPX 10.8.1)**: When enabled, VPin Studio installs a score-server plugin for VPX that
   checks achievements while you play and records your best ball.
 
+### AI Assistants (MCP)
+
+The VPin Studio Server can now offer an **MCP (Model Context Protocol)** endpoint, so AI assistants like Claude can
+answer questions about your cabinet, e.g. "Which tables have no ROM?" or "Which tables have updates on VPS?".
+
+- **Preferences**: Enable the endpoint in the new "AI Assistants (MCP)" page of the preferences. It is disabled by
+  default. The page shows the endpoint URL and the command to add the cabinet to Claude Code:
+  `claude mcp add --transport http vpin-studio http://<cabinet>:8089/mcp`
+- **Tools**: List emulators, search tables (by name or ROM, only with issues, disabled or with VPS updates), table
+  details including validation issues, the highscores of a table and the latest highscores of the cabinet.
+- **Read-only**: The tools only read data, they do not change anything on the cabinet. Like the REST API, the
+  endpoint has no password, so everyone in your network can use it while it is enabled.
+
 ### Changes
 
 - **Players**: Removed the "Discord Players" tab. The players view now only shows the built-in players.

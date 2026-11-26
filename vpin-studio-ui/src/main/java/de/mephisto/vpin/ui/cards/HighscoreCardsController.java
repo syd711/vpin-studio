@@ -30,6 +30,11 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -53,13 +58,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
 
   @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTemplate;
-
-  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnBaseTemplate;
-
-  @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnWheel;
 
   @FXML
   private Button tableEditBtn;
@@ -75,6 +74,9 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
 
   @FXML
   private BorderPane templateEditorPane;
+
+  @FXML
+  private BorderPane rootPane;
 
   private final List<String> ignoreList = new ArrayList<>();
 
@@ -247,6 +249,14 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       templateEditorController = loader.getController();
       templateEditorController.setCardsController(this);
       templateEditorPane.setCenter(editorRoot);
+
+      // the Highscore cards / Wheels tabs and the designer toolbar span the whole page, above the three tiles
+      TabPane designerTabs = templateEditorController.getTabPane();
+      ToolBar designerToolbar = templateEditorController.getToolbar();
+      ((Pane) designerTabs.getParent()).getChildren().removeAll(designerTabs, designerToolbar);
+      VBox pageHeader = new VBox(12, designerTabs, designerToolbar);
+      BorderPane.setMargin(pageHeader, new Insets(0, 0, 14, 0));
+      rootPane.setTop(pageHeader);
     }
     catch (IOException e) {
       LOG.error("failed to load template editor: " + e.getMessage(), e);
@@ -270,40 +280,24 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
       return label;
     }, this, true);
 
-    BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
-      CardTemplate template = getCardTemplateForGame(value);
-      Label label = new Label("");
-      if (template != null && !template.isTemplate()) {
-        label.setGraphic(WidgetFactory.createCheckboxIcon(ThemeColors.SUCCESS_LIGHT, Messages.get("dialog.customized_highscore_card")));
-      }
-      label.getStyleClass().add("default-text");
-      return label;
-    }, this, true);
-
+    // template column: the "Custom" pill for tables with their own design, the base template name otherwise
     BaseLoadingColumn.configureColumn(columnBaseTemplate, (value, model) -> {
-      CardTemplate template = getBaseCardTemplateForGame(value);
-      String templateName = template == null ? CardTemplate.DEFAULT : template.getName();
-
+      CardTemplate template = getCardTemplateForGame(value);
+      if (template != null && !template.isTemplate()) {
+        Label pill = new Label(Messages.get("cards.designer.custom_pill"));
+        pill.getStyleClass().addAll("sm-pill", "sm-pill-info");
+        pill.setTooltip(new Tooltip(Messages.get("dialog.customized_highscore_card")));
+        return pill;
+      }
+      CardTemplate baseTemplate = getBaseCardTemplateForGame(value);
+      String templateName = baseTemplate == null ? CardTemplate.DEFAULT : baseTemplate.getName();
       Label label = new Label(templateName);
-      label.getStyleClass().add("default-text");
+      label.getStyleClass().add("sm-hint");
       label.setTooltip(new Tooltip(templateName));
       return label;
     }, this, true);
 
-    BaseLoadingColumn.configureLoadingColumn(columnWheel, "Loading...", (value, model) -> {
-      Label label = new Label("");
-      label.getStyleClass().add("default-text");
-      JFXFuture.supplyAsync(() -> {
-        FrontendMediaRepresentation gameMedia = client.getGameMediaService().getGameMedia(model.getGameId());
-        return gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
-      }).thenAcceptLater((image) -> {
-        if (image != null) {
-          label.setGraphic(WidgetFactory.createCheckIcon());
-        }
-      });
-      return label;
-    });
-
+    emulatorCombo.setButtonCell(new EmulatorButtonCell());
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -379,6 +373,34 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     return new GameRepresentationModel(game);
   }
 
+
+  /**
+   * Shows the selected emulator as "Emulator <name>" with a muted prefix
+   */
+  static class EmulatorButtonCell extends ListCell<GameEmulatorRepresentation> {
+    private final Label prefix = new Label(Messages.get("cards.designer.emulator_prefix"));
+    private final Label name = new Label();
+    private final HBox box = new HBox(6, prefix, name);
+
+    EmulatorButtonCell() {
+      prefix.getStyleClass().add("sm-hint");
+      name.getStyleClass().add("sm-text");
+      box.setAlignment(Pos.CENTER_LEFT);
+    }
+
+    @Override
+    protected void updateItem(GameEmulatorRepresentation item, boolean empty) {
+      super.updateItem(item, empty);
+      setText(null);
+      if (empty || item == null) {
+        setGraphic(null);
+      }
+      else {
+        name.setText(item.toString());
+        setGraphic(box);
+      }
+    }
+  }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override

@@ -9,6 +9,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
+import javafx.beans.InvalidationListener;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -54,6 +56,10 @@ public class PositionResizer {
 
 
   private Object userData;
+
+  private static final int CAPTION_HEIGHT = 20;
+  private String caption;
+  private Label captionLabel;
 
   boolean eventTriggered = false;
   private EventHandler<MouseEvent> eventHandler = (e) -> {
@@ -138,6 +144,39 @@ public class PositionResizer {
         }
       }
     });
+
+    InvalidationListener captionUpdater = o -> updateCaption();
+    xProperty.addListener(captionUpdater);
+    yProperty.addListener(captionUpdater);
+    widthProperty.addListener(captionUpdater);
+    heightProperty.addListener(captionUpdater);
+  }
+
+  /**
+   * Optional name shown in a tag above the box, followed by the size of the box, e.g. "Other media · 1055 × 605"
+   */
+  public void setCaption(String caption) {
+    this.caption = caption;
+    if (caption != null && captionLabel == null) {
+      captionLabel = new Label();
+      captionLabel.getStyleClass().add("sm-selection-caption");
+      captionLabel.setMouseTransparent(true);
+      overlay.getChildren().add(captionLabel);
+    }
+    updateCaption();
+  }
+
+  private void updateCaption() {
+    if (captionLabel == null) {
+      return;
+    }
+    captionLabel.setVisible(caption != null);
+    captionLabel.setText(caption + " · " + widthProperty.get() + " × " + heightProperty.get());
+    double x = xProperty.get() * zoomX;
+    double y = yProperty.get() * zoomY;
+    // above the box, inside it when there is no room above
+    double labelY = y - CAPTION_HEIGHT;
+    captionLabel.relocate(Math.max(0, x), labelY < 0 ? y + 2 : labelY);
   }
 
   public void addToPane(Pane pane) {
@@ -300,6 +339,7 @@ public class PositionResizer {
         handles[i][j].setY((y + j * height / 2.0) * zoomY - j * handleSize2);
       }
     }
+    updateCaption();
   }
 
   public Color getColor() {

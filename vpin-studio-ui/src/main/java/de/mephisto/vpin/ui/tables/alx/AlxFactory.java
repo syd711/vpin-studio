@@ -29,8 +29,13 @@ public class AlxFactory {
 
   private final static int COLUMN_COUNT = 5;
 
-  /** one bar color per chart, the length carries the value */
-  private static final String BAR_COLOR = ThemeColors.INFO;
+  /** bar colors, cycled per row as in the original statistics view */
+  private static final List<String> BAR_COLORS = List.of(ThemeColors.CHART_BLUE, ThemeColors.CHART_RED, ThemeColors.CHART_ORANGE,
+      ThemeColors.CHART_GREEN, ThemeColors.CHART_MAGENTA, ThemeColors.CHART_GRAY, ThemeColors.CHART_BLUE);
+
+  private static String barColor(int row) {
+    return BAR_COLORS.get(row % BAR_COLORS.size());
+  }
 
   public static double calculateColumnWidth(Stage stage) {
     if (stage.getTitle().startsWith("VPin Studio")) {
@@ -177,7 +182,7 @@ public class AlxFactory {
       }
 
       int percentage = (int) (alxEntry.getScores() * 100 / maxValue);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, BAR_COLOR, alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getScores()), percentage, barColor(root.getChildren().size()), alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         loader.setResources(Messages.getBundle());
@@ -203,7 +208,7 @@ public class AlxFactory {
     for (TableAlxEntry alxEntry : statEntries) {
 
       String lastPlayed = alxEntry.getLastPlayed() != null ? DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(alxEntry.getLastPlayed()) : "-";
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), lastPlayed, -1, BAR_COLOR, alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), lastPlayed, -1, barColor(root.getChildren().size()), alxEntry.getGameId());
       rowCount++;
 
       //limit to 20 rows.
@@ -245,7 +250,7 @@ public class AlxFactory {
 
       int percentage = (int) (alxEntry.getTimePlayedSecs() * 100 / maxValue);
       String durationText = DurationFormatUtils.formatDuration(alxEntry.getTimePlayedSecs() * 1000, "HH 'hours', mm 'minutes'", false);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, BAR_COLOR, alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), durationText, percentage, barColor(root.getChildren().size()), alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         loader.setResources(Messages.getBundle());
@@ -278,7 +283,7 @@ public class AlxFactory {
       }
 
       int percentage = (int) (alxEntry.getNumberOfPlays() * 100 / maxValue);
-      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, BAR_COLOR, alxEntry.getGameId());
+      AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(), String.valueOf(alxEntry.getNumberOfPlays()), percentage, barColor(root.getChildren().size()), alxEntry.getGameId());
       try {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         loader.setResources(Messages.getBundle());

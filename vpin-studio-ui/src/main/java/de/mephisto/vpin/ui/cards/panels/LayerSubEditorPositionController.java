@@ -10,7 +10,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import de.mephisto.vpin.ui.util.SegmentedToggles;
 import org.apache.commons.beanutils.PropertyUtils;
 
 public class LayerSubEditorPositionController {
@@ -25,7 +26,7 @@ public class LayerSubEditorPositionController {
   private Spinner<Integer> heightSpinner;
 
   @FXML
-  private HBox alignBox;
+  private VBox alignBox;
 
   @FXML
   private ToggleButton alignLeftButton;
@@ -60,6 +61,8 @@ public class LayerSubEditorPositionController {
       bindButton(alignTopButton, vgrp, prefix + "Alignment", binder, CardTemplate.TOP, false);
       bindButton(alignMiddleButton, vgrp, prefix + "Alignment", binder, CardTemplate.MIDDLE, false);
       bindButton(alignBottomButton, vgrp, prefix + "Alignment", binder, CardTemplate.BOTTOM, false);
+
+      SegmentedToggles.keepSelected(alignLeftButton, alignCenterButton, alignRightButton, alignTopButton, alignMiddleButton, alignBottomButton);
     }
   }
 

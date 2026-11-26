@@ -293,46 +293,25 @@
 }
 
 /**
- * Common Buttons
+ * Common dialog buttons (see UI-STYLEGUIDE.md "Buttons"): submit-button is the primary action of a dialog and has the
+ * sm-accent-button look (rule below), default-button is a secondary action with the sm-button look
  */
-.submit-button {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -c-highlight;
+.button.default-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-control;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-border;
     -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: -c-primary;
-    -fx-text-fill: -c-warm-white;
-    -fx-border-radius: 3px;
-}
-
-.submit-button:hover {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -c-primary-hover-border;
-    -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: -c-highlight;
-    -fx-text-fill: -c-warm-white;
+    -fx-border-radius: 4;
+    -fx-padding: 5 12 5 12;
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
     -fx-cursor: hand;
 }
 
-.default-button {
-    -fx-border-radius: 3px;
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -c-darkest;
-    -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: -c-separator;
-    -fx-text-fill: -c-warm-white;
-}
-
-.default-button:hover {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: -c-primary-hover-border;
-    -fx-border-width: 1;
-    -fx-font-size : 14px;
-    -fx-background-color: -fx-font-hover;
-    -fx-text-fill: -c-warm-white;
-    -fx-cursor: hand;
+.button.default-button:hover {
+    -fx-background-color: -c-control-hover;
 }
 
 .warn-button {
@@ -498,20 +477,84 @@
     -fx-graphic-text-gap: 5;
 }
 
-.sm-accent-button {
+/* the one primary action of a panel; .submit-button (primary button of the dialogs) shares the look */
+.sm-accent-button, .button.submit-button {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: -c-on-warn;
     -fx-background-color: -c-warn;
     -fx-background-radius: 4;
+    -fx-border-color: -c-warn;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
     -fx-padding: 5 14 5 14;
     -fx-min-height: 30;
     -fx-pref-height: 30;
     -fx-cursor: hand;
 }
 
-.sm-accent-button:hover {
+.sm-accent-button:hover, .button.submit-button:hover {
     -fx-background-color: -c-warn-hover;
+    -fx-border-color: -c-warn-hover;
+}
+
+.sm-accent-button .ikonli-font-icon, .button.submit-button .ikonli-font-icon {
+    -fx-icon-color: -c-on-warn;
+}
+
+/* System Manager component tab ("Simulate" / "Install <version>"): their own original look, no fixed 30px height,
+   the install button is the larger yellow (-c-warn) accent without border */
+.button.sm-simulate-button {
+    -fx-font-size: 14px;
+    -fx-text-fill: -c-white;
+    -fx-background-color: -c-control;
+    -fx-background-radius: 4;
+    -fx-border-color: -c-border;
+    -fx-border-radius: 4;
+    -fx-padding: 5 12 5 12;
+    -fx-cursor: hand;
+}
+
+.button.sm-simulate-button:hover {
+    -fx-background-color: -c-control-hover;
+}
+
+.button.sm-install-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-on-warn;
+    -fx-background-color: -c-warn;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.button.sm-install-button:hover {
+    -fx-background-color: -c-warn-hover;
+}
+
+/* window title bar buttons (minimize / maximize / pin / close): their own original look, the global .button defaults
+   above do not apply (values = the former JavaFX default) */
+.button.header-button {
+    -fx-background-color: -fx-base-7;
+    -fx-background-insets: 0 0 -1 0;
+    -fx-background-radius: 3;
+    -fx-border-color: transparent;
+    -fx-border-style: hidden;
+    -fx-border-width: 0;
+    -fx-text-fill: -c-text-soft;
+}
+
+.button.header-button:disabled {
+    -fx-opacity: 0.4;
+}
+
+.button.header-button:hover {
+    -fx-background-color: -c-primary;
+    -fx-text-fill: -c-warm-white;
+    -fx-cursor: hand;
 }
 
 /* destructive actions (restart server, shutdown, delete) and actions flagging a problem */
@@ -541,4 +584,18 @@
 
 .sm-danger-button .ikonli-font-icon {
     -fx-icon-color: -c-error;
+}
+
+/* eye / lock buttons in the designer layer headers: bare icons, hover shows a control tile */
+.button.designer-layer-button, .toggle-button.designer-layer-button,
+.toggle-button.designer-layer-button:selected, .toggle-button.designer-layer-button:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 4;
+    -fx-padding: 3;
+    -fx-cursor: hand;
+}
+
+.button.designer-layer-button:hover, .toggle-button.designer-layer-button:hover {
+    -fx-background-color: -c-control;
 }

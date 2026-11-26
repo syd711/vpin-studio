@@ -65,3 +65,18 @@
     -fx-min-height: 30;
     -fx-pref-height: 30;
 }
+
+/* accent check box (e.g. "Auto-save" in the dialog headers): orange box with a dark check mark when selected */
+.check-box.sm-accent-checkbox:selected > .box {
+    -fx-background-color: -c-warn;
+    -fx-border-color: -c-warn;
+}
+
+.check-box.sm-accent-checkbox:selected:hover > .box {
+    -fx-background-color: -c-warn-hover;
+    -fx-border-color: -c-warn-hover;
+}
+
+.check-box.sm-accent-checkbox:selected > .box > .mark {
+    -fx-background-color: -c-on-warn;
+}

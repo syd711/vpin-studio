@@ -40,6 +40,24 @@
     -fx-spacing: 8;
 }
 
+/* first action bar of a tab: same top / left inset as the floating-toolbar of the other tabs of the Tables section
+   (VPS, Statistics, Backups, …; modena's default tool-bar padding) */
+.sm-actionbar.sm-actionbar-flush {
+    -fx-padding: 0.416667em 0.5em 0 0.5em;
+}
+
+/* further action bar rows below an sm-actionbar-flush keep the same left inset */
+.sm-actionbar.sm-actionbar-inset {
+    -fx-padding: 12 0.5em 0 0.5em;
+}
+
 .sm-actionbar .separator {
     -fx-padding: 0 4 0 4;
+}
+
+/* a segmented control in a floating toolbar keeps the 30px control height (2px padding + 1px border around 24px toggles) */
+.floating-toolbar .sm-segmented > .toggle-button {
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
+    -fx-padding: 0 12 0 12;
 }

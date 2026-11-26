@@ -1442,7 +1442,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (int i = 0; i < rating; i++) {
         Label label = new Label();
         label.setUserData(index);
-        FontIcon icon = WidgetFactory.createIcon("mdi2s-star", getIconColor(value));
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star", value.isDisabled() ? ThemeColors.ICON_DISABLED : ThemeColors.WARN);
         icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE + 2);
         label.setGraphic(icon);
         label.setCursor(Cursor.HAND);

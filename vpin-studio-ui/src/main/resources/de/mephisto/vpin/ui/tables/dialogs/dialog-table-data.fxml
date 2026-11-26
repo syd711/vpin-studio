@@ -1089,42 +1089,26 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <right>
-                  <HBox alignment="CENTER" spacing="3.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0" BorderPane.alignment="CENTER">
                      <children>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="%cards.instructions_card.auto_save" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets right="3.0" />
-                           </HBox.margin>
-                        </CheckBox>
+                        <CheckBox fx:id="autosaveCheckbox" minWidth="-Infinity" mnemonicParsing="false" selected="true" styleClass="sm-text, sm-header-checkbox, sm-accent-checkbox" text="%cards.instructions_card.auto_save" />
                         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious" styleClass="sm-button, sm-button-icon">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                            <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2c-chevron-left" iconSize="18" styleClass="c-icon-white" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_previous_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext" styleClass="sm-button, sm-button-icon">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                            <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2f-forward" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2c-chevron-right" iconSize="18" styleClass="c-icon-white" />
                            </graphic>
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.instructions_card.jump_to_the_next_entry_in_the_current" wrapText="true" />
                            </tooltip>
                         </Button>
                      </children>
-                     <padding>
-                        <Insets left="6.0" right="6.0" />
-                     </padding>
                   </HBox>
                </right>
                <left>

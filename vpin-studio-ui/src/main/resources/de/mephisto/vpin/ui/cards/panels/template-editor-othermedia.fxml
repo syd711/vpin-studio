@@ -22,110 +22,78 @@
 <?import javafx.scene.control.ToggleButton?>
 <TitledPane fx:id="settingsPane" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorOtherMediaController">
   <graphic>
-      <BorderPane prefWidth="250.0">
-         <left>
-            <Label text="%cards.template_editor_othermedia.other_media_settings" />
-         </left>
-         <right>
-            <HBox alignment="CENTER_RIGHT" spacing="3.0">
-               <children>
-                  <Button fx:id="eyeBtn" mnemonicParsing="false"  styleClass="sm-button, sm-button-icon">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2e-eye-outline" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%cards.template_editor_othermedia.toggle_other_media_visibility" />
-                     </tooltip>
-                  </Button>
-                  <ToggleButton fx:id="lockBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onLockToggle" styleClass="custom-toggle-button-small">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2l-lock-open-variant-outline" iconSize="13" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
-                     </tooltip>
-                  </ToggleButton>
-               </children>
-            </HBox>
-         </right>
-      </BorderPane>
+      <HBox fx:id="layerHeader" alignment="CENTER_LEFT" spacing="10.0" styleClass="designer-layer-header">
+         <children>
+            <FontIcon iconLiteral="mdi2i-image-outline" iconSize="18" styleClass="c-icon-muted" />
+            <Label fx:id="layerNameLabel" styleClass="designer-layer-name" text="%cards.designer.layer_other_media" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="eyeBtn" mnemonicParsing="false" styleClass="designer-layer-button">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2e-eye-outline" iconSize="18" styleClass="c-icon-muted" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%cards.template_editor_othermedia.toggle_other_media_visibility" />
+               </tooltip>
+            </Button>
+            <ToggleButton fx:id="lockBtn" mnemonicParsing="false" onAction="#onLockToggle" styleClass="designer-layer-button">
+               <graphic>
+                  <FontIcon iconLiteral="mdi2l-lock-open-variant-outline" iconSize="18" styleClass="c-icon-muted" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%cards.template_editor_background.lock_these_properties_for_custom_templates" />
+               </tooltip>
+            </ToggleButton>
+         </children>
+      </HBox>
   </graphic>
   <content>
-      <ScrollPane hbarPolicy="NEVER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
          <content>
-            <VBox styleClass="accordion-container" >
+            <VBox spacing="12.0" styleClass="accordion-container">
                <children>
+                  <Label styleClass="sm-hint" text="%cards.template_editor_othermedia.add_an_additional_image_layer_containing_a_media" wrapText="true" />
 
-                  <Label text="%cards.template_editor_othermedia.add_an_additional_image_layer_containing_a_media" prefWidth="200" wrapText="true">
-                     <graphic>
-                        <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.4" />
-                     </graphic>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </Label>
-
-                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                  <VBox spacing="6.0">
                      <children>
-                        <Label text="%cards.template_editor_othermedia.media_asset" styleClass="c-text-white">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
-                           </graphic>
+                        <Label styleClass="sm-small" text="%cards.template_editor_othermedia.media_asset">
                            <tooltip>
                               <Tooltip prefWidth="300.0" text="%cards.template_editor_othermedia.select_the_displayed_media_asset" wrapText="true" />
                            </tooltip>
                         </Label>
+                        <ComboBox fx:id="otherMediaScreensComboBox" maxWidth="1.7976931348623157E308" />
                      </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </HBox>
-                  <ComboBox fx:id="otherMediaScreensComboBox" prefWidth="150.0" >
-                     <VBox.margin>
-                        <Insets top="6.0" bottom="12.0" />
-                     </VBox.margin>
-                  </ComboBox>
+                  </VBox>
 
                   <fx:include fx:id="position" source="template-subeditor-position.fxml" />
 
-                  <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <CheckBox fx:id="otherMediaKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" styleClass="c-text-white">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
+                        <CheckBox fx:id="otherMediaKeepARCheckBox" mnemonicParsing="false" text="%cards.template_editor_manufacturer.keep_aspect_ratio" />
                         <Label>
                            <graphic>
-                              <FontIcon styleClass="c-icon-white" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon iconLiteral="mdi2h-help-circle-outline" iconSize="16" styleClass="c-icon-muted" />
                            </graphic>
                            <tooltip>
                               <Tooltip text="%cards.template_editor_manufacturer.when_checked_the_aspect_ratio_of_the_image" />
                            </tooltip>
                         </Label>
                      </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
                   </HBox>
 
+                  <!-- empty state: the selected table has no media for the chosen screen -->
+                  <VBox fx:id="missingMediaBox" alignment="CENTER" spacing="10.0" styleClass="sm-inset, designer-empty-state">
+                     <children>
+                        <FontIcon iconLiteral="mdi2i-image-outline" iconSize="24" styleClass="c-icon-subtle" />
+                        <Label fx:id="missingMediaLabel" styleClass="sm-hint" textAlignment="CENTER" wrapText="true" />
+                        <Button mnemonicParsing="false" onAction="#onAddMedia" styleClass="sm-button, sm-button-small" text="%cards.designer.add_media" />
+                     </children>
+                     <padding>
+                        <Insets bottom="18.0" left="12.0" right="12.0" top="18.0" />
+                     </padding>
+                  </VBox>
                </children>
                <padding>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets bottom="14.0" left="14.0" right="14.0" top="4.0" />
                </padding>
             </VBox>
          </content>

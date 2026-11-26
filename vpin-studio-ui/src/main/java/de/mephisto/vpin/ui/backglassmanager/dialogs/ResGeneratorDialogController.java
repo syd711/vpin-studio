@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +64,13 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private StackPane fileNamePane;
 
   @FXML
+  private Label titleLabel;
+
+  @FXML
   private Label screenResLabel;
 
   @FXML
   private Label backglassScreenLabel;
-
-  @FXML
-  private Label backglassDimensionLabel;
 
   @FXML
   private Label backglassPositionLabel;
@@ -81,13 +82,13 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private ImageView previewImage;
 
   @FXML
-  private RadioButton radioStretchBackglass;
+  private ToggleButton radioStretchBackglass;
 
   @FXML
-  private RadioButton radioCenterBackglass;
+  private ToggleButton radioCenterBackglass;
 
   @FXML
-  private RadioButton radioCustomWidth;
+  private ToggleButton radioCustomWidth;
 
   @FXML
   private Spinner<Integer> customWidthSpinner;
@@ -114,6 +115,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private BufferedImage frameImg;
 
   private BufferedImage backglassImg;
+
+  /** The preview keeps the ratio of the backglass screen, its height is the fitHeight of the FXML */
+  private static final double MAX_PREVIEW_WIDTH = 760;
 
   private int previewWidth = -1;
   private int previewHeight = -1;
@@ -397,6 +401,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       refreshPreview();
     });
     tg.selectToggle(radioStretchBackglass);
+    SegmentedToggles.keepSelected(radioStretchBackglass, radioCenterBackglass, radioCustomWidth);
 
     // Custom-width spinner: 1–9999 px, default 1280
     SpinnerValueFactory<Integer> widthFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999, 1280);
@@ -417,11 +422,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
             backglassScreenLabel.setText(formatDimension(w, h));
 
-            // resize the preview proportionnaly
-            this.previewHeight = (int) previewImage.getFitHeight();
-            double width = previewImage.getFitHeight() * w / h;
+            // resize the preview proportionnaly, wide screens are limited in width
+            double height = previewImage.getFitHeight();
+            double width = height * w / h;
+            if (width > MAX_PREVIEW_WIDTH) {
+              width = MAX_PREVIEW_WIDTH;
+              height = width * h / w;
+            }
             previewImage.setFitWidth(width);
+            previewImage.setFitHeight(height);
             this.previewWidth = (int) width;
+            this.previewHeight = (int) height;
             refreshPreview();
           }
         });
@@ -463,6 +474,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   public void setData(Stage stage, int emulatorId, String fileName) {
     this.stage = stage;
+    titleLabel.setText(FilenameUtils.getName(fileName));
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(emulatorId, fileName, false))
         .thenAcceptLater(res -> setScreenRes(res))
@@ -506,8 +518,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
       screenResLabel.setText(screenres.getScreenresFilePath());
       screenResLabel.setTooltip(new Tooltip(screenres.getScreenresFilePath()));
-      backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
-      backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
+      backglassPositionLabel.setText(Messages.get("backglass.res_generator.preview_info",
+          formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()),
+          formatLocation(screenres.getBackglassX(), screenres.getBackglassY())));
 
       if (screenres.isBackglassCentered()) {
         int bgW = screenres.getBackglassWidth();
@@ -545,21 +558,21 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     }
     else {
       screenResLabel.setText(Messages.get("backglass.res_generator.no_screen_res_file_found_please_run"));
-      backglassDimensionLabel.setText("--");
+      backglassPositionLabel.setText("");
     }
   }
 
   private String formatLocation(int x, int y) {
     StringBuilder bld = new StringBuilder();
     if (x != -1 || y != -1) {
-      bld.append(x).append(" / ").append(y);
+      bld.append(x).append(", ").append(y);
     }
     return bld.toString();
   }
 
   private String formatDimension(int width, int height) {
     StringBuilder bld = new StringBuilder();
-    bld.append(width).append(" x ").append(height);
+    bld.append(width).append(" × ").append(height);
     return bld.toString();
   }
 }
